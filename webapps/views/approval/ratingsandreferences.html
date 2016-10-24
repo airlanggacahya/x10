@@ -1,0 +1,154 @@
+<style type="text/css">
+		#defaulterstatus{
+	    	width: 60%;
+		    height: 50%;
+		    margin-left: -3%;
+		    margin-top: -10%;
+		}
+
+		#verificationcheck{
+	    	width: 60%;
+		    height: 50%;
+		    margin-left: -3%;
+		    margin-top: -10%;
+		}
+
+		@media (max-width: 1200px){
+			#defaulterstatus{
+		    	width: 70%;
+			    height: 70%;
+			    /*margin-left: -3%;*/
+			    margin-top: -17%;
+			}
+
+			#verificationcheck{
+		   		 width: 70%;
+			    height: 70%;
+			    /*margin-left: -3%;*/
+			    margin-top: -17%;
+			}
+		}
+
+		@media (min-width: 1750px){
+			#defaulterstatus{
+		    width: 70%;
+			    height: 60%;
+			    margin-left: -3%;
+			    margin-top: -12%;
+			}
+
+			#verificationcheck{
+		    	width: 70%;
+			    height: 60%;
+			    margin-left: -3%;
+			    margin-top: -12%;
+			}
+		}
+
+
+		.mgtop-10{
+			margin-top: -10px;
+		}
+		.mgtop-35{
+			margin-top: -35px;
+		}
+</style>
+
+<style type="text/css">
+	.nopadding{
+		padding: 0;
+	}
+	.nopadding-right{
+		padding-right: 0;
+	}
+	.box{
+		border: 1px solid black;
+		height: 250px;
+	}
+	.textcenter{
+		text-align: center;
+	}
+	label{
+		font-size: 10px !important;
+	}
+	h4{
+		font-size: 12px !important;
+		text-decoration: underline;
+	}
+	text, .noable{
+		font-size: 9px !important;
+	}
+</style>
+<div class="panel panel-default panel-asik" style="height: 250px;">
+	<div class="panel-heading">
+		Ratings and References
+	</div>
+	<div class="panel-body">
+		<div class="col-md-6 no-padding" style="padding-right: 4px;">
+			<div class="col-md-12 no-padding">
+				<label class="col-md-6 no-padding">Internal Rating</label>
+				<div class="col-md-6 no-padding"><h3 data-bind="text: ko.computed(function () { return kendo.toString(internalrating(), 'n2') }, internalrating)" type="text" style="width: 100%;" disabled></h3></div>
+			</div>
+
+			<div class="clearfix with-space"></div>
+
+			<div class="col-md-12 no-padding">
+				<label class="col-md-6 no-padding">External Rating</label>
+				<div class="col-md-6 no-padding">
+				  	<img src="/static/img/iconjempol/yes.png" height="30px" data-bind="visible: externalrating() == true">
+					<img src="/static/img/iconjempol/normal.png" height="30px" data-bind="visible: externalrating() == 'zero' ">
+					<img src="/static/img/iconjempol/no.png" height="30px" data-bind="visible: externalrating() == false">
+				</div>
+			</div>
+
+			<div class="clearfix with-space"></div>
+
+			<div class="col-md-12 no-padding">
+				<label class="col-md-6 no-padding">Commercial CIBIL</label>
+				<div class="col-md-6 no-padding">
+			  		<img src="/static/img/iconjempol/yes.png" height="30px" data-bind="visible: commercialcibil() == true">
+					<img src="/static/img/iconjempol/normal.png" height="30px" data-bind="visible: commercialcibil() == 'zero' ">
+					<img src="/static/img/iconjempol/no.png" height="30px" data-bind="visible: commercialcibil() == false">
+				</div>
+			</div>
+
+			<div class="clearfix with-space"></div>
+
+			<div class="col-md-12 no-padding">
+				<label class="col-md-6 no-padding">PD Remarks</label>
+				<div class="col-md-6 no-padding">
+			  		<img src="/static/img/iconjempol/yes.png" height="30px" data-bind="visible: pdremarks() == true">
+					<img src="/static/img/iconjempol/normal.png" height="30px" data-bind="visible: pdremarks() == 'zero'">
+					<img src="/static/img/iconjempol/no.png" height="30px" data-bind="visible: pdremarks() == false">
+				</div>
+			</div>
+
+			<div class="clearfix with-space"></div>
+
+			<div class="col-md-12 no-padding">
+				<label class="col-md-6 no-padding">Reference Check</label>
+				<div class="col-md-6 no-padding">
+			  		<img src="/static/img/iconjempol/yes.png" height="30px" data-bind="visible: referencecheck() == true">
+					<img src="/static/img/iconjempol/normal.png" height="30px" data-bind="visible: referencecheck() == 'zero' ">
+					<img src="/static/img/iconjempol/no.png" height="30px" data-bind="visible: referencecheck() == false">
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6 no-padding">
+			<div class="col-md-12 no-padding mgtop-10">
+				<div style="margin-left: 15px;"><label>Defaulter Status</label></div>
+				<div>
+					<div id="defaulterstatus"></div>
+				</div>
+			</div>
+
+			<div class="col-md-12 no-padding mgtop-35">
+				<div style="margin-left: 15px;"><label>Verification Check</label></div>
+				<div>
+					<div id="verificationcheck" ></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

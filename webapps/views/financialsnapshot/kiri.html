@@ -1,0 +1,150 @@
+<style type="text/css">
+	.panel{
+		 border-radius: 11px;
+		 margin-bottom: 15px;
+	}
+	.panel-heading{
+		padding: 1px 10px !important;
+	}
+	h3{
+		text-align: center;
+		color: #fff;
+		font-size: 14px !important;
+	}
+	#panel1{
+		background-color: #F0A202;
+		
+	}
+	#panel2{
+		background-color: #32485e;
+	}
+	/*#line{
+		background-color: #fff;
+	}*/
+
+	#ex{
+		background-color: #F26419;
+		margin-top: -38px;
+	}
+
+	.panel-body.kiriPanel {
+	        padding: -4px 11px 24px !important;
+	}
+
+	.panel-body{
+		    padding: 1px 7px !important;
+	}
+
+	.sheet{
+		background-color: #9dc3e6;
+		height: 74px;
+		margin-bottom: 35px;
+	}
+
+	.head{
+		font-size: 17px;
+		font-weight: 700;
+	}
+
+	.ttl{
+		font-weight: 800;
+	}
+
+</style>
+<script type="text/javascript" src="/static/core/financialsnapshot-kiri.js"></script>
+<div data-bind="with: left">
+	<div data-bind="visible: r.rootdates().length > 0 && panelVisible() == true">
+		<!-- <div class="col-md-12">
+			<div class="panel" id="panel1">
+				<div class="panel-heading">
+					<h3>
+						Profit & Loss Account
+					</h3>
+				</div>
+				<div class="panel-body kiriPanel">
+					<div class="col-md-6">
+						<div class="panel-body" id="line">
+							<div class="col-md-12">
+								<div id="chartline"></div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="panel-body">
+							<div id="chartstick"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> -->
+		<div class="col-md-12">
+			<div class="col-sm-12" data-bind="visible: r.rootdates().length > 0">
+			  <div class="panel" id="panelright2" style="margin-right: -26px;">
+			    <div class="panel-heading">
+			      <h3>
+			        Financial Ratios
+			      </h3>
+			    </div>
+			    <div class="panel-body" style="margin-top: -9px;">
+			      <div class="col-sm-6" style="border-right: 1px solid white;">
+			        <div class="col-sm-12" style="border-bottom: 1px solid white;">
+
+			          <div class="panel panelright3">
+			            <div class="panel-heading">
+			              <h4 class="titlepanelright3">
+			                Liquidity Ratios
+			              </h4>
+			            </div>
+			            <div class="panel-body">
+			              <h4>Current Ratio : <span data-bind="text: currentratio"></span></h4>
+			            </div>
+			          </div>
+
+			        </div>
+			        <div class="col-sm-12" style="border-bottom: 1px solid white;">
+
+			          <div class="panel panelright3">
+			            <div class="panel-heading">
+			              <h4 class="titlepanelright3">
+			                Coverage Ratios
+			              </h4>
+			            </div>
+			            <div class="panel-body">
+			              <h4>ISCR: <span data-bind="text: ICSR"></span></h4>
+			              <h4>DSCR: <span data-bind="text: DSCR"></span></h4>
+			            </div>
+			          </div>
+
+			        </div>
+			        <div class="col-sm-12 panel panelright3">
+
+			          <h4 class="titlepanelright3">
+			            Profitability Ratios
+			          </h4>
+			          <div id="profitableratios" style="margin: 10px 0px"></div>
+
+			        </div>
+			      </div>
+			      <div class="col-sm-6">
+			        <div class="col-sm-12 panel panelright3">
+			          <h4 class="titlepanelright3">
+			            Operating Ratios
+			          </h4>
+			          <div id="operatingratios"></div>
+			          <!-- (Debtor Days, Creditor Days and Stock Turnover Days) -->
+			        </div>
+			        <div class="col-sm-12" style="border-bottom: 1px solid white;"></div>
+			        <div class="col-sm-12 panel panelright3">
+			          <h4 class="titlepanelright3">
+			            Leverage Ratios
+			          </h4>
+			          <div id="leverageratios"></div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+		
+	</div>
+</div>

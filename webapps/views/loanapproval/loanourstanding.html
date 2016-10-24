@@ -1,0 +1,59 @@
+<div class="container-fluid">
+   
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="k-grid k-widget">
+            <table>
+               <thead class="k-grid-header">
+                  <tr>
+                     <th class="k-header center sub-bgcolor col-sm-2">Bank</th>
+                     <th class="k-header center sub-bgcolor col-sm-2" colspan="2">Amount</th>
+                     <th class="k-header center sub-bgcolor col-sm-1">ROI</th>
+                     <th class="k-header center sub-bgcolor">Nature Of Facility</th>
+                     <th class="k-header center sub-bgcolor" colspan="2">Security</th>
+                     <th class="k-header center sub-bgcolor col-sm-2" colspan="2">Sanction Date</th>
+                  </tr>
+                  <tr>
+                     <th class="k-header text-center">&nbsp;</th>
+                     <th class="k-header text-center text-bold">FB</th>
+                     <th class="k-header text-center text-bold">NFB</th>
+                     <th class="k-header text-center">&nbsp;</th>
+                     <th class="k-header text-center">&nbsp;</th>
+                     <th class="k-header text-center text-bold">FB</th>
+                     <th class="k-header text-center text-bold">NFB</th>
+                     <th class="k-header text-center text-bold">FB</th>
+                     <th class="k-header text-center text-boldth">NFB</th>
+                  </tr>
+               </thead>
+               <tbody data-bind="foreach:loanApproval.outstandingData().topTable">
+                  <tr>
+                     <td data-bind="text: bankName"></td>
+                     <td class="center" data-bind="text: amount.fb"></td>
+                     <td class="center" data-bind="text: amount.nfb"></td>
+                     <td class="center" data-bind="text: roi"></td>
+                     <td class="center" data-bind="text: natureOfFacility"></td>
+                     <td data-bind="text: security.fb"></td>
+                     <td data-bind="text: security.nfb"></td>
+                     <td class="center" data-bind="text: moment(sanctionDate.fb()).format('DD-MMM-YYYY')"></td>
+                     <td class="center" data-bind="text: moment(sanctionDate.nfb()).format('DD-MMM-YYYY')"></td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="k-grid no-padding" style="width: 51.34%">
+            <table class="table-bordered">
+               <tr>
+                  <td class="text-bold" style="width: 81%">Total Monthly Fixed EMI Obligation of All Unsecured Loan and Term Loan</td>
+                  <td class="col-sm-4 text-center" data-bind="text: loanApproval.outstandingData().totalEMI"></td>
+               </tr>
+            </table>
+         </div>
+      </div>
+   </div>
+
+</div>

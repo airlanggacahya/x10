@@ -1,0 +1,76 @@
+<style>
+	.form-container {
+		padding-top: 10px;
+		overflow: scroll;
+	}
+	.form-container table tr td {
+	    border: 1px solid #e2e2e2;
+	    padding: 6px 5px;
+	}
+	.form-container table tr.header td {
+	    padding: 5px 6px;
+		text-align: center;
+		vertical-align: middle;
+	}
+	.form-container table tr.colored td {
+		color: rgb(32,63,83);
+	}
+	.form-container .align-right {
+		text-align: right;
+	}
+	.form-container table tr {
+		background-color: #f5f5f5;
+		cursor: pointer;
+	}
+	.form-container table tr.row-clickable:hover {
+		background-color: #d5d5d5;
+	}
+	.cell-formula {
+		text-align: center;
+		position: relative;
+	}
+	.cell-formula .fa {
+		margin-right: 5px;
+		position: absolute;
+		left: 10px;
+		top: 9px;
+	}
+
+	.form-container > table > tbody > tr:nth-child(3) > td:nth-child(1),
+	.form-container > table > tbody > tr:nth-child(3) > td:nth-child(2) {
+		background-color: #D3E298;
+	}
+</style>
+
+<div class="clearfix"></div>
+
+<script src="/static/core/credit-score.js"></script>
+
+{{template "filter.html"}}
+
+<div data-bind="with: frp" >
+	<div class="col-md-12 col-sm-12 ez panel-content">
+	    <div class="panel ez no-padding hardcore">
+			<div class="panel-body">
+				<div class="controls">
+					<div class="col-md-4" style="display:none">
+						<label class="form-label col-md-4">Show Detail</label>
+						<div class="col-md-8">
+							<input type="checkbox" class="input-sm" /> 
+						</div>
+					</div>
+				</div>
+				<div class="controls">
+					<div class="col-md-4">
+					<label>
+						* Click this icon <i class="fa fa-plus-square-o" style="color:#168846;font-size:20px;    vertical-align: sub;"></i> to view breakdown
+					</label> 
+					</div>
+					<div class="clearfix"></div>
+				</div>
+
+				<div class="form-container"></div>
+			</div>
+		</div>
+	</div>
+</div>

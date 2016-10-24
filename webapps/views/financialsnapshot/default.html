@@ -1,0 +1,152 @@
+<script type="text/javascript">
+  model.PageTopMenu('{{.TopMenu}}');
+  model.PageId('{{.Menuname}}');
+  model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
+  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+  model.Access = ko.observable('{{.Menuid}}');
+  model.View = ko.observable('{{.View}}');
+  model.Create= ko.observable('{{.Create}}');
+  model.Delete= ko.observable('{{.Delete}}');
+  model.Process= ko.observable('{{.Process}}');
+  model.Edit= ko.observable('{{.Edit}}')
+  model.User= ko.observable('{{.Username}}');
+
+  var r = {};
+  r.rootdata = ko.observableArray([])
+  r.rootdates = ko.observableArray([])
+  r.customerId = ko.observable('')
+
+  refreshFilter = function(){
+    if (r.getCustomerId() === false) {
+        return
+    }
+
+    r.rootdata([])
+    r.rootdates([])
+
+    var param = {}
+    param.CustomerId = r.customerId().split('|')[0]
+    param.DealNo = r.customerId().split('|')[1]
+    param.ForModule = 'ratio report'
+
+    r.isLoading(true)
+    app.ajaxPost('/ratio/getreportdata', param, function (res) {
+      if (res.Message != '') {
+        sweetAlert("Oops...", res.Message, "error");
+        r.isLoading(false)
+        left.panelVisible(false)
+        return
+      }
+      if(res.Data.AuditStatus.length == 0){
+        sweetAlert("Oops...", "Cannot Find Report Data", "error");
+        left.panelVisible(false)
+      }else{
+        r.rootdata(res.Data.FormData)
+        r.rootdates(_.orderBy(res.Data.AuditStatus, 'Date', 'asc'))
+        left.loadRatioData()
+        left.panelVisible(true)
+        r.constructDataRight(r.rootdata())
+      }
+      r.isLoading(false)
+      r.rootdata(res.Data.FormData)
+      r.rootdates(_.orderBy(res.Data.AuditStatus, 'Date', 'asc'))
+      left.panelVisible(true)
+      left.loadRatioData()
+      $("body").css("overflow", "hidden");
+      $("#horizontal-menu").hide()
+      r.constructDataRight(r.rootdata())
+    })
+  }
+
+  r.getCustomerId = function () {
+    var customer = $('.jf-tbl select:eq(0)').data('kendoDropDownList').value()
+    var dealNumber = $('.jf-tbl select:eq(1)').data('kendoDropDownList').value()
+
+    if (customer == '') {
+        // sweetAlert("Oops...", "Customer cannot be empty", "error");
+        return false
+    }
+    if (dealNumber == '') {
+        // sweetAlert("Oops...", "Deal number cannot be empty", "error");
+        return false
+    }
+
+    r.customerId([customer, dealNumber].join('|'))
+
+    return [customer, dealNumber].join('|')
+  }
+
+  r.isLoading = function (what) {
+    $('.apx-loading')[what ? 'show' : 'hide']()
+    $('.app-content')[what ? 'hide' : 'show']()
+  }
+
+</script>
+
+{{template "filter.html"}}
+<div class="col-md-12 col-sm-12 ez panel-content">
+  <div class="panel ez">
+    <div class="panel-body" style="margin-top: 5px;">
+      <div class="col-sm-12">
+        <div class="col-sm-5">{{template "kiri.html"}}</div>
+        <div class="col-sm-2" data-bind="visible: r.rootdates().length > 0">
+          <div data-bind="with: left">
+            <div class="panel" id="panel2">
+              <div class="panel-heading">
+                <h3>
+                  Balance Sheet
+                </h3>
+              </div>
+              <div class="panel-body  kiriPanel" style="margin-top: -9px;">
+                <div class="col-md-12" style="margin-top: 27px;">
+                  <div>
+                    <!-- <div class="col-md-12"> -->
+                      <div class="panel col-md-12 sheet">
+                        <div class="panel-body col-md-12" data-bind="with: WCASSETS">
+                          <center>
+                            <p data-bind="text: value" class="head"></p>
+                            <div ><i id="WCASSETS" class="ttl" ></i> <span class="ttl" id="WCASSETS1" data-bind="text: growth"></span></div>
+                            <div data-bind="text: title"></div>
+                          </center>
+                        </div>
+                      </div>
+                      <div class="panel col-md-12 sheet">
+                        <div class="panel-body col-md-12" data-bind="with: TNW">
+                          <center>
+                            <p data-bind="text: value" class="head"></p>
+                            <div><i class="ttl" id="TNW"></i> <span class="ttl" id="TNW1" data-bind="text: growth"></span></div>
+                            <div data-bind="text: title"></div>
+                          </center>
+                        </div>
+                      </div>
+                      <div class="panel col-md-12 sheet">
+                        <div class="panel-body col-md-12" data-bind="with: ADNW">
+                          <center>
+                            <p data-bind="text: value" class="head"></p>
+                            <div><i id="ADNW" class="ttl"></i> <span class="ttl" id="ADNW1" data-bind="text: growth"></span></div>
+                            <div data-bind="text: title"></div>
+                          </center>
+                        </div>
+                      </div>
+                      <div class="panel col-md-12 sheet">
+                        <div class="panel-body col-md-12" data-bind="with: TOTOBW">
+                          <center>
+                            <p data-bind="text: value" class="head"></p>
+                            <div><i id="TOTOBW" class="ttl"></i> <span class="ttl" id="TOTOBW1" data-bind="text: growth"></span></div>
+                            <div data-bind="text: title"></div>
+                          </center>
+                        </div>
+                      </div>
+                    <!-- </div> -->
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-5">{{template "kanan.html"}}</div>
+      </div>
+    </div>
+  </div>
+</div>

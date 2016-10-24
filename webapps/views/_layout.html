@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>X10 Data Analytics</title>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/static/img/eaciit_logo.png" type="image/x-icon" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <script>
+      var model = {
+        appName: '/web/',
+        Processing: true,
+      };
+    </script>
+
+    <!-- jquery -->
+    <script src="/static/js/jquery-2.1.0.min.js"></script>
+    <script src="/static/js/jquery-ui.min.js"></script>
+
+    <!-- jquery number -->
+    <script src="/static/jquery.number/jquery.number.js"></script>
+
+    <!-- knockout -->
+    <script src="/static/js/knockout-3.4.0.js"></script>
+    <script src="/static/js/knockout.mapping.js"></script>
+
+    <!-- lazyjs -->
+    <!-- <script src="/static/lazyjs/lazy.min.js"></script> -->
+
+    <!-- underscore -->
+    <!-- <script src="/static/js/underscore.min.js"></script> -->
+    <!-- <script src="/static/jsPDF/jspdf.js"></script> -->
+
+
+    <!-- lodash -->
+    <script src="/static/lodash/lodash.min.js"></script>
+
+    <!-- bootstrap -->
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" />
+
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css" />
+
+    <!-- material-switch -->
+    <!--  Js switch  -->
+    <script src="/static/switch-js/bootstrap-switch.js"></script>
+    <script src="/static/switch-js/highlight.js"></script>
+    <script src="/static/switch-js/main.js"></script>
+    <!-- Js switch  -->
+
+    <!-- switch Bootstrap CSS  -->
+    <link href="/static/switch-css/bootstrap-switch.min.css" rel="stylesheet">
+    <!-- switch Bootstrap CSS -->
+
+    <!-- kendo-ui -->
+
+    <link href="/static/css/tabs.css" type="text/css" rel="stylesheet" />
+    <link href="/static/css/tabstyles.css" type="text/css" rel="stylesheet" />
+    <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="/static/kendoui/styles/kendo.common.min.css" type="text/css" rel="stylesheet" />
+    <link href="/static/kendoui/styles/kendo.default.min.css" type="text/css" rel="stylesheet" />
+    <link href="/static/kendoui/styles/kendo.material.min.css" type="text/css" rel="stylesheet" />
+    <link href="/static/kendoui/styles/kendo.common-bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="/static/kendoui/styles/kendo.dataviz.min.css" type="text/css" rel="stylesheet" />
+    <link href="/static/kendoui/styles/kendo.dataviz.bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="/static/kendoui/styles/kendo.dataviz.uniform.min.css" type="text/css" rel="stylesheet" />
+    <link href="/static/kendoui/styles/kendo.uniform.min.css" type="text/css" rel="stylesheet" />
+    <link href="/static/kendoui/styles/kendo.ez.css" type="text/css" rel="stylesheet" />
+
+    <script src="/static/kendoui/js/kendo.all.min.js"></script>
+    <script src="/static/js/jszip.min.js"></script>
+
+    <!-- knockout-kendo -->
+    <script src="/static/js/knockout-kendo.min.js"></script>
+
+    <!-- knockout-else -->
+    <script src="/static/knockout-else/knockout-else.js"></script>
+
+    <!-- moment -->
+    <script src="/static/js/moment.min.js"></script>
+
+    <!--  Js switch  -->
+    <script src="/static/switch-js/bootstrap-switch.js"></script>
+    <script src="/static/switch-js/highlight.js"></script>
+    <script src="/static/switch-js/main.js"></script>
+    <!-- Js switch  -->
+
+    <!-- sweetalert -->
+    <script src="/static/sweetalert/sweetalert2.min.js"></script>
+    <link href="/static/sweetalert/sweetalert2.min.css" rel="stylesheet"/>
+
+    <!-- tooltipster -->
+    <link rel="stylesheet" href="/static/tooltipster/css/tooltipster.css" />
+    <link rel="stylesheet" href="/static/tooltipster/css/tooltipster-val.css" />
+    <script src="/static/tooltipster/js/jquery.tooltipster.min.js"></script>
+
+    <!-- excellent export -->
+    <script src="/static/excellentexport/excellentexport.min.js"></script>
+
+    <!-- jquery.sortable -->
+    <script src="/static/jquery.sortable/jquery.sortable.min.js"></script>
+
+    <!-- toolkit -->
+    <script src="/static/toolkit/toolkit.js"></script>
+
+    <!-- fonts -->
+    <!-- <link rel="stylesheet" href="/static/css/fonts.css" /> -->
+
+    <!-- spinkit -->
+    <link rel="stylesheet" href="/static/spinkit/spinkit.css" />
+    <!-- js -->
+    <!-- <script src="/static/js/underscore.min.js"></script> -->
+    <script src="/static/js/linq.js"></script>
+    <script src="/static/js/ecis_config.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/ecis_start.js"></script>
+    <script src="/static/js/jquery.fullscreen.min.js"></script>
+
+    <!-- core -->
+    <script src="/static/core/app.js"></script>
+    <script src="/static/core/layout.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap-ext.css" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+    <link rel="stylesheet" href="/static/css/materialize.custom.css" />
+    <script src="/static/js/materialize.js"></script>
+
+    <link rel="stylesheet" href="/static/css/custom.css" />
+
+    <!-- materialized -->
+
+    <style type="text/css">
+      body{
+        margin: 0 !important;
+        /*background-color: #F0F3F4 !important;*/
+      }
+      /*.app{
+        background-color: white !important;
+      }*/
+      .k-grid {
+        font-size: 11px;
+         /*font-family: 'Segoe UI';*/
+      }
+      .k-window-titlebar .k-link{
+          background: #fff;
+      }
+
+      p{
+        margin: 0px;
+      }
+
+      .k-icon.k-filter {
+          background: url("/static/img/Filter.png");
+          padding-right: 4px;
+      }
+
+      .k-popup, .k-grid .k-filter-options, .k-menu .k-menu-group{
+        padding: 12px;
+      }
+
+      .navbar {
+        height: 30px;
+      }
+
+      .k-numerictextbox,.k-datepicker, .k-dropdown, .k-multiselect, .k-timepicker{
+        width: 100%;
+      }
+
+      .k-autocomplete.k-state-default, .k-picker-wrap.k-state-default, .k-numeric-wrap.k-state-default, .k-dropdown-wrap.k-state-default, .k-multiselect-wrap.k-header {
+        background: rgb(226, 226, 226);
+        border-color: #cccccc;
+      }
+
+      /* breadcrumb */
+      .breadcrumb-section {
+          margin-top: -15px;
+          text-align: right;
+      }
+      .breadcrumb {
+          background: transparent;
+      }
+      /*.breadcrumb li {
+          background: #ffffff;
+          margin: 0;
+      }*/
+      .breadcrumb li.youare {
+          background: transparent;
+      }
+      td[role="gridcell"] { white-space: normal!important; }
+      td[role="gridcell"] {
+            word-break: break-all !important;
+            word-wrap: break-word !important;
+      }
+      /*table{
+      table-layout: fixed;
+      }*/
+
+      /*.breadcrumb li.active {
+          background-color: #f0f3f4;
+      }*/
+      .breadcrumb a { color: #f0f0f0; background: #909090; padding: 5px 15px; border-radius: 15px; }
+      .breadcrumb a:hover { background: #E35A33; color: #ffffff; text-decoration: none; }
+      .breadcrumb a.active { background: #50c0d4; color: #ffffff; cursor: default; }
+      .breadcrumb a.active:hover { text-decoration: none; }
+      .breadcrumb > li:first-child + li::before {
+          padding: 0px;
+          color: #CCC;
+          content: "";
+          background-color: #f0f3f4;
+      }
+      .breadcrumb a.youare { background: transparent; color: #333; cursor: default; }
+      .breadcrumb a.youare:hover { text-decoration: none; }
+      /* breadcrumb */
+
+      /*!
+       * Start Bootstrap - Simple Sidebar (http://startbootstrap.com/)
+       * Copyright 2013-2016 Start Bootstrap
+       * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
+       */
+
+      /* Toggle Styles */
+
+      /*#wrapper {
+          padding-left: 0;
+          -webkit-transition: all 0.5s ease;
+          -moz-transition: all 0.5s ease;
+          -o-transition: all 0.5s ease;
+          transition: all 0.5s ease;
+      }*/
+
+      #wrapper.toggled {
+          padding-left: 250px;
+      }
+
+
+
+      #wrapper.toggled #sidebar-wrapper {
+          width: 16.66666667%;
+      }
+
+      #page-content-wrapper {
+          width: 100%;
+          position: absolute;
+          padding: 15px;
+      }
+
+      #wrapper.toggled #page-content-wrapper {
+          position: absolute;
+          margin-right: -250px;
+      }
+
+      /* Sidebar Styles */
+
+
+
+      .sidebar-nav li {
+          text-indent: 20px;
+          line-height: 35px;
+          padding-right: 42px;
+      }
+
+      .sidebar-nav li a {
+          display: block;
+          text-decoration: none;
+          color: #F0F3F4;
+      }
+
+      .sidebar-nav li a:hover {
+          text-decoration: none;
+          color: #F0F3F4;
+          background: rgba(255,255,255,0.2);
+      }
+
+      .sidebar-nav li .active {
+          text-decoration: none;
+          background: #F0F3F4;
+      }
+
+      .sidebar-nav li .active {
+          color: black;
+      }
+
+      .sidebar-nav li a:active,
+      .sidebar-nav li a:focus {
+          text-decoration: none;
+      }
+
+
+
+      .sidebar-nav > .sidebar-brand a {
+          color: #999999;
+      }
+
+      .sidebar-nav > .sidebar-brand a:hover {
+          color: #fff;
+          background: none;
+      }
+
+      @media(min-width:768px) {
+          #wrapper {
+              padding-left: 250px;
+          }
+
+          #wrapper.toggled {
+              padding-left: 0;
+          }
+
+          #sidebar-wrapper {
+              width: 16.66666667%;
+              overflow-x: hidden;
+              margin-top: 0px;
+          }
+
+          #wrapper.toggled #sidebar-wrapper {
+              width: 0;
+          }
+
+          #page-content-wrapper {
+              padding: 20px;
+              position: relative;
+          }
+
+          #wrapper.toggled #page-content-wrapper {
+              position: relative;
+              margin-right: 0;
+          }
+      }
+
+    </style>
+
+  <script id="template-menuside" type="text/html">
+
+    <ul class="sidebar-nav" data-bind="visible: (model.currentMenu() == $data.title())">
+
+      <li class="sidebar-brand">
+          <a href="{{BaseUrl}}">
+            <img src="/static/img/x10_logo.png" style="height: 40px; margin-left: 25%;" alt="X | 10" class="img-responsive"/>
+          </a>
+      </li>
+
+      <!--ko if: model.currentTitle() === 'Dashboard' || model.PageTopMenu() === 'Reports' || model.PageTopMenu() === 'Input Status'-->
+        <li class="lilabel">Customer ID | Name</li>
+        <li>
+          <select name="page" id="customer"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select>
+        </li>
+        <li class="lilabel">Deal Number</li>
+        <li>
+          <select name="page" id="role"  data-bind="kendoDropDownList: {data:filter().DealNumberSearchList, value:filter().DealNumberSearchVal , optionLabel: 'Select One' , filter:'contains'}"></select>
+        </li>
+        <li class="lilabel">Relationship Manager</li>
+        <li>
+          <select name="page" id="customer"  data-bind="kendoDropDownList: { dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select>
+        </li>
+        <li class="lilabel">Location</li>
+        <li>
+          <select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select>
+        </li>
+        <li class="lilabel">Branch</li>
+        <li>
+          <select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select>
+        </li>
+        <li class="lilabel">Customer Location</li>
+        <li>
+          <select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select>
+        </li>
+        <li class="lilabel">Turnover</li>
+        <li>
+          <select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select>
+        </li>
+        <li class="lilabel">Time Period</li>
+        <li>
+          <select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select>
+        </li>
+        <li>
+          <div class="mgtop10">
+              <button type="button" id="add" class="btn btn-success side-reset"><span class="glyphicon glyphicon-repeat"></span> Reset</button>
+               <button type="button" id="add" class="btn btn-primary side-refresh "><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
+          </div>
+        </li>
+      <!-- /ko -->
+
+      <!--ko if: model.PageTopMenu() === 'Data Entry' || model.PageTopMenu() === 'Master Data' || model.PageTopMenu() === 'Ask More'-->
+      <li data-bind="foreach: $data.submenu()">
+          <a data-bind="attr: { href: $data.href()}, text: $data.title(), css: { 'active': (model.currentTitle() == $data.title()) }">
+          </a>
+      </li>
+      <!-- /ko -->
+    </ul>
+    <!-- <ul class="sidebar-nav">
+          <li class="sidebar-brand">
+              <a href="{{BaseUrl}}">
+                <img src="/static/img/x10_logo.png" height="40" alt="X | 10" />
+              </a>
+          </li>
+          <li>
+              <a href="#">Account Details</a>
+          </li>
+          <li data-bind="css: { 'active': (model.currentTitle() == 'Customer Profile') }">
+              <a href="/datacapturing/customerprofileinfo">Customer Profile</a>
+          </li>
+          <li data-bind="css: { 'active': (model.currentTitle() == 'Balance Sheet Inputs') }">
+              <a href="/ratio/input">Balance Sheet Inputs</a>
+          </li>
+          <li>
+              <a href="#">Provision, Projections &Estimates</a>
+          </li>
+          <li>
+              <a href="#">Banking Statement</a>
+          </li>
+          <li>
+              <a href="#">Stock & Book Debt</a>
+          </li>
+          <li>
+              <a href="#">Distributor Track Record</a>
+          </li>
+          <li data-bind="css: { 'active': (model.currentTitle() == 'Repayment Track Records') }">
+              <a href="/rtr/default">External Repayment Track Record</a>
+          </li>
+          <li>
+              <a href="#">Document Upload</a>
+          </li>
+          <li>
+              <a href="#">Approval Form</a>
+          </li>
+      </ul> -->
+  </script>
+
+  <script id="breadcrumbTemplate" type="text/html">
+    <li data-bind="attr:{class:CssClass}">
+      <a data-bind="text: Title, attr:{href:Url, class:CssClass, onclick: (Action!=undefined?Action:'')}"></a>
+    </li>
+  </script>
+
+  <script type="text/javascript" >
+      function ClearSavedFilter(){
+          setTimeout(function(){
+            if( ["Data Entry"].indexOf(model.PageTopMenu()) == -1){
+              eraseCookie("topfilterDataEntry");
+            }
+            if(["Data Masters"].indexOf(model.PageTopMenu()) == -1){
+              eraseCookie("topfilterDMDataMasters");
+            }
+            if(["Reports"].indexOf(model.PageTopMenu()) == -1){
+              eraseCookie("topfilterReports");
+            }
+          },2000);
+      }
+
+      $(document).ready(function () {
+        ClearSavedFilter();
+
+         // if(window.location.href.indexOf("accountdetail/default") == -1){
+          $("#select-btn").remove();
+         // }
+
+        var logoutInterval;
+//         ajaxPost("/login/sessionchecktimeout", {}, function (data) {
+//           if (data.IsError) {
+// //      template-menu      swal({
+// //              title: "Error",
+// //              text: "Your session is expired..",
+// //              type: "error",
+// //              showConfirmButton: false,
+// //              timer: 2000
+// //            });
+//             swal({
+//               title: "Session expired",
+//               text: "Your session is expired, do you want to stay or logout ?",
+//               type: "warning",
+//               showCancelButton: true,
+//               confirmButtonColor: "#DD6B55",
+//               confirmButtonText: "Yes, I'm stay",
+//               cancelButtonText: "Logoff (10)",
+//               closeOnConfirm: true,
+//               closeOnCancel: true
+//             }, function (isConfirm) {
+//               if (isConfirm) {
+//                window.reload();
+                ajaxPost("/login/heartbeat", {}, function () {}, function () {});
+                clearInterval(logoutInterval)
+//                window.location = data.Data;
+//               } else {
+//                 window.location = data.Data;
+// //                swal("Error!", "Cancel removing file.", "error");
+//               }
+//             });
+//             var seconds = 10, second = 0;
+//             logoutInterval = setInterval(function () {
+//               if (second >= seconds) {
+//                 window.location = data.Data;
+//                 clearInterval(logoutInterval);
+//               } else {
+//                 $(".cancel").text("Logoff (" + (9 - second) + ")");
+//               }
+//               second++;
+//             }, 1000);
+
+//           } else {
+//             ajaxPost("/login/heartbeat", {}, function () {}, function () {});
+//           }
+//         }, function (c) {
+//           window.location = "/login/default";
+//         });
+        generateDDL();
+      });
+      function generateDDL(){
+        var url = "{{BaseUrl}}datacapturing/getcustomerprofilelist";
+        ajaxPost(url, "", function(data) {
+          filter().CustomerSearchAll(data);
+          var arr = [];
+          var arrkey = [];
+          for(var i in data){
+            if(arrkey.indexOf(data[i].customer_id) == -1){
+            arr.push({ customer_id : data[i].customer_id, customer_name : data[i].customer_id + " - " + data[i].customer_name})
+            arrkey.push(data[i].customer_id);
+          }
+          }
+
+          filter().CustomerSearchList(arr)
+        }, undefined);
+      }
+
+//      (function () {
+//        ajaxPost("/login/sessionchecktimeout", {}, function (data) {
+//          if (data.IsError) {
+//            swal({
+//              title: "Error",
+//              text: "Your session is expired..",
+//              type: "error",
+//              showConfirmButton: false,
+//              timer: 2000
+//            });
+//            window.stop();
+//            setTimeout(function () {
+//              window.location = data.Data;
+//            }, 2000);
+//          } else {
+//            ajaxPost("/login/heartbeat", {}, function () {}, function () {});
+//          }
+//        }, function (c) {
+//          window.location = "/login/default";
+//        });
+//      })()
+  </script>
+  <style type="text/css">
+      @media screen and (max-width:680px) {
+        ul.topnav li:not(:first-child) {display: none;}
+        ul.topnav li.icon {
+          float: right;
+          display: inline-block;
+        }
+      }
+
+      @media screen and (max-width:680px) {
+        ul.topnav.responsive {position: relative;}
+        ul.topnav.responsive li.icon {
+          /*position: absolute;*/
+          right: 0;
+          top: 0;
+        }
+        ul.topnav.responsive li {
+          float: none;
+          display: inline;
+        }
+        ul.topnav.responsive li a {
+          display: block;
+          text-align: left;
+        }
+      }
+
+      .grid-select:hover {
+        color:white;
+      }
+  </style>
+  <script>
+    function myFunction() {
+        var x = document.getElementById("myTopnav");
+        if (x.className === "topnav") {
+            x.className += " responsive";
+        } else {
+            x.className = "topnav";
+        }
+    }
+  </script>
+</head>
+<script>
+  filter = ko.observable({})
+  filter().CustomerSearchList = ko.observableArray([]);
+  filter().CustomerSearchAll = ko.observableArray([]);
+  filter().CustomerSearchVal = ko.observable('');
+  filter().DealNumberSearchList = ko.observableArray([]);
+  filter().DealNumberSearchVal = ko.observable('');
+
+  filter().CustomerSearchVal.subscribe(function(value){
+    filter().DealNumberSearchList([]);
+    var arr = _.filter(filter().CustomerSearchAll(),function(x){ return x.customer_id == value })
+    for(var i in arr){
+      filter().DealNumberSearchList.push(arr[i].deal_no)
+    }
+    if (arr.length == 1 ){
+      filter().DealNumberSearchVal(arr[0].deal_no);
+      // refreshdata();
+    }
+  });
+
+  function GridColumn(id, userId, gridId) {
+    this.Name = id + "_" + userId + "_" + gridId;
+    this.GridId = gridId;
+    this.Init = function () {
+      var grid = $('#' + this.GridId).data('kendoGrid');
+
+      var gridCols = grid.columns;
+      var datas = readCookie(this.Name);
+      if (datas == null) {
+        var visibleCols = [];
+        jQuery.each(gridCols, function (index) {
+          if (!this.hidden) {
+            visibleCols.push(this.field);
+          }
+        });
+        createCookie(this.Name, visibleCols.join('|'));
+      } else {
+        var showColumns = datas.split('|');
+        jQuery.each(gridCols, function (index) {
+          if (showColumns.indexOf(this.field) < 0) {
+            grid.hideColumn(this.field);
+          }
+        });
+      }
+    };
+    this.GetColumns = function () {
+      return readCookie(this.Name);
+    };
+    this.AddColumn = function (columnName) {
+      var datas = this.GetColumns();
+      var cols = [];
+      if (datas != null) {
+        cols = datas.split('|');
+        if (cols.indexOf(columnName) < 0) {
+          cols.push(columnName);
+        }
+      }
+
+      eraseCookie(this.Name);
+      createCookie(this.Name, cols.join('|'));
+    };
+    this.RemoveColumn = function (columnName) {
+      var datas = this.GetColumns();
+      var cols = [];
+      if (datas != null) {
+        cols = datas.split('|');
+        if (cols.indexOf(columnName) > -1) {
+          jQuery.each(cols, function (index) {
+            if (cols[index] == columnName) {
+              cols.splice(index, 1);
+            }
+          });
+        }
+      }
+
+      eraseCookie(this.Name);
+      createCookie(this.Name, cols.join('|'));
+    };
+  }
+
+  function createCookie(name, value, days) {
+    days = days || 365;
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      var expires = "; expires=" + date.toGMTString();
+    } else
+      var expires = "";
+    document.cookie = name + "=" + value + expires + "; path=/";
+  }
+
+  function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ')
+        c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) == 0)
+        return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+
+  function eraseCookie(name) {
+    createCookie(name, "", -1);
+  }
+
+  function getDefaultDatetimepicker() {
+    var d = new Date();
+    var DefaultDate = new Date();
+    var day = moment(d).format("ddd");
+    if (day != "Mon") {
+      DefaultDate.setDate(DefaultDate.getDate() - 1);
+    } else {
+      DefaultDate.setDate(DefaultDate.getDate() - 3);
+    }
+    return moment(DefaultDate).format("YYYY-MM-DD")
+  }
+
+  function getUTCDate(strdate) {
+    var d = moment.utc(strdate);
+    return new Date(d.year(), d.month(), d.date(), 0, 0, 0)
+  }
+  function getUTCDateFull(strdate) {
+    var d = moment.utc(strdate);
+    return new Date(d.year(), d.month(), d.date(), d.hours(), d.minutes(), d.seconds())
+  }
+
+  function toUTC(d) {
+    var year = d.getFullYear();
+    var month = d.getMonth();
+    var date = d.getDate();
+    var hours = d.getHours();
+    var minutes = d.getMinutes();
+    var seconds = d.getSeconds();
+    return moment(Date.UTC(year, month, date, hours, minutes, seconds)).toISOString();
+  }
+
+  function Logout() {
+    localStorage.clear();
+    window.location.href = "/logout/do";
+  }
+
+  function BreadCrumb(id, title, url, cssClass, action) {
+    var obj = {
+      _id: ko.observable(id),
+      Title: ko.observable(title == undefined ? id : title),
+      Url: url,
+      Action: action,
+      CssClass: cssClass
+    };
+
+    return obj;
+  }
+
+  model.FindSubMenu = function(){
+    var subarr = _.find(model.menu(),function(x){
+      return x.title() == model.PageTopMenu()
+    })
+    var aa = []
+    _.each(subarr.submenu(), function(v,i){
+      if(v.submenu().length > 0){
+         _.each(v.submenu(), function(vv,ii){
+          aa.push(vv)
+         })
+      }else{
+        aa.push(v)
+      }
+    })
+    model.CurrentSubMenu(aa);
+    setTimeout(function(){
+      $("#horizontal-menu a:contains('"+model.currentTitle()+"')").closest("li").addClass("tab-current");
+    },200);
+  }
+
+  model.CurrentDate = ko.observable();
+  model.CurrentTime = ko.observable();
+
+  model.ParentId = ko.observableArray([]);
+  model.PageId = ko.observable("");
+  model.PageTopMenu = ko.observable("");
+  model.CurrentSubMenu = ko.observableArray([]);
+  // model.PageTopMenu.subscribe(function(val){
+  //     setTimeout(function(){
+  //       model.FindSubMenu();
+  //     },5000)
+  // });
+
+  model.MainMenus = ko.observableArray([]);
+  model.RoleGroup = ko.observable("");
+  model.BreadCrumbs = ko.observableArray([]);
+  model.VisibleDropdown = ko.observableArray([]);
+  model.dateMenu = ko.observable(new Date(getDefaultDatetimepicker()));
+  // model.currentMenu = ko.observable('Dashboard');
+  // model.currentTitle = ko.observable('Dashboard');
+  function getServerDateTime() {
+    var param = {};
+    ajaxPost("/dashboard/getcurrentdate", param, function (res) {
+      var d = new Date(res.Data.CurrentDate);
+      var DefaultDate = new Date(res.Data.CurrentDate);
+      var day = moment(d).format("ddd");
+      if (day != "Mon") {
+        DefaultDate.setDate(DefaultDate.getDate() - 1);
+      } else {
+        DefaultDate.setDate(DefaultDate.getDate() - 3);
+      }
+      model.CurrentDate(moment(new Date(DefaultDate)).format("YYYY-MM-DD"));
+    });
+  }
+  function convert(array) {
+    var map = {};
+    for (var i = 0; i < array.length; i++) {
+      var obj = array[i];
+      obj.submenu = [];
+
+      map[obj.Id] = obj;
+
+      var parent = obj.Parent || '-';
+      if (!map[parent]) {
+        map[parent] = {
+          submenu: []
+        };
+      }
+      map[parent].submenu.push(obj);
+    }
+    return map['-'].submenu;
+  }
+
+  function MenuItem(Id, href, title, icon, submenu, baseURL) {
+    var obj = {
+      Id: ko.observable(Id),
+      title: ko.observable(title == undefined ? Id : title),
+      href: ko.observable(baseURL + href),
+      icon: ko.observable(icon),
+      submenu: ko.observableArray([])
+    };
+    var arr = submenu;
+    for (var i in arr) {
+      obj.submenu.push(
+              new MenuItem(
+                      arr[i]._id,
+                      arr[i].href,
+                      arr[i].title,
+                      arr[i].icon,
+                      arr[i].submenu,
+                      baseURL
+                      )
+              );
+    }
+    return obj;
+  }
+  ;
+
+  model.getDataMenu = function () {
+    var url = "/menusetting/getmenutop";
+    var param = {
+    };
+    ajaxPost(url, param, function (data) {
+      var arrData = [];
+      var baseURL = "";
+      var dataMenu = data.Data.Records;
+      for (var i in dataMenu) {
+        arrData.push({
+          "_id": dataMenu[i].PageId,
+          "Id": dataMenu[i].Id,
+          "Parent": dataMenu[i].Parent,
+          "IndexMenu": dataMenu[i].IndexMenu,
+          "title": dataMenu[i].Title,
+          "icon": dataMenu[i].Icon,
+          "href": dataMenu[i].Url,
+        });
+      }
+      var sortMenu = Enumerable.From(arrData).OrderBy("$.Parent").ThenBy("$.IndexMenu").ToArray();
+      var dataTree = convert(sortMenu);
+      var arr = dataTree;
+      for (var i in arr) {
+        model.MainMenus.push(
+                new MenuItem(
+                        arr[i]._id,
+                        arr[i].href,
+                        arr[i].title,
+                        arr[i].icon,
+                        arr[i].submenu,
+                        baseURL
+                        )
+                );
+      }
+      vm.menu(model.MainMenus());
+      vm.prepareDropDownMenu();
+
+      model.FindSubMenu();
+
+      rendermenu();
+
+    });
+  }
+
+  function rendermenu(){
+       var margin = parseInt($("#filtercontainer").css('marginTop'));
+      $("#myTopnav").kendoMenu({
+        animation: false,
+        open: function(e) {
+          var item = $(e.item);
+          item.find(".horizontal-menu").width($(window).width() - $("#sidebar-wrapper").width());
+          $(window).resize(function(){
+            item.find(".horizontal-menu").width($(this).width() - $("#sidebar-wrapper").width());
+          });
+          $("#filtercontainer").css('margin-top', margin + 45);
+        },
+        close: function(e) {
+          // $("#filtercontainer").css('margin-top', margin);
+        },
+        closeOnClick : true,
+        deactivate: function(e){
+          $("#myTopnav").getKendoMenu().open($(".active").parent());
+          if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null){
+            showFilter(false);
+          }
+        }
+      });
+
+      window.autoHideLoaderForTheFirstTime()
+
+      setTimeout(function () {
+        var hoverActiveMenu = function () {
+          $('.color-base.active').trigger('mouseover')
+        }
+
+        var delay = setTimeout(hoverActiveMenu, 50)
+
+        $('.color-base').parent().on('mouseleave', function () {
+          delay = setTimeout(hoverActiveMenu, 50)
+        })
+        $('.color-base').parent().on('mouseover', function () {
+          clearTimeout(delay)
+        })
+      }, 100)
+  }
+
+  model.GetPageTitle = function (PageId, MenuList, ParentId) {
+    var Title = "";
+    for (var i in MenuList) {
+      if (MenuList[i]._id == PageId) {
+        Title = MenuList[i].Title
+        ParentId.push(MenuList[i]._id);
+        break;
+      }
+      if (Title == "" && MenuList[i].submenu.length > 0) {
+        Title = model.GetPageTitle(PageId, MenuList[i].submenu, ParentId)
+
+        if (Title !== "") {
+          ParentId.push(MenuList[i]._id);
+        }
+      }
+    }
+    return Title;
+  };
+
+  model.PageTitle = ko.computed(function () {
+    var PageId = model.PageId();
+    var PageTopMenu = model.PageTopMenu();
+    var MenuList = model.MainMenus();
+    var Title = "";
+    var ParentId = [];
+    Title = model.GetPageTitle(PageId, MenuList, ParentId);
+    model.currentMenu(PageTopMenu);
+    model.currentTitle(PageId);
+    model.ParentId(ParentId);
+    return Title;
+  }, model);
+
+  model.AppHomeButtonLoad = function (obj) {
+    var id = obj._id;
+    var url = obj.Url;
+    var title = obj.Title;
+    window.location.href = url;
+  }
+
+  function goToMenu(val){
+      window.location = val
+  }
+</script>
+<script>
+  model.BreadCrumbs.push(new BreadCrumb("youare", "You are here : ", "#", "youare"));
+</script>
+<style type="text/css">
+  @media (min-width: 992px) {
+   /* #nav-dex{
+      margin-left: 15.66666667%;
+      padding-left: 0;
+    }*/
+
+  }
+  .app-wrapper{
+    margin: 0;
+  }
+/*  #nav-dex{
+    background-color: white;
+  }*/
+  #leftside{
+    background-color: black;
+    height: 100%;
+  }
+  /*.modal-content{
+    width:1000px;
+  }*/
+
+  .menutitle{
+    font-weight: 400 !important;
+  }
+
+  /*div.app-content div.col-sm-12.ez.panel-content,
+   {
+    padding: 0;
+  }*/
+  #sidebar-title {
+    color: white;
+    margin-top: 19px;
+    margin-left: 19%;
+    display: inline-block;
+  }
+  .toggled-title {
+    background-color: #0c4979;
+  }
+  #sidebar-wrapper{
+    background-color: #e6e6e6;
+  }
+  .custom-bar{
+    padding: 7px;
+    margin-top: 6px;
+    margin-left: 6px;
+    border: 1px solid;
+    border-radius: 5px;
+  }
+  .custom-bar:hover{
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+  }
+</style>
+
+<body>
+  <div class="app">
+    <div class="row" style="margin: 0">
+      <div class="div-container">
+        <div class="navbar-fixed-top app-top" id="nav-dex">
+          <div class="app-wrapper">
+
+            <div class="sidebar-top no-padding pull-left">
+              <div id="sidebar-title">
+                Additional Filters
+              </div>
+              <div class="sidebar-toggle custom-bar">
+                <i class="fa fa-bars" style="font-size: 23px; cursor: pointer; cursor: hand; color: white;" onClick="toggle()"></i>
+              </div>
+              <!-- <div class="logo-container" > -->
+                <!-- <a href="{{BaseUrl}}">
+                  <img src="/static/img/x10_logo.png"  alt="X | 10" class="img-responsives"/>
+                </a> -->
+              <!-- </div> -->
+            </div>
+
+            <script type="text/javascript">
+            toggle(false)
+            var open = false;
+            function toggle() {
+              if( ! open ){
+                if(model.currentTitle() === 'Dashboard'){
+                  $(".sidebar-top").addClass("col-sm-2 toggled-title")
+                  $(".sidebar-toggle").addClass("pull-right")
+                  $("#sidebar-wrapper").show()
+                  $("#sidebar-title").show()
+                  $("#sidebar-wrapper").width('16.66666667%')
+                }
+              } else {
+                $(".sidebar-top").removeClass("col-sm-2 toggled-title")
+                $(".sidebar-toggle").removeClass("pull-right")
+                $("#sidebar-wrapper").hide()
+                $("#sidebar-title").hide()
+                $("#sidebar-wrapper").width(0)
+              }
+              open = !open
+            }
+            </script>
+
+            <script id="template-menu" type="text/html">
+              <!-- ko if: $data.submenu().length==0 -->
+                <li class="k-item k-state-default">
+                    <a id="" class="color-base" data-bind="css: { 'active': (model.currentMenu() == $data.title()) }, attr: { href: $data.href() }">
+                      <i data-bind="css: $data.icon()"></i>&nbsp;
+                      <span data-bind="text: $data.title()"></span>
+                    </a>
+                </li>
+              <!-- /ko -->
+
+              <!-- ko if: $data.submenu().length > 0 -->
+
+                <li class="k-item k-state-default" data-bind="css: { error: ($data.submenu() > 0) }">
+
+                  <a id="idmenu" class="color-base" data-toggle="dropdown" data-bind="css: { 'active': (model.currentMenu() == $data.title()) }, attr: { href: $data.href() }">
+                    <i data-bind="css: $data.icon()"></i>&nbsp;
+                    <span data-bind="text: $data.title()"></span>
+                  </a>
+
+                  <ul class="k-group k-menu-group" id="submenu-top">
+                    <li class="k-item k-state-default">
+                      <div class="horizontal-menu tabs tabs-style-linemove">
+                        <nav>
+                          <ul class="" role="tablist" data-bind="foreach: $data.submenu()">
+                            <li data-bind="
+                            attr: { class: ((model.currentTitle() === $data.title()) ? ' tab-current' : '')}">
+                              <a data-bind="attr: { href: $data.href(), onclick :'goToMenu(\'' + href() + '\')' }" role="tab" data-toggle="tab">
+                                <span class="menutitle" data-bind="text: $data.title()"></span>
+                              </a>
+                            </li>
+                          </ul>
+                        </nav>
+                      </div>
+                    </li>
+                  </ul>
+
+                  <!-- <ul class="dropdown-menu" aria-expanded="true" data-bind="template: { name: 'template-menu', foreach: $data.submenu() }"></ul> -->
+
+                </li>
+              <!-- /ko -->
+            </script>
+
+            <div class="app-menu">
+              <ul class="nav navbar-nav" id="myTopnav" data-bind="template: { name: 'template-menu', foreach: menu }"></ul>
+              <div class="clear"></div>
+            </div>
+
+            <style type="text/css">
+
+              .horizontal-menu {
+                  width: 380px;
+              }
+              .horizontal-menu:after {
+                  content: ".";
+                  display: block;
+                  height: 0;
+                  clear: both;
+                  visibility: hidden;
+              }
+            </style>
+
+            <ul class="nav navbar-nav navbar-right m-n hidden-xs nav-user">
+              <li class="dropdown hidden-xs">
+                <a id="idmenu" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="true">
+                  <span class="thumb-sm avatar pull-left">
+                    <img src="/static/img/no-image.png" />
+                  </span>
+                  <div class="pull-right name">
+                    <span class="thumb-sm title-user" data-bind="text: model.User"></span>
+                    <b class="caret color-base"></b>
+                  </div>
+                </a>
+                <ul class="dropdown-menu animated fadeInRight">
+                  <span class="arrow top"></span>
+                  <li> <a id="logout" onClick="Logout()" style="cursor:pointer" class="logout-link"><i class="fa fa-unlock" aria-hidden="true"></i> &nbsp;  Logout</a></li>
+                </ul>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+
+        <div class="app-title">
+          <div id="filtercontainer" class="col-sm-12"></div>
+        <!--   <div style="display: inline-block" class="pull-right">
+            <ol class="breadcrumb pull-right" data-bind="template:{name:'breadcrumbTemplate', foreach:BreadCrumbs}"></ol>
+          </div> -->
+        </div>
+
+        <!-- <div class="app-content" style="display:none;">
+          <div>
+            <div id="horizontal-menu" class="tabs tabs-style-linemove" data-bind="visible:(model.PageTopMenu() === 'Data Entry'|| model.PageTopMenu() === 'Reports' || model.PageTopMenu() === 'Data Masters' || model.PageTopMenu() === 'Ask More')">
+              <nav>
+                <ul class="" role="tablist" data-bind="foreach: model.CurrentSubMenu">
+                  <li data-bind="visible:(model.PageTopMenu() === 'Data Entry' || model.PageTopMenu() === 'Reports' || model.PageTopMenu() === 'Data Masters' || model.PageTopMenu() === 'Ask More'), attr:{class: ((model.currentTitle() === $data.title) ? ' tab-current' : '')}  ">
+                    <a data-bind="attr: { href:'#', onclick :'goToMenu(\'' + href() + '\')' }" role="tab" data-toggle="tab">
+                      <span class="menutitle" data-bind="text: $data.title"></span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div> -->
+          {{.Content}}
+        </div>
+
+        <div class="apx-loading">{{template "loading.html"}}</div>
+
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  // not all request are complete in 2 seconds, this is bad, really bad, but i don't want to ruin the view on another page, so i made this
+  window.enableAutoHideLoaderForTheFirstTime = true
+  window.autoHideLoaderForTheFirstTime = function () {
+    setTimeout(function(){
+      if (!window.enableAutoHideLoaderForTheFirstTime) {
+        return
+      }
+
+      $(".app-content").show();
+      $(".apx-loading").hide();
+    },2000);
+  }
+
+  ko.applyBindings(model)
+  toolkit.fixKendoMultiSelect()
+  $(document).ready(function () {
+      model.Processing = false;
+      getServerDateTime();
+      model.getDataMenu();
+
+      
+  });
+</script>
+
+</body>
+</html>
+
+<style type="text/css">
+ /* .k-i-close{
+    background-position: -19px -11px;
+    height: 12px;
+    background-size: 250px 250px;
+  }*/
+  /*.k-link:not(.k-state-disabled):hover>.k-i-close, .k-link:not(.k-state-disabled):hover>.k-delete, .k-link:not(.k-state-disabled):hover>.k-group-delete, .k-state-hover>.k-i-close, .k-state-hover>.k-delete, .k-state-hover>.k-group-delete, .k-state-hover>*>.k-i-close, .k-state-hover>*>.k-delete, .k-state-hover>*>.k-group-delete, .k-button:not(.k-state-disabled):hover .k-i-close, .k-button:not(.k-state-disabled):hover .k-delete, .k-button:not(.k-state-disabled):hover .k-group-delete, .k-textbox:hover .k-i-close, .k-textbox:hover .k-delete, .k-textbox:hover .k-group-delete, .k-button:active .k-i-close, .k-button:active .k-delete, .k-button:active .k-group-delete{
+    background-position: -19px -11px;
+  }*/
+  /*.k-header {
+    background: rgb(221, 221, 221);
+}*/
+/*.k-multiselect .k-button p{
+  margin: 0 0 0px;
+}*/
+/*.f-lbl{
+    max-width: 50px;
+    padding-right: 10px;
+    margin-left: 23px;
+    text-align: right;
+}
+.f-val{
+    padding-right: 25px;
+}*/
+/*.align_right, .align-right
+{
+    text-align:right;
+}
+
+.align_center, .align-center
+{
+    text-align:center;
+}
+
+.align_left, .align-left
+{
+    text-align:left;
+}*/
+/*.dropdown-menu li:hover{
+  background-color: #2c3992;
+
+  color: white!important;
+}
+.dropdown-menu li a:hover{
+  color: white!important;
+}*/
+/*.body{
+      font-family: 'Segoe UI','Segoe','SegoeUI-Regular-final',Tahoma,Helvetica,Arial,sans-serif;
+}*/
+</style>
+
+<!-- Form Modal -->
+<div class="modal fade" id="modalAdd" aria-hidden="true" aria-labelledby="modalTitle" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title modal-title">Banks Data</h4>
+      </div>
+      <div class="modal-body">
+        <div class="panel">
+          <div class="panel-heading">
+            <h4 class="no-margin">Banks Account</h4>
+          </div>
+          <div class="panel-body" data-bind="with: bankaccount">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group col-sm-12">
+                  <label for="bankname" class="col-sm-4 form-control-label">Bank Name:</label>
+                  <div class="col-sm-8">
+                    <input type="text" id="bankname" class="form-control input-sm" validationMessage="Bank Name Required" required data-bind="value: bankname"  />
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group col-sm-12">
+                  <label for="bankname" class="col-sm-4 form-control-label">Facility Type:</label>
+                  <div class="col-sm-8">
+                    <!--<label class="radio-inline"><input id="fbradio" data-switch-no-init="true" type="radio" name="fb">Fund Based</label>
+                    <label class="radio-inline"><input id="nfbradio" data-switch-no-init="true" type="radio" name="nfb">Non-Fund Based</label>
+                    <label class="radio-inline"><input id="bothradio" data-switch-no-init="true" type="radio" name="both">Both</label>-->
+                    <select id="facilitytype" multiple="multiple" data-placeholder="Select Facility Type"></select>
+                  </div>
+                </div>
+              </div>
+              <div id="nfb" class="col-sm-12">
+                <h4>Non-Fund Based</h4>
+                <hr>
+                <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4">Nature Of Facility:</label>
+                    <div class="col-sm-8">
+                      <input class="form-control input-sm" id="naturefacility">
+                    </div>
+                  </div>
+                  <div id="othernf" class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                      <input class="form-control input-sm" id="othernaturefacility">
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4">Sanction Limit:</label>
+                    <div id="nfbsl" class="col-sm-8">
+                      <input type="number" id="nfbsanclimit" class="form-control input-sm" validationMessage="NFB Sanc Limit Rs Lacs Required" required  />
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4">Sanction Date:</label>
+                    <div class="col-sm-8">
+                      <input class="form-control input-sm"  id="nfbsanctiondate">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                  <label  class="form-control-label col-sm-4">Security for NFB:</label>
+                  <textarea class="form-control" rows="5" id="securitynfb"></textarea>
+                </div>
+              </div>
+
+              <div id="fb" class="col-sm-12">
+                <h4>Fund Based</h4>
+                <hr>
+                <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-12">
+                    <label for="inputPassword3" class="col-sm-4 form-control-label">A/C Type :</label>
+                    <div class="col-sm-8">
+                      <!--<input type="text" id="actype" class="form-control input-sm" validationMessage="A/C Type Required" required data-bind="value: actype"/>-->
+                      <input id="actype" value="1"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">A/C No :</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="acno" class="form-control input-sm" validationMessage="A/C No Required" required data-bind="value: acno"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">A/C Holder :</label>
+                    <div class="col-sm-8">
+                      <input type="text" id="acholder" class="form-control input-sm" validationMessage="A/C Holder Required" required data-bind="value: acholder"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">Sanction Limit:</label>
+                    <div class="col-sm-8">
+                      <input type="number" id="sanclimit" class="form-control input-sm" validationMessage="Sanc Limit Rs.Lacs required" data-bind="value: sanclimit"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">ROI Per Annum (%) :</label>
+                    <div class="col-sm-8">
+                      <input type="number" id="roiperannum" class="form-control input-sm" validationMessage="ROI PER ANNUM required" data-bind="value: roiperannum"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">Interest Per Month :</label>
+                    <div class="col-sm-8">
+                      <input type="number" disabled="disabled" id="interestpermonth" class="form-control input-sm" validationMessage="Interest Per Month required" data-bind="value: interestpermonth"/>
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4">Sanction Date:</label>
+                    <div class="col-sm-8">
+                      <input class="form-control input-sm"  id="fbsanctiondate">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                  <label  class="form-control-label col-sm-4">Security for FB:</label>
+                  <label id="same" class="checkbox-inline"><input id="samenfb" data-switch-no-init="true" type="checkbox" name="sameasnnfb" />Same as NFB</label>
+                  <textarea class="form-control" rows="5" id="securityfb"></textarea>
+                </div>
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-sm-12">
+                       <div class="panel-heading"><h4 class="no-margin">Banks Details</h4></div>
+                      <div id="bankdetailgridform"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              &nbsp;
+              <div id="current" class="col-sm-12">
+                <h4>Current Account</h4>
+                <hr>
+                <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-12">
+                    <label for="inputPassword3" class="col-sm-4 form-control-label">A/C Type :</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control input-sm" id="currentactype" value="Current" disabled/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">A/C No :</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="currentacno" class="form-control input-sm" validationMessage="A/C No Required" required data-bind="value: currentacno"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">A/C Holder :</label>
+                    <div class="col-sm-8">
+                      <input type="text" id="currentacholder" class="form-control input-sm" validationMessage="A/C Holder Required" required data-bind="value: currentacholder"/>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-sm-12">
+                       <div class="panel-heading"><h4 class="no-margin">Banks Details</h4></div>
+                      <div id="currentbankdetailgridform"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelbtn" class="btn btn-danger" type="button" class="btn btn-default"> Cancel</button>
+          <button id="savebtn" class="btn btn-success" type="button" class="btn btn-default">Save Bank Data</button>
+          <button id="updatebtn" class="btn btn-warning" type="button" class="btn btn-default">Update Bank Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Form Modal -->

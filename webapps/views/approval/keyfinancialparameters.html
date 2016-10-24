@@ -1,0 +1,79 @@
+<script type="text/javascript" src="/static/core/financialsnapshot-kiri.js"></script>
+<style type="text/css">
+	.sheet{
+		background-color: #9dc3e6;
+		height: 74px;
+		margin-bottom: 35px;
+		text-align: center;
+		padding: 0;
+	}
+	.headxx{
+		font-size: 17px !important;
+		font-weight: 700 !important;
+		text-align: center !important;
+	}
+
+	.ttl{
+		font-weight: 800;
+	}
+	.textmenyo{
+		font-size: 12px;
+	}
+	.sheetbawah{
+		padding: 5px;
+	}
+	.sheettop .panel-body{
+		min-height: 92px;
+	}
+</style>
+
+<div class="panel-heading"><h3 class="text-center">Key Financial Parameters</h3></div>
+
+<div class="panel-default content no-padding">
+	
+	<div class="panel-heading text-center">Balance Sheet</div>
+	
+	<div class="panel-body sheettop" style="padding: 5px;padding-top: 35px">
+      <div class="panel col-sm-3 " style="margin-right: 5px;margin-left: 10%;">
+        <div class="panel-body sheetbawah col-sm-12" data-bind="with: left.WCASSETS">
+          <center>
+            <p data-bind="text: value" class="number-label"></p>
+            <div ><i id="WCASSETS" class="ttl" ></i> <span class="ttl" id="WCASSETS1" data-bind="text: growth"></span></div>
+            <div class="textmenyo" data-bind="text: title"></div>
+          </center>
+        </div>
+      </div>
+      <div class="panel col-sm-3 " style="margin-right: 5px;">
+        <div class="panel-body sheetbawah col-sm-12" data-bind="with: left.ADNW">
+          <center>
+            <p data-bind="text: value" class="number-label"></p>
+            <div><i id="ADNW" class="ttl"></i> <span class="ttl" id="ADNW1" data-bind="text: growth"></span></div>
+            <div class="textmenyo" data-bind="text: title"></div>
+          </center>
+        </div>
+      </div>
+      <div class="panel col-sm-3 ">
+        <div class="panel-body sheetbawah col-sm-12" data-bind="with: left.TOTOBW">
+          <center>
+            <p data-bind="text: value" class="number-label"></p>
+            <div><i id="TOTOBW" class="ttl"></i> <span class="ttl" id="TOTOBW1" data-bind="text: growth"></span></div>
+            <div class="textmenyo" data-bind="text: title"></div>
+          </center>
+        </div>
+      </div>
+	</div>
+</div>
+
+<div class="panel-default content no-padding">
+	
+	<div class="panel-heading text-center">Profit & Loss</div>
+	
+	<div class="panel-body" style="padding: 5px;">
+      <div id="chartline" style="height:250px"></div>
+	</div>
+</div>
+
+<div class="footer col-sm-12">
+	<button onclick="r.showDetails('kfpb')" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
+	<button data-bind="" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Full Form</button>
+</div>

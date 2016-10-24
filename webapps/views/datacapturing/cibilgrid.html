@@ -1,0 +1,192 @@
+<style type="text/css">
+  table, th, td {
+    /*border: 1px solid #fff !important;*/
+    font-size: 9px;
+  }
+  th, .th {
+    padding: 4px;
+    font-size: 10px;
+    font-weight: normal;
+  }
+  .grid-input {
+    height: 35px;
+  }
+  .onlyNumb {
+    text-align: right;
+    padding-right: 5px;
+  }
+  @media (max-width: 1366px){
+     #credittype{
+      /*width:635px;*/
+      overflow: scroll;
+    }
+    #companyreport{
+      /*width:635px;*/
+      overflow: scroll;
+    }
+    #enquiry{
+      /*width:635px;*/
+      overflow: scroll;
+    }
+
+    #tblCibilReportSumarry2 {
+      width: 900px;
+      overflow: scroll;
+    }
+    #tblCibilCreditTypeSummary{
+      width: 900px;
+      overflow: scroll;
+    }
+  }
+  #credittype{
+    overflow-y:scroll;
+  }
+  /*.swal2-modal h2 {
+    color: #575757;
+    font-size: 20px;
+    text-align: center;
+    font-weight: 600;
+    text-transform: none;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    line-height: 60px;
+    display: block;
+}*/
+
+</style>
+<script src="/static/core/cibil.js"></script>
+<h6 class="panel no-margin space5 comment-header header-bgcolor" id="title-cibil">Report Summary</h6>
+<div id="companyreport" data-bind="with:cibil">
+  <table id="tblCibilReportSumarry1">
+    <tbody>
+      <tr>
+        <td class="sub-bgcolor">No. of Credit Grantors</td>
+        <td style="width: 50px;"><input type="text" name="noCreditGrantors" class="form-control input-sm onlyNumb grid-input" data-bind="value:creditgrantor" readonly></td>
+        <td class="sub-bgcolor">No. of Credit Facilities</td>
+        <td><input type="text" name="noCreditFacilities" class="form-control input-sm onlyNumb grid-input" data-bind="value:creditfacilities" readonly></td>
+        <td class="sub-bgcolor">No. of Closed Credit Facilities</td>
+        <td><input type="text" name="noClosedCreditFacilities" class="form-control input-sm onlyNumb grid-input" data-bind="value:closecreditfacilitis" readonly></td>
+      </tr>
+      <tr>
+        <td class="sub-bgcolor">No. of Credit Facilities Guaranteed by Others</td>
+        <td><input type="text" name="noCreditFacilitiesGrantorsGuarantedOther" class="form-control input-sm onlyNumb grid-input" data-bind="value:creditguaranteothers" readonly></td>
+        <td class="sub-bgcolor">Lastes Credit Facility Open Date</td>
+        <td><input type="text" name="noCreditFacilities" class="form-control input-sm grid-input" data-bind="value:latestopendate" readonly></td>
+        <td class="sub-bgcolor">First Credit Facility Open Date</td>
+        <td><input type="text" name="noClosedCreditFacilities" class="form-control input-sm grid-input" data-bind="value:firstopendate" readonly></td>
+      </tr>
+    </tbody>
+  </table>
+  <table id="tblCibilReportSumarry2">
+    <thead>
+      <tr>
+        <th class="sub-bgcolor">Credit Facilities</th>
+        <th class="sub-bgcolor">No. of Standard</th>
+        <th class="sub-bgcolor">Current Balance in Standard</th>
+        <th class="sub-bgcolor">No. of Other than Standard</th>
+        <th class="sub-bgcolor">Current Balance in Other than Standard</th>
+        <th class="sub-bgcolor">No. of Law Suits</th>
+        <th class="sub-bgcolor">No. of Wilful Defaults</th>
+      </tr>
+    <thead>
+    <tbody data-bind="foreach: model.detailreportsummary">
+      <tr>
+        <td class="sub-bgcolor" data-bind="text: CreditFacilities">As Borrower</td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:NoOfStandard" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:CurrentBalanceStandard" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:NoOfOtherThanStandard
+" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:CurrentBalanceOtherThanStandard
+" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:NoOfLawSuits
+" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:NoOfWilfulDefaults
+" readonly></td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  </div>
+  <h6 class="panel no-margin space5 comment-header header-bgcolor">Credit type Summary</h6>
+  <div id="credittype" data-bind="with:cibil">
+  <table id="tblCibilCreditTypeSummary">
+    <thead>
+      <tr>
+        <th class="sub-bgcolor" rowspan="2" style="min-width: 76px">No. of Credit Facilities As Borrower</th>
+        <th class="sub-bgcolor" rowspan="2" style="min-width: 317px">Credit Type</th>
+        <th class="sub-bgcolor" rowspan="2" style="min-width: 50px">Currency Code</th>
+        <th class="sub-bgcolor" colspan="5" style="text-align: center !important;">Asset Classification</th>
+        <th class="sub-bgcolor" rowspan="2" style="min-width: 100px">Current Balance</th>
+      </tr>
+      <tr>
+        <th class="sub-bgcolor" style="min-width: 100px">Standard</th>
+        <th class="sub-bgcolor" style="min-width: 100px">Sub - Standard</th>
+        <th class="sub-bgcolor" style="min-width: 100px">Doubtful</th>
+        <th class="sub-bgcolor" style="min-width: 100px">Loss</th>
+        <th class="sub-bgcolor" style="min-width: 110px">Special Mention A/C</th>
+      </tr>
+    </thead>
+    <!-- <div class="test" style="overflow: scroll; width:100px"> -->
+    <tbody data-bind="foreach:CreditTypeSummary">
+      <tr>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:NoCreditFacilitiesBorrower " readonly></td>
+        <!-- <td style="padding:3px; background-color:#eee; "><span data-bind="" ></span></td> -->
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:CreditType" style="font-size: 9px;text-align:left;"readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:CurrencyCode" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:Standard"  readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:Substandard" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:Doubtful" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:Loss" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:SpecialMention" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:TotalCurrentBalance" readonly></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" style="padding:3px; background-color:#eee; text-align: center"><span style="font-weight">TOTAL</span></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:model.totalStandard" readonly></td>
+        <td colspan="4" style="padding:3px; background-color:#eee; "></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:model.totalCurrentBalance" readonly></td>
+      </tr>
+    </tfoot>
+    </div>
+  </table>
+</br>
+</div>
+<h6 class="panel no-margin space5 comment-header header-bgcolor">Enquiry Summary</h6>
+<div id="enquiry" data-bind="with:cibil">
+  <table id="tblCibilCreditTypeSummary">
+    <thead>
+      <tr>
+        <th class="sub-bgcolor">Enquiry</th>
+        <th class="sub-bgcolor" style="width:68px">3 Months</th>
+        <th class="sub-bgcolor" style="width:68px">6 Months</th>
+        <th class="sub-bgcolor" style="width:68px">9 Months</th>
+        <th class="sub-bgcolor" style="width:68px">12 Months</th>
+        <th class="sub-bgcolor" style="width:68px">24 Months</th>
+        <th class="sub-bgcolor" style="width:68px">>24 Months</th>
+        <!-- <th class="sub-bgcolor" style="width:60px">> 24 Months</th> -->
+        <th class="sub-bgcolor">Total</th>
+        <th class="sub-bgcolor" style="min-width:100px">Most Recent Date</th>
+      </tr>
+    </thead>
+    <tbody data-bind="">
+      <tr>
+        <td class="sub-bgcolor">No. of Enquiries</td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:threemonth" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:sixmonth" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:ninemonth" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:twelvemonth" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:duaempatmonth" readonly></td>
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:thanduaempatmonth" readonly></td>
+        <!-- <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:lessduaempatmonth" readonly></td> -->
+        <td><input type="text" class="form-control input-sm onlyNumb grid-input" data-bind="value:totalenquiries" readonly></td>
+        <td><input type="text" class="form-control input-sm grid-input" data-bind="value:recent" readonly></td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <h6 class="no-margin">*The Current Balance figures as per Last Reported Date</h6>
+
+</div>

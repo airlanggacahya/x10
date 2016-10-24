@@ -1,0 +1,785 @@
+<script type="text/javascript">
+  keyindicator = ko.observableArray([])
+  currentratio = ko.observable("");
+  ICSR = ko.observable("");
+  DSCR = ko.observable("");
+
+  r.KI = ko.observableArray([{
+    Section : ko.observable(''),
+    SectionAlias: ko.observable(''),
+    ColumnHeader: ko.observableArray([]),
+    Data : [
+         {
+            Id : ko.observable('TO'),
+            subsection: "",
+            alias : ko.observable('Turnover'),
+            ratio : ko.observable('Turnover'),
+            row : ko.observableArray([])
+         },
+         {
+            Id : ko.observable('EBITDA'),
+            subsection: "",
+            alias : ko.observable('EBITDA'),
+            ratio : ko.observable('EBITDA'),
+            row : ko.observableArray([])
+         },
+         {
+            Id : ko.observable('PAT'),
+            subsection: "",
+            alias : ko.observable('Profit After Tax'),
+            ratio : ko.observable('PAT'),
+            row : ko.observableArray([])
+         },
+         {
+            Id : ko.observable('GPMARGIN'),
+            subsection: '',
+            alias : ko.observable('Gross Profit Margin %'),
+            ratio : ko.observable('Gross Profit Margin %'),
+            row : ko.observableArray([])
+         },
+         {
+            Id : ko.observable('EBITDAMARGIN'),
+            subsection: '',
+            alias : ko.observable('EBITDA Margin %'),
+            ratio : ko.observable('EBITDA Margin %'),
+            row : ko.observableArray([])
+         },
+         {
+            Id : ko.observable('WCASSETS'),
+            subsection: '',
+            alias : ko.observable('Working Capital Assets'),
+            ratio : ko.observable('Working Capital Assets'),
+            row : ko.observableArray([])
+         },
+         {
+            Id : ko.observable('NETWORCAP'),
+            subsection: '',
+            alias : ko.observable('WC Days'),
+            ratio : ko.observable('Net Working Capital Cycle'),
+            row : ko.observableArray([])
+         },
+         {
+             Id : ko.observable('WCAP'),
+            subsection: "",
+            alias : ko.observable('WC Fund from Bank WC Loan'),
+            ratio : ko.observable('Working Capital Limits from Banks/FI\'s (OD / CC)'),
+            row : ko.observableArray([])
+         },
+         {
+            Id : ko.observable('NWLESSFA'),
+            subsection: "",
+            alias : ko.observable('Net Worth less Fixed assets'),
+            ratio : ko.observable('Net Worth less Fixed assets'),
+            row : ko.observableArray([])
+         },
+         {
+            Id : ko.observable('WCGAP'),
+            subsection: "",
+            alias : ko.observable('WC GAP'),
+            ratio : ko.observable('WC Gap'),
+            row : ko.observableArray([])
+         },
+         {
+            Id : ko.observable('WCGAPMPBF'),
+            subsection: "",
+            alias : ko.observable('WC GAP (MPBF Method)'),
+            ratio : ko.observable('W C Gap ( Lacs) (MPBF Method)'),
+            row : ko.observableArray([])
+         },
+      ],
+    row : ko.observableArray([])
+  }])
+
+  r.FR = ko.observableArray([
+     {
+        Section : ko.observable('Name'),
+        SectionAlias: ko.observable('Name'),
+        ColumnHeader: ko.observableArray([]),
+        Data : [
+        ],
+        row : ko.observableArray([])
+     },
+     {
+        Section : ko.observable('RATIO'),
+        SectionAlias: ko.observable(toTitleCase('PROFITABILITY RATIO')),
+        ColumnHeader: ko.observableArray([]),
+        Data : [
+           {
+              Id : ko.observable('GPMARGIN'),
+              subsection: '',
+              alias : ko.observable('Gross Profit Margin %'),
+              ratio : ko.observable('Gross Profit Margin %'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('EBITDAMARGIN'),
+              subsection: '',
+              alias : ko.observable('EBITDA Margin %'),
+              ratio : ko.observable('EBITDA Margin %'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('PBTMARGIN'),
+              subsection: '',
+              alias : ko.observable('PBT Margin %'),
+              ratio : ko.observable('PBT Margin %'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('PATMARGIN'),
+              subsection: '',
+              alias : ko.observable('PAT margin %'),
+              ratio : ko.observable('PAT margin %'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('ROCE'),
+              subsection: '',
+              alias : ko.observable('ROCE %'),
+              ratio : ko.observable('ROCE %'),
+              row : ko.observableArray([])
+           }
+        ],
+        row : ko.observableArray([])
+     },
+     {
+        Section : ko.observable('LEVERAGE RATIO'),
+        SectionAlias : ko.observable(toTitleCase('LEVERAGE RATIO')),
+        ColumnHeader: ko.observableArray([]),
+        Data : [
+           {
+              Id : ko.observable('DERATIO'),
+              subsection: '',
+              alias : ko.observable('Debt / Equity (D/E) (Adj. NW)'),
+              ratio : ko.observable('Debt to Equity'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('NETDERATIO'),
+              subsection: '',
+              alias : ko.observable('Net Debt / Equity (Adj. NW)'),
+              ratio : ko.observable('Net Debt to Equity'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('LEVERAGEINCLX10'),
+              subsection: '',
+              alias : ko.observable('TOL / TNW (Adj. NW)'),
+              ratio : ko.observable('TOL/TNW'),
+              row : ko.observableArray([])
+           }
+        ],
+        row : ko.observableArray([])
+     },
+     {
+        Section : ko.observable('COVERAGE RATIO'),
+        SectionAlias : ko.observable(toTitleCase('COVERAGE RATIO')),
+        ColumnHeader: ko.observableArray([]),
+        Data : [
+           {
+              Id : ko.observable('ISCRWITHX10'),
+              subsection: '',
+              alias : ko.observable('ISCR'),
+              ratio : ko.observable('Interest Coverage Ratio'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('DSCR'),
+              subsection: '',
+              alias : ko.observable('DSCR'),
+              ratio : ko.observable('DSCR'),
+              row : ko.observableArray([])
+           }
+        ],
+        row : ko.observableArray([])
+     },
+     {
+        Section : ko.observable('LIQUIDITY RATIO'),
+        SectionAlias : ko.observable(toTitleCase('LIQUIDITY RATIO')),
+        ColumnHeader: ko.observableArray([]),
+        Data : [
+           {
+              Id : ko.observable('CURATIO'),
+              subsection: '',
+              alias : ko.observable('Current Ratio'),
+              ratio : ko.observable('Current Ratio'),
+              row : ko.observableArray([])
+           }
+        ],
+        row : ko.observableArray([])
+     },
+     {
+        Section : ko.observable('OPERATING RATIO'),
+        SectionAlias : ko.observable(toTitleCase('OPERATING RATIO')),
+        ColumnHeader: ko.observableArray([]),
+        Data : [
+           {
+              Id : ko.observable('WORKACI'),
+              subsection: '',
+              alias : ko.observable('Debtor Days'),
+              ratio : ko.observable('Working Capital Cycle :- Debtor Days'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('CREDAY'),
+              subsection: '',
+              alias : ko.observable('Creditor Days'),
+              ratio : ko.observable('Creditor Days'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('STOCKDAY'),
+              subsection: '',
+              alias : ko.observable('Stock Days'),
+              ratio : ko.observable('Stock Days'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('NETWORCAP'),
+              subsection: '',
+              alias : ko.observable('Working Capital Cycle'),
+              ratio : ko.observable('Net Working Capital Cycle'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('WCREQ'),
+              subsection: '',
+              alias : ko.observable('W C Requirement ( Lacs)'),
+              ratio : ko.observable('W C Requirement ( Lacs)'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('WCGAPMPBF'),
+              subsection: '',
+              alias : ko.observable('W C Gap ( Lacs) (MPBF Method)'),
+              ratio : ko.observable('W C Gap ( Lacs) (MPBF Method)'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('LEVERAGEINCLX10'),
+              subsection: '',
+              alias : ko.observable('Leverage Including X10 (TOL/TNW)'),
+              ratio : ko.observable('Leverage Including X10 (TOL/TNW)'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('GEARING'),
+              subsection: '',
+              alias : ko.observable('Gearing (times) including X10 Loan'),
+              ratio : ko.observable('Gearing (times) including X10 Loan'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('ISCRWITHX10'),
+              subsection: '',
+              alias : ko.observable('Int.Coverage Ratio (ISCR) with X10 Loan'),
+              ratio : ko.observable('Interest Coverage Ratio (Incl. X10 Int.)'),
+              row : ko.observableArray([])
+           },
+           {
+              Id : ko.observable('BTO'),
+              subsection: '',
+              alias : ko.observable('BTO% against FY 14 TO'),
+              ratio : ko.observable('BTO% against FY 14 TO'),
+              row : ko.observableArray([])
+           },
+        ],
+        row : ko.observableArray([])
+     },
+  ])
+
+  r.constructDataRight = function (res) {
+
+    _.map(r.KI(), function(v, i){
+      r.KI()[i].ColumnHeader([])
+      r.KI()[i].row([])
+      //create header
+      r.KI()[i].ColumnHeader.push(v.SectionAlias())
+      _.each(r.rootdates(), function(column){
+         if(column.Status == "PROVISION") {
+            // r.KI()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Prov.)")
+         } else if(column.Status == "ESTIMATED") {
+            // r.KI()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Estimated)")
+         }
+         else if(column.Status == "AUDITED"){
+            r.KI()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Audited)")
+         }
+      })
+      //end create header
+      //
+      var dataSection = _.groupBy(v.Data, 'subsection');
+
+      _.map(dataSection, function(v1, i1){
+         //create row
+         //
+         if(i1 != "") {
+            r.KI()[i].row.push({"rowData" : [i1]})
+         }
+
+         _.map(v1, function(v2, i2){
+            var row = _.find(res, {'FieldAlias':v2.Id()})
+            var rowData = []
+            rowData.push(v2.alias())
+            if(row != undefined) {
+               _.each(r.rootdates(), function(column) {
+                if(column.Status == "PROVISION") {} else if(column.Status == "ESTIMATED") {}
+                else if(column.Status == "AUDITED"){
+                  var rowSelected = row.Values.find(function(g){return g.Date == column.Date})
+                  if(rowSelected!=undefined) {
+                     if(typeof rowSelected.Value === "number") {
+                        if(row.ValueType == "percentage"){
+                           rowData.push(kendo.toString(rowSelected.Value, "P2"))
+                        } else {
+                           rowData.push(rowSelected.Value.toFixed(2))
+                        }
+                     } else {
+                        rowData.push(rowSelected.Value)
+                     }
+                  } else {
+                     rowData.push("")
+                  }
+                }
+               })
+
+               r.KI()[i].row.push({"rowData" : rowData})
+            }
+         })
+
+         //end create row
+      })
+    })
+
+    _.map(r.FR(), function(v, i){
+      r.FR()[i].ColumnHeader([])
+      r.FR()[i].row([])
+      //create header
+      if(i == 0) {
+         r.FR()[i].ColumnHeader.push("Name")
+         _.each(r.rootdates(), function(column){
+            if(column.Status == "PROVISION") {
+               // r.FR()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Prov.)")
+            } else if(column.Status == "ESTIMATED") {
+               // r.FR()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Estimated)")
+            }
+            else if(column.Status == "AUDITED"){
+               r.FR()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Audited)")
+            }
+         })
+      } else {
+         r.FR()[i].ColumnHeader.push(v.SectionAlias())
+      }
+
+      //end create header
+      //
+      var dataSection = _.groupBy(v.Data, 'subsection');
+      _.map(dataSection, function(v1, i1){
+         //create row
+         //
+         if(i1 != "") {
+            r.FR()[i].row.push({"rowData" : [i1]})
+         }
+
+         _.map(v1, function(v2, i2){
+            var row = _.find(res, {'FieldAlias':v2.Id()})
+            var rowData = []
+
+            if(row == undefined) {
+               rowData.push(v2.alias())
+            }else if(row != undefined) {
+              v2.alias(row.FieldName)
+              rowData.push(v2.alias())
+              _.each(r.rootdates(), function(column) {
+                if(column.Status == "PROVISION") {
+                  // r.FR()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Prov.)")
+                } else if(column.Status == "ESTIMATED") {
+                  // r.FR()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Estimated)")
+                }
+                else if(column.Status == "AUDITED"){
+                  var rowSelected = row.Values.find(function(g){return g.Date == column.Date})
+                  if(rowSelected!=undefined) {
+                     if(typeof rowSelected.Value === "number") {
+                        if(row.ValueType == "percentage"){
+                           rowData.push(kendo.toString(rowSelected.Value, "P2"))
+                        } else {
+                           rowData.push(rowSelected.Value.toFixed(2))
+                        }
+                     } else {
+                        rowData.push(rowSelected.Value)
+                     }
+                  } else {
+                     rowData.push("")
+                  }
+                }
+              })
+
+              r.FR()[i].row.push({"rowData" : rowData})
+            }
+         })
+
+         //end create row
+      })
+    })
+
+    if ( r.FR()[4].row().length > 0 ){
+      var cr = r.FR()[4].row()[0].rowData[r.FR()[4].row()[0].rowData.length - 1] + " ( " + r.FR()[0].ColumnHeader()[r.FR()[0].ColumnHeader().length - 1] + " )";
+      cr = cr.replace("(Audited)", "");
+      currentratio(cr);
+    }
+    if ( r.FR()[3].row().length > 0 ){
+      var ICSRtmp = r.FR()[3].row()[0].rowData[r.FR()[3].row()[0].rowData.length - 1] + " ( " + r.FR()[0].ColumnHeader()[r.FR()[0].ColumnHeader().length - 1] + " )";
+      ICSRtmp = ICSRtmp.replace("(Audited)", "");
+      ICSR(ICSRtmp);
+    }
+    if ( r.FR()[3].row().length > 0 ){
+      var DSCRtmp = r.FR()[3].row()[1].rowData[r.FR()[3].row()[1].rowData.length - 1] + " ( " + r.FR()[0].ColumnHeader()[r.FR()[0].ColumnHeader().length - 1] + " )";
+      DSCRtmp = DSCRtmp.replace("(Audited)", "");
+      DSCR(DSCRtmp);
+    }
+    if ( r.FR()[1].row().length > 4 ){
+      dataprofitableratios = [
+        {
+          name: r.FR()[0].ColumnHeader()[r.FR()[0].ColumnHeader().length - 2].replace("(Audited)", ""),
+          color: ecisColors[0],
+          data: [
+            parseFloat(r.FR()[1].row()[4].rowData[ r.FR()[0].ColumnHeader().length - 2 ].replace(",","").replace(" %","")),
+            parseFloat(r.FR()[1].row()[3].rowData[ r.FR()[0].ColumnHeader().length - 2 ].replace(",","").replace(" %","")),
+            parseFloat(r.FR()[1].row()[2].rowData[ r.FR()[0].ColumnHeader().length - 2 ].replace(",","").replace(" %","")),
+            parseFloat(r.FR()[1].row()[1].rowData[ r.FR()[0].ColumnHeader().length - 2 ].replace(",","").replace(" %","")),
+            parseFloat(r.FR()[1].row()[0].rowData[ r.FR()[0].ColumnHeader().length - 2 ].replace(",","").replace(" %",""))
+          ],
+        }, {
+          name: r.FR()[0].ColumnHeader()[r.FR()[0].ColumnHeader().length - 1].replace("(Audited)", ""),
+          color: ecisColors[1],
+          data: [
+            parseFloat(r.FR()[1].row()[4].rowData[ r.FR()[0].ColumnHeader().length - 1 ].replace(",","").replace(" %","")),
+            parseFloat(r.FR()[1].row()[3].rowData[ r.FR()[0].ColumnHeader().length - 1 ].replace(",","").replace(" %","")),
+            parseFloat(r.FR()[1].row()[2].rowData[ r.FR()[0].ColumnHeader().length - 1 ].replace(",","").replace(" %","")),
+            parseFloat(r.FR()[1].row()[1].rowData[ r.FR()[0].ColumnHeader().length - 1 ].replace(",","").replace(" %","")),
+            parseFloat(r.FR()[1].row()[0].rowData[ r.FR()[0].ColumnHeader().length - 1 ].replace(",","").replace(" %",""))
+          ]
+        }
+      ]
+      r.generateprofitableratios(dataprofitableratios);
+    }
+    if ( r.FR()[5].row().length > 2 ){
+      dataoperatingratioscategories = [
+        r.FR()[0].ColumnHeader()[r.FR()[0].ColumnHeader().length - 2].replace("(Audited)", ""),
+        r.FR()[0].ColumnHeader()[r.FR()[0].ColumnHeader().length - 1].replace("(Audited)", "")
+      ]
+      dataoperatingratiosseries =[
+        {
+          data: [
+            r.FR()[5].row()[0].rowData[r.FR()[0].ColumnHeader().length - 2],
+            r.FR()[5].row()[0].rowData[r.FR()[0].ColumnHeader().length - 1]
+          ],
+          name: "Debtor Days",
+          color: ecisColors[0]
+        },{
+          data: [
+            r.FR()[5].row()[1].rowData[r.FR()[0].ColumnHeader().length - 2],
+            r.FR()[5].row()[1].rowData[r.FR()[0].ColumnHeader().length - 1]
+          ],
+          name: "Creditor Days",
+          color: ecisColors[1]
+        },{
+          data: [
+            r.FR()[5].row()[2].rowData[r.FR()[0].ColumnHeader().length - 2],
+            r.FR()[5].row()[2].rowData[r.FR()[0].ColumnHeader().length - 1]
+          ],
+          name: "Stock Turnover Days",
+          color: ecisColors[2]
+        }
+      ]
+      r.generateoperatingratios(dataoperatingratioscategories,dataoperatingratiosseries);
+    }
+    if ( r.FR()[2].row().length > 2 ){
+      dataleverageratiosseries = [{
+        data: [
+          r.FR()[2].row()[0].rowData[ r.FR()[0].ColumnHeader().length -1 ],
+          r.FR()[2].row()[1].rowData[ r.FR()[0].ColumnHeader().length -1 ],
+          r.FR()[2].row()[2].rowData[ r.FR()[0].ColumnHeader().length -1 ]
+        ],
+        name: r.FR()[0].ColumnHeader()[r.FR()[0].ColumnHeader().length -1].replace("(Audited)", ""),
+        color: ecisColors[1]
+      }]
+      dataleverageratioscategories = [
+        r.FR()[2].row()[0].rowData[ 0 ].substring(0,13) + "...",
+        r.FR()[2].row()[1].rowData[ 0 ].substring(0,13) + "...",
+        r.FR()[2].row()[2].rowData[ 0 ].substring(0,13) + "..."
+      ]
+      r.generateleverageratios(dataleverageratiosseries,dataleverageratioscategories);
+    }
+  }
+
+  r.generateprofitableratios = function (data){
+    $("#profitableratios").kendoChart({
+        title: {
+            visible: false
+        },
+        legend: {
+            position: "bottom",
+            orientation: "horizontal",
+            labels: {
+              color: "white"
+            }
+        },
+        seriesDefaults: {
+          type: "bar"
+        },
+        chartArea: {
+          height: 245,
+          background:"transparent"
+        },
+        series: data,
+        valueAxis: {
+            line: {
+                visible: false
+            },
+            minorGridLines: {
+                visible: false
+            },
+            labels: {
+                rotation: "auto",
+                template: "#= value # %",
+                color: "white",
+                step:2
+            }
+        },
+        categoryAxis: {
+            categories: ["ROCE %", "PAT Margin %", "PBT Martin %", "EBITDA Margin %", "Gross Profit Margin %"],
+            majorGridLines: {
+                visible: false
+            },
+            labels: {
+              color: "white"
+            }
+        },
+        tooltip: {
+            visible: true,
+            template: "#= series.name #: #= value # %"
+        }
+    });
+  }
+
+  r.generateoperatingratios = function (datacategories, dataseries){
+    $("#operatingratios").kendoChart({
+      categoryAxis: {
+        categories: datacategories,
+        crosshair: {
+          dashType: "dashDot",
+          visible: true
+        },
+        labels: {
+          color: "white"
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      valueAxis: {
+        labels: {
+          color: "white",
+          step:2
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      chartArea: {
+        height: 195,
+        background:"transparent"
+      },
+      seriesDefaults: {
+          type: "line",
+          style: "smooth",
+          markers: {
+              size: 3
+          }
+      },
+      legend: {
+        position: "bottom",
+        orientation: "horizontal",
+        labels: {
+          color: "white"
+        }
+      },
+      series:dataseries,
+      tooltip: {
+        visible: true,
+        template: "#= series.name #: #= value #"
+      }
+    });
+  }
+
+  r.generateleverageratios = function (dataseries,datacategories){
+    $("#leverageratios").kendoChart({
+      chartArea: {
+        height: 195,
+        background:"transparent"
+      },
+      categoryAxis: {
+        categories: datacategories,
+        labels: {
+          rotation: "auto",
+          color: "white"
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      valueAxis: {
+        labels: {
+          color: "white",
+          step:2
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      seriesDefaults: {
+          type: "area",
+          area: {
+              line: {
+                  style: "smooth"
+              }
+          }
+      },
+      legend: {
+        position: "bottom",
+        orientation: "horizontal",
+        labels: {
+          color: "white"
+        }
+      },
+      series: dataseries,
+      tooltip: {
+        visible: true,
+        template: "#= series.name #: #= value #"
+      }
+    });
+  }
+
+  var checkSub = function(data){
+    if(data.rowData.length == 1) {
+      return false
+    }
+
+    return true
+  }
+</script>
+<style type="text/css">
+  .k-grid  .k-grid-header  .k-header {
+    white-space: normal;
+  }
+  .KI tbody tr td{
+    color: white !important;
+    font-size: 11px !important;
+    padding: 3px;
+  }
+
+  .KI thead tr th{
+    font-size: 11px !important;
+    padding: 3px;
+  }
+
+  .panel-body{
+    padding: 1px 7px !important;
+  }
+  #panelright1{
+    background-color: rgb(237,125,49);
+  }
+  #panelright2{
+    background-color: rgb(39,67,52);
+  }
+  .panelright3{
+    background-color: rgb(52,98,86);
+    margin-bottom: 5px !important;
+    margin-top: 5px !important;
+  }
+  .col-sm-12{
+    padding: 0;
+  }
+  .k-chart-area{
+    background-color: transparent !important;
+  }
+  h4{
+    color: white;
+    text-align: center;
+    font-size: 10px !important;
+  }
+  text{
+    font-size: 10px !important;
+    color: white !important;
+  }
+  .titlepanelright3{
+    color: rgb(255,255,0);
+    text-align: center;
+    font-size: 10px !important;
+    margin-bottom: 0;
+  }
+  g{
+    background-color: transparent;
+  }
+  .table{
+    margin-bottom: 4px;
+    margin-top: -7px;
+  }
+  .app-container .app-content h3 {
+    border-bottom: 1px solid #F0F3F4;
+    padding-bottom: 1px;
+    margin-top: 3px;
+  }
+</style>
+<div class="col-sm-12" data-bind="visible: r.rootdates().length > 0">
+  <div class="panel" id="panelright1" style="margin-left: -16px;">
+    <div class="panel-heading">
+      <h3>
+        Key Indicators
+      </h3>
+    </div>
+    <div class="panel-body" style="margin-top: -2px;">
+      <div class="col-sm-12">
+        <div class="panel-body">
+          <table class="table table-bordered KI" data-bind="foreach: r.KI">
+            <thead>
+              <tr data-bind="foreach: ColumnHeader">
+                 <th class="header-table" style="color: #fff;" data-bind="text: $data"></th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: row">
+              <tr data-bind="foreach: rowData">
+                 <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
+                 <td data-bind="text: $data, visible: checkSub($parent) == true"></td>
+              </tr>
+              </div>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-bind="with: left" style="margin-top: -11px;">
+      <div class="panel" id="panel1" style="margin-left: -16px;">
+        <div class="panel-heading">
+          <h3>
+            Profit & Loss Account
+          </h3>
+        </div>
+        <div class="panel-body" style="margin-top: -5px;">
+          <div class="col-md-6">
+            <div class="panel-body">
+              <div class="col-md-12">
+                <div id="chartline"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="panel-body">
+              <div id="chartstick"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+

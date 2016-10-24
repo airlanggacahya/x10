@@ -1,0 +1,55 @@
+<script>
+	r.LD = {
+		Amount : ko.observable(0),
+		Tenor : ko.observable(0),
+		ROI : ko.observable("")
+	}
+
+	r.setLD = function(ad){
+		if(ad != null) {
+			console.log(ad)
+			r.LD.Amount(ad.loandetails.requestedlimitamount)
+			r.LD.Tenor(ad.loandetails.limittenor)
+			r.LD.ROI(ad.loandetails.proposedrateinterest + "%")
+		}
+	}
+</script>
+
+<div class="panel panel-default panel-asik" style="height: 250px;">
+	<div class="panel-heading">
+		Loan Details
+	</div>
+	<div class="panel-body">
+		<h3>Proposed</h3>
+
+		<div class="col-md-4 no-padding" style="padding-right: 4px;">
+			<div><span type="text" class="number-label" disabled data-bind="text: r.LD.Amount()" /></div>
+			<div><label>Amount</label></div>
+		</div>
+
+		<div class="col-md-4 no-padding" style="padding-left: 4px; padding-right: 4px;">
+			<div><span type="text" class="number-label" disabled data-bind="text: r.LD.Tenor()" /></div>
+			<div><label>Tenor</label></div>
+		</div>
+
+		<div class="col-md-4 no-padding" style="padding-left: 4px;">
+			<div><span type="text" class="number-label" disabled data-bind="text: r.LD.ROI()" /></div>
+			<div><label>ROI</label></div>
+		</div>
+
+		<div class="clearfix with-space"></div>
+
+		<h3>Existing Customer</h3>
+
+		<div class="col-md-6 no-padding" style="padding-right: 4px;">
+			<div><span type="text" class="number-label" disabled data-bind="text: 0" /></div>
+			<div><label>Avg. utilization of existing limit</label></div>
+		</div>
+
+		<div class="col-md-6 no-padding" style="padding-left: 4px;">
+			<div><span type="text" class="number-label" disabled data-bind="text: 0" /></div>
+			<div><label>Principal repayment delays</label></div>
+		</div>
+
+	</div>
+</div>

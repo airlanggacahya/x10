@@ -1,0 +1,336 @@
+<script type="text/javascript">
+	r.constructDataKeyFinancialRatios = function (res,ress) {
+
+  	// Leverage Ratios
+  	if ( r.FR()[2].row().length > 2 ){
+      var dataleverageratiosseries = []
+      _.each(r.FR()[0].ColumnHeader(), function(v,i){
+        if(i != 0){
+          dataleverageratiosseries.push({
+            data: [
+              r.FR()[2].row()[0].rowData[ i ],
+              r.FR()[2].row()[1].rowData[ i ],
+              r.FR()[2].row()[2].rowData[ i ]
+            ],
+            name: r.FR()[0].ColumnHeader()[ i ].replace("(Audited)", ""),
+            color: ecisColors[i]
+          })
+        }
+      })
+
+      dataleverageratioscategories = [
+        r.FR()[2].row()[0].rowData[ 0 ].substring(0,13) + "...",
+        r.FR()[2].row()[1].rowData[ 0 ].substring(0,13) + "...",
+        r.FR()[2].row()[2].rowData[ 0 ].substring(0,13) + "..."
+      ]
+      r.generateleverageratios(dataleverageratiosseries,dataleverageratioscategories);
+    }
+    // End Leverage Ratios
+
+		// Operating Ratios
+    if ( r.FR()[5].row().length > 5 ){
+      data1 = []
+      data2 = []
+      dataleverageratioscategories = []
+      _.each(r.FR()[0].ColumnHeader(), function(v,i){
+        if(i != 0){
+          data1.push(r.FR()[5].row()[4].rowData[ i ])
+          data2.push(r.FR()[5].row()[5].rowData[ i ])
+          dataleverageratioscategories.push(r.FR()[0].ColumnHeader()[i].replace("(Audited)", ""))
+        }
+      })
+
+      dataleverageratiosseries = [
+        {
+          data: data1,
+          name: [
+            "WC Requirement",
+          ],
+          color: ecisColors[0]
+        },
+        {
+          data: data2,
+          name: [
+            "WC Gap",
+          ],
+          color: ecisColors[1]
+        }
+      ]
+              
+      r.generateoperatingratios(dataleverageratiosseries,dataleverageratioscategories);
+    }
+		// End Operating Ratios
+
+		// Coverage Ratios
+		if ( r.FR()[3].row().length > 1 ){
+      data1 = []
+      data2 = []
+      dataleverageratioscategories = []
+      _.each(r.FR()[0].ColumnHeader(), function(v,i){
+        if(i != 0){
+          data1.push(r.FR()[3].row()[1].rowData[ i ])
+          data2.push(r.FR()[3].row()[0].rowData[ i ])
+          dataleverageratioscategories.push(r.FR()[0].ColumnHeader()[i].replace("(Audited)", ""))
+        }
+      })
+
+      dataleverageratiosseries = [
+        {
+          data: data1,
+          name: [
+            "DSCR",
+          ],
+          color: ecisColors[0]
+        },
+        {
+          data: data2,
+          name: [
+            "ISCR",
+          ],
+          color: ecisColors[1]
+        }
+      ]
+
+      r.generatecoverageratios(dataleverageratiosseries,dataleverageratioscategories);
+    }
+		// End Coverage Ratios
+
+    // Liquidity Ratios
+    if ( r.FR()[4].row().length > 0 ){
+      var dataleverageratiosseries = []
+      _.each(r.FR()[0].ColumnHeader(), function(v,i){
+        if(i != 0){
+          dataleverageratiosseries.push({
+            data: [
+              r.FR()[4].row()[0].rowData[ i ]
+            ],
+            name: r.FR()[0].ColumnHeader()[ i ].replace("(Audited)", ""),
+            color: ecisColors[i]
+          })
+        }
+      })
+      dataleverageratioscategories = [
+        // r.FR()[4].row()[0].rowData[ 0 ].substring(0,13) + "...",
+      ]
+      r.generateliquidityratios(dataleverageratiosseries,dataleverageratioscategories);
+    }
+		// End Liquidity Ratios
+  }
+
+  r.generateleverageratios = function (dataseries,datacategories){
+    $("#leverageratios").kendoChart({
+      chartArea: {
+        height: 150,
+        background:"transparent"
+      },
+      categoryAxis: {
+        categories: datacategories,
+        labels: {
+          // rotation: "auto",
+          color: "black"
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      valueAxis: {
+        labels: {
+          color: "black",
+          step:2
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      seriesDefaults: {
+          type: "area",
+          area: {
+              line: {
+                  style: "smooth"
+              }
+          }
+      },
+      legend: {
+        position: "bottom",
+        orientation: "horizontal",
+        labels: {
+          color: "black"
+        }
+      },
+      series: dataseries,
+      tooltip: {
+        visible: true,
+        template: "#= series.name #: #= value #"
+      }
+    });
+  }
+
+  r.generateoperatingratios = function (dataseries,datacategories){
+  	$("#operatingratios").kendoChart({
+      chartArea: {
+        height: 150,
+        background:"transparent"
+      },
+      categoryAxis: {
+        categories: datacategories,
+        labels: {
+          // rotation: "auto",
+          color: "black"
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      valueAxis: {
+        labels: {
+          color: "black",
+          step:2
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      seriesDefaults: {
+          type: "column",
+      },
+      legend: {
+        position: "bottom",
+        orientation: "horizontal",
+        labels: {
+          color: "black"
+        }
+      },
+      series: dataseries,
+      tooltip: {
+        visible: true,
+        template: "#= series.name #: #= value #"
+      }
+    });
+  }
+
+  r.generatecoverageratios = function (dataseries,datacategories){
+    $("#coverageratios").kendoChart({
+      chartArea: {
+        height: 150,
+        background:"transparent"
+      },
+      categoryAxis: {
+        categories: datacategories,
+        labels: {
+          // rotation: "auto",
+          color: "black"
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      valueAxis: {
+        labels: {
+          color: "black",
+          step:2
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      seriesDefaults: {
+          type: "line",
+          style: "smooth",
+          markers: {
+              size: 3
+          }
+      },
+      legend: {
+        visible: "false",
+        position: "bottom",
+        orientation: "horizontal",
+        labels: {
+          color: "black"
+        }
+      },
+      series: dataseries,
+      tooltip: {
+        visible: true,
+        template: "#= series.name #: #= value #"
+      }
+    });
+  }
+
+  r.generateliquidityratios = function (dataseries,datacategories){
+    $("#liquidityratios").kendoChart({
+      chartArea: {
+        height: 150,
+        background:"transparent"
+      },
+      categoryAxis: {
+        categories: datacategories,
+        labels: {
+          // rotation: "auto",
+          color: "black"
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      valueAxis: {
+        labels: {
+          color: "black",
+          step:2
+        },
+        majorGridLines: {
+            visible: false
+        },
+      },
+      seriesDefaults: {
+          type: "bar",
+      },
+      legend: {
+        position: "bottom",
+        orientation: "horizontal",
+        labels: {
+          color: "black"
+        }
+      },
+      series: dataseries,
+      tooltip: {
+        visible: true,
+        template: "#= series.name #: #= value #"
+      }
+    });
+  }
+</script>
+
+<div class="panel-heading"><h3 class="text-center">Key Financial Ratios</h3></div>
+
+<div class="panel-default col-sm-6 content no-padding" style="border-right: 2px solid #fafafa">
+  <div class="panel-heading text-center">Leverage Ratios</div>
+  <div class="panel-body" style="padding-bottom: 0px;margin-bottom: -8px;">
+		<div id="leverageratios"></div>
+	</div>
+</div>
+
+<div class="panel-default col-sm-6 content no-padding" style="border-left: 2px solid #fafafa">
+	<div class="panel-heading">Operating Ratios</div>
+  <div class="panel-body" style="padding-bottom: 0px;margin-bottom: -8px;">
+			<div id="operatingratios"></div>
+  </div>
+</div>
+
+<div class="panel-default col-sm-6 content no-padding" style="border-right: 2px solid #fafafa">
+	<div class="panel-heading">Coverage Ratios</div>
+  <div class="panel-body" style="padding-bottom: 0px">
+			<div id="coverageratios"></div>
+  </div>
+</div>
+
+<div class="panel-default col-sm-6 content no-padding" style="border-left: 2px solid #fafafa">
+	<div class="panel-heading">Liquidity Ratios</div>
+  <div class="panel-body" style="padding-bottom: 0px">
+      <div id="liquidityratios"></div>
+  </div>
+</div>
+
+<div class="footer col-sm-12">
+  <button onclick="r.showDetails('kfrb')" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
+  <button data-bind="" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Full Form</button>
+</div>

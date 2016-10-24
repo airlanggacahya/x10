@@ -1,0 +1,123 @@
+<script type="text/javascript">
+model.PageTopMenu("Reports");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Reports", "Reports", "", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+</script>
+<!--
+	"PROFIT & LOSS ACCOUNT"
+	"BALANCE SHEET"
+	"RATIO"
+	"CASH FLOW STATEMENT"
+-->
+<div style="display:none">
+{{template "filter.html"}}
+</div>
+<script src="/static/core/ratio-report.js"></script>
+
+<style>
+	.grid {
+		font-family: 'Source Sans Pro', 'Lato', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+	}
+	/*.grid .k-alt {
+		background-color: transparent !important;
+	}*/
+	.grid td {
+	    white-space: inherit;
+	}
+
+	.k-grid {
+		font-size: inherit;
+		font-family: inherit;
+	}
+	/*.k-grid tr.is-formula {
+	    background-color: rgba(92, 184, 92, 0.83) !important;
+    	color: white;
+	}*/
+	.k-grid tr.is-formula td {
+		font-weight: bold;
+	}
+	.btn.btn-tag {
+		background-color: #f9f9f9;
+	    border: none;
+	    pointer-events: none;
+	}
+	.btn.btn-tag.btn-primary {
+	    color: #337ab7;
+	}
+	.btn.btn-tag.btn-success {
+		color: #5cb85c;
+	}
+	.btn.btn-tag.btn-warning {
+		color: #f0ad4e;
+	}
+	/*.growthcolor{
+		background-color: rgb(195, 220, 236);
+	}*/
+	/*div.form-container > div > div.k-grid-header > div.k-grid-header-locked {
+		height: 78px;
+	}*/
+	.borderon{
+		/*border: 1px solid rgb(32,63,83);*/
+	}
+	.tabme nav ul li a{
+		    margin-top: 5px;
+	}
+	thead th{
+		border-right: 1px solid #e4e4e4;
+	}
+	.panel-heading{
+		padding-bottom: 0 !important;
+	}
+	.panel-heading h4{
+		margin-bottom: 0 !important;
+	}
+	#xls{
+		margin-top: 10px;
+	}
+</style>
+<br>
+<div data-bind="with: ratioReport " >
+	<div class="col-md-12 col-sm-12 ez panel-content">
+  	<div class="panel ez no-padding hardcore">
+  		<div class="panel-heading">
+  			<!-- <h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">Key Financials & Financial Ratios</h4> -->
+  		</div>
+			<div class="panel-body">
+				<!-- <div class="filter col-md-12 align-right no-padding hardcore">
+					<button class="btn btn-sm btn-primary" data-bind="click: refresh">
+						<i class="fa fa-refresh"></i> Refresh
+					</button>
+				</div> -->
+				<div class="tabs tabs-style-linemove tabme" data-bind="visible: (r.data().length > 0)">
+		  		<nav>
+		  			<ul role="tablist">
+		  				<li class="borderon tab-current"><a href="javascript:r.render('PROFIT & LOSS ACCOUNT');">PROFIT & LOSS ACCOUNT</a></li>
+		  				<li class="borderon"><a href="javascript:r.render('BALANCE SHEET');">BALANCE SHEET</a></li>
+		  				<li class="borderon"><a href="javascript:r.render('RATIO');">RATIO</a></li>
+		  				<li class="borderon"><a href="javascript:r.render('CASH FLOW STATEMENT');">CASH FLOW STATEMENT</a></li>
+		  			</ul>
+		  		</nav>
+		  		<button class="btn btn-flat btn-sm btn-success" id="xls" onclick="r.exportExcel(filter().CustomerSearchText())">Export to Excel</button>
+	  		</div>
+				<div class="clearfix"></div>
+				<div class="form-container" style="padding-top: 10px;">
+					<div class="grid"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style type="text/css">
+	.mar-20{
+		    margin-top: -20px;
+	}
+</style>

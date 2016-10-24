@@ -1,0 +1,151 @@
+<script type="text/javascript" src="/static/core/approvalcomments.js"></script>
+<style type="text/css">
+	.k-widget * {
+		box-sizing: border-box;
+	}
+
+	p.head {
+		text-align: left;
+		cursor: pointer;
+		cursor: hand;
+	}
+	.btn-space {
+	    margin-right: 5px;
+	}
+</style>
+<div id="content4" data-bind="with:apcom" class="content-container">
+	
+	<div class="col-sm-12">
+		<div class="form-group col-sm-6">
+	    	<label class="col-sm-12 text-left">Date</label>
+	    	<div class="col-sm-12">
+	    		<input id="commentdate" data-bind="" class="input-sm form-control" style="width: 100%;">
+	    	</div>
+		</div>
+	</div>
+
+	<div class="col-sm-12">
+		<div class="form-group col-sm-6">
+	    	<label class="col-sm-12 text-left">Amount</label>
+	    	<div class="col-sm-12">
+	    		<input id="commentamount" data-bind="" class="input-sm form-control" style="width: 100%;">
+	    	</div>
+		</div>
+		<div class="form-group col-sm-6">
+	    	<label class="col-sm-12 text-left">ROI</label>
+	    	<div class="col-sm-12">
+	    		<input id="commentroi" data-bind="" class="input-sm form-control" style="width: 100%;">
+	    	</div>
+		</div>
+	</div>
+
+	<div class="col-sm-12">
+		<div class="form-group col-sm-6">
+	    	<label class="col-sm-12 text-left">PF</label>
+	    	<div class="col-sm-12">
+	    		<input id="commentpf" data-bind="" class="input-sm form-control" style="width: 100%;">
+	    	</div>
+		</div>
+		<div class="form-group col-sm-6">
+	    	<label class="col-sm-12 text-left">PG</label>
+	    	<div class="col-sm-12">
+	    		<input id="commentpg" data-bind="" class="input-sm form-control" style="width: 100%;">
+	    	</div>
+		</div>
+	</div>
+
+	<div class="col-sm-12">
+		<div class="form-group col-sm-12">
+	    	<label class="col-sm-12 text-left">Security</label>
+	    	<div class="col-sm-12">
+	    		<input id="commentsecurity" data-bind="" class="input-sm form-control" style="width: 100%;">
+	    	</div>
+		</div>
+	</div>
+
+	<div class="col-sm-12">
+		<div class="form-group col-sm-12">
+	    	<label class="col-sm-12 text-left">Other Conditions</label>
+	    	<div class="col-sm-12">
+	    		<textarea id="commentconditions" data-bind="" class="input-sm form-control" style="width: 100%;"></textarea>
+	    	</div>
+		</div>
+	</div>
+
+	<div class="col-sm-12">
+		<div class="form-group col-sm-12">
+	    	<label class="col-sm-12 text-left">Committee Remarks</label>
+	    	<div class="col-sm-12">
+	    		<textarea id="commentremarks" data-bind="" class="input-sm form-control" style="width: 100%;"></textarea>
+	    	</div>
+		</div>
+	</div>
+
+	<!-- <div class="panel-body col-md-12">
+		<div id="grid2"></div>
+	</div> -->
+	<div class="col-md-12">
+		<button data-bind="click: apcom.saveSanction" class="btn btn-sm btn-flat btn-space btn-confirm sanction">Sanction</button>
+		<button data-bind="click: apcom.saveHold" class="btn btn-sm btn-flat btn-space btn-unfreeze sanction">Hold</button>
+	</div>
+</div>
+<div class="col-md-12 content-container" data-bind="with:apcom">
+
+	<div class="col-md-12 form-group">
+    	<button class="btn btn-sm btn-flat btn-save btn-space pull-left">Save</button>
+    	<button class="btn btn-sm btn-flat btn-reset btn-space pull-left">Reset</button>
+    	<button class="btn btn-sm btn-flat btn-reenter btn-space pull-left">Re-Enter</button>
+	</div>
+	<p class="head caret1"><span id="caret1" class="fa fa-caret-down"></span> Comments on Financials</p>
+	<div class="panel-body" id="content1">
+		<div class="col-md-12">
+			<textarea class="input-sm form-control" data-bind="value: accountCommentFinancials" readonly></textarea >
+		</div>
+	</div>
+
+	<p class="head caret2"><span id="caret2" class="fa fa-caret-down"></span> Risk / Concerns & Mitigans</p>
+	<div class="panel-body" id="content2">
+		<div class="col-md-12">
+			<div id="grid1"></div>
+		</div>
+	</div>
+
+	<p class="head caret3"><span id="caret3" class="fa fa-caret-down"></span> Final Comments</p>
+	<div class="panel-body" id="content3"data-bind="with: formCreditAnalyst.FinalComment">
+
+		<div class="col-sm-12 no-padding">
+			<div class="form-group col-sm-12 no-padding">
+		    	<label class="col-sm-12 text-left">Amount</label>
+		    	<div class="col-sm-12">
+		    		<input id="commentamount2" data-bind="" class="input-sm form-control" style="width: 100%;">
+		    	</div>
+			</div>
+		</div>
+
+		<div class="col-sm-12 no-padding">
+			<div class="form-group col-sm-12 no-padding">
+		    	<label class="col-sm-12 text-left">Recommend Condition</label>
+		    	<div class="col-sm-12">
+		    		<input id="commentcondition" data-bind="" class="input-sm form-control" style="width: 100%;">
+		    	</div>
+			</div>
+		</div>
+
+		<div class="col-sm-12 no-padding">
+			<div class="form-group col-sm-12 no-padding">
+		    	<label class="col-sm-12 text-left">Recommendations</label>
+		    	<div class="col-sm-12">
+		    		<input id="commentrecommendation" data-bind="" class="input-sm form-control" style="width: 100%;">
+		    	</div>
+			</div>
+		</div>
+
+		<!-- <div class="col-md-12">
+			<div id="grid3"></div>
+		</div> -->
+	</div>
+
+	<div class="form-group">
+    	<button class="btn btn-sm btn-flat btn-save" data-bind="click: apcom.sendCreditAnalyst">Send to Decision Committee</button>
+	</div>
+</div>

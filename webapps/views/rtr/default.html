@@ -1,0 +1,52 @@
+<script type="text/javascript">
+model.PageTopMenu("Data Entry");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Data Entry", "Data Entry ", "#", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+// $('#btnconfirm').hide()
+</script>
+
+{{template "filter.html"}}
+<div>
+  <div class="col-sm-12 col-sm-12 ez panel-content">
+      <div class="panel ez no-padding padd hardcore">
+        <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+        <!-- <div class="form-last-confirmation-info"></div> -->
+        <button id="btnconfirm" class="btn btn-sm btn-confirm" onclick="confirm()">Confirm</button>
+        <span class="form-last-confirmation-info pull-right"></span>
+        <div class="panel-body">
+        		{{template "topgrid.html"}}
+        		{{template "bottomgrid.html"}}
+        </div>
+      </div>
+  </div>
+</div>
+
+<style type="text/css">
+	/*.margin20 {
+		margin-top: 20px;
+	}*/
+  .form-last-confirmation-info {
+    padding-bottom: 10px;
+    text-align: right;
+    font-style: italic;
+    color: #27ae60;
+    margin-right: 25px;
+  }
+  #btnconfirm{
+    margin-left: 40px;
+  }
+
+  .padd{
+    padding: 20px;
+  }
+
+
+</style>

@@ -1,0 +1,136 @@
+<script type="text/javascript">
+
+var data = [
+{cat:"cat1",val:30},
+{cat:"cat2",val:20},
+{cat:"cat3",val:10}
+];
+
+var actualnum = 
+
+function BuildSampleChart(id,val,sval,tval,label,type,numtype){
+
+}
+
+function GetCoordinate(id){
+ var alltext = $("#"+id).find("text");
+ var category = [];
+ var value = [];
+
+alltext.each(function(){
+    var keycat = parseInt($(alltext[0]).attr("y")); 
+    var el = parseInt($(this).attr("y"));
+    if(el>(keycat - 5) && el<(keycat+5)){
+        category.push($(this));
+    }else{
+        var keyval = parseInt($(alltext[category.length]).attr("x")); 
+        el = parseInt($(this).attr("x"));
+        if(el>(keyval - 5) && el<(keyval+5)){
+            value.push($(this));
+        }
+    }
+});
+ return { category : category, value :value }
+}
+
+function BuildLine(coordinate){
+	  var axis = $("."+cl).getKendoChart().getAxis()._axis.plotArea.axisY;
+    var slot = axis.slot(value);
+    var coordata = GetCoordinate(cl);
+
+    var line = new kendo.drawing.Path({
+        stroke: {
+         color: "black",
+          width: 0.2,
+        },
+    });
+
+    var cate = coordata.category;
+    var diff = cate[1].attr("x") - cate[0].attr("x") 
+    var el = cate[category]; //_.find(cate,function(val){ return $(val).html() == category;  })
+    if(el == undefined){
+        return;
+    }
+
+    line.moveTo( parseInt($(el).attr("x")) - (diff/3) , slot.origin.y).lineTo([ parseInt($(el).attr("x"))+ (diff/1.7), slot.origin.y]).close();
+
+    var xpos =  [parseInt($(el).attr("x")) - (diff/3) , slot.origin.y-10];
+    if(cl.indexOf("reco")>-1){
+      xpos =  [parseInt($(el).attr("x")) + (diff/3) , slot.origin.y-10];
+    }
+
+    var label = new kendo.drawing.Text(label , xpos, {
+        fill: {
+          color: "black",
+        },
+        font: (font == undefined? "10px sans-serif":font)
+      });
+
+    var group = new kendo.drawing.Group();
+    group.append(label,line);
+    $("."+cl).getKendoChart().surface.draw(group);
+}
+
+
+ function createChart() {
+ 			 var stocksDataSource = new kendo.data.DataSource({
+	            transport: {
+	                read: {
+	                    url: function() {
+	                        return "../content/dataviz/dashboards/stock-data-2011.json";
+	                    },
+	                    dataType: "json"
+	                }
+	            },
+
+	            group: {
+	                field: "symbol"
+	            },
+
+	            sort: {
+	                field: "date",
+	                dir: "asc"
+	            },
+
+	            schema: {
+	                model: {
+	                    fields: {
+	                        date: {
+	                            type: "date"
+	                        }
+	                    }
+	                }
+	            }
+	        });
+
+            $("#chart1").kendoChart({
+                title: { text: "Stock Prices" },
+                dataSource: stocksDataSource,
+                series: [{
+                    type: "column",
+                    field: "close",
+                    name: "#= group.value # (close)"
+                }],
+                legend: {
+                    position: "bottom"
+                },
+                valueAxis: {
+                    labels: {
+                        format: "${0}",
+                        skip: 2,
+                        step: 2
+                    }
+                },
+                categoryAxis: {
+                    field: "date",
+                    labels: {
+                        format: "MMM"
+                    }
+                }
+            });
+}
+
+createChart();
+</script>
+
+<div id="chart1"></div>

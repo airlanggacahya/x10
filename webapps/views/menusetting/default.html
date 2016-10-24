@@ -1,0 +1,121 @@
+
+<script type="text/javascript">
+model.PageTopMenu("Administrator");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Administrator", "Administrator", "#", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+ model.User= ko.observable('{{.Username}}');
+</script>
+<script src="/static/core/menusetting.js"></script>
+<script src="/static/core/authentication.js"></script>
+
+<style type="text/css"> 
+.k-numerictextbox,.k-datepicker, .k-dropdown {
+    width: 100%;
+}
+.Role{
+    overflow-y: auto;
+    height: 262px;
+}
+</style>
+
+<div data-bind="with: menusett">
+    <div class="col-md-8 col-sm-8 ez panel-content">
+        <div class="panel ez no-padding hardcore">
+            <div class="panel-heading">
+                <h3 class="no-margin">
+                  Form Entry
+                </h3>
+                <div class="panel-nav-button">
+                    <button  data-bind="click:saveAppmenu, visible:saveData" id= "save" class="btn btn-sm btn-primary btn-flat" > <i class="fa fa-floppy-o"> Save</i></button>
+                    <span data-bind="visible: select">
+                        <button  data-bind="click:updateAppmenu, visible:updateData" id= "update" class="btn btn-sm btn-primary btn-flat" > <i class="fa fa-floppy-o"> Update</i></button>
+                        <button  data-bind="click:resetAppMenu" class="btn btn-sm btn-danger btn-flat"><i class="fa fa-refresh"> Reset</i></button>
+                    </span>
+                    <button class="btn btn-sm btn-success btn-flat" data-bind="click:newdataMenulist"><i class="fa fa-plus" data-bind="text:btnNewData"></i></button>
+                </div>
+            </div>
+            <div class="panel-body" id="EntryForm">
+                <form id="AppMenu">
+                    <div class="col-md-12 form-group">
+                      <div class="col-md-2">
+                        <label for="Acc" class="control-label">Parent <span class="mandatory">*</span></label>
+                      </div>
+                      <div class="col-md-9">
+                        <input type="text" id="parent" name="parent" tabindex="-1"   data-bind= "kendoDropDownList: {value: Parent, data:listMenu, dataValueField: 'Id', dataTextField: 'title'}" placeholder="Select Parent"  validationMessage="Parent required" readonly />
+                      </div>
+                    </div>
+                    <div class="col-md-12 form-group">
+                      <div class="col-md-2">
+                        <label for="Acc" class="control-label">Title <span class="mandatory">*</span></label>
+                      </div>
+                      <div class="col-md-9">
+                         <input id = "title" type="text" name="title"  required="" class="form-control input-sm" data-bind="value:Title" readonly />
+                      </div>
+                    </div>
+                    <div class="col-md-12 form-group">
+                      <div class="col-md-2">
+                        <label for="Acc" class="control-label">Url <span class="mandatory">*</span></label>
+                      </div>
+                      <div class="col-md-9">
+                        <input id = "Url" name="mm" required="" type="text" class="form-control input-sm"   placeholder="Input Format:  /folder/default" class="form-control input-sm" data-bind="value:Url" readonly/>
+                      </div>
+                    </div>
+                    <div class="col-md-12 form-group">
+                      <div class="col-md-2">
+                        <label for="Acc" class="control-label">Icon <span class="mandatory">*</span></label>
+                      </div>
+                      <div class="col-md-9">
+                        <input id = "Icon" name="Icon" required="" type="text" class="form-control input-sm"   placeholder="Input Format:  fa fa-home" class="form-control input-sm" data-bind="value:Icon" readonly/>
+                      </div>
+                    </div>
+                    <div class="col-md-12 form-group">
+                      <div class="col-md-2">
+                        <label for="Acc" class="control-label">Index <span class="mandatory">*</span></label>
+                      </div>
+                      <div class="col-md-9">
+                        <input type="text" name="IndexMenu" id="IndexMenu" validationMessage="Index Menu required" required="" data-bind="kendoNumericTextBox: {value:IndexMenu, min: 0}" readonly/>
+                        <span class="k-invalid-msg" data-for="IndexMenu"></span>
+                      </div>
+                    </div>
+                    <div class="col-md-12 form-group">
+                      <div class="col-md-2">
+                        <label for="Acc" class="control-label">Enable <span class="mandatory">*</span></label>
+                      </div>
+                      <div class="col-md-9">
+                        <input type="checkbox" name="my-checkbox" checked class="form-control input-sm" id="Enable" readonly />
+                      </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-4 ez panel-content">
+        <div class="panel ez no-padding hardcore">
+            <div class="panel-heading">
+                <h3 class="no-margin">
+                    Menu List
+                </h3>
+                <div class="panel-nav-button" data-bind="visible: select">
+                    <button class="btn btn-sm btn-primary  btn-flat" data-bind="click:editdataMenulist"><i class="fa fa-pencil-square-o" aria-hidden="true"> Edit</i></button>
+                    <button class="btn btn-sm btn-danger  btn-flat"  data-bind="click:deleteMunulist"><i class="fa fa-times" aria-hidden="true"> Remove</i></button>
+                </div>
+            </div>
+            <div class="panel-body  Role">
+                <script id="menulist-template" type="text/kendo-ui-template">
+                    <input type="hidden" value="#:item._id#" />
+                    <span class="glyphicon glyphicon-credit-card"></span>&nbsp;#: item.title #
+                </script>
+                <div>
+                    <ul id="menu-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

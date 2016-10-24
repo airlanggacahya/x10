@@ -1,0 +1,1102 @@
+<script type="text/javascript">
+    model.PageTopMenu('{{.TopMenu}}');
+    model.PageId('{{.Menuname}}');
+    model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
+    model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+    model.Access = ko.observable('{{.Menuid}}');
+    model.View = ko.observable('{{.View}}');
+    model.Create= ko.observable('{{.Create}}');
+    model.Delete= ko.observable('{{.Delete}}');
+    model.Process= ko.observable('{{.Process}}');
+    model.Edit= ko.observable('{{.Edit}}')
+    model.User= ko.observable('{{.Username}}');
+
+
+    var csc = ko.observable({})
+    csc().datasource = ko.observableArray([])
+
+    csc().getCreditScoreData = function (callback) {
+        csc().datasource([])
+
+        var url = '/creditscorecard/getcreditscorecarddata'
+        var param = { customerid: filter().CustomerSearchVal(), dealno: filter().DealNumberSearchVal() }
+        ajaxPost(url, param, function (res) {
+            if (res.Message != "") {
+                swal("Warning",res.Message,"warning");
+                return
+            }
+
+            window.fm = res.Data.FormulaModel
+            res.Data.CreditScoreData.Items.forEach(function (d) {
+                switch (d.Name) {
+                    case 'Growth':
+                        csc().calculateGrowth(res.Data.FormulaModel, d); break
+                    case 'Leverage (TOL/TNW)':
+                        csc().calculateLeverage(res.Data.FormulaModel, d); break
+                    case 'DSCR':
+                        csc().calculateDSCR(res.Data.FormulaModel, d); break
+                    case 'Interest Coverage':
+                        csc().calculateInterestCoverage(res.Data.FormulaModel, d); break
+                    case 'Working Capital Cycle':
+                        csc().calculateWorkingCapital(res.Data.FormulaModel, d); break
+                    case 'Banking To Turnover Ratio':
+                        d.Value = kendo.toString(fm.BankingAnalysis.BankingToTurnoverRatio, 'n2') + '%'; break
+                    case 'Inward Bounces': 
+                        d.Value = kendo.toString(fm.BankingAnalysis.InwardBounces, 'p2'); break
+                    case 'EMI track':
+                        csc().calculateEMITrack(res.Data.FormulaModel, d); break
+                    case 'Avg. Payment delay days with Distri.':
+                        d.Value = fm.AccountDetails.VDMaxOfAverageDelayDays; break
+                    case 'OD/CC Utilization (average of last 3 months) ABB vs Proposed EMI':
+                        csc().calculateODCCABBEMI(res.Data.FormulaModel, d); break
+                }
+
+                d.WeightScore = kendo.toString(d.WeightScore, 'n2')
+            })
+
+            var prevHeader = null
+            var values = []
+            res.Data.CreditScoreData.Items.forEach(function (d) {
+                if (d.IsHeader) {
+                    prevHeader = d
+                    values = []
+
+                    fm.RatingData.ParametersGroupData.forEach(function (e) {
+                        if (e.ParametersGroup == prevHeader.Name) {
+                            prevHeader.Weight = e.WeightageOfGroupInCreditScore
+                        }
+                    })
+
+                    return
+                }
+
+                values.push(parseFloat(d.WeightScore.split(' ')[0]))
+                var weightScore = prevHeader.Score * prevHeader.Weight / 100
+
+                prevHeader.Score = kendo.toString(_.sum(values), 'n1')
+            })
+
+            res.Data.CreditScoreData.Items.forEach(function (d) {
+                if (d.IsHeader) {
+                    var weightScore = d.Score * d.Weight / 100
+                    d.WeightScore = kendo.toString(weightScore, 'n2')
+                }
+            })
+
+            csc().datasource(res.Data.CreditScoreData.Items)
+            callback()
+        }, function () {
+            callback()
+        })
+    }
+
+    csc().getLastAuditedDate = function () {
+        var res = fm.BalanceSheet.AuditStatus.filter(function (d) {
+            return d.Status == "AUDITED"
+        })
+        return res[res.length - 1].Date
+    }
+
+    csc().calculateCategoryAndScore = function (fm, ParametersGroup, Parameters, value, filterCallback) {
+        var res = null
+
+        fm.RatingMaster.filter(function (d) {
+            return $.trim(d.ParametersGroup) == $.trim(ParametersGroup) 
+                && $.trim(d.Parameters) == $.trim(Parameters)
+        }).filter(function (d) {
+            if (filterCallback != undefined) {
+                return filterCallback(d)
+            }
+
+            return true
+        }).forEach(function (d) {
+            if (res != null) {
+                return
+            }
+
+            var score = toolkit.redefine(fm.RatingData.CategoriesData.find(function (e) {
+                return e.Id == d.Id
+            }), { Score: 0 }).Score
+
+            switch (d.Operator) {
+                case 'equal':
+                    if (typeof d.Value1 === 'string') {
+                        if (String(value) == String(d.Value1)) {
+                            res = { category: d.Categories, score: score }
+                        }
+                    } else {
+                        if (value == d.Value1) {
+                            res = { category: d.Categories, score: score }
+                        }
+                    }
+
+                    break;
+                case 'between':
+                    if (value >= d.Value1 && value <= d.Value2) {
+                        res = { category: d.Categories, score: score }
+                    }
+
+                    break;
+                case 'min':
+                    if (value > d.Value1) {
+                        res = { category: d.Categories, score: score }
+                    }
+
+                    break;
+                case 'max':
+                    if (value < d.Value1) {
+                        res = { category: d.Categories, score: score }
+                    }
+
+                    break;
+            }
+        })
+
+        return res
+    }
+
+    csc().calculateGrowth = function (fm, row) {
+        var lastAudited = csc().getLastAuditedDate()
+        var lastAuditedValue = fm.BalanceSheet.FormData.find(function (d) {
+            return (d.FieldName.toLowerCase().indexOf('sales') > -1)
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var lastYearLastAudited = moment(lastAudited, "DD-MM-YYYY").add(-1, "years").format("DD-MM-YYYY")
+        var lastYearLastAuditedValue = fm.BalanceSheet.FormData.find(function (d) {
+            return (d.FieldName.toLowerCase().indexOf('sales') > -1)
+        }).Values.find(function (d) {
+            return d.Date == lastYearLastAudited
+        }).Value
+
+        var value = (toolkit.number(lastAuditedValue / lastYearLastAuditedValue) - 1) * 100
+        var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
+
+        row.Category = categoryAndScore.category
+        row.Score = categoryAndScore.score
+        row.WeightScore = row.Score * row.Weight / 100
+        row.Value = kendo.toString(value, 'n2') + '%'
+        row.Expand = false
+        row.Children = [{
+            Id: "a01",
+            Name: "(Sales/Receipts for current year) /",
+            Value: lastAuditedValue,
+        }, {
+            Id: "a02",
+            Name: "(Sales / Receipts for previous year)",
+            Value: lastYearLastAuditedValue
+        }, {
+            Id: "a03",
+            Name: "-1",
+            Value: -1
+        }]
+    }
+
+    csc().calculateLeverage = function (fm, row) {
+        var lastAudited = csc().getLastAuditedDate()
+
+        var sales = fm.BalanceSheet.FormData.find(function (d) {
+            return (d.FieldName.toLowerCase().indexOf('sales') > -1)
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var longterm = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Long Term Loans from Banks/FI -AL") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var capitallimit = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Working Capital Limits from Banks/FI's (OD / CC)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var unsecureloan = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Unsecured loans  (Bank & Financial Institutions)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var sundrycred = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Sundry Creditors") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var bussincome = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Other Income (part of Business Income)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var nonbussincome = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Other Income (Non Business income)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var sharecapital = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Share Capital") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var reserves = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Reserves & Surplus(excluding revaluation reserve)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var unsecureloanpartner = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Unsecured loans from partners/shareholders (ICDs incl.)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var miscexp = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Misc Exp. (DRE+PreOp+Prelim+Acc P&L") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var groupco = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Group Co. Investments (Biz Related)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var unqouted = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Unquoted/Dead Investments (Non Biz Related)i.e. shares, gold, chit fund") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var loanandadv = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Loans & Adv  to directors/partners etc (ICDs)/Diversions") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var debtormore6 = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Debtors > 6 months") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var profitbrought = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Profit brought forward") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var groupconot = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Group Co. Investments (Not Biz Related)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var groupco = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Group Co. Investments (Biz Related)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var calcpbslpos = fm.RTR.PBSLPOS
+        var calclosewithin = fm.RTR.CloseWithin3MonthPOS
+        var calcbalancetrans = fm.RTR.BalancePOS
+        var calcsundrycred = sundrycred;
+        var calctotaloutsidedebt = longterm + capitallimit + unsecureloan;
+        var calclimit = fm.AccountDetails.LDRequestedLimitAmount;
+
+        var calcleverage0 = calclimit + calctotaloutsidedebt + calcsundrycred + calcpbslpos - calclosewithin - calcbalancetrans;
+
+        var calcinvestment = groupconot+unqouted;
+        var calctotalincome = sales+bussincome+nonbussincome;
+        var calcsharecap = sharecapital;
+        var calcloanadv = loanandadv ;
+        var calcadjustednet = calctotalincome > 0 ? calcsharecap + reserves + unsecureloanpartner - miscexp  - calcinvestment - calcloanadv - debtormore6 + ( profitbrought - groupco ) : 0;
+        var value = calcleverage0 / calcadjustednet;
+        
+        var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
+
+        row.Category = categoryAndScore.category
+        row.Score = categoryAndScore.score
+        row.WeightScore = row.Score * row.Weight / 100
+        row.Value = value
+        row.Expand = false
+        row.Children = [{
+            Id: "b01",
+            Name: "( Amount of Limit to Customer +",
+            Value: calclimit
+        }, {
+            Id: "b01",
+            Name: "Total Outside Debts  +",
+            Value: calctotaloutsidedebt,
+            Expand: true,
+            Children: [{
+                Id: "bs01",
+                Name: "Long Term Loans from Banks/FI -AL  +",
+                Value: longterm
+            }, {
+                Id: "bs02",
+                Name: "Working Capital Limits from Banks/FI's (OD / CC) +",
+                Value: capitallimit
+            }, {
+                Id: "bs03",
+                Name: "Unsecured loans  (Bank & Financial Institutions)",
+                Value: unsecureloan
+            }]
+        }, {
+            Id: "b02",
+            Name: "Sundry Creditors + ",
+            Value: calcsundrycred
+        }, {
+            Id: "b03",
+            Name: "P.B.S.L. POS +",
+            Value: calcpbslpos
+        }, {
+            Id: "b04",
+            Name: "Close Within 3 Month (POS in Lacs) +",
+            Value: calclosewithin
+        }, {
+            Id: "b05",
+            Name: "Balance Transfer (POS) ) /",
+            Value: calcbalancetrans
+        },
+        {
+            Id: "b06",
+            Name: "Adjusted NET WORTH",
+            Value: calcadjustednet,
+            Expand :true,
+            Children :[{
+                Id: "bs01",
+                Name: "IF Total Income > 0",
+                Value: calctotalincome,
+                Expand: true,
+                Children: [{
+                    Id: "bt01",
+                    Name: "Sales/Receipts +",
+                    Value: sales
+                }, {
+                    Id: "bt02",
+                    Name: "Other Income (part of Business Income)  +",
+                    Value: bussincome
+                }, {
+                    Id: "bt03",
+                    Name: "Other Income (Non Business income)",
+                    Value: nonbussincome
+                }]
+            }, {
+                Id: "bs02",
+                Name: "{ Share Capital +",
+                Value: sharecapital
+            }, {
+                Id: "bs03",
+                Name: "Reserves & Surplus(excluding revaluation reserve) +",
+                Value: reserves
+            }, {
+                Id: "bs04",
+                Name: "Unsecured loans from partners/shareholders (ICDs incl.) -",
+                Value: unsecureloanpartner
+            }, {
+                Id: "bs05",
+                Name: "Misc Exp. (DRE+PreOp+Prelim+Acc P&L) - ",
+                Value: miscexp
+            }, {
+                Id: "bs06",
+                Name: "Investments (excl. Biz related) - ",
+                Value: calcinvestment,
+                Expand: true,
+                Children: [{
+                    Id: "bt01",
+                    Name: "Group Co. Investments (Not Biz Related) + ",
+                    Value: groupconot
+                }, {
+                    Id: "bt02",
+                    Name: "Unquoted/Dead Investments (Non Biz Related)i.e. shares, gold, chit fund",
+                    Value: unqouted,
+                }]
+            }, {
+                Id: "bs07",
+                Name: "Loans & Adv  to directors/partners etc (ICDs)/Diversions -",
+                Value: loanandadv
+            }, {
+                Id: "bs08",
+                Name: "Debtors > 6 months +",
+                Value: debtormore6,
+            }, {
+                Id: "bs09",
+                Name: "(Profit brought forward - ",
+                Value: profitbrought
+            }, {
+                Id: "bs10",
+                Name: "Group Co. Investments (Biz Related)) }",
+                Value: groupco
+            }, {
+                Id: "bs11",
+                Name: "ELSE IF TOTAL INCOME = 0"
+            }, {
+                Id: "b12",
+                Name: "Display 0"
+            }]
+        }]
+    }
+
+    csc().calculateDSCR = function (fm, row) {
+        var lastAudited = csc().getLastAuditedDate()
+
+        var sales = fm.BalanceSheet.FormData.find(function (d) {
+            return (d.FieldName.toLowerCase().indexOf('sales') > -1)
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var salesdatacur = sales
+
+        var bussincome = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Other Income (part of Business Income)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var openingstock = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Opening Stock") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var purchases = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Purchases") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var closingstock = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Closing Stock") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var directexpense = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Direct expenses") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var adminis = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Administrative Expenses + any other exps") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var selling = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Selling & Distribution Expenses") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var salary = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Salary to Partner/Director") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var interestFI = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Interest to FI/Banks") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var salesExcl = salesdatacur + bussincome
+
+        var closingStockDoubled = closingstock * 2
+        var costOfSales = (openingstock + purchases + closingstock + directexpense) - closingStockDoubled
+        var grossProfit = salesExcl - costOfSales
+
+        var adminOtherExpense = adminis + selling + salary
+
+        var ebdit = grossProfit - adminOtherExpense
+
+        var calcsalesexc = sales + bussincome;
+        var calccostofsales = costOfSales
+        var calcadminis = 0 // csc().datapoint()["calcadminis"];
+        var EMIAMount12 = fm.RTR.EMI
+        var EMIBalance = fm.RTR.EMIBalance
+        var yearRepayment = fm.RTR.YearlyRepayment * 100000;
+
+        var limit = fm.AccountDetails.LDRequestedLimitAmount * 100000;
+        var proposedROI = fm.AccountDetails.LDProposedRateInterest / 100;
+        var proposedROI16percent = proposedROI; 
+        var divider = 100000
+        var approx = limit + (proposedROI16percent * divider)
+
+        var totalYearRepayment = yearRepayment; 
+        var value = ebdit / (totalYearRepayment / divider)
+
+        var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
+
+        row.Category = categoryAndScore.category
+        row.Score = categoryAndScore.score
+        row.WeightScore = row.Score * row.Weight / 100
+        row.Value = value
+        row.Expand = false
+        row.Children = [{
+            Id: "a01",
+            Name: "EBDIT /",
+            Value: ebdit,
+            Expand: false,
+            Children: [{
+                Id: "a02",
+                Name: "Gross Profits -",
+                Value: grossProfit,
+                Expand: false,
+                Children: [{
+                    Id: "a03",
+                    Name: "Sales excl other incomes (Net Of excise) -",
+                    Value: salesExcl,
+                    Expand: false,
+                    Children: [{
+                        Id: "a04",
+                        Name: "Sales/Receipts +",
+                        Value: salesdatacur
+                    }, {
+                        Id: "a05",
+                        Name: "Other Income (part of Business Income)",
+                        Value: bussincome
+                    }]
+                }, {
+                    Id: "a06",
+                    Name: "Cost of Sales",
+                    Value: costOfSales,
+                    Expand: false,
+                    Children: [{
+                        Id: "a07",
+                        Name: "( Opening Stock  +",
+                        Value: openingstock,
+                    }, {
+                        Id: "a08",
+                        Name: "Purchases +",
+                        Value: purchases,
+                    }, {
+                        Id: "a09",
+                        Name: "Closing Stock +",
+                        Value: closingstock,
+                    }, {
+                        Id: "a10",
+                        Name: "Direct expenses ) -",
+                        Value: directexpense,
+                    }, {
+                        Id: "a11",
+                        Name: "Closing Stock*2",
+                        Value: closingStockDoubled,
+                    }]
+                }]
+            }]
+        },{ 
+            Id: "a02",
+            Name: "(Interest to FI and Banks +",
+            Value: interestFI,
+            Expand: false
+        },{ 
+            Id: "a03",
+            Name: "Approximate X10 Interest (B) in Rs. )/",
+            Value: approx,
+            Expand: false
+        },{ 
+            Id: "a04",
+            Name: "100000",
+            Value: divider,
+            Expand: false
+        }]
+    }
+
+    csc().calculateInterestCoverage = function (fm, row) {
+        var lastAudited = csc().getLastAuditedDate()
+
+        var sales = fm.BalanceSheet.FormData.find(function (d) {
+            return (d.FieldName.toLowerCase().indexOf('sales') > -1)
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var bussincome = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Other Income (part of Business Income)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var openingstock = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Opening Stock") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var purchases = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Purchases") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var closingstock = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Closing Stock") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var directexpense = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Direct expenses") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var adminis = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Administrative Expenses + any other exps") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var selling = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Selling & Distribution Expenses") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var salary = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Salary to Partner/Director") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var interestFI = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Interest to FI/Banks") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var salesdatacur = sales
+
+        var salesExcl = salesdatacur + bussincome
+
+        var closingStockDoubled = closingstock * 2
+        var costOfSales = (openingstock + purchases + closingstock + directexpense) - closingStockDoubled
+        var grossProfit = salesExcl - costOfSales
+
+        var adminOtherExpense = adminis + selling + salary
+
+        var ebdit = grossProfit - adminOtherExpense;
+
+        var calcsalesexc = sales + bussincome;
+        var calccostofsales = costOfSales
+        var calcadminis = 0 // csc().datapoint()["calcadminis"];
+        var EMIAMount12 = fm.RTR.EMI
+        var EMIBalance = fm.RTR.EMIBalance
+        var yearRepayment = fm.RTR.YearlyRepayment * 100000;
+        var limit = fm.AccountDetails.LDRequestedLimitAmount * 100000;
+        var proposedROI = fm.AccountDetails.LDProposedRateInterest;
+        var proposedROI16percent = (proposedROI / 100)
+        var divider = 100000
+        var approx = limit * proposedROI16percent
+
+        var totalYearRepayment = (EMIAMount12 + yearRepayment + approx)
+        var value = ebdit / ( interestFI + approx / divider )
+
+        var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
+        row.Category = categoryAndScore.category
+        row.Score = categoryAndScore.score
+        row.WeightScore = row.Score * row.Weight / 100
+        row.Value = value
+        row.Expand = false
+        row.Children = [{
+            Id: "a01",
+            Name: "EBDIT /",
+            Value: ebdit,
+            Expand: false,
+            Children: [{
+                Id: "a02",
+                Name: "Gross Profits -",
+                Value: grossProfit,
+                Expand: false,
+                Children: [{
+                    Id: "a03",
+                    Name: "Sales excl other incomes (Net Of excise) -",
+                    Value: salesExcl,
+                    Expand: false,
+                    Children: [{
+                        Id: "a04",
+                        Name: "Sales/Receipts +",
+                        Value: salesdatacur
+                    }, {
+                        Id: "a05",
+                        Name: "Other Income (part of Business Income)",
+                        Value: bussincome
+                    }]
+                }, {
+                    Id: "a06",
+                    Name: "Cost of Sales",
+                    Value: costOfSales,
+                    Expand: false,
+                    Children: [{
+                        Id: "a07",
+                        Name: "( Opening Stock  +",
+                        Value: openingstock,
+                    }, {
+                        Id: "a08",
+                        Name: "Purchases +",
+                        Value: purchases,
+                    }, {
+                        Id: "a09",
+                        Name: "Closing Stock +",
+                        Value: closingstock,
+                    }, {
+                        Id: "a10",
+                        Name: "Direct expenses ) -",
+                        Value: directexpense,
+                    }, {
+                        Id: "a11",
+                        Name: "Closing Stock*2",
+                        Value: closingStockDoubled,
+                    }]
+                }]
+            }]
+        },{ 
+            Id: "a02",
+            Name: "(Interest to FI and Banks +",
+            Value: interestFI,
+            Expand: false
+        },{ 
+            Id: "a03",
+            Name: "Approximate X10 Interest (B) in Rs. )/",
+            Value: approx,
+            Expand: false
+        },{ 
+            Id: "a04",
+            Name: "100000",
+            Value: divider,
+            Expand: false
+        }]
+    }
+
+    csc().calculateWorkingCapital = function (fm, row) {
+        var lastAudited = csc().getLastAuditedDate()
+
+        var sales = fm.BalanceSheet.FormData.find(function (d) {
+            return (d.FieldName.toLowerCase().indexOf('sales') > -1)
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var openingstock = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Opening Stock") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var purchases = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Purchases") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var closingstock = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Closing Stock") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var directexpense = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Direct expenses") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var bussincome = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Other Income (part of Business Income)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var nonbussincome = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Other Income (Non Business income)") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var debtormore6 = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Debtors > 6 months") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var debotrless6 = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Debtors < 6 months") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var inventories = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Inventories") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+        var sundrycred = fm.BalanceSheet.FormData.find(function (d) {
+            return d.FieldName.indexOf("Sundry Creditors") > -1
+        }).Values.find(function (d) {
+            return d.Date == lastAudited
+        }).Value
+
+
+        var salesdatacur = sales
+        var calcsales = salesdatacur
+        var totalincome = sales+bussincome+nonbussincome;
+
+        var closingStockDoubled = closingstock * 2
+        var costOfSales = (openingstock + purchases + closingstock + directexpense) - closingStockDoubled
+        var calccostofsales = costOfSales
+
+        var calcreceivedebtor = debtormore6 + debotrless6;
+        var calcdebtordays = calcreceivedebtor / calcsales*365;
+        var calccostofgoods = calccostofsales
+        var calcstockdays = inventories / calccostofgoods * 365;
+        calcstockdays = isFinite(calcstockdays) ? calcstockdays : 0;
+        var calccreditordays = sundrycred / calccostofgoods * 365;
+        calccreditordays = isFinite(calccreditordays) ? calccreditordays : 0;
+        var calcnetworkingcapitalcyc = calcdebtordays + calcstockdays - calccreditordays;
+        var value = totalincome > 0 ? calcnetworkingcapitalcyc : 0;
+
+        var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
+
+        row.Category = categoryAndScore.category
+        row.Score = categoryAndScore.score
+        row.WeightScore = row.Score * row.Weight / 100
+        row.Value = value
+        row.Expand = false
+        row.Children = [{
+                Id: "e01",
+                Name: "IF TOTAL INCOME > 0",
+                Value: kendo.toString(totalincome,'N2')
+            }, {
+                Id: "e02",
+                Name: "Net Working Capital Cycle",
+                Value: 0,
+                Expand: false,
+                Children: [{
+                    Id: 'ea01',
+                    Name: "(     Debtor Days +",
+                    Value: kendo.toString(calcdebtordays,'N2')
+                }, {
+                    Id: 'ea02',
+                    Name: "Stock Days - ",
+                    Value: kendo.toString(calcstockdays,'N2'),
+                    Expand: false,
+                    Children: [{
+                        Id: 'eab01',
+                        Name: "Inventories / ",
+                        Value:  inventories,
+                    }, {
+                        Id: 'eab02',
+                        Name: "  (  Cost of Goods Sold (COGS) *",
+                        Value: calccostofgoods,
+                        Expand: false,
+                        Children: [{
+                            Id: 'eaba01',
+                            Name: '( Opening Stock  +',
+                            Value: openingstock
+                        }, {
+                            Id: 'eaba02',
+                            Name: 'Purchases + ',
+                            Value: purchases
+                        }, {
+                            Id: 'eaba03',
+                            Name: 'Closing Stock + ',
+                            Value: closingstock
+                        }, {
+                            Id: 'eaba04',
+                            Name: 'Direct expenses ) - ',
+                            Value: directexpense
+                        }, {
+                            Id: 'eaba05',
+                            Name: 'Closing Stock*2',
+                            Value: closingstock*2
+                        }]
+                    }, {
+                        Id: 'eab03',
+                        Name: "365 )",
+                        Value: 365
+                    }]
+                }, {
+                    Id: 'ea03',
+                    Name: "Creditor Days     )",
+                    Value:kendo.toString(calccreditordays,"N2"),
+                    Expand: false,
+                    Children: [{
+                        Id: 'eac01',
+                        Name: 'Sundry Creditors /',
+                        Value: sundrycred
+                    }, {
+                        Id: 'eac02',
+                        Name: '(   Cost of Goods Sold (COGS) *',
+                        Value: calccostofgoods,
+                        Expand: false,
+                        Children: [{
+                            Id: 'eabc01',
+                            Name: '( Opening Stock  +',
+                            Value: openingstock
+                        }, {
+                            Id: 'eabc02',
+                            Name: 'Purchases + ',
+                            Value: purchases
+                        }, {
+                            Id: 'eabc03',
+                            Name: 'Closing Stock + ',
+                            Value: closingstock
+                        }, {
+                            Id: 'eabc04',
+                            Name: 'Direct expenses ) - ',
+                            Value: directexpense
+                        }, {
+                            Id: 'eabc05',
+                            Name: 'Closing Stock*2',
+                            Value: closingstock*2
+                        }]
+                    }, {
+                        Id: 'eac03',
+                        Name: '365  )',
+                        Value: 365
+                    }]
+                }]
+            }, {
+                Id: "e03",
+                Name: "ELSE IF TOTAL INCOME = 0",
+                Value: 0
+            }, {
+                Id: "e04",
+                Name: "NA",
+                Value: 0
+            }]
+    }
+
+    csc().calculateEMITrack = function (fm, row) {
+        var sancLimit = fm.BankingAnalysis.SactionLimit
+        var dpdTrack = fm.RTR.DPDTrack
+
+        row.Value = sancLimit
+        row.Expand = false
+        row.Children = [{
+            Id: 'w01',
+            Name: 'Sanction Limit',
+            Value: sancLimit,
+        }, {
+            Id: 'w02',
+            Name: 'Max of DPD track',
+            Value: dpdTrack,
+        }]
+    }
+
+    csc().calculateODCCABBEMI = function (fm, row) {
+        var isCurrent = (fm.BankingAnalysisRawDetails.filter(function (d) {
+            return d.DataBank[0].BankAccount.FundBased.AccountType == "Current"
+        })) == fm.BankingAnalysisRawDetails.length
+
+        var ODCCValue = ''
+        var ABBOFEMIValue = ''
+        var ABBValue = ''
+        var EMIValue = ''
+
+        if (isCurrent) {
+            var op2 = fm.BankingAnalysisRawDetails.map(function (d) {
+                var avgBalon = _.sumBy(d.DataBank[0].BankDetails, 'AvgBalon')
+                var length = d.DataBank[0].BankDetails.length
+
+                return toolkit.number(avgBalon / length)
+            })
+
+            var limitAmount = fm.AccountDetails.LDRequestedLimitAmount
+            var rateInterest = fm.AccountDetails.LDProposedRateInterest
+            var limitTenor = fm.AccountDetails.LDLimitTenor
+
+            var abb = toolkit.number(_.sum(op2) / op2.length)
+            var emi = toolkit.number((limitAmount * (1 + rateInterest / 100)) / limitTenor)
+
+            var value = toolkit.number(abb / emi)
+            var categoryAndScore = csc().calculateCategoryAndScore(fm, "Banking", row.Name, value, function (d) {
+                return (d.Categories.toLowerCase().indexOf('emi') > -1)
+            })
+
+            ABBValue = kendo.toString(abb, 'n2')
+            EMIValue = kendo.toString(emi, 'n2')
+            ABBOFEMIValue = kendo.toString(value, 'p2')
+
+            row.Category = categoryAndScore.category
+            row.Score = categoryAndScore.score
+            row.WeightScore = row.Score * row.Weight / 100
+            row.Value = value
+        } else {
+            var op1 = fm.BankingAnalysisRawDetails.map(function (d) {
+                var max = _.max(_.map(d.DataBank[0].BankDetails, function (e) {
+                    return toolkit.number(e.AvgBalon / e.OdCcLimit)
+                }))
+
+                return max
+            })
+
+            var value = toolkit.number(_.sum(op1) / op1.length) * 100
+            var categoryAndScore = csc().calculateCategoryAndScore(fm, "Banking", row.Name, value, function (d) {
+                return (d.Categories.toLowerCase().indexOf('emi') == -1)
+            })
+
+            ODCCValue = kendo.toString(value, 'p2')
+
+            row.Category = categoryAndScore.category
+            row.Score = categoryAndScore.score
+            row.WeightScore = row.Score * row.Weight / 100
+            row.Value = kendo.toString(value) + '%'
+        }
+
+        row.Expand = false
+        row.Children = [{
+            Id: 'w07',
+            Name: 'If (A/C type is OD/CC)<br />and Max(OD/CC Utilization per month)>0)<br />then Max(OD/CC Utilization per month)<br />else<br />" "',
+            Value: ODCCValue,
+            Expand: false,
+            Children: [{
+                Id: 'w08',
+                Name: "OD/CC Utilization per month = ('Avg. Bal on 1+7+14+21+28')/(OD/CC Limit per Months)",
+                Value: ODCCValue
+            }]
+        }, {
+            Id: 'w09',
+            Name: "If (A/C type is Current)<br />and check if ABB <75% of EMI<br />ABB=>75% to 90% of EMI<br />ABB =>90% to 100% of EMI<br />ABB >100% of EMI",
+            Value: ABBOFEMIValue,
+            Expand: false,
+            Children: [{
+                Id: 'w10',
+                Name: "ABB = Average (Current Account<br />Average Balance)",
+                Value: ABBValue,
+                Expand: false,
+                Children: [{
+                    Id: 'w12',
+                    Name: 'Current Account Average Balance =<br />Sum of Current Account Average Balance for all Banks / Count of Current Account Average Balance',
+                    Value: ABBValue,
+                    Expand: false,
+                    Children: [{
+                        Id: 'w13',
+                        Name: 'Current Account Average Balance for each bank = Sum of Avg. Bal on 1+7+14+21+28 / Count of Avg. Bal on 1+7+14+21+28',
+                        Value: ABBValue,
+                        Expand: false,
+                    }]
+                }]
+            }, {
+                Id: 'w14',
+                Name: "EMI = [ Proposed amount * (1+Proposed Rate/100) ] / Limit Tenor",
+                Value: EMIValue
+            }]
+        }]
+    }
+
+</script>
+
+{{template "form.html"}}

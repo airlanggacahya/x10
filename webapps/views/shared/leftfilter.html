@@ -1,0 +1,33 @@
+<div id="sidebar-wrapper">
+<ul class="sidebar-nav">
+    <li class="lilabel">Customer ID | Name</li>
+    <li><select name="page" id="customer"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+     <li class="lilabel">Deal Number</li>
+    <li><select name="page" id="role"  data-bind="kendoDropDownList: {data:filter().DealNumberSearchList, value:filter().DealNumberSearchVal , optionLabel: 'Select One' , filter:'contains'}"></select></li>
+     <li class="lilabel">Relationship Manager</li>
+    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+     <li class="lilabel">Location</li>
+    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+     <li class="lilabel">Branch</li>
+    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+     <li class="lilabel">Customer Location</li>
+    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+     <li class="lilabel">Turnover</li>
+    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+     <li class="lilabel">Time Period</li>
+    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+    <li>
+      <div class="mgtop10">
+          <button type="button" id="add" class="btn btn-sm btn-success side-reset"><span class="glyphicon glyphicon-repeat"></span> Reset</button>
+           <button type="button" id="add" class="btn btn-sm btn-primary side-refresh "><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
+      </div>
+    </li>
+</ul>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#sidebar-wrapper").hide()
+        $("#sidebar-wrapper").width(0)
+    })
+</script>

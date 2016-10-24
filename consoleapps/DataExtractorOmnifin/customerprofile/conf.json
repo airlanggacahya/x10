@@ -1,0 +1,12 @@
+[{
+	"mysqldbname" : "x10_db",
+	"mysqluser" : "root",
+	"mysqlpassword" : "admin",
+	"mysqlhost":"127.0.0.1:3306",
+	"mongodbname" : "x10",
+	"mongouser" : "",
+	"mongopassword" : "",
+	"mongohost":"127.0.0.1:27017",
+	"timeinterval":1,
+	"tables":["cr_financial_data_dtl","gcd_customer_m","com_address_m","cr_repaysch_dtl"]
+}]

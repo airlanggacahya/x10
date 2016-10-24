@@ -1,0 +1,60 @@
+<style>
+    .no-padding{
+        padding-left : 0px;
+        padding-right : 0px;
+    }
+    .summary{
+        padding-left : 10px;
+    }
+</style>
+
+<script type="text/html" id="topcust-product-template">
+    <!-- ko foreach: loanApproval.companyBackgroundData().mostLength -->
+        <tr>
+            <!-- ko if: $index() == 0 -->
+                <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
+                    Top Customers Name
+                </td>
+                <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
+                <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
+                    Products
+                </td>
+                <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
+            <!-- /ko -->
+            <!-- ko ifnot: $index() == 0 -->
+                <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
+                <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
+            <!-- /ko -->
+        </tr>
+    <!-- /ko -->
+</script>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="compbackgrid"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="k-grid">
+                <table class="table-bordered" style="word-break: break-word" data-bind="template: { name: 'topcust-product-template' }">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="k-grid">
+                <table class="table-bordered">
+                    <tr>
+                        <td class="col-sm-2 center text-bold">Expansion Plan</td>
+                        <td class="col-sm-4" data-bind="text:loanapproval.expansionplan"></td>
+                        <td class="col-sm-2 center text-bold">Comments On Financial</td>
+                        <td class="col-sm-4" data-bind="text:loanapproval.commentfinance"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

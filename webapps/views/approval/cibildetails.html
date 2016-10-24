@@ -1,0 +1,18 @@
+<div class="panel-default content no-padding">
+    
+    <div class="panel-heading text-center">Cibil Details</div>
+    <div class="panel-body">
+        <div class="col-md-4 no-padding" style="padding-right: 4px; margin-top: 30px;text-align:center;">
+            <!--<div><input class="input-sm form-control" data-bind="value: ko.computed(function () { return kendo.toString(mincibilscore(), 'n2') }, mincibilscore)" type="text" style="width: 100%;" disabled></div>-->
+            <div><span class="number-label" data-bind="text: ko.computed(function () { return kendo.toString(mincibilscore(), 'n0') }, mincibilscore)"></span></div>
+            <div><label>Minimum CIBIL Score</label></div>
+        </div>
+
+        <div class="col-md-8 no-padding" style="padding-left: 4px;">
+            <div><div id="cibilchart" style="height: 100px;"></div></div>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+</div>
+

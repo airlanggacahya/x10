@@ -1,0 +1,411 @@
+<script type="text/javascript">
+  customerprofile().ApplicantDetail = ko.observable(ApplicantDetail)
+  var ApplicantDetail = {
+    // TIN : ko.observable(""),
+    // TAN : ko.observable(""),
+    // RN : ko.observable(""),
+    // AnyOther : ko.observable(""),
+    // Name : ko.observable(""),
+    // ConstitutionEntityValue : ko.observable(""),
+    DateIncorporation : ko.observable(),
+    // PAN : ko.observable(0),
+    // CIN : ko.observable(0),
+    // GroupTurnOver : ko.observable(''),
+    // AmountOfLoan : ko.observable(''),
+    // NatureBusinessValue : ko.observable(""),
+    // YB : ko.observable(0),
+    // TotalEmployee : ko.observable(0),
+    // ATO : ko.observable(0),
+    // CEP : ko.observable(0),
+    // UGC : ko.observable(0),
+    // AmountofLoanRequestInFigures : ko.observable(0),
+    Detail : ko.observableArray([]),
+    // Office : ko.observableArray(["Owned","Rented"]),
+  };
+
+   customerprofile().ddl = ko.observable({
+    ConstitutionEntity : ko.observableArray(["Limited Liability Partnership","Partnership Concern","Proprietorship Concern","Private Limited Company","Proprietorship Concern","Others","PRIVATE"]),
+    NatureBusiness : ko.observableArray(["Manufacturing","Service","Trading","Others","SME"]),
+   })
+
+   customerprofile().ApplicantDetail.subscribe(function(val){
+    customerprofile().ApplicantDetail().AnnualTurnOver= val.AnnualTurnOver;
+   })
+
+  ApplicantDetail.Detail.push(
+  //   {
+  //     Title: ko.observable("Registered Address"),
+  //     Id: ko.observable(""),
+  //     Address: ko.observable(""),
+  //     City: ko.observable(""),
+  //     CityList: ko.observableArray([]),
+  //     State: ko.observable(""),
+  //     Phone: ko.observable(""),
+  //     Mobile: ko.observable(""),
+  //     CP: ko.observable(""),
+  //     Email: ko.observable(""),
+  //     OfficeValue: ko.observable(""),
+  //     NoYaaa: ko.observable(""),
+  //     AreaPlot: ko.observable(""),
+  //     BuildupArea: ko.observable(""),
+  //   }
+  // );
+
+  // ApplicantDetail.Detail.push(
+  //   {
+  //     Title: ko.observable("Address for Correspondence"),
+  //     Id: ko.observable(""),
+  //     Address: ko.observable(""),
+  //     City: ko.observable(""),
+  //     CityList: ko.observableArray([]),
+  //     State: ko.observable(""),
+  //     Phone: ko.observable(""),
+  //     Mobile: ko.observable(""),
+  //     CP: ko.observable(""),
+  //     Email: ko.observable(""),
+  //     OfficeValue: ko.observable(""),
+  //     NoYaaa: ko.observable(""),
+  //     AreaPlot: ko.observable(""),
+  //     BuildupArea: ko.observable(""),
+  //   }
+  // );
+
+  // ApplicantDetail.Detail.push(
+  //   {
+  //     Title: ko.observable("Site/Work Address"),
+  //     Id: ko.observable(""),
+  //     Address: ko.observable(""),
+  //     City: ko.observable(""),
+  //     CityList: ko.observableArray([]),
+  //     State: ko.observable(""),
+  //     Phone: ko.observable(""),
+  //     Mobile: ko.observable(""),
+  //     CP: ko.observable(""),
+  //     Email: ko.observable(""),
+  //     OfficeValue: ko.observable(""),
+  //     NoYaaa: ko.observable(""),
+  //     AreaPlot: ko.observable(""),
+  //     BuildupArea: ko.observable(""),
+  //   }
+  );
+</script>
+
+<ul class="collapsible" data-collapsible="accordion">
+  <li class="panel">
+    <div class="panel-heading"><h5 class="no-margin">General Details</h5></div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-6">
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Name of the Applicant :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm" validationMessage="Any Other required" required data-bind="value:customerprofile().ApplicantDetail().CustomerName"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputPassword3" class="col-sm-4 form-control-label">Constitution of the Entity :</label>
+            <div class="col-sm-8">
+              <!-- <select name="page" id="a" data-bind="kendoDropDownList: {data:customerprofile().ddl().ConstitutionEntity(), value:customerprofile().ApplicantDetail().CustomerConstitution , optionLabel: 'Select One'}" ></select> -->
+               <input type="text" class="form-control input-sm" validationMessage="required" required data-bind="value:customerprofile().ApplicantDetail().CustomerConstitution"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Date of Incorporation :</label>
+            <div class="col-sm-8">
+              <!-- <input type="text" id="di" class="form-control input-sm" validationMessage="Date Incorporation required" required data-bind="kendoDatePicker:{value:customerprofile().ApplicantDetail().DateOfIncorporation,format: 'dd-MM-yyyy'}"/> -->
+                <input type="text" id="doi" class="form-control input-sm" validationMessage="Any Other required" required data-bind="kendoDatePicker: {value:ApplicantDetail.DateIncorporation, format:  'dd-MM-yyyy'}"/>
+            </div>
+          </div>
+
+          <!-- <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Any Other :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm" validationMessage="Any Other required" required data-bind="value:customerprofile().ApplicantDetail().AnyOther"/>
+            </div>
+          </div> -->
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">Tax Identification Number </span>(TIN) :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm" validationMessage="Tax Identification Number required" required data-bind="value:customerprofile().ApplicantDetail().TIN"/>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-sm-6">
+
+
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">Tax Account Number </span>(TAN) :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm" validationMessage="Tax Account Number required" required data-bind="value:customerprofile().ApplicantDetail().TAN"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Registration Number :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm" validationMessage="Registration Number required" required data-bind="value:customerprofile().ApplicantDetail().CustomerRegistrationNumber"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">PAN Number :</label>
+            <div class="col-sm-8">
+              <!-- <input type="number" class="form-control input-sm" validationMessage="PAN required" required data-bind="value:customerprofile().ApplicantDetail().PAN"/> -->
+              <input type="text" class="form-control input-sm" validationMessage="PAN required" required data-bind="value:customerprofile().ApplicantDetail().CustomerPan"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">CIN Number :</label>
+            <div class="col-sm-8">
+              <!-- <input type="number" class="form-control input-sm" validationMessage="PAN required" required data-bind="value:customerprofile().ApplicantDetail().PAN"/> -->
+              <input type="text" class="form-control input-sm" validationMessage="CIN required" required data-bind="value:customerprofile().ApplicantDetail().CIN"/>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </li>
+  <li class="panel">
+    <div class="panel-heading"><h5 class="no-margin">Company Background Details</h5></div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group col-sm-12">
+            <label for="inputPassword3" class="col-sm-4 form-control-label">Nature of Business :</label>
+            <div class="col-sm-8">
+              <!-- <select name="page" id="b" data-bind="kendoDropDownList: {data:customerprofile().ddl().NatureBusiness(), value:customerprofile().ApplicantDetail().NatureOfBussiness , optionLabel: 'Select One'}" ></select> -->
+                <input class="form-control input-sm" validationMessage="required" required data-bind="value:customerprofile().ApplicantDetail().NatureOfBussiness"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">No. of Years in Business :</label>
+            <div class="col-sm-8">
+              <input type="number" class="form-control input-sm" validationMessage="No. of Years in Business required" required data-bind="value:customerprofile().ApplicantDetail().YearsInBusiness"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">No. of Employees :</label>
+            <div class="col-sm-8">
+              <input type="number" class="form-control input-sm" validationMessage="No. of Employees required" required data-bind="value:customerprofile().ApplicantDetail().NoOfEmployees" placeholder="info not available" />
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Annual Turnover :</label>
+            <div class="col-sm-8">
+              <input type="number" class="form-control input-sm" validationMessage="Annual Turnover required" required data-bind="value:customerprofile().ApplicantDetail().AnnualTurnOver"/>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-sm-6">
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">User Group Companies :</label>
+            <div class="col-sm-8">
+              <input class="form-control input-sm" validationMessage="User Group Companies required" required data-bind="value:customerprofile().ApplicantDetail().UserGroupCompanies"/>
+            </div>
+          </div>
+<!--
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Capital Expansion Plans (If any) :</label>
+            <div class="col-sm-8">
+              <input type="number" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().CapitalExpansionPlans"  placeholder="info not available"/>
+              <label class="radio-inline"><input id="CapitalExpansionPlansBoolNone" data-switch-no-init="true" type="radio" name="CapitalExpansionPlansBool"  onclick="CapitalExpansionPlansBool(false)">None</label>
+              <label class="radio-inline"><input id="CapitalExpansionPlansBoolDetail" data-switch-no-init="true" type="radio" name="CapitalExpansionPlansBool"  onclick="CapitalExpansionPlansBool(true)">Enter Details</label>
+            </div>
+          </div> -->
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Group Turnover :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().GroupTurnOver"  placeholder="Group Turnover not available"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Requested Loan Amount (Rs.) :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().AmountLoan"/>
+            </div>
+          </div>
+
+         <!--  <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Second Line of Business :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Orders in Hand :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Projects Completed :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Person who started business :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm"/>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-12">
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Person currently running business :</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control input-sm"/>
+            </div>
+          </div> -->
+        </div>
+
+        <!-- <div class="form-group col-sm-12">
+          <label for="inputEmail3" class="col-sm-4 form-control-label">Requested Loan Amount (Rs.) :</label>
+          <div class="col-sm-8">
+            <input type="number" class="form-control input-sm" validationMessage="Requested Loan Amount (Rs.) required" required data-bind="value:customerprofile().ApplicantDetail().AmountofLoanRequestInFigures"/>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </li>
+  <li class="panel">
+    <div class="panel-heading"><h5 class="no-margin">Company Address Details</h5></div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12" data-bind="foreach: ApplicantDetail.Detail">
+          <div class="col-sm-4 well well-sm">
+            <h4 data-bind="text:Title"></h4>
+
+            <!-- <input type="hidden" data-bind="value:Id"> -->
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Address :</label>
+              <div class="col-sm-8">
+                <textarea class="form-control input-sm" data-bind="value:AddressRegistered"></textarea>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Landmark :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:LandmarkRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">City :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:CityRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Pin Code :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:PincodeRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">State :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:StateRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Tel1 :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:PhoneRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Mobile No. :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:MobileRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Contact Person :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:ContactPersonRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Email :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:EmailRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Office :</label>
+              <div class="col-sm-8">
+                <!-- <select name="page" id="c" data-bind="kendoDropDownList: {data:ApplicantDetail.Office, value:OfficeValue , optionLabel: 'Select One'}" ></select> -->
+                <input type="text" class="form-control input-sm" data-bind="value:OfficeRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">No. of years at above address :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:NoOfYearsAtAboveAddressRegistered" />
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Area of Plot :</label>
+              <div class="col-sm-8">
+                <!-- <input type="text" class="form-control input-sm" data-bind="value:AreaOfPlotRegistered" /> -->
+                <div class="input-group">
+                  <input type="text" class="form-control input-sm" data-bind="value:AreaOfPlotRegistered" />
+                  <span class="input-group-addon" id="basic-addon2">sq. mts</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Built up Area :</label>
+              <div class="col-sm-8">
+                <!-- <input type="text" class="form-control input-sm" data-bind="value:BuiltUpAreaRegistered" /> -->
+                <div class="input-group">
+                  <input type="text" class="form-control input-sm" data-bind="value:BuiltUpAreaRegistered" />
+                  <span class="input-group-addon" id="basic-addon2">sq. mts</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12">
+              <label for="inputEmail3" class="col-sm-4 form-control-label">Market Value :</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control input-sm" data-bind="value:ValueRegistered" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>

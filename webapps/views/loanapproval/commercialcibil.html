@@ -1,0 +1,36 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="k-grid col-sm-6 no-padding">
+                <table class="table-bordered">
+                    <tr>
+                        <td class="col-sm-4 center text-bold">Assessment</td>
+                        <td class="col-sm-8" data-bind="text: loanApproval.commercialCibil.assessment"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="k-grid">
+                <table>
+                    <thead class="k-grid-header">
+                        <tr class="sub-bgcolor">
+                            <th class="col-sm-2 sub-bgcolor k-header">Name</th>
+                            <th class="col-sm-2 text-center sub-bgcolor k-header">Date</th>
+                            <th class="sub-bgcolor k-header">Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: loanApproval.commercialCibil.comments">
+                        <tr>
+                            <td data-bind="text: UserName"></td>
+                            <td class="center" data-bind="text: moment(DateInput).format('DD MMMM YYYY H:mm')"></td>
+                            <td data-bind="text: Comment"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

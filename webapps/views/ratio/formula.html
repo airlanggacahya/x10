@@ -1,0 +1,164 @@
+<script type="text/javascript">
+model.PageTopMenu("Data Masters");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Data Masters", "Data Masters", "#", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+</script>
+
+<script src="/static/core/ratio-formula.js"></script>
+
+<style>
+	.k-grid {
+		font-size: inherit;
+		font-family: inherit;
+	}
+	.btn.btn-tag {
+		background-color: #f9f9f9;
+	    border: none;
+	    pointer-events: none;
+	}
+	.btn.btn-tag.btn-primary {
+	    color: #337ab7;
+	}
+	.btn.btn-tag.btn-success {
+		color: #5cb85c;
+	}
+	.btn.btn-tag.btn-warning {
+		color: #f0ad4e;
+	}
+</style>
+
+<div data-bind="with: formula">
+	<div class="col-md-12 col-sm-12 ez panel-content">
+		<div class="panel ez">
+			<div class="panel-body">
+				<div class="filter col-md-12 no-padding hardcore align-right">
+					<button class="btn btn-sm btn-success">Add New</button>
+					<button class="btn btn-sm btn-primary">Refresh</button>
+					<button class="btn btn-sm btn-save">Save Changes</button>
+					<a class="btn btn-sm btn-primary" target="_blank" href="/ratio/input">View Result</a>
+				</div>
+				<!-- <div class="filter col-md-6">
+					<button class="btn btn-sm btn-primary" data-bind="click: save">
+						<i class="fa fa-save"></i> Save
+					</button>
+					<button class="btn btn-sm btn-primary" data-bind="click: addMoreColumn, visible: (r.customerId() != '')">
+						<i class="fa fa-plus"></i> Add more column
+					</button>
+				</div> -->
+				<div class="clearfix"></div>
+				<div style="padding-top: 10px;">
+					<div class="formula"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<!-- <div class="modal fade modal-add-new">
+	<div class="modal-dialog">
+		<form class="form-add">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">Form Add New</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row" data-bind="with: r.newData" />
+					    <div class="col-sm-12">
+					        <div class="form-group">
+					            <label class="col-sm-4 form-control-label align-right">Section :</label>
+					        	<div class="col-sm-6">
+				        			<input type="text" class="form-control input-sm" placeholder="Type Section name here" required data-bind="value: Section" onkeyup="r.emptyDropDown(this)" />
+					        	</div>
+					        	<div class="clearfix"></div>
+				        	</div>
+					    </div>
+					    <div class="col-sm-12">
+					        <div class="form-group">
+					        	<div class="col-sm-offset-4 col-sm-6">
+					        		<label class="col-sm-4 form-control-label">Or choose :</label>
+					        		<div class="col-md-8 no-padding hardcore">
+					        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: r.optionSection, value: Section, optionLabel: 'Select one' }"></select>
+					        		</div>
+					        	</div>
+					        	<div class="clearfix"></div>
+				        	</div>
+					    </div>
+					    <div class="col-sm-12">
+					        <div class="form-group">
+					            <label class="col-sm-4 form-control-label align-right">Sub Section :</label>
+					        	<div class="col-sm-6">
+				        			<input type="text" class="form-control input-sm" placeholder="Type Sub Section name here" data-bind="value: SubSection" onkeyup="r.emptyDropDown(this)" />
+					        	</div>
+					        	<div class="clearfix"></div>
+				        	</div>
+					    </div>
+					    <div class="col-sm-12">
+					        <div class="form-group">
+					        	<div class="col-sm-offset-4 col-sm-6">
+					        		<label class="col-sm-4 form-control-label">Or choose :</label>
+					        		<div class="col-md-8 no-padding hardcore">
+					        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: r.optionSubSection, value: SubSection, optionLabel: 'Select one' }"></select>
+					        		</div>
+					        	</div>
+					        	<div class="clearfix"></div>
+				        	</div>
+					    </div>
+					    <div class="col-sm-12">
+					        <div class="form-group">
+					            <label class="col-sm-4 form-control-label align-right">Field :</label>
+					        	<div class="col-sm-6">
+				        			<input type="text" class="form-control input-sm" placeholder="Type Field name here" required data-bind="value: Field" />
+					        	</div>
+					        	<div class="clearfix"></div>
+				        	</div>
+					    </div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-sm btn-primary">Save</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+<div class="modal fade modal-history">
+	<div class="modal-dialog" style="width: 900px;">
+		<form class="form-add">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">Show History</h4>
+				</div>
+				<div class="modal-body">
+					<div class="grid-history"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div> -->
+
+
+<style type="text/css">
+	.mar-20{
+		    margin-top: -20px;
+	}
+	.form-control-label {
+		margin-top: 5px;
+	}
+</style>

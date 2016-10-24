@@ -1,0 +1,129 @@
+
+<script type="text/javascript">
+model.PageTopMenu("Administrator");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Administrator", "Administrator", "#", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+
+</script>
+<script src="/static/core/role-setting.js"></script>
+<!-- <script src="/static/core/authentication.js"></script> -->
+<style type="text/css">
+  .modal-backdrop
+  {
+      opacity: 0 !important;
+      z-index: 0;
+  }
+  .bootstrap-switch{
+    margin-left: 4%;
+  }
+
+</style>
+<div  data-bind="with:rolesett">
+    <div class="col-md-9 col-sm-9 ez panel-content">
+        <div class="panel ez no-padding hardcore">
+          <div class="panel-heading">
+            <h3 class="no-margin">
+                &nbsp;
+            </h3>
+            <div class="panel-nav-button">
+              <button  type="button" class="btn btn-sm btn-success btn-flat" data-bind="click:AddNew"><i class="fa fa-plus"></i> Add New</button>
+              <button class="btn btn-sm btn-info tooltipster" title="Toggle Advanced Filter" data-bind="click: toggleFilter"><i class="fa fa-server"></i> Show Filter</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div data-bind="visible:loading">
+              <center class="align-center">
+                  <h5>Please wait while processing your request</h5>
+                  <img src="/static/img/loader.gif" alt="Loading..." />
+              </center>
+            </div>
+            <div data-bind="visible:!loading()">
+                <div id="MasterGridRole"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-3 ez panel-filter" >
+        <div class="panel ez no-padding hardcore">
+          <div class="panel-heading">
+              <h3 class="no-margin">Filter</h3>
+              <div class="panel-nav-button">
+                  <div class="form-group relative align-right no-margin no-padding hardcore">
+                      <button  type="button" btn-sm class="btn btn-sm btn-primary btn-flat" data-bind="click:Search"><i class="fa fa-search"></i> Search</button>
+                      <button  type="button" class="btn btn-sm btn-danger btn-flat" data-bind="click:Reset"><i class="fa fa-refresh"></i> Reset</button>
+                  </div>
+              </div>
+          </div>
+          <div class="panel-body">
+            <div id="from-filter">
+                <p>Filter your using input below.</p>
+                <div class="form-group form-group-table-name">
+                    <div class="input-group input-group-sm ez width-full">
+                      <span class="input-group-addon width-100 align-right">Role</span>
+                      <select type="text"  class="form-control input-sm" id = "filterRole" data-bind="kendoMultiSelect: {value:filterRole, data: listRole, filter: 'startswith', dataTextField: 'text', dataValueField: 'value'}"></select>
+                    </div>
+                </div>
+                <div class="form-group form-group-table-name">
+                    <div class="input-group input-group-sm ez width-full">
+                      <span class="input-group-addon width-100 align-right">Status</span>
+                      <input id="filterStatus" class="switch-mini" type="checkbox"  data-off-text="inactive" data-on-text="active">
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog" style="width: 45%;">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel" data-bind="text:titleModel"></h4>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form class="form-horizontal" id ="AddRole">
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-3 form-control-label">Role Name<span class="mandatory">*</span></label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control input-sm" name="roleName" id="roleName" validationMessage="Role Name required" required data-bind="value:roleName, enable:disableRolename"/>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-3 form-control-label">Status</label>
+                        <div class="col-sm-8">
+                          <input id="Status" class="switch-mini" type="checkbox"  data-off-text="inactive" data-on-text="active" checked>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-3 form-control-label">Landing Page</label>
+                        <div class="col-sm-8">
+                          <input type="text" name="page" id="role" data-bind="kendoDropDownList: {data:listPage, dataTextField: 'text', dataValueField: 'value', optionLabel: 'select landing page'}"  />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-md-12">
+                            <div id="MasterGridMenu"></div>
+                        </div>
+                      </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default btn-flat" data-dismiss="modal" data-bind="click:Cancel"><i class="fa fa-times"></i> Close</button>
+                    <button type="button" class="btn btn-sm btn-primary btn-flat" data-bind="click:(edit() != true)? SaveData : UpdateData"><i class="fa fa-floppy-o"></i> Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

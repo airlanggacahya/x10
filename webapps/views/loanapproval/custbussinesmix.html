@@ -1,0 +1,46 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col-md-6">
+                <div class="k-grid k-widget">
+                    <table>
+                        <thead class="k-grid-header">
+                            <tr>
+                                <th colspan="2" class="sub-bgcolor k-header">Customer Business Mix</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td class="col-sm-2 text-bold">Stock & Sell - in %</td>
+                            <td class="col-sm-2 right"><span data-bind="text:loanapproval.stocksell"></span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-sm-2 text-bold">B2B - Govt.- in %</td>
+                            <td class="col-sm-2 right"><span data-bind="text:loanapproval.govt"></span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-sm-2 text-bold">B2B - Corporate  - in %</td>
+                            <td class="col-sm-2 right"><span data-bind="text:loanapproval.corporate"></span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="k-grid k-widget">
+                    <table>
+                        <thead class="k-grid-header">
+                            <tr>
+                                <th colspan="2" class="sub-bgcolor k-header">Distributor Business Mix</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: loanapproval.distributorList">
+                            <tr>
+                                <td class="col-sm-2 text-bold" data-bind="text: Label"></td>
+                                <td class="col-sm-2 right" data-bind="text: Result"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

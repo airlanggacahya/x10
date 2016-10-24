@@ -1,0 +1,270 @@
+<script type="text/javascript">
+filter().CustomerSearchText = ko.observable("");
+filter().CustomerSearchVal.subscribe(function(value){
+  filter().DealNumberSearchList([]);
+  var arr = _.filter(filter().CustomerSearchAll(),function(x){ return x.customer_id == value })
+  for(var i in arr){
+    filter().DealNumberSearchList.push(arr[i].deal_no)
+  }
+  if (arr.length == 1 ){
+    filter().DealNumberSearchVal(arr[0].deal_no);
+    setTimeout(function(){
+      $("#role").getKendoDropDownList().value(filter().DealNumberSearchVal());
+    },500);
+  }
+  setTimeout(function(){
+    filter().CustomerSearchText($("#customer").getKendoDropDownList().text())
+  },500)
+});
+
+</script>
+<style type="text/css">
+  .filter-label {
+    font-size: 12px;
+    color: black;
+    display: inline-block;
+    margin-top: 6px;
+  }
+
+  .filter-font {
+    font-weight: normal;
+    font-size: 11px;
+  }
+
+  .filter-button {
+    padding-top: 6px;
+    color: #fff;
+    background-color: #0c4979;
+    border-color: #fff;
+    margin-left: 5px;
+  }
+
+  .filter-button:hover {
+    color: #fff;
+    background-color: #0c1969;
+  }
+
+  .filter-button:focus {
+    color: #fff;
+    background-color: #0c4979;
+  }
+
+  .filter-select {
+    width: 33.33333333%;
+    margin-top: 1.5px;
+    margin-left: 3px;
+  }
+
+  .app-menu .k-animation-container{
+      height: 40px!important;
+  }
+
+</style>
+
+<!-- <div class="col-md-12 col-sm-12 ez panel-content" id="filtercontainer"> -->
+  <!-- <div class="panel ez no-padding hardcore"> -->
+    <!-- <div class="panel-body" > -->
+    <div class="jf-tbl col-md-8" style="display: none;">
+      <!-- <div class="pull-left"><span class="filter-label">Customer:</span></div> -->
+      <!-- <div class="col-sm-4 pull-left"> -->
+        <select class="filter-select filter-font pull-left" name="page" id="customer" data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Choose Customer', filter:'contains'}" ></select>
+      <!-- </div> -->
+      <!-- <div class="pull-left"><span class="filter-label" style="margin-left: 13px">Deal No:</span></div> -->
+      <!-- <div class="col-sm-4 pull-left"> -->
+        <select class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:filter().DealNumberSearchList, value:filter().DealNumberSearchVal , optionLabel: 'Deal No' , filter:'contains'}"></select>
+      <!-- </div> -->
+      <div class="pull-left">
+        <button class="btn btn-sm filter-font filter-button" type="button" id="refresh" btn-sm onclick="refreshFilter()"> 
+          Select
+        </button>
+      </div>
+    </div>
+
+    <div id="replacedfilter" class="col-md-12">
+      <span data-bind="text: getFilterText()"></span>
+    </div>
+
+      <!-- <table class="jf-tbl" style="border: none !important;">
+        <tr>
+          <td class="setLabel">Customer</td>
+          <td class="col-sm-4 f-datepick">
+             <select name="page" id="customer" data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Please Select', filter:'contains'}" ></select>
+          </td>
+          <td class="setLabel">Deal No</td>
+          <td class="col-sm-4 f-datepick">
+            <select name="page" id="role" data-bind="kendoDropDownList: {data:filter().DealNumberSearchList, value:filter().DealNumberSearchVal , optionLabel: 'Please Select' , filter:'contains'}"></select>
+          </td>
+          <td class="col-sm-12">
+            <button  type="button" id="refresh" btn-sm class="btn btn-sm btn-default separator" onclick="refreshFilter()"> <span class="glyphicon glyphicon-refresh"></span>&nbsp;   select</button>
+                <button class="btn btn-sm btn-primary separator" id="select-btn" onclick="refreshFilter()" style="margin-right: inherit;">
+                <span class="glyphicon glyphicon-refresh"></span> Select
+              </button>
+          </td>
+        </tr>
+      </table> -->
+    <!-- </div> -->
+  <!-- </div> -->
+<!-- </div> -->
+
+<script type="text/javascript">
+
+function showFilter(show) {
+  $(".jf-tbl")[show ? 'show' : 'hide']()
+  $("#replacedfilter")[show ? 'hide' : 'show']()
+  if (show) {
+    if($(".app-menu .k-animation-container .jf-tbl").length == 0){
+      $(".jf-tbl").appendTo("#filtercontainer");
+      $("#filtercontainer").appendTo(".app-menu .k-animation-container");
+    }
+      $(".app-title").css("margin-bottom",150);
+  } else {
+    if($(".app-menu .k-animation-container #replacedfilter").length == 0){
+      $("#replacedfilter").appendTo("#filtercontainer");
+      $("#filtercontainer").appendTo(".app-menu .k-animation-container");
+    }
+      $(".app-title").css("margin-bottom",120);
+  }
+}
+
+$("#replacedfilter").click(function(e){
+  showFilter(true);
+})
+
+function getFilterText() {
+  return "Customer: " + filter().CustomerSearchText() + " | Deal No: " + filter().DealNumberSearchVal();
+}
+
+function getPreviousFilter() {
+  var info = localStorage.getItem("filterInfo")
+  if (typeof info === 'undefined' || info == null) {
+    return {
+      customerId: "",
+      dealNo: "",
+      beenOn: ""
+    }
+  }
+
+  return JSON.parse(info)
+}
+
+function setCurrentFilter() {
+  var info = {
+    customerId: filter().CustomerSearchVal(),
+    dealNo: filter().DealNumberSearchVal(),
+    beenOn: window.location.pathname
+  }
+
+  localStorage.setItem("filterInfo", JSON.stringify(info))
+}
+
+function autoSetFilter() {
+  ko.mapping.toJS(vm.menu).filter(function (d) {
+      return (["DATACAPTURING", "REPORTS", "DATAMASTER"].indexOf(d.Id) > -1)
+  })
+}
+
+function generateDDL(){
+  var url = "{{BaseUrl}}datacapturing/getcustomerprofilelist";
+  ajaxPost(url, "", function(data) {
+     filter().CustomerSearchAll(data);
+    var arr = [];
+    var arrkey = [];
+    for(var i in data){
+      if(arrkey.indexOf(data[i].customer_id) == -1){
+      arr.push({ customer_id : data[i].customer_id, customer_name : data[i].customer_id + " - " + data[i].customer_name})
+      arrkey.push(data[i].customer_id);
+    }
+    }
+
+    filter().CustomerSearchList(arr);
+
+    autoSetFilter()
+  }, undefined);
+}
+
+$(document).ready(function(){
+  generateDDL();
+  setTimeout(function(){
+    refreshFilter = (function() {
+      var cached_function = refreshFilter;
+      return function(str) {
+        if(filter().CustomerSearchVal() == "" || filter().DealNumberSearchVal() == "" ) {
+          swal("Warning","Please complete the filters","warning")
+          return;
+        }
+        eraseCookie("topfilter"+model.PageTopMenu().split(" ").join(""));
+        createCookie("topfilter"+model.PageTopMenu().split(" ").join(""),filter().CustomerSearchVal()+"|"+filter().DealNumberSearchVal(),1);
+             cached_function.apply(this, arguments); // use .apply() to call it
+      };
+    }());
+
+    if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null){
+      var cook = readCookie("topfilter"+model.PageTopMenu().split(" ").join(""));
+      filter().CustomerSearchVal(cook.split("|")[0]);
+      filter().DealNumberSearchVal(cook.split("|")[1]);
+      setTimeout(function(){
+       refreshFilter();
+      },500);
+      showFilter(false);
+    } else if(parse("customerid") != "Not found" && parse("dealno") != "Not found" ){
+      filter().CustomerSearchVal( parse("customerid") );
+      filter().DealNumberSearchVal( parse("dealno") );
+      setTimeout(function(){
+       refreshFilter();
+      },500);
+      showFilter(false);
+    } else {
+      showFilter(true);
+    }
+
+  },2000);
+});
+
+function parse(val) {
+  var result = "Not found",
+      tmp = [];
+  location.search
+  //.replace ( "?", "" )
+  // this is better, there might be a question mark inside
+  .substr(1)
+      .split("&")
+      .forEach(function (item) {
+      tmp = item.split("=");
+      if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
+  });
+  return result;
+}
+
+// $(document).click(function(event) { 
+//     if( $(event.target).closest('#replacedfilter').length ) {
+//         showFilter(true)
+//     } else {
+//       if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null){
+//         if( ! $(event.target).closest('.filter-select').length && ! $(event.target).closest('.filter-button').length) {
+//           showFilter(false)
+//         }
+//       }
+//     }
+// })
+
+$(".filter-button").click(function(event) { 
+  showFilter(false)
+})
+</script>
+
+<style type="text/css">
+  .f-ddl{
+    width: 260px;
+}
+.f-val{
+    padding-right: 25px;
+     min-width: 400px;
+}
+.f-lbl{
+    max-width: 80px;
+    padding-right: 10px;
+    margin-left: 23px;
+    text-align: right;
+}
+</style>
+

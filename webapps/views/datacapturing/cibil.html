@@ -1,0 +1,1423 @@
+ 	<script type="text/javascript">
+model.PageTopMenu("Data Entry");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Data Entry", "Data Entry", "#", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+</script>
+<style type="text/css">
+	 .space5 {
+	    margin-bottom:5px
+	  }
+	  html, body, button {
+	  	font-size: 12px;
+	  }
+	  .swal2-cancel{
+	  	margin-left: 10px;
+
+	  }
+	.swal-custom {
+	    width: 22% !important;
+	    margin-left: -32% !important;
+	    margin-top: -4% !important;
+	    position: absolute;
+	}
+	.margin-promotor{
+		margin-left: 15px;
+    	margin-right: 15px;
+	}
+	/*.swal2-icon.swal2-warning {
+	    font-size: 32px;
+	    line-height: 51px;
+	    text-align: center;
+	}
+	.swal2-icon {
+	    width: 51px;
+	    height: 51px;
+	    border: 4px solid grey;
+	    border-radius: 50%;
+	    margin: 20px auto 30px;
+	    box-sizing: content-box;
+	    cursor: default;
+	    -webkit-touch-callout: none;
+	    -webkit-user-select: none;
+	    -moz-user-select: none;
+	    -ms-user-select: none;
+	    user-select: none;
+	}*/
+
+</style>
+
+<script src="/static/core/cibil.js"></script>
+{{template "filter.html"}}
+<div data-bind="with: cibil" >
+	<div class="col-md-12 col-sm-12 ez panel-content" data-bind="visible:(cibil.entry() == false)">
+	   	<div class="ez panel">
+			<!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+			<!-- <div class="panel-body" style="margin-top: -35px;"> -->
+			<div class="panel-body" style="margin-top: -10px;"> <!-- remove this if using header h4 -->
+				<div class="col-md-12"><span class="pull-right" style="margin-bottom: 13px" data-bind="text: statusAccept"></span></div>
+				<div class="col-md-12 nopad-left-right">
+					<div class="col-md-7 col-sm-7 nopad-left-right" id="cibilgrid-container">
+						<div class="panel ez no-padding hardcore">
+							<div class="panel-body no-padding">
+								{{template "cibilgrid.html"}}
+							</div>
+							<div class="panel-body">
+								<center>
+									<div class="row">
+										<button class="btn btn-flast btn-sm btn-details" data-bind="click: showDetail">Show More Details</button>
+										<button id="btnconfirm" class="btn btn-flast btn-sm btn-confirm" data-bind="text: textButtonDetail, click: confirmCompany"></button>
+										<button class="btn btn-flast btn-sm btn-freeze" data-bind="click: openreports">View Company CIBIL Report</button>
+									</div>
+								</center>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3 col-sm-3 nopad-left-right">
+						{{template "panelcibil.html"}}
+					</div>
+					<div class="col-md-2 col-sm-2">
+						<div class="panel-body no-padding">
+							<div class="col-md-12"><button onclick="cibil.AccpetOrReject(3)" class="btn btn-flast btn-sm btn-success btn-confirmasi" style="width: 100%; margin-bottom: 6px;">Accept</button></div>
+							<div class="col-md-12"><button onclick="cibil.AccpetOrReject(-3)"  class="btn btn-flast btn-sm btn-danger btn-confirmasi" style="width: 100%; margin-bottom: 6px;">Reject</button></div>
+						</div>
+					    <div class="panel ez no-padding hardcore nopad-left-right">
+							<div class="panel-heading no-padding">
+								<h5 class="no-margin no-padding comment-header">Comments</h5>
+								<div class="panel-nav-button">
+								   <!-- <button  type="button" btn-sm class="btn btn-sm btn-primary"><i class="fa fa-refresh"></i> Refresh</button> -->
+								</div>
+							</div>
+						    <div class="panel-body nopad-left-right ">
+						        {{template "cibilcomment.html"}}
+						    </div>
+					    </div>
+					    <div class="col-md-10 col-sm-10">
+							<div class="col-md-7 col-sm-7 panel-body" style="margin-left: 23%;">
+								<center>
+									<div class="panel">
+										<div class="panel-body">
+											<div class="row">
+												<button class="btn btn-flast btn-sm btn-details" data-bind="click: showAllDetail">Show All Details</button>
+												<button id="btnconfirmall" data-bind="click:confirmAll" class="btn btn-flast btn-sm btn-confirm">Confirm All</button>
+												<button class="btn btn-flast btn-sm btn-freeze">View / Download All CIBIL Report</button>
+											</div>
+										</div>
+									</div>
+								</center>
+							</div>
+						</div>
+						<div class="col-md-12 col-sm-12">
+							<div class="panel-body">
+								<ul class="collapsiblecibil" data-collapsible="accordion" style="margin-left: -41px;">
+								    <li data-bind="visible: (cibilShowDetail() != false)">
+								      <div class="collapsible-header active"><i class="fa fa-list"></i>Company CIBIL Score <i class="fa fa-chevron-down pull-right"></i></div>
+								      <div id="companyCibil" class="collapsible-body">
+								      	<div class="panel ez no-padding hardcore" id="header-detail">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										           Office
+										        </h3>
+										    </div>
+									      	<div class="panel-body">
+									      		<form id="biodata">
+								                <div class="col-md-6">
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-3 widthlable">
+								                      <label for="Acc" class="control-label">Company Name :</label>
+								                    </div>
+								                    <div class="col-md-9 widthfield">
+								                      <input type="text" id="compname" name="compname" class="form-control input-sm" data-bind="value: compname" validationMessage="Name readonly" readonly/>
+								                    </div>
+								                  </div>
+
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-3 widthlable">
+								                      <label for="Acc" class="control-label">DUNS Number :</label>
+								                    </div>
+								                    <div class="col-md-9 widthfield">
+								                      <input type="text" class="form-control input-sm" id="duns" name="duns" data-bind="value: duns" validationMessage="DUNS Number readonly" readonly/>
+								                    </div>
+								                  </div>
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-3 widthlable">
+								                      <label for="Acc" class="control-label">PAN :</label>
+								                    </div>
+								                    <div class="col-md-9 widthfield">
+								                      <input  type="text" class="form-control input-sm" data-bind="value: pan" validationMessage="PAN readonly" readonly />
+								                    </div>
+								                  </div>
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-3 widthlable">
+								                      <label for="Acc" class="control-label">Address :</label>
+								                    </div>
+								                    <div class="col-md-9 widthfield">
+								                      <textarea class="form-control input-sm" data-bind="value: address" validationMessage="Address readonly" readonly></textarea>
+								                      <!-- <input  type="text"  /> -->
+								                    </div>
+								                  </div>
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-3 widthlable">
+								                      <label for="Acc" class="control-label">CITY :</label>
+								                    </div>
+								                    <div class="col-md-9 widthfield">
+								                      <input  type="text" class="form-control input-sm" data-bind="value: city" validationMessage="Location readonly" readonly />
+								                    </div>
+								                  </div>
+								                </div>
+								                <div class="col-md-6">
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-4 widthlable">
+								                      <label for="Acc" class="control-label">Telephone :</label>
+								                    </div>
+								                    <div class="col-md-8 widthfield">
+								                      <input  type="text" class="form-control input-sm" id="tlp" name="tlp" data-bind="value: tlp" validationMessage="Telephone readonly" readonly />
+								                    </div>
+								                  </div>
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-4 widthlable">
+								                      <label for="Acc" class="control-label">State :</label>
+								                    </div>
+								                    <div class="col-md-8 widthfield">
+								                      <input  type="text" class="form-control input-sm" id="state" name="state" data-bind="value: state" validationMessage="State readonly" readonly />
+								                    </div>
+								                  </div>
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-4 widthlable">
+								                      <label for="Acc" class="control-label">Pin Code :</label>
+								                    </div>
+								                    <div class="col-md-8 widthfield">
+								                      <input  type="text" class="form-control input-sm" id="pin" name="pin" data-bind="value: pin" validationMessage="Pin Code readonly" readonly />
+								                    </div>
+								                  </div>
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-4 widthlable">
+								                      <label for="Acc" class="control-label">Country :</label>
+								                    </div>
+								                    <div class="col-md-8 widthfield">
+								                      <input  type="text" class="form-control input-sm" data-bind="value: country" validationMessage="Country readonly" readonly />
+								                    </div>
+								                  </div>
+								                  <div class="col-md-12 form-group">
+								                    <div class="col-md-4 widthlable">
+								                      <label for="Acc" class="control-label">File Open Date :</label>
+								                    </div>
+								                    <div class="col-md-8 widthfield">
+								                      <input  type="text" class="form-control input-sm" name="fileopendate" data-bind="value: fileopendate" readonly>
+				                          			  <span class="k-invalid-msg" data-for="fileopendate"></span>
+								                    </div>
+								                  </div>
+								                </div>
+								            </form>
+									      	</div>
+									    </div>
+									    <div class="panel ez no-padding hardcore">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										           Report Summary
+										        </h3>
+										    </div>
+									      	<div class="panel-body">
+									      		<form id="biodata">
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. Credit Grantors :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input type="text" id="creditgrantor" name="v" class="form-control input-sm" data-bind="value: creditgrantor" validationMessage="No. Credit Grantors readonly" readonly/>
+									                    </div>
+									                  </div>
+
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. Credit Facilities :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input type="text" class="form-control input-sm" id="creditfacilities" name="creditfacilities" data-bind="value: creditfacilities" validationMessage="No. Credit Facilities Number readonly" readonly/>
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. Closed Credit Facilities :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" data-bind="value: closecreditfacilitis" validationMessage="No. Closed Credit Facilities readonly" readonly />
+									                    </div>
+									                  </div>
+									                </div>
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. Credit Facilities Guaranteed by Others :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="creditguaranteothers" name="creditguaranteothers" data-bind="value: creditguaranteothers" validationMessage="No. Closed Credit Facilities readonly" readonly />
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Latest Credit Facility Open Date :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="latestopendate" name="latestopendate" data-bind="value: latestopendate" readonly>
+				                          				  <span class="k-invalid-msg" data-for="datebirth"></span>
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">First Credit Facility Open Date :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="firstopendate" name="firstopendate" data-bind="value: firstopendate" readonly>
+				                          				  <span class="k-invalid-msg" data-for="datebirth"></span>
+									                    </div>
+									                  </div>
+									                </div>
+									            </form>
+									      	</div>
+									    </div>
+									    <div class="panel ez no-padding hardcore">
+									    	<div class="panel-heading">
+										        <h3 class="no-margin">
+										           Detail Report Summary
+										        </h3>
+										   </div>
+										   <div class="panel-body"  data-bind="foreach: model.detailreportsummary">
+										   	<div class="panel ez no-padding hardcore">
+											    	<div class="panel-heading">
+												        <h3 class="no-margin" data-bind="text: CreditFacilities"></h3>
+												   </div>
+												   <div class="panel-body">
+												   	<form id="biodata" class="col-md-12">
+												   		<div class="col-md-6">
+												   			<div class="col-md-12 form-group">
+											                  <div class="col-md-4 widthlable">
+											                     <label for="Acc" class="control-label">No. of Standard :</label>
+											                  </div>
+											                  <div class="col-md-8 widthfield">
+											                     <input type="text" id="standartaccount" name="CurrentBalanceOtherThanStandard" class="form-control input-sm" data-bind="value: NoOfStandard" validationMessage="No. Standard ACCOUNT readonly" readonly/>
+											                  </div>
+											               </div>
+											            </div>
+											            <div class="col-md-6">
+												   			<div class="col-md-12 form-group">
+											                  <div class="col-md-4 widthlable">
+											                     <label for="Acc" class="control-label">Current Balance in Standard :</label>
+											                  </div>
+											                  <div class="col-md-8 widthfield">
+											                     <input type="text" id="standartaccount" class="form-control input-sm" data-bind="value: CurrentBalanceStandard" validationMessage="No. Standard ACCOUNT readonly" readonly/>
+											                  </div>
+											               </div>
+											            </div>
+											            <div class="col-md-6">
+												   			<div class="col-md-12 form-group">
+											                  <div class="col-md-4 widthlable">
+											                     <label for="Acc" class="control-label">No. of Other than Standard :</label>
+											                  </div>
+											                  <div class="col-md-8 widthfield">
+											                     <input type="text" id="standartaccount" class="form-control input-sm" data-bind="value: NoOfOtherThanStandard" validationMessage="No. Standard ACCOUNT readonly" readonly/>
+											                  </div>
+											               </div>
+											            </div>
+											            <div class="col-md-6">
+												   			<div class="col-md-12 form-group">
+											                  <div class="col-md-4 widthlable">
+											                     <label for="Acc" class="control-label">Current Balance in Other than Standard :</label>
+											                  </div>
+											                  <div class="col-md-8 widthfield">
+											                     <input type="text" id="standartaccount" class="form-control input-sm" data-bind="value: CurrentBalanceOtherThanStandard" validationMessage="No. Standard ACCOUNT readonly" readonly/>
+											                  </div>
+											               </div>
+											            </div>
+											            <div class="col-md-6">
+												   			<div class="col-md-12 form-group">
+											                  <div class="col-md-4 widthlable">
+											                     <label for="Acc" class="control-label">No. of Law Suits :</label>
+											                  </div>
+											                  <div class="col-md-8 widthfield">
+											                     <input type="text" id="standartaccount" class="form-control input-sm" data-bind="value: NoOfLawSuits" validationMessage="No. Standard ACCOUNT readonly" readonly/>
+											                  </div>
+											               </div>
+											            </div>
+											            <div class="col-md-6">
+												   			<div class="col-md-12 form-group">
+											                  <div class="col-md-4 widthlable">
+											                     <label for="Acc" class="control-label">No. of Wilful Defaults :</label>
+											                  </div>
+											                  <div class="col-md-8 widthfield">
+											                     <input type="text" id="standartaccount" class="form-control input-sm" data-bind="value: NoOfWilfulDefaults" validationMessage="No. Standard ACCOUNT readonly" readonly/>
+											                  </div>
+											               </div>
+												   		</div>
+												   	</form>
+												   </div>
+												 </div>
+												</div>
+										   </div>
+									    </div>
+									    <!-- <div class="panel ez no-padding hardcore">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										           Credit Facilities As Borrower
+										        </h3>
+										    </div>
+									      	<div class="panel-body">
+									      		<form id="biodata">
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. Standard ACCOUNT :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input type="text" id="standartaccount" name="standartaccount" class="form-control input-sm" data-bind="value: standartaccountBor" validationMessage="No. Standard ACCOUNT readonly" readonly/>
+									                    </div>
+									                  </div>
+
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Current Balance in Standard :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input type="text" class="form-control input-sm" id="balanceinstandart" name="balanceinstandart" data-bind="value: balanceinstandartBor" validationMessage="Current Balance in Standard readonly" readonly/>
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Other than Standard :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" data-bind="value: otherthanstandartBor" validationMessage="No. of Other than Standard readonly" readonly />
+									                    </div>
+									                  </div>
+									                </div>
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Current Balance in other than Standard :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="balanceotherBor" name="balanceother" data-bind="value: balanceotherBor" validationMessage="Current Balance in other than Standard" readonly>
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Law Suits :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="lawsuits" name="lawsuits" data-bind="value: lawsuitsBor" validationMessage="No. of Law Suits readonly" readonly />
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Wilful Defaults :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="wiful" name="wiful" data-bind="value: wifulBor" validationMessage="No. of Wilful Defaults readonly" readonly>
+									                    </div>
+									                  </div>
+
+									                </div>
+									            </form>
+									      	</div>
+									    </div>
+									    <div class="panel ez no-padding hardcore">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										           Credit Facilities As Guarantor
+										        </h3>
+										    </div>
+									      	<div class="panel-body">
+									      		<form id="biodata">
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. Standard ACCOUNT :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input type="text" id="standartaccount" name="standartaccount" class="form-control input-sm" data-bind="value: standartaccountGua" validationMessage="No. Standard ACCOUNT readonly" readonly/>
+									                    </div>
+									                  </div>
+
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Current Balance in Standard :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input type="text" class="form-control input-sm" id="balanceinstandart" name="balanceinstandart" data-bind="value: balanceinstandartGua" validationMessage="Current Balance in Standard readonly" readonly/>
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Other than Standard :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" data-bind="value: otherthanstandartGua" validationMessage="No. of Other than Standard readonly" readonly />
+									                    </div>
+									                  </div>
+									                </div>
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Current Balance in other than Standard :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="balanceother" name="balanceother" data-bind="value: balanceotherGua" validationMessage="Current Balance in other than Standard" readonly>
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Law Suits :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="lawsuits" name="lawsuits" data-bind="value: lawsuitsGua" validationMessage="No. of Law Suits readonly" readonly />
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Wilful Defaults :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="wiful" name="wiful" data-bind="value: wifulGua" validationMessage="No. of Wilful Defaults readonly" readonly>
+									                    </div>
+									                  </div>
+
+									                </div>
+									            </form>
+									      	</div>
+									    </div> -->
+									    <div class="panel ez no-padding hardcore">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										           Credit Type Summary
+										        </h3>
+										    </div>
+									      	<div class="panel-body">
+									      		<div data-bind="foreach: CreditTypeSummary">
+										      		<div class="panel panel-default">
+										      			<div class="panel-body">
+												      		<form id="biodata">
+												                <div class="col-md-6">
+
+												                  <div class="col-md-12 form-group">
+												                    <div class="col-md-4 widthlable">
+												                      <label for="Acc" class="control-label">No. of Credit Facilities As Borrower :</label>
+												                    </div>
+												                    <div class="col-md-8 widthfield">
+												                      <input type="text" class="form-control input-sm" id="creditborower" name="creditborower" data-bind="value: NoCreditFacilitiesBorrower" validationMessage="No. of Credit Facilities As Borrower readonly" readonly/>
+												                    </div>
+												                  </div>
+												                  <div class="col-md-12 form-group">
+												                    <div class="col-md-4 widthlable">
+												                      <label for="Acc" class="control-label">Credit Type :</label>
+												                    </div>
+												                    <div class="col-md-8 widthfield">
+												                      <textarea  type="text" class="form-control input-sm" data-bind="value: CreditType" validationMessage="Credit Type readonly" readonly ></textarea>
+												                    </div>
+												                  </div>
+												                </div>
+												                <div class="col-md-6">
+												                  <div class="col-md-12 form-group">
+												                    <div class="col-md-4 widthlable">
+												                      <label for="Acc" class="control-label">Currency Code :</label>
+												                    </div>
+												                    <div class="col-md-8 widthfield">
+												                      <input  type="text" class="form-control input-sm" id="currency" name="currency" data-bind="value: CurrencyCode" validationMessage="Currency Code readonly" readonly />
+												                    </div>
+												                  </div>
+												                  <div class="col-md-12 form-group">
+												                    <div class="col-md-4 widthlable">
+												                      <label for="Acc" class="control-label">TOTAL Current Balance :</label>
+												                    </div>
+												                    <div class="col-md-8 widthfield">
+												                      <input  type="text" class="form-control input-sm" id="wiful" name="totalcurrent" data-bind="value: TotalCurrentBalance" validationMessage="Total Current Balance readonly" readonly>
+												                    </div>
+												                  </div>
+
+												                </div>
+												            </form>
+												        </div>
+												    </div>
+												</div>
+									      	</div>
+									    </div>
+									    <div class="panel ez no-padding hardcore">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										            Asset Classification In Amount
+										        </h3>
+										    </div>
+									      	<div class="panel-body">
+									      		<div data-bind="foreach: assetClassificationAmount">
+										      		<div class="panel panel-default">
+										      			<div class="panel-body">
+												      		<form id="biodata">
+												                <div class="col-md-6">
+
+												                  <div class="col-md-12 form-group">
+												                    <div class="col-md-4 widthlable">
+												                      <label for="Acc" class="control-label">Standard :</label>
+												                    </div>
+												                    <div class="col-md-8 widthfield">
+												                      <input type="text" class="form-control input-sm" id="creditborower" name="standart" data-bind="value: cibil.assetClassificationAmount()[$index()].standart" validationMessage="Standard readonly" readonly/>
+												                    </div>
+												                  </div>
+												                  <div class="col-md-12 form-group">
+												                    <div class="col-md-4 widthlable">
+												                      <label for="Acc" class="control-label">Substandard :</label>
+												                    </div>
+												                    <div class="col-md-8 widthfield">
+												                      <input  type="text" class="form-control input-sm" data-bind="value: cibil.assetClassificationAmount()[$index()].substandart" validationMessage="Substandard readonly" readonly />
+												                    </div>
+												                  </div>
+												                  <div class="col-md-12 form-group">
+												                    <div class="col-md-4 widthlable">
+												                      <label for="Acc" class="control-label">Doubtful :</label>
+												                    </div>
+												                    <div class="col-md-8 widthfield">
+												                      <input  type="text" class="form-control input-sm" data-bind="value: cibil.assetClassificationAmount()[$index()].Doubtful" validationMessage="Doubtful readonly" readonly />
+												                    </div>
+												                  </div>
+												                </div>
+												                <div class="col-md-6">
+												                  <div class="col-md-12 form-group">
+												                    <div class="col-md-4 widthlable">
+												                      <label for="Acc" class="control-label">Loss :</label>
+												                    </div>
+												                    <div class="col-md-8 widthfield">
+												                      <input  type="text" class="form-control input-sm" id="loss" name="loss" data-bind="value: cibil.assetClassificationAmount()[$index()].loss" validationMessage="Loss readonly" readonly />
+												                    </div>
+												                  </div>
+												                  <div class="col-md-12 form-group">
+												                    <div class="col-md-4 widthlable">
+												                      <label for="Acc" class="control-label">Special Mention A/C :</label>
+												                    </div>
+												                    <div class="col-md-8 widthfield">
+												                      <input  type="text" class="form-control input-sm" id="spacialmention" name="spacialmention" data-bind="value: cibil.assetClassificationAmount()[$index()].spacialmention" validationMessage="Special Mention A/C readonly" readonly>
+												                    </div>
+												                  </div>
+
+												                </div>
+												            </form>
+												        </div>
+												    </div>
+												</div>
+									      	</div>
+									    </div>
+									    <div class="panel ez no-padding hardcore">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										            Enquiry Summary
+										        </h3>
+										    </div>
+									      	<div class="panel-body">
+									      		<form id="biodata">
+									                <div class="col-md-6">
+
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Enquiries in 3 Months :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input type="text" class="form-control input-sm" id="threemonth" name="threemonth" data-bind="value: threemonth" validationMessage="Three Month readonly" readonly/>
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Enquiries in 6 Months :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" data-bind="value: sixmonth" validationMessage="No. of Enquiries in 6 Months readonly" readonly />
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Enquiries in 9 Months :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" data-bind="value: ninemonth" validationMessage="No. of Enquiries in 9 Months readonly" readonly />
+									                    </div>
+									                  </div>
+									                   <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Enquiries in 12 Months :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" data-bind="value: twelvemonth" validationMessage="No. of Enquiries in 12 Months readonly" readonly />
+									                    </div>
+									                  </div>
+									                </div>
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Enquiries in 24 Months :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="duaempatmonth" name="duaempatmonth" data-bind="value: duaempatmonth" validationMessage="No. of Enquiries in 24 Months readonly" readonly />
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">No. of Enquiries in > 24 Months :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="thanduaempatmonth" name="thanduaempatmonth" data-bind="value:thanduaempatmonth" validationMessage="No. of Enquiries in 24 Months readonly" readonly />
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Total No. of Enquiries :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="totalenquiries" name="totalenquiries" data-bind="value: totalenquiries" validationMessage="Total No. of Enquiries readonly" readonly>
+									                    </div>
+									                  </div>
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Most Recent Date :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="recent" name="recent" data-bind="value: recent" readonly>
+				                          			  	  <span class="k-invalid-msg" data-for="recent"></span>
+									                    </div>
+									                  </div>
+									                </div>
+									            </form>
+									      	</div>
+									    </div>
+								      </div>
+								    </li>
+								    <li id="promotors1" data-bind="visible: (cibilShowAllDetail() != false)">
+								      <div id="promotors2" class="collapsible-header"><i class="fa fa-list"></i>Promotors / Directors / Guarantors CIBIL Score<i class="fa fa-chevron-down pull-right"></i></div>
+
+								      <div data-bind="foreach: promotorsOnList">
+								      	<div class="">
+								  			<div class="panel-heading">
+										        <h4 class="no-margin">
+										           <span data-bind="text: toTitleCase(Name)"></span> / <span data-bind="text: toTitleCase(promotorText)"></span>
+										        </h4>
+										    </div>
+									      	<div class="" >
+									      		<div class="panel">
+													<div class="panel-body">
+										      		<form id="biodata">
+										                <div class="col-md-6">
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Consumer Name :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input type="text" class="form-control input-sm" id="consname" name="consname" data-bind="value:Name" validationMessage="Consumer Name readonly" readonly/>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Date of Birth :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Dob" readonly>
+					                          			      <span class="k-invalid-msg" data-for="birth"></span>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Gender :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input type="text" class="form-control input-sm" id="gender" data-bind="value:Gender" readonly>
+										                    </div>
+										                  </div>
+										                   <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Date of Report :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Dates" readonly>
+					                          			      <span class="k-invalid-msg" data-for="datereport"></span>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Time of report :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Times" readonly>
+					                          			      <span class="k-invalid-msg" data-for="timereport"></span>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">CIBIL Score :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Score" validationMessage="CIBIL Score readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">CIBIL Transunion Score :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Score" validationMessage="Cibil Transunion Score readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Scoring Factors :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <textarea rows="5" cols="50"  type="text" class="form-control input-sm" data-bind="value:ScoringFactor, attr:{'id': 'scoring'+$index()}" validationMessage="Scoring Factors readonly" readonly ></textarea>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Income Tax ID Number (PAN) :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:PAN" validationMessage="Income Tax ID Number (PAN) readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Passport Number :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Passport" validation Message="Passport Number readonly" readonly />
+										                    </div>
+										                  </div>
+										                </div>
+										                <div class="col-md-6">
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Email Address :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <textarea rows="5" cols="50"  type="text" class="form-control input-sm" id="totalenquiries" name="email" data-bind="value:Email" validationMessage=">Email Address readonly" readonly></textarea>
+										                    </div>
+										                  </div>
+										                  <!-- <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Address (with pincode) :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <textarea  type="text" class="form-control input-sm" id="address" name="address" data-bind="value:Address" validationMessage="Address (with pincode) readonly" readonly></textarea>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Address Date Reported :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="addressdatereport" name="addressdatereport" data-bind="value:AddDateReport" validationMessage="Address Date Reported readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Address Category :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="addresscategory" name="addresscategory" data-bind="value:Category" validationMessage="Address Category readonly" readonly>
+										                    </div>
+										                  </div> -->
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Total no of Accounts :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="totalnoaccount" name="totalnoaccount" data-bind="value:TotalAcc" validationMessage="Total no of Accounts readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Total No of Overdue Accounts :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="totaloverdue" name="totaloverdue" data-bind="value:TotalOverdue" validationMessage="Total No of Overdue Accounts readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">No of Zero Balance Account :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="nozeroaccount" name="nozeroaccount" data-bind="value:TotalZeroBalanceAcc" validationMessage="No of Zero Balance Account readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">High Credit / Sanction Amount :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="highcredit" name="highcredit" data-bind="value:HighCreditSanctionAmount" validationMessage="High Credit / Sanction Amount readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Current Balances :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="currentbalances" name="currentbalances" data-bind="value:CurrentBalanceText" validationMessage="Current Balances readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Overdue Amount :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="overdueamount" name="overdueamount" data-bind="value:OverdueBalance" validationMessage="Overdue Amount readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Telephone Type / Number :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <textarea rows="4" cols="50"  type="text" class="form-control input-sm" data-bind="value:Telephone, attr:{'id': 'Telephone'+$index()}" validationMessage="Telephone readonly" readonly ></textarea>
+										                    </div>
+										                  </div>
+										                </div>
+										                <div class="col-md-12">
+										                		<div class="row">
+										                			<div class="col-md-6">
+											                			<div class="col-md-4 widthlable">
+											                			<label for="Acc" class="control-label">Address(ES) :</label>
+											                			</div>
+										                			</div>
+										                		</div>
+										                		<div class="row">
+										                			<div class="col-md-12">
+										                				<table class="table">
+										                					<thead>
+											                					<tr>
+											                						<th>Address (With Pincode)</th>
+											                						<th>Address Category</th>
+											                						<th>Address Date Reported</th>
+											                					</tr>
+										                					</thead>
+										                					<tbody data-bind="foreach: Addresses">
+											                					<tr>
+											                						<td data-bind="text: AddressPinCode"></td>
+											                						<td data-bind="text: Category"></td>
+											                						<td data-bind="text: DateReportedText"></td>
+											                					</tr>
+										                					</tbody>
+										                				</table>
+										                			</div>
+										                		</div>
+										                </div>
+										            </form>
+								            	</div>
+							            </div>
+									      	</div>
+									    </div>
+									    <!-- <div class="panel ez no-padding hardcore">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										            Date Opened
+										        </h3>
+										    </div>
+									      	<div class="panel-body">
+									      		<form id="biodata">
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Recent :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input type="text" class="form-control input-sm" id="daterecent" name="daterecent"  data-bind="kendoDatePicker: {value: daterecent, format:  'dd-MM-yyyy'}" readonly>
+				                          			  	  <span class="k-invalid-msg" data-for="daterecent"></span>
+									                    </div>
+									                  </div>
+									                </div>
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Oldest :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="Oldestdate" name="Oldestdate"  data-bind="kendoDatePicker: {value: Oldestdate, format:'dd-MM-yyyy'}" readonly>
+				                          			  	  <span class="k-invalid-msg" data-for="Oldestdate"></span>
+									                    </div>
+									                  </div>
+
+									                </div>
+									            </form>
+									      	</div>
+									    </div> -->
+								      </div>
+								    </li>
+								    <li id="promotors1" data-bind="visible: cibilShowAllDetail1()">
+								      <div id="promotors2" class="collapsible-header"><i class="fa fa-list"></i>Promotors / Directors / Guarantors CIBIL Score<i class="fa fa-chevron-down pull-right"></i></div>
+
+								      <div data-bind="foreach: promotorsList">
+								      	<div class="panel ez no-padding hardcore">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										           <span data-bind="text:Name"></span> / <span data-bind="text:promotorText"></span>
+										        </h3>
+										    </div>
+									      	<div class="panel-body" >
+									      		<!-- <div class="panel">
+													<div class="panel-body">
+										      		<form id="biodata">
+										                <div class="col-md-6">
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Consumer Name :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input type="text" class="form-control input-sm" id="consname" name="consname" data-bind="value:Name" validationMessage="Consumer Name readonly" readonly/>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Date of Birth :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:DateOfBirth" readonly>
+					                          			      <span class="k-invalid-msg" data-for="birth"></span>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Gender :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <select id="gender" data-bind="kendoDropDownList: {value:Gender, data: cibil.genderlist(), dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select customer name'}" readonly></select>
+										                    </div>
+										                  </div>
+										                   <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Date of Report :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Dates" readonly>
+					                          			      <span class="k-invalid-msg" data-for="datereport"></span>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Time of report :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Times" readonly>
+					                          			      <span class="k-invalid-msg" data-for="timereport"></span>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">CIBIL Score :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Score" validationMessage="CIBIL Score readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Cibil Transunion Score :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Score" validationMessage="Cibil Transunion Score readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Scoring Factors :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:ScoringFactor" validationMessage="Scoring Factors readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Income Tax ID Number (PAN) :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:PAN" validationMessage="Income Tax ID Number (PAN) readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Passport Number :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Passport" validation Message="Passport Number readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Telephone Type :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:TelephoneType" validationMessage="Telephone Type readonly" readonly />
+										                    </div>
+										                  </div>
+										                </div>
+										                <div class="col-md-6">
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Telephone Number :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="tlpnumber" name="tlpnumber" data-bind="value:Phone" validationMessage="Telephone Number readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Email Address :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="totalenquiries" name="email" data-bind="value:Email" validationMessage=">Email Address readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Address (with pincode) :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="address" name="address" data-bind="value:Address" validationMessage="Address (with pincode) readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Address Date Reported :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="addressdatereport" name="addressdatereport" data-bind="value:AddDateReport" validationMessage="Address Date Reported readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Address Category :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="addresscategory" name="addresscategory" data-bind="value:Category" validationMessage="Address Category readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Total no of Accounts :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="totalnoaccount" name="totalnoaccount" data-bind="value:TotalAcc" validationMessage="Total no of Accounts readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Total No of Overdue Accounts :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="totaloverdue" name="totaloverdue" data-bind="value:TotalOverdue" validationMessage="Total No of Overdue Accounts readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">No of Zero Balance Account :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="nozeroaccount" name="nozeroaccount" data-bind="value:TotalZeroBalanceAcc" validationMessage="No of Zero Balance Account readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">High Credit / Sanction Amount :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="highcredit" name="highcredit" data-bind="value:HighCreditSanctionAmount" validationMessage="High Credit / Sanction Amount readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Current Balances :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="currentbalances" name="currentbalances" data-bind="value:CurrentBalance" validationMessage="Current Balances readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Overdue Amount :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="overdueamount" name="overdueamount" data-bind="value:OverdueBalance" validationMessage="Overdue Amount readonly" readonly>
+										                    </div>
+										                  </div>
+										                </div>
+										            </form>
+								            	</div> -->
+								            	<div class="panel">
+													<div class="panel-body">
+										      		<form id="biodata">
+										                <div class="col-md-6">
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Consumer Name :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input type="text" class="form-control input-sm" id="consname" name="consname" data-bind="value:Name" validationMessage="Consumer Name readonly" readonly/>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Date of Birth :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Dob" readonly>
+					                          			      <span class="k-invalid-msg" data-for="birth"></span>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Gender :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input type="text" class="form-control input-sm" id="gender" data-bind="value:Gender" readonly>
+										                    </div>
+										                  </div>
+										                   <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Date of Report :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Dates" readonly>
+					                          			      <span class="k-invalid-msg" data-for="datereport"></span>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Time of report (24 Hr. Format):</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Times" readonly>
+					                          			      <span class="k-invalid-msg" data-for="timereport"></span>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">CIBIL Score :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Score" validationMessage="CIBIL Score readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Cibil Transunion Score :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Score" validationMessage="CIBIL Transunion Score readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Scoring Factors :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <textarea rows="5" cols="50"  type="text" class="form-control input-sm" data-bind="value:ScoringFactor, attr:{'id': 'onscoring'+$index()}" validationMessage="Scoring Factors readonly" readonly ></textarea>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Income Tax ID Number (PAN) :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:PAN" validationMessage="Income Tax ID Number (PAN) readonly" readonly />
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Passport Number :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" data-bind="value:Passport" validation Message="Passport Number readonly" readonly />
+										                    </div>
+										                  </div>
+										                </div>
+										                <div class="col-md-6">
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Email Address :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <textarea  type="text" class="form-control input-sm" id="totalenquiries" name="email" data-bind="value:Email" validationMessage=">Email Address readonly" readonly></textarea>
+										                    </div>
+										                  </div>
+										                  <!-- <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Address (with pincode) :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <textarea  type="text" class="form-control input-sm" id="address" name="address" data-bind="value:Address" validationMessage="Address (with pincode) readonly" readonly></textarea>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Address Date Reported :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="addressdatereport" name="addressdatereport" data-bind="value:AddDateReport" validationMessage="Address Date Reported readonly" readonly>
+										                    </div>
+										                  </div> -->
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Address Category :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="addresscategory" name="addresscategory" data-bind="value:Category" validationMessage="Address Category readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Total no of Accounts :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="totalnoaccount" name="totalnoaccount" data-bind="value:TotalAcc" validationMessage="Total no of Accounts readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Total No of Overdue Accounts :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="totaloverdue" name="totaloverdue" data-bind="value:TotalOverdue" validationMessage="Total No of Overdue Accounts readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">No of Zero Balance Account :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="nozeroaccount" name="nozeroaccount" data-bind="value:TotalZeroBalanceAcc" validationMessage="No of Zero Balance Account readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">High Credit / Sanction Amount (Rs. INR):</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="highcredit" name="highcredit" data-bind="value:HighCreditSanctionAmount" validationMessage="High Credit / Sanction Amount readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Current Balances (Rs. INR):</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="currentbalances" name="currentbalances" data-bind="value:CurrentBalanceText" validationMessage="Current Balances readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Overdue Amount :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <input  type="text" class="form-control input-sm" id="overdueamount" name="overdueamount" data-bind="value:OverdueBalance" validationMessage="Overdue Amount readonly" readonly>
+										                    </div>
+										                  </div>
+										                  <div class="col-md-12 form-group">
+										                    <div class="col-md-4 widthlable">
+										                      <label for="Acc" class="control-label">Telephone Type / Number :</label>
+										                    </div>
+										                    <div class="col-md-8 widthfield">
+										                      <textarea rows="4" cols="50"  type="text" class="form-control input-sm" data-bind="value:Telephone, attr:{'id': 'Telephone'+$index()}" validationMessage="Telephone readonly" readonly ></textarea>
+										                    </div>
+										                  </div>
+										                </div>
+										                <div class="col-md-12">
+										                		<div class="row">
+										                			<div class="col-md-6">
+											                			<div class="col-md-4 widthlable">
+											                			<label for="Acc" class="control-label">Address(ES) :</label>
+											                			</div>
+										                			</div>
+										                		</div>
+										                		<div class="row">
+										                			<div class="col-md-12">
+										                				<table class="table">
+										                					<thead>
+											                					<tr>
+											                						<th>Address (With Pincode)</th>
+											                						<th>Address Category</th>
+											                						<th>Address Date Reported</th>
+											                					</tr>
+										                					</thead>
+										                					<tbody data-bind="foreach: Addresses">
+											                					<tr>
+											                						<td data-bind="text: AddressPinCode"></td>
+											                						<td data-bind="text: Category"></td>
+											                						<td data-bind="text: DateReportedText"></td>
+											                					</tr>
+										                					</tbody>
+										                				</table>
+										                			</div>
+										                		</div>
+										                </div>
+										            </form>
+								            	</div>
+							            </div>
+									      	</div>
+									    </div>
+									    <!-- <div class="panel ez no-padding hardcore">
+								  			<div class="panel-heading">
+										        <h3 class="no-margin">
+										            Date Opened
+										        </h3>
+										    </div>
+									      	<div class="panel-body">
+									      		<form id="biodata">
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Recent :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input type="text" class="form-control input-sm" id="daterecent" name="daterecent"  data-bind="kendoDatePicker: {value: daterecent, format:  'dd-MM-yyyy'}" readonly>
+				                          			  	  <span class="k-invalid-msg" data-for="daterecent"></span>
+									                    </div>
+									                  </div>
+									                </div>
+									                <div class="col-md-6">
+									                  <div class="col-md-12 form-group">
+									                    <div class="col-md-4 widthlable">
+									                      <label for="Acc" class="control-label">Oldest :</label>
+									                    </div>
+									                    <div class="col-md-8 widthfield">
+									                      <input  type="text" class="form-control input-sm" id="Oldestdate" name="Oldestdate"  data-bind="kendoDatePicker: {value: Oldestdate, format:'dd-MM-yyyy'}" readonly>
+				                          			  	  <span class="k-invalid-msg" data-for="Oldestdate"></span>
+									                    </div>
+									                  </div>
+
+									                </div>
+									            </form>
+									      	</div>
+									    </div> -->
+								      </div>
+
+
+								    </li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+		<div data-bind="visible: (cibil.entry() == true)">
+		{{template "entryreportcibil.html"}}
+		</div>
+	</div>
+</div>
+
+<style type="text/css">
+	.mar-20{
+		    margin-top: -20px;
+	}
+</style>

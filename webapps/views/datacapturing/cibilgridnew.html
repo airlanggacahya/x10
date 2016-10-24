@@ -1,0 +1,160 @@
+<div class="row">
+  <div class="col-md-12">
+  <table class="k-grid no-border">
+    <tr>
+      <td>Select Rating :</td>
+      <td>  <input id="acct" data-bind="kendoDropDownList: { data: ratingList, value: rating}" type="text" class="acct input-sm form-control"></td>
+    </tr>
+  </table>
+   <!--  <div class="col-md-2">
+      <label class="pull-right">Select Rating :</label>
+    </div>
+    <div class="col-md-1" style="width: 20px;"></div>
+    <div class="col-md-2">
+    <input id="acct" data-bind="kendoDropDownList: { data: ratingList, value: rating, optionLabel: 'Please Select'}" type="text" class="acct input-sm form-control" style="width: 100%;">
+    </div> -->
+
+
+  </div>
+<div class="spacer"></div>
+  <div class="col-md-12 cibilgridfixed">
+    <div class="container-companysummary">
+          <table class="table-bordered k-grid" id="tblCibilReportSumarry1">
+            <thead>
+              <tr><th colspan="6">Report Summary</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="sub-bgcolor">No. of Credit Grantors</td>
+                <td class="onlyNumb"><span type="text" name="noCreditGrantors" class="  grid-input" data-bind="text:creditgrantor" readonly></td>
+                <td class="sub-bgcolor">No. of Credit Facilities</td>
+                <td class="onlyNumb"><span type="text" name="noCreditFacilities" class="  grid-input" data-bind="text:creditfacilities" readonly></td>
+                <td class="sub-bgcolor">No. of Closed Credit Facilities</td>
+                 <td class="onlyNumb"><span type="text" name="noClosedCreditFacilities" class="  grid-input" data-bind="text:closecreditfacilitis" readonly></td>
+              </tr>
+              <tr>
+                <td class="sub-bgcolor">No. of Credit Facilities Guaranteed by Others</td>
+                 <td class="onlyNumb"><span type="text" name="noCreditFacilitiesGrantorsGuarantedOther" class="  grid-input" data-bind="text:creditguaranteothers" readonly></td>
+                <td class="sub-bgcolor">Lastes Credit Facility Open Date</td>
+                <td><span type="text" name="noCreditFacilities" class=" grid-input" data-bind="text:latestopendate" readonly></td>
+                <td class="sub-bgcolor">First Credit Facility Open Date</td>
+                <td><span type="text" name="noClosedCreditFacilities" class=" grid-input" data-bind="text:firstopendate" readonly></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="spacer"></div>
+          <table class="k-grid table-bordered" id="tblCibilReportSumarry2">
+            <thead>
+              <tr>
+                <th class="sub-bgcolor text-center" style="min-width: 94px;">Credit Facilities</th>
+                <th class="sub-bgcolor text-center">No. of Standard</th>
+                <th class="sub-bgcolor text-center">Current Balance in Standard</th>
+                <th class="sub-bgcolor text-center">No. of Other than Standard</th>
+                <th class="sub-bgcolor text-center">Current Balance in Other than Standard</th>
+                <th class="sub-bgcolor text-center">No. of Law Suits</th>
+                <th class="sub-bgcolor text-center">No. of Wilful Defaults</th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: detailreportsummary">
+              <tr>
+                <td class="sub-bgcolor text-center" data-bind="text: CreditFacilities" >As Borrower</td>
+              <td class="onlyNumb"><span type="text" class="  grid-input" data-bind="text:NoOfStandard" readonly></td>
+                <td class="onlyNumb"><span type="text" class="  grid-input" data-bind="text:CurrentBalanceStandard" readonly></td>
+                <td class="onlyNumb"><span type="text" class="  grid-input" data-bind="text:NoOfOtherThanStandard" readonly></td>
+                <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:CurrentBalanceOtherThanStandard" readonly></td>
+                <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:NoOfLawSuits" readonly></td>
+                <td class="onlyNumb"><span type="text" class="  grid-input" data-bind="text:NoOfWilfulDefaults" readonly></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="spacer"></div>
+              <table class="k-grid table-bordered" id="tblCibilCreditTypeSummary">
+                <thead>
+                  <tr><th colspan="9">Credit Type Summary</th></tr>
+                </thead>
+                <thead>
+                  <tr style="text-align: center;">
+                    <th class="sub-bgcolor text-center" rowspan="2">No. of Credit Facilities As Borrower</th>
+                    <th class="sub-bgcolor text-center" rowspan="2">Credit Type</th>
+                    <th class="sub-bgcolor text-center" rowspan="2">Currency Code</th>
+                    <th class="sub-bgcolor text-center" colspan="5" style="text-align: center !important;">Asset Classification</th>
+                    <th class="sub-bgcolor text-center" rowspan="2">Current Balance</th>
+                  </tr>
+                  <tr>
+                    <th class="sub-bgcolor text-center" style="min-width: 100px">Standard</th>
+                    <th class="sub-bgcolor text-center" style="min-width: 100px">Sub - Standard</th>
+                    <th class="sub-bgcolor text-center" style="min-width: 100px">Doubtful</th>
+                    <th class="sub-bgcolor text-center" style="min-width: 100px">Loss</th>
+                    <th class="sub-bgcolor text-center" style="min-width: 110px">Special Mention A/C</th>
+                  </tr>
+                </thead>
+                <tbody data-bind="foreach:CreditTypeSummary">
+                  <tr>
+                     <td class="onlyNumb"><span type="text" class=" grid-input"  data-bind="text:NoCreditFacilitiesBorrower " readonly></td>
+                     <td ><span type="text" class=" grid-input"  style="font-size: 9px;text-align:left; min-width: 287px" data-bind="text:CreditType" readonly></td>
+                    <td><span type="text" class="onlyNumb grid-input"  style=" min-width: 75px" data-bind="text:CurrencyCode" readonly></td>
+                     <td class="onlyNumb"><span type="text" class=" grid-input"  data-bind="text:Standard" readonly></td>
+                     <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:Substandard" readonly></td>
+                     <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:Doubtful" readonly></td>
+                     <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:Loss" readonly></td>
+                     <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:SpecialMention" readonly></td>
+                    <td class="onlyNumb"><span type="text" class=" grid-input" style="min-width: 140px" data-bind="text:TotalCurrentBalance" readonly></td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" style="padding:3px; background-color:#eee; text-align: center; vertical-align: middle;"><span style="font-weight">TOTAL</span></td>
+                    <td><span type="text" class="onlyNumb grid-input" data-bind="text:totalStandard" readonly></td>
+                    <td colspan="4" style="padding:3px; background-color:#eee; "></td>
+                    <td><span type="text" class="onlyNumb grid-input" data-bind="text:totalCurrentBalance" readonly></td>
+                  </tr>
+                </tfoot>
+              </table>
+    <div class="spacer" ></div>
+          <table class="k-grid table-bordered" id="tblCibilCreditTypeSummary">
+            <thead>
+              <tr><th colspan="9">Enquiry Summary</th></tr>
+            </thead>
+            <thead>
+              <tr>
+                <th class="sub-bgcolor text-center">Enquiry</th>
+                <th class="sub-bgcolor text-center" style="width:68px">3 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">6 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">9 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">12 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">24 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">>24 Months</th>
+                <th class="sub-bgcolor text-center">Total</th>
+                <th class="sub-bgcolor text-center" style="min-width:100px">Most Recent Date</th>
+              </tr>
+            </thead>
+            <tbody data-bind="">
+              <tr>
+                <td class="sub-bgcolor text-center" style="vertical-align: middle;">No. of Enquiries</td>
+                 <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:threemonth" readonly></td>
+                 <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:sixmonth" readonly></td>
+                <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:ninemonth" readonly></td>
+                 <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:twelvemonth" readonly></td>
+                <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:duaempatmonth" readonly></td>
+                 <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:thanduaempatmonth" readonly></td>
+                 <td class="onlyNumb"><span type="text" class=" grid-input" data-bind="text:totalenquiries" readonly></td>
+                 <td class="onlyNumb"><span type="text" class="grid-input" data-bind="text:recent" readonly></td>
+              </tr>
+            </tbody>
+          </table>
+      </div>
+  </div>
+</div>
+<div class="spacer"></div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-3"></div>
+      <div class="col-md-7">
+        <button class="btn btn-sm btn-default tooltipster" style="width: 147px;" title="Show Company Details" data-bind="click: checkShowHide(1)"><i class="fa fa-list"></i> &nbsp; More...</button>
+        <button class="btn btn-sm btn-default tooltipster" style="width: 147px;" title="Show CIBIL PDF" data-bind="click: openreports"><i class="fa fa-file-pdf-o"></i>  &nbsp;View/Download Report</button>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+  </div>
+</div>

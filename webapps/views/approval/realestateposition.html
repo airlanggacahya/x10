@@ -1,0 +1,14 @@
+<div class="panel-default content no-padding">
+    
+    <div class="panel-heading text-center">Information</div>
+
+    <div class="panel-body" id="labelscore">
+        <div class="col-md-12 no-padding" style="padding-right: 4px;text-align:center;">
+            <!--<div><input id='score' class="input-sm form-control" type="number" data-bind="value: ko.computed(function () { return kendo.toString(totalrealestate(), 'n2') }, totalrealestate)" disabled/></div>-->
+            <div><span class='number-label' data-bind="text: ko.computed(function () { return kendo.toString(totalrealestate(), 'n0') }, totalrealestate)"></span></div>
+            <div><label>Real Estate Position (Rs. Lacs)</label></div>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+</div>

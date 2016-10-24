@@ -1,0 +1,443 @@
+
+<script type="text/javascript">
+model.PageTopMenu("Data Browser");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}');
+model.User= ko.observable('{{.Username}}');
+</script>
+
+<style>
+    /*.k-button{
+        height:     30px!important;
+    }*/
+    /*.k-delete{
+        margin-top: -39px;
+    margin-right: -48px;
+    }*/
+</style>
+<div class="col-md-12 col-sm-12 ez panel-content">
+    <div class="panel ez no-padding hardcore">
+<!--       <div class="panel-heading">
+        <h3 class="no-margin">
+            &nbsp;
+        </h3>
+        <div class="panel-nav-button">
+           <button  type="button" btn-sm class="btn btn-sm btn-default " data-bind="click:buildGridDB"><i class="fa fa-refresh"></i> Refresh</button>
+        </div>
+      </div> -->
+      <div class="panel-body">
+      <div class="col-md-11">
+             <div class="form-group form-group-table-name">
+                <div class="input-group input-group-sm ez width-full">
+                  <span class="input-group-addon width-100 align-right">Fields</span>
+                  <select class="multifield"  id="multiFields" data-bind="kendoMultiSelect:{data: fields, dataTextField: 'alias', dataValueField: 'field'}"></select>
+                </div>
+            </div>
+      </div>
+           <div class="col-md-1">
+                   <button  type="button" btn-sm class="btn btn-sm btn-default " data-bind="click:buildGridDB"><i class="fa fa-refresh"></i> Refresh</button>
+
+            </div>
+
+
+            <!-- <div data-bind="visible:loading">
+              <center class="align-center">
+                  <h5>Please wait while processing your request</h5>
+                  <img src="/static/img/loader.gif" alt="Loading..." />
+              </center>
+            </div> -->
+            <div class="col-md-12">
+                <div id="dbGrid"></div>
+            </div>
+            <div class="col-md-12" data-bind="foreach:avgdatas">
+                <div class="col-md-6" data-bind="text:$data.field,attr:{class:classval}"></div>
+                <div class="col-md-6" data-bind="text:$data.value,attr:{class:classval}"></div>
+            </div>
+      </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript">
+
+//declare variable for summary data grid for html looping
+var avgdatas = ko.observableArray([]);
+// declare variable for grid fields
+var fields = [
+    {
+      "alias":"Allocation Date",
+      "field":"ALLOCATION_DATE",
+      "tipe":"date"
+   },  {
+      "alias":"Lead Gen. Date",
+      "field":"LEAD_GENERATION_DATE",
+      "tipe":"date"
+   },  {
+      "alias":"Exp. Disb. Date",
+      "field":"EXPECTED_DISBURSAL_DATE",
+      "tipe":"date"
+   },  {
+      "alias":"Maker Date",
+      "field":"MAKER_DATE",
+      "tipe":"date"
+   },
+   {
+      "alias":"Cust. Name",
+      "field":"CUSTOMER_NAME",
+      "tipe":"string"
+   },
+   {
+      "alias":"Email",
+      "field":"EMAIL_ID",
+      "tipe":"string"
+   },
+   {
+      "alias":"Address 1",
+      "field":"ADDRESS_LINE1",
+      "tipe":"string"
+   },
+   {
+      "alias":"Address 2",
+      "field":"ADDRESS_LINE2",
+      "tipe":"string"
+   },
+   {
+      "alias":"Contact Person",
+      "field":"CONTACT_PERSON",
+      "tipe":"string"
+   },
+   {
+      "alias":"Phone",
+      "field":"PRIMARY_PHONE",
+      "tipe":"string"
+   },
+   {
+      "alias":"Maker",
+      "field":"MAKER_ID",
+      "tipe":"string"
+   },
+   {
+      "alias":"Loan Purpose",
+      "field":"LOAN_PURPOSE",
+      "tipe":"string"
+   },
+   {
+      "alias":"Author",
+      "field":"AUTHOR_ID",
+      "tipe":"string"
+   },
+   {
+      "alias":"Loan Type",
+      "field":"LOAN_TYPE",
+      "tipe":"string"
+   },
+   {
+      "alias":"Turn over",
+      "field":"TURNOVER",
+      "tipe":"double"
+   },
+   {
+      "alias":"Amount Required",
+      "field":"AMOUNT_REQUIRED",
+      "tipe":"double"
+   },
+   {
+      "alias":"Product",
+      "field":"PRODUCT",
+      "tipe":"string"
+   },
+   {
+      "alias":"Group Desc",
+      "field":"GROUP_DESC",
+      "tipe":"string"
+   },
+   {
+      "alias":"Remark",
+      "field":"REMARK",
+      "tipe":"string"
+   }
+]
+//declare variable for selected grid fields
+var selected = [
+    "CUSTOMER_NAME",
+    "EMAIL_ID",
+    "AMOUNT_REQUIRED",
+    "TURNOVER",
+    "AUTHOR_ID",
+    "ALLOCATION_DATE",
+    //"emp_dept_name",
+    "REMARK"
+]
+//get data grid and build kendo grid
+function buildGridDB() {
+  var schema = GenerateSchemaGrid();
+  var filtsum = {};
+  $("#dbGrid").html("");
+    $("#dbGrid").kendoGrid({
+      toolbar: ["excel"],
+      excel: {
+          fileName: "databrowser.xlsx",
+          allPages:true
+      },
+        dataSource: {
+        transport:{
+            read: function(yo){
+                var callData = {};
+                var sort = "";
+                //build sort parameter
+                if (yo.data["sort"] != undefined){
+                  sort = yo.data["sort"][0]["field"];
+                  sort = yo.data["sort"][0]["dir"] == "asc"?sort:"-"+sort;
+                }
+                //check filter header kendo
+                if(yo.data["filter"] == undefined){
+                  yo.data["filter"] = {filters:[]}
+                }
+
+                filtsum = yo.data["filter"];
+                //append all kendo parameter (pageize, take, skip, filters, etc)
+                for(var i in yo.data){
+                    callData[i] = yo.data[i];
+                }
+                // var datefrom = $("#filt_job_from").val();
+                // var dateto = $("#filt_job_to").val();
+                // client = "";
+                // project = "";
+                // if($("#filt_job_client").getKendoDropDownList()!=undefined){
+                //   client = $("#filt_job_client").getKendoDropDownList().value();
+                //   project = $("#filt_job_project").getKendoDropDownList().value();
+                // }
+                //append filter
+                // callData["dateto"] = dateto;
+                // callData["datefrom"] = datefrom;
+                // callData["client"] = client.split("-")[0].trim();
+                // callData["project"] = project.split("-")[0].trim();
+                callData["sort"] = sort;
+
+                ajaxPost("/databrowser/getlistdata",callData, function(res){
+                        yo.success(res.data);
+                });
+            },
+        },
+         schema: {
+            data: "data",
+            total: "total",
+        },
+        serverPaging: true, 
+        pageSize:10,
+        serverSorting: true,
+        serverFiltering:true,
+    },
+    sortable: true,
+    filterable: true,
+    scrollable:true,
+    resizable:true,
+    pageable: {
+        input: true,
+        pageSizes: true,
+        numeric: false
+    },
+    columns:schema.col,
+    dataBound:function(e){
+            // GetDataSummary(schema.doublecol , schema.typelist, filtsum);
+        },
+    });
+}
+
+//generate column and schema for kendo grid base on selected fields
+function GenerateSchemaGrid(){
+        var paramdouble = [];
+        var allfields = [];
+        var schema = {};    
+        var columns = [];
+        var typelist = [];
+        var selected =  $("#multiFields").getKendoMultiSelect().value();
+
+        var datefrom = $("#filt_job_from").val();
+        var dateto = $("#filt_job_to").val();
+        var client = "";
+        var project = "";
+        if($("#filt_job_client").getKendoDropDownList() != undefined){
+          client = $("#filt_job_client").getKendoDropDownList().value();
+          project = $("#filt_job_project").getKendoDropDownList().value();
+        }
+        var param = {}
+        param["dateto"] = dateto;
+        param["datefrom"] = datefrom;
+        param["client"] = client.split("-")[0].trim();
+        param["project"] = project.split("-")[0].trim();
+
+        for(var i in selected){
+            var f = _.find(fields, function(num){ return num.field == selected[i] ; });
+
+            //Set Parameter
+            if(f.tipe=="double"){
+                paramdouble.push(f.field);
+            }
+            allfields.push(f.field);
+
+            //build Schema
+            if(f.tipe=="string")
+            schema[f.field] = { type : "string"  }
+            else if(f.tipe=="double")
+            schema[f.field] = { type : "number"  }
+            else
+            schema[f.field] = { type : "date"  }
+
+            //build Columns
+            if(f.tipe=="string"){
+                var URLFilter = "/databrowser/getfilter";
+                URLFilter += "?active_field="+f.field;
+                if (f.field == "curr_pos_name" || f.field == "emp_dept_name"|| f.field == "emp_office_city"){
+                    var cols = {
+                    "field":f.field,
+                    "title":f.alias,
+                    "attributes":{ class:"align-left"},
+                    width:"100px",
+                      filterable: {
+                        multi: true ,
+                        dataSource: {
+                            schema: {
+                            data: function(response) {
+                              return response.data;
+                            }
+                          },
+                            transport: {
+                                read: {
+                                    url: URLFilter,
+                                    dataType: "json",
+                                    method:'POST',
+                                    data: param
+                                },
+                           }
+                        }
+                    },
+                    };
+                }else{
+                    var cols = {
+                    "field":f.field,
+                    "title":f.alias,
+                    "attributes":{ class:"align-left"},
+                    "width":"150px",
+                    "filterable":{
+                          operators: {
+                              string: {
+                                  contains: "Contains",
+                                  eq: "Equal to",
+                                  startwith:"Start with",
+                                  endwith:"End with",
+                              }
+                          }
+                      },
+                };
+                }
+                columns.push(cols);
+            }else if(f.tipe == "double"){
+                columns.push({
+                    "field":f.field,
+                    "title":f.alias,
+                    // "format":"{0:N0}",
+                    "template" : "#: kendo.toString(parseInt(" + f.field+ "),'N0') #",
+                    "attributes":{ class:"align-right"},
+                    "filterable":false,
+                    "width":"100px"
+                });
+            }
+            else if(f.tipe == "date")
+            columns.push({
+                "field":f.field,
+                "title":f.alias,
+                "template": "#= moment("+f.field+").utc().format('DD MMM YYYY') #", 
+                "attributes": { "style": "text-align:center" },
+                "filterable":false,
+                "width":"100px",
+            });
+
+            //settype
+            typelist.push(f);
+
+        }
+        return {col : columns, typelist : typelist, doublecol : paramdouble}
+}
+
+// get data summary grid for total and avg 
+// function GetDataSummary(fields,typelist,filter){
+//     var datefrom = $("#filt_job_from").val();
+//     var dateto = $("#filt_job_to").val();
+//     var client = $("#filt_job_client").getKendoDropDownList().value();
+//     var project = $("#filt_job_project").getKendoDropDownList().value();
+//     var param = {}
+//     param["dateto"] = dateto;
+//     param["datefrom"] = datefrom;
+//     param["client"] = client.split("-")[0].trim();
+//     param["project"] = project.split("-")[0].trim();
+//     param["filter"] = filter;
+//     avgdatas([]);
+//     param.fields = $("#multiFields").getKendoMultiSelect().value();
+//     var url = "/databrowser/getsummary";
+//         ajaxPost(url, param, function (datas) {
+//             var dt = datas.data;
+//             if(dt.length>0){
+//                 BuildSummary(dt,typelist);
+//             }
+//         });
+  
+// }
+//when filter click
+function FilterDBRefresh(){
+   buildGridDB();
+}
+//build html for summary data grid
+// function BuildSummary(dt,typelist){
+//         avgdatas.push({
+//           field : "Average",
+//           value : "-",
+//           classval: "col-md-6 lbl-sum"
+//         });
+        
+//         for(var i in typelist)
+//         {
+//           if(typelist[i].tipe=="double"){
+//             avgdatas.push({
+//               field : typelist[i].alias,
+//               value : kendo.toString(dt[0][typelist[i].field +"avg"] ,'N0'),
+//               classval:"col-md-6 val-sum"
+//             });
+            
+//           }
+//         }
+
+//         avgdatas.push({
+//           field : "Total",
+//           value : "-",
+//           classval: "col-md-6 lbl-sum"
+//         });
+
+//         for(var i in typelist)
+//         {
+//           if(typelist[i].tipe=="double"){
+//             avgdatas.push({
+//               field : typelist[i].alias,
+//               value : kendo.toString(dt[0][typelist[i].field +"sum"] ,'N0'),
+//               classval:"col-md-6 val-sum"
+
+//             });
+//           }
+//         }
+// }
+
+//when document ready run this script (first load)
+$(document).ready(function(){
+   
+    $("#multiFields").getKendoMultiSelect().value(selected);
+    setTimeout(function(){
+        buildGridDB();
+            
+    },1000);
+});
+</script>

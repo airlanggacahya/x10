@@ -1,0 +1,287 @@
+
+<script type="text/javascript">
+model.PageTopMenu("Data Masters");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Data Masters", "Data Masters", "", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}');
+model.User= ko.observable('{{.Username}}');
+</script>
+
+<script src="/static/jquery.tokeninput/jquery.tokeninput.js"></script>
+<link rel="stylesheet" href="/static/jquery.tokeninput/token-input.css">
+<link rel="stylesheet" href="/static/jquery.tokeninput/token-input-facebook.css">
+
+<script src="/static/core/formula.js"></script>
+
+<style>
+	.grid {
+		font-family: 'Source Sans Pro', 'Lato', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+	}
+	.grid td {
+	    white-space: inherit;
+	}
+	.grid .row-section {
+		font-weight: bold;
+		font-size: 20px;
+	}
+	.grid .row-sub-section {
+		font-weight: bold;
+		font-size: 16px;
+	}
+	.grid .row-section td:not(:first-child),
+	.grid .row-sub-section td:not(:first-child) {
+		border-left-color: transparent;
+	}
+	.token-input.tt-input {
+	    padding: 0px;
+		padding-left: 1px;
+	    height: auto;
+	}
+	.tokenfield {
+	    min-height: 100px;
+	}
+	.tokenfield .token {
+		padding-right: 5px;
+	}
+	.tokenfield .token .close {
+		display: none;
+	}
+	.token.operand {
+	    background-color: rgba(92, 184, 92, 0.83);
+		color: white;
+		border-color: rgba(92, 184, 92, 0.83);
+		padding: 0px 7px 0px 3px;
+	}
+	.token.operand.paranthesess {
+		background-color: #428bca;
+		border-color: #428bca;
+	}
+	.token .token-label {
+		max-width: inherit !important;
+	}
+	.k-dropdown .k-input {
+		text-align: left;
+	}
+	/*.token:not(.operand) {
+	    background-color: transparent;
+	    color: #428bca;
+		border-color: #428bca;
+	}
+	.tokenfield .token:hover {
+		padding-right: inherit;
+	}
+	.tokenfield .token:hover .close {
+		display: inherit;
+	}*/
+	.modal-financial .modal-dialog {
+		width: 1000px;
+		/*margin-left: -500px;*/
+	}
+	input.token-input-formula-text {
+		width: 10px;
+	}
+	ul.token-input-list-facebook {
+		width: 100%;
+    	min-height: 100px;
+	    border-color: #e5e5e5;
+	    padding: 5px;
+	}
+	li.token-input-token-facebook {
+	    border-radius: 0px;
+	    border-color: #e5e5e5;
+	    padding: 4px 6px;
+	}
+	li.token-input-selected-token-facebook {
+		background-color: #428bca;
+	}
+	.mini-loading {
+		pointer-events: none;
+		opacity: 0.7;
+	}
+</style>
+
+<div>
+	<div class="col-md-12 col-sm-12 ez panel-content">
+		<div class="panel ez">
+			<div class="panel-body" >
+				<div class="controls-left">
+			    	<div class="col-sm-6">
+						<div class="form-group">
+				            <label class="col-sm-4 form-label align-right">Select Section</label>
+				        	<div class="col-sm-8">
+			        			<select data-bind="kendoDropDownList: { data: formula.optionSection, value: formula.selectedSection, dataValueField: 'value', dataTextField: 'text' }"></select>
+				        	</div>
+				        	<div class="clearfix"></div>
+			        	</div>
+		        	</div>
+				</div>
+				<div class="controls" style="text-align: right;">
+					<button class="btn btn-sm btn-primary" data-bind="click: formula.showModalFinancial">Add New</button>
+					<button class="btn btn-sm btn-primary" data-bind="click: formula.refresh">Refresh</button>
+					<!-- <button id="onreset" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-primary separator" style="margin-right: inherit;" onclick="adf.getReset()">
+						<i class="fa fa-trash-o" aria-hidden="true"></i> Reset
+					</button>
+					<button id="onconfirm" data-bind="visible: (adf.formVisibility() == true)" class="btn btn-sm btn-primary separator" style="margin-right: inherit;" onclick="adf.getConfirm()">
+						<i class="fa fa-check" aria-hidden="true"></i><span data-bind="text: adf.optionChangeConfirm"></span>
+					</button> -->
+					<!-- <button data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-primary separator" style="margin-right: inherit;" onclick="adf.getVerify()">
+						<i class="fa fa-check-circle-o" aria-hidden="true"></i> Freeze
+					</button> -->
+					<!-- <button data-bind="visible: (adf.formVisibility() == true && adf.form.Status() > 0)" class="btn btn-sm btn-primary separator" style="margin-right: inherit;" onclick="adf.getUnfreeze()">
+						<i class="fa fa-check-circle-o" aria-hidden="true"></i> Unfreeze
+					</button> -->
+				</div>
+
+				<div class="form-container" style="padding-top: 10px;">
+					<div class="grid"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade modal-financial">
+	<div class="modal-dialog">
+		<div class="modal-content" data-bind="with: formula.financial">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">
+					<span data-bind="text: (formula.financialIsNew() ? 'New' : 'Edit')"></span>
+					Formula
+				</h4>
+			</div>
+			<div class="modal-body" style="border-bottom: 1px solid #e5e5e5;">
+				<div class="row">
+			        <div class="form-group">
+				    	<div class="col-sm-6">
+				            <label class="col-sm-4 form-label align-right">Alias</label>
+				        	<div class="col-sm-8">
+			        			<input type="text" class="form-control input-sm" placeholder="Type alias here" required data-bind="value: Id, enable: formula.financialIsNew" />
+				        	</div>
+				        	<div class="clearfix"></div>
+			        	</div>
+				    	<div class="col-sm-6">
+				            <label class="col-sm-4 form-label align-right">Name</label>
+				        	<div class="col-sm-8">
+			        			<input type="text" class="form-control input-sm" placeholder="Type name here" required data-bind="value: Title" />
+				        	</div>
+				        	<div class="clearfix"></div>
+			        	</div>
+			        	<div class="clearfix"></div>
+				    </div>
+			        <div class="form-group">
+				    	<div class="col-sm-6">
+			        		<label class="col-sm-4 form-label align-right">Put After</label>
+			        		<div class="col-md-8">
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { filter: 'contains', data: formula.optionFieldsForPutAfter, dataValueField: 'alias', dataTextField: 'text', value: PutAfter, optionLabel: 'Select one' }"></select>
+			        		</div>
+				        	<div class="clearfix"></div>
+			        	</div>
+
+				    	<div class="col-sm-6">
+			        		<label class="col-sm-4 form-label align-right">Value Type</label>
+			        		<div class="col-md-8">
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionValueTypes, dataValueField: 'value', dataTextField: 'text', value: ValueType }"></select>
+			        		</div>
+				        	<div class="clearfix"></div>
+			        	</div>
+			        	<div class="clearfix"></div>
+				    </div>
+				</div>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+			    	<div class="col-sm-6">
+			    		<div class="form-group">
+				            <label class="col-sm-4 form-label align-right">Select source</label>
+				        	<div class="col-sm-8">
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionFrom, dataValueField: 'name', dataTextField: 'name', value: formula.selectedFrom, optionLabel: 'Select one', change: formula.changeSource }"></select>
+				        	</div>
+				        	<div class="clearfix"></div>
+				        </div>
+			        	<div class="clearfix"></div>
+		            </div>
+		            
+			    	<div class="col-sm-6" data-bind="visible: (formula.optionFields().length > 0)">
+			    		<div class="form-group">
+				            <label class="col-sm-4 form-label align-right">Select field</label>
+				        	<div class="col-sm-8">
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { filter: 'contains', data: formula.optionFields, dataValueField: 'alias', dataTextField: 'name', change: formula.selectField, optionLabel: 'Select one' }"></select>
+				        	</div>
+				        	<div class="clearfix"></div>
+				        </div>
+					</div>
+
+			    	<div class="col-sm-6" data-bind="visible: (formula.optionSubSection().length > 0)">
+			    		<div class="form-group">
+				            <label class="col-sm-4 form-label align-right">Select sub section</label>
+				        	<div class="col-sm-8">
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { filter: 'contains', data: formula.optionSubSection, value: formula.selectedSubSection, optionLabel: 'Select one' }"></select>
+				        	</div>
+				        	<div class="clearfix"></div>
+				        </div>
+			        	<div class="clearfix"></div>
+		            </div>
+
+			    	<div class="col-sm-6" data-bind="visible: formula.usePeriod()">
+			    		<div class="form-group">
+				            <label class="col-sm-4 form-label align-right">Select period</label>
+				        	<div class="col-sm-8">
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionPeriods, dataValueField: 'value', dataTextField: 'text', value: formula.selectedPeriod }"></select>
+				        	</div>
+				        	<div class="clearfix"></div>
+				        </div>
+			        	<div class="clearfix"></div>
+		            </div>
+
+		        	<div class="clearfix"></div>
+
+			        <div class="form-group">
+				    	<div class="col-sm-12">
+				            <label class="col-sm-2 form-label align-right">Select operator</label>
+				            <div class="col-sm-8">
+				            	<button class="btn btn-sm btn-primary tooltipster" title="plus" data-bind="click: formula.addOperator('+')">
+									<span>+</span>
+								</button>
+								<button class="btn btn-sm btn-primary tooltipster" title="minus" data-bind="click: formula.addOperator('-')">
+									<span>-</span>
+								</button>
+								<button class="btn btn-sm btn-primary tooltipster" title="multiply" data-bind="click: formula.addOperator('*')">
+									<span>X</span>
+								</button>
+								<button class="btn btn-sm btn-primary tooltipster" title="divide" data-bind="click: formula.addOperator('/')">
+									<span>/</span>
+								</button>
+								<button class="btn btn-sm btn-primary tooltipster" title="divide" data-bind="click: formula.addOperator('(')">
+									<span>(</span>
+								</button>
+								<button class="btn btn-sm btn-primary tooltipster" title="divide" data-bind="click: formula.addOperator(')')">
+									<span>)</span>
+								</button>
+				            </div>
+				            <div class="clearfix"></div>
+			            </div>
+			            <div class="clearfix"></div>
+		            </div>
+
+					<div class="form-group">
+						<div class="col-sm-12">
+							<input rows="15" id="formula-text" data-sbind="value: Formula" style="width: 100%; resize: none;" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-sm btn-save" data-bind="click: formula.saveFinancial">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+

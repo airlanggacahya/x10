@@ -1,0 +1,265 @@
+<script type="text/javascript">
+  model.PageTopMenu('{{.TopMenu}}');
+  model.PageId('{{.Menuname}}');
+  model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
+  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+  model.Access = ko.observable('{{.Menuid}}');
+  model.View = ko.observable('{{.View}}');
+  model.Create= ko.observable('{{.Create}}');
+  model.Delete= ko.observable('{{.Delete}}');
+  model.Process= ko.observable('{{.Process}}');
+  model.Edit= ko.observable('{{.Edit}}')
+  model.User= ko.observable('{{.Username}}');
+</script>
+
+<script type="text/javascript" src="/static/core/loanapproval.js"></script>
+
+<style>
+    #tab0 {
+      font-size: 11px;
+    }
+    .k-grid table {
+      margin-bottom: 5px;
+      color: #444;
+    }
+    .k-grid table td {
+      background-color: white;
+    }
+
+    .k-grid-header .k-header {
+      color: #444;
+    }
+    .table-divider {
+      width: 1% !important;
+      border: none !important;
+      background-color: #fafafa !important;
+    }
+    .dummy-td {
+      border: none !important;
+      background-color: #fafafa !important;
+    }
+    .k-grid td {
+      white-space: normal !important;
+    }
+    .k-widget {
+      border: none !important;
+    }
+    .text-bold {
+      font-weight: bold !important;
+    }
+    .k-grid tr td {
+      border-width: 1px !important;
+    }
+    .center, .text-center {
+      text-align: center;
+    }
+</style>
+
+{{template "filter.html"}}
+<div>
+  <div class="col-sm-12 col-sm-12 ez panel-content" style="display: none">
+    <div class="panel ez no-padding hardcore">
+      <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+      <div class="panel-heading">
+        <button class="btn btn-primary" data-bind="click:exportPDF()"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
+      </div>
+      <div class="panel-body">
+        <div class="tab-content cotainer-tab">
+          <div class="tab-pane active" id="tab0">
+            <table class="table table-bordered KI" id="headerpdf">
+              <thead >
+                  <tr class="header-table hiddenrow">
+                      <td class="text-center header-bgcolor">X 10 FINANCIAL SERVICES LTD.</td>
+                  </tr>
+                  <tr class="hiddenrow">
+                      <td data-bind="text:loanapproval.companyname" class="sub-bgcolor center"></td>
+                  </tr>
+              </thead>
+            </table>
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor ">
+                  <i class="fa fa-list"></i>Loan Summary<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "loansummary.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Loan Detail<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "loandetail.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Payment Track<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "paymenttrack.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Key Policy Parameter Check<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "keypolicyparametercheck.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Promoter Background<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "promotersbackground.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Commercial CIBIL Assessment<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "commercialcibil.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Company Background<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "companybackground.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Reference Check<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "referencecheck.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+       
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Property Ownership (Details by Borrower / Promoters / Guarantors)<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "loanproperty.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Outstanding Debts (Working Capital Facility And Other Term Loans)<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "loanourstanding.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion" style="display:none">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>COMPLIANCE CHECK<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "loancompliance.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active">
+                  <i class="fa fa-list"></i>Business Mix<i class="fa fa-chevron-down pull-right"></i>
+                </div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "custbussinesmix.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <!--<ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active"><i class="fa fa-list"></i></i>Distributor Mix<i class="fa fa-chevron-down pull-right"></i></div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12 ez panel-content">
+                    {{template "distributormix.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>-->
+            
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active"><i class="fa fa-list"></i></i>Compliance Check<i class="fa fa-chevron-down pull-right"></i></div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "compliancecheck.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+     
+

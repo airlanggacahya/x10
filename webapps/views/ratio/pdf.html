@@ -1,0 +1,333 @@
+<script type="text/javascript">
+model.PageTopMenu("{{.TopMenu}}");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "#", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+</script>
+
+<style type="text/css">
+   .spacer {
+      margin-top : 10px;
+   }
+
+   .spacerTable {
+      margin-top : 5%;
+   }
+
+   .subsection {
+      text-align: center;
+      font-weight: bold;
+      background: rgb(51, 122, 183);
+      color: white;
+   }
+
+   .header-table {
+      text-align: center;
+      font-weight: bold;
+      background: rgb(51, 122, 183);
+      color: white;
+   }
+   .text-center {
+      text-align: center;
+      vertical-align: middle;
+      margin-top: 2%;
+      font-size: 1.5em;
+   }
+   .text-yellow {
+      background: yellow;
+   }
+   .text-yellow th {
+      text-align: center;
+   }
+   .text-right {
+      text-align: right;
+   }
+
+   .custom-header {
+      font-size: 11px;
+      font-weight: bold;
+   }
+
+   tr th:first-child {
+      width: 400px !important;
+   }
+
+   tr td:first-child {
+      width: 400px !important;
+   }
+
+   nav ul li a{
+        margin-top: 5px;
+  }
+
+   .heighfix{
+/*    height: 37px;
+    padding-top: 10px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;*/
+
+     font-family: 'Source Sans Pro', 'Lato', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    vertical-align: bottom;
+    color: rgb(168, 168, 168);
+    background-color: white;
+    border: 1px solid #e4e4e4;
+        padding: 2px 7px;
+        height: 37px;
+  }
+
+    .heighfixhead{
+/*    height: 37px;
+    padding-top: 10px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;*/
+
+     font-family: 'Source Sans Pro', 'Lato', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    vertical-align: bottom;
+    color: rgb(168, 168, 168);
+    background-color: rgb(241, 241, 241);
+    border: 1px solid #e4e4e4;
+    padding: 9px 8px;
+  }
+  .heighfix-all{
+   /* height: 37px;
+    padding-top: 15px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    background-color: #50c0d4;
+    color: white;
+    font-weight: bolder;
+    vertical-align: center;*/
+    height: 37px;
+    font-family: 'Source Sans Pro', 'Lato', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    vertical-align: bottom;
+    color: rgb(168, 168, 168);
+    background-color: rgb(241, 241, 241);
+    border: 1px solid #e4e4e4;
+    padding: 9px 8px;
+}
+  }
+  .heighfix-all2{
+ /*   height: 37px;
+    padding-top: 15px !important;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    background-color: #50c0d4;
+    color: white;
+    font-weight: bolder;
+    text-align: center;
+    vertical-align: center;*/
+    text-align: center !important;
+
+  }
+  .col-sm-2, .col-sm-10{
+    padding: 0;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+      /* display: none; <- Crashes Chrome on hover */
+      -webkit-appearance: none;
+      margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+  }
+  .form-last-confirmation-info {
+    padding-bottom: 10px;
+    padding-right: 10px;
+    text-align: right;
+    font-style: italic;
+    color: #27ae60;
+  }
+</style>
+
+<script src="/static/core/ratio-pdf.js"></script>
+
+{{template "filter.html"}}
+
+<div class="spacer"></div>
+<div class="row" data-bind="with: ratioPdf">
+   <div class="col-md-12 col-sm-12 ez panel-content">
+      <div class="panel ez">
+      <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+         <!-- <div class="panel-heading"> -->
+
+         <!-- </div> -->
+         <div class="panel-body" data-bind="visible:ratioPdf.KI()[0].row().length>0">
+            <div class="panel">
+            <div class="col-md-12">
+              <div class="col-sm-12">
+                 <button class="btn btn-sm btn-success" style="margin-bottom: 10px;" data-bind="click: exportPDF,visible:ratioPdf.KI()[0].row().length>0">
+                 <i class="fa fa-file-pdf-o"></i>&nbsp; Export PDF
+                </button>
+                <button class="btn btn-sm btn-primary" style="margin-bottom: 10px;" data-bind="click: exportPDF,visible:ratioPdf.KI()[0].row().length>0">
+                 <i class="fa fa-envelope"></i>&nbsp; Email PDF
+                </button>
+              </div>
+            </div>
+            <div class="col-md-12 tabfixed" style="margin-bottom: 10px; position: fixed; top: 55px; z-index: 1; background-color: #efefef; display: none;">
+              <div class="tabs tabs-style-linemove tabme" data-bind="visible: (r.data().length > 0)">
+                <nav>
+                  <ul role="tablist">
+                    <li class="borderon tab1 tab-current"><a href="javascript:r.checkTabs('tab1')">Key Indicators</a></li>
+                    <li class="borderon tab2"><a href="javascript:r.checkTabs('tab2')">Financial Ratios</a></li>
+                    <li class="borderon tab3"><a href="javascript:r.checkTabs('tab3');">Financial Summary</a></li>
+                    <li class="borderon tab4"><a href="javascript:r.checkTabs('tab4');">Stock & Debt</a></li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+            <div class="col-md-12" style="margin-bottom: 10px;">
+              <div class="tabs tabs-style-linemove tabme" data-bind="visible: (r.data().length > 0)">
+                <nav>
+                  <ul role="tablist">
+                    <li class="borderon tab1 tab-current"><a href="javascript:r.checkTabs('tab1')">Key Indicators</a></li>
+                    <li class="borderon tab2"><a href="javascript:r.checkTabs('tab2')">Financial Ratios</a></li>
+                    <li class="borderon tab3"><a href="javascript:r.checkTabs('tab3');">Financial Summary</a></li>
+                    <li class="borderon tab4"><a href="javascript:r.checkTabs('tab4');">Stock & Debt</a></li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+               <div class="panel-body print">
+                  <div class="row">
+                     <div id="tab1" class="col-md-12 tabhidden">
+                        <table class="table table-bordered KI" data-bind="foreach: KI">
+                           <thead data-bind="visible: headerCheckKI()">
+                              <tr class="header-table hiddenrow">
+                                 <th colspan="10" class="text-center header-bgcolor">
+                                    X 10 FINANCIAL SERVICES LTD.
+                                 </th>
+                              </tr>
+                              <tr class="hiddenrow">
+                                 <th class="header-table sub-bgcolor">COMPANY NAME</th>
+                                 <th colspan="10" data-bind="text: $parent.customerName"></th>
+                              </tr>
+                              <tr>
+                                 <th colspan="10" class="text-center header-bgcolor">Key Indicators</th>
+                              </tr>
+                           </thead>
+                           <thead>
+                              <tr data-bind="foreach: ColumnHeader">
+                                 <th class="header-table header-bgcolor" data-bind="text: $data"></th>
+                              </tr>
+                           </thead>
+                            <tbody data-bind="foreach: row">
+                              <tr data-bind="foreach: rowData">
+                                 <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
+                                 <td data-bind="text: $data, visible: checkSub($parent) == true"></td>
+                              </tr>
+                              </div>
+                           </tbody>
+                        </table>
+                     </div>
+                     <div class="col-md-12 spacerTable hiddenrow"></div>
+                     <div id="tab2" class="col-md-12 tabhidden">
+                        <table class="table table-bordered FR" data-bind="foreach: FR">
+                           <thead data-bind="visible: headerCheckFR()">
+                           <tr>
+                              <th colspan="10" class="text-center header-bgcolor">Financial Ratios</th>
+                           </tr>
+                           </thead>
+                           <thead>
+                              <tr data-bind="foreach: ColumnHeader">
+                                 <td class="header-table header-bgcolor" data-bind="text: $data, visible: headerCheckSub($parent) == true"></td>
+                                 <td class="sub-bgcolor  subsection" colspan="10" data-bind="text: $data, visible: headerCheckSub($parent) == false"></td>
+                              </tr>
+                           </thead>
+                            <tbody data-bind="foreach: row">
+                              <tr data-bind="foreach: rowData">
+                                 <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
+                                 <td data-bind="text: $data, visible: checkSub($parent) == true"></td>
+                              </tr>
+                              </div>
+                           </tbody>
+                        </table>
+                     </div>
+                     <div class="col-md-12 spacerTable hiddenrow"></div>
+                     <div id="tab3" class="col-md-12 tabhidden">
+                        <table class="table table-bordered" data-bind="foreach: KFI">
+                           <thead data-bind="visible: headerCheckKFI()">
+                              <tr>
+                                 <th colspan="10" class="header-bgcolor text-center">Financial Summary <br><span class="custom-header">(Amount in Rs.Lacs)</span></th>
+                              </tr>
+                           </thead>
+                           <thead>
+                              <tr data-bind="foreach: ColumnHeader">
+                                 <th class="header-table header-bgcolor" data-bind="text: $data"></th>
+                              </tr>
+                           </thead>
+                           <tbody data-bind="foreach: row">
+                              <tr data-bind="foreach: rowData">
+                                 <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
+                                 <td data-bind="text: $data, visible: checkSub($parent) == true"></td>
+                              </tr>
+                              </div>
+                           </tbody>
+                        </table>
+                     </div>
+                     <div class="col-md-12 spacerTable hiddenrow"></div>
+                     <div id="tab4" class="col-md-12 tabhidden">
+                        <table class="table table-bordered">
+                           <thead>
+                           <tr>
+                              <th colspan="10" class="text-center header-bgcolor">Adjusted Operating Metrics (Adjusting for the year end effect)</th>
+                           </tr>
+                           </thead>
+                           <thead>
+                              <tr data-bind="foreach: AOMData.ColumnHeader">
+                                 <th class="header-table header-bgcolor" data-bind="text: $data"></th>
+                              </tr>
+                           </thead>
+                           <tbody data-bind="foreach: AOMData.Row">
+                              <tr data-bind="foreach: rowData">
+                                 <td data-bind="text: $data"></td>
+                              </tr>
+                              </div>
+                           </tbody>
+                        </table>
+                        <div class="spacerTable"></div>
+                        <table class="table table-bordered">
+                           <thead>
+                              <tr>
+                                 <th colspan="10" class="text-center header-bgcolor">Ageing Analysis</th>
+                              </tr>
+                           </thead>
+                           <thead>
+                              <tr>
+                                 <th class="header-table header-bgcolor">Month</th>
+                                 <th class="header-table header-bgcolor">Current Asset</th>
+                                 <th class="header-table header-bgcolor">0-90 days</th>
+                                 <th class="header-table header-bgcolor">90days</th>
+                                 <th class="header-table header-bgcolor">180 Days</th>
+                              </tr>
+                           </thead>
+                           <tbody data-bind="foreach: AAData.Row">
+                              <tr>
+                                 <td data-bind="text: col1"></td>
+                                 <td data-bind="text: col2"></td>
+                                 <td data-bind="text: col3"></td>
+                                 <td data-bind="text: col4"></td>
+                                 <td data-bind="text: col5"></td>
+                              </tr>
+                              </div>
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

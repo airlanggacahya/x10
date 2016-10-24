@@ -1,0 +1,713 @@
+<style type="text/css">
+  .no-margin{
+    font-weight: bolder;
+    /*text-decoration: underline;*/
+  }
+  .k-state-disabled{
+    background-color: #eee !important;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  .k-state-disabled span, .k-state-disabled input{
+    background-color: #eee !important;
+  }
+  span.k-dropdown-wrap.k-state-disabled .k-input{
+    color: black !important;
+  }
+</style>
+<script type="text/javascript">
+model.PageTopMenu("Data Entry");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Data Entry", "Data Entry", "#", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+customerprofile = ko.observable({id: ""});
+customerprofile().FinancialReport = ko.observable();
+customerprofile().Status = ko.observable();
+model.All = ko.observable("customerprofile");
+
+
+// filter().DealNumberSearchVal.subscribe(function(value){
+//   refreshdata();
+// })
+
+formatnum =  function(number, decimalPlace) {
+   decimalPlace = (typeof decimalPlace === "undefined" ? 0 : decimalPlace);
+
+   var suffix = ((String(number).indexOf(".") > -1) ? String(number).split(".")[1].substring(0, decimalPlace) : "");
+   var prefix = ((String(number).indexOf(".") > -1) ? String(number).split(".")[0] : String(number)).split("").reverse().join("");
+
+   var result = "";
+    for (var i = 0; i < prefix.length; i++) {
+      result += prefix[i];
+      if (i == 2)
+          result += ",";
+      else if (i > 2 && ((i - 2) % 2 == 0))
+          result += ",";
+    }
+
+    result = result.split("").reverse().join("")
+
+    if (suffix.length > 0) if (parseInt(suffix, 10) != 0) result = result + "." + suffix;
+    result = result.replace(/- /g, "-");
+
+    if(String(number).length % 2 != 0) {
+      var res = result.split('')
+      var remove = res.splice(0,1,'')
+      result = res.join('')
+    }
+
+    result = result.replace(/\s+/g, '')
+
+    return result;
+}
+
+function refreshFilter(){
+  refreshdata();
+}
+
+filter().CustomerSearchVal.subscribe(function(val){
+  blanked();
+});
+
+function refreshdata(){
+  blanked();
+  var param = {CustomerId: filter().CustomerSearchVal(), Dealno: filter().DealNumberSearchVal()}
+  var url = "{{BaseUrl}}datacapturing/getcustomerprofiledetail";
+  ajaxPost(url, param, function(data) {
+    // console.log(data);
+    console.log(data);
+    if (data.length > 0) {
+      model.All(data[0]);
+      data[0].ApplicantDetail.DateOfIncorporation = data[0].ApplicantDetail.DateOfIncorporation+"";
+      $(".grid2").getKendoGrid().dataSource.data([])
+      $(".grid2").getKendoGrid().refresh()
+      $(".grid3").getKendoGrid().dataSource.data([])
+      $(".grid3").getKendoGrid().refresh()
+      detail.biodata([]);
+      customerprofile().Status(data[0].Status);
+      if(data[0].Status == 1){
+        $('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(data[0].ConfirmedDate),"dd-MM-yyyy h:mm:ss tt") )
+      } else if(data[0].Status == 2){
+        $('.form-last-confirmation-info').html('Last verified on: '+kendo.toString(new Date(data[0].VerifiedDate),"dd-MM-yyyy h:mm:ss tt") )
+      } else{
+        $('.form-last-confirmation-info').html('')
+      }
+      customerprofile().id = data[0].Id;
+      customerprofile().ConfirmedBy = data[0].ConfirmedBy;
+      customerprofile().ConfirmedDate = data[0].ConfirmedDate;
+      ApplicantDetail.DateIncorporation(kendo.parseDate(new Date(data[0].ApplicantDetail.DateOfIncorporation), 'dd-MM-yyyy'));
+      data[0].ApplicantDetail.AmountLoan = formatnum(data[0].ApplicantDetail.AmountLoan)
+      data[0].ApplicantDetail.RegisteredAddress.Title = "Registered Address";
+      data[0].ApplicantDetail.AddressCorrespondence.Title = "Address for Correspondence";
+      data[0].ApplicantDetail.SiteWorkAddress.Title = "Site/Work Address";
+      if (data[0].ApplicantDetail.NoOfEmployees == 0){
+        data[0].ApplicantDetail.NoOfEmployees = ""
+      }
+      if (data[0].ApplicantDetail.GroupTurnOver == 0){
+        data[0].ApplicantDetail.GroupTurnOver = ""
+      }
+      if (data[0].ApplicantDetail.CapitalExpansionPlans == 0){
+        data[0].ApplicantDetail.CapitalExpansionPlans = ""
+      }
+
+      if(data[0].ApplicantDetail.CapitalExpansionPlansBool){
+        $('#CapitalExpansionPlansBoolNone').prop("checked", false);
+        $('#CapitalExpansionPlansBoolDetail').prop("checked", true);
+      } else{
+        $('#CapitalExpansionPlansBoolNone').prop("checked", true);
+        $('#CapitalExpansionPlansBoolDetail').prop("checked", false);
+      }
+
+      $(".grid2").getKendoGrid().dataSource.data(data[0].FinancialReport.DetailsPertainingBanker)
+      $(".grid2").getKendoGrid().refresh()
+       $(".grid3").getKendoGrid().dataSource.data(data[0].FinancialReport.ExistingRelationship)
+      $(".grid3").getKendoGrid().refresh()
+      if (ApplicantDetail.Detail().length > 0 ){
+        ApplicantDetail.Detail([]);
+      }
+      ApplicantDetail.Detail.push(data[0].ApplicantDetail.RegisteredAddress);
+      ApplicantDetail.Detail.push(data[0].ApplicantDetail.AddressCorrespondence);
+      ApplicantDetail.Detail.push(data[0].ApplicantDetail.SiteWorkAddress);
+      // console.log(data[0].ApplicantDetail.RegisteredAddress)
+      // pushaddressfake();
+      //data[0].ApplicantDetail.RegisteredAddress = ApplicantDetail.Detail()[0]
+      customerprofile().ApplicantDetail(data[0].ApplicantDetail);
+      data[0].NonRefundableProcessingFeesDetails.InstrumentDate = moment(data[0].NonRefundableProcessingFeesDetails.InstrumentDate).format("DD-MMM-YYYY");
+
+      customerprofile().FinancialReport(data[0].FinancialReport);
+      customerprofile().NonRefundableProcessingFeesDetails(data[0].NonRefundableProcessingFeesDetails)
+
+      $.each(data[0].DetailOfPromoters.Biodata, function(i,v){
+        if(data[0].DetailOfPromoters.Biodata[i].PropertyOwned == null || data[0].DetailOfPromoters.Biodata[i].PropertyOwned.length == 0){
+          data[0].DetailOfPromoters.Biodata[i].PropertyOwnedkendo = ko.observableArray([])
+        } else{
+          data[0].DetailOfPromoters.Biodata[i].PropertyOwnedkendo = ko.observableArray(data[0].DetailOfPromoters.Biodata[i].PropertyOwned)
+        }
+      })
+
+      detail.biodata(data[0].DetailOfPromoters.Biodata)
+      detail.detailReference(data[0].DetailOfPromoters.DetailOfReference)
+      if (detail.detailReference().length == 0){
+        detail.detailReference.push({Name: '',Address: '',ContactNo: '',RelationAplicant: ''});
+      }
+      // if (data[0].DetailOfPromoters.DetailOfReference.length > 0){
+      //   detail.detailReference(data[0].DetailOfPromoters.DetailOfReference)
+      // } else{
+      //   detail.detailReference.push({Name: '',Address: '',ContactNo: '',RelationAplicant: ''});
+      // }
+      //data[0].DetailOfPromoters.Biodata = detail.biodata()
+      $("#cf").show();
+      $("#edit").show();
+      $("#ceedit").hide();
+      $("#vf").show();
+      $("#reset").show();
+      $("#pdf").show();
+      disableedit();
+      buttonlogicstatus(customerprofile().Status());
+    }else if(filter().CustomerSearchVal() != "" && filter().DealNumberSearchVal() != "" ){
+       swal("warning","Data not available", "warning");
+    }else{
+      blanked();
+    }
+  }, undefined);
+}
+
+function CapitalExpansionPlansBool(stat){
+  customerprofile().ApplicantDetail().CapitalExpansionPlansBool = stat
+  if(stat){
+    $('#CapitalExpansionPlansBoolNone').prop("checked", false);
+    $('#CapitalExpansionPlansBoolDetail').prop("checked", true);
+  } else{
+    $('#CapitalExpansionPlansBoolNone').prop("checked", true);
+    $('#CapitalExpansionPlansBoolDetail').prop("checked", false);
+  }
+}
+
+function pushaddressfake(){
+  ApplicantDetail.Detail.push(
+    {
+      Title: ko.observable("Address for Correspondence"),ValueRegistered: "",LandmarkRegistered: "",PincodeRegistered: "",
+      AddressRegistered:"",CityRegistered:"",StateRegistered:"",PhoneRegistered:"",MobileRegistered:"",ContactPersonRegistered:"",EmailRegistered:"",OfficeRegistered:"",NoOfYearsAtAboveAddressRegistered:"",AreaOfPlotRegistered:"",BuiltUpAreaRegistered:""
+    }
+  );
+  ApplicantDetail.Detail.push(
+    {
+      Title: ko.observable("Site/Work Address"),ValueRegistered: "",LandmarkRegistered: "",PincodeRegistered: "",
+      AddressRegistered:"",CityRegistered:"",StateRegistered:"",PhoneRegistered:"",MobileRegistered:"",ContactPersonRegistered:"",EmailRegistered:"",OfficeRegistered:"",NoOfYearsAtAboveAddressRegistered:"",AreaOfPlotRegistered:"",BuiltUpAreaRegistered:""
+    }
+  );
+}
+
+function pushaddressfakeComplete(){
+   ApplicantDetail.Detail([]);
+   ApplicantDetail.Detail.push(
+    {
+      Title: ko.observable("Registered Address"),ValueRegistered: "",LandmarkRegistered: "",PincodeRegistered: "",
+      AddressRegistered:"",CityRegistered:"",StateRegistered:"",PhoneRegistered:"",MobileRegistered:"",ContactPersonRegistered:"",EmailRegistered:"",OfficeRegistered:"",NoOfYearsAtAboveAddressRegistered:"",AreaOfPlotRegistered:"",BuiltUpAreaRegistered:""
+    }
+  );
+  ApplicantDetail.Detail.push(
+    {
+      Title: ko.observable("Address for Correspondence"),ValueRegistered: "",LandmarkRegistered: "",PincodeRegistered: "",
+      AddressRegistered:"",CityRegistered:"",StateRegistered:"",PhoneRegistered:"",MobileRegistered:"",ContactPersonRegistered:"",EmailRegistered:"",OfficeRegistered:"",NoOfYearsAtAboveAddressRegistered:"",AreaOfPlotRegistered:"",BuiltUpAreaRegistered:""
+    }
+  );
+  ApplicantDetail.Detail.push(
+    {
+      Title: ko.observable("Site/Work Address"),ValueRegistered: "",LandmarkRegistered: "",PincodeRegistered: "",
+      AddressRegistered:"",CityRegistered:"",StateRegistered:"",PhoneRegistered:"",MobileRegistered:"",ContactPersonRegistered:"",EmailRegistered:"",OfficeRegistered:"",NoOfYearsAtAboveAddressRegistered:"",AreaOfPlotRegistered:"",BuiltUpAreaRegistered:""
+    }
+  );
+}
+
+function buttonlogicstatus(status){
+  if (status == 0) {
+    $("#vf").prop( "disabled", true );
+    $("#cf").prop( "disabled", false );
+    $("#edit").prop( "disabled", false );
+  } else if(status == 1){
+    $("#vf").prop( "disabled", false );
+    $("#cf").prop( "disabled", true );
+    $("#edit").prop( "disabled", true );
+  } else if(status == 2){
+    $("#vf").prop( "disabled", true );
+    $("#cf").prop( "disabled", true );
+    $("#edit").prop( "disabled", true );
+  }
+}
+
+// function onSelectDealno(e){
+//   var dataItem = this.dataItem(e.item);
+//   customerprofile().DealNumberSearchList([]);
+//   $.each( customerprofile().CustomerSearchList(), function( key, value ) {
+//     if (value.customer_id == dataItem.customer_id){
+//       customerprofile().DealNumberSearchList.push(value.deal_no);
+//     }
+//   });
+// }
+
+// function getDetailmen(e){
+//   var dataItem = this.dataItem(e.item);
+//   var param = {CustomerId: customerprofile().CustomerSearchVal(), Dealno: customerprofile().DealNumberSearchVal()}
+//   var url = "{{BaseUrl}}datacapturing/getcustomerprofiledetail";
+//   ajaxPost(url, param, function(data) {
+//     console.log(data)
+//   }, undefined);
+// }
+var editmode = ko.observable(false);
+function enableedit(){
+  $(".cotainer-tab input").prop("disabled", false);
+  $(".cotainer-tab textarea").prop("disabled", false);
+  $("#genderdropdown").data("kendoDropDownList").enable(true);
+  $("#Martialdropdown").data("kendoDropDownList").enable(true);
+  $("#Guarantodropdown").data("kendoDropDownList").enable(true);
+  $("#designation").data("kendoDropDownList").enable(true);
+  $("#ownership").data("kendoDropDownList").enable(true);
+  // $("#di").data("kendoDatePicker").enable(true);
+  // $("#datebirth").data("kendoDatePicker").enable(true);
+  $("#anniversarrydate").data("kendoDatePicker").enable(true);
+  $("#doi").data("kendoDatePicker").enable(true);
+  // $("#id").data("kendoDatePicker").enable(true);
+  $("#holdingpercent").data("kendoNumericTextBox").enable(true);
+  editmode(true);
+  // $("#a").data("kendoDropDownList").enable(true);
+  // $("#b").data("kendoDropDownList").enable(true);
+  // $("#c").data("kendoDropDownList").enable(true);
+  // $("#d").data("kendoDropDownList").enable(true);
+  $("#edit").hide();
+  $("#ceedit").show();
+  $(".btnsave").show();
+  EnableAllkendo(true);
+  // for(var i in detail.biodata()){
+  //   if(detail.biodata()[i].PropertyOwnedkendo().length == 0){
+  //     detail.biodata()[i].PropertyOwnedkendo.push({PropertyType: "",Address: "",MarketValue: ""})
+  //   }
+  // }
+}
+
+function disableedit(){
+  try{
+    for(var i in detail.biodata()){
+        for(var x in detail.biodata()[i].PropertyOwnedkendo()){
+      if(detail.biodata()[i].PropertyOwnedkendo()[x].Address == "" && detail.biodata()[i].PropertyOwnedkendo()[x].MarketValue == "" && detail.biodata()[i].PropertyOwnedkendo()[x].PropertyType == ""){
+        detail.biodata()[i].PropertyOwnedkendo().splice(x,1);
+      }
+    }
+  }
+
+  editmode(false);
+  $("#edit").show();
+  $("#ceedit").hide();
+  $(".btnsave").hide();
+  $(".cotainer-tab input").prop("disabled", true);
+  $(".cotainer-tab textarea").prop("disabled", true);
+  $("#genderdropdown").data("kendoDropDownList").enable(false);
+  $("#Martialdropdown").data("kendoDropDownList").enable(false);
+  $("#Guarantodropdown").data("kendoDropDownList").enable(false);
+  $("#designation").data("kendoDropDownList").enable(false);
+  $("#ownership").data("kendoDropDownList").enable(false);
+  // $("#di").data("kendoDatePicker").enable(false);
+  // $("#datebirth").data("kendoDatePicker").enable(false);
+  $("#anniversarrydate").data("kendoDatePicker").enable(false);
+  $("#doi").data("kendoDatePicker").enable(false);
+  // $("#id").data("kendoDatePicker").enable(false);
+  $("#holdingpercent").data("kendoNumericTextBox").enable(false);
+  EnableAllkendo(false);
+
+}catch(e){
+  console.log(e)
+}
+
+  // $("#a").data("kendoDropDownList").enable(false);
+  // $("#b").data("kendoDropDownList").enable(false);
+  // $("#c").data("kendoDropDownList").enable(false);
+  // $("#d").data("kendoDropDownList").enable(false);
+}
+
+function EnableAllkendo(param){
+  $("#biodata .k-widget").each(function(i,e){
+
+  var $ddl = $(e).find("select").getKendoDropDownList();
+
+  if($ddl == undefined)
+  var $ddl = $(e).find("input").getKendoDropDownList();
+
+  var $dtm = $(e).find("input").getKendoDatePicker();
+  var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+  if($ddl != undefined)
+  {
+    $ddl.enable(param);
+  }else if($dtm != undefined){
+    $dtm.enable(param);
+  }else if ($txt != undefined){
+    $txt.enable(param);
+  }
+
+});
+}
+
+function reset(){
+  filter().CustomerSearchVal('');
+  filter().DealNumberSearchVal('');
+  customerprofile().ApplicantDetail({});
+  ApplicantDetail.Detail([]);
+  customerprofile().NonRefundableProcessingFeesDetails({});
+  disableedit();
+  $("#cf").hide();
+  $("#vf").hide();
+  $("#edit").hide();
+  $("#ceedit").hide();
+  $("#reset").hide();
+  $("#pdf").hide();
+}
+
+function blanked(){
+  try{
+  customerprofile().ApplicantDetail({});
+  ApplicantDetail.Detail([]);
+  pushaddressfakeComplete();
+  customerprofile().FinancialReport().DetailsPertainingBanker = [];
+  customerprofile().FinancialReport().ExistingRelationship = [];
+  customerprofile().FinancialReport().PreviousLoansDetail = [];
+  customerprofile().NonRefundableProcessingFeesDetails({})
+  disableedit();
+  $("#cf").hide();
+  $("#vf").hide();
+  $("#edit").hide();
+  $("#ceedit").hide();
+  $("#reset").hide();
+  $("#pdf").hide();
+  detail.biodata([]);
+  $(".grid1").getKendoGrid().dataSource.read()
+  $(".grid2").getKendoGrid().dataSource.read()
+  $(".grid3").getKendoGrid().dataSource.read()
+}catch(e){
+  console.log(e)
+}
+}
+
+function confirmorverify(status){
+  // if(status==1){
+  //   var dt = detail.biodata();
+  //   _.each(dt,function(e,i){
+  //       _.each(e,function(ex,ix){
+  //             if((ix=="Name"||ix=="FatherName"||ix=="Gender"||ix=="MaritalStatus"||ix=="DateOfBirth"||ix=="Address"||ix=="Phone"||ix=="Mobile"||ix=="Ownership"||ix=="Ownership"||ix=="NoOfYears")&& (ex == "" ||ex == 0 )){
+  //               alert("kosong cok");
+  //               return;
+  //             }
+  //         });
+  //   });
+  // }
+
+  // if (status == 1){
+  //   if (customerprofile().ApplicantDetail().CustomerName == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().CustomerConstitution == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().DateOfIncorporation == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().CustomerPan == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().NatureOfBussiness == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().YearsInBusiness == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().NoOfEmployees == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().AnnualTurnOver == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().AmountLoan == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.CityRegistered == ""){
+  //    swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.StateRegistered == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.PhoneRegistered == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.ContactPersonRegistered == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.OfficeRegistered == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.NoOfYearsAtAboveAddressRegistered == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.AreaOfPlotRegistered == ""){
+  //    swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.BuiltUpAreaRegistered == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.MobileRegistered == ""){
+  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
+  //     return;
+  //   }
+  // }
+
+  customerprofile().Status(status);
+
+  save();
+
+  buttonlogicstatus(status);
+  $("#edit").hide();
+  $("#ceedit").hide();
+}
+
+function save(){
+  param = {};
+  param.Id = customerprofile().id;
+  param.Status = customerprofile().Status();
+  param.ConfirmedBy = customerprofile().ConfirmedBy;
+  param.ConfirmedDate = customerprofile().ConfirmedDate;
+  param.NonRefundableProcessingFeesDetails = customerprofile().NonRefundableProcessingFeesDetails();
+  param.FinancialReport = customerprofile().FinancialReport();
+  param.DetailOfPromoters = customerprofile().DetailofPromoters();
+  param.ApplicantDetail = customerprofile().ApplicantDetail();
+  param.ApplicantDetail.RegisteredAddress = ApplicantDetail.Detail()[0];
+  param.ApplicantDetail.AddressCorrespondence = ApplicantDetail.Detail()[1];
+  param.ApplicantDetail.SiteWorkAddress = ApplicantDetail.Detail()[2];
+  param.ApplicantDetail.DateOfIncorporation = ApplicantDetail.DateIncorporation();
+  param.ApplicantDetail.AmountLoan = customerprofile().ApplicantDetail().AmountLoan.split(",").join("");
+
+  $.each(detail.biodata(),function(i,v){
+    $.each(detail.biodata()[i].PropertyOwnedkendo(),function(ii,vv){
+      detail.biodata()[i].PropertyOwnedkendo()[ii].MarketValue = parseFloat(vv.MarketValue)
+    })
+    detail.biodata()[i].PropertyOwned = detail.biodata()[i].PropertyOwnedkendo();
+  })
+
+  param.DetailOfPromoters.Biodata = detail.biodata();
+  param.DetailOfPromoters.DetailOfReference = detail.detailReference();
+
+  var url = "{{BaseUrl}}datacapturing/savecustomerprofiledetail";
+  ajaxPost(url, param, function(data) {
+    if (data){
+      swal("success", "Data already saved...", "success");
+      refreshdata();
+    }
+  }, undefined);
+}
+
+$(document).ready(function(){
+  reset();
+});
+
+</script>
+<script src="/static/core/detailsofpromotersdirectorsguarantors.js"></script>
+
+<style type="text/css">
+  .btnsave{
+    padding: 10px;
+  }
+  .mgright17{
+    margin-bottom: 1px;
+  }
+
+
+
+.form-last-confirmation-info {
+  padding-bottom: 10px;
+  text-align: right;
+  font-style: italic;
+  color: #27ae60;
+  margin-right: 10px;
+}
+</style>
+
+
+{{template "filter.html"}}
+<div>
+  <div class="col-sm-12 col-sm-12 ez panel-content">
+      <div class="panel ez no-padding hardcore">
+        <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+        <div class="panel-body">
+          <!-- <div class="form-last-confirmation-info"></div> -->
+          <div class="panel-nav-button">
+            <button  type="button" id="ceedit" btn-sm class="btn btn-sm btn-success" onclick="disableedit()">Cancel Edit</button>
+            <button  type="button" id="edit" btn-sm class="btn btn-sm btn-save" onclick="enableedit()"> Edit</button>
+             <button  type="button" id="cf" btn-sm class="btn btn-sm btn-confirm" onclick="confirmorverify(1)">Confirm</button>
+             <button  type="button" id="vf" btn-sm class="btn btn-sm btn-freeze" onclick="confirmorverify(2)">Verify</button>
+             <!-- <button type="button" btn-sm class="btn btn-sm btn-default" > View All</button> -->
+             <button  type="button" id="pdf" btn-sm class="btn btn-sm btn-primary" onclick="exportPDF();">Download as PDF</button>
+            <!-- <button  id="pdf" class="btn-pdf" onclick="exportPDF();"><span></span></button> -->
+            <span class="form-last-confirmation-info pull-right"></span>
+          </div>
+          <!-- <ul id= "ontabs" class="nav nav-tabs" style=" margin-bottom: 1%;">
+            <li id="li1" class="active"><a href="#tab0" data-toggle="tab">All Details</a></li>
+            <li id="li1"><a href="#tab1" data-toggle="tab">Applicant Details</a></li>
+            <li id="li2"><a href="#tab2" data-toggle="tab">Financial Information</a></li>
+            <li id="li3"><a href="#tab3" data-toggle="tab">Non-Refundable Processing Fees Details</a></li>
+            <li id="li4"><a href="#tab4" data-toggle="tab">Details of Promoters/Directors/Guarantors</a></li>
+          </ul> -->
+          <div class="tab-content cotainer-tab" style="margin-top: 10px">
+            <div class="tab-pane active" id="tab0">
+            <ul class="collapsible" data-collapsible="accordion">
+            <li>
+            <div class="collapsible-noreplace active"><i class="fa fa-list"></i>Applicant Details<i class="fa fa-chevron-down pull-right"></i></div>
+            <div class="collapsible-body row">
+              <div class="col-sm-12 btnsave">
+                <span class="pull-right"><button class="btn btn-save btn-sm" onclick="save()">Save</button></span>
+              </div>
+              <div class="col-sm-12">
+                {{template "detailforapplicant.html"}}
+              </div>
+            </div>
+            </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace active"><i class="fa fa-list"></i>Financial Information<i class="fa fa-chevron-down pull-right"></i></div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12 btnsave">
+                    <!-- <span class="pull-right"><button class="btn btn-warning btn-sm" onclick="save()">Save</button></span> -->
+                  </div>
+                  <div class="col-sm-12">
+                    {{template "financialinformation.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+             <ul class="collapsible" data-collapsible="accordion">
+            <li>
+                 <div class="collapsible-noreplace active"><i class="fa fa-list"></i>Non-Refundable Processing Fee Details<i class="fa fa-chevron-down pull-right"></i></div>
+            <div class="collapsible-body row">
+              <div class="col-sm-12 btnsave">
+                <span class="pull-right"><button class="btn btn-warning btn-sm" onclick="save()">Save</button></span>
+              </div>
+              <div class="col-sm-12">
+                {{template "nonrefundableprocessingfeesdetails.html"}}
+                </div>
+                </div>
+                   </li>
+            </ul>
+
+             <ul class="collapsible" data-collapsible="accordion">
+            <li>
+                 <div class="collapsible-noreplace active"><i class="fa fa-list"></i>Details of Promoters/Directors/Guarantors<i class="fa fa-chevron-down pull-right"></i></div>
+            <div class="collapsible-body row">
+              <div class="col-sm-12 btnsave">
+                <span class="pull-right"><button class="btn btn-warning btn-sm" onclick="save()">Save</button></span>
+              </div>
+                <div class="col-sm-12">
+                {{template "detailsofpromotersdirectorsguarantors.html"}}
+                </div>
+                </div>
+                   </li>
+            </ul>
+
+            </div>
+            <div class="tab-pane" id="tab1">
+                {{template "detailforapplicant.html"}}
+            </div>
+            <div class="tab-pane" id="tab2">
+                {{template "financialinformation.html"}}
+            </div>
+            <div class="tab-pane" id="tab3">
+                {{template "nonrefundableprocessingfeesdetails.html"}}
+            </div>
+            <div class="tab-pane" id="tab4">
+                {{template "detailsofpromotersdirectorsguarantors.html"}}
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function exportPDF(){
+      kendo.drawing.drawDOM($("#tab0")).then(function(group){
+          kendo.drawing.pdf.saveAs(group, customerprofile().ApplicantDetail().CustomerName  + " - " + customerprofile().ApplicantDetail().DealNo + ".pdf");
+        });
+  }
+
+  $(document).ready(function(){
+    setTimeout(function(){
+        $("#tab0 .collapsible-header").each(function(i,e){
+         $(e).css("display","none");
+        });
+
+             $("#tab0 .collapsible-noreplace").each(function(i,e){
+         $(e).attr("class","collapsible-header");
+         $(e).addClass('header-bgcolor');
+        });
+
+        $("#tab0 .collapsible-header").each(function(i,e){
+         $(e).trigger("click");
+        });
+
+           $("#tab0 .k-grid-add").each(function(i,e){
+         $(e).css("display","none");
+        });
+
+             $("#tab0 .btn-success").each(function(i,e){
+         $(e).css("display","none");
+        });
+        setTimeout(function(){
+            $("#tab0 .collapsible-body").each(function(i,e){
+              $(e).css("display","block");
+            });
+        },1000);
+
+    },1000);
+
+    ApplicantDetail.Detail.push(
+      {
+        Title: ko.observable("Registered Address"),ValueRegistered: "",LandmarkRegistered: "",PincodeRegistered: "",        AddressRegistered:"",CityRegistered:"",StateRegistered:"",PhoneRegistered:"",MobileRegistered:"",ContactPersonRegistered:"",EmailRegistered:"",OfficeRegistered:"",NoOfYearsAtAboveAddressRegistered:"",AreaOfPlotRegistered:"",BuiltUpAreaRegistered:""
+      }
+    );
+    ApplicantDetail.Detail.push(
+      {
+        Title: ko.observable("Address for Correspondence"),ValueRegistered: "",LandmarkRegistered: "",PincodeRegistered: "",
+        AddressRegistered:"",CityRegistered:"",StateRegistered:"",PhoneRegistered:"",MobileRegistered:"",ContactPersonRegistered:"",EmailRegistered:"",OfficeRegistered:"",NoOfYearsAtAboveAddressRegistered:"",AreaOfPlotRegistered:"",BuiltUpAreaRegistered:""
+      }
+    );
+    ApplicantDetail.Detail.push(
+      {
+        Title: ko.observable("Site/Work Address"),ValueRegistered: "",LandmarkRegistered: "",PincodeRegistered: "",
+        AddressRegistered:"",CityRegistered:"",StateRegistered:"",PhoneRegistered:"",MobileRegistered:"",ContactPersonRegistered:"",EmailRegistered:"",OfficeRegistered:"",NoOfYearsAtAboveAddressRegistered:"",AreaOfPlotRegistered:"",BuiltUpAreaRegistered:""
+      }
+    );
+
+  });
+</script>

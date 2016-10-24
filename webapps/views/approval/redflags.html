@@ -1,0 +1,19 @@
+<div class="panel-default content no-padding">
+	
+	<div class="panel-heading text-center">Red Flags</div>
+
+	<div class="panel-body">
+	<div data-bind="foreach: redflags">
+		<div class="col-sm-6 no-padding" >
+		    <div class="item">
+		        <div data-bind="attr:{title:RedFlags},event:{mouseover:hovername()}" class="col-sm-3 no-padding"><img src="/static/img/red-flag.png" height="22px;" /></div>
+		        <!--<div class="col-sm-9 no-padding"><input class="input-sm form-control" type="text" data-bind="value: Name" style="width: 100%;" disabled /></div>-->
+				<div><span class="text-label redflag" data-bind="text: Name,attr:{title:RedFlags},event:{mouseover:hovername()}"></span></div>
+				<div class="clearfix"></div>
+		    </div>
+		</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+

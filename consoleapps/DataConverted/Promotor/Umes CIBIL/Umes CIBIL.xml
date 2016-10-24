@@ -1,0 +1,779 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="0.45.0">
+<page number="1" position="absolute" top="0" left="0" height="1188" width="903">
+	<fontspec id="0" size="11" family="Helvetica" color="#666666"/>
+	<fontspec id="1" size="8" family="Helvetica" color="#666666"/>
+	<fontspec id="2" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="3" size="8" family="Helvetica" color="#005484"/>
+	<fontspec id="4" size="10" family="Helvetica" color="#003366"/>
+	<fontspec id="5" size="28" family="Helvetica" color="#003366"/>
+	<fontspec id="6" size="8" family="Helvetica" color="#000000"/>
+	<fontspec id="7" size="10" family="Helvetica" color="#ff0000"/>
+	<fontspec id="8" size="8" family="Helvetica" color="#ff0000"/>
+	<fontspec id="9" size="7" family="Helvetica" color="#005484"/>
+	<fontspec id="10" size="7" family="Helvetica" color="#999999"/>
+	<fontspec id="11" size="10" family="Helvetica" color="#676767"/>
+<image top="33" left="36" width="831" height="181" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-1_1.jpg"/>
+<image top="1135" left="42" width="90" height="30" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-1_2.png"/>
+<text top="295" left="42" width="186" height="12" font="0"><b>CONSUMER INFORMATION: </b></text>
+<text top="320" left="42" width="36" height="10" font="1"><i>NAME: </i></text>
+<text top="319" left="78" width="211" height="11" font="2">UMESHKUMAR JEMATRAJ MEHTA    </text>
+<text top="344" left="42" width="86" height="10" font="1"><i>DATE OF BIRTH: </i></text>
+<text top="343" left="128" width="61" height="11" font="2">14-10-1977</text>
+<text top="344" left="458" width="51" height="10" font="1"><i>GENDER: </i></text>
+<text top="343" left="508" width="33" height="11" font="2">MALE</text>
+<text top="372" left="42" width="207" height="12" font="0"><b>CIBIL TRANSUNION SCORE(S): </b></text>
+<text top="402" left="45" width="74" height="10" font="3"><b>SCORE NAME </b></text>
+<text top="402" left="250" width="40" height="10" font="3"><b>SCORE </b></text>
+<text top="402" left="332" width="106" height="10" font="3"><b>SCORING FACTORS </b></text>
+<text top="432" left="42" width="162" height="11" font="4">CIBIL TRANSUNION SCORE </text>
+<text top="450" left="42" width="74" height="11" font="4">VERSION 1.0</text>
+<text top="432" left="248" width="50" height="28" font="5">625</text>
+<text top="440" left="331" width="15" height="10" font="6">1:  </text>
+<text top="438" left="345" width="380" height="11" font="2">ONE OR MORE TRADES WRITTEN OFF IN THE PAST 24 MONTHS. </text>
+<text top="458" left="331" width="15" height="10" font="6">2:  </text>
+<text top="456" left="345" width="458" height="11" font="2">PRESENCE OF A TRADELINE 91+ DAYS DELINQUENT IN THE PAST 6 MONTHS. </text>
+<text top="476" left="331" width="15" height="10" font="6">3:  </text>
+<text top="474" left="345" width="473" height="11" font="2">CREDIT CARD BALANCES ARE HIGH IN PROPORTION TO HIGH CREDIT AMOUNT. </text>
+<text top="494" left="331" width="15" height="10" font="6">4:  </text>
+<text top="492" left="345" width="285" height="11" font="2">LOW PROPORTION OF SATISFACTORY TRADES. </text>
+<text top="512" left="331" width="15" height="10" font="6">5:  </text>
+<text top="510" left="345" width="447" height="11" font="2">PRESENCE OF A TRADELINE 91+ DAYS DELINQUENT 7 TO 12 MONTHS AGO. </text>
+<text top="530" left="331" width="15" height="10" font="6">6:  </text>
+<text top="528" left="345" width="478" height="11" font="2">PRESENCE OF A TRADELINE 91+ DAYS DELINQUENT 13 OR MORE MONTHS AGO. </text>
+<text top="596" left="42" width="373" height="11" font="4">POSSIBLE RANGE FOR CIBIL TRANSUNION SCORE VERSION 1.0</text>
+<text top="620" left="42" width="272" height="11" font="2">Consumers with more than 6 months credit history*</text>
+<text top="620" left="578" width="3" height="11" font="7">:</text>
+<text top="620" left="595" width="164" height="11" font="7">300 (high risk) to 900 (low risk)</text>
+<text top="637" left="42" width="266" height="11" font="2">Consumers with less than 6 months credit history*</text>
+<text top="637" left="578" width="3" height="11" font="7">:</text>
+<text top="637" left="595" width="7" height="11" font="7">0</text>
+<text top="654" left="42" width="405" height="11" font="2">Consumers not in CIBIL database or with insufficient information for scoring*</text>
+<text top="654" left="578" width="3" height="11" font="7">:</text>
+<text top="654" left="595" width="11" height="11" font="7">-1</text>
+<text top="685" left="42" width="530" height="10" font="6">* At least one tradeline with information updated in last 24 months is required.In case of error in scoring a value of </text>
+<text top="685" left="572" width="10" height="10" font="8">'0'</text>
+<text top="685" left="582" width="58" height="10" font="6"> is returned. </text>
+<text top="715" left="42" width="130" height="12" font="0"><b>IDENTIFICATION(S):</b></text>
+<text top="739" left="42" width="114" height="10" font="3"><b>IDENTIFICATION TYPE</b></text>
+<text top="739" left="291" width="133" height="10" font="3"><b>IDENTIFICATION NUMBER</b></text>
+<text top="739" left="541" width="63" height="10" font="3"><b>ISSUE DATE</b></text>
+<text top="739" left="707" width="96" height="10" font="3"><b>EXPIRATION DATE</b></text>
+<text top="763" left="42" width="185" height="11" font="2">INCOME TAX ID NUMBER (PAN) </text>
+<text top="763" left="291" width="77" height="11" font="2">AAFPM0580N</text>
+<text top="793" left="42" width="124" height="11" font="2">PASSPORT NUMBER </text>
+<text top="793" left="291" width="55" height="11" font="2">E3617549</text>
+<text top="836" left="42" width="105" height="12" font="0"><b>TELEPHONE(S):</b></text>
+<text top="860" left="42" width="95" height="10" font="3"><b>TELEPHONE TYPE</b></text>
+<text top="860" left="333" width="113" height="10" font="3"><b>TELEPHONE NUMBER</b></text>
+<text top="860" left="624" width="128" height="10" font="3"><b>TELEPHONE EXTENSION</b></text>
+<text top="884" left="42" width="95" height="11" font="2">MOBILE PHONE </text>
+<text top="884" left="333" width="67" height="11" font="2">9820237468</text>
+<text top="914" left="42" width="93" height="11" font="2">OFFICE PHONE </text>
+<text top="914" left="333" width="53" height="11" font="2">23893178</text>
+<text top="944" left="42" width="102" height="11" font="2">NOT CLASSIFIED </text>
+<text top="944" left="333" width="73" height="11" font="2">38130560914</text>
+<text top="974" left="42" width="102" height="11" font="2">NOT CLASSIFIED </text>
+<text top="974" left="333" width="53" height="11" font="2">43471613</text>
+<text top="1017" left="42" width="134" height="12" font="0"><b>EMAIL CONTACT(S):</b></text>
+<text top="1041" left="42" width="87" height="10" font="3"><b>EMAIL ADDRESS</b></text>
+<text top="1065" left="42" width="131" height="11" font="2">UMESH@CHIPCOM.IN </text>
+<text top="222" left="36" width="60" height="8" font="9"><b> CONSUMER: </b></text>
+<text top="221" left="96" width="173" height="10" font="6">UMESHKUMAR JEMATRAJ MEHTA</text>
+<text top="220" left="269" width="3" height="11" font="2"> </text>
+<text top="240" left="36" width="59" height="8" font="9"><b> MEMBER ID: </b></text>
+<text top="239" left="95" width="61" height="10" font="6">NB72731001</text>
+<text top="238" left="157" width="3" height="11" font="2"> </text>
+<text top="257" left="36" width="148" height="8" font="9"><b> MEMBER REFERENCE NUMBER: </b></text>
+<text top="222" left="684" width="27" height="8" font="9"><b>DATE:</b></text>
+<text top="221" left="712" width="54" height="10" font="6">21-06-2016</text>
+<text top="220" left="765" width="3" height="11" font="2"> </text>
+<text top="240" left="684" width="27" height="8" font="9"><b>TIME: </b></text>
+<text top="239" left="711" width="41" height="10" font="6">17:28:58</text>
+<text top="238" left="752" width="3" height="11" font="2"> </text>
+<text top="257" left="684" width="92" height="8" font="9"><b>CONTROL NUMBER: </b></text>
+<text top="256" left="776" width="70" height="10" font="6">1,13,08,85,367</text>
+<text top="1123" left="36" width="152" height="8" font="10">  Services provided in association with</text>
+<text top="1123" left="254" width="477" height="10" font="6">© COPYRIGHT 2015 CREDIT INFORMATION BUREAU (INDIA) LIMITED. ALL RIGHTS RESERVED.</text>
+<text top="1123" left="800" width="67" height="10" font="6">PAGE 1 OF    </text>
+<text top="1123" left="858" width="6" height="10" font="6">5</text>
+<text top="1147" left="339" width="217" height="11" font="11"><b>CIBIL CIN : U72300MH2000PLC128359</b></text>
+</page>
+<page number="2" position="absolute" top="0" left="0" height="1188" width="903">
+	<fontspec id="12" size="10" family="Helvetica" color="#005484"/>
+	<fontspec id="13" size="11" family="Helvetica" color="#005484"/>
+	<fontspec id="14" size="10" family="Helvetica" color="#000000"/>
+	<fontspec id="15" size="8" family="Helvetica" color="#666666"/>
+<image top="33" left="36" width="831" height="181" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-2_1.jpg"/>
+<image top="1135" left="42" width="90" height="30" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-2_2.png"/>
+<text top="301" left="42" width="182" height="11" font="2">CHIP_COM@REDIFFMAIL.COM </text>
+<text top="344" left="42" width="101" height="12" font="0"><b>ADDRESS(ES): </b></text>
+<text top="374" left="48" width="76" height="11" font="12">ADDRESS(e):</text>
+<text top="374" left="124" width="354" height="11" font="2">PRATIKHSA TOWER 9TH FLR B WING MAHARASHTRA 400008</text>
+<text top="400" left="48" width="71" height="11" font="12">CATEGORY:</text>
+<text top="400" left="119" width="137" height="11" font="2">PERMANENT ADDRESS</text>
+<text top="400" left="329" width="111" height="11" font="12">RESIDENCE CODE:</text>
+<text top="400" left="440" width="46" height="11" font="2">OWNED</text>
+<text top="400" left="601" width="105" height="11" font="12">DATE REPORTED:</text>
+<text top="400" left="706" width="61" height="11" font="2">09-12-2015</text>
+<text top="426" left="48" width="61" height="11" font="12">ADDRESS:</text>
+<text top="426" left="109" width="723" height="11" font="2">CHIP COM TRADERS PVT LTD 386 AHMED CHAMS SHOP 4 GRND FLR LAMINGTON RD MUMBAI INDIA MAHARASHTRA 400004</text>
+<text top="452" left="48" width="71" height="11" font="12">CATEGORY:</text>
+<text top="452" left="119" width="115" height="11" font="2">NOT CATEGORIZED</text>
+<text top="452" left="329" width="111" height="11" font="12">RESIDENCE CODE:</text>
+<text top="452" left="601" width="105" height="11" font="12">DATE REPORTED:</text>
+<text top="452" left="706" width="61" height="11" font="2">31-05-2012</text>
+<text top="477" left="48" width="61" height="11" font="12">ADDRESS:</text>
+<text top="477" left="109" width="737" height="11" font="2">CHIPCOM TRADE P LTD CHIPCOM TRADE P LTD,ADITYA ARCADE SANGVI GROUP,OFFICE 207 208 LAMINGTON ROAD MUMBAI </text>
+<text top="491" left="48" width="135" height="11" font="2">MAHARASHTRA 400004</text>
+<text top="517" left="48" width="71" height="11" font="12">CATEGORY:</text>
+<text top="517" left="119" width="115" height="11" font="2">NOT CATEGORIZED</text>
+<text top="517" left="329" width="111" height="11" font="12">RESIDENCE CODE:</text>
+<text top="517" left="601" width="105" height="11" font="12">DATE REPORTED:</text>
+<text top="517" left="706" width="61" height="11" font="2">12-01-2012</text>
+<text top="543" left="48" width="61" height="11" font="12">ADDRESS:</text>
+<text top="543" left="109" width="605" height="11" font="2">VIJAY CHAMBERS 2ND FLOOR OFFICE NO 2 0 OPP DREMLAND CINEMA MUMBAI MAHARASHTRA 400004</text>
+<text top="569" left="48" width="71" height="11" font="12">CATEGORY:</text>
+<text top="569" left="119" width="115" height="11" font="2">NOT CATEGORIZED</text>
+<text top="569" left="329" width="111" height="11" font="12">RESIDENCE CODE:</text>
+<text top="569" left="601" width="105" height="11" font="12">DATE REPORTED:</text>
+<text top="569" left="706" width="61" height="11" font="2">09-11-2010</text>
+<text top="615" left="42" width="199" height="12" font="0"><b>EMPLOYMENT INFORMATION:</b></text>
+<text top="639" left="42" width="83" height="10" font="3"><b>ACCOUNT TYPE</b></text>
+<text top="639" left="208" width="32" height="10" font="3"><b>DATE </b></text>
+<text top="657" left="208" width="58" height="10" font="3"><b>REPORTED</b></text>
+<text top="639" left="291" width="104" height="10" font="3"><b>OCCUPATION CODE</b></text>
+<text top="639" left="499" width="42" height="10" font="3"><b>INCOME</b></text>
+<text top="639" left="624" width="113" height="10" font="3"><b>NET / GROSS INCOME</b></text>
+<text top="657" left="624" width="58" height="10" font="3"><b>INDICATOR</b></text>
+<text top="639" left="748" width="108" height="10" font="3"><b>MONTHLY / ANNUAL </b></text>
+<text top="657" left="748" width="103" height="10" font="3"><b>INCOME INDICATOR</b></text>
+<text top="681" left="42" width="85" height="11" font="2">CREDIT CARD </text>
+<text top="681" left="208" width="61" height="11" font="2">31-05-2016</text>
+<text top="681" left="291" width="100" height="11" font="2">SELF EMPLOYED</text>
+<text top="681" left="499" width="62" height="10" font="6">Not Available</text>
+<text top="681" left="624" width="62" height="10" font="6">Not Available</text>
+<text top="681" left="748" width="62" height="10" font="6">Not Available</text>
+<text top="720" left="42" width="78" height="12" font="0"><b>SUMMARY: </b></text>
+<text top="744" left="42" width="89" height="12" font="13"><b>ACCOUNT(S) </b></text>
+<text top="768" left="42" width="86" height="10" font="3"><b>ACCOUNT TYPE </b></text>
+<text top="768" left="234" width="62" height="10" font="3"><b>ACCOUNTS </b></text>
+<text top="768" left="467" width="62" height="10" font="3"><b>ADVANCES </b></text>
+<text top="768" left="634" width="61" height="10" font="3"><b>BALANCES </b></text>
+<text top="768" left="782" width="79" height="10" font="3"><b>DATE OPENED </b></text>
+<text top="793" left="250" width="40" height="10" font="1"><i>TOTAL: </i></text>
+<text top="792" left="289" width="7" height="11" font="2">8</text>
+<text top="793" left="574" width="57" height="10" font="1"><i>CURRENT: </i></text>
+<text top="792" left="631" width="63" height="11" font="2">1,88,70,566</text>
+<text top="793" left="751" width="49" height="10" font="1"><i>RECENT: </i></text>
+<text top="792" left="800" width="61" height="11" font="2">05-11-2015</text>
+<text top="813" left="231" width="58" height="10" font="1"><i>OVERDUE: </i></text>
+<text top="812" left="289" width="7" height="11" font="2">1</text>
+<text top="792" left="42" width="73" height="11" font="14"><b>All Accounts</b></text>
+<text top="832" left="202" width="88" height="10" font="1"><i>ZERO-BALANCE: </i></text>
+<text top="831" left="289" width="10" height="11" font="2">4 </text>
+<text top="793" left="355" width="110" height="10" font="1"><i>HIGH CR/SANC. AMT: </i></text>
+<text top="792" left="465" width="63" height="11" font="2">1,90,92,842</text>
+<text top="813" left="590" width="58" height="10" font="1"><i>OVERDUE: </i></text>
+<text top="812" left="648" width="47" height="11" font="2">9,22,691</text>
+<text top="813" left="752" width="48" height="10" font="1"><i>OLDEST: </i></text>
+<text top="812" left="800" width="61" height="11" font="2">01-11-2001</text>
+<text top="858" left="42" width="78" height="12" font="13"><b>ENQUIRIES </b></text>
+<text top="882" left="42" width="105" height="10" font="3"><b>ENQUIRY PURPOSE </b></text>
+<text top="882" left="291" width="38" height="10" font="3"><b>TOTAL </b></text>
+<text top="882" left="385" width="78" height="10" font="3"><b>PAST 30 DAYS </b></text>
+<text top="882" left="501" width="94" height="10" font="3"><b>PAST 12 MONTHS </b></text>
+<text top="882" left="634" width="94" height="10" font="3"><b>PAST 24 MONTHS </b></text>
+<text top="882" left="815" width="46" height="10" font="3"><b>RECENT </b></text>
+<text top="909" left="42" width="73" height="11" font="14"><b>All Enquiries</b></text>
+<text top="909" left="322" width="7" height="11" font="2">4</text>
+<text top="909" left="455" width="7" height="11" font="2">0</text>
+<text top="909" left="588" width="7" height="11" font="2">2</text>
+<text top="909" left="721" width="7" height="11" font="2">0</text>
+<text top="909" left="800" width="61" height="11" font="2">09-12-2015</text>
+<text top="943" left="42" width="94" height="12" font="0"><b>ACCOUNT(S): </b></text>
+<text top="975" left="48" width="55" height="10" font="3"><b>ACCOUNT </b></text>
+<text top="975" left="263" width="39" height="10" font="3"><b>DATES </b></text>
+<text top="975" left="469" width="56" height="10" font="3"><b>AMOUNTS </b></text>
+<text top="975" left="667" width="45" height="10" font="3"><b>STATUS </b></text>
+<text top="1006" left="48" width="85" height="10" font="1"><i>MEMBER NAME: </i></text>
+<text top="1005" left="133" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="1024" left="48" width="106" height="10" font="1"><i>ACCOUNT NUMBER: </i></text>
+<text top="1023" left="154" width="29" height="11" font="2">NOT </text>
+<text top="1041" left="48" width="73" height="11" font="2">DISCLOSED </text>
+<text top="1060" left="48" width="33" height="10" font="1"><i>TYPE: </i></text>
+<text top="1059" left="81" width="85" height="11" font="2">CREDIT CARD </text>
+<text top="1078" left="48" width="71" height="10" font="1"><i>OWNERSHIP: </i></text>
+<text top="1077" left="119" width="71" height="11" font="2">INDIVIDUAL </text>
+<text top="1006" left="263" width="50" height="10" font="1"><i>OPENED: </i></text>
+<text top="1005" left="313" width="65" height="11" font="2">01-11-2001 </text>
+<text top="1024" left="263" width="86" height="10" font="1"><i>LAST PAYMENT: </i></text>
+<text top="1023" left="348" width="65" height="11" font="2">27-10-2005 </text>
+<text top="1041" left="263" width="148" height="10" font="1"><i>REPORTED AND CERTIFIED: </i></text>
+<text top="1059" left="263" width="65" height="11" font="2">27-04-2016 </text>
+<text top="1078" left="263" width="92" height="10" font="1"><i>PMT HIST START: </i></text>
+<text top="1077" left="355" width="65" height="11" font="2">01-04-2016 </text>
+<text top="1006" left="469" width="74" height="10" font="15">HIGH CREDIT: </text>
+<text top="1005" left="543" width="50" height="11" font="2">9,22,691 </text>
+<text top="1024" left="469" width="109" height="10" font="1"><i>CURRENT BALANCE: </i></text>
+<text top="1023" left="578" width="50" height="11" font="2">9,22,691 </text>
+<text top="1042" left="469" width="58" height="10" font="1"><i>OVERDUE: </i></text>
+<text top="1041" left="527" width="50" height="11" font="2">9,22,691 </text>
+<text top="1005" left="667" width="175" height="10" font="1"><i>WRITTEN OFF /SETTLED STATUS: </i></text>
+<text top="1023" left="667" width="86" height="11" font="2">WRITTEN-OFF </text>
+<text top="1042" left="667" width="121" height="10" font="1"><i>WRITTEN OFF (TOTAL): </i></text>
+<text top="1041" left="788" width="40" height="11" font="2">26,938 </text>
+<text top="1060" left="667" width="143" height="10" font="1"><i>WRITTEN OFF (PRINCIPAL): </i></text>
+<text top="1059" left="810" width="40" height="11" font="2">26,938 </text>
+<text top="222" left="36" width="60" height="8" font="9"><b> CONSUMER: </b></text>
+<text top="221" left="96" width="173" height="10" font="6">UMESHKUMAR JEMATRAJ MEHTA</text>
+<text top="220" left="269" width="3" height="11" font="2"> </text>
+<text top="240" left="36" width="59" height="8" font="9"><b> MEMBER ID: </b></text>
+<text top="239" left="95" width="61" height="10" font="6">NB72731001</text>
+<text top="238" left="157" width="3" height="11" font="2"> </text>
+<text top="257" left="36" width="148" height="8" font="9"><b> MEMBER REFERENCE NUMBER: </b></text>
+<text top="222" left="684" width="27" height="8" font="9"><b>DATE:</b></text>
+<text top="221" left="712" width="54" height="10" font="6">21-06-2016</text>
+<text top="220" left="765" width="3" height="11" font="2"> </text>
+<text top="240" left="684" width="27" height="8" font="9"><b>TIME: </b></text>
+<text top="239" left="711" width="41" height="10" font="6">17:28:58</text>
+<text top="238" left="752" width="3" height="11" font="2"> </text>
+<text top="257" left="684" width="92" height="8" font="9"><b>CONTROL NUMBER: </b></text>
+<text top="256" left="776" width="70" height="10" font="6">1,13,08,85,367</text>
+<text top="1123" left="36" width="152" height="8" font="10">  Services provided in association with</text>
+<text top="1123" left="254" width="477" height="10" font="6">© COPYRIGHT 2015 CREDIT INFORMATION BUREAU (INDIA) LIMITED. ALL RIGHTS RESERVED.</text>
+<text top="1123" left="800" width="67" height="10" font="6">PAGE 2 OF    </text>
+<text top="1123" left="858" width="6" height="10" font="6">5</text>
+<text top="1147" left="339" width="217" height="11" font="11"><b>CIBIL CIN : U72300MH2000PLC128359</b></text>
+</page>
+<page number="3" position="absolute" top="0" left="0" height="1188" width="903">
+	<fontspec id="16" size="7" family="Helvetica" color="#000000"/>
+<image top="33" left="36" width="831" height="181" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-3_1.jpg"/>
+<image top="1135" left="42" width="90" height="30" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-3_2.png"/>
+<text top="298" left="263" width="80" height="10" font="1"><i>PMT HIST END: </i></text>
+<text top="297" left="342" width="65" height="11" font="2">01-05-2013 </text>
+<text top="327" left="48" width="405" height="10" font="3"><b>DAYS PAST DUE/ASSET CLASSIFICATION (UP TO 36 MONTHS; LEFT TO RIGHT)</b></text>
+<text top="357" left="48" width="23" height="11" font="2">181 </text>
+<text top="371" left="48" width="23" height="8" font="16">04-16</text>
+<text top="357" left="94" width="23" height="11" font="2">181 </text>
+<text top="371" left="94" width="23" height="8" font="16">03-16</text>
+<text top="357" left="140" width="23" height="11" font="2">181 </text>
+<text top="371" left="140" width="23" height="8" font="16">02-16</text>
+<text top="357" left="185" width="23" height="11" font="2">181 </text>
+<text top="371" left="185" width="23" height="8" font="16">01-16</text>
+<text top="357" left="231" width="23" height="11" font="2">181 </text>
+<text top="371" left="231" width="23" height="8" font="16">12-15</text>
+<text top="357" left="277" width="23" height="11" font="2">181 </text>
+<text top="371" left="277" width="23" height="8" font="16">11-15</text>
+<text top="357" left="323" width="23" height="11" font="2">181 </text>
+<text top="371" left="323" width="23" height="8" font="16">10-15</text>
+<text top="357" left="369" width="23" height="11" font="2">181 </text>
+<text top="371" left="369" width="23" height="8" font="16">09-15</text>
+<text top="357" left="415" width="23" height="11" font="2">181 </text>
+<text top="371" left="415" width="23" height="8" font="16">08-15</text>
+<text top="357" left="461" width="23" height="11" font="2">181 </text>
+<text top="371" left="461" width="23" height="8" font="16">07-15</text>
+<text top="357" left="506" width="23" height="11" font="2">181 </text>
+<text top="371" left="506" width="23" height="8" font="16">06-15</text>
+<text top="357" left="552" width="23" height="11" font="2">181 </text>
+<text top="371" left="552" width="23" height="8" font="16">05-15</text>
+<text top="357" left="598" width="23" height="11" font="2">181 </text>
+<text top="371" left="598" width="23" height="8" font="16">04-15</text>
+<text top="357" left="644" width="23" height="11" font="2">181 </text>
+<text top="371" left="644" width="23" height="8" font="16">03-15</text>
+<text top="357" left="690" width="23" height="11" font="2">181 </text>
+<text top="371" left="690" width="23" height="8" font="16">02-15</text>
+<text top="357" left="735" width="23" height="11" font="2">181 </text>
+<text top="371" left="735" width="23" height="8" font="16">01-15</text>
+<text top="357" left="781" width="23" height="11" font="2">181 </text>
+<text top="371" left="781" width="23" height="8" font="16">12-14</text>
+<text top="357" left="827" width="23" height="11" font="2">181 </text>
+<text top="371" left="827" width="23" height="8" font="16">11-14</text>
+<text top="393" left="48" width="23" height="11" font="2">181 </text>
+<text top="407" left="48" width="23" height="8" font="16">10-14</text>
+<text top="393" left="94" width="23" height="11" font="2">181 </text>
+<text top="407" left="94" width="23" height="8" font="16">09-14</text>
+<text top="393" left="140" width="27" height="11" font="2">XXX </text>
+<text top="407" left="140" width="23" height="8" font="16">08-14</text>
+<text top="393" left="185" width="23" height="11" font="2">181 </text>
+<text top="407" left="185" width="23" height="8" font="16">07-14</text>
+<text top="393" left="231" width="23" height="11" font="2">181 </text>
+<text top="407" left="231" width="23" height="8" font="16">06-14</text>
+<text top="393" left="277" width="23" height="11" font="2">181 </text>
+<text top="407" left="277" width="23" height="8" font="16">05-14</text>
+<text top="393" left="323" width="23" height="11" font="2">181 </text>
+<text top="407" left="323" width="23" height="8" font="16">04-14</text>
+<text top="393" left="369" width="23" height="11" font="2">181 </text>
+<text top="407" left="369" width="23" height="8" font="16">03-14</text>
+<text top="393" left="415" width="23" height="11" font="2">181 </text>
+<text top="407" left="415" width="23" height="8" font="16">02-14</text>
+<text top="393" left="461" width="23" height="11" font="2">181 </text>
+<text top="407" left="461" width="23" height="8" font="16">01-14</text>
+<text top="393" left="506" width="23" height="11" font="2">181 </text>
+<text top="407" left="506" width="23" height="8" font="16">12-13</text>
+<text top="393" left="552" width="23" height="11" font="2">181 </text>
+<text top="407" left="552" width="23" height="8" font="16">11-13</text>
+<text top="393" left="598" width="27" height="11" font="2">XXX </text>
+<text top="407" left="598" width="23" height="8" font="16">10-13</text>
+<text top="393" left="644" width="23" height="11" font="2">181 </text>
+<text top="407" left="644" width="23" height="8" font="16">09-13</text>
+<text top="393" left="690" width="23" height="11" font="2">181 </text>
+<text top="407" left="690" width="23" height="8" font="16">08-13</text>
+<text top="393" left="735" width="23" height="11" font="2">181 </text>
+<text top="407" left="735" width="23" height="8" font="16">07-13</text>
+<text top="393" left="781" width="23" height="11" font="2">181 </text>
+<text top="407" left="781" width="23" height="8" font="16">06-13</text>
+<text top="393" left="827" width="27" height="11" font="2">XXX </text>
+<text top="407" left="827" width="23" height="8" font="16">05-13</text>
+<text top="434" left="48" width="55" height="10" font="3"><b>ACCOUNT </b></text>
+<text top="434" left="263" width="39" height="10" font="3"><b>DATES </b></text>
+<text top="434" left="469" width="56" height="10" font="3"><b>AMOUNTS </b></text>
+<text top="434" left="667" width="45" height="10" font="3"><b>STATUS </b></text>
+<text top="465" left="48" width="85" height="10" font="1"><i>MEMBER NAME: </i></text>
+<text top="464" left="133" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="483" left="48" width="106" height="10" font="1"><i>ACCOUNT NUMBER: </i></text>
+<text top="482" left="154" width="29" height="11" font="2">NOT </text>
+<text top="500" left="48" width="73" height="11" font="2">DISCLOSED </text>
+<text top="519" left="48" width="33" height="10" font="1"><i>TYPE: </i></text>
+<text top="518" left="81" width="167" height="11" font="2">BUSINESS LOAN - PRIORITY </text>
+<text top="536" left="48" width="150" height="11" font="2">SECTOR - AGRICULTURE </text>
+<text top="555" left="48" width="71" height="10" font="1"><i>OWNERSHIP: </i></text>
+<text top="554" left="119" width="38" height="11" font="2">JOINT </text>
+<text top="465" left="263" width="50" height="10" font="1"><i>OPENED: </i></text>
+<text top="464" left="313" width="65" height="11" font="2">05-11-2015 </text>
+<text top="483" left="263" width="86" height="10" font="1"><i>LAST PAYMENT: </i></text>
+<text top="482" left="348" width="65" height="11" font="2">29-02-2016 </text>
+<text top="500" left="263" width="148" height="10" font="1"><i>REPORTED AND CERTIFIED: </i></text>
+<text top="518" left="263" width="65" height="11" font="2">29-02-2016 </text>
+<text top="537" left="263" width="92" height="10" font="1"><i>PMT HIST START: </i></text>
+<text top="536" left="355" width="65" height="11" font="2">01-02-2016 </text>
+<text top="555" left="263" width="80" height="10" font="1"><i>PMT HIST END: </i></text>
+<text top="554" left="342" width="65" height="11" font="2">01-01-2016 </text>
+<text top="465" left="469" width="75" height="10" font="15">SANCTIONED: </text>
+<text top="464" left="543" width="57" height="11" font="2">90,00,000 </text>
+<text top="483" left="469" width="109" height="10" font="1"><i>CURRENT BALANCE: </i></text>
+<text top="482" left="578" width="57" height="11" font="2">89,43,017 </text>
+<text top="584" left="48" width="405" height="10" font="3"><b>DAYS PAST DUE/ASSET CLASSIFICATION (UP TO 36 MONTHS; LEFT TO RIGHT)</b></text>
+<text top="614" left="48" width="27" height="11" font="2">STD </text>
+<text top="628" left="48" width="23" height="8" font="16">02-16</text>
+<text top="614" left="94" width="27" height="11" font="2">STD </text>
+<text top="628" left="94" width="23" height="8" font="16">01-16</text>
+<text top="654" left="48" width="55" height="10" font="3"><b>ACCOUNT </b></text>
+<text top="654" left="263" width="39" height="10" font="3"><b>DATES </b></text>
+<text top="654" left="469" width="56" height="10" font="3"><b>AMOUNTS </b></text>
+<text top="654" left="667" width="45" height="10" font="3"><b>STATUS </b></text>
+<text top="686" left="48" width="85" height="10" font="1"><i>MEMBER NAME: </i></text>
+<text top="684" left="133" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="704" left="48" width="106" height="10" font="1"><i>ACCOUNT NUMBER: </i></text>
+<text top="702" left="154" width="29" height="11" font="2">NOT </text>
+<text top="720" left="48" width="73" height="11" font="2">DISCLOSED </text>
+<text top="740" left="48" width="33" height="10" font="1"><i>TYPE: </i></text>
+<text top="738" left="81" width="95" height="11" font="2">HOUSING LOAN </text>
+<text top="758" left="48" width="71" height="10" font="1"><i>OWNERSHIP: </i></text>
+<text top="756" left="119" width="38" height="11" font="2">JOINT </text>
+<text top="686" left="263" width="50" height="10" font="1"><i>OPENED: </i></text>
+<text top="684" left="313" width="65" height="11" font="2">05-11-2015 </text>
+<text top="704" left="263" width="86" height="10" font="1"><i>LAST PAYMENT: </i></text>
+<text top="702" left="348" width="65" height="11" font="2">31-03-2016 </text>
+<text top="720" left="263" width="148" height="10" font="1"><i>REPORTED AND CERTIFIED: </i></text>
+<text top="738" left="263" width="65" height="11" font="2">30-04-2016 </text>
+<text top="758" left="263" width="92" height="10" font="1"><i>PMT HIST START: </i></text>
+<text top="756" left="355" width="65" height="11" font="2">01-04-2016 </text>
+<text top="776" left="263" width="80" height="10" font="1"><i>PMT HIST END: </i></text>
+<text top="774" left="342" width="65" height="11" font="2">01-11-2015 </text>
+<text top="686" left="469" width="75" height="10" font="15">SANCTIONED: </text>
+<text top="684" left="543" width="57" height="11" font="2">90,00,000 </text>
+<text top="704" left="469" width="109" height="10" font="1"><i>CURRENT BALANCE: </i></text>
+<text top="702" left="578" width="57" height="11" font="2">90,04,910 </text>
+<text top="804" left="48" width="405" height="10" font="3"><b>DAYS PAST DUE/ASSET CLASSIFICATION (UP TO 36 MONTHS; LEFT TO RIGHT)</b></text>
+<text top="834" left="48" width="27" height="11" font="2">STD </text>
+<text top="848" left="48" width="23" height="8" font="16">04-16</text>
+<text top="834" left="94" width="27" height="11" font="2">STD </text>
+<text top="848" left="94" width="23" height="8" font="16">03-16</text>
+<text top="834" left="140" width="27" height="11" font="2">XXX </text>
+<text top="848" left="140" width="23" height="8" font="16">02-16</text>
+<text top="834" left="185" width="27" height="11" font="2">XXX </text>
+<text top="848" left="185" width="23" height="8" font="16">01-16</text>
+<text top="834" left="231" width="27" height="11" font="2">STD </text>
+<text top="848" left="231" width="23" height="8" font="16">12-15</text>
+<text top="834" left="277" width="27" height="11" font="2">STD </text>
+<text top="848" left="277" width="23" height="8" font="16">11-15</text>
+<text top="875" left="48" width="55" height="10" font="3"><b>ACCOUNT </b></text>
+<text top="875" left="263" width="39" height="10" font="3"><b>DATES </b></text>
+<text top="875" left="469" width="56" height="10" font="3"><b>AMOUNTS </b></text>
+<text top="875" left="667" width="45" height="10" font="3"><b>STATUS </b></text>
+<text top="906" left="48" width="85" height="10" font="1"><i>MEMBER NAME: </i></text>
+<text top="905" left="133" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="924" left="48" width="106" height="10" font="1"><i>ACCOUNT NUMBER: </i></text>
+<text top="923" left="154" width="29" height="11" font="2">NOT </text>
+<text top="941" left="48" width="73" height="11" font="2">DISCLOSED </text>
+<text top="960" left="48" width="33" height="10" font="1"><i>TYPE: </i></text>
+<text top="959" left="81" width="85" height="11" font="2">CREDIT CARD </text>
+<text top="978" left="48" width="71" height="10" font="1"><i>OWNERSHIP: </i></text>
+<text top="977" left="119" width="71" height="11" font="2">INDIVIDUAL </text>
+<text top="906" left="263" width="50" height="10" font="1"><i>OPENED: </i></text>
+<text top="905" left="313" width="65" height="11" font="2">04-01-2007 </text>
+<text top="924" left="263" width="86" height="10" font="1"><i>LAST PAYMENT: </i></text>
+<text top="923" left="348" width="65" height="11" font="2">17-11-2015 </text>
+<text top="941" left="263" width="148" height="10" font="1"><i>REPORTED AND CERTIFIED: </i></text>
+<text top="959" left="263" width="65" height="11" font="2">31-05-2016 </text>
+<text top="978" left="263" width="92" height="10" font="1"><i>PMT HIST START: </i></text>
+<text top="977" left="355" width="65" height="11" font="2">01-05-2016 </text>
+<text top="996" left="263" width="80" height="10" font="1"><i>PMT HIST END: </i></text>
+<text top="995" left="342" width="65" height="11" font="2">01-06-2013 </text>
+<text top="906" left="469" width="74" height="10" font="15">HIGH CREDIT: </text>
+<text top="905" left="543" width="50" height="11" font="2">1,53,930 </text>
+<text top="924" left="469" width="109" height="10" font="1"><i>CURRENT BALANCE: </i></text>
+<text top="923" left="578" width="21" height="11" font="2">-52 </text>
+<text top="1025" left="48" width="405" height="10" font="3"><b>DAYS PAST DUE/ASSET CLASSIFICATION (UP TO 36 MONTHS; LEFT TO RIGHT)</b></text>
+<text top="1055" left="48" width="23" height="11" font="2">000 </text>
+<text top="1069" left="48" width="23" height="8" font="16">05-16</text>
+<text top="1055" left="94" width="23" height="11" font="2">000 </text>
+<text top="1069" left="94" width="23" height="8" font="16">04-16</text>
+<text top="1055" left="140" width="23" height="11" font="2">000 </text>
+<text top="1069" left="140" width="23" height="8" font="16">03-16</text>
+<text top="1055" left="185" width="23" height="11" font="2">000 </text>
+<text top="1069" left="185" width="23" height="8" font="16">02-16</text>
+<text top="1055" left="231" width="23" height="11" font="2">000 </text>
+<text top="1069" left="231" width="23" height="8" font="16">01-16</text>
+<text top="1055" left="277" width="23" height="11" font="2">000 </text>
+<text top="1069" left="277" width="23" height="8" font="16">12-15</text>
+<text top="1055" left="323" width="23" height="11" font="2">000 </text>
+<text top="1069" left="323" width="23" height="8" font="16">11-15</text>
+<text top="1055" left="369" width="23" height="11" font="2">000 </text>
+<text top="1069" left="369" width="23" height="8" font="16">10-15</text>
+<text top="1055" left="415" width="23" height="11" font="2">000 </text>
+<text top="1069" left="415" width="23" height="8" font="16">09-15</text>
+<text top="1055" left="461" width="23" height="11" font="2">000 </text>
+<text top="1069" left="461" width="23" height="8" font="16">08-15</text>
+<text top="1055" left="506" width="23" height="11" font="2">000 </text>
+<text top="1069" left="506" width="23" height="8" font="16">07-15</text>
+<text top="1055" left="552" width="23" height="11" font="2">000 </text>
+<text top="1069" left="552" width="23" height="8" font="16">06-15</text>
+<text top="1055" left="598" width="23" height="11" font="2">000 </text>
+<text top="1069" left="598" width="23" height="8" font="16">05-15</text>
+<text top="1055" left="644" width="23" height="11" font="2">000 </text>
+<text top="1069" left="644" width="23" height="8" font="16">04-15</text>
+<text top="1055" left="690" width="23" height="11" font="2">000 </text>
+<text top="1069" left="690" width="23" height="8" font="16">03-15</text>
+<text top="1055" left="735" width="23" height="11" font="2">000 </text>
+<text top="1069" left="735" width="23" height="8" font="16">02-15</text>
+<text top="1055" left="781" width="23" height="11" font="2">000 </text>
+<text top="1069" left="781" width="23" height="8" font="16">01-15</text>
+<text top="1055" left="827" width="23" height="11" font="2">000 </text>
+<text top="1069" left="827" width="23" height="8" font="16">12-14</text>
+<text top="222" left="36" width="60" height="8" font="9"><b> CONSUMER: </b></text>
+<text top="221" left="96" width="173" height="10" font="6">UMESHKUMAR JEMATRAJ MEHTA</text>
+<text top="220" left="269" width="3" height="11" font="2"> </text>
+<text top="240" left="36" width="59" height="8" font="9"><b> MEMBER ID: </b></text>
+<text top="239" left="95" width="61" height="10" font="6">NB72731001</text>
+<text top="238" left="157" width="3" height="11" font="2"> </text>
+<text top="257" left="36" width="148" height="8" font="9"><b> MEMBER REFERENCE NUMBER: </b></text>
+<text top="222" left="684" width="27" height="8" font="9"><b>DATE:</b></text>
+<text top="221" left="712" width="54" height="10" font="6">21-06-2016</text>
+<text top="220" left="765" width="3" height="11" font="2"> </text>
+<text top="240" left="684" width="27" height="8" font="9"><b>TIME: </b></text>
+<text top="239" left="711" width="41" height="10" font="6">17:28:58</text>
+<text top="238" left="752" width="3" height="11" font="2"> </text>
+<text top="257" left="684" width="92" height="8" font="9"><b>CONTROL NUMBER: </b></text>
+<text top="256" left="776" width="70" height="10" font="6">1,13,08,85,367</text>
+<text top="1123" left="36" width="152" height="8" font="10">  Services provided in association with</text>
+<text top="1123" left="254" width="477" height="10" font="6">© COPYRIGHT 2015 CREDIT INFORMATION BUREAU (INDIA) LIMITED. ALL RIGHTS RESERVED.</text>
+<text top="1123" left="800" width="67" height="10" font="6">PAGE 3 OF    </text>
+<text top="1123" left="858" width="6" height="10" font="6">5</text>
+<text top="1147" left="339" width="217" height="11" font="11"><b>CIBIL CIN : U72300MH2000PLC128359</b></text>
+</page>
+<page number="4" position="absolute" top="0" left="0" height="1188" width="903">
+<image top="33" left="36" width="831" height="181" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-4_1.jpg"/>
+<image top="1135" left="42" width="90" height="30" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-4_2.png"/>
+<text top="295" left="48" width="23" height="11" font="2">000 </text>
+<text top="309" left="48" width="23" height="8" font="16">11-14</text>
+<text top="295" left="94" width="23" height="11" font="2">000 </text>
+<text top="309" left="94" width="23" height="8" font="16">10-14</text>
+<text top="295" left="140" width="23" height="11" font="2">000 </text>
+<text top="309" left="140" width="23" height="8" font="16">09-14</text>
+<text top="295" left="185" width="23" height="11" font="2">000 </text>
+<text top="309" left="185" width="23" height="8" font="16">08-14</text>
+<text top="295" left="231" width="23" height="11" font="2">000 </text>
+<text top="309" left="231" width="23" height="8" font="16">07-14</text>
+<text top="295" left="277" width="23" height="11" font="2">000 </text>
+<text top="309" left="277" width="23" height="8" font="16">06-14</text>
+<text top="295" left="323" width="23" height="11" font="2">000 </text>
+<text top="309" left="323" width="23" height="8" font="16">05-14</text>
+<text top="295" left="369" width="23" height="11" font="2">000 </text>
+<text top="309" left="369" width="23" height="8" font="16">04-14</text>
+<text top="295" left="415" width="23" height="11" font="2">000 </text>
+<text top="309" left="415" width="23" height="8" font="16">03-14</text>
+<text top="295" left="461" width="23" height="11" font="2">000 </text>
+<text top="309" left="461" width="23" height="8" font="16">02-14</text>
+<text top="295" left="506" width="23" height="11" font="2">000 </text>
+<text top="309" left="506" width="23" height="8" font="16">01-14</text>
+<text top="295" left="552" width="23" height="11" font="2">000 </text>
+<text top="309" left="552" width="23" height="8" font="16">12-13</text>
+<text top="295" left="598" width="23" height="11" font="2">000 </text>
+<text top="309" left="598" width="23" height="8" font="16">11-13</text>
+<text top="295" left="644" width="23" height="11" font="2">000 </text>
+<text top="309" left="644" width="23" height="8" font="16">10-13</text>
+<text top="295" left="690" width="23" height="11" font="2">000 </text>
+<text top="309" left="690" width="23" height="8" font="16">09-13</text>
+<text top="295" left="735" width="23" height="11" font="2">000 </text>
+<text top="309" left="735" width="23" height="8" font="16">08-13</text>
+<text top="295" left="781" width="23" height="11" font="2">000 </text>
+<text top="309" left="781" width="23" height="8" font="16">07-13</text>
+<text top="295" left="827" width="23" height="11" font="2">027 </text>
+<text top="309" left="827" width="23" height="8" font="16">06-13</text>
+<text top="336" left="48" width="55" height="10" font="3"><b>ACCOUNT </b></text>
+<text top="336" left="263" width="39" height="10" font="3"><b>DATES </b></text>
+<text top="336" left="469" width="56" height="10" font="3"><b>AMOUNTS </b></text>
+<text top="336" left="667" width="45" height="10" font="3"><b>STATUS </b></text>
+<text top="367" left="48" width="85" height="10" font="1"><i>MEMBER NAME: </i></text>
+<text top="366" left="133" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="385" left="48" width="106" height="10" font="1"><i>ACCOUNT NUMBER: </i></text>
+<text top="384" left="154" width="29" height="11" font="2">NOT </text>
+<text top="402" left="48" width="73" height="11" font="2">DISCLOSED </text>
+<text top="421" left="48" width="33" height="10" font="1"><i>TYPE: </i></text>
+<text top="420" left="81" width="85" height="11" font="2">CREDIT CARD </text>
+<text top="439" left="48" width="71" height="10" font="1"><i>OWNERSHIP: </i></text>
+<text top="438" left="119" width="71" height="11" font="2">INDIVIDUAL </text>
+<text top="367" left="263" width="50" height="10" font="1"><i>OPENED: </i></text>
+<text top="366" left="313" width="65" height="11" font="2">17-08-2006 </text>
+<text top="385" left="263" width="49" height="10" font="1"><i>CLOSED: </i></text>
+<text top="384" left="312" width="65" height="11" font="2">11-09-2008 </text>
+<text top="402" left="263" width="148" height="10" font="1"><i>REPORTED AND CERTIFIED: </i></text>
+<text top="420" left="263" width="65" height="11" font="2">28-02-2009 </text>
+<text top="439" left="263" width="92" height="10" font="1"><i>PMT HIST START: </i></text>
+<text top="438" left="355" width="65" height="11" font="2">01-09-2008 </text>
+<text top="457" left="263" width="80" height="10" font="1"><i>PMT HIST END: </i></text>
+<text top="456" left="342" width="65" height="11" font="2">01-08-2006 </text>
+<text top="367" left="469" width="109" height="10" font="1"><i>CURRENT BALANCE: </i></text>
+<text top="366" left="578" width="10" height="11" font="2">0 </text>
+<text top="486" left="48" width="405" height="10" font="3"><b>DAYS PAST DUE/ASSET CLASSIFICATION (UP TO 36 MONTHS; LEFT TO RIGHT)</b></text>
+<text top="516" left="48" width="23" height="11" font="2">000 </text>
+<text top="530" left="48" width="23" height="8" font="16">09-08</text>
+<text top="516" left="94" width="23" height="11" font="2">000 </text>
+<text top="530" left="94" width="23" height="8" font="16">08-08</text>
+<text top="516" left="140" width="23" height="11" font="2">000 </text>
+<text top="530" left="140" width="23" height="8" font="16">07-08</text>
+<text top="516" left="185" width="23" height="11" font="2">000 </text>
+<text top="530" left="185" width="23" height="8" font="16">06-08</text>
+<text top="516" left="231" width="23" height="11" font="2">000 </text>
+<text top="530" left="231" width="23" height="8" font="16">05-08</text>
+<text top="516" left="277" width="23" height="11" font="2">000 </text>
+<text top="530" left="277" width="23" height="8" font="16">04-08</text>
+<text top="516" left="323" width="23" height="11" font="2">000 </text>
+<text top="530" left="323" width="23" height="8" font="16">03-08</text>
+<text top="516" left="369" width="23" height="11" font="2">000 </text>
+<text top="530" left="369" width="23" height="8" font="16">02-08</text>
+<text top="516" left="415" width="23" height="11" font="2">000 </text>
+<text top="530" left="415" width="23" height="8" font="16">01-08</text>
+<text top="516" left="461" width="23" height="11" font="2">000 </text>
+<text top="530" left="461" width="23" height="8" font="16">12-07</text>
+<text top="516" left="506" width="23" height="11" font="2">000 </text>
+<text top="530" left="506" width="23" height="8" font="16">11-07</text>
+<text top="516" left="552" width="23" height="11" font="2">000 </text>
+<text top="530" left="552" width="23" height="8" font="16">10-07</text>
+<text top="516" left="598" width="23" height="11" font="2">000 </text>
+<text top="530" left="598" width="23" height="8" font="16">09-07</text>
+<text top="516" left="644" width="23" height="11" font="2">000 </text>
+<text top="530" left="644" width="23" height="8" font="16">08-07</text>
+<text top="516" left="690" width="23" height="11" font="2">000 </text>
+<text top="530" left="690" width="23" height="8" font="16">07-07</text>
+<text top="516" left="735" width="23" height="11" font="2">000 </text>
+<text top="530" left="735" width="23" height="8" font="16">06-07</text>
+<text top="516" left="781" width="23" height="11" font="2">000 </text>
+<text top="530" left="781" width="23" height="8" font="16">05-07</text>
+<text top="516" left="827" width="27" height="11" font="2">XXX </text>
+<text top="530" left="827" width="23" height="8" font="16">04-07</text>
+<text top="552" left="48" width="23" height="11" font="2">000 </text>
+<text top="566" left="48" width="23" height="8" font="16">03-07</text>
+<text top="552" left="94" width="23" height="11" font="2">000 </text>
+<text top="566" left="94" width="23" height="8" font="16">02-07</text>
+<text top="552" left="140" width="23" height="11" font="2">000 </text>
+<text top="566" left="140" width="23" height="8" font="16">01-07</text>
+<text top="552" left="185" width="23" height="11" font="2">000 </text>
+<text top="566" left="185" width="23" height="8" font="16">12-06</text>
+<text top="552" left="231" width="23" height="11" font="2">000 </text>
+<text top="566" left="231" width="23" height="8" font="16">11-06</text>
+<text top="552" left="277" width="23" height="11" font="2">000 </text>
+<text top="566" left="277" width="23" height="8" font="16">10-06</text>
+<text top="552" left="323" width="23" height="11" font="2">000 </text>
+<text top="566" left="323" width="23" height="8" font="16">09-06</text>
+<text top="552" left="369" width="23" height="11" font="2">000 </text>
+<text top="566" left="369" width="23" height="8" font="16">08-06</text>
+<text top="593" left="48" width="55" height="10" font="3"><b>ACCOUNT </b></text>
+<text top="593" left="263" width="39" height="10" font="3"><b>DATES </b></text>
+<text top="593" left="469" width="56" height="10" font="3"><b>AMOUNTS </b></text>
+<text top="593" left="667" width="45" height="10" font="3"><b>STATUS </b></text>
+<text top="624" left="48" width="85" height="10" font="1"><i>MEMBER NAME: </i></text>
+<text top="623" left="133" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="642" left="48" width="106" height="10" font="1"><i>ACCOUNT NUMBER: </i></text>
+<text top="641" left="154" width="29" height="11" font="2">NOT </text>
+<text top="659" left="48" width="73" height="11" font="2">DISCLOSED </text>
+<text top="678" left="48" width="33" height="10" font="1"><i>TYPE: </i></text>
+<text top="677" left="81" width="85" height="11" font="2">CREDIT CARD </text>
+<text top="696" left="48" width="71" height="10" font="1"><i>OWNERSHIP: </i></text>
+<text top="695" left="119" width="71" height="11" font="2">INDIVIDUAL </text>
+<text top="624" left="263" width="50" height="10" font="1"><i>OPENED: </i></text>
+<text top="623" left="313" width="65" height="11" font="2">15-06-2004 </text>
+<text top="642" left="263" width="86" height="10" font="1"><i>LAST PAYMENT: </i></text>
+<text top="641" left="348" width="65" height="11" font="2">02-12-2004 </text>
+<text top="660" left="263" width="49" height="10" font="1"><i>CLOSED: </i></text>
+<text top="659" left="312" width="65" height="11" font="2">28-07-2008 </text>
+<text top="677" left="263" width="148" height="10" font="1"><i>REPORTED AND CERTIFIED: </i></text>
+<text top="695" left="263" width="65" height="11" font="2">31-12-2013 </text>
+<text top="714" left="263" width="92" height="10" font="1"><i>PMT HIST START: </i></text>
+<text top="713" left="355" width="65" height="11" font="2">01-07-2008 </text>
+<text top="732" left="263" width="80" height="10" font="1"><i>PMT HIST END: </i></text>
+<text top="731" left="342" width="65" height="11" font="2">01-07-2008 </text>
+<text top="624" left="469" width="74" height="10" font="15">HIGH CREDIT: </text>
+<text top="623" left="543" width="33" height="11" font="2">6,221 </text>
+<text top="642" left="469" width="109" height="10" font="1"><i>CURRENT BALANCE: </i></text>
+<text top="641" left="578" width="10" height="11" font="2">0 </text>
+<text top="660" left="469" width="75" height="10" font="1"><i>CREDIT LIMIT: </i></text>
+<text top="659" left="543" width="40" height="11" font="2">18,000 </text>
+<text top="678" left="469" width="65" height="10" font="1"><i>CASH LIMIT: </i></text>
+<text top="677" left="534" width="33" height="11" font="2">7,200 </text>
+<text top="696" left="469" width="60" height="10" font="1"><i>PMT FREQ: </i></text>
+<text top="695" left="529" width="62" height="11" font="2">MONTHLY </text>
+<text top="761" left="48" width="405" height="10" font="3"><b>DAYS PAST DUE/ASSET CLASSIFICATION (UP TO 36 MONTHS; LEFT TO RIGHT)</b></text>
+<text top="791" left="48" width="23" height="11" font="2">000 </text>
+<text top="805" left="48" width="23" height="8" font="16">07-08</text>
+<text top="832" left="48" width="55" height="10" font="3"><b>ACCOUNT </b></text>
+<text top="832" left="263" width="39" height="10" font="3"><b>DATES </b></text>
+<text top="832" left="469" width="56" height="10" font="3"><b>AMOUNTS </b></text>
+<text top="832" left="667" width="45" height="10" font="3"><b>STATUS </b></text>
+<text top="863" left="48" width="85" height="10" font="1"><i>MEMBER NAME: </i></text>
+<text top="862" left="133" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="881" left="48" width="106" height="10" font="1"><i>ACCOUNT NUMBER: </i></text>
+<text top="880" left="154" width="29" height="11" font="2">NOT </text>
+<text top="898" left="48" width="73" height="11" font="2">DISCLOSED </text>
+<text top="917" left="48" width="33" height="10" font="1"><i>TYPE: </i></text>
+<text top="916" left="81" width="85" height="11" font="2">CREDIT CARD </text>
+<text top="935" left="48" width="71" height="10" font="1"><i>OWNERSHIP: </i></text>
+<text top="934" left="119" width="71" height="11" font="2">INDIVIDUAL </text>
+<text top="863" left="263" width="50" height="10" font="1"><i>OPENED: </i></text>
+<text top="862" left="313" width="65" height="11" font="2">03-12-2004 </text>
+<text top="881" left="263" width="49" height="10" font="1"><i>CLOSED: </i></text>
+<text top="880" left="312" width="65" height="11" font="2">03-12-2004 </text>
+<text top="898" left="263" width="148" height="10" font="1"><i>REPORTED AND CERTIFIED: </i></text>
+<text top="916" left="263" width="65" height="11" font="2">19-06-2005 </text>
+<text top="935" left="263" width="92" height="10" font="1"><i>PMT HIST START: </i></text>
+<text top="934" left="355" width="65" height="11" font="2">01-12-2004 </text>
+<text top="953" left="263" width="80" height="10" font="1"><i>PMT HIST END: </i></text>
+<text top="952" left="342" width="65" height="11" font="2">01-12-2004 </text>
+<text top="863" left="469" width="109" height="10" font="1"><i>CURRENT BALANCE: </i></text>
+<text top="862" left="578" width="10" height="11" font="2">0 </text>
+<text top="982" left="48" width="405" height="10" font="3"><b>DAYS PAST DUE/ASSET CLASSIFICATION (UP TO 36 MONTHS; LEFT TO RIGHT)</b></text>
+<text top="1012" left="48" width="27" height="11" font="2">XXX </text>
+<text top="1026" left="48" width="23" height="8" font="16">12-04</text>
+<text top="1053" left="48" width="55" height="10" font="3"><b>ACCOUNT </b></text>
+<text top="1053" left="263" width="39" height="10" font="3"><b>DATES </b></text>
+<text top="1053" left="469" width="56" height="10" font="3"><b>AMOUNTS </b></text>
+<text top="1053" left="667" width="45" height="10" font="3"><b>STATUS </b></text>
+<text top="222" left="36" width="60" height="8" font="9"><b> CONSUMER: </b></text>
+<text top="221" left="96" width="173" height="10" font="6">UMESHKUMAR JEMATRAJ MEHTA</text>
+<text top="220" left="269" width="3" height="11" font="2"> </text>
+<text top="240" left="36" width="59" height="8" font="9"><b> MEMBER ID: </b></text>
+<text top="239" left="95" width="61" height="10" font="6">NB72731001</text>
+<text top="238" left="157" width="3" height="11" font="2"> </text>
+<text top="257" left="36" width="148" height="8" font="9"><b> MEMBER REFERENCE NUMBER: </b></text>
+<text top="222" left="684" width="27" height="8" font="9"><b>DATE:</b></text>
+<text top="221" left="712" width="54" height="10" font="6">21-06-2016</text>
+<text top="220" left="765" width="3" height="11" font="2"> </text>
+<text top="240" left="684" width="27" height="8" font="9"><b>TIME: </b></text>
+<text top="239" left="711" width="41" height="10" font="6">17:28:58</text>
+<text top="238" left="752" width="3" height="11" font="2"> </text>
+<text top="257" left="684" width="92" height="8" font="9"><b>CONTROL NUMBER: </b></text>
+<text top="256" left="776" width="70" height="10" font="6">1,13,08,85,367</text>
+<text top="1123" left="36" width="152" height="8" font="10">  Services provided in association with</text>
+<text top="1123" left="254" width="477" height="10" font="6">© COPYRIGHT 2015 CREDIT INFORMATION BUREAU (INDIA) LIMITED. ALL RIGHTS RESERVED.</text>
+<text top="1123" left="800" width="67" height="10" font="6">PAGE 4 OF    </text>
+<text top="1123" left="858" width="6" height="10" font="6">5</text>
+<text top="1147" left="339" width="217" height="11" font="11"><b>CIBIL CIN : U72300MH2000PLC128359</b></text>
+</page>
+<page number="5" position="absolute" top="0" left="0" height="1188" width="903">
+	<fontspec id="17" size="10" family="Helvetica" color="#005484"/>
+<image top="33" left="36" width="831" height="181" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-5_1.jpg"/>
+<image top="1135" left="42" width="90" height="30" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Promotor\Umes CIBIL\Umes CIBIL-5_2.png"/>
+<text top="298" left="48" width="85" height="10" font="1"><i>MEMBER NAME: </i></text>
+<text top="297" left="133" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="316" left="48" width="106" height="10" font="1"><i>ACCOUNT NUMBER: </i></text>
+<text top="315" left="154" width="29" height="11" font="2">NOT </text>
+<text top="333" left="48" width="73" height="11" font="2">DISCLOSED </text>
+<text top="352" left="48" width="33" height="10" font="1"><i>TYPE: </i></text>
+<text top="351" left="81" width="85" height="11" font="2">CREDIT CARD </text>
+<text top="370" left="48" width="71" height="10" font="1"><i>OWNERSHIP: </i></text>
+<text top="369" left="119" width="71" height="11" font="2">INDIVIDUAL </text>
+<text top="298" left="263" width="50" height="10" font="1"><i>OPENED: </i></text>
+<text top="297" left="313" width="65" height="11" font="2">15-11-2002 </text>
+<text top="316" left="263" width="49" height="10" font="1"><i>CLOSED: </i></text>
+<text top="315" left="312" width="65" height="11" font="2">10-02-2004 </text>
+<text top="333" left="263" width="148" height="10" font="1"><i>REPORTED AND CERTIFIED: </i></text>
+<text top="351" left="263" width="65" height="11" font="2">28-02-2007 </text>
+<text top="370" left="263" width="92" height="10" font="1"><i>PMT HIST START: </i></text>
+<text top="369" left="355" width="65" height="11" font="2">01-02-2004 </text>
+<text top="388" left="263" width="80" height="10" font="1"><i>PMT HIST END: </i></text>
+<text top="387" left="342" width="65" height="11" font="2">01-02-2004 </text>
+<text top="298" left="469" width="74" height="10" font="15">HIGH CREDIT: </text>
+<text top="297" left="543" width="40" height="11" font="2">10,000 </text>
+<text top="316" left="469" width="109" height="10" font="1"><i>CURRENT BALANCE: </i></text>
+<text top="315" left="578" width="10" height="11" font="2">0 </text>
+<text top="417" left="48" width="405" height="10" font="3"><b>DAYS PAST DUE/ASSET CLASSIFICATION (UP TO 36 MONTHS; LEFT TO RIGHT)</b></text>
+<text top="447" left="48" width="27" height="11" font="2">XXX </text>
+<text top="461" left="48" width="23" height="8" font="16">02-04</text>
+<text top="496" left="42" width="83" height="12" font="0"><b>ENQUIRIES: </b></text>
+<text top="532" left="48" width="50" height="10" font="3"><b>MEMBER </b></text>
+<text top="532" left="296" width="82" height="10" font="3"><b>ENQUIRY DATE </b></text>
+<text top="532" left="543" width="105" height="10" font="3"><b>ENQUIRY PURPOSE </b></text>
+<text top="532" left="761" width="100" height="10" font="3"><b>ENQUIRY AMOUNT </b></text>
+<text top="556" left="48" width="61" height="11" font="2">X10FINAN </text>
+<text top="556" left="296" width="61" height="11" font="2">09-12-2015</text>
+<text top="556" left="543" width="42" height="11" font="2">OTHER</text>
+<text top="556" left="798" width="63" height="11" font="2">1,00,00,000</text>
+<text top="586" left="48" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="586" left="296" width="61" height="11" font="2">14-10-2015</text>
+<text top="586" left="543" width="92" height="11" font="2">HOUSING LOAN</text>
+<text top="586" left="808" width="53" height="11" font="2">90,00,000</text>
+<text top="616" left="48" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="616" left="296" width="61" height="11" font="2">12-01-2012</text>
+<text top="616" left="543" width="82" height="11" font="2">CREDIT CARD</text>
+<text top="616" left="831" width="30" height="11" font="2">1,000</text>
+<text top="646" left="48" width="101" height="11" font="2">NOT DISCLOSED </text>
+<text top="646" left="296" width="61" height="11" font="2">09-11-2010</text>
+<text top="646" left="543" width="92" height="11" font="2">HOUSING LOAN</text>
+<text top="646" left="808" width="53" height="11" font="2">34,00,000</text>
+<text top="696" left="42" width="325" height="11" font="17"><b>END OF REPORT ON UMESHKUMAR JEMATRAJ MEHTA</b></text>
+<text top="739" left="42" width="786" height="11" font="2">All information (&#34;Information&#34;) contained in this credit information report (CIR) is the current and up to date information collated by Credit Information </text>
+<text top="754" left="42" width="799" height="11" font="2">Bureau (India) Limited (&#34;CIBIL&#34;) based on information provided by its various members (&#34;Members&#34;). By accessing and using the Information, the user </text>
+<text top="769" left="42" width="775" height="11" font="2">acknowledges and accepts the following: While CIBIL takes reasonable care in preparing the CIR, CIBIL shall not be responsible for errors and/or </text>
+<text top="784" left="42" width="816" height="11" font="2">omissions caused by inaccurate or inadequate information submitted to it. However, CIBIL shall take reasonable steps to ensure accurate reproduction of </text>
+<text top="799" left="42" width="818" height="11" font="2">the information submitted by the Members and, to the extent statutorily permitted, it shall correct any such inaccuracies in the CIR. Further, CIBIL does not</text>
+<text top="814" left="42" width="781" height="11" font="2">guarantee the adequacy or completeness of the information and/or its suitability for any specific purpose nor is CIBIL responsible for any access or </text>
+<text top="829" left="42" width="796" height="11" font="2">reliance on the CIR. The CIR is not a recommendation by CIBIL to any Member to (i) lend or not to lend; (ii) enter into or not to enter into any financial </text>
+<text top="844" left="42" width="811" height="11" font="2">transaction with the concerned individual/entity. Credit Scores do not form part of the CIR. The use of the CIR is governed by the provisions of the Credit </text>
+<text top="859" left="42" width="813" height="11" font="2">Information Companies (Regulation) Act, 2005, the Credit Information Companies Regulations, 2006, Credit Information Companies Rules, 2006 and the </text>
+<text top="874" left="42" width="380" height="11" font="2">terms and conditions of the Operating Rules for CIBIL and its Members.</text>
+<text top="222" left="36" width="60" height="8" font="9"><b> CONSUMER: </b></text>
+<text top="221" left="96" width="173" height="10" font="6">UMESHKUMAR JEMATRAJ MEHTA</text>
+<text top="220" left="269" width="3" height="11" font="2"> </text>
+<text top="240" left="36" width="59" height="8" font="9"><b> MEMBER ID: </b></text>
+<text top="239" left="95" width="61" height="10" font="6">NB72731001</text>
+<text top="238" left="157" width="3" height="11" font="2"> </text>
+<text top="257" left="36" width="148" height="8" font="9"><b> MEMBER REFERENCE NUMBER: </b></text>
+<text top="222" left="684" width="27" height="8" font="9"><b>DATE:</b></text>
+<text top="221" left="712" width="54" height="10" font="6">21-06-2016</text>
+<text top="220" left="765" width="3" height="11" font="2"> </text>
+<text top="240" left="684" width="27" height="8" font="9"><b>TIME: </b></text>
+<text top="239" left="711" width="41" height="10" font="6">17:28:58</text>
+<text top="238" left="752" width="3" height="11" font="2"> </text>
+<text top="257" left="684" width="92" height="8" font="9"><b>CONTROL NUMBER: </b></text>
+<text top="256" left="776" width="70" height="10" font="6">1,13,08,85,367</text>
+<text top="1123" left="36" width="152" height="8" font="10">  Services provided in association with</text>
+<text top="1123" left="254" width="477" height="10" font="6">© COPYRIGHT 2015 CREDIT INFORMATION BUREAU (INDIA) LIMITED. ALL RIGHTS RESERVED.</text>
+<text top="1123" left="800" width="67" height="10" font="6">PAGE 5 OF    </text>
+<text top="1123" left="858" width="6" height="10" font="6">5</text>
+<text top="1147" left="339" width="217" height="11" font="11"><b>CIBIL CIN : U72300MH2000PLC128359</b></text>
+</page>
+</pdf2xml>

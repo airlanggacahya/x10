@@ -1,0 +1,229 @@
+<style>
+    .no-padding{
+        padding-left : 0px;
+        padding-right : 0px;
+    }
+
+    textarea {
+        resize: none;
+    }
+</style>
+
+<script type="text/html" id="prop-table-template">
+    <div 
+    data-bind="style: { width: loanApproval.propertyOwnershipData().settings.getTotalWidth(data.name.values()) }" 
+    style="margin-bottom: 15px">
+        <div class="k-grid">
+            <table style="word-break: break-word; border: none !important;">
+                <tr>
+                    <td class="text-bold" data-bind="text: data.name.title, 
+                    style: { width: loanApproval.propertyOwnershipData().settings.getHeaderWidth() }"></td>
+                    <!-- ko foreach: { data: data.name.values(), as: 'val' } -->
+                        <td class="table-divider"></td>
+                        <!-- ko if: val == '' -->
+                            <td class="dummy-td"></td>
+                        <!-- /ko -->
+                        <!-- ko ifnot: val == '' -->
+                            <td class="header-bgcolor text-center" data-bind="style: { width: loanApproval.propertyOwnershipData().settings.getContentWidth() }">
+                                <span data-bind="text: val"></span>
+                            </td>
+                        <!-- /ko -->
+                    <!-- /ko -->
+                </tr>
+            </table>
+
+            <table style="word-break: break-word; border: none !important;">
+                <thead class="k-grid-header">
+                    <tr data-bind="if: data.name.values().length > 0">
+                        <th id="dummy-td"></th>
+                        <!-- ko foreach: { data: data.name.values() } -->
+                            <th class="table-divider"></th>
+                            <!-- ko if: $data == '' -->
+                                <td class="dummy-td"></td>
+                            <!-- /ko -->
+                            <!-- ko ifnot: $data == '' -->
+                                <th class="sub-bgcolor k-header  center">Residence Details</th>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-bold col-sm-2" data-bind="text: data.address.title,
+                        style: { width: loanApproval.propertyOwnershipData().settings.getHeaderWidth() }"></td>
+                        <!-- ko foreach: { data: data.address.values(), as: 'val' } -->
+                            <td class="table-divider"></td>
+                            <!-- ko if: data.address.values()[$index()] == "" -->
+                                <td class="dummy-td"></td>
+                            <!-- /ko -->
+                            <!-- ko ifnot: data.address.values()[$index()] == "" -->
+                                <td data-bind="style: { width: loanApproval.propertyOwnershipData().settings.getContentWidth() }">
+                                    <span data-bind="text: val"></span>
+                                </td>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                    <tr>
+                        <td class="text-bold col-sm-2" data-bind="text: data.ownership.title,
+                        style: { width: loanApproval.propertyOwnershipData().settings.getHeaderWidth() }"></td>
+                        <!-- ko foreach: { data: data.ownership.values(), as: 'val' } -->
+                            <td class="table-divider"></td>
+                            <!-- ko if: data.ownership.values()[$index()] == "" -->
+                                <td class="dummy-td"></td>
+                            <!-- /ko -->
+                            <!-- ko ifnot: data.ownership.values()[$index()] == "" -->
+                                <td data-bind="style: { width: loanApproval.propertyOwnershipData().settings.getContentWidth() }">
+                                    <span data-bind="text: val"></span>
+                                </td>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                    <tr>
+                        <td class="text-bold col-sm-2" data-bind="text: data.noOfYears.title,
+                        style: { width: loanApproval.propertyOwnershipData().settings.getHeaderWidth() }"></td>
+                        <!-- ko foreach: { data: data.noOfYears.values(), as: 'val' } -->
+                            <td class="table-divider"></td>
+                            <!-- ko if: data.noOfYears.values()[$index()] == "" -->
+                                <td class="dummy-td"></td>
+                            <!-- /ko -->
+                            <!-- ko ifnot: data.noOfYears.values()[$index()] == "" -->
+                                <td data-bind="style: { width: loanApproval.propertyOwnershipData().settings.getContentWidth() }">
+                                    <span data-bind="text: val"></span>
+                                </td>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                    <tr>
+                        <td class="text-bold col-sm-2" data-bind="text: data.netWorth.title,
+                        style: { width: loanApproval.propertyOwnershipData().settings.getHeaderWidth() }"></td>
+                        <!-- ko foreach: { data: data.netWorth.values(), as: 'val' } -->
+                            <td class="table-divider"></td>
+                            <!-- ko if: data.netWorth.values()[$index()] == "" -->
+                                <td class="dummy-td"></td>
+                            <!-- /ko -->
+                            <!-- ko ifnot: data.netWorth.values()[$index()] == "" -->
+                                <td data-bind="style: { width: loanApproval.propertyOwnershipData().settings.getContentWidth() }">
+                                    <span data-bind="text: val"></span>
+                                </td>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                </tbody>
+            </table>
+
+            <table style="word-break: break-word; border: none !important;">
+                <thead class="k-grid-header">
+                    <tr data-bind="if: data.name.values().length > 0">
+                        <th id="dummy-td"></th>
+                        <!-- ko foreach: { data: data.name.values() } -->
+                            <th class="table-divider"></th>
+                            <!-- ko if: $data == '' -->
+                                <td class="dummy-td"></td>
+                            <!-- /ko -->
+                            <!-- ko ifnot: $data == '' -->
+                                <th class="sub-bgcolor k-header  center">Other Owned Property Details</th>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-bold col-sm-2" data-bind="text: data.propertyType.title,
+                        style: { width: loanApproval.propertyOwnershipData().settings.getHeaderWidth() }"></td>
+                        <!-- ko foreach: { data: data.propertyType.values(), as: 'val' } -->
+                            <td class="table-divider"></td>
+                            <!-- ko if: data.propertyType.values()[$index()] == "" -->
+                                <td class="dummy-td"></td>
+                            <!-- /ko -->
+                            <!-- ko ifnot: data.propertyType.values()[$index()] == "" -->
+                                <td data-bind="style: { width: loanApproval.propertyOwnershipData().settings.getContentWidth() }">
+                                    <span data-bind="text: val"></span>
+                                </td>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                    <tr>
+                        <td class="text-bold col-sm-2" data-bind="text: data.propertyAddress.title,
+                        style: { width: loanApproval.propertyOwnershipData().settings.getHeaderWidth() }"></td>
+                        <!-- ko foreach: { data: data.propertyAddress.values(), as: 'val' } -->
+                            <td class="table-divider"></td>
+                            <!-- ko if: data.propertyAddress.values()[$index()] == "" -->
+                                <td class="dummy-td"></td>
+                            <!-- /ko -->
+                            <!-- ko ifnot: data.propertyAddress.values()[$index()] == "" -->
+                                <td data-bind="style: { width: loanApproval.propertyOwnershipData().settings.getContentWidth() }">
+                                    <span data-bind="text: val"></span>
+                                </td>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                    <tr>
+                        <td class="text-bold col-sm-2" data-bind="text: data.propertyMarket.title,
+                        style: { width: loanApproval.propertyOwnershipData().settings.getHeaderWidth() }"></td>
+                        <!-- ko foreach: { data: data.propertyMarket.values(), as: 'val' } -->
+                            <td class="table-divider"></td>
+                            <!-- ko if: data.propertyMarket.values()[$index()] == "" -->
+                                <td class="dummy-td"></td>
+                            <!-- /ko -->
+                            <!-- ko ifnot: data.propertyMarket.values()[$index()] == "" -->
+                                <td data-bind="style: { width: loanApproval.propertyOwnershipData().settings.getContentWidth() }">
+                                    <span data-bind="text: val"></span>
+                                </td>
+                            <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</script>
+
+<div class="container-fluid">
+
+    <div data-bind="template: { name: 'prop-table-template', foreach: loanApproval.propertyOwnershipData().biodatas, as: 'data' }"></div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="k-grid k-widget no-padding" style="width: 45.45%">
+                <table>
+                    <thead class="k-grid-header">
+                        <tr>
+                           <th colspan="2" class="sub-bgcolor k-header "><center>Office Details</center></th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td class="text-bold" style="width: 36.333333%">Address</td>
+                        <td>
+                            <span data-bind="text:loanapproval.officeaddress == '' ? '&nbsp;' : loanapproval.officeaddress"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-bold" style="width: 36.333333%">Ownership</td>
+                        <td>
+                            <span data-bind="text:loanapproval.officeownership == '' ? '&nbsp;' : loanapproval.officeownership"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-bold" style="width: 36.333333%">Land Area</td>
+                        <td>
+                            <span data-bind="text:loanapproval.officelandarea == '' ? '-' : loanapproval.officelandarea"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-bold" style="width: 36.333333%">Built Up Area</td>
+                        <td>
+                            <span data-bind="text:loanapproval.officebuiltuparea == '' ? '-' : loanapproval.officebuiltuparea"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-bold" style="width: 36.333333%">Market Value</td>
+                        <td>
+                            <span data-bind="text:loanapproval.valueregistered == '' ? '-' : loanapproval.valueregistered"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

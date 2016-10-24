@@ -1,0 +1,134 @@
+<style type="text/css">
+	/*#distributormax{
+		width: 150%;
+	    height: 150%;
+	    margin-left: -20%;
+    	margin-top: -20%;
+	}*/
+</style>
+
+<script type="text/javascript">
+
+	Segmen = ko.observable('')
+	Distributor = ko.observable('')
+	AvgRDD = ko.observable('')
+	Vintage = ko.observable('')
+	distributormaxData = ko.observableArray([])
+
+  function borrowerdetails(){
+		Segmen(r.AllData().Data.AD[0].borrowerdetails.customersegmentclasification)
+		Distributor(r.AllData().Data.AD[0].accountsetupdetails.leaddistributor)
+		Vintage(r.AllData().Data.AD[0].borrowerdetails.businessvintage)
+
+		AvgRDD(0)
+		total = 0
+		totalarr = r.AllData().Data.AD[0].vendordetails.length
+		_.each(r.AllData().Data.AD[0].vendordetails, function(v,i){
+			total += v.avgtransactionweightedpaymentdays
+		})
+		AvgRDD(total/totalarr)
+
+		distributormaxData([])
+		ii = 0
+		_.each(r.AllData().Data.AD[0].distributormix, function(v,i){
+			i = i == "iriscomputerslimitedin" ? "Iris Computers Limited" : 
+				i == "rashiin" ? "Rashi" :
+				i == "compuagein"? "Compuage" : 
+				i == "savexin" ? "Savex" :
+				i == "supertronin"? "Supertron" :
+				i == "avnetin" ? "Avnet" : "";
+
+
+			distributormaxData.push({
+				category: i,
+		    value: v,
+		    color: ecisColors[ii]
+			})
+			ii++;
+		})
+
+
+
+		distributormaxCreate()
+	}
+
+	function distributormaxCreate() {
+	 $("#distributormax").html("");
+    $("#distributormax").kendoChart({
+        legend: {
+            visible: false
+        },
+        chartArea: {
+            background: "",
+            // height: 80
+        },
+        series: [{
+            type: "pie",
+            data: distributormaxData()
+        }],
+        tooltip: {
+            visible: true,
+            template: "#=category # : #=value #%"
+        }
+    });
+	}
+
+	function startme(){
+		borrowerdetails()
+		ratingsandreferences()
+	}
+</script>
+
+<div class="panel panel-default panel-asik" style="height: 250px;">
+	<div class="panel-heading">
+		Borrower Details
+	</div>
+	<div class="panel-body">
+		<div class="col-md-6 no-padding" style="padding-right: 4px;">
+			<div class="col-md-12 no-padding">
+				<div><label>Segment</label></div>
+				<div><h3 data-bind="text: Segmen"></h3></div>
+			</div>
+
+			<div class="clearfix with-space"></div>
+
+			<div class="col-md-12 no-padding">
+				<div><label>Distributor</label></div>
+				<div><h3 data-bind="text: Distributor"></h3></div>
+			</div>
+
+			<div class="clearfix with-space"></div>
+
+			<!-- <h3>Lead</h3> -->
+
+			<div class="col-md-12 no-padding">
+				<div style="width: 130px;"><label>Avg. Repayment Delay Days</label></div>
+				<div><h3 class="number-label" data-bind="text: ko.computed(function () { return kendo.toString(AvgRDD(), 'n2') }, AvgRDD)" type="text" style="width: 100%;"></h3> </div>
+			</div>
+		</div>
+
+		<div class="col-md-6 no-padding" style="padding-left: 4px;text-align:center!important">
+			<div class="col-md-12 no-padding">
+				<div><label>Vintage</label></div>
+				<div><h3 class="number-label" style="text-align:center!important" data-bind="text: ko.computed(function () { return kendo.toString(Vintage(), 'n2') }, Vintage)" type="text" style="width: 100%;" disabled> </h3></div>
+			</div>
+
+			<div class="clearfix with-space"></div>
+
+			<div class="col-md-12 no-padding">
+				<div><label>Distributor Mix</label></div>
+				<div>
+					<div class="chart">
+						<!-- <div class="nopadding" id="distributormax"></div> -->
+					</div>
+				</div>
+			</div>
+
+			<div class="chart">
+				<div class="nopadding" id="distributormax"></div>
+			</div>
+		</div>
+
+		<div class="clearfix"></div>
+	</div>
+</div>

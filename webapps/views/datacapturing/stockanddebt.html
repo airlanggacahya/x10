@@ -1,0 +1,720 @@
+<script type="text/javascript">
+  //initial
+    model.PageTopMenu("Data Entry");
+    model.PageId('{{.Menuname}}');
+    model.BreadCrumbs.push(new BreadCrumb("Data Entry", "Data Entry", "#", "", ""));
+    model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+    model.Access = ko.observable('{{.Menuid}}');
+    model.View = ko.observable('{{.View}}');
+    model.Create= ko.observable('{{.Create}}');
+    model.Delete= ko.observable('{{.Delete}}');
+    model.Process= ko.observable('{{.Process}}');
+    model.Edit= ko.observable('{{.Edit}}')
+    model.User= ko.observable('{{.Username}}');
+
+    selectdateval = ko.observable(new Date());
+    selectdateseqval = ko.observable("first");
+    selectdateseqList = ko.observableArray(["first","last"]);
+
+    dataratioreport = ko.observableArray([])
+    datesratioreport = ko.observableArray([])
+    Turnover = ko.observable(0)
+    COG = ko.observable(0)
+
+    AOM = ko.observableArray([]);
+    AA = ko.observableArray([]);
+
+    trigger = ko.observable(false);
+
+    Mode = ko.observable(0);
+
+    stockanddebt = ko.observable({Id: '', CustomerId : '',Flag : 0,AOM : [],AA : []})
+
+    //flag :
+      //1 -> save draft
+      //2 -> Confirm
+      //3 -> verify
+
+  // end initial
+
+  //function
+    function addAOM(){
+      // var date = kendo.toString(selectdateval(), 'MMMM yyyy');
+
+      // t = true;
+      // $.each( stockanddebt().AOM ,function(k,v){
+      //   if(v.OperatingRatioString == date){
+      //     t = false;
+      //   }
+      // })
+
+      // if (t){
+      //   swal("Success","Adjusted Operating Metrics Has Been Addded", "success");
+      //   if(selectdateseqval() == "first"){
+      //     stockanddebt().AOM.unshift({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: '',InventoryAmount: '',LessPayablesAmount: '',WCRequirement: ''});
+      //   } else if(selectdateseqval() == "last"){
+      //     stockanddebt().AOM.push({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: '',InventoryAmount: '',LessPayablesAmount: '',WCRequirement: ''});
+      //   }
+      //   selectdateval(new Date());
+      //   selectdateseqval("first");
+      //   AOM(stockanddebt().AOM);
+      // } else{
+      //   swal("Warning","This Month already added", "warning");
+      // }
+      var date = kendo.toString(selectdateval(), 'MMMM yyyy');
+      AOM.push({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
+      // swal("Success","Adjusted Operating Metrics Has Been Addded", "success");
+    }
+
+    function addAA(){
+      // var date = kendo.toString(selectdateval(), 'MMMM yyyy');
+
+      // t = true;
+      // $.each( stockanddebt().AA ,function(k,v){
+      //   if(v.BulanString == date){
+      //     t = false;
+      //   }
+      // })
+
+      // if (t){
+      //   swal("Success","Ageing Analysis Has Been Addded", "success");
+      //   if(selectdateseqval() == "first"){
+      //     stockanddebt().AA.unshift({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+      //   } else if(selectdateseqval() == "last"){
+      //     stockanddebt().AA.push({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+      //   }
+      //   selectdateval(new Date());
+      //   selectdateseqval("first");
+      //   AA(stockanddebt().AA);
+      // } else{
+      //   swal("Warning","This Month already added", "warning");
+      // }
+      var date = kendo.toString(selectdateval(), 'MMMM yyyy');
+      AA.push({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+      // swal("Success","Ageing Analysis Has Been Addded", "success");
+    }
+
+    isLoading = function (what) {
+        $('.apx-loading')[what ? 'show' : 'hide']()
+        $('.app-content')[what ? 'hide' : 'show']()
+    }
+
+    function refreshFilter(){
+      var param = {CustomerId: filter().CustomerSearchVal(), Dealno: filter().DealNumberSearchVal()}
+      var customerId = filter().CustomerSearchVal() + "|" + filter().DealNumberSearchVal();
+      var url = "{{BaseUrl}}datacapturing/getstockanddebtdetail";
+      isLoading(true)
+      ajaxPost(url, param, function(data) {
+        // console.log(data[0].Flag);
+        // if()
+        PrepareDataRatioReport(param, data, customerId);
+      }, undefined);
+    }
+
+    function changeDate(v,i,mode){
+      console.log(v,i);
+      var date = kendo.toString(v, 'MMMM yyyy');
+
+      if (mode == "AOM"){
+        stockanddebt().AOM[i].OperatingRatio = v;
+        stockanddebt().AOM[i].OperatingRatioString = date;
+        if(i == 0){
+          tmp = moment(v).subtract(1, 'month')._d;
+          date = kendo.toString(tmp, 'MMMM yyyy');
+          stockanddebt().AOM[i+1].OperatingRatio = tmp;
+          stockanddebt().AOM[i+1].OperatingRatioString = date;
+          tmp = moment(v).subtract(2, 'month')._d;
+          date = kendo.toString(tmp, 'MMMM yyyy');
+          stockanddebt().AOM[i+2].OperatingRatio = tmp;
+          stockanddebt().AOM[i+2].OperatingRatioString = date;
+        }
+      } else if(mode == "AA"){
+        stockanddebt().AA[i].Bulan = v;
+        stockanddebt().AA[i].BulanString = date;
+        if(i == 0){
+          tmp = moment(v).subtract(1, 'month')._d;
+          date = kendo.toString(tmp, 'MMMM yyyy');
+          stockanddebt().AA[i+1].Bulan = tmp;
+          stockanddebt().AA[i+1].BulanString = date;
+          tmp = moment(v).subtract(2, 'month')._d;
+          date = kendo.toString(tmp, 'MMMM yyyy');
+          stockanddebt().AA[i+2].Bulan = tmp;
+          stockanddebt().AA[i+2].BulanString = date;
+        }
+      }
+    }
+
+    function resetmen(){
+      AOM([]);
+      AA([]);
+      var date = kendo.toString(selectdateval(), 'MMMM yyyy');
+      AOM.push({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
+      AA.push({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+      tmp = moment().subtract(1, 'month')._d;
+      date = kendo.toString(tmp, 'MMMM yyyy');
+      AOM.push({Id: "", OperatingRatio: tmp, OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
+      AA.push({Id: "", BulanString: date,Bulan: tmp,ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+      tmp = moment().subtract(2, 'month')._d;
+      date = kendo.toString(tmp, 'MMMM yyyy');
+      AOM.push({Id: "", OperatingRatio: tmp, OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
+      AA.push({Id: "", BulanString: date,Bulan: tmp,ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+      stockanddebt().AOM = AOM();
+      stockanddebt().AA = AA();
+    }
+
+    function awal(){
+      // $("#").show();
+      // $("#").hide();
+      $("#btndraft").hide();
+      $("#btnconfirm").hide();
+      $("#btnceedit").hide();
+      $(".filtermen").hide();
+      if(stockanddebt().Flag == 0){
+        $("#btnnewentry").show();
+        $("#btnedit").hide();
+        $("#btnverify").hide();
+        $("#btnupdate").hide();
+      } else if(stockanddebt().Flag == 1){
+        $("#btnnewentry").hide();
+        $("#btnedit").show();
+        $("#btnverify").hide();
+        $("#btnupdate").hide();
+      } else if(stockanddebt().Flag == 2){
+        $("#btnnewentry").hide();
+        $("#btnedit").hide();
+        $("#btnverify").show();
+        $("#btnupdate").show();
+      }
+      else{
+        $("#btnnewentry").hide();
+        $("#btnedit").hide();
+        $("#btnverify").hide();
+        $("#btnupdate").hide();
+      }
+      Mode(0);
+      $(".modezero").prop("disabled", true);
+    }
+
+    function makenewentryoredit(){
+      trigger(true)
+      $("#btnverify").hide();
+      $("#btnupdate").hide();
+      $("#btnnewentry").hide();
+      $("#btnedit").hide();
+      $("#btndraft").show();
+      $("#btnconfirm").show();
+      $("#btnceedit").show();
+      $(".filtermen").show();
+      Mode(1);
+      $(".modezero").prop("disabled", false);
+    }
+
+    function cancelmen(){
+      awal();
+      refreshFilter();
+    }
+
+    function verify(){
+      stockanddebt().Flag = 3;
+      awal();
+      savedata();
+    }
+
+    function confirm(){
+      stockanddebt().Flag = 2;
+      awal();
+      savedata();
+    }
+
+    function save(){
+      stockanddebt().Flag = 1;
+      awal();
+      savedata();
+    }
+
+    function wcrupdate(i){
+      a = parseInt(AOM()[i].ReceivablesAmount);
+      b = parseInt(AOM()[i].InventoryAmount);
+      c = parseInt(AOM()[i].LessPayablesAmount);
+      total = a+b-c;
+      AOM()[i].WCRequirement = total+"";
+
+      $($('.WCRequirement')[i]).val(AOM()[i].WCRequirement)
+
+      if ( trigger() ){
+        k1 = ( Turnover() != 0 ) ? ( (a / Turnover())*365 ) : 0;
+        k2 = ( Turnover() != 0 ) ? ( (b / Turnover())*365 ) : 0;
+        k3 = ( COG() != 0 ) ? ( (c / COG())*365 ) : 0;
+        tk = k1 + k2 - k3;
+
+        AOM()[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : kendo.toString(k1, "N2");
+        AOM()[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : kendo.toString(k2, "N2");
+        AOM()[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : kendo.toString(k3, "N2");
+        AOM()[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : kendo.toString(tk, "N2");
+
+        $($('.ReceivablesDays')[i]).val(AOM()[i].ReceivablesDays)
+        $($('.InventoryDays')[i]).val(AOM()[i].InventoryDays)
+        $($('.LessPayablesDays')[i]).val(AOM()[i].LessPayablesDays)
+        $($('.WCDays')[i]).val(AOM()[i].WCDays)
+      }
+    }
+
+    function savedata(){
+      trigger(false)
+      // stockanddebt().AOM = AOM();
+      // stockanddebt().AA = AA();
+      param = stockanddebt();
+      param.DateFlag = new Date();
+      var url = "{{BaseUrl}}datacapturing/savestockanddebtdetail";
+      ajaxPost(url, param, function(data) {
+        if (data){
+          swal("success", "Data already saved...", "success");
+          refreshFilter();
+        }
+      }, undefined);
+    }
+
+    function PrepareDataRatioReport(param, data, customerId){
+      dataratioreport([])
+      datesratioreport([])
+      app.ajaxPost('/ratio/getreportdata', param, function (res) {
+        Turnover(0);
+        COG(0);
+
+        if (res.Message != '') {
+          isLoading(false)
+
+          repairtable()
+
+          return
+        }
+
+        dataratioreport(res.Data.FormData)
+        datesratioreport(_.orderBy(res.Data.AuditStatus, 'Date', 'desc'))
+
+        if(res.Data.AuditStatus.length > 0){
+          $.each(constructData(dataratioreport()),function(i,v){
+
+            if(v.Name == "Turnover"){
+              // if(v.ColumnData[ 1 ].Value != 0){
+              //   Turnover(v.ColumnData[ 1 ].Value);
+              // } else if(v.ColumnData[ 2 ].Value != 0){
+              //   Turnover(v.ColumnData[ 2 ].Value);
+              // } else if(v.ColumnData[ datesratioreport().length - _.filter(datesratioreport(), function(name){return name.Status == "AUDITED" }).length ].Value != 0){
+              //   Turnover(v.ColumnData[ datesratioreport().length - _.filter(datesratioreport(), function(name){return name.Status == "AUDITED" }).length ].Value);
+              // }
+              var max = datesratioreport().length - _.filter(datesratioreport(), function(name){return name.Status == "AUDITED" }).length;
+              $.each(v.ColumnData, function(ii,vv){
+                if(ii > 0 && ii <= max && vv.Value != 0){
+                  Turnover(vv.Value);
+                  return false
+                }
+              })
+            }
+
+            if(v.Name == "Cost of Goods Sold (COGS)"){
+              // if(v.ColumnData[ 1 ].Value != 0){
+              //   COG(v.ColumnData[ 1 ].Value);
+              // } else if(v.ColumnData[ 2 ].Value != 0){
+              //   COG(v.ColumnData[ 2 ].Value);
+              // } else if(v.ColumnData[ datesratioreport().length - _.filter(datesratioreport(), function(name){return name.Status == "AUDITED" }).length ].Value != 0){
+              //   COG(v.ColumnData[ datesratioreport().length - _.filter(datesratioreport(), function(name){return name.Status == "AUDITED" }).length ].Value);
+              // }
+              var max = datesratioreport().length - _.filter(datesratioreport(), function(name){return name.Status == "AUDITED" }).length;
+              $.each(v.ColumnData, function(ii,vv){
+                if(ii > 0 && ii <= max && vv.Value != 0){
+                  COG(vv.Value);
+                  return false
+                }
+              })
+            }
+
+          })
+        }
+
+        repairtable(data, customerId)
+
+        isLoading(false)
+
+      })
+    }
+
+    function repairtable(data, customerId){
+      if (data != undefined && data.length > 0){
+        $.each(data[0].AOM,function(i,v){
+
+          var ReceivablesDays = 0;
+          var InventoryDays = 0;
+          var LessPayablesDays = 0;
+          var WCDays = 0;
+
+          if(Turnover() > 0){
+            ReceivablesDays = ( v.ReceivablesAmount / Turnover() ) * 365;
+            InventoryDays = ( v.InventoryAmount / Turnover() ) * 365;
+          }
+
+          if(COG() > 0){
+            LessPayablesDays = ( v.LessPayablesAmount / COG() ) * 365;
+          }
+
+          WCDays = ReceivablesDays + InventoryDays - LessPayablesDays;
+
+          data[0].AOM[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : kendo.toString(ReceivablesDays, "N2");
+          data[0].AOM[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : kendo.toString(InventoryDays, "N2");
+          data[0].AOM[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : kendo.toString(LessPayablesDays, "N2");
+          data[0].AOM[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : kendo.toString(WCDays, "N2");
+        })
+      }
+
+      if(data != undefined && data.length > 0){
+        data = data[0];
+        console.log(data.Flag)
+        if(data.Flag == 2){
+          $('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(data.DateFlag),"dd-MM-yyyy h:mm:ss tt") )
+        } else if(data.Flag == 3){
+          $('.form-last-confirmation-info').html('Last verified on: '+kendo.toString(new Date(data.DateFlag),"dd-MM-yyyy h:mm:ss tt") )
+        } else{
+          $('.form-last-confirmation-info').html('')
+        }
+        stockanddebt({
+          Id: data.Id,
+          CustomerId : data.CustomerId,
+          Flag : data.Flag,
+          AOM : data.AOM,
+          AA : data.AA
+        });
+        AOM(data.AOM);
+        AA(data.AA);
+      }else{
+        stockanddebt({Id: '', CustomerId : customerId,Flag : 0,AOM : [],AA : []})
+        resetmen();
+      }
+      awal();
+    }
+
+    function constructData(res) {
+      var flat = []
+
+      var opSection1 = _.groupBy(res, 'SectionName');
+      var opSection2 = _.map(opSection1, function (v, k) {
+        return { key: k, data: v, order: _.minBy(v, 'FieldOrder').FieldOrder };
+      });
+      var opSection3 = _.orderBy(opSection2, 'order');
+      var i = 1, j = 1;
+      opSection3.forEach(function (section) {
+        var sectionId = 'section-' + i;
+        flat.push({
+          id: sectionId,
+          parentId: null,
+          Order: _.minBy(section.data, 'FieldOrder').FieldOrder,
+          Name: section.key,
+          Type: 'Section'
+        });
+        i++;
+
+        var opSubSection1 = _.groupBy(section.data, 'SubSectionName');
+        var opSubSection2 = _.map(opSubSection1, function (v, k) {
+          return { key: k, data: v, order: _.minBy(v, 'FieldOrder').FieldOrder };
+        });
+        var opSubSection3 = _.orderBy(opSubSection2, 'order')
+        opSubSection3.forEach(function (subSection) {
+          var subSectionId = sectionId
+
+          if (subSection.key != '') {
+            subSectionId = 'sub-section-' + j;
+            flat.push({
+              id: subSectionId,
+              parentId: sectionId,
+              Order: _.minBy(subSection.data, 'FieldOrder').FieldOrder,
+              ParentName: section.key,
+              Name: subSection.key,
+              Type: 'Sub Section'
+            });
+          }
+          j++
+
+          _.orderBy(subSection.data, 'FieldOrder').forEach(function (field) {
+            var isFromFormula = (field.Type === 'Formula')
+            var values = _.orderBy(field.Values, 'Date', 'desc')
+            values = values.map(function (d, i) {
+              d.Growth = 0
+
+              if (i < (values.length - 1)) {
+                var previousYearValue = values[i + 1].Value
+                var currentYearValue = d.Value
+
+                d.Growth = toolkit.number((currentYearValue - previousYearValue) / previousYearValue * 100)
+              }
+
+              return d
+            })
+
+            flat.push({
+              id: field.Id,
+              parentId: subSectionId,
+              Order: field.FieldOrder,
+              Name: field.FieldName,
+              Section: section.key,
+              SubSection: subSection.key,
+              Type: 'Field',
+              ColumnData: values,
+              IsFromFormula: isFromFormula,
+            });
+          });
+        });
+      });
+
+      return flat;
+    }
+  // end function
+
+  $(document).ready(function () {
+    awal();
+
+    $('.AOM').collapsible({
+      accordion : true
+    });
+
+    $('.AA').collapsible({
+      accordion : true
+    });
+  });
+</script>
+
+<style type="text/css">
+  .heighfix{
+/*    height: 37px;
+    padding-top: 10px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;*/
+
+     font-family: 'Source Sans Pro', 'Lato', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    vertical-align: bottom;
+    color: inherit;
+    background-color: white;
+    /*border: 1px solid #e4e4e4;*/
+        padding: 2px 7px;
+        height: 37px;
+  }
+
+    .heighfixhead{
+/*    height: 37px;
+    padding-top: 10px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;*/
+
+     font-family: 'Source Sans Pro', 'Lato', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    vertical-align: bottom;
+    color: rgb(168, 168, 168);
+    background-color: rgb(241, 241, 241);
+    border: 1px solid #e4e4e4;
+    padding: 9px 8px;
+  }
+  .heighfix-all{
+   /* height: 37px;
+    padding-top: 15px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    background-color: #50c0d4;
+    color: white;
+    font-weight: bolder;
+    vertical-align: center;*/
+    height: 37px;
+    font-family: 'Source Sans Pro', 'Lato', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    vertical-align: bottom;
+    color: rgb(168, 168, 168);
+    background-color: rgb(241, 241, 241);
+    border: 1px solid #e4e4e4;
+    padding: 9px 8px;
+}
+  }
+  .heighfix-all2{
+ /*   height: 37px;
+    padding-top: 15px !important;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    background-color: #50c0d4;
+    color: white;
+    font-weight: bolder;
+    text-align: center;
+    vertical-align: center;*/
+    text-align: center !important;
+
+  }
+  .col-sm-2, .col-sm-10{
+    padding: 0;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+      /* display: none; <- Crashes Chrome on hover */
+      -webkit-appearance: none;
+      margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+  }
+  .form-last-confirmation-info {
+    padding-top: 50px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    text-align: right;
+    font-style: italic;
+    color: #27ae60;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  table {
+    border-collapse:separate;
+    border-spacing:2px;
+  }
+</style>
+
+{{template "filter.html"}}
+<div>
+  <div class="col-sm-12 ez panel-content" data-bind="visible: (stockanddebt().CustomerId != '')">
+    <div class="row" style="padding-left: 10px; padding-right: 10px;">
+      <div class="col-sm-12 panel ez no-padding hardcore">
+        <div class="col-sm-12 panel-heading">
+          <!-- <h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4> -->
+          <div class="panel-nav-button">
+            <button id="btnverify" btn-sm class="btn btn-sm btn-success" onclick="verify()"> <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp; Verify</button>
+            <button id="btnnewentry" btn-sm class="btn btn-sm btn-primary" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Make New Entry</button>
+            <button id="btnedit" btn-sm class="btn btn-sm btn-warning" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Draft</button>
+            <button id="btnupdate" btn-sm class="btn btn-sm btn-primary" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-pencil"></span>&nbsp; Update Draft</button>
+            <button id="btnconfirm" btn-sm class="btn btn-sm btn-success" onclick="confirm()"> <span class="glyphicon glyphicon-ok"></span>&nbsp; Confirm</button>
+            <button id="btndraft" btn-sm class="btn btn-sm btn-primary" onclick="save()"> <span class="glyphicon glyphicon-share-alt"></span>&nbsp; Save Draft</button>
+            <button id="btnceedit" btn-sm class="btn btn-sm btn-primary" onclick="resetmen()"> <span class="glyphicon glyphicon-refresh"></span>&nbsp; Reset</button>
+          </div>
+        </div>
+        <div class="form-last-confirmation-info"></div>
+        <div class="panel-body col-sm-12">
+          <div class="col-sm-12">
+            <div class="col-sm-5 filtermen">
+              <div class="col-sm-7">
+                <!-- <input class="form-control input-sm" data-bind="kendoDatePicker: {value: selectdateval, start:'year',depth: 'year',format: 'MMMM yyyy'}" /> -->
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <ul class="AOM active" data-collapsible="accordion" style="margin-left: -41px;">
+                <li>
+                  <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Adjusted Operating Metrics<i class="fa fa-chevron-down pull-right"></i></div>
+                  <div class="collapsible-body">
+                    <div class="panel">
+                      <div class="panel-heading">
+                        <div class="filtermen" style="float:right; margin-right: 7px !important; margin-bottom: 10px !important; "><button class="btn btn-sm btn-primary pull-right" onclick="addAOM()"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Add Month</button></div>
+                      </div>
+                      <div class="panel-body">
+                        <div class="col-sm-12">
+                          <div class="col-sm-2">
+                            <div class="col-sm-12 heighfix-all sub-bgcolor" style="text-align: center; "> <b><p>Operating Ratio</p></b> </div>
+                            <div class="col-sm-12 heighfix-all sub-bgcolor"> <p>Receivables Days</p> </div>
+                            <div class="col-sm-12 heighfix-all sub-bgcolor"> <p>Inventory Days</p> </div>
+                            <div class="col-sm-12 heighfix-all sub-bgcolor"> <p>Payables Days</p> </div>
+                            <div class="col-sm-12 heighfix-all sub-bgcolor" style="text-align: center; "> <b><p>WC Days</p></b> </div>
+                            <div class="col-sm-12 heighfix-all sub-bgcolor"> <p>Receivables Amount</p> </div>
+                            <div class="col-sm-12 heighfix-all sub-bgcolor"> <p>Inventory Amount</p> </div>
+                            <div class="col-sm-12 heighfix-all sub-bgcolor"> <p>Payables Amount</p> </div>
+                            <div class="col-sm-12 heighfix-all sub-bgcolor" style="text-align: center; "> <b><p>WC Requirement</p></b> </div>
+                          </div>
+                          <div class="col-sm-10" style="overflow-x: scroll;overflow-y: hidden;border: 1px solid #e4e4e4;">
+                            <!-- <div class="container-inner" style="width: 50000px;" data-bind="foreach: AOM, visible: (stockanddebt().Flag == 0) || (stockanddebt().Flag > 1) || (Mode() == 1)"> -->
+                            <div class="container-inner" style="width: 50000px;">
+                              <div data-bind="foreach: AOM">
+                                <div class="" style="text-align: center;float:left;width:150px;">
+                                  <div class="col-sm-12 heighfix"> <input id="datemen" class="form-control input-sm" data-bind="kendoDatePicker: {value: OperatingRatioString, start:'year',depth: 'year',format: 'MMMM yyyy', change:function(){ changeDate(this.value(), $index(), 'AOM') }}" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm ReceivablesDays" disabled data-bind="value:ReceivablesDays" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm InventoryDays" disabled data-bind="value:InventoryDays" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm LessPayablesDays" disabled data-bind="value:LessPayablesDays" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm WCDays" disabled data-bind="value:WCDays" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input type="number" class="form-control input-sm modezero" data-bind="value:ReceivablesAmount, event:{change: wcrupdate( $index() )}" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input type="number" class="form-control input-sm modezero" data-bind="value:InventoryAmount, event:{change: wcrupdate( $index() )}" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input type="number" class="form-control input-sm modezero" data-bind="value:LessPayablesAmount, event:{change: wcrupdate( $index() )}" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input type="number" class="form-control input-sm WCRequirement" disabled data-bind="value:WCRequirement" /> </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <ul class="AA" data-collapsible="accordion" style="margin-left: -41px;">
+                <li>
+                  <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Ageing Analysis<i class="fa fa-chevron-down pull-right"></i></div>
+                  <div class="collapsible-body">
+                    <div class="panel">
+                      <div class="panel-body">
+                        <div class="col-sm-12">
+                          <div style="max-height: 500px; overflow-y: scroll; overflow-x: hidden;">
+                            <table class="table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th class="sub-bgcolor text-center">Month</th>
+                                  <th class="sub-bgcolor text-center">Current Asset</th>
+                                  <th class="sub-bgcolor text-center">0-90 Days</th>
+                                  <th class="sub-bgcolor text-center">90 Days</th>
+                                  <th class="sub-bgcolor text-center">180 Days</th>
+                                </tr>
+                              </thead>
+                              <tbody data-bind="foreach: AA">
+                                <tr>
+                                  <td rowspan="2" style="vertical-align: middle"><input id="datemen" class="form-control input-sm" data-bind="kendoDatePicker: {value: BulanString, start:'year',depth: 'year',format: 'MMMM yyyy', change:function(){ changeDate(this.value(), $index(), 'AA') }}" /></td>
+                                  <td>Receivable</td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: ReceivableMin90" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: ReceivableMore90" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: ReceivableMore180" /></td>
+                                </tr>
+                                <tr>
+                                  <td>Inventory</td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: InventoryMin90" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: InventoryMore90" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: InventoryMore180" /></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="col-sm-12 filtermen" style="padding-top: 10px;padding-left: 5px;"><button class="btn btn-sm btn-primary" onclick="addAA()"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Add Month</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<!-- <div class="modal fade" id="modalAOM" style="z-index: 10000;">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header" style="">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Adjusted Operating Metrics</h4>
+      </div>
+      <div class="modal-body">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div> -->

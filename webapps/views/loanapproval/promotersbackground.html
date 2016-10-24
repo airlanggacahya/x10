@@ -1,0 +1,38 @@
+<style>
+    .no-padding{
+        padding-left : 0px;
+        padding-right : 0px;
+    }
+</style>
+
+<div class="container-fluid">
+
+<script type="text/html" id="promoter-table-template">
+    <div 
+    data-bind="style: { width: loanApproval.promoterBackgroundData().settings.getTotalWidth(data.name.values()) }" 
+    style="margin-bottom: 15px">
+    	<div class="k-grid">
+		    <table 
+		    class="table-bordered" 
+		    style="word-break: break-word"
+		    data-bind="foreach: { data: Object.keys(data), as: 'prop' }">
+		      <tr>
+		        <td data-bind="
+		        text: data[prop].title, 
+		        attr: { class: 'text-bold' },
+		        style: { width: loanApproval.promoterBackgroundData().settings.getHeaderWidth() }
+		        "></td>
+		        <!-- ko foreach: { data: data[prop].values(), as: 'val' } -->
+		            <td data-bind="style: { width: loanApproval.promoterBackgroundData().settings.getContentWidth() }">
+		              <span data-bind="text: val"></span>
+		            </td>
+		        <!-- /ko -->
+		      </tr>
+		    </table>
+		</div>
+	</div>
+</script>
+
+    <div data-bind="template: { name: 'promoter-table-template', foreach: loanApproval.promoterBackgroundData().data, as: 'data' }"></div>
+
+</div>

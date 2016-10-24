@@ -1,0 +1,201 @@
+<script type="text/javascript">
+model.PageTopMenu("Data Entry");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Data Entry", "Data Entry", "", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+</script>
+
+<div class="clearfix"></div>
+
+<script type="text/javascript" src="/static/core/duediligence-form.js"></script>
+<script type="text/javascript" src="/static/circle/circles.min.js"></script>
+<style>
+	.panel-collapse {
+		padding-top: 10px;
+	}
+	.panel-heading[data-toggle="collapse"] {
+		cursor: pointer;
+	}
+	.panel-heading[data-toggle="collapse"] a:hover {
+		text-decoration: none;
+	}
+	.relative {
+		position: relative;
+	}
+	.vendor-col-header {
+		width: 295px;
+    	position: relative;
+    	margin-left: 10px;
+	}
+	.vendor-col-content {
+		position: absolute;
+		left: 300px;
+		top: 0px;
+	    right: 12px;
+	    overflow: auto;
+	}
+	.vendor-col-column {
+		width: 200px;
+		float: left;
+		padding-left: 10px;
+	}
+	.swal2-cancel{
+	  	margin-left: 10px;
+	}
+	.panel-title{
+		font-weight: bold;
+	}
+	.k-input {
+	    font-weight: bolder;
+	    color: #676767;
+	}
+	h3{
+		font-size: 16px;
+	}
+
+	.modal-dialog {
+   		width: 500px;
+   		margin: 30px auto;
+   	}
+
+   	.ref{
+   		height: 36Px;
+   		padding: 1Px;
+   	}
+
+   	.circles-text{
+   		font-size: 14px !important;
+   	}
+
+   	#canvas .circle {
+		display: inline-block;
+		margin: 1em;
+	}
+
+	#canvas{
+		margin-top: -28px;
+	}
+ 
+   .k-grid  .k-grid-header  .k-header  .k-link {
+	    height: auto;
+	}
+  
+	.k-grid  .k-grid-header  .k-header {
+	    white-space: normal;
+	}
+	.k-grid td {
+		line-height: 2.5em;
+	}
+
+	.collapsibleue{
+		width: 600px;	
+	}
+	.form-last-confirmation-info {
+	    padding-bottom: 10px;
+	    text-align: right;
+	    font-style: italic;
+	    color: #27ae60;
+	    margin-right: 10px;
+	}
+
+	.collapsible-body{
+		padding: 1px !important;
+	}
+	.k-grid .k-grid-header .k-header {
+    	background-color: rgb(195, 220, 236);
+    }
+    #onadd{
+    	margin-left: 11px !important;
+    	margin-top: 2px !important;
+    }
+    
+    
+
+</style>
+{{template "filter.html"}}
+
+<div data-bind="with: due">
+	<div class="col-md-12 col-sm-12 ez panel-content">
+		<div class="panel ez">
+			<!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+			<div data-bind="visible: (formVisible() == true)">
+				<div class="panel-body">
+					<div class="controls" style="text-align: left;">
+						<button id="onsave" class="btn btn-sm btn-save separator ontop" style="margin-right: inherit;" onclick="due.saveAll()">
+							Save all
+						</button>
+						<button id="onreset" class="btn btn-sm btn-reset btn-confirm separator ontop" style="margin-right: inherit;" onclick="due.getReset()">
+							Reset
+						</button>
+						<button id="onconfirm" class="btn btn-sm btn-confirm separator ontop" style="margin-right: inherit;" data-bind="visible: (due.form.Status() == 0)" onclick="due.setConfirm()">
+							<span>Confirm All</span>
+						</button>
+						<button id="onconfirm" class="btn btn-sm btn-reenter separator ontop" style="margin-right: inherit;" data-bind="visible: (due.form.Status() == 1)"onclick="due.setReEnter()">
+							<span>Re Enter</span>
+						</button>
+						<button class="btn btn-sm btn-freeze separator" style="margin-right: inherit;" data-bind="visible: (due.form.Freeze() == false)" onclick="due.setFreeze()">
+							Freeze
+						</button>
+						<button class="btn btn-sm btn-unfreeze separator" style="margin-right: inherit;" data-bind="visible: (due.form.Freeze() == true)" onclick="due.setUnFreeze()">
+							Unfreeze
+						</button>
+						<span class="form-last-confirmation-info pull-right"></span>
+					</div>
+					<div id="AD-Container">
+						<div class="form-container" style="padding-top: 10px;">
+							<div id="accordion" role="tablist" aria-multiselectable="true">
+								<div id="accordion" role="tablist" aria-multiselectable="true">
+									<ul class="collapsibleDue" data-collapsible="accordion" style="margin-left: -41px;">
+										<li id="c-1">
+											<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Verifications <i class="fa fa-chevron-down pull-right"></i></div>
+											<div id="companyCibil" class="collapsible-body">
+											    <div>
+											    	<div id="gridverification0"></div>
+											    </div>
+								    		</div>
+										</li>
+										<li id="c-2">
+											<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Appearance in Defaulter Lists<i class="fa fa-chevron-down pull-right"></i></div>
+											<div class="collapsible-body">
+												    <div>
+												    	<div id="gridDefaulterList0"></div>
+												    </div>
+								    		</div>
+										</li>
+										<li id="c-3">
+											<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Promoter / Director / Guarantor Background <i class="fa fa-chevron-down pull-right"></i></div>
+											<div id="companyCibil" class="collapsible-body">
+											    <div>
+										    		<div class="k-header k-grid-toolbar grid-table-action headerColorGrid ref">
+														<div class="pull-left">
+											            	<button id="onadd" class="btn btn-sm btn-add separator" style="margin-right: inherit;" onclick="due.addRowBackground()">
+																<i class="fa fa-plus"></i> Add
+															</button>
+														</div>
+													</div>
+										    		<div id="background0"></div>
+											    </div>
+								    		</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div> 
+					</div>
+					<!-- <div class="col-md-6" id="canvas">
+						<div class="circle" id="circlesPositif"></div>
+						<div class="circle" id="circlesNetral"></div>
+						<div class="circle" id="circlesNegatif"></div>
+					</div> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

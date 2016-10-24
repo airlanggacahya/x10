@@ -1,0 +1,174 @@
+<script type="text/javascript">
+	var topgriddata = [{
+		OBLIPos : 0,
+		OBLIEmi : 0,
+		CWMPos : 0,
+		CWMEmi : 0,
+		PBSLPos : 0,
+		PBSLEmi :0,
+		BTPos : 0,
+		BTEmi : 0,
+		TCLPos : 0,
+		TCLEmi : 0,
+		DPLLoan : 0,
+		DPLMargin : 0,
+		DPLTenor : 0,
+		DPLROI : 0,
+      IntOBLI : 0,
+		ExisPos : 0,
+		Yrp : 0,
+		SumBounces: 0,
+		SumExtenalYearly: 0,
+	}];
+
+</script>
+
+<style type="text/css">
+	div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
+		background-color: rgb(57,125, 129) !important;
+		color: #fff !important;
+	}
+
+	div.k-grid-header > div > table > thead > tr:nth-child(2) > th {
+		background-color: rgb(195, 220, 236) !important;
+		color: rgb(32,63,83) !important;
+	}
+</style>
+
+<div class="col-md-12"><div id="topgrid"></div></div>
+
+
+<script id="rowTemplateTop" type="text/x-kendo-tmpl">
+   <tr>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#: app.formatnum(OBLIPos)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#: app.formatnum(OBLIEmi)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(CWMPos)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(CWMEmi)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(PBSLPos)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(PBSLEmi)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(BTPos)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(BTEmi)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(TCLPos)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(TCLEmi)#</span>
+      </td>
+      <!-- <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:DPLLoan#</span>
+      </td> -->
+      <!-- <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:DPLMargin#</span>
+      </td> -->
+      <!-- <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:DPLTenor#</span>
+      </td> -->
+      <!-- <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:DPLROI#</span>
+      </td> -->
+      <!-- <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+         #:IntOBLI#
+      </td> -->
+      <!-- <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:ExisPos#</span>
+      </td> -->
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(IntOBLI)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(SumExtenalYearly)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:app.formatnum(Yrp)#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+      	<span>#:SumBounces#</span>
+      </td>
+  </tr>
+</script>
+
+<script type="text/javascript">
+function CreateTopGrid(){
+	$("#topgrid").kendoGrid({
+		dataSource : {
+			data : topgriddata
+		},
+		columns : [
+			{ title : "Total Obligations",
+				columns : [
+					{ field : "OBLIPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+					{ field : "OBLIEmi", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+				],
+				width: 100
+			 },
+			{ title : "Close Within 3 Month",
+				columns : [
+					{ field : "CWMPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+					{ field : "CWMEmi", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+				],
+				width: 100
+			 },
+			{ title : "P.B.S.L",
+				columns : [
+					{ field : "PBSLPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+					{ field : "PBSLEmi", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+				],
+				width: 100
+			},
+			{ title : "Balance Transfer",
+				columns : [
+					{ field : "BTPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+					{ field : "BTEmi", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+				],
+				width: 100
+			},
+			{ title : "Total Considered Liability",
+				columns : [
+					{ field : "TCLPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+					{ field : "TCLEmi", title : "EMI (Rs lacs)", width: 100, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+				],
+				width: 60
+			 },
+			// { title : "Detail of Proposed Loan",
+			// 	// columns : [
+			// 	// 	{field : "DPLLoan", headerAttributes: { "class": "sub-bgcolor" }, title : "Proposed Amount of Limit (Rs Lacs)", width: 190, attributes: { style: 'background: rgb(238, 238, 238)' } },
+			// 	// 	{field : "DPLMargin", headerAttributes: { "class": "sub-bgcolor" }, title : "Cust. Margin", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' } },
+			// 	// 	{field : "DPLTenor", headerAttributes: { "class": "sub-bgcolor" }, title : "Tenor (month)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' } },
+			// 	// 	{field : "DPLROI", headerAttributes: { "class": "sub-bgcolor" }, title : "ROI(%)", width: 70, attributes: { style: 'background: rgb(238, 238, 238)' } },
+   //  //            {field : "IntOBLI", headerAttributes: { "class": "sub-bgcolor" }, title : "X10 Int. Obligation (Rs)" , width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
+			// 	// ],
+			// 	width: 100
+			// },
+			{field : "IntOBLI", headerAttributes: { "class": "sub-bgcolor" }, title : "X10 Int. <br/> Obligation (Rs)" , width: 100, attributes: { style: 'background: rgb(238, 238, 238)' } },
+			// { title : "X10 Existing Pos (Rs)", field : "ExisPos", width: 130, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+			{ title : "External Yearly <br/> Repayment (Rs. Lacs)", width: 135, field : "SumExtenalYearly", attributes: { style: 'background: rgb(238, 238, 238)', class: "wrap" } },
+			{ title : "External Yearly <br/> Repayment (Rs. Lacs) incl. X10 Int" , field : "Yrp", width: 125, attributes: { style: 'background: rgb(238, 238, 238)' } },
+			{ title : "EMI Bounces <br/>(Last 6 Months)", width: 100, field : "SumBounces", attributes: { style: 'background: rgb(238, 238, 238)' } },
+		],
+		rowTemplate: kendo.template($("#rowTemplateTop").html())
+	});
+}
+
+
+$(document).ready(function(){
+	CreateTopGrid();
+
+})
+
+</script>

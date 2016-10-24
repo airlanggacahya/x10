@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="0.45.0">
+<page number="1" position="absolute" top="0" left="0" height="1263" width="892">
+	<fontspec id="0" size="10" family="Times" color="#000000"/>
+	<fontspec id="1" size="10" family="Times" color="#4f90a9"/>
+	<fontspec id="2" size="10" family="Times" color="#ffffff"/>
+	<fontspec id="3" size="10" family="Times" color="#404040"/>
+	<fontspec id="4" size="8" family="Times" color="#636363"/>
+<image top="26" left="263" width="525" height="113" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Company\MEGA BYTE CORPORATION-2\MEGA BYTE CORPORATION-2-1_1.png"/>
+<text top="1209" left="420" width="61" height="11" font="0">Page 1 of 6</text>
+<text top="158" left="98" width="116" height="11" font="1">Report Order Number</text>
+<text top="158" left="274" width="62" height="11" font="0">W-6719130</text>
+<text top="158" left="449" width="77" height="11" font="1">Product Name</text>
+<text top="158" left="625" width="105" height="11" font="0">COMMERCIAL CIR</text>
+<text top="176" left="98" width="99" height="11" font="1">Report Order Date</text>
+<text top="176" left="274" width="69" height="11" font="0">22-Aug-2016</text>
+<text top="176" left="449" width="41" height="11" font="1">User ID</text>
+<text top="176" left="625" width="70" height="11" font="0">NB72730001</text>
+<text top="194" left="98" width="141" height="11" font="1">Loan Amount Applied (Rs)</text>
+<text top="194" left="274" width="70" height="11" font="0">7,500,000.00</text>
+<text top="194" left="449" width="149" height="11" font="1">Member Reference Number</text>
+<text top="227" left="98" width="80" height="11" font="2">Search Criteria</text>
+<text top="245" left="98" width="76" height="11" font="1">Identifier Type</text>
+<text top="245" left="274" width="101" height="11" font="3">D-U-N-S® Number</text>
+<text top="245" left="449" width="113" height="11" font="1">Identification Number</text>
+<text top="245" left="625" width="68" height="11" font="3">86-216-4230</text>
+<text top="288" left="100" width="34" height="11" font="1">Profile</text>
+<text top="309" left="100" width="32" height="11" font="2">Name</text>
+<text top="309" left="275" width="142" height="10" font="4">MEGA BYTE CORPORATION</text>
+<text top="330" left="100" width="64" height="11" font="2">Short Name</text>
+<text top="330" left="451" width="101" height="11" font="2">D-U-N-S® Number</text>
+<text top="330" left="626" width="60" height="10" font="4">86-216-4230</text>
+<text top="351" left="100" width="25" height="11" font="2">PAN</text>
+<text top="351" left="275" width="68" height="10" font="4">AAWFM5759L</text>
+<text top="351" left="451" width="96" height="11" font="2">Legal Constitution</text>
+<text top="351" left="626" width="75" height="10" font="4">PARTNERSHIP</text>
+<text top="372" left="100" width="85" height="11" font="2">Class of Activity</text>
+<text top="372" left="451" width="44" height="11" font="2">Address</text>
+<text top="372" left="626" width="157" height="10" font="4">NO 21 2ND FLOOR   OTC ROAD</text>
+<text top="382" left="626" width="156" height="10" font="4">CROSS SP ROAD BENGALURU</text>
+<text top="402" left="100" width="60" height="11" font="2">City / Town</text>
+<text top="402" left="275" width="65" height="10" font="4">BANGALORE</text>
+<text top="402" left="451" width="103" height="11" font="2">Telephone Number</text>
+<text top="402" left="626" width="76" height="10" font="4">9108041143441</text>
+<text top="423" left="100" width="37" height="11" font="2">District</text>
+<text top="423" left="451" width="66" height="11" font="2">Fax Number</text>
+<text top="444" left="100" width="117" height="11" font="2">State / Union Territory</text>
+<text top="444" left="275" width="64" height="10" font="4">KARNATAKA</text>
+<text top="444" left="451" width="52" height="11" font="2">PIN Code</text>
+<text top="444" left="626" width="35" height="10" font="4">560002</text>
+<text top="465" left="100" width="42" height="11" font="2">Country</text>
+<text top="465" left="275" width="28" height="10" font="4">INDIA</text>
+<text top="465" left="451" width="81" height="11" font="2">File Open Date</text>
+<text top="465" left="626" width="70" height="10" font="4">22 - Oct - 2009</text>
+<text top="486" left="100" width="676" height="11" font="1">*Note: Classification of Activity / Occupation as per Reserve Bank of India, Handbook of Instructions, Basic Statistical Returns 1</text>
+<text top="498" left="100" width="109" height="11" font="1">and 2, Latest Edition</text>
+<text top="537" left="100" width="91" height="11" font="1">Report Summary</text>
+<text top="558" left="100" width="117" height="11" font="2">No. of Credit Grantors</text>
+<text top="558" left="248" width="6" height="10" font="4">3</text>
+<text top="558" left="358" width="67" height="11" font="2">No. of Credit</text>
+<text top="570" left="358" width="47" height="11" font="2">Facilities</text>
+<text top="558" left="469" width="6" height="10" font="4">3</text>
+<text top="558" left="580" width="73" height="11" font="2">No. of Closed</text>
+<text top="570" left="580" width="82" height="11" font="2">Credit Facilities</text>
+<text top="558" left="691" width="6" height="10" font="4">0</text>
+<text top="591" left="100" width="117" height="11" font="2">No. of Credit Facilities</text>
+<text top="603" left="100" width="119" height="11" font="2">Guaranteed by Others</text>
+<text top="591" left="248" width="6" height="10" font="4">1</text>
+<text top="591" left="358" width="68" height="11" font="2">Latest Credit</text>
+<text top="603" left="358" width="99" height="11" font="2">Facility Open Date</text>
+<text top="591" left="469" width="72" height="10" font="4">02 - Mar - 2016</text>
+<text top="591" left="580" width="99" height="11" font="2">First Credit Facility</text>
+<text top="603" left="580" width="58" height="11" font="2">Open Date</text>
+<text top="591" left="691" width="72" height="10" font="4">30 - Sep - 2007</text>
+<text top="624" left="100" width="82" height="11" font="2">Credit Facilities</text>
+<text top="624" left="200" width="84" height="11" font="2">No. of Standard</text>
+<text top="624" left="300" width="87" height="11" font="2">Current Balance</text>
+<text top="636" left="300" width="61" height="11" font="2">in Standard</text>
+<text top="624" left="401" width="65" height="11" font="2">No. of Other</text>
+<text top="636" left="401" width="75" height="11" font="2">than Standard</text>
+<text top="624" left="501" width="87" height="11" font="2">Current Balance</text>
+<text top="636" left="501" width="67" height="11" font="2">in other than</text>
+<text top="648" left="501" width="49" height="11" font="2">Standard</text>
+<text top="624" left="601" width="87" height="11" font="2">No. of Law Suits</text>
+<text top="624" left="701" width="65" height="11" font="2">No. of Wilful</text>
+<text top="636" left="701" width="44" height="11" font="2">Defaults</text>
+<text top="669" left="100" width="66" height="11" font="2">As Borrower</text>
+<text top="669" left="200" width="6" height="10" font="4">3</text>
+<text top="669" left="300" width="47" height="10" font="4">61,49,764</text>
+<text top="669" left="401" width="6" height="10" font="4">0</text>
+<text top="669" left="501" width="6" height="10" font="4">0</text>
+<text top="669" left="601" width="6" height="10" font="4">0</text>
+<text top="669" left="701" width="6" height="10" font="4">0</text>
+<text top="690" left="100" width="71" height="11" font="2">As Guarantor</text>
+<text top="690" left="200" width="6" height="10" font="4">0</text>
+<text top="690" left="300" width="6" height="10" font="4">0</text>
+<text top="690" left="401" width="6" height="10" font="4">0</text>
+<text top="690" left="501" width="6" height="10" font="4">0</text>
+<text top="690" left="601" width="6" height="10" font="4">0</text>
+<text top="690" left="701" width="6" height="10" font="4">0</text>
+<text top="711" left="100" width="117" height="11" font="1">Credit Type Summary</text>
+<text top="732" left="101" width="67" height="11" font="2">No. of Credit</text>
+<text top="744" left="102" width="64" height="11" font="2">Facilities As</text>
+<text top="756" left="110" width="49" height="11" font="2">Borrower</text>
+<text top="732" left="181" width="62" height="11" font="2">Credit Type</text>
+<text top="732" left="266" width="49" height="11" font="2">Currency</text>
+<text top="744" left="276" width="29" height="11" font="2">Code</text>
+<text top="732" left="472" width="104" height="11" font="2">Asset Classification</text>
+<text top="753" left="334" width="49" height="11" font="2">Standard</text>
+<text top="753" left="412" width="25" height="11" font="2">Sub-</text>
+<text top="765" left="412" width="47" height="11" font="2">standard</text>
+<text top="753" left="490" width="45" height="11" font="2">Doubtful</text>
+<text top="753" left="568" width="25" height="11" font="2">Loss</text>
+<text top="753" left="646" width="39" height="11" font="2">Special</text>
+<text top="765" left="646" width="66" height="11" font="2">Mention A/C</text>
+<text top="732" left="738" width="40" height="11" font="2">Current</text>
+<text top="744" left="737" width="43" height="11" font="2">Balance</text>
+<text top="786" left="100" width="6" height="10" font="4">1</text>
+<text top="786" left="178" width="43" height="10" font="4">MEDIUM</text>
+<text top="796" left="178" width="61" height="10" font="4">TERM LOAN</text>
+<text top="807" left="178" width="44" height="10" font="4">(PERIOD</text>
+<text top="817" left="178" width="45" height="10" font="4">ABOVE 1</text>
+<text top="828" left="178" width="54" height="10" font="4">YEAR AND</text>
+<text top="838" left="178" width="38" height="10" font="4">UPTO 3</text>
+<text top="849" left="178" width="39" height="10" font="4">YEARS)</text>
+<text top="786" left="256" width="18" height="10" font="4">INR</text>
+<text top="786" left="334" width="6" height="10" font="4">0</text>
+<text top="786" left="724" width="6" height="10" font="4">0</text>
+<text top="868" left="100" width="6" height="10" font="4">1</text>
+<text top="868" left="178" width="25" height="10" font="4">HIRE</text>
+<text top="879" left="178" width="58" height="10" font="4">PURCHASE</text>
+<text top="868" left="256" width="18" height="10" font="4">INR</text>
+<text top="868" left="334" width="47" height="10" font="4">32,68,123</text>
+<text top="868" left="724" width="47" height="10" font="4">32,68,123</text>
+<text top="898" left="100" width="6" height="10" font="4">1</text>
+<text top="898" left="178" width="66" height="10" font="4">UNSECURED</text>
+<text top="909" left="178" width="53" height="10" font="4">BUSINESS</text>
+<text top="919" left="178" width="29" height="10" font="4">LOAN</text>
+<text top="898" left="256" width="18" height="10" font="4">INR</text>
+<text top="898" left="334" width="47" height="10" font="4">28,81,641</text>
+<text top="898" left="724" width="47" height="10" font="4">28,81,641</text>
+<text top="939" left="256" width="23" height="10" font="4">Total</text>
+<text top="939" left="334" width="47" height="10" font="4">61,49,764</text>
+<text top="939" left="724" width="47" height="10" font="4">61,49,764</text>
+<text top="959" left="100" width="95" height="11" font="1">Enquiry Summary</text>
+<text top="980" left="100" width="41" height="11" font="2">Enquiry</text>
+<text top="980" left="205" width="49" height="11" font="2">3 Months</text>
+<text top="980" left="275" width="49" height="11" font="2">6 Months</text>
+<text top="980" left="345" width="49" height="11" font="2">9 Months</text>
+<text top="980" left="416" width="56" height="11" font="2">12 Months</text>
+<text top="980" left="486" width="56" height="11" font="2">24 Months</text>
+<text top="980" left="556" width="20" height="11" font="2">&gt;24</text>
+<text top="992" left="556" width="39" height="11" font="2">Months</text>
+<text top="980" left="626" width="27" height="11" font="2">Total</text>
+<text top="980" left="696" width="96" height="11" font="2">Most Recent Date</text>
+<text top="1013" left="100" width="85" height="11" font="2">No. of Enquiries</text>
+<text top="1012" left="205" width="6" height="10" font="4">2</text>
+<text top="1012" left="275" width="6" height="10" font="4">4</text>
+<text top="1012" left="345" width="6" height="10" font="4">5</text>
+<text top="1012" left="416" width="6" height="10" font="4">5</text>
+<text top="1012" left="486" width="6" height="10" font="4">6</text>
+<text top="1012" left="556" width="6" height="10" font="4">0</text>
+<text top="1012" left="626" width="6" height="10" font="4">6</text>
+<text top="1012" left="696" width="67" height="10" font="4">13 - Jul - 2016</text>
+<text top="1034" left="100" width="325" height="11" font="1">* The Current Balance figures as per the Last Reported Date.</text>
+<text top="1073" left="100" width="51" height="11" font="1">Locations</text>
+<text top="1094" left="100" width="55" height="11" font="2">D-U-N-S®</text>
+<text top="1106" left="100" width="43" height="11" font="2">Number</text>
+<text top="1094" left="170" width="45" height="11" font="2">Location</text>
+<text top="1106" left="170" width="31" height="11" font="2">Type*</text>
+<text top="1094" left="240" width="44" height="11" font="2">Address</text>
+<text top="1094" left="310" width="107" height="11" font="2">City / Town District</text>
+<text top="1094" left="451" width="35" height="11" font="2">State /</text>
+<text top="1106" left="451" width="31" height="11" font="2">Union</text>
+<text top="1118" left="451" width="45" height="11" font="2">Territory</text>
+<text top="1094" left="521" width="52" height="11" font="2">PIN Code</text>
+<text top="1094" left="591" width="57" height="11" font="2">Telephone</text>
+<text top="1106" left="591" width="43" height="11" font="2">Number</text>
+<text top="1094" left="661" width="20" height="11" font="2">Fax</text>
+<text top="1106" left="661" width="43" height="11" font="2">Number</text>
+<text top="1094" left="732" width="23" height="11" font="2">Last</text>
+<text top="1106" left="732" width="49" height="11" font="2">Reported</text>
+<text top="1118" left="732" width="25" height="11" font="2">Date</text>
+</page>
+<page number="2" position="absolute" top="0" left="0" height="1263" width="892">
+<image top="26" left="263" width="525" height="113" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Company\MEGA BYTE CORPORATION-2\MEGA BYTE CORPORATION-2-2_1.png"/>
+<text top="1209" left="420" width="61" height="11" font="0">Page 2 of 6</text>
+<text top="158" left="98" width="116" height="11" font="1">Report Order Number</text>
+<text top="158" left="274" width="62" height="11" font="0">W-6719130</text>
+<text top="158" left="449" width="77" height="11" font="1">Product Name</text>
+<text top="158" left="625" width="105" height="11" font="0">COMMERCIAL CIR</text>
+<text top="176" left="98" width="99" height="11" font="1">Report Order Date</text>
+<text top="176" left="274" width="69" height="11" font="0">22-Aug-2016</text>
+<text top="176" left="449" width="41" height="11" font="1">User ID</text>
+<text top="176" left="625" width="70" height="11" font="0">NB72730001</text>
+<text top="194" left="98" width="141" height="11" font="1">Loan Amount Applied (Rs)</text>
+<text top="194" left="274" width="70" height="11" font="0">7,500,000.00</text>
+<text top="194" left="449" width="149" height="11" font="1">Member Reference Number</text>
+<text top="228" left="100" width="60" height="10" font="4">99-999-9999</text>
+<text top="228" left="170" width="6" height="10" font="4">0</text>
+<text top="228" left="240" width="54" height="10" font="4">NO 21 2ND</text>
+<text top="238" left="240" width="36" height="10" font="4">FLOOR</text>
+<text top="249" left="240" width="55" height="10" font="4">OTC ROAD</text>
+<text top="259" left="240" width="54" height="10" font="4">CROSS SP</text>
+<text top="270" left="240" width="30" height="10" font="4">ROAD</text>
+<text top="280" left="240" width="58" height="10" font="4">BENGALUR</text>
+<text top="291" left="240" width="8" height="10" font="4">U</text>
+<text top="228" left="310" width="58" height="10" font="4">BANGALOR</text>
+<text top="238" left="310" width="7" height="10" font="4">E</text>
+<text top="228" left="451" width="57" height="10" font="4">KARNATAK</text>
+<text top="238" left="451" width="7" height="10" font="4">A</text>
+<text top="228" left="521" width="35" height="10" font="4">560002</text>
+<text top="228" left="591" width="58" height="10" font="4">9108041143</text>
+<text top="238" left="591" width="18" height="10" font="4">441</text>
+<text top="228" left="732" width="46" height="10" font="4">30 - Sep -</text>
+<text top="238" left="732" width="23" height="10" font="4">2009</text>
+<text top="310" left="100" width="60" height="10" font="4">86-216-4230</text>
+<text top="310" left="170" width="6" height="10" font="4">0</text>
+<text top="310" left="240" width="51" height="10" font="4">2/1, FIRST</text>
+<text top="321" left="240" width="39" height="10" font="4">FLOOR,</text>
+<text top="331" left="240" width="58" height="10" font="4">OTC ROAD,</text>
+<text top="342" left="240" width="47" height="10" font="4">SP ROAD</text>
+<text top="352" left="240" width="37" height="10" font="4">CROSS</text>
+<text top="310" left="310" width="58" height="10" font="4">BANGALOR</text>
+<text top="321" left="310" width="7" height="10" font="4">E</text>
+<text top="310" left="451" width="57" height="10" font="4">KARNAKAT</text>
+<text top="321" left="451" width="7" height="10" font="4">A</text>
+<text top="310" left="521" width="35" height="10" font="4">560002</text>
+<text top="310" left="591" width="58" height="10" font="4">9108041143</text>
+<text top="321" left="591" width="18" height="10" font="4">441</text>
+<text top="310" left="732" width="46" height="10" font="4">30 - Sep -</text>
+<text top="321" left="732" width="23" height="10" font="4">2009</text>
+<text top="372" left="100" width="108" height="11" font="1">*0-Registered Office</text>
+<text top="393" left="100" width="167" height="11" font="1">1- Other than Registered Office</text>
+<text top="432" left="100" width="106" height="11" font="1">Relationship Details</text>
+<text top="453" left="100" width="76" height="11" font="1">Relationship 1</text>
+<text top="474" left="100" width="110" height="11" font="2">Related Entity Name</text>
+<text top="474" left="275" width="108" height="10" font="4">  DHARMENDRA BAID</text>
+<text top="474" left="451" width="145" height="11" font="2">Related D-U-N-S® Number</text>
+<text top="495" left="100" width="66" height="11" font="2">Relationship</text>
+<text top="495" left="275" width="50" height="10" font="4">PARTNER</text>
+<text top="495" left="451" width="71" height="11" font="2">Related Type</text>
+<text top="495" left="626" width="153" height="10" font="4">RESIDENT INDIAN INDIVIDUAL</text>
+<text top="516" left="100" width="25" height="11" font="2">PAN</text>
+<text top="516" left="275" width="68" height="10" font="4">AGRPB7009D</text>
+<text top="516" left="451" width="117" height="11" font="2">Percentage of Control</text>
+<text top="537" left="100" width="44" height="11" font="2">Address</text>
+<text top="537" left="275" width="149" height="10" font="4">   NO 50 8TH MAIN ROAD RPC</text>
+<text top="547" left="275" width="42" height="10" font="4">LAYOUT</text>
+<text top="537" left="451" width="60" height="11" font="2">City / Town</text>
+<text top="537" left="626" width="73" height="10" font="4">VIJAYANAGAR</text>
+<text top="567" left="100" width="37" height="11" font="2">District</text>
+<text top="567" left="451" width="117" height="11" font="2">State / Union Territory</text>
+<text top="567" left="626" width="64" height="10" font="4">KARNATAKA</text>
+<text top="588" left="100" width="52" height="11" font="2">PIN Code</text>
+<text top="588" left="275" width="35" height="10" font="4">560040</text>
+<text top="588" left="451" width="103" height="11" font="2">Telephone Number</text>
+<text top="588" left="626" width="117" height="10" font="4">98452744319845274431</text>
+<text top="609" left="100" width="42" height="11" font="2">Country</text>
+<text top="609" left="275" width="6" height="10" font="4">1</text>
+<text top="609" left="451" width="104" height="11" font="2">Last Reported Date</text>
+<text top="609" left="626" width="72" height="10" font="4">31 - Mar - 2016</text>
+<text top="630" left="100" width="76" height="11" font="1">Relationship 2</text>
+<text top="651" left="100" width="110" height="11" font="2">Related Entity Name</text>
+<text top="651" left="275" width="103" height="10" font="4">DHARMENDRA BAID</text>
+<text top="651" left="451" width="145" height="11" font="2">Related D-U-N-S® Number</text>
+<text top="672" left="100" width="66" height="11" font="2">Relationship</text>
+<text top="672" left="275" width="50" height="10" font="4">PARTNER</text>
+<text top="672" left="451" width="71" height="11" font="2">Related Type</text>
+<text top="672" left="626" width="164" height="10" font="4">BUSINESS ENTITY REGISTERED</text>
+<text top="682" left="626" width="41" height="10" font="4">IN INDIA</text>
+<text top="702" left="100" width="25" height="11" font="2">PAN</text>
+<text top="702" left="451" width="117" height="11" font="2">Percentage of Control</text>
+<text top="702" left="626" width="9" height="10" font="4">%</text>
+<text top="723" left="100" width="44" height="11" font="2">Address</text>
+<text top="723" left="275" width="149" height="10" font="4">   NO 50 8TH MAIN ROAD RPC</text>
+<text top="733" left="275" width="118" height="10" font="4">LAYOUT VIJAYANAGAR</text>
+<text top="744" left="275" width="65" height="10" font="4">BENGALURU</text>
+<text top="723" left="451" width="60" height="11" font="2">City / Town</text>
+<text top="723" left="626" width="65" height="10" font="4">BANGALORE</text>
+<text top="764" left="100" width="37" height="11" font="2">District</text>
+<text top="764" left="451" width="117" height="11" font="2">State / Union Territory</text>
+<text top="763" left="626" width="64" height="10" font="4">KARNATAKA</text>
+<text top="785" left="100" width="52" height="11" font="2">PIN Code</text>
+<text top="784" left="275" width="35" height="10" font="4">560040</text>
+<text top="785" left="451" width="103" height="11" font="2">Telephone Number</text>
+<text top="784" left="626" width="58" height="10" font="4">8041323443</text>
+<text top="806" left="100" width="42" height="11" font="2">Country</text>
+<text top="805" left="275" width="28" height="10" font="4">INDIA</text>
+<text top="806" left="451" width="104" height="11" font="2">Last Reported Date</text>
+<text top="805" left="626" width="72" height="10" font="4">29 - Feb - 2016</text>
+<text top="827" left="100" width="76" height="11" font="1">Relationship 3</text>
+<text top="848" left="100" width="110" height="11" font="2">Related Entity Name</text>
+<text top="847" left="275" width="108" height="10" font="4">  DHARMENDRA VAID</text>
+<text top="848" left="451" width="145" height="11" font="2">Related D-U-N-S® Number</text>
+<text top="869" left="100" width="66" height="11" font="2">Relationship</text>
+<text top="868" left="275" width="50" height="10" font="4">PARTNER</text>
+<text top="869" left="451" width="71" height="11" font="2">Related Type</text>
+<text top="868" left="626" width="153" height="10" font="4">RESIDENT INDIAN INDIVIDUAL</text>
+<text top="890" left="100" width="25" height="11" font="2">PAN</text>
+<text top="890" left="451" width="117" height="11" font="2">Percentage of Control</text>
+<text top="911" left="100" width="44" height="11" font="2">Address</text>
+<text top="910" left="275" width="164" height="10" font="4">50,  KALYAN CO-OPERATION,  8-</text>
+<text top="921" left="275" width="132" height="10" font="4">MAIN ROAD, RPC LAYOUT</text>
+<text top="911" left="451" width="60" height="11" font="2">City / Town</text>
+<text top="941" left="100" width="37" height="11" font="2">District</text>
+<text top="941" left="451" width="117" height="11" font="2">State / Union Territory</text>
+<text top="940" left="626" width="64" height="10" font="4">KARNATAKA</text>
+<text top="962" left="100" width="52" height="11" font="2">PIN Code</text>
+<text top="961" left="275" width="35" height="10" font="4">560040</text>
+<text top="962" left="451" width="103" height="11" font="2">Telephone Number</text>
+<text top="961" left="626" width="76" height="10" font="4">9108023407674</text>
+<text top="983" left="100" width="42" height="11" font="2">Country</text>
+<text top="982" left="275" width="28" height="10" font="4">INDIA</text>
+<text top="983" left="451" width="104" height="11" font="2">Last Reported Date</text>
+<text top="982" left="626" width="72" height="10" font="4">31 - Mar - 2012</text>
+<text top="1004" left="100" width="76" height="11" font="1">Relationship 4</text>
+<text top="1025" left="100" width="110" height="11" font="2">Related Entity Name</text>
+<text top="1024" left="275" width="93" height="10" font="4">  MAHENDRA VAID</text>
+<text top="1025" left="451" width="145" height="11" font="2">Related D-U-N-S® Number</text>
+<text top="1046" left="100" width="66" height="11" font="2">Relationship</text>
+<text top="1045" left="275" width="50" height="10" font="4">PARTNER</text>
+<text top="1046" left="451" width="71" height="11" font="2">Related Type</text>
+<text top="1045" left="626" width="153" height="10" font="4">RESIDENT INDIAN INDIVIDUAL</text>
+<text top="1067" left="100" width="25" height="11" font="2">PAN</text>
+<text top="1067" left="451" width="117" height="11" font="2">Percentage of Control</text>
+<text top="1088" left="100" width="44" height="11" font="2">Address</text>
+<text top="1087" left="275" width="164" height="10" font="4">50,  KALYAN CO-OPERATION,  8-</text>
+<text top="1098" left="275" width="132" height="10" font="4">MAIN ROAD, RPC LAYOUT</text>
+<text top="1088" left="451" width="60" height="11" font="2">City / Town</text>
+<text top="1118" left="100" width="37" height="11" font="2">District</text>
+<text top="1118" left="451" width="117" height="11" font="2">State / Union Territory</text>
+<text top="1117" left="626" width="64" height="10" font="4">KARNATAKA</text>
+<text top="1139" left="100" width="52" height="11" font="2">PIN Code</text>
+<text top="1138" left="275" width="35" height="10" font="4">560040</text>
+<text top="1139" left="451" width="103" height="11" font="2">Telephone Number</text>
+<text top="1138" left="626" width="76" height="10" font="4">9108023407674</text>
+<text top="1160" left="100" width="42" height="11" font="2">Country</text>
+<text top="1159" left="275" width="28" height="10" font="4">INDIA</text>
+<text top="1160" left="451" width="104" height="11" font="2">Last Reported Date</text>
+<text top="1159" left="626" width="72" height="10" font="4">31 - Mar - 2012</text>
+</page>
+<page number="3" position="absolute" top="0" left="0" height="1263" width="892">
+	<fontspec id="5" size="8" family="Times" color="#ffffff"/>
+	<fontspec id="6" size="10" family="Times" color="#636363"/>
+<image top="26" left="263" width="525" height="113" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Company\MEGA BYTE CORPORATION-2\MEGA BYTE CORPORATION-2-3_1.png"/>
+<text top="1209" left="420" width="61" height="11" font="0">Page 3 of 6</text>
+<text top="158" left="98" width="116" height="11" font="1">Report Order Number</text>
+<text top="158" left="274" width="62" height="11" font="0">W-6719130</text>
+<text top="158" left="449" width="77" height="11" font="1">Product Name</text>
+<text top="158" left="625" width="105" height="11" font="0">COMMERCIAL CIR</text>
+<text top="176" left="98" width="99" height="11" font="1">Report Order Date</text>
+<text top="176" left="274" width="69" height="11" font="0">22-Aug-2016</text>
+<text top="176" left="449" width="41" height="11" font="1">User ID</text>
+<text top="176" left="625" width="70" height="11" font="0">NB72730001</text>
+<text top="194" left="98" width="141" height="11" font="1">Loan Amount Applied (Rs)</text>
+<text top="194" left="274" width="70" height="11" font="0">7,500,000.00</text>
+<text top="194" left="449" width="149" height="11" font="1">Member Reference Number</text>
+<text top="228" left="100" width="76" height="11" font="1">Relationship 5</text>
+<text top="249" left="100" width="110" height="11" font="2">Related Entity Name</text>
+<text top="249" left="275" width="87" height="10" font="4">MAHENDRA BAID</text>
+<text top="249" left="451" width="145" height="11" font="2">Related D-U-N-S® Number</text>
+<text top="270" left="100" width="66" height="11" font="2">Relationship</text>
+<text top="270" left="275" width="50" height="10" font="4">PARTNER</text>
+<text top="270" left="451" width="71" height="11" font="2">Related Type</text>
+<text top="270" left="626" width="164" height="10" font="4">BUSINESS ENTITY REGISTERED</text>
+<text top="280" left="626" width="41" height="10" font="4">IN INDIA</text>
+<text top="300" left="100" width="25" height="11" font="2">PAN</text>
+<text top="300" left="451" width="117" height="11" font="2">Percentage of Control</text>
+<text top="300" left="626" width="9" height="10" font="4">%</text>
+<text top="321" left="100" width="44" height="11" font="2">Address</text>
+<text top="321" left="275" width="149" height="10" font="4">   NO 50 8TH MAIN ROAD RPC</text>
+<text top="331" left="275" width="118" height="10" font="4">LAYOUT VIJAYANAGAR</text>
+<text top="342" left="275" width="65" height="10" font="4">BENGALURU</text>
+<text top="321" left="451" width="60" height="11" font="2">City / Town</text>
+<text top="321" left="626" width="65" height="10" font="4">BANGALORE</text>
+<text top="362" left="100" width="37" height="11" font="2">District</text>
+<text top="362" left="451" width="117" height="11" font="2">State / Union Territory</text>
+<text top="361" left="626" width="64" height="10" font="4">KARNATAKA</text>
+<text top="383" left="100" width="52" height="11" font="2">PIN Code</text>
+<text top="383" left="451" width="103" height="11" font="2">Telephone Number</text>
+<text top="382" left="626" width="58" height="10" font="4">8041323443</text>
+<text top="404" left="100" width="42" height="11" font="2">Country</text>
+<text top="403" left="275" width="28" height="10" font="4">INDIA</text>
+<text top="404" left="451" width="104" height="11" font="2">Last Reported Date</text>
+<text top="403" left="626" width="72" height="10" font="4">29 - Feb - 2016</text>
+<text top="425" left="100" width="76" height="11" font="1">Relationship 6</text>
+<text top="446" left="100" width="110" height="11" font="2">Related Entity Name</text>
+<text top="445" left="275" width="93" height="10" font="4">  MAHENDRA BAID</text>
+<text top="446" left="451" width="145" height="11" font="2">Related D-U-N-S® Number</text>
+<text top="467" left="100" width="66" height="11" font="2">Relationship</text>
+<text top="466" left="275" width="50" height="10" font="4">PARTNER</text>
+<text top="467" left="451" width="71" height="11" font="2">Related Type</text>
+<text top="466" left="626" width="153" height="10" font="4">RESIDENT INDIAN INDIVIDUAL</text>
+<text top="488" left="100" width="25" height="11" font="2">PAN</text>
+<text top="487" left="275" width="66" height="10" font="4">AECPB1490B</text>
+<text top="488" left="451" width="117" height="11" font="2">Percentage of Control</text>
+<text top="509" left="100" width="44" height="11" font="2">Address</text>
+<text top="508" left="275" width="141" height="10" font="4">50  KALYAN CO-OPERATIVE</text>
+<text top="519" left="275" width="139" height="10" font="4">SOCIETY 8 MN RD RPC LYT</text>
+<text top="509" left="451" width="60" height="11" font="2">City / Town</text>
+<text top="508" left="626" width="73" height="10" font="4">VIJAYANAGAR</text>
+<text top="539" left="100" width="37" height="11" font="2">District</text>
+<text top="539" left="451" width="117" height="11" font="2">State / Union Territory</text>
+<text top="538" left="626" width="64" height="10" font="4">KARNATAKA</text>
+<text top="560" left="100" width="52" height="11" font="2">PIN Code</text>
+<text top="559" left="275" width="35" height="10" font="4">560040</text>
+<text top="560" left="451" width="103" height="11" font="2">Telephone Number</text>
+<text top="559" left="626" width="105" height="10" font="4">421086959845274431</text>
+<text top="581" left="100" width="42" height="11" font="2">Country</text>
+<text top="580" left="275" width="6" height="10" font="4">1</text>
+<text top="581" left="451" width="104" height="11" font="2">Last Reported Date</text>
+<text top="580" left="626" width="72" height="10" font="4">31 - Mar - 2016</text>
+<text top="620" left="100" width="113" height="11" font="1">Credit Facility Details</text>
+<text top="641" left="100" width="83" height="11" font="1">Credit Facility 1</text>
+<text top="662" left="100" width="103" height="11" font="2">Credit Facility Type</text>
+<text top="661" left="275" width="153" height="10" font="4">MEDIUM TERM LOAN (PERIOD</text>
+<text top="672" left="275" width="142" height="10" font="4">ABOVE 1 YEAR AND UPTO 3</text>
+<text top="682" left="275" width="39" height="10" font="4">YEARS)</text>
+<text top="662" left="451" width="111" height="11" font="2">Credit Grantor Name</text>
+<text top="661" left="626" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="702" left="100" width="107" height="11" font="2">Ownership Indicator</text>
+<text top="702" left="275" width="40" height="10" font="4">OWNER</text>
+<text top="702" left="451" width="89" height="11" font="2">Account Number</text>
+<text top="702" left="626" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="723" left="100" width="75" height="11" font="2">Sanction Date</text>
+<text top="723" left="200" width="60" height="11" font="2">Sanctioned</text>
+<text top="735" left="200" width="41" height="11" font="2">Amount</text>
+<text top="723" left="300" width="81" height="11" font="2">Currency Code</text>
+<text top="723" left="401" width="81" height="11" font="2">Drawing Power</text>
+<text top="723" left="501" width="87" height="11" font="2">Current Balance</text>
+<text top="723" left="601" width="104" height="11" font="2">Asset Classification</text>
+<text top="756" left="100" width="72" height="10" font="4">30 - Sep - 2007</text>
+<text top="756" left="200" width="47" height="10" font="4">25,00,000</text>
+<text top="756" left="300" width="18" height="10" font="4">INR</text>
+<text top="756" left="401" width="6" height="10" font="4">0</text>
+<text top="756" left="501" width="6" height="10" font="4">0</text>
+<text top="756" left="601" width="58" height="10" font="4">STANDARD</text>
+<text top="776" left="100" width="71" height="11" font="2">Wilful Default</text>
+<text top="788" left="100" width="34" height="11" font="2">Status</text>
+<text top="776" left="200" width="71" height="11" font="2">Wilful Default</text>
+<text top="788" left="200" width="25" height="11" font="2">Date</text>
+<text top="776" left="300" width="87" height="11" font="2">Suit Filed Status</text>
+<text top="776" left="401" width="50" height="11" font="2">Suit Filed</text>
+<text top="788" left="401" width="41" height="11" font="2">Amount</text>
+<text top="776" left="501" width="79" height="11" font="2">Suit Filed Date</text>
+<text top="776" left="601" width="81" height="11" font="2">Account Status</text>
+<text top="776" left="701" width="75" height="11" font="2">Last Reported</text>
+<text top="788" left="701" width="25" height="11" font="2">Date</text>
+<text top="808" left="100" width="64" height="10" font="4">NOT WILFUL</text>
+<text top="819" left="100" width="62" height="10" font="4">DEFAULTER</text>
+<text top="808" left="300" width="85" height="10" font="4">*No Suit Reported</text>
+<text top="819" left="300" width="70" height="10" font="4">by the Member</text>
+<text top="808" left="601" width="30" height="10" font="4">OPEN</text>
+<text top="808" left="701" width="72" height="10" font="4">31 - Mar - 2012</text>
+<text top="839" left="100" width="91" height="11" font="1">24 Month History</text>
+<text top="860" left="100" width="35" height="11" font="2">Period</text>
+<text top="859" left="224" width="44" height="10" font="5">Feb 2012</text>
+<text top="859" left="324" width="43" height="10" font="5">Jan 2012</text>
+<text top="859" left="424" width="45" height="10" font="5">Dec 2011</text>
+<text top="859" left="524" width="45" height="10" font="5">Nov 2011</text>
+<text top="859" left="626" width="43" height="10" font="5">Oct 2011</text>
+<text top="859" left="725" width="45" height="10" font="5">Sep 2011</text>
+<text top="881" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="880" left="200" width="6" height="10" font="4">0</text>
+<text top="880" left="300" width="6" height="10" font="4">0</text>
+<text top="880" left="401" width="6" height="10" font="4">0</text>
+<text top="880" left="501" width="6" height="10" font="4">0</text>
+<text top="880" left="601" width="6" height="10" font="4">0</text>
+<text top="880" left="701" width="6" height="10" font="4">0</text>
+<text top="902" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="901" left="200" width="58" height="10" font="4">STANDARD</text>
+<text top="901" left="300" width="58" height="10" font="4">STANDARD</text>
+<text top="901" left="401" width="58" height="10" font="4">STANDARD</text>
+<text top="901" left="501" width="58" height="10" font="4">STANDARD</text>
+<text top="901" left="601" width="58" height="10" font="4">STANDARD</text>
+<text top="901" left="701" width="58" height="10" font="4">STANDARD</text>
+<text top="923" left="100" width="35" height="11" font="2">Period</text>
+<text top="922" left="223" width="45" height="10" font="5">Aug 2011</text>
+<text top="922" left="326" width="40" height="10" font="5">Jul 2011</text>
+<text top="922" left="425" width="43" height="10" font="5">Jun 2011</text>
+<text top="922" left="523" width="46" height="10" font="5">May 2011</text>
+<text top="922" left="626" width="43" height="10" font="5">Apr 2011</text>
+<text top="922" left="725" width="44" height="10" font="5">Mar 2011</text>
+<text top="944" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="943" left="200" width="6" height="10" font="4">0</text>
+<text top="943" left="300" width="6" height="10" font="4">0</text>
+<text top="943" left="401" width="6" height="10" font="4">0</text>
+<text top="943" left="501" width="6" height="10" font="4">0</text>
+<text top="965" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="964" left="200" width="58" height="10" font="4">STANDARD</text>
+<text top="964" left="300" width="58" height="10" font="4">STANDARD</text>
+<text top="964" left="401" width="58" height="10" font="4">STANDARD</text>
+<text top="964" left="501" width="58" height="10" font="4">STANDARD</text>
+<text top="986" left="100" width="35" height="11" font="2">Period</text>
+<text top="985" left="224" width="44" height="10" font="5">Feb 2011</text>
+<text top="985" left="324" width="43" height="10" font="5">Jan 2011</text>
+<text top="985" left="424" width="45" height="10" font="5">Dec 2010</text>
+<text top="985" left="524" width="45" height="10" font="5">Nov 2010</text>
+<text top="985" left="626" width="43" height="10" font="5">Oct 2010</text>
+<text top="985" left="725" width="45" height="10" font="5">Sep 2010</text>
+<text top="1007" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="1006" left="200" width="6" height="10" font="4">0</text>
+<text top="1006" left="300" width="6" height="10" font="4">0</text>
+<text top="1006" left="501" width="6" height="10" font="4">0</text>
+<text top="1006" left="601" width="6" height="10" font="4">0</text>
+<text top="1006" left="701" width="32" height="10" font="4">87,885</text>
+<text top="1028" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="1027" left="200" width="58" height="10" font="4">STANDARD</text>
+<text top="1027" left="300" width="58" height="10" font="4">STANDARD</text>
+<text top="1027" left="501" width="58" height="10" font="4">STANDARD</text>
+<text top="1027" left="601" width="58" height="10" font="4">STANDARD</text>
+<text top="1027" left="701" width="58" height="10" font="4">STANDARD</text>
+<text top="1049" left="100" width="35" height="11" font="2">Period</text>
+<text top="1048" left="223" width="45" height="10" font="5">Aug 2010</text>
+<text top="1048" left="326" width="40" height="10" font="5">Jul 2010</text>
+<text top="1048" left="425" width="43" height="10" font="5">Jun 2010</text>
+<text top="1048" left="523" width="46" height="10" font="5">May 2010</text>
+<text top="1048" left="626" width="43" height="10" font="5">Apr 2010</text>
+<text top="1048" left="725" width="44" height="10" font="5">Mar 2010</text>
+<text top="1070" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="1069" left="200" width="41" height="10" font="4">1,74,544</text>
+<text top="1069" left="300" width="41" height="10" font="4">2,59,993</text>
+<text top="1069" left="401" width="41" height="10" font="4">3,44,248</text>
+<text top="1069" left="501" width="41" height="10" font="4">4,27,326</text>
+<text top="1069" left="601" width="41" height="10" font="4">5,09,244</text>
+<text top="1069" left="701" width="41" height="10" font="4">5,90,017</text>
+<text top="1091" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="1090" left="200" width="58" height="10" font="4">STANDARD</text>
+<text top="1090" left="300" width="58" height="10" font="4">STANDARD</text>
+<text top="1090" left="401" width="58" height="10" font="4">STANDARD</text>
+<text top="1090" left="501" width="58" height="10" font="4">STANDARD</text>
+<text top="1090" left="601" width="58" height="10" font="4">STANDARD</text>
+<text top="1090" left="701" width="58" height="10" font="4">STANDARD</text>
+<text top="1112" left="100" width="94" height="11" font="1">Guarantor Details</text>
+<text top="1133" left="352" width="188" height="11" font="6">No Guarantor Information Available</text>
+<text top="1175" left="100" width="83" height="11" font="1">Credit Facility 2</text>
+</page>
+<page number="4" position="absolute" top="0" left="0" height="1263" width="892">
+<image top="26" left="263" width="525" height="113" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Company\MEGA BYTE CORPORATION-2\MEGA BYTE CORPORATION-2-4_1.png"/>
+<text top="1209" left="420" width="61" height="11" font="0">Page 4 of 6</text>
+<text top="158" left="98" width="116" height="11" font="1">Report Order Number</text>
+<text top="158" left="274" width="62" height="11" font="0">W-6719130</text>
+<text top="158" left="449" width="77" height="11" font="1">Product Name</text>
+<text top="158" left="625" width="105" height="11" font="0">COMMERCIAL CIR</text>
+<text top="176" left="98" width="99" height="11" font="1">Report Order Date</text>
+<text top="176" left="274" width="69" height="11" font="0">22-Aug-2016</text>
+<text top="176" left="449" width="41" height="11" font="1">User ID</text>
+<text top="176" left="625" width="70" height="11" font="0">NB72730001</text>
+<text top="194" left="98" width="141" height="11" font="1">Loan Amount Applied (Rs)</text>
+<text top="194" left="274" width="70" height="11" font="0">7,500,000.00</text>
+<text top="194" left="449" width="149" height="11" font="1">Member Reference Number</text>
+<text top="228" left="100" width="103" height="11" font="2">Credit Facility Type</text>
+<text top="228" left="275" width="86" height="10" font="4">HIRE PURCHASE</text>
+<text top="228" left="451" width="111" height="11" font="2">Credit Grantor Name</text>
+<text top="228" left="626" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="249" left="100" width="107" height="11" font="2">Ownership Indicator</text>
+<text top="249" left="275" width="40" height="10" font="4">OWNER</text>
+<text top="249" left="451" width="89" height="11" font="2">Account Number</text>
+<text top="249" left="626" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="270" left="100" width="75" height="11" font="2">Sanction Date</text>
+<text top="270" left="200" width="60" height="11" font="2">Sanctioned</text>
+<text top="282" left="200" width="41" height="11" font="2">Amount</text>
+<text top="270" left="300" width="81" height="11" font="2">Currency Code</text>
+<text top="270" left="401" width="81" height="11" font="2">Drawing Power</text>
+<text top="270" left="501" width="87" height="11" font="2">Current Balance</text>
+<text top="270" left="601" width="104" height="11" font="2">Asset Classification</text>
+<text top="303" left="100" width="72" height="10" font="4">29 - Feb - 2016</text>
+<text top="303" left="200" width="47" height="10" font="4">35,00,000</text>
+<text top="303" left="300" width="18" height="10" font="4">INR</text>
+<text top="303" left="401" width="47" height="10" font="4">35,00,000</text>
+<text top="303" left="501" width="47" height="10" font="4">32,68,123</text>
+<text top="303" left="601" width="58" height="10" font="4">STANDARD</text>
+<text top="323" left="100" width="71" height="11" font="2">Wilful Default</text>
+<text top="335" left="100" width="34" height="11" font="2">Status</text>
+<text top="323" left="200" width="71" height="11" font="2">Wilful Default</text>
+<text top="335" left="200" width="25" height="11" font="2">Date</text>
+<text top="323" left="300" width="87" height="11" font="2">Suit Filed Status</text>
+<text top="323" left="401" width="50" height="11" font="2">Suit Filed</text>
+<text top="335" left="401" width="41" height="11" font="2">Amount</text>
+<text top="323" left="501" width="79" height="11" font="2">Suit Filed Date</text>
+<text top="323" left="601" width="81" height="11" font="2">Account Status</text>
+<text top="323" left="701" width="75" height="11" font="2">Last Reported</text>
+<text top="335" left="701" width="25" height="11" font="2">Date</text>
+<text top="355" left="100" width="64" height="10" font="4">NOT WILFUL</text>
+<text top="366" left="100" width="62" height="10" font="4">DEFAULTER</text>
+<text top="355" left="300" width="59" height="10" font="4">NOT A SUIT</text>
+<text top="366" left="300" width="61" height="10" font="4">FILED CASE</text>
+<text top="355" left="601" width="30" height="10" font="4">OPEN</text>
+<text top="355" left="701" width="71" height="10" font="4">30 - Jun - 2016</text>
+<text top="386" left="100" width="91" height="11" font="1">24 Month History</text>
+<text top="407" left="100" width="35" height="11" font="2">Period</text>
+<text top="406" left="223" width="46" height="10" font="5">May 2016</text>
+<text top="406" left="325" width="43" height="10" font="5">Apr 2016</text>
+<text top="406" left="424" width="44" height="10" font="5">Mar 2016</text>
+<text top="406" left="524" width="44" height="10" font="5">Feb 2016</text>
+<text top="406" left="625" width="43" height="10" font="5">Jan 2016</text>
+<text top="406" left="725" width="45" height="10" font="5">Dec 2015</text>
+<text top="428" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="427" left="200" width="47" height="10" font="4">33,46,448</text>
+<text top="427" left="300" width="47" height="10" font="4">34,23,735</text>
+<text top="427" left="401" width="47" height="10" font="4">35,00,000</text>
+<text top="427" left="501" width="47" height="10" font="4">35,00,000</text>
+<text top="449" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="448" left="200" width="58" height="10" font="4">STANDARD</text>
+<text top="448" left="300" width="58" height="10" font="4">STANDARD</text>
+<text top="448" left="401" width="58" height="10" font="4">STANDARD</text>
+<text top="448" left="501" width="58" height="10" font="4">STANDARD</text>
+<text top="470" left="100" width="35" height="11" font="2">Period</text>
+<text top="469" left="223" width="45" height="10" font="5">Nov 2015</text>
+<text top="469" left="325" width="43" height="10" font="5">Oct 2015</text>
+<text top="469" left="424" width="45" height="10" font="5">Sep 2015</text>
+<text top="469" left="524" width="45" height="10" font="5">Aug 2015</text>
+<text top="469" left="627" width="40" height="10" font="5">Jul 2015</text>
+<text top="469" left="726" width="43" height="10" font="5">Jun 2015</text>
+<text top="491" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="512" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="533" left="100" width="35" height="11" font="2">Period</text>
+<text top="532" left="223" width="46" height="10" font="5">May 2015</text>
+<text top="532" left="325" width="43" height="10" font="5">Apr 2015</text>
+<text top="532" left="424" width="44" height="10" font="5">Mar 2015</text>
+<text top="532" left="524" width="44" height="10" font="5">Feb 2015</text>
+<text top="532" left="625" width="43" height="10" font="5">Jan 2015</text>
+<text top="532" left="725" width="45" height="10" font="5">Dec 2014</text>
+<text top="554" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="575" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="596" left="100" width="35" height="11" font="2">Period</text>
+<text top="595" left="223" width="45" height="10" font="5">Nov 2014</text>
+<text top="595" left="325" width="43" height="10" font="5">Oct 2014</text>
+<text top="595" left="424" width="45" height="10" font="5">Sep 2014</text>
+<text top="595" left="524" width="45" height="10" font="5">Aug 2014</text>
+<text top="595" left="627" width="40" height="10" font="5">Jul 2014</text>
+<text top="595" left="726" width="43" height="10" font="5">Jun 2014</text>
+<text top="617" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="638" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="659" left="100" width="94" height="11" font="1">Guarantor Details</text>
+<text top="680" left="100" width="64" height="11" font="1">Guarantor 1</text>
+<text top="701" left="100" width="89" height="11" font="2">Guarantor Name</text>
+<text top="701" left="275" width="161" height="11" font="2">Guarantor D-U-N-S ® Number</text>
+<text top="701" left="451" width="84" height="11" font="2">Guarantor Type</text>
+<text top="701" left="626" width="82" height="11" font="2">Guarantor PAN</text>
+<text top="721" left="100" width="103" height="10" font="4">DHARMENDRA BAID</text>
+<text top="721" left="451" width="164" height="10" font="4">BUSINESS ENTITY REGISTERED</text>
+<text top="732" left="451" width="41" height="10" font="4">IN INDIA</text>
+<text top="752" left="100" width="44" height="11" font="2">Address</text>
+<text top="751" left="275" width="140" height="10" font="4">NO 50 8TH MAIN ROAD RPC</text>
+<text top="762" left="275" width="118" height="10" font="4">LAYOUT VIJAYANAGAR</text>
+<text top="772" left="275" width="68" height="10" font="4">BENGALURU,</text>
+<text top="752" left="451" width="117" height="11" font="2">State / Union Territory</text>
+<text top="751" left="626" width="64" height="10" font="4">KARNATAKA</text>
+<text top="792" left="100" width="60" height="11" font="2">City / Town</text>
+<text top="792" left="275" width="65" height="10" font="4">BANGALORE</text>
+<text top="792" left="451" width="52" height="11" font="2">PIN Code</text>
+<text top="813" left="100" width="37" height="11" font="2">District</text>
+<text top="813" left="451" width="42" height="11" font="2">Country</text>
+<text top="813" left="626" width="28" height="10" font="4">INDIA</text>
+<text top="834" left="100" width="57" height="11" font="2">Telephone</text>
+<text top="834" left="275" width="58" height="10" font="4">8041323443</text>
+<text top="834" left="451" width="66" height="11" font="2">Fax Number</text>
+<text top="855" left="451" width="104" height="11" font="2">Last Reported Date</text>
+<text top="855" left="626" width="71" height="10" font="4">30 - Jun - 2016</text>
+<text top="876" left="100" width="64" height="11" font="1">Guarantor 2</text>
+<text top="897" left="100" width="89" height="11" font="2">Guarantor Name</text>
+<text top="897" left="275" width="161" height="11" font="2">Guarantor D-U-N-S ® Number</text>
+<text top="897" left="451" width="84" height="11" font="2">Guarantor Type</text>
+<text top="897" left="626" width="82" height="11" font="2">Guarantor PAN</text>
+<text top="918" left="100" width="87" height="10" font="4">MAHENDRA BAID</text>
+<text top="918" left="451" width="164" height="10" font="4">BUSINESS ENTITY REGISTERED</text>
+<text top="928" left="451" width="41" height="10" font="4">IN INDIA</text>
+<text top="948" left="100" width="44" height="11" font="2">Address</text>
+<text top="948" left="275" width="151" height="10" font="4">50 KALYAN CO-OP SOCIETY 8</text>
+<text top="958" left="275" width="158" height="10" font="4">MN RD RPC LYT VIJAYANAGAR</text>
+<text top="969" left="275" width="68" height="10" font="4">BANGALORE,</text>
+<text top="948" left="451" width="117" height="11" font="2">State / Union Territory</text>
+<text top="948" left="626" width="64" height="10" font="4">KARNATAKA</text>
+<text top="989" left="100" width="60" height="11" font="2">City / Town</text>
+<text top="988" left="275" width="65" height="10" font="4">BANGALORE</text>
+<text top="989" left="451" width="52" height="11" font="2">PIN Code</text>
+<text top="1010" left="100" width="37" height="11" font="2">District</text>
+<text top="1010" left="451" width="42" height="11" font="2">Country</text>
+<text top="1009" left="626" width="28" height="10" font="4">INDIA</text>
+<text top="1031" left="100" width="57" height="11" font="2">Telephone</text>
+<text top="1030" left="275" width="58" height="10" font="4">8041323443</text>
+<text top="1031" left="451" width="66" height="11" font="2">Fax Number</text>
+<text top="1052" left="451" width="104" height="11" font="2">Last Reported Date</text>
+<text top="1051" left="626" width="71" height="10" font="4">30 - Jun - 2016</text>
+<text top="1073" left="100" width="64" height="11" font="1">Guarantor 3</text>
+<text top="1094" left="100" width="89" height="11" font="2">Guarantor Name</text>
+<text top="1094" left="275" width="161" height="11" font="2">Guarantor D-U-N-S ® Number</text>
+<text top="1094" left="451" width="84" height="11" font="2">Guarantor Type</text>
+<text top="1094" left="626" width="82" height="11" font="2">Guarantor PAN</text>
+<text top="1114" left="100" width="163" height="10" font="4">MEGA COMPU WORLD PRIVATE</text>
+<text top="1125" left="100" width="41" height="10" font="4">LIMITED</text>
+<text top="1114" left="451" width="164" height="10" font="4">BUSINESS ENTITY REGISTERED</text>
+<text top="1125" left="451" width="41" height="10" font="4">IN INDIA</text>
+<text top="1145" left="100" width="44" height="11" font="2">Address</text>
+<text top="1144" left="275" width="142" height="10" font="4">NO 21 OTC ROAD S.P ROAD</text>
+<text top="1155" left="275" width="68" height="10" font="4">BANGALORE,</text>
+<text top="1145" left="451" width="117" height="11" font="2">State / Union Territory</text>
+<text top="1144" left="626" width="64" height="10" font="4">KARNATAKA</text>
+<text top="1175" left="100" width="60" height="11" font="2">City / Town</text>
+<text top="1174" left="275" width="65" height="10" font="4">BANGALORE</text>
+<text top="1175" left="451" width="52" height="11" font="2">PIN Code</text>
+</page>
+<page number="5" position="absolute" top="0" left="0" height="1263" width="892">
+<image top="26" left="263" width="525" height="113" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Company\MEGA BYTE CORPORATION-2\MEGA BYTE CORPORATION-2-5_1.png"/>
+<text top="1209" left="420" width="61" height="11" font="0">Page 5 of 6</text>
+<text top="158" left="98" width="116" height="11" font="1">Report Order Number</text>
+<text top="158" left="274" width="62" height="11" font="0">W-6719130</text>
+<text top="158" left="449" width="77" height="11" font="1">Product Name</text>
+<text top="158" left="625" width="105" height="11" font="0">COMMERCIAL CIR</text>
+<text top="176" left="98" width="99" height="11" font="1">Report Order Date</text>
+<text top="176" left="274" width="69" height="11" font="0">22-Aug-2016</text>
+<text top="176" left="449" width="41" height="11" font="1">User ID</text>
+<text top="176" left="625" width="70" height="11" font="0">NB72730001</text>
+<text top="194" left="98" width="141" height="11" font="1">Loan Amount Applied (Rs)</text>
+<text top="194" left="274" width="70" height="11" font="0">7,500,000.00</text>
+<text top="194" left="449" width="149" height="11" font="1">Member Reference Number</text>
+<text top="228" left="100" width="37" height="11" font="2">District</text>
+<text top="228" left="451" width="42" height="11" font="2">Country</text>
+<text top="228" left="626" width="28" height="10" font="4">INDIA</text>
+<text top="249" left="100" width="57" height="11" font="2">Telephone</text>
+<text top="249" left="275" width="58" height="10" font="4">8041323443</text>
+<text top="249" left="451" width="66" height="11" font="2">Fax Number</text>
+<text top="270" left="451" width="104" height="11" font="2">Last Reported Date</text>
+<text top="270" left="626" width="71" height="10" font="4">30 - Jun - 2016</text>
+<text top="312" left="100" width="83" height="11" font="1">Credit Facility 3</text>
+<text top="333" left="100" width="103" height="11" font="2">Credit Facility Type</text>
+<text top="333" left="275" width="154" height="10" font="4">UNSECURED BUSINESS LOAN</text>
+<text top="333" left="451" width="111" height="11" font="2">Credit Grantor Name</text>
+<text top="333" left="626" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="354" left="100" width="107" height="11" font="2">Ownership Indicator</text>
+<text top="354" left="275" width="40" height="10" font="4">OWNER</text>
+<text top="354" left="451" width="89" height="11" font="2">Account Number</text>
+<text top="354" left="626" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="375" left="100" width="75" height="11" font="2">Sanction Date</text>
+<text top="375" left="200" width="60" height="11" font="2">Sanctioned</text>
+<text top="387" left="200" width="41" height="11" font="2">Amount</text>
+<text top="375" left="300" width="81" height="11" font="2">Currency Code</text>
+<text top="375" left="401" width="81" height="11" font="2">Drawing Power</text>
+<text top="375" left="501" width="87" height="11" font="2">Current Balance</text>
+<text top="375" left="601" width="104" height="11" font="2">Asset Classification</text>
+<text top="408" left="100" width="72" height="10" font="4">02 - Mar - 2016</text>
+<text top="408" left="200" width="47" height="10" font="4">30,30,000</text>
+<text top="408" left="300" width="18" height="10" font="4">INR</text>
+<text top="408" left="401" width="47" height="10" font="4">30,30,000</text>
+<text top="408" left="501" width="47" height="10" font="4">28,81,641</text>
+<text top="408" left="601" width="58" height="10" font="4">STANDARD</text>
+<text top="428" left="100" width="71" height="11" font="2">Wilful Default</text>
+<text top="440" left="100" width="34" height="11" font="2">Status</text>
+<text top="428" left="200" width="71" height="11" font="2">Wilful Default</text>
+<text top="440" left="200" width="25" height="11" font="2">Date</text>
+<text top="428" left="300" width="87" height="11" font="2">Suit Filed Status</text>
+<text top="428" left="401" width="50" height="11" font="2">Suit Filed</text>
+<text top="440" left="401" width="41" height="11" font="2">Amount</text>
+<text top="428" left="501" width="79" height="11" font="2">Suit Filed Date</text>
+<text top="428" left="601" width="81" height="11" font="2">Account Status</text>
+<text top="428" left="701" width="75" height="11" font="2">Last Reported</text>
+<text top="440" left="701" width="25" height="11" font="2">Date</text>
+<text top="460" left="100" width="64" height="10" font="4">NOT WILFUL</text>
+<text top="471" left="100" width="62" height="10" font="4">DEFAULTER</text>
+<text top="460" left="300" width="59" height="10" font="4">NOT A SUIT</text>
+<text top="471" left="300" width="61" height="10" font="4">FILED CASE</text>
+<text top="460" left="601" width="30" height="10" font="4">OPEN</text>
+<text top="460" left="701" width="72" height="10" font="4">31 - Mar - 2016</text>
+<text top="491" left="100" width="91" height="11" font="1">24 Month History</text>
+<text top="512" left="100" width="35" height="11" font="2">Period</text>
+<text top="511" left="224" width="44" height="10" font="5">Feb 2016</text>
+<text top="511" left="324" width="43" height="10" font="5">Jan 2016</text>
+<text top="511" left="424" width="45" height="10" font="5">Dec 2015</text>
+<text top="511" left="524" width="45" height="10" font="5">Nov 2015</text>
+<text top="511" left="626" width="43" height="10" font="5">Oct 2015</text>
+<text top="511" left="725" width="45" height="10" font="5">Sep 2015</text>
+<text top="533" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="554" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="575" left="100" width="35" height="11" font="2">Period</text>
+<text top="574" left="223" width="45" height="10" font="5">Aug 2015</text>
+<text top="574" left="326" width="40" height="10" font="5">Jul 2015</text>
+<text top="574" left="425" width="43" height="10" font="5">Jun 2015</text>
+<text top="574" left="523" width="46" height="10" font="5">May 2015</text>
+<text top="574" left="626" width="43" height="10" font="5">Apr 2015</text>
+<text top="574" left="725" width="44" height="10" font="5">Mar 2015</text>
+<text top="596" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="617" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="638" left="100" width="35" height="11" font="2">Period</text>
+<text top="637" left="224" width="44" height="10" font="5">Feb 2015</text>
+<text top="637" left="324" width="43" height="10" font="5">Jan 2015</text>
+<text top="637" left="424" width="45" height="10" font="5">Dec 2014</text>
+<text top="637" left="524" width="45" height="10" font="5">Nov 2014</text>
+<text top="637" left="626" width="43" height="10" font="5">Oct 2014</text>
+<text top="637" left="725" width="45" height="10" font="5">Sep 2014</text>
+<text top="659" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="680" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="701" left="100" width="35" height="11" font="2">Period</text>
+<text top="700" left="223" width="45" height="10" font="5">Aug 2014</text>
+<text top="700" left="326" width="40" height="10" font="5">Jul 2014</text>
+<text top="700" left="425" width="43" height="10" font="5">Jun 2014</text>
+<text top="700" left="523" width="46" height="10" font="5">May 2014</text>
+<text top="700" left="626" width="43" height="10" font="5">Apr 2014</text>
+<text top="700" left="725" width="44" height="10" font="5">Mar 2014</text>
+<text top="722" left="100" width="87" height="11" font="2">Current Balance</text>
+<text top="743" left="100" width="63" height="11" font="2">Asset Class</text>
+<text top="764" left="100" width="94" height="11" font="1">Guarantor Details</text>
+<text top="785" left="352" width="188" height="11" font="6">No Guarantor Information Available</text>
+<text top="830" left="100" width="610" height="11" font="1"># will appear in column &#34;Sanctioned Amount&#34; &amp; &#34;Drawing Power&#34; if it is consolidation of more than one credit facility</text>
+<text top="854" left="100" width="290" height="11" font="2">Details of Credit Facilities Guaranteed by the Borrower</text>
+<text top="875" left="234" width="424" height="11" font="6">No Details of Credit Facilities Guaranteed by the Borrower Information Available</text>
+<text top="896" left="100" width="610" height="11" font="1"># will appear in column &#34;Sanctioned Amount&#34; &amp; &#34;Drawing Power&#34; if it is consolidation of more than one credit facility</text>
+<text top="935" left="100" width="166" height="11" font="1">Enquiry Details Last 24 Months</text>
+<text top="956" left="100" width="76" height="11" font="2">Credit Grantor</text>
+<text top="956" left="275" width="69" height="11" font="2">Enquiry Date</text>
+<text top="956" left="451" width="62" height="11" font="2">Credit Type</text>
+<text top="956" left="626" width="85" height="11" font="2">Enquiry Amount</text>
+<text top="976" left="100" width="132" height="10" font="4">X10 FINANCIAL SERVICES</text>
+<text top="987" left="100" width="41" height="10" font="4">LIMITED</text>
+<text top="976" left="275" width="67" height="10" font="4">13 - Jul - 2016</text>
+<text top="976" left="451" width="166" height="10" font="4">SHORT TERM LOAN (LESS THAN</text>
+<text top="987" left="451" width="41" height="10" font="4">1 YEAR)</text>
+<text top="976" left="626" width="55" height="10" font="4">1,00,00,000</text>
+<text top="1006" left="100" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="1006" left="275" width="67" height="10" font="4">06 - Jul - 2016</text>
+<text top="1006" left="451" width="153" height="10" font="4">MEDIUM TERM LOAN (PERIOD</text>
+<text top="1017" left="451" width="142" height="10" font="4">ABOVE 1 YEAR AND UPTO 3</text>
+<text top="1027" left="451" width="39" height="10" font="4">YEARS)</text>
+<text top="1006" left="626" width="47" height="10" font="4">40,00,000</text>
+<text top="1047" left="100" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="1047" left="275" width="72" height="10" font="4">29 - Feb - 2016</text>
+<text top="1047" left="451" width="154" height="10" font="4">UNSECURED BUSINESS LOAN</text>
+<text top="1047" left="626" width="41" height="10" font="4">5,00,000</text>
+<text top="1066" left="100" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="1066" left="275" width="72" height="10" font="4">25 - Feb - 2016</text>
+<text top="1066" left="451" width="154" height="10" font="4">UNSECURED BUSINESS LOAN</text>
+<text top="1066" left="626" width="26" height="10" font="4">1,000</text>
+<text top="1086" left="100" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="1086" left="275" width="72" height="10" font="4">07 - Dec - 2015</text>
+<text top="1086" left="451" width="71" height="10" font="4">CASH CREDIT</text>
+<text top="1086" left="626" width="47" height="10" font="4">10,00,000</text>
+<text top="1105" left="100" width="86" height="10" font="4">NOT DISCLOSED</text>
+<text top="1105" left="275" width="67" height="10" font="4">21 - Jul - 2015</text>
+<text top="1105" left="451" width="154" height="10" font="4">UNSECURED BUSINESS LOAN</text>
+<text top="1105" left="626" width="47" height="10" font="4">25,00,000</text>
+<text top="1128" left="100" width="243" height="11" font="1">Suit Filed Account(s) of the Borrower - Details</text>
+<text top="1149" left="290" width="313" height="11" font="6">No Suit Filed Account(s) of the Borrower - Details reported.</text>
+</page>
+<page number="6" position="absolute" top="0" left="0" height="1263" width="892">
+	<fontspec id="7" size="7" family="Helvetica" color="#404040"/>
+<image top="26" left="263" width="525" height="113" src="D:\Projects\src\eaciit\x10\consoleapps\DataConverted\Company\MEGA BYTE CORPORATION-2\MEGA BYTE CORPORATION-2-6_1.png"/>
+<text top="1209" left="420" width="61" height="11" font="0">Page 6 of 6</text>
+<text top="158" left="98" width="116" height="11" font="1">Report Order Number</text>
+<text top="158" left="274" width="62" height="11" font="0">W-6719130</text>
+<text top="158" left="449" width="77" height="11" font="1">Product Name</text>
+<text top="158" left="625" width="105" height="11" font="0">COMMERCIAL CIR</text>
+<text top="176" left="98" width="99" height="11" font="1">Report Order Date</text>
+<text top="176" left="274" width="69" height="11" font="0">22-Aug-2016</text>
+<text top="176" left="449" width="41" height="11" font="1">User ID</text>
+<text top="176" left="625" width="70" height="11" font="0">NB72730001</text>
+<text top="194" left="98" width="141" height="11" font="1">Loan Amount Applied (Rs)</text>
+<text top="194" left="274" width="70" height="11" font="0">7,500,000.00</text>
+<text top="194" left="449" width="149" height="11" font="1">Member Reference Number</text>
+<text top="227" left="98" width="83" height="11" font="6">Disclaimer Info:</text>
+<text top="245" left="98" width="696" height="11" font="6">&#34;All information contained in this credit information report (CIR) has been collated by TransUnion CIBIL Limited based on</text>
+<text top="257" left="98" width="696" height="11" font="6">information provided by its various members (&#34;Members&#34;). Consequently TransUnion CIBIL disclaims any and all responsibility on</text>
+<text top="269" left="98" width="696" height="11" font="6">the accuracy,completeness and veracity of any and all such information as provided. The information is current and up to date to</text>
+<text top="281" left="98" width="696" height="11" font="6">such extent as provided by its Members. Credit Scores are not part of CIR. Any information contained herein does not reflect the</text>
+<text top="293" left="98" width="696" height="11" font="6">views of TransUnion CIBIL or its directors or employees. The use of this report is governed by the provisions of the Credit</text>
+<text top="305" left="98" width="696" height="11" font="6">Information Companies (Regulation) Act, 2005,  the Credit Information Companies Regulations,2006, Credit Information</text>
+<text top="317" left="98" width="689" height="11" font="6">Companies Rules, 2006 and the terms and conditions of the Operating Rules for TransUnion CIBIL and its Members.&#34;</text>
+<text top="334" left="98" width="470" height="8" font="7">&#34; © COPYRIGHT 2014 TRANSUNION CIBIL LIMITED. CIN: U72300MH2000PLC128359. ALL RIGHTS RESERVED.&#34;</text>
+</page>
+</pdf2xml>

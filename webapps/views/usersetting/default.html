@@ -1,0 +1,155 @@
+
+<script type="text/javascript">
+model.PageTopMenu("Administrator");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("Administrator", "Administrator", "#", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}');
+model.User= ko.observable('{{.Username}}');
+</script>
+<script src="/static/core/usersetting.js"></script>
+<script src="/static/core/authentication.js"></script>
+<style type="text/css">
+  .modal-backdrop
+  {
+      opacity: 0 !important;
+      z-index: 0;
+  }
+  .k-numerictextbox,.k-datepicker, .k-dropdown {
+    width: 100%;
+  }
+</style>
+<div  data-bind="with:usersett">
+    <div class="col-md-9 col-sm-9 ez panel-content">
+        <div class="panel ez no-padding hardcore">
+          <div class="panel-heading">
+            <h3 class="no-margin">
+                &nbsp;
+            </h3>
+            <div class="panel-nav-button">
+              <button  type="button" class="btn btn-sm btn-success btn-flat" data-bind="click:AddNew"><i class="fa fa-plus"> Add New</i></button>
+              <button class="btn btn-sm btn-info tooltipster" title="Toggle Advanced Filter" data-bind="click: toggleFilter"><i class="fa fa-server" data-bind="text:TitelFilter"></i></button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div data-bind="visible:loading">
+              <center class="align-center">
+                  <h5>Please wait while processing your request</h5>
+                  <img src="/static/img/loader.gif" alt="Loading..." />
+              </center>
+            </div>
+            <div data-bind="visible:!loading()">
+                <div id="MasterGridUser"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-3 ez panel-filter" >
+        <div class="panel ez no-padding hardcore">
+          <div class="panel-heading">
+              <h3 class="no-margin">Filter</h3>
+              <div class="panel-nav-button">
+                  <div class="form-group relative align-right no-margin no-padding hardcore">
+                      <button  type="button" btn-sm class="btn btn-sm btn-primary btn-flat" data-bind="click:Search"><i class="fa fa-search"> Search</i></button>
+                      <button  type="button" class="btn btn-sm btn-danger btn-flat" data-bind="click:Reset"><i class="fa fa-refresh"> Reset</i></button>
+                  </div>
+              </div>
+          </div>
+          <div class="panel-body">
+            <div id="from-filter">
+                <p>Filter your using input below.</p>
+                <div class="form-group form-group-table-name">
+                    <div class="input-group input-group-sm ez width-full">
+                      <span class="input-group-addon width-100 align-right">User Name</span>
+                      <select class="form-control input-sm" data-bind="kendoMultiSelect: {value:filterUser, data: listUserName, filter: 'startswith', dataTextField: 'text', dataValueField: 'value'}"></select>
+                    </div>
+                </div>
+                <div class="form-group form-group-table-name">
+                    <div class="input-group input-group-sm ez width-full">
+                      <span class="input-group-addon width-100 align-right">Role</span>
+                      <select id="filterRole"  data-bind="kendoMultiSelect: {value:filterRole, data: listRole, filter: 'startswith', dataTextField: 'text', dataValueField: 'value'}" ></select>
+                    </div>
+                </div>
+                <div class="form-group form-group-table-name">
+                    <div class="input-group input-group-sm ez width-full">
+                      <span class="input-group-addon width-100 align-right">Status</span>
+                      <input id="StatusFilter" class="switch-mini" type="checkbox"  data-off-text="inactive" data-on-text="active">
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-bind="click:Cancel">
+                           <span aria-hidden="true">&times;</span>
+                           <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel" data-bind="text:titleModel"></h4>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form class="form-horizontal" id ="AddUserSetting">
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-3 form-control-label">User Name<span class="mandatory">*</span></label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control input-sm" name="userName" id="userName" validationMessage="User Name required" required data-bind="value:userName"/>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-3 form-control-label">Full Name<span class="mandatory">*</span></label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control input-sm" name="fullName" id="fullName" validationMessage="Full Name required" required="" data-bind="value:fullName"/>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-3 form-control-label">Email<span class="mandatory">*</span></label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control input-sm" data-type="email" name="email" id="email" validationMessage="Email required" required="" data-bind="value:email"/>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-3 form-control-label">Password<span class="mandatory">*</span></label>
+                        <div class="col-sm-8">
+                          <input type="password" style="height: 30px;" class="form-control input-sm" data-type="password" name="password" id="password" validationMessage="Password required" required="" data-bind="value:password"/>
+                        </div>
+                      </div>
+                      <div  class="form-group" id ="confirmPass">
+                            <label for="inputPassword3" class="col-sm-3 form-control-label">Confirm Password<span class="mandatory">*</span></label>
+                            <div class="col-sm-8">
+                              <input type="password" style="height: 30px;" class="form-control" data-type="confirmPassword" name="confirmPassword" id="confirmPassword" validationMessage="Password required" required="" data-bind="value:confirmPassword"/>
+                            </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-3 form-control-label">Status</label>
+                        <div class="col-sm-8">
+                          <input id="Status" class="switch-mini" type="checkbox"  data-off-text="inactive" data-on-text="active" checked>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-3 form-control-label">Role</label>
+                        <div class="col-sm-8">
+                          <input type="text" name="role" id="role" data-bind="kendoDropDownList: {value: role, data:listRole, dataTextField: 'text', dataValueField: 'value', optionLabel: 'select roles'}"  />
+                        </div>
+                      </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default btn-flat" data-dismiss="modal" data-bind="click:Cancel"><i class="fa fa-times"></i> Close</button>
+                    <button type="button" class="btn btn-sm btn-primary btn-flat" data-bind="click:(edit() != true)? SaveData : UpdateData"><i class="fa fa-floppy-o"></i> Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

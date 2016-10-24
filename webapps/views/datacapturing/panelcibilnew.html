@@ -1,0 +1,65 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <table class="k-grid no-border" style="margin-left: 2%;">
+    <tr>
+      <td>Min. Score :</td>
+      <td style="max-width: 78px;"> <input type="text" class="form-control text-right" data-bind="value: minScore" readonly></td>
+      <td style="width:100%;"><button class="btn btn-primary form-control confirmPromotor" style="width: 100px; float: right; margin-right: 10px;" onclick="updateConfirmPromotors(1)">Confirm Scores</button><button class="btn btn-danger form-control unConfirmPromotor" style="float: right; margin-right: 10px;" onclick="updateConfirmPromotors(0)">Unconfirm Scores</button></td>
+    </tr>
+  </table>
+    <!-- <div class="spacer"></div> -->
+
+
+    <!--   <br><br>
+      <div class="col-md-12">
+          <div class="col-md-4"></div>
+          <div class="col-md-2" style="margin-top: 6px;">
+            <label>Min. Score :</label>
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control text-right" data-bind="value: minScore" readonly>
+          </div>
+          <div class="col-md-3" style="margin-left: 12px;">
+            <button class="btn btn-primary form-control">Confirm Scores</button>
+          </div>
+        </div>
+      </div>
+      <br><br><br> -->
+
+      <div class="col-md-12">
+        <div style="overflow-x: hidden;overflow-y: scroll;border: 1px solid #e4e4e4;">
+          <div style="border: 1px solid #e4e4e4; max-height: 450px; min-height: 450px;">
+            <table class="table table-bordered">
+              <thead>
+                <th class="sub-bgcolor text-center">Names</th>
+                <th class="sub-bgcolor text-center" style="width: 80px">CIBIL Scores</th>
+                <th class="sub-bgcolor text-center" style="width: 90px">More..</th>
+              </thead>
+              <tbody data-bind="foreach: promotorsList">
+                <td class="text-center"><span data-bind="text: Name"></span><br>(<span data-bind="text: promotorText"></span>)</td>
+                <td><input type="text" class="form-control input-sm text-right" data-bind="value: CIBILScore" readonly/></td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-danger tooltipster-prom" title="Open CIBIL File" data-bind="click: openreportsGuarantor(FileName)"><i class="fa fa-file-pdf-o"></i></button>
+                  <button class="btn btn-sm btn-details tooltipster-sd" title="Show Detail" data-bind="click: checkShowHideGuarantor($index())"><i class="fa fa-list"></i></button>
+                </td>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="spacer"></div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+        <button class="btn btn-sm btn-default tooltipster" style="width: 147px;" title="Show Promotor Details" data-bind="click: checkShowHide(2)"><i class="fa fa-list"></i> &nbsp; More...</button>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+  </div>
+</div>

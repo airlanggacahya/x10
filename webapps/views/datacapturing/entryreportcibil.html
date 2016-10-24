@@ -1,0 +1,616 @@
+<script type="text/javascript">
+model.dataEntryCibilReport = ko.observable({
+    Id:'',
+    Profile : ko.observable({
+      CompanyName: ko.observable(''),
+      CustomerId: ko.observable(''),
+      DealNo: ko.observable(''),
+      DunsNumber: ko.observable(''),
+      Pan: ko.observable(''),
+      Address: ko.observable(''),
+      CityTown: ko.observable(''),
+      Telephone: ko.observable(''),
+      StateUnion: ko.observable(''),
+      PinCode: ko.observable(''),
+      Country: ko.observable(''),
+      FileOpenDate: ko.observable(''),
+    }),
+
+    ReportSummary: ko.observable({
+      Grantors: ko.observable(''),
+      Facilities: ko.observable(''),
+      CreditFacilities: ko.observable(''),
+      FacilitiesGuaranteed: ko.observable(''),
+      LatestCreditFacilityOpenDate: ko.observable(''),
+      FirstCreditFacilityOpenDate: ko.observable('')
+    }),
+
+    CreditFacilityBorrower: ko.observable({
+      NoStandard:ko.observable(''),
+      CurrentBalanceStandard:ko.observable(''),
+      NoOtherThanStandard:ko.observable(''),
+      CurrentBalanceOtherThanStandard:ko.observable(''),
+      NoLawSuits:ko.observable(''),
+      NoWilfulDefaults:ko.observable('')
+    }),
+
+    CreditFacilityGuarantor: ko.observable({
+      NoStandard:ko.observable(''),
+      CurrentBalanceStandard:ko.observable(''),
+      NoOtherThanStandard:ko.observable(''),
+      CurrentBalanceOtherThanStandard:ko.observable(''),
+      NoLawSuits:ko.observable(''),
+      NoWilfulDefaults:ko.observable('')
+    }),
+
+    DetailReportSummary: ko.observableArray([]),
+    CreditTypeSummary: ko.observableArray([
+    // {
+    //   CreditType: ko.observable(''),
+    //   NoCreditFacilitiesBorrower: ko.observable(''),
+    //   CurrencyCode: ko.observable(''),
+    //   Standard: ko.observable(''),
+    //   Substandard: ko.observable(''),
+    //   Doubtful: ko.observable(''),
+    //   Loss: ko.observable(''),
+    //   SpecialMention: ko.observable(''),
+    //   TotalCurrentBalance: ko.observable('')
+    // }
+    ]),
+
+    EnquirySummary : ko.observable({
+      Enquiries3Month: ko.observable(0),
+      Enquiries6Month: ko.observable(0),
+      Enquiries9Month: ko.observable(0),
+      Enquiries12Month: ko.observable(0),
+      Enquiries24Month: ko.observable(0),
+      EnquiriesThan24Month: ko.observable(0),
+      TotalEnquiries: ko.observable(''),
+      MostRecentDate: ko.observable('')
+    }),
+
+    Status: 0
+});
+
+model.setDataEntry = function(data) {
+  model.dataEntryCibilReport().Id = data.Id
+  model.dataEntryCibilReport().Profile().CompanyName(data.Profile.CompanyName)
+  model.dataEntryCibilReport().Profile().CustomerId(data.Profile.CustomerId)
+  model.dataEntryCibilReport().Profile().DealNo(data.Profile.DealNo)
+  model.dataEntryCibilReport().Profile().DunsNumber(data.Profile.DunsNumber)
+  model.dataEntryCibilReport().Profile().Pan(data.Profile.Pan)
+  model.dataEntryCibilReport().Profile().Address(data.Profile.Address)
+  model.dataEntryCibilReport().Profile().CityTown(data.Profile.CityTown)
+  model.dataEntryCibilReport().Profile().Telephone(data.Profile.Telephone)
+  model.dataEntryCibilReport().Profile().StateUnion(data.Profile.StateUnion)
+  model.dataEntryCibilReport().Profile().PinCode(data.Profile.PinCode)
+  model.dataEntryCibilReport().Profile().Country(data.Profile.Country)
+  model.dataEntryCibilReport().Profile().FileOpenDate(data.Profile.FileOpenDate)
+
+  model.dataEntryCibilReport().ReportSummary().Grantors(data.ReportSummary.Grantors)
+  model.dataEntryCibilReport().ReportSummary().Facilities(data.ReportSummary.Facilities)
+  model.dataEntryCibilReport().ReportSummary().CreditFacilities(data.ReportSummary.CreditFacilities)
+  model.dataEntryCibilReport().ReportSummary().FacilitiesGuaranteed(data.ReportSummary.FacilitiesGuaranteed)
+  model.dataEntryCibilReport().ReportSummary().LatestCreditFacilityOpenDate(data.ReportSummary.LatestCreditFacilityOpenDate)
+  model.dataEntryCibilReport().ReportSummary().FirstCreditFacilityOpenDate(data.ReportSummary.FirstCreditFacilityOpenDate)
+
+  // Credit Facilities As Borrower
+   // model.dataEntryCibilReport().CreditFacilityBorrower().NoStandard(data.CreditFacilityBorrower.NoStandard);
+   // model.dataEntryCibilReport().CreditFacilityBorrower().CurrentBalanceStandard(data.CreditFacilityBorrower.CurrentBalanceStandard);
+   // model.dataEntryCibilReport().CreditFacilityBorrower().NoOtherThanStandard(data.CreditFacilityBorrower.NoOtherThanStandard);
+   // model.dataEntryCibilReport().CreditFacilityBorrower().CurrentBalanceOtherThanStandard(data.CreditFacilityBorrower.CurrentBalanceOtherThanStandard);
+   // model.dataEntryCibilReport().CreditFacilityBorrower().NoLawSuits(data.CreditFacilityBorrower.NoLawSuits);
+   // model.dataEntryCibilReport().CreditFacilityBorrower().NoWilfulDefaults(data.CreditFacilityBorrower.NoWilfulDefaults);
+
+   // Credit Facilities As Guarantor
+   // model.dataEntryCibilReport().CreditFacilityGuarantor().NoStandard(data.CreditFacilityBorrower.NoStandard);
+   // model.dataEntryCibilReport().CreditFacilityGuarantor().CurrentBalanceStandard(data.CreditFacilityBorrower.CurrentBalanceStandard);
+   // model.dataEntryCibilReport().CreditFacilityGuarantor().NoOtherThanStandard(data.CreditFacilityBorrower.NoOtherThanStandard);
+   // model.dataEntryCibilReport().CreditFacilityGuarantor().CurrentBalanceOtherThanStandard(data.CreditFacilityBorrower.CurrentBalanceOtherThanStandard);
+   // model.dataEntryCibilReport().CreditFacilityGuarantor().NoLawSuits(data.CreditFacilityBorrower.NoLawSuits);
+   // model.dataEntryCibilReport().CreditFacilityGuarantor().NoWilfulDefaults(data.CreditFacilityBorrower.NoWilfulDefaults);
+
+   // EnquirySummary
+  // model.dataEntryCibilReport().CreditTypeSummary([]);
+   model.dataEntryCibilReport().EnquirySummary().Enquiries3Month(data.EnquirySummary.Enquiries3Month);
+   model.dataEntryCibilReport().EnquirySummary().Enquiries6Month(data.EnquirySummary.Enquiries6Month);
+   model.dataEntryCibilReport().EnquirySummary().Enquiries9Month(data.EnquirySummary.Enquiries9Month);
+   model.dataEntryCibilReport().EnquirySummary().Enquiries12Month(data.EnquirySummary.Enquiries12Month);
+   model.dataEntryCibilReport().EnquirySummary().Enquiries24Month(data.EnquirySummary.Enquiries24Month);
+   model.dataEntryCibilReport().EnquirySummary().EnquiriesThan24Month(data.EnquirySummary.EnquiriesThan24Month);
+   model.dataEntryCibilReport().EnquirySummary().MostRecentDate(data.EnquirySummary.MostRecentDate);
+   model.dataEntryCibilReport().EnquirySummary().TotalEnquiries(data.EnquirySummary.TotalEnquiries);
+
+   // CreditTypeSummary);
+    model.dataEntryCibilReport().CreditTypeSummary([]);
+   if ( data.CreditTypeSummary != null){
+    // $.each(data.CreditTypeSummary, function(key, val){
+    //
+    //   model.dataEntryCibilReport().CreditTypeSummary().push(val);
+    // });
+
+      model.dataEntryCibilReport().CreditTypeSummary(data.CreditTypeSummary);
+   }
+
+   model.dataEntryCibilReport().DetailReportSummary([])
+
+   if(data.DetailReportSummary == null) {
+      //model.dataEntryCibilReport().DetailReportSummary(model.detailreportsummary())
+      $.each(model.detailreportsummary(), function(k, v){
+        temp = {}
+        $.each(v, function(ki, vi){
+          if(ki != "CreditFacilities")
+            temp[ki] = ""
+          else
+              temp[ki] = vi
+        })
+
+        model.dataEntryCibilReport().DetailReportSummary.push(temp)
+      })
+   } else {
+      model.dataEntryCibilReport().DetailReportSummary(data.DetailReportSummary)
+   }
+
+   model.dataEntryCibilReport().Status = data.Status
+}
+
+model.cibilReportId = ko.observable('')
+model.addCreditTypeSummary = function (){
+  model.dataEntryCibilReport().CreditTypeSummary().push({
+    CreditType: ko.observable(''),
+    NoCreditFacilitiesBorrower: ko.observable(''),
+    CurrencyCode: ko.observable(''),
+    Standard: ko.observable(''),
+    Substandard: ko.observable(''),
+    Doubtful: ko.observable(''),
+    Loss: ko.observable(''),
+    SpecialMention: ko.observable(''),
+    TotalCurrentBalance: ko.observable('')
+  });
+  model.dataEntryCibilReport().CreditTypeSummary(model.dataEntryCibilReport().CreditTypeSummary());
+}
+
+model.removeCreditTypeSummary = function (){
+  model.dataEntryCibilReport().CreditTypeSummary.remove(this);
+}
+
+function ValidateCibil()
+{
+  var repsum = model.dataEntryCibilReport().ReportSummary();
+  //var borrower = model.dataEntryCibilReport().CreditFacilityBorrower();
+  //var guarantor = model.dataEntryCibilReport().CreditFacilityGuarantor();
+  var detailsummary = model.dataEntryCibilReport().DetailReportSummary();
+  var enquiry = model.dataEntryCibilReport().EnquirySummary()
+  var credtype = model.dataEntryCibilReport().CreditTypeSummary(); //array
+
+   //check repsum
+  var Valid = true;
+  var dt = repsum;
+    _.each(dt,function(e,i){
+        if(e() == "" && parseInt(e()) != 0){
+         Valid = false;
+        }
+    });
+  if(!Valid){
+    return false;
+  }
+
+  //check borrower
+  // var Valid = true;
+  // var dt = borrower;
+  //   _.each(dt,function(e,i){
+  //       if(e() == "" && parseInt(e()) != 0){
+  //        Valid = false;
+  //       }
+  //   });
+  // if(!Valid){
+  //   return false;
+  // }
+
+  // //check guarantor
+  // var Valid = true;
+  // var dt = guarantor;
+  //   _.each(dt,function(e,i){
+  //       if(e() == "" && parseInt(e()) != 0){
+  //        Valid = false;
+  //       }
+  //   });
+  // if(!Valid){
+  //   return false;
+  // }
+
+   var Valid = true;
+   var dt = detailsummary;
+     _.each(dt,function(e,i){
+        _.each(e,function(v,k){
+          if(v == "" && parseInt(v) != 0){
+            console.log(v)
+            Valid = false;
+          }
+        });
+     });
+   if(!Valid){
+     return false;
+   }
+
+  var Valid = true;
+  var dt = enquiry;
+    _.each(dt,function(e,i){
+        if(e() == "" && parseInt(e()) != 0){
+         Valid = false;
+        }
+    });
+  if(!Valid){
+    return false;
+  }
+
+
+  var Valid = true;
+  var dt = credtype;
+  _.each(dt,function(e,i){
+      _.each(e,function(ex,ix){
+          if(typeof ex === "function") {
+           if(ex() == "" && parseInt(ex()) != 0){
+              Valid = false;
+            }
+          }else{
+             if(ex == "" && parseInt(ex) != 0){
+              Valid = false;
+            }
+          }
+        });
+  });
+
+  if(!Valid){
+    return false;
+  }
+
+  return true;
+}
+
+function saveCibilReport(status){
+  model.addProfileCompanyData();
+  var url = "{{BaseUrl}}datacapturing/savingreportcibil";
+
+  if(!ValidateCibil()){
+    swal("Warning","Please complete all fields","warning");
+    return false;
+  }
+
+  model.dataEntryCibilReport().Profile().CustomerId(parseInt(filter().CustomerSearchVal()));
+  model.dataEntryCibilReport().Profile().DealNo( filter().DealNumberSearchVal());
+
+  if (status == "save"){
+    model.dataEntryCibilReport().Status = 0;
+    param = model.dataEntryCibilReport();
+    // param = model.dataEntryCibilReport().Profile().DealNo(filter().DealNumberSearchVal());
+    ajaxPost(url, param, function(data) {
+        if (data) {
+          swal("Data Saved", "Data have been saved", "success");
+          // model.cibilReportId(data.Id);
+           model.dataEntryCibilReport().Id = data.Id;
+        }
+      }, undefined);
+    cibil.entry(false);
+  }else {
+    model.dataEntryCibilReport().Status = 1
+
+    swal({
+        title: "Are you sure",
+        text: "Submit this data?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-primary",
+        cancelButtonClass: "btn-success",
+        confirmButtonText: "Submit",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: true,
+        closeOnCancel: false
+      }).then(function() {
+        setTimeout(function() {
+          model.dataEntryCibilReport().Status = 1
+
+          var url = "{{BaseUrl}}datacapturing/submitreportcibil";
+          param = model.dataEntryCibilReport();
+          ajaxPost(url, param, function(data) {
+            if (data) {
+              swal("Data Submited", "Data have been submited", "success");
+              refreshFilter();
+              // pushDataToCibil(data);
+            }
+          }, undefined);
+
+          cibil.entry(false);
+
+        }, 1000);
+      }, function(dismiss) {
+        if (dismiss === 'cancel') {
+          swal("Cancelled!", "Data didn't submit", "error");
+        }
+      })
+
+
+  }
+
+}
+
+function pushDataToCibil(data){
+  //
+  cibil.creditgrantor(data.ReportSummary.Grantors);
+  cibil.creditfacilities(data.ReportSummary.CreditFacilities);
+  cibil.closecreditfacilitis(data.ReportSummary.Facilities);
+  cibil.creditguaranteothers(data.ReportSummary.FacilitiesGuaranteed);
+  var last =  model.dataEntryCibilReport().ReportSummary().LatestCreditFacilityOpenDate();
+  last = kendo.parseDate(last);
+  last = kendo.toString(last, 'dd-MMM-yyyy');
+
+  var first = model.dataEntryCibilReport().ReportSummary().FirstCreditFacilityOpenDate();
+  first = kendo.parseDate(first);
+  first = kendo.toString(first, 'dd-MMM-yyyy')
+
+  cibil.latestopendate(last);
+  cibil.firstopendate(first);
+  // .latestopendate(),cibil.firstopendate());
+  // ============
+
+  // cibil.standartaccountBor(data.CreditFacilityBorrower.NoStandard)
+  // cibil.balanceinstandartBor(data.CreditFacilityBorrower.CurrentBalanceStandard)
+  // cibil.otherthanstandartBor(data.CreditFacilityBorrower.CurrentBalanceOtherThanStandard)
+  // cibil.balanceotherBor(data.CreditFacilityBorrower.CurrentBalanceStandard)
+  // cibil.lawsuitsBor(data.CreditFacilityBorrower.NoLawSuits)
+  // cibil.wifulBor(data.CreditFacilityBorrower.NoWilfulDefaults)
+
+  // cibil.standartaccountGua(data.CreditFacilityGuarantor.NoStandard)
+  // cibil.balanceinstandartGua(data.CreditFacilityGuarantor.CurrentBalanceStandard)
+  // cibil.otherthanstandartGua(data.CreditFacilityGuarantor.CurrentBalanceOtherThanStandard)
+  // cibil.balanceotherGua(data.CreditFacilityGuarantor.CurrentBalanceStandard)
+  // cibil.lawsuitsGua(data.CreditFacilityGuarantor.NoLawSuits)
+  // cibil.wifulGua(data.CreditFacilityGuarantor.NoWilfulDefaults)
+  // ============
+
+  cibil.threemonth(data.EnquirySummary.Enquiries3Month)
+  cibil.sixmonth(data.EnquirySummary.Enquiries6Month )
+  cibil.ninemonth(data.EnquirySummary.Enquiries9Month)
+  cibil.twelvemonth(data.EnquirySummary.Enquiries12Month)
+  cibil.duaempatmonth(data.EnquirySummary.Enquiries24Month)
+  cibil.thanduaempatmonth(data.EnquirySummary.EnquiriesThan24Month)
+  // cibil.lessduaempatmonth(data.EnquirySummary.)
+  var recent = model.dataEntryCibilReport().EnquirySummary().MostRecentDate()
+  recent = kendo.parseDate(recent);
+  recent = kendo.toString(recent, 'dd-MMM-yyyy')
+  cibil.recent(recent)
+
+  cibil.totalenquiries(data.EnquirySummary.TotalEnquiries)
+  cibil.CreditTypeSummary([]);
+    $.each(data.CreditTypeSummary, function(key, val){
+        //
+        cibil.CreditTypeSummary().push(val);
+    });
+  cibil.CreditTypeSummary(cibil.CreditTypeSummary());
+
+  var totalSt = 0;
+  var totalCur = 0;
+  for (i = 0; i < cibil.CreditTypeSummary().length; i++ ){
+  // .CreditTypeSummary()[i].standard)
+  totalSt = totalSt + parseInt(cibil.CreditTypeSummary()[i].Standard);
+  totalCur = totalCur + parseInt(cibil.CreditTypeSummary()[i].TotalCurrentBalance);
+  }
+  model.totalStandard(totalSt);
+  model.totalCurrentBalance(totalCur);
+}
+
+model.addProfileCompanyData = function(){
+  // .costomerProfileku());
+  if (model.costomerProfileku().length !== 0 ){
+  model.dataEntryCibilReport().Profile().CompanyName(model.costomerProfileku().CompanyName)
+  model.dataEntryCibilReport().Profile().CustomerId(model.costomerProfileku().CustomerId)
+  model.dataEntryCibilReport().Profile().DunsNumber(model.costomerProfileku().DunsNumber)
+  model.dataEntryCibilReport().Profile().Pan(model.costomerProfileku().Pan)
+  model.dataEntryCibilReport().Profile().Address(model.costomerProfileku().Address)
+  model.dataEntryCibilReport().Profile().CityTown(model.costomerProfileku().CityTown)
+  model.dataEntryCibilReport().Profile().Telephone(model.costomerProfileku().Telephone)
+  model.dataEntryCibilReport().Profile().StateUnion(model.costomerProfileku().StateUnion)
+  model.dataEntryCibilReport().Profile().PinCode(model.costomerProfileku().PinCode)
+  model.dataEntryCibilReport().Profile().Country(model.costomerProfileku().Country)
+  model.dataEntryCibilReport().Profile().FileOpenDate(model.costomerProfileku().FileOpenDate)
+  }
+}
+
+
+function FilterInput(event) {
+    var keyCode = ('which' in event) ? event.which : event.keyCode;
+
+    isNotWanted = (keyCode == 69 || keyCode == 101);
+    return !isNotWanted;
+};
+function handlePaste (e) {
+    var clipboardData, pastedData;
+
+    // Get pasted data via clipboard API
+    clipboardData = e.clipboardData || window.clipboardData;
+    pastedData = clipboardData.getData('Text').toUpperCase();
+
+    if(pastedData.indexOf('E')>-1) {
+        //alert('found an E');
+        e.stopPropagation();
+        e.preventDefault();
+    }
+};
+
+
+</script>
+<script src="/static/core/cibil.js"></script>
+<style type="text/css">
+  table, th, td {
+    border: 1px solid #f4f4f4;
+    font-size: 11px;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+  }
+</style>
+
+<div data-bind="with:dataEntryCibilReport" >
+  <div class="col-md-12 col-sm-12 ez panel-content">
+    <div class="panel ez no-padding hardcore">
+      <div class="panel-body">
+        <div class="col-md-12">
+          <div class="panel ez no-padding hardcore">
+            <div class="panel-body">
+              <h4 class="no-margin" style="text-align: center; background-color:#4f90a9; padding:10px; color: #fff">Please enter following details for the Borrower</h4>
+              <br>
+                <h5 class="no-margin space5">Report Summary</h5>
+                <div class="table-responsive">
+                <table id="">
+                  <tbody>
+                    <tr>
+                      <td class="th">No. of Credit Grantors</td>
+                      <td style="width: 60px;"><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditGrantors" class="form-control input-sm" data-bind="value:ReportSummary().Grantors"></td>
+                      <td class="th">No. of Credit Facilities</td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditFacilities" class="form-control input-sm" data-bind="value:ReportSummary().Facilities"></td>
+                      <td class="th">No. of Closed Credit Facilities</td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="value:ReportSummary().CreditFacilities"></td>
+                    </tr>
+                    <tr>
+                      <td class="th">No. of Credit Facilities Guaranteed by Others</td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditFacilitiesGrantorsGuarantedOther" class="form-control input-sm" data-bind="value:ReportSummary().FacilitiesGuaranteed"></td>
+                      <td class="th">Lastes Credit Facility Open Date</td>
+                      <td><input type="text" name="noCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().LatestCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"></td>
+                      <td class="th">First Credit Facility Open Date</td>
+                      <td><input type="text" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().FirstCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"></td>
+                    </tr>
+                  </tbody>
+                </table>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Credit Facilities</th>
+                        <th>No. of Standard</th>
+                        <th>Current Balance in Standard</th>
+                        <th>No. of Other than Standard</th>
+                        <th>Current Balance in Other than Standard</th>
+                        <th>No. of Law Suits</th>
+                        <th>No. of Wilful Defaults</th>
+                      </tr>
+                    <thead>
+                    <tbody data-bind="foreach: DetailReportSummary">
+                      <tr>
+                        <td class="th" data-bind="text: CreditFacilities">As Borrower</td>
+                        <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:CurrentBalanceOtherThanStandard"></td>
+                        <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:CurrentBalanceStandard"></td>
+                        <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfLawSuits
+                "></td>
+                        <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfOtherThanStandard
+                "></td>
+                        <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfStandard
+                "></td>
+                        <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfWilfulDefaults
+                "></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br>
+                <h5 class="no-margin space5">Credit type Summary</h5>
+                <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th rowspan="2">No. of Credit Facilities As Borrower</th>
+                      <th rowspan="2">Credit Type</th>
+                      <th rowspan="2">Currency Code</th>
+                      <th colspan="5" style="text-align: center !important;">Asset Classification</th>
+                      <th rowspan="2">Current Balance</th>
+                    </tr>
+                    <tr>
+                      <th>Standard</th>
+                      <th>Sub - Standard</th>
+                      <th>Doubtful</th>
+                      <th>Loss</th>
+                      <th>Special Mention A/C</th>
+                    </tr>
+                  </thead>
+                  <tbody data-bind="foreach:CreditTypeSummary()">
+                    <tr>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:NoCreditFacilitiesBorrower"></td>
+                      <td><textarea data-bind="value:CreditType" ></textarea></td>
+                      <td><input type="text" class="form-control input-sm" data-bind="value:CurrencyCode"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Standard" ></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Substandard"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Doubtful"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Loss"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:SpecialMention"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:TotalCurrentBalance"></td>
+                      <td><button class="btn btn-sm btn-danger" data-bind="click:model.removeCreditTypeSummary, visible:$index() > 0"><span class="fa fa-remove"></span></button></td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+                <button class="btn btn-sm btn-success" onclick="model.addCreditTypeSummary()"><span class="fa fa-plus"></span> Add Row</button>
+
+                <br><br>
+                <h5 class="no-margin space5">Enquiry Summary</h5>
+                <div class="table-responsive">
+                  <table id="tblCibilCreditTypeSummary">
+                    <thead>
+                      <tr>
+                        <th style="width:30px">Enquiry</th>
+                        <th style="width:30px">3 Months</th>
+                        <th style="width:30px">6 Months</th>
+                        <th style="width:30px">9 Months</th>
+                        <th style="width:30px">12 Months</th>
+                        <th style="width:30px">24 Months</th>
+                        <th style="width:30px">>24 Months</th>
+                        <!-- <th style="width:60px">> 24 Months</th> -->
+                        <th style="width:60px">Total</th>
+                        <th>Most Recent Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="th">No. of Enquiries</td>
+                        <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries3Month"></td>
+                        <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries6Month"></td>
+                        <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries9Month"></td>
+                        <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries12Month"></td>
+                        <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries24Month"></td>
+                        <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().EnquiriesThan24Month"></td>
+                        <!-- <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:lessduaempatmonth"></td> -->
+                        <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:EnquirySummary().TotalEnquiries" ></td>
+                        <td style="width: 120px;"><input type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:EnquirySummary().MostRecentDate, format: 'dd-MMM-yyyy'}"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div style="text-align: center">
+                  <br><br>
+                  <button class="btn btn-sm btn-primary" onclick="saveCibilReport('submit')">
+                  <span class="glyphicon glyphicon-ok"></span>&nbsp;
+                  Submit Details</button> &nbsp;
+                  <button class="btn btn-sm btn-primary" onclick="saveCibilReport('save')">
+                    <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;
+                  Save Draft</button>&nbsp;&nbsp;
+                  <button class="btn btn-sm btn-warning" onclick="backToMain();">
+                  <span class="glyphicon glyphicon-share-alt"></span>&nbsp;
+                   Cancel</button>
+                </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="col-md-5"> -->
+          <!-- <div class="panel ez no-padding hardcore"> -->
+            <!-- <div class="panel-body"> -->
+              <!-- <iframe src="/static/pdf/chip.pdf" style="width:100%; height:100%;" frameborder="0"></iframe> -->
+              <!-- <embed width="100%" height="500" data-bind="attr: {src:'/static/pdf/' + cibil.fileNamePdf()}"> -->
+              <!-- <embed width="100%" height="500" src="/static/pdf/CHIP COM TRADERS PVT LTD.pdf"> -->
+            </div>
+          </div>
+        <!-- </div> -->
+      </div>
+    </div>
+  </div>
+</div>

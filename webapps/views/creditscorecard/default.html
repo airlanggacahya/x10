@@ -1,0 +1,1842 @@
+<script type="text/javascript">
+  model.PageTopMenu('{{.TopMenu}}');
+  model.PageId('{{.Menuname}}');
+  model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
+  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+  model.Access = ko.observable('{{.Menuid}}');
+  model.View = ko.observable('{{.View}}');
+  model.Create= ko.observable('{{.Create}}');
+  model.Delete= ko.observable('{{.Delete}}');
+  model.Process= ko.observable('{{.Process}}');
+  model.Edit= ko.observable('{{.Edit}}')
+  model.User= ko.observable('{{.Username}}');
+
+var ns = function (d) {
+	return d.replace(/\ /g, '')
+}
+
+var csc = ko.observable({});
+csc()["datapoint"] = ko.observable({});
+csc()["datasource"] = ko.observableArray([]);
+
+function refreshFilter(){
+	csc().getalldata();
+}
+
+csc().lastYear = ko.observable("");
+
+csc().findLastYear = function(data){
+	var year = 0;
+	_.each(data,function(e,i){
+		var curryear = e.fieldid.indexOf("AUDITED") > -1 ? parseInt(moment(e.date,"DD-MM-YYYY").format("YYYY")) : 0;
+		year = curryear > year ? curryear :year;
+	});
+	csc().lastYear(year.toString());
+}
+
+csc().getalldata = function(callback){
+	var param = { customerid: filter().CustomerSearchVal(), dealno: filter().DealNumberSearchVal() }
+	app.ajaxPost("/creditscorecard/getalldata", param, function (res) {
+		console.log(res)
+		if(res.Status!="NOK"){
+
+			//added checked confirmed data
+				zz1 = checkConfirmedOrNot(res.Data.AccountDetail[0].status, 1, 99, res.Data.AccountDetail, [], "Account Detail");
+				zz2 = checkConfirmedOrNot(res.Data.BalanceSheetInput[0].confirmed, true, true, res.Data.BalanceSheetInput, [], "Balance Sheet Input");
+				k = 0;
+				$.each(res.Data.Bank.Data, function(i,v){
+					if(v.IsConfirmed){
+					}else{
+						k++;
+					}
+					if( (res.Data.Bank.Data.length-1) == i){
+						zz = checkConfirmedOrNot(v.IsConfirmed, true, true, v, null, k+" Bank");
+					}
+				})
+
+			//end this
+
+		csc().data = ko.observable(res.Data);
+		//join table
+		_.each(csc().data().BalanceSheetInput[0].formdata, function(e,i){
+			var name = _.find(csc().data().BalanceSheetMaster,function(x){ return "AUDITED-"+x._id == e.fieldid });
+			if(name != undefined)
+			e["fieldname"] = name.field;
+			else
+			e["fieldname"] = "";
+		});
+
+		csc().findLastYear(csc().data().BalanceSheetInput[0].formdata);
+
+		_.each(csc().data().BalanceSheetMaster, function(e,i){
+			var name = _.find(csc().data().BalanceSheetInput[0].formdata ,function(x){ return x.fieldname == e.field && x.date.indexOf(csc().lastYear()) > -1 });
+			if(name == undefined){
+				csc().data().BalanceSheetInput[0].formdata.push({ fieldname : e.field , date : csc().lastYear() , value : 0 });
+			}
+		});
+
+
+
+		csc().generateRiskParameter();
+		csc().generateIndustryBusinessRisk();
+		csc().generategrowth();
+		csc().generateBanking();
+		}else{
+				swal("Warning",res.Message,"warning");
+			}
+
+		csc().isLoading(false)
+
+		if (typeof callback === 'function') {
+			callback()
+		}
+
+	}, function () {
+
+	})
+}
+
+csc().isLoading = function (what) {
+    $('.apx-loading')[what ? 'show' : 'hide']()
+    $('.app-content')[what ? 'hide' : 'show']()
+}
+
+csc().generategrowth = function(){
+	csc().datapoint()["score"] = [];
+	csc().datapoint()["financial"] = [];
+	var formdata = csc().data().BalanceSheetInput[0].formdata;
+	var salesdatacur = _.find(formdata,function(x){ return x.fieldname.indexOf("Sales") > -1 && x.date.indexOf(csc().lastYear()) > -1  });
+	if(salesdatacur==undefined){
+		swal("Warning","Data sales current year not found!","warning")
+		return;
+	}
+	var salesdatalast = _.find(formdata,function(x){ return x.fieldname.indexOf("Sales") > -1 && x.date.indexOf((parseInt(csc().lastYear())-1).toString() ) > -1});
+	if(salesdatalast==undefined){
+		swal("Warning","Data sales last year not found!","warning")
+		return;
+	}
+	var calc =  !isFinite((salesdatacur.value/salesdatalast.value)-1) ? 1 : (salesdatacur.value/salesdatalast.value)-1;
+	csc().datapoint()["salesdatacur"] = salesdatacur.value;
+	csc().datapoint()["salesdatalast"] = salesdatalast.value;
+	calc = calc*100;
+	var cat = calc < 0? "decline" : calc <= 5? "up to 5%" : calc <= 10 ? "5 to 10"  : calc<=15?"10 to 15":">15";
+	var score = calc < 0? -2 : calc <= 5? 2 : calc <= 10 ? 5  : calc<=15? 8 : 10;
+
+	csc().datapoint()["score"].push(score * 0.25);
+
+	var res = {
+		Id: "01",
+		Name: "GROWTH",
+		Value: calc +"%",
+		Description: "{ (Sales/Receipts for current year)<br />/<br />(Sales / Receipts for previous year) }<br />-1",
+		Expand: false,
+		Category : cat,
+		Score: score,
+		Weight: 25,
+		WeightScore: score * 0.25 ,
+		Children: [{
+			Id: "a01",
+			Name: "(Sales/Receipts for current year) /",
+			Value: salesdatacur.value,
+		}, {
+			Id: "a02",
+			Name: "(Sales / Receipts for previous year)",
+			Value: salesdatalast.value
+		}, {
+			Id: "a03",
+			Name: "-1",
+			Value: -1
+		}]
+	}
+
+	csc().datapoint()["financial"].push(res);
+	csc().generateLeverage();
+}
+
+csc().generateLeverage = function(){
+	var accdet = csc().data().AccountDetail[0];
+	var rtr = csc().data().RTR;
+	var rtrsum = csc().data().RTRSummary;
+	var formdata = csc().data().BalanceSheetInput[0].formdata;
+
+	var longterm = _.find(formdata,function(x){ return x.fieldname.indexOf("Long Term Loans from Banks/FI -AL") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	if(longterm==undefined){
+		swal("Warning","Data longterm not found!","warning")
+		return;
+	}
+	var capitallimit = _.find(formdata,function(x){ return x.fieldname.indexOf("Working Capital Limits from Banks/FI's (OD / CC)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	if(capitallimit==undefined){
+		swal("Warning","Data capitallimit not found!","warning")
+		return;
+	}
+	var unsecureloan = _.find(formdata,function(x){ return x.fieldname.indexOf("Unsecured loans  (Bank & Financial Institutions)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	if(unsecureloan==undefined){
+		swal("Warning","Data unsecureloan not found!","warning")
+		return;
+	}
+	var sundrycred = _.find(formdata,function(x){ return x.fieldname.indexOf("Sundry Creditors") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	csc().datapoint()["sundrycred"] = sundrycred.value;
+	if(sundrycred==undefined){
+		swal("Warning","Data sundrycred not found!","warning")
+		return;
+	}
+
+	// var pbslposarr = _.filter(rtr,function(x){ return x.BSLStatus.toLowerCase().indexOf("pbsl") > -1 && x.LoanStatus.toLowerCase().indexOf("live") > -1 });
+	// var balancetransarr = _.filter(rtr,function(x){ return x.LoanStatus.toLowerCase().indexOf("balance") > -1 });
+	// var closewithinarr = _.filter(rtr,function(x){ return x.EMI <=3 });
+
+
+	var calcpbslpos = rtrsum.PBSLPOS; //_.reduce(pbslposarr, function(memo, num){ return memo + num.POS ; }, 0);
+	var calclosewithin = rtrsum.CloseWithin3MonthPOS; //_.reduce(closewithinarr, function(memo, num){ return memo + num.POS ; }, 0);
+	var calcbalancetrans = rtrsum.BalancePOS;  //_.reduce(balancetransarr, function(memo, num){ return memo + num.POS ; }, 0);
+	var calcsundrycred = sundrycred.value;
+	var calctotaloutsidedebt = longterm.value + capitallimit.value + unsecureloan.value;
+	var calclimit = accdet.loandetails.requestedlimitamount;
+
+	var calcleverage0 = calclimit + calctotaloutsidedebt + calcsundrycred + calcpbslpos - calclosewithin - calcbalancetrans;
+
+	var sales = csc().datapoint()["salesdatacur"];
+	var bussincome = _.find(formdata,function(x){ return x.fieldname.indexOf("Other Income (part of Business Income)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	csc().datapoint()["bussincome"] = bussincome.value;
+	var nonbussincome = _.find(formdata,function(x){ return x.fieldname.indexOf("Other Income (Non Business income)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	csc().datapoint()["nonbussincome"] = nonbussincome.value;
+
+	var sharecapital = _.find(formdata,function(x){ return x.fieldname.indexOf("Share Capital") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var reserves = _.find(formdata,function(x){ return x.fieldname.indexOf("Reserves & Surplus(excluding revaluation reserve)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var unsecureloanpartner = _.find(formdata,function(x){ return x.fieldname.indexOf("Unsecured loans from partners/shareholders (ICDs incl.)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var miscexp = _.find(formdata,function(x){ return x.fieldname.indexOf("Misc Exp. (DRE+PreOp+Prelim+Acc P&L") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var groupco = _.find(formdata,function(x){ return x.fieldname.indexOf("Group Co. Investments (Biz Related)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var unqouted = _.find(formdata,function(x){ return x.fieldname.indexOf("Unquoted/Dead Investments (Non Biz Related)i.e. shares, gold, chit fund") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+
+	var loanandadv = _.find(formdata,function(x){ return x.fieldname.indexOf("Loans & Adv  to directors/partners etc (ICDs)/Diversions") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var debtormore6 = _.find(formdata,function(x){ return x.fieldname.indexOf("Debtors > 6 months") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	csc().datapoint()["debtormore6"]= debtormore6.value;
+	var profitbrought = _.find(formdata,function(x){ return x.fieldname.indexOf("Profit brought forward") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var groupconot = _.find(formdata,function(x){ return x.fieldname.indexOf("Group Co. Investments (Not Biz Related)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var groupco = _.find(formdata,function(x){ return x.fieldname.indexOf("Group Co. Investments (Biz Related)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+
+	var calcinvestment = groupconot.value+unqouted.value;
+	var calctotalincome = sales+bussincome.value+nonbussincome.value;
+	var calcsharecap = sharecapital.value;//+reserves.value+unsecureloanpartner.value - miscexp.value;
+	var calcloanadv = loanandadv.value ;//- debtormore6.value + (profitbrought.value - groupco.value)
+	var calcadjustednet = calctotalincome > 0 ? calcsharecap + reserves.value + unsecureloanpartner.value - miscexp.value  - calcinvestment - calcloanadv - debtormore6.value + ( profitbrought.value - groupco.value ) : 0;
+	var calcleverage = calcleverage0 / calcadjustednet;
+	// console.log(calcsharecap ,reserves.value ,unsecureloanpartner.value ,miscexp.value, calcinvestment, calcloanadv, debtormore6.value,  profitbrought.value ,groupco.value )
+	calcleverage = isFinite(calcleverage)?calcleverage:0;
+
+	var cat = calcleverage < 3? "<3" : calcleverage <= 4? "3 to 4" : calcleverage <= 5 ? "4 to 5": ">5";
+	var score = calcleverage < 3? 10 : calcleverage <= 4? 8 : calcleverage <= 5 ? 5: 0;
+
+	csc().datapoint()["score"].push(score*0.25);
+
+	var leverage = {
+	Id: "02",
+	Name: "LEVERAGE (TOL/TNW)",
+	Value: calcleverage,
+	Description: "( Amount of Limit to Customer<br />+<br />Total Outside Debts<br />+<br />Creditors (closing)<br />+<br />POS of all post Bal.Sheet Loans<br />-<br />Close Within 3 Month (POS in Lacs)<br />-<br />Balance Transfer (POS) )<br />/<br />Adjusted Net Worth",
+	Expand: false,
+	Category: cat,
+	Score: score,
+	Weight: 25,
+	WeightScore: score*0.25 ,
+	Children: [{
+		Id: "b01",
+		Name: "( Amount of Limit to Customer +",
+		Value: calclimit
+	}, {
+		Id: "b01",
+		Name: "Total Outside Debts  +",
+		Value: calctotaloutsidedebt,
+		Expand: true,
+		Children: [{
+			Id: "bs01",
+			Name: "Long Term Loans from Banks/FI -AL  +",
+			Value: longterm.value
+		}, {
+			Id: "bs02",
+			Name: "Working Capital Limits from Banks/FI's (OD / CC) +",
+			Value: capitallimit.value
+		}, {
+			Id: "bs03",
+			Name: "Unsecured loans  (Bank & Financial Institutions)",
+			Value: unsecureloan.value
+		}]
+	}, {
+		Id: "b02",
+		Name: "Sundry Creditors + ",
+		Value: calcsundrycred
+	}, {
+		Id: "b03",
+		Name: "P.B.S.L. POS +",
+		Value: calcpbslpos
+	}, {
+		Id: "b04",
+		Name: "Close Within 3 Month (POS in Lacs) +",
+		Value: calclosewithin
+	}, {
+		Id: "b05",
+		Name: "Balance Transfer (POS) ) /",
+		Value: calcbalancetrans
+	},
+	{
+		Id: "b06",
+		Name: "Adjusted NET WORTH",
+		Value:  isFinite(calcadjustednet)?calcadjustednet:0,
+		Expand :true,
+		Children :[
+					{
+				Id: "bs01",
+				Name: "IF Total Income > 0",
+				Value: calctotalincome,
+				Expand: true,
+				Children: [{
+					Id: "bt01",
+					Name: "Sales/Receipts +",
+					Value: sales
+				}, {
+					Id: "bt02",
+					Name: "Other Income (part of Business Income)  +",
+					Value: bussincome.value
+				}, {
+					Id: "bt03",
+					Name: "Other Income (Non Business income)",
+					Value: nonbussincome.value
+				}]
+			}, {
+				Id: "bs02",
+				Name: "{ Share Capital +",
+				Value: sharecapital.value
+			}, {
+				Id: "bs03",
+				Name: "Reserves & Surplus(excluding revaluation reserve) +",
+				Value: reserves.value
+			}, {
+				Id: "bs04",
+				Name: "Unsecured loans from partners/shareholders (ICDs incl.) -",
+				Value: unsecureloanpartner.value
+			}, {
+				Id: "bs05",
+				Name: "Misc Exp. (DRE+PreOp+Prelim+Acc P&L) - ",
+				Value: miscexp.value
+			}, {
+				Id: "bs06",
+				Name: "Investments (excl. Biz related) - ",
+				Value: calcinvestment,
+				Expand: true,
+				Children: [{
+					Id: "bt01",
+					Name: "Group Co. Investments (Not Biz Related) + ",
+					Value: groupconot.value
+				}, {
+					Id: "bt02",
+					Name: "Unquoted/Dead Investments (Non Biz Related)i.e. shares, gold, chit fund",
+					Value: unqouted.value,
+
+					// TEST LVL 3
+					// Expand: true,
+					// Children: [{
+					// 	Id: "bts01",
+					// 	Name: "Test 1",
+					// 	Value: 123
+					// }, {
+					// 	Id: "bts02",
+					// 	Name: "Test 2",
+					// 	Value: 345
+					// }]
+				}]
+			}, {
+				Id: "bs07",
+				Name: "Loans & Adv  to directors/partners etc (ICDs)/Diversions -",
+				Value: loanandadv.value
+			}, {
+				Id: "bs08",
+				Name: "Debtors > 6 months +",
+				Value: debtormore6.value,
+			}, {
+				Id: "bs09",
+				Name: "(Profit brought forward - ",
+				Value: profitbrought.value
+			}, {
+				Id: "bs10",
+				Name: "Group Co. Investments (Biz Related)) }",
+				Value: groupco.value
+			}, {
+				Id: "bs11",
+				Name: "ELSE IF TOTAL INCOME = 0"
+			}, {
+				Id: "b12",
+				Name: "Display 0"
+			}
+				]
+			},
+			]
+		};
+
+	csc().datapoint()["financial"].push(leverage);
+	csc().generatepostdscr();
+}
+
+csc().generateInterestCoverage = function(){
+	var accdet = csc().data().AccountDetail[0];
+	var rtr = csc().data().RTR;
+	var rtrsum = csc().data().RTRSummary;
+	var formdata = csc().data().BalanceSheetInput[0].formdata;
+
+	// ====
+
+	var salesdatacur = _.find(formdata,function(x){ return x.fieldname.indexOf("Sales") > -1 && x.date.indexOf(csc().lastYear()) > -1  });
+	if(salesdatacur==undefined){
+		swal("Warning","Data sales current year not found!","warning")
+	}
+
+	var bussincome = _.find(formdata,function(x){ return x.fieldname.indexOf("Other Income (part of Business Income)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var salesExcl = salesdatacur.value + bussincome.value
+
+	var openingstock = _.find(formdata,function(x){ return x.fieldname.indexOf("Opening Stock") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var purchases = _.find(formdata,function(x){ return x.fieldname.indexOf("Purchases") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var closingstock = _.find(formdata,function(x){ return x.fieldname.indexOf("Closing Stock") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var directexpense = _.find(formdata,function(x){ return x.fieldname.indexOf("Direct expenses") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var closingStockDoubled = closingstock.value * 2
+	var costOfSales = (openingstock.value + purchases.value + closingstock.value + directexpense.value) - closingStockDoubled
+	csc().datapoint().calccostofsales = costOfSales;
+	var grossProfit = salesExcl - costOfSales
+
+	var adminis = _.find(formdata,function(x){ return x.fieldname.indexOf("Administrative Expenses + any other exps") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var selling = _.find(formdata,function(x){ return x.fieldname.indexOf("Selling & Distribution Expenses") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var salary = _.find(formdata,function(x){ return x.fieldname.indexOf("Salary to Partner/Director") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var interestFI = _.find(formdata,function(x){ return x.fieldname.indexOf("Interest to FI/Banks") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var adminOtherExpense = adminis.value + selling.value + salary.value
+
+	var ebdit = grossProfit - adminOtherExpense;
+
+	// ====
+
+	var sales = csc().datapoint()["sales"];
+	var bussincome = csc().datapoint()["bussincome"];
+
+	var calcsalesexc = sales + bussincome;
+	var calccostofsales = csc().datapoint()["calccostofsales"];
+	var calcadminis = csc().datapoint()["calcadminis"];
+	var EMIAMount12 = _.reduce(rtr, function(memo, num){ return memo + num.EMI ; }, 0) * 12;
+	var EMIBalance = _.reduce(rtr, function(memo, num){ return memo + num.EMIBalance ; }, 0);
+	var yearRepayment = _.reduce(rtr,function(memo,num){
+		var isLive = (num.LoanStatus.toLowerCase().indexOf("live") > -1)
+		var isTypeOD = (num.TypeOfLoan.toLowerCase().indexOf('od/cc') > -1)
+		var isTypeBill = (num.TypeOfLoan.toLowerCase().indexOf('bill discounting') > -1)
+		var isTypeLetter = (num.TypeOfLoan.toLowerCase().indexOf('letter of credit') > -1)
+
+		if (isLive && (isTypeOD || isTypeBill || isTypeLetter)) {
+			return memo + num.EMI * 12
+		} else if (isLive && (num.EMIBalance >= 12)) {
+			return memo + num.EMI * 12
+		} else if (isLive && (num.EMIBalance < 12)) {
+			return memo + num.EMI * num.EMIBalance
+		} else if (!isLive) {
+			return memo + 0
+		}
+
+		return memo + 0
+	}, 0);
+	var limit = accdet.loandetails.requestedlimitamount*100000;
+	var proposedROI = accdet.loandetails.proposedrateinterest;
+	var proposedROI16percent = (proposedROI / 100)
+	var divider = 100000
+	var approx = limit * proposedROI16percent
+
+	var totalYearRepayment = (EMIAMount12 + yearRepayment + approx)
+	var dscr = ebdit / ( interestFI.value + approx / divider )
+
+	// console.log(ebdit, totalYearRepayment, divider, kendo.toString(dscr, 'n7'))
+
+	var cat = dscr < 0.7? "<0.7" : dscr <= 1? "0.7 to 1" : ">1";
+	var score = dscr < 0.7? 0 : dscr <= 1? 7 : 10;
+
+	csc().datapoint()["score"].push(score * 0.15);
+
+	var res = {
+		Id: "04",
+		Name: "Interest Coverage Ratio (Incl. X10 Int.)",
+		Value: dscr,
+		Description: "EBDIT /<br />((Interest to FI and Banks +<br />Approximate X10 Interest (B) in Rs. ) /<br />" + String(divider) + ")",
+		Expand: false,
+		Category : cat,
+		Score: score,
+		Weight: 15.0,
+		WeightScore: score*0.15,
+		Children: [{
+			Id: "a01",
+			Name: "EBDIT /",
+			Value: ebdit,
+			Expand: false,
+			Children: [{
+				Id: "a02",
+				Name: "Gross Profits -",
+				Value: grossProfit,
+				Expand: false,
+				Children: [{
+					Id: "a03",
+					Name: "Sales excl other incomes (Net Of excise) -",
+					Value: salesExcl,
+					Expand: false,
+					Children: [{
+						Id: "a04",
+						Name: "Sales/Receipts +",
+						Value: salesdatacur.value
+					}, {
+						Id: "a05",
+						Name: "Other Income (part of Business Income)",
+						Value: bussincome.value
+					}]
+				}, {
+					Id: "a06",
+					Name: "Cost of Sales",
+					Value: costOfSales,
+					Expand: false,
+					Children: [{
+						Id: "a07",
+						Name: "( Opening Stock  +",
+						Value: openingstock.value,
+					}, {
+						Id: "a08",
+						Name: "Purchases +",
+						Value: purchases.value,
+					}, {
+						Id: "a09",
+						Name: "Closing Stock +",
+						Value: closingstock.value,
+					}, {
+						Id: "a10",
+						Name: "Direct expenses ) -",
+						Value: directexpense.value,
+					}, {
+						Id: "a11",
+						Name: "Closing Stock*2",
+						Value: closingStockDoubled,
+					}]
+				}]
+			}]
+		},{	
+			Id: "a02",
+			Name: "(Interest to FI and Banks +",
+			Value: interestFI.value,
+			Expand: false
+		},{	
+			Id: "a03",
+			Name: "Approximate X10 Interest (B) in Rs. )/",
+			Value: approx,
+			Expand: false
+		},{	
+			Id: "a04",
+			Name: "100000",
+			Value: divider,
+			Expand: false
+		}]
+	}
+	csc().datapoint()["financial"].push(res);
+	csc().generateworkingcapital();
+}
+
+
+csc().redefine = function (what, defaultValue) {
+	if (typeof what === 'undefined') {
+		return defaultValue
+	}
+	return what
+}
+
+
+csc().generateworkingcapital = function(){
+	var formdata = csc().data().BalanceSheetInput[0].formdata;
+
+	var totalincome = csc().datapoint()["salesdatacur"]+csc().datapoint()["bussincome"]+csc().datapoint()["nonbussincome"];
+	var debtormore6 = csc().datapoint()["debtormore6"];
+	var debotrless6 = _.find(formdata,function(x){ return x.fieldname.indexOf("Debtors < 6 months") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var inventories = _.find(formdata,function(x){ return x.fieldname.indexOf("Inventories") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var sundrycred = csc().datapoint()["sundrycred"];
+
+	var calcreceivedebtor = debtormore6 + debotrless6.value;
+	var calcsales = csc().datapoint()["salesdatacur"];
+	var calcdebtordays = calcreceivedebtor / calcsales*365;
+	// console.log(calcdebtordays,"???",calcreceivedebtor,calcsales)
+	var calccostofgoods = csc().datapoint()["calccostofsales"];
+	var calcstockdays = inventories.value / calccostofgoods * 365;
+	calcstockdays = isFinite(calcstockdays) ? calcstockdays : 0;
+	var calccreditordays = sundrycred / calccostofgoods * 365;
+	calccreditordays = isFinite(calccreditordays) ? calccreditordays : 0;
+	var calcnetworkingcapitalcyc = calcdebtordays + calcstockdays - calccreditordays;
+	var calcnetworkingcapital = totalincome > 0 ? calcnetworkingcapitalcyc : 0;
+
+	var openingstock = _.find(formdata,function(x){ return x.fieldname.indexOf("Opening Stock") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var purchases = _.find(formdata,function(x){ return x.fieldname.indexOf("Purchases") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var closingstock = _.find(formdata,function(x){ return x.fieldname.indexOf("Closing Stock") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var directexpense = _.find(formdata,function(x){ return x.fieldname.indexOf("Direct expenses") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+
+
+	var cat = calcnetworkingcapital < 45? "<45 day" : calcnetworkingcapital <= 60? "45 to 60" : calcnetworkingcapital <= 75 ? "60 to 75"  : calcnetworkingcapital<=90?"75 to 90":"> 90 days";
+	var score = calcnetworkingcapital < 45? 10 : calcnetworkingcapital <= 60? 8 : calcnetworkingcapital <= 75 ? 5  : calcnetworkingcapital<=90? 2 :0;
+
+	csc().datapoint()["score"].push(score * 0.15);
+
+	var res = {
+			Id: "05",
+			Name: "Working Capital Cycle (Days)",
+			Value: calcnetworkingcapital,
+			Description: "IF TOTAL INCOME > 0 Display Net Working Capital Cycle ELSE IF TOTAL INCOME = 0 Display 'NA'",
+			Category: cat,
+			Score: score,
+			Weight: 15.0,
+			WeightScore:  score * 0.15 ,
+			Expand: false,
+			Children: [{
+				Id: "e01",
+				Name: "IF TOTAL INCOME > 0",
+				Value: kendo.toString(totalincome,'N2')
+			}, {
+				Id: "e02",
+				Name: "Net Working Capital Cycle",
+				Value: 0,
+				Expand: false,
+				Children: [{
+					Id: 'ea01',
+					Name: "(     Debtor Days +",
+					Value: kendo.toString(calcdebtordays,'N2')
+				}, {
+					Id: 'ea02',
+					Name: "Stock Days - ",
+					Value: kendo.toString(calcstockdays,'N2'),
+					Expand: false,
+					Children: [{
+						Id: 'eab01',
+						Name: "Inventories / ",
+						Value:  inventories.value,
+					}, {
+						Id: 'eab02',
+						Name: "  (  Cost of Goods Sold (COGS) *",
+						Value: calccostofgoods,
+						Expand: false,
+						Children: [{
+							Id: 'eaba01',
+							Name: '( Opening Stock  +',
+							Value: openingstock.value
+						}, {
+							Id: 'eaba02',
+							Name: 'Purchases + ',
+							Value: purchases.value
+						}, {
+							Id: 'eaba03',
+							Name: 'Closing Stock + ',
+							Value: closingstock.value
+						}, {
+							Id: 'eaba04',
+							Name: 'Direct expenses ) - ',
+							Value: directexpense.value
+						}, {
+							Id: 'eaba05',
+							Name: 'Closing Stock*2',
+							Value: closingstock.value*2
+						}]
+					}, {
+						Id: 'eab03',
+						Name: "365 )",
+						Value: 365
+					}]
+				}, {
+					Id: 'ea03',
+					Name: "Creditor Days     )",
+					Value:kendo.toString(calccreditordays,"N2"),
+					Expand: false,
+					Children: [{
+						Id: 'eac01',
+						Name: 'Sundry Creditors /',
+						Value: sundrycred
+					}, {
+						Id: 'eac02',
+						Name: '(   Cost of Goods Sold (COGS) *',
+						Value: calccostofgoods,
+						Expand: false,
+						Children: [{
+							Id: 'eabc01',
+							Name: '( Opening Stock  +',
+							Value: openingstock.value
+						}, {
+							Id: 'eabc02',
+							Name: 'Purchases + ',
+							Value: purchases.value
+						}, {
+							Id: 'eabc03',
+							Name: 'Closing Stock + ',
+							Value: closingstock.value
+						}, {
+							Id: 'eabc04',
+							Name: 'Direct expenses ) - ',
+							Value: directexpense.value
+						}, {
+							Id: 'eabc05',
+							Name: 'Closing Stock*2',
+							Value: closingstock.value*2
+						}]
+					}, {
+						Id: 'eac03',
+						Name: '365  )',
+						Value: 365
+					}]
+				}]
+			}, {
+				Id: "e03",
+				Name: "ELSE IF TOTAL INCOME = 0",
+				Value: 0
+			}, {
+				Id: "e04",
+				Name: "NA",
+				Value: 0
+			}]
+		};
+	csc().datapoint()["financial"].push(res);
+	var totscore = _.reduce(csc().datapoint()["score"],function(memo,num){ return memo + parseFloat(num) });
+	csc().datapoint()["financial"].unshift(
+	{
+		Id: "00",
+		Name: "Financial Risk Parameters",
+		IsHeader: true,
+		Score: totscore,
+		Weight: 30,
+		WeightScore: kendo.toString(totscore * 0.3,"N2"),
+	});
+	_.each(csc().datapoint()["financial"],function(e,i){
+		csc().datasource().push(e);
+	});  ;
+}
+
+
+csc().generatepostdscr = function () {
+	var accdet = csc().data().AccountDetail[0];
+	var rtr = csc().data().RTR;
+	var rtrsum = csc().data().RTRSummary;
+	var formdata = csc().data().BalanceSheetInput[0].formdata;
+
+	// ====
+
+	var salesdatacur = _.find(formdata,function(x){ return x.fieldname.indexOf("Sales") > -1 && x.date.indexOf(csc().lastYear()) > -1  });
+	if(salesdatacur==undefined){
+		swal("Warning","Data sales current year not found!","warning")
+	}
+
+	var bussincome = _.find(formdata,function(x){ return x.fieldname.indexOf("Other Income (part of Business Income)") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var salesExcl = salesdatacur.value + bussincome.value
+
+	// console.log(bussincome,"_+_+_+_");
+
+	var openingstock = _.find(formdata,function(x){ return x.fieldname.indexOf("Opening Stock") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var purchases = _.find(formdata,function(x){ return x.fieldname.indexOf("Purchases") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var closingstock = _.find(formdata,function(x){ return x.fieldname.indexOf("Closing Stock") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var directexpense = _.find(formdata,function(x){ return x.fieldname.indexOf("Direct expenses") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+
+	var closingStockDoubled = closingstock.value * 2
+	var costOfSales = (openingstock.value + purchases.value + closingstock.value + directexpense.value) - closingStockDoubled
+	var grossProfit = salesExcl - costOfSales
+
+	var adminis = _.find(formdata,function(x){ return x.fieldname.indexOf("Administrative Expenses + any other exps") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var selling = _.find(formdata,function(x){ return x.fieldname.indexOf("Selling & Distribution Expenses") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var salary = _.find(formdata,function(x){ return x.fieldname.indexOf("Salary to Partner/Director") > -1 && x.date.indexOf(csc().lastYear()) > -1 });
+	var adminOtherExpense = adminis.value + selling.value + salary.value
+
+	var ebdit = grossProfit - adminOtherExpense
+
+	// ====
+
+	var sales = csc().datapoint()["sales"];
+	var bussincome = csc().datapoint()["bussincome"];
+
+	var calcsalesexc = sales + bussincome;
+	var calccostofsales = csc().datapoint()["calccostofsales"];
+	var calcadminis = csc().datapoint()["calcadminis"];
+	var EMIAMount12 = _.reduce(rtr, function(memo, num){ return memo + num.EMI ; }, 0) * 12;
+	var EMIBalance = _.reduce(rtr, function(memo, num){ return memo + num.EMIBalance ; }, 0);
+	var yearRepayment = rtrsum.YearlyRepayment*100000; //_.reduce(rtr,function(memo,num){
+	// 	var isLive = (num.LoanStatus.toLowerCase().indexOf("live") > -1)
+	// 	var isTypeOD = (num.TypeOfLoan.toLowerCase().indexOf('od/cc') > -1)
+	// 	var isTypeBill = (num.TypeOfLoan.toLowerCase().indexOf('bill discounting') > -1)
+	// 	var isTypeLetter = (num.TypeOfLoan.toLowerCase().indexOf('letter of credit') > -1)
+
+	// 	if (isLive && (isTypeOD || isTypeBill || isTypeLetter)) {
+	// 		return memo + num.EMI * 12
+	// 	} else if (isLive && (num.EMIBalance >= 12)) {
+	// 		return memo + num.EMI * 12
+	// 	} else if (isLive && (num.EMIBalance < 12)) {
+	// 		return memo + num.EMI * num.EMIBalance
+	// 	} else if (!isLive) {
+	// 		return memo + 0
+	// 	}
+
+	// 	return memo + 0
+	// }, 0);
+	var limit = accdet.loandetails.requestedlimitamount*100000;
+	var proposedROI = accdet.loandetails.proposedrateinterest/100;
+	var proposedROI16percent = proposedROI; //(proposedROI * 16 / 100)
+	var divider = 100000
+	var approx = limit + (proposedROI16percent * divider)
+
+	var totalYearRepayment = yearRepayment; //(EMIAMount12 + yearRepayment + approx)
+	var dscr = ebdit / (totalYearRepayment / divider)
+
+	// console.log(ebdit, totalYearRepayment, divider, kendo.toString(dscr, 'n7'))
+
+	var cat = dscr < 0.7? "<0.7" : dscr <= 1? "0.7 to 1" : ">1";
+	var score = dscr < 0.7? 0 : dscr <= 1? 7 : 10;
+
+	csc().datapoint()["score"].push(score * 0.2);
+
+	var res = {
+		Id: "dddd01",
+		Name: "DSCR",
+		Value: dscr,
+		Description: "EBDIT<br />/<br />Yearly Repayment<br />/<br />" + String(divider),
+		Expand: false,
+		Category : cat,
+		Score: score,
+		Weight: 20.0,
+		WeightScore: score*0.2,
+		Children: [{
+			Id: "a01",
+			Name: "EBDIT /",
+			Value: ebdit,
+			Expand: false,
+			Children: [{
+				Id: "a02",
+				Name: "Gross Profits -",
+				Value: grossProfit,
+				Expand: false,
+				Children: [{
+					Id: "a03",
+					Name: "Sales excl other incomes (Net Of excise) -",
+					Value: salesExcl,
+					Expand: false,
+					Children: [{
+						Id: "a04",
+						Name: "Sales/Receipts +",
+						Value: salesdatacur.value
+					}, {
+						Id: "a05",
+						Name: "Other Income (part of Business Income)",
+						Value: bussincome
+					}]
+				}, {
+					Id: "a06",
+					Name: "Cost of Sales",
+					Value: costOfSales,
+					Expand: false,
+					Children: [{
+						Id: "a07",
+						Name: "( Opening Stock  +",
+						Value: openingstock.value,
+					}, {
+						Id: "a08",
+						Name: "Purchases +",
+						Value: purchases.value,
+					}, {
+						Id: "a09",
+						Name: "Closing Stock +",
+						Value: closingstock.value,
+					}, {
+						Id: "a10",
+						Name: "Direct expenses ) -",
+						Value: directexpense.value,
+					}, {
+						Id: "a11",
+						Name: "Closing Stock*2",
+						Value: closingStockDoubled,
+					}]
+				}]
+			}, {
+				Id: "a12",
+				Name: "Adminstrative and Other Expenses",
+				Value: adminOtherExpense,
+				Expand: false,
+				Children: [{
+					Id: 'a13',
+					Name: 'Administrative Expenses + any other exps +',
+					Value: adminis.value
+				}, {
+					Id: 'a14',
+					Name: 'Selling & Distribution Expenses +',
+					Value: selling.value
+				}, {
+					Id: 'a15',
+					Name: 'Salary to Partner/Director',
+					Value: salary.value
+				}]
+			}]
+		}, {
+			Id: 'a27',
+			Name: 'Yearly Repayment /',
+			Value: totalYearRepayment,
+			Expand: false,
+			// Children: [{
+			// 	Id: 'a15',
+			// 	Name: '( EMI AMOUNT Rs. (NOT in lacs) * 12 +',
+			// 	Value: EMIAMount12,
+			// }, {
+			// 	Id: 'a16',
+			// 	Name: 'Yearly Repayment +',
+			// 	Value: yearRepayment,
+			// 	Expand: false,
+			// 	Children: [{
+			// 		Id: 'a17',
+			// 		Name: 'IF ((Loan is "Live") AND (Type of Loan is "OD/CC" or "Bill Discounting" or "Letter of Credit")) {',
+			// 	}, {
+			// 		Id: 'a18',
+			// 		Name: 'EMI AMOUNT x 12',
+			// 	}, {
+			// 		Id: 'a19',
+			// 		Name: 'ELSE IF (Loan is "Live" AND Balance of EMIs >= 12)',
+			// 	}, {
+			// 		Id: 'a20',
+			// 		Name: 'EMI AMOUNT x 12',
+			// 	}, {
+			// 		Id: 'a21',
+			// 		Name: 'ELSE IF (Loan is "Live" AND Balance of EMIs < 12)',
+			// 	}, {
+			// 		Id: 'a22',
+			// 		Name: 'EMI AMOUNT x Balance of EMIs'
+			// 	}, {
+			// 		Id: 'a23',
+			// 		Name: 'ELSE IF (Loan is not "Live")'
+			// 	}, {
+			// 		Id: 'a23a',
+			// 		Name: 'No amount is added'
+			// 	}]
+			// }, {
+			// 	Id: "a24",
+			// 	Name: "Approximate X10 Interest (B) in Rs. )",
+			// 	Value: approx,
+			// 	Expand: false,
+			// 	Children: [{
+			// 		Id: 'a25',
+			// 		Name: 'Amount of Limit to Customer +',
+			// 		Value: limit
+			// 	}, {
+			// 		Id: 'a26',
+			// 		Name: 'Proposed ROI (16 %) *',
+			// 		Value: proposedROI16percent
+			// 	}, {
+			// 		Id: 'a30',
+			// 		Name: String(divider),
+			// 		Value: divider
+			// 	}]
+			// }]
+		}, {
+			Id: 'a28',
+			Name: '100000'
+		}]
+	}
+
+	csc().datapoint()["financial"].push(res);
+	csc().generateInterestCoverage();
+}
+
+csc().generateIndustryBusinessRisk = function () {
+	var industry = []
+	// ======== segment classification
+	;(function () {
+		industry.push({
+			Id: "z02",
+			Name: "Customer Segment Clasification",
+			Category: csc().data().AccountDetail[0].borrowerdetails.customersegmentclasification,
+			Score: 0,
+			Weight: 0,
+			WeightScore: 0,
+		})
+	})();
+
+	// ======== segment
+	;(function () {
+		var segmentClassificationCategory = csc().data().AccountDetail[0].borrowerdetails.customersegmentclasification
+		var segmentClassificationMeta = csc().data().RatingMaster.find(function (d) {
+			return $.trim(d.categories) == $.trim(segmentClassificationCategory)
+		});
+
+		var segmentValue = 0
+		if (typeof segmentClassificationMeta !== 'undefined') {
+			var segmentClassificationInfo = csc().data().RatingData[0].categoriesdata.find(function (d) {
+			    return d.id == segmentClassificationMeta._id
+			})
+			segmentValue = csc().redefine(segmentClassificationInfo, { score: 0 }).score
+		}
+
+		var segmentCategory = ''
+		switch ($.trim(segmentClassificationCategory)) {
+			case 'Auth. Dealer/ Large T2 Distributors': { segmentCategory = 'Good' } break;
+			case 'System Integrator': 					{ segmentCategory = 'Good' } break;
+			case 'Small System Integrator': 			{ segmentCategory = 'Average' } break;
+			case 'Corporate': 							{ segmentCategory = 'Good' } break;
+			case 'Small Dealers': 						{ segmentCategory = 'Low' } break;
+			case 'National Distributor': 				{ segmentCategory = 'Excellent' } break;
+			case 'Others': 								{ segmentCategory = 'Low' } break;
+		}
+
+		var segmentLabel = "Customer Segment" // rm16
+		var segmentInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return d.parameters == segmentLabel
+		})
+		var segmentWeight = csc().redefine(segmentInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var segmentPercentage = toolkit.number((segmentValue * segmentWeight) / 100)
+		industry.push({
+			Id: "z03",
+			Name: segmentLabel,
+			Category: segmentCategory,
+			Score: segmentValue,
+			Weight: segmentWeight,
+			WeightScore: kendo.toString(segmentPercentage, 'n2'),
+		})
+	})();
+
+	// ======== constitution
+	;(function () {
+		var constitutionCategory = csc().data().AccountDetail[0].borrowerdetails.borrowerconstitution
+		var constitutionMeta = csc().data().RatingMaster.find(function (d) {
+			return d.categories == constitutionCategory
+		});
+		var constitutionMetaValue = csc().data().RatingData[0].categoriesdata.find(function (d) {
+		    return d.id == csc().redefine(constitutionMeta, { _id: "" })._id
+		})
+		var constitutionValue = csc().redefine(constitutionMetaValue, { score: 0 }).score
+
+		var constitutionLabel = "Borrower Constitution" // rm08
+		var constitutionInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return d.parameters == constitutionLabel
+		})
+		var constitutionWeight = csc().redefine(constitutionInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var constitutionPercentage = toolkit.number((constitutionValue * constitutionWeight) / 100)
+		industry.push({
+			Id: "z04",
+			Name: constitutionLabel,
+			Category: constitutionCategory,
+			Score: constitutionValue,
+			Weight: constitutionWeight,
+			WeightScore: kendo.toString(constitutionPercentage, 'n2'),
+		})
+	})();
+
+	// ======== diversification
+	;(function () {
+		var diversificationValueComparator = csc().data().AccountDetail[0].borrowerdetails.diversificationcustomers
+		var diversificationCategory = ""
+		if (diversificationValueComparator == 1) {
+			diversificationCategory = "Single Customer"
+		} else if (diversificationValueComparator >= 2 && diversificationValueComparator <= 5) {
+			diversificationCategory = "2- 5 Clients"
+		} else if (diversificationValueComparator >= 6 && diversificationValueComparator <= 10) {
+			diversificationCategory = "6- 10 Clients"
+		} else if (diversificationValueComparator > 10) {
+			diversificationCategory = "> 10 Clients"
+		}
+
+		var diversificationLabel = "Diversification: no. of clients / customers" // rm16
+		var diversificationInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return d.parameters == diversificationLabel
+		})
+
+		var diversificationValueFieldId = toolkit.redefine(csc().data().RatingMaster.find(function (d) {
+			return (d.parameters == diversificationLabel) && (ns(d.categories) == ns(diversificationCategory))
+		}), { _id: '' })._id
+		var diversificationValue = toolkit.redefine(csc().data().RatingData[0].categoriesdata.find(function (d) {
+			return d.id == diversificationValueFieldId
+		}), { score: 0 }).score
+
+		var diversificationWeight = csc().redefine(diversificationInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var diversificationPercentage = toolkit.number((diversificationValue * diversificationWeight) / 100)
+		industry.push({
+			Id: "z05",
+			Name: diversificationLabel,
+			Category: diversificationCategory,
+			Score: diversificationValue,
+			Weight: diversificationWeight,
+			WeightScore: kendo.toString(diversificationPercentage, 'n2'),
+		})
+	})();
+
+	// ======== supplier
+	;(function () {
+		var supplierValueComparator = csc().data().AccountDetail[0].borrowerdetails.dependenceonsuppliers
+		var supplierCategory = ""
+		if (supplierValueComparator == 1) {
+			supplierCategory = "Single Supplier"
+		} else if (supplierValueComparator >= 2 && supplierValueComparator <= 5) {
+			supplierCategory = "2- 5 Supplier"
+		} else if (supplierValueComparator >= 6 && supplierValueComparator <= 10) {
+			supplierCategory = "6- 10 Supplier"
+		} else if (supplierValueComparator > 10) {
+			supplierCategory = "> 10 Supplier"
+		}
+
+		var supplierLabel = "Dependence on suppliers" // rm16
+		var supplierInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return d.parameters == supplierLabel
+		})
+
+		var supplierValueFieldId = toolkit.redefine(csc().data().RatingMaster.find(function (d) {
+			return (d.parameters == supplierLabel) && (ns(d.categories) == ns(supplierCategory))
+		}), { _id: '' })._id
+		var supplierValue = toolkit.redefine(csc().data().RatingData[0].categoriesdata.find(function (d) {
+			return d.id == supplierValueFieldId
+		}), { score: 0 }).score
+
+		var supplierWeight = csc().redefine(supplierInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var supplierPercentage = toolkit.number((supplierValue * supplierWeight) / 100)
+		industry.push({
+			Id: "z06",
+			Name: supplierLabel,
+			Category: supplierCategory,
+			Score: supplierValue,
+			Weight: supplierWeight,
+			WeightScore: kendo.toString(supplierPercentage, 'n2'),
+		})
+	})();
+
+	// ======== vintage
+	;(function () {
+		var vintageValueComparator = csc().data().AccountDetail[0].borrowerdetails.businessvintage
+		var vintageCategory = ""
+		if (vintageValueComparator <= 2) {
+			vintageCategory = "Up to 2 Yrs"
+		} else if (vintageValueComparator > 2 && vintageValueComparator <= 4) {
+			vintageCategory = "2.1 to 4 Yrs"
+		} else if (vintageValueComparator >= 4 && vintageValueComparator <= 6) {
+			vintageCategory = "4.1 to 6 Yrs"
+		} else if (vintageValueComparator >= 6 && vintageValueComparator <= 10) {
+			vintageCategory = "6.1 to 10 Yrs"
+		} else if (vintageValueComparator > 10) {
+			vintageCategory = ">=10.1 Year"
+		}
+
+		var vintageLabel = "Business Vintage" // rm16
+		var vintageInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return d.parameters == vintageLabel
+		})
+
+		var vintageValueFieldId = toolkit.redefine(csc().data().RatingMaster.find(function (d) {
+			return (d.parameters == vintageLabel) && (ns(d.categories) == ns(vintageCategory))
+		}), { _id: '' })._id
+		var vintageValue = toolkit.redefine(csc().data().RatingData[0].categoriesdata.find(function (d) {
+			return d.id == vintageValueFieldId
+		}), { score: 0 }).score
+
+		var vintageWeight = csc().redefine(vintageInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var vintagePercentage = toolkit.number((vintageValue * vintageWeight) / 100)
+		industry.push({
+			Id: "z07",
+			Name: vintageLabel,
+			Category: vintageCategory,
+			Score: vintageValue,
+			Weight: vintageWeight,
+			WeightScore: kendo.toString(vintagePercentage, 'n2'),
+		})
+	})();
+
+	// ======== header -> Industry & Business Risk Parameters AD
+	;(function () {
+		var headerLabel = "Industry & Business Risk Parameters"
+		var headerInfo = csc().data().RatingData[0].parametersgroupdata.find(function (d) {
+		    return (d.parametersgroup.indexOf(headerLabel) > -1)
+		})
+		var headerScore = _.sum(industry.map(function (d) {
+			return kendo.parseFloat(d.WeightScore)
+		}))
+		var headerWeight = csc().redefine(headerInfo, { weightageofgroupincreditscore: 0 }).weightageofgroupincreditscore
+		var headerWeightScore = toolkit.number(headerScore * headerWeight / 100)
+
+		industry = [{
+			Id: "z01",
+			Name: headerLabel,
+			IsHeader: true,
+			Score: headerScore,
+			Weight: headerWeight,
+			WeightScore: kendo.toString(headerWeightScore, 'n2'),
+		}].concat(industry)
+	})();
+
+	csc().datasource(industry.concat(csc().datasource()))
+}
+csc().generateRiskParameter = function () {
+	var params = []
+
+	// ======== experience
+	;(function () {
+		var expValueComparator = 0
+		try {
+			expValueComparator = _.max(csc().data().AccountDetail[0].promotordetails.map(function (d) {
+				return d.experienceinsamelineofbusiness
+			}))
+		} catch (err) {
+			console.log(err)
+		}
+
+		var expCategory = ""
+		if (expValueComparator == 0) {
+			expCategory = "New Start-up"
+		} else if (expValueComparator <= 2) {
+			expCategory = "Upto 2 yrs"
+		} else if (expValueComparator > 2 && expValueComparator <= 5) {
+			expCategory = "2.1 to 5 Yrs"
+		// } else if (expValueComparator > 5 && expValueComparator <= 7) {
+		// 	expCategory = "5.1 to 7 Yrs"
+		} else if (expValueComparator > 7 && expValueComparator <= 10) {
+			expCategory = "7.1 to 10 Yrs"
+		} else if (expValueComparator > 10) {
+			expCategory = "More than 10 yrs"
+		}
+
+		var expLabel = "Experience in the same line of business" // rm29
+		var expInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return d.parameters == expLabel
+		})
+
+		var expValueFieldId = toolkit.redefine(csc().data().RatingMaster.find(function (d) {
+			return (d.parameters == expLabel) && (ns(d.categories) == ns(expCategory))
+		}), { _id: '' })._id
+		var expValue = toolkit.redefine(csc().data().RatingData[0].categoriesdata.find(function (d) {
+			return d.id == expValueFieldId
+		}), { score: 0 }).score
+
+		var expWeight = csc().redefine(expInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var expPercentage = toolkit.number((expValue * expWeight) / 100)
+		params.push({
+			Id: "y02",
+			Name: expLabel,
+			Category: expCategory,
+			Score: expValue,
+			Weight: expWeight,
+			WeightScore: kendo.toString(expPercentage, 'n2'),
+		})
+	})();
+
+	// ======== market
+	;(function () {
+		var marketCategory = csc().data().AccountDetail[0].borrowerdetails.marketreference
+		var marketMeta = csc().data().RatingMaster.find(function (d) {
+			return d.categories == marketCategory
+		});
+		var marketMetaValue = csc().data().RatingData[0].categoriesdata.find(function (d) {
+		    return d.id == csc().redefine(marketMeta, { _id: "" })._id
+		})
+		var marketValue = csc().redefine(marketMetaValue, { score: 0 }).score
+
+		var marketLabel = "Market Reference of promoters" //
+		var marketInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return $.trim(d.parameters) == $.trim(marketLabel)
+		})
+		var marketWeight = csc().redefine(marketInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var marketPercentage = toolkit.number((marketValue * marketWeight) / 100)
+		params.push({
+			Id: "y03",
+			Name: marketLabel,
+			Category: marketCategory,
+			Score: marketValue,
+			Weight: marketWeight,
+			WeightScore: kendo.toString(marketPercentage, 'n2'),
+		})
+	})();
+
+	// ======== education
+	;(function () {
+		var levels = [
+			"Professional in the same line of business",
+			"Technical Graduate / Post Graduate",
+			"Graduation - Other",
+			"Matriculate",
+			"Under Matriculate"
+		]
+
+		var promotorMapped = csc().data().AccountDetail[0].promotordetails.map(function (d, i) {
+		    return {
+		    	levelIndex: levels.indexOf(d.educationalqualificationofmainpromoter),
+		    	index: i
+		    }
+		})
+		var highestInfo = _.minBy(promotorMapped.filter(function (d) {
+			return d.index > -1
+		}), 'levelIndex')
+
+		var educationCategory = ""
+		try {
+			educationCategory = csc().data().AccountDetail[0].promotordetails[highestInfo.index].educationalqualificationofmainpromoter
+		} catch (err) {
+			console.log(err)
+		}
+
+		var educationMeta = csc().data().RatingMaster.find(function (d) {
+			return d.categories == educationCategory
+		});
+		var educationMetaValue = csc().data().RatingData[0].categoriesdata.find(function (d) {
+		    return d.id == csc().redefine(educationMeta, { _id: "" })._id
+		})
+		var educationValue = csc().redefine(educationMetaValue, { score: 0 }).score
+
+		var educationLabel = "Educational Qualification of main promoter" //
+		var educationInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return $.trim(d.parameters) == $.trim(educationLabel)
+		})
+		var educationWeight = csc().redefine(educationInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var educationPercentage = toolkit.number((educationValue * educationWeight) / 100)
+		params.push({
+			Id: "y04",
+			Name: educationLabel,
+			Category: educationCategory,
+			Score: educationValue,
+			Weight: educationWeight,
+			WeightScore: kendo.toString(educationPercentage, 'n2'),
+		})
+	})();
+
+	// ======== resi
+	;(function () {
+		var resiCategory = ""
+		try {
+			// resiCategory = csc().data().AccountDetail[0].promotordetails[0].resiownershipstatus
+			resiCategory = _.find(csc().data().AccountDetail[0].promotordetails,
+				function(x){
+					return x.resiownershipstatus.indexOf("Owned")>-1;
+				});
+			resiCategory = resiCategory == undefined? csc().data().AccountDetail[0].promotordetails[0].resiownershipstatus:resiCategory.resiownershipstatus;
+		} catch (err) {
+			console.log(err)
+		}
+
+		var resiMeta = csc().data().RatingMaster.find(function (d) {
+			return d.categories == resiCategory
+		});
+		var resiMetaValue = csc().data().RatingData[0].categoriesdata.find(function (d) {
+		    return d.id == csc().redefine(resiMeta, { _id: "" })._id
+		})
+		var resiValue = csc().redefine(resiMetaValue, { score: 0 }).score
+
+		var resiLabel = "Resi Ownership Status" //
+		var resiInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return $.trim(d.parameters) == $.trim(resiLabel)
+		})
+		var resiWeight = csc().redefine(resiInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var resiPercentage = toolkit.number((resiValue * resiWeight) / 100)
+		params.push({
+			Id: "y05",
+			Name: resiLabel,
+			Category: resiCategory,
+			Score: resiValue,
+			Weight: resiWeight,
+			WeightScore: kendo.toString(resiPercentage, 'n2'),
+		})
+	})();
+
+	// ======== office
+	;(function () {
+		var officeCategory = ""
+		try {
+			// officeCategory = csc().data().AccountDetail[0].promotordetails[0].officeownershipstatus
+			officeCategory = _.find(csc().data().AccountDetail[0].promotordetails,
+				function(x){
+					return x.officeownershipstatus.indexOf("Owned")>-1;
+				});
+			officeCategory = officeCategory == undefined? csc().data().AccountDetail[0].promotordetails[0].officeownershipstatus :officeCategory.officeownershipstatus;
+		} catch (err) {
+			console.log(err)
+		}
+
+		var officeMeta = csc().data().RatingMaster.find(function (d) {
+			return d.categories == officeCategory
+		});
+		var officeMetaValue = csc().data().RatingData[0].categoriesdata.find(function (d) {
+		    return d.id == csc().redefine(officeMeta, { _id: "" })._id
+		})
+		var officeValue = csc().redefine(officeMetaValue, { score: 0 }).score
+
+		var officeLabel = "Office Ownership Status" //
+		var officeInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return $.trim(d.parameters) == $.trim(officeLabel)
+		})
+		var officeWeight = csc().redefine(officeInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var officePercentage = toolkit.number((officeValue * officeWeight) / 100)
+		params.push({
+			Id: "y06",
+			Name: officeLabel,
+			Category: officeCategory,
+			Score: officeValue,
+			Weight: officeWeight,
+			WeightScore: kendo.toString(officePercentage, 'n2'),
+		})
+	})();
+
+	// ======== real estate
+	;(function () {
+		var realestateSumValue = 0
+		try {
+			realestateSumValue = _.max(csc().data().AccountDetail[0].promotordetails.map(function (d) {
+			    return _.sum(d.realestateposition)
+			}))
+		} catch (err) {
+			console.log(err)
+		}
+		var loanValue = csc().data().AccountDetail[0].loandetails.requestedlimitamount
+		// var realestateValue = toolkit.number(realestateSumValue / loanValue)
+		// console.log("realestate",realestateSumValue,loanValue);
+		realestateSumValue = realestateSumValue/loanValue;
+
+
+		var realestateCategory = ""
+		if ( (realestateSumValue > 2 )) {
+			realestateCategory = "More than 2 times of total loan"
+		} else if ( realestateSumValue > 1.5 ) {
+			realestateCategory = "1.51 to 2 times of total loan"
+		} else if ( realestateSumValue > 1 ) {
+			realestateCategory = "1.01 to 1.51 times of total loan"
+		} else if ( realestateSumValue >= 0.75 ) {
+			realestateCategory = "0.75 to 1 times of total loan"
+		} else {
+			realestateCategory = "Less than 0.75 times of total loan"
+		}
+
+		var realestateLabel = "Real Estate position of the borrower"
+		var realestateInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return d.parameters == realestateLabel
+		})
+
+		var realestateValueFieldId = toolkit.redefine(csc().data().RatingMaster.find(function (d) {
+			return (d.parameters == realestateLabel) && (ns(d.categories) == ns(realestateCategory))
+		}), { _id: '' })._id
+		var realestateValue = toolkit.redefine(csc().data().RatingData[0].categoriesdata.find(function (d) {
+			return d.id == realestateValueFieldId
+		}), { score: 0 }).score
+
+		var realestateWeight = csc().redefine(realestateInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var realestatePercentage = toolkit.number((realestateValue * realestateWeight) / 100)
+		params.push({
+			Id: "y07",
+			Name: realestateLabel,
+			Category: realestateCategory,
+			Score: realestateValue,
+			Weight: realestateWeight,
+			WeightScore: kendo.toString(realestatePercentage, 'n2'),
+		})
+	})();
+
+	// ======== cibil
+	;(function () {
+		var cibilValueComparator = 0
+		try {
+			cibilValueComparator = _.min(csc().data().AccountDetail[0].promotordetails.map(function (d) {
+			    return d.cibilscore
+			}))
+		} catch (err) {
+			console.log(err)
+		}
+
+		var cibilCategory = "No Loan History"
+		if (cibilValueComparator > 700) {
+			cibilCategory = "Above 700"
+		} else if (cibilValueComparator >= 650 && cibilValueComparator <= 700) {
+			cibilCategory = "650-700"
+		} else if (cibilValueComparator >= 600 && cibilValueComparator < 650) {
+			cibilCategory = "600-650"
+		} else if (cibilValueComparator > 0 && cibilValueComparator < 600) {
+			cibilCategory = "Below 600"
+		}
+
+		var cibilLabel = "CIBIL Scores"
+		var cibilInfo = csc().data().RatingData[0].parametersdata.find(function (d) {
+			return d.parameters == cibilLabel
+		})
+
+		var cibilValueFieldId = toolkit.redefine(csc().data().RatingMaster.find(function (d) {
+			return (d.parameters == cibilLabel) && (ns(d.categories) == ns(cibilCategory))
+		}), { _id: '' })._id
+		var cibilValue = toolkit.redefine(csc().data().RatingData[0].categoriesdata.find(function (d) {
+			return d.id == cibilValueFieldId
+		}), { score: 0 }).score
+
+		var cibilWeight = csc().redefine(cibilInfo, { weightagewithingroup: 0 }).weightagewithingroup
+		var cibilPercentage = toolkit.number((cibilValue * cibilWeight) / 100)
+		params.push({
+			Id: "y08",
+			Name: cibilLabel,
+			Category: cibilCategory,
+			Score: cibilValue,
+			Weight: cibilWeight,
+			WeightScore: kendo.toString(cibilPercentage, 'n2'),
+		})
+	})();
+
+	// ======== header -> Management / Promoters Risk Parameters
+	;(function () {
+		var headerLabel = "Management / Promoters Risk Parameters"
+		var headerInfo = csc().data().RatingData[0].parametersgroupdata.find(function (d) {
+		    return (d.parametersgroup.indexOf(headerLabel) > -1)
+		})
+		var headerScore = _.sum(params.map(function (d) {
+			return kendo.parseFloat(d.WeightScore)
+		}))
+		var headerWeight = csc().redefine(headerInfo, { weightageofgroupincreditscore: 0 }).weightageofgroupincreditscore
+		var headerWeightScore = toolkit.number(headerScore * headerWeight / 100)
+
+		params = [{
+			Id: "y01",
+			Name: headerLabel,
+			IsHeader: true,
+			Score: headerScore,
+			Weight: headerWeight,
+			WeightScore: kendo.toString(headerWeightScore, 'n2'),
+		}].concat(params)
+	})();
+
+	csc().datasource(params.concat(csc().datasource()))
+}
+csc().generateBanking = function () {
+	var accdet = csc().data().AccountDetail[0];
+	var rtr = csc().data().RTR;
+	var bank = csc().data().Bank;
+	var ratingData = csc().data().RatingData[0];
+	var ratingMaster = csc().data().RatingMaster;
+	var formdata = csc().data().BalanceSheetInput[0].formdata;
+
+	var res = []
+
+	// =====
+
+	var sumCreditByTotalCredit = toolkit.number(
+		_.sumBy(bank.Summary, 'TotalCredit') * 12 / bank.Summary.length)
+	var salesReceipt = toolkit.number(formdata.find(function (d) {
+	    return d.fieldname == "Sales/Receipts" && d.date.indexOf(csc().lastYear()) > -1
+	}).value)
+	var otherIncome = toolkit.number(formdata.find(function (d) {
+	    return d.fieldname == "Other Income (part of Business Income)" && d.date.indexOf(csc().lastYear()) > -1
+	}).value)
+	var turnoverValue = sumCreditByTotalCredit / (salesReceipt + otherIncome) * 100
+	var turnoverCategory = ''; if (turnoverValue < 65) {
+		turnoverCategory = 'Less than 65%'
+	} else if (turnoverValue >= 65 && turnoverValue < 80) {
+		turnoverCategory = '65% to 80%'
+	} else if (turnoverValue >= 80 && turnoverValue < 110) {
+		turnoverCategory = '80.01 % to 110%'
+	} else if (turnoverValue >= 110) {
+		turnoverCategory = 'Above 110%'
+	}
+	var turnoverWeight = toolkit.number(ratingData.parametersdata.find(function (d) {
+	    return (d.parametersgroup == "Banking") && (d.parameters == "Banking To Turnover Ratio")
+	}).weightagewithingroup)
+	var turnoverScore = toolkit.number(ratingData.categoriesdata.find(function (d) {
+		var _id = ratingMaster.find(function (d) {
+		    return (d.parametersgroup == "Banking") &&
+		    	(d.parameters == "Banking To Turnover Ratio") &&
+		    	(d.categories.indexOf(turnoverCategory) > -1)
+		})._id
+	    return d.id == toolkit.redefine(_id, '')
+	}).score)
+
+	res.push({
+		Id: "w02",
+		Name: "Banking To Turnover Ratio",
+		Category: turnoverCategory,
+		Score: turnoverScore,
+		Weight: turnoverWeight,
+		WeightScore: kendo.toString(toolkit.number(turnoverScore * turnoverWeight) / 100, 'n2'),
+		Value: turnoverValue + ' %'
+	})
+
+	// =====
+
+	var bouncesValue = _.sumBy(csc().data().Bank.Summary, 'OwCheque') /
+		_.sumBy(csc().data().Bank.Summary, 'NoOfDebit')
+	if (isNaN(bouncesValue)) {
+		bouncesValue = 0
+	} else {
+	    bouncesValue = toolkit.number(
+	    	_.sumBy(csc().data().Bank.Summary, 'OwCheque') / // should this be IwCheque ?
+		    _.sumBy(csc().data().Bank.Summary, 'NoOfCredit'))
+	}
+
+	bouncesValue = bouncesValue * 100
+
+	var bouncesCategory = ''; if (bouncesValue > 10) {
+		bouncesCategory = 'More than 10%'
+	} else if (bouncesValue > 8 && bouncesValue <= 10) {
+		bouncesCategory = '8.01% to 10%'
+	} else if (bouncesValue > 5 && bouncesValue <= 8) {
+		bouncesCategory = '5.01% to 8%'
+	} else if (bouncesValue > 2 && bouncesValue <= 5) {
+		bouncesCategory = '2% to 5%'
+	} else if (bouncesValue <= 2) {
+		bouncesCategory = '<2%'
+	}
+
+	var bouncesWeight = toolkit.number(ratingData.parametersdata.find(function (d) {
+	    return (d.parametersgroup == "Banking") && (d.parameters == "Inward Bounces")
+	}).weightagewithingroup)
+	var bouncesScore = ratingData.categoriesdata.find(function (d) {
+		var _id = ratingMaster.find(function (d) {
+		    return (d.parametersgroup == "Banking") &&
+		    	(d.parameters == "Inward Bounces") &&
+		    	(d.categories == bouncesCategory)
+		})._id
+	    return d.id == toolkit.redefine(_id, '')
+	})
+
+	bouncesScore = bouncesScore == undefined ? 0 : bouncesScore.score;
+	res.push({
+		Id: "w03",
+		Name: "Inward Bounces",
+		Category: bouncesCategory,
+		Score: bouncesScore,
+		Weight: bouncesWeight,
+		WeightScore: kendo.toString(toolkit.number(bouncesScore * bouncesWeight) / 100, 'n2'),
+		Value: bouncesValue + " %"
+	})
+
+	// =====
+
+	var sancLimit = _.sumBy(bank.Data, function (d) {
+	    return d.DataBank[0].BankAccount.FundBased.SancLimit
+	})
+	var dpdTrack = _.max(rtr.map(function (d) {
+
+		var mav = _.max(d.Months.map(function(dx){
+			var vals = parseInt(dx.Value.replace(/DPD/g, '').replace(/\+/g, ''), 10);
+		    return isNaN(vals)? 0 : vals
+		}) , function(x){
+			return x
+		});
+
+		return mav
+	}))
+
+	// console.log(sancLimit)
+	// console.log(dpdTrack)
+
+	var emiCategory = ''
+	if (sancLimit == 0) {
+		emiCategory = 'No Credit Facility'
+	} else if (sancLimit > 0 && dpdTrack == 0) {
+		emiCategory = 'ETR'
+	} else if (sancLimit > 0 && dpdTrack == 15) {
+		emiCategory = 'GTR'
+	} else if (sancLimit > 0 && dpdTrack == 30) {
+		emiCategory = 'PTR'
+	}
+
+	var emiField = toolkit.redefine(ratingMaster.find(function (d) {
+	    return (d.parametersgroup == "Banking") &&
+	    	(d.parameters == "EMI track") &&
+	    	(d.categories == emiCategory)
+	}), { _id: '' })._id
+	var emiWeight = toolkit.number(ratingData.parametersdata.find(function (d) {
+	    return (d.parametersgroup == "Banking") && (d.parameters == "EMI track")
+	}).weightagewithingroup)
+	var emiScore = toolkit.number(toolkit.redefine(ratingData.categoriesdata.find(function (d) {
+	    return d.id == emiField
+	}), { score: 0 }).score)
+
+	res.push({
+		Id: "w04",
+		Name: "EMI track",
+		Category: emiCategory,
+		Score: emiScore,
+		Weight: emiWeight,
+		WeightScore: kendo.toString(toolkit.number(emiScore * emiWeight) / 100, 'n2'),
+		Value: sancLimit,
+		Children: [{
+				Id: 'w01',
+				Name: 'Sanction Limit',
+				Value: sancLimit,
+			},
+			{
+				Id: 'w02',
+				Name: 'Max of DPD track',
+				Value: dpdTrack,
+			}
+		]
+	})
+
+	// =====
+
+	var avgDelayDayValue = _.maxBy(accdet.vendordetails.map(function (d) {
+		return d.averagedelaydays
+	}))
+	var avgDelayDayCategory = ''
+	if (avgDelayDayValue > 35) {
+		avgDelayDayCategory = '>35'
+	} else if (avgDelayDayValue >= 26 && avgDelayDayValue <= 35) {
+		avgDelayDayCategory = '26 to 35'
+	} else if (avgDelayDayValue >= 16 && avgDelayDayValue <= 25) {
+		avgDelayDayCategory = '16 to 25'
+	} else if (avgDelayDayValue >= 5 && avgDelayDayValue <= 15) {
+		avgDelayDayCategory = '5 to 15'
+	} else if (avgDelayDayValue < 5) {
+		avgDelayDayCategory = '<5'
+	}
+	var avgDelayDayWeight = toolkit.number(ratingData.parametersdata.find(function (d) {
+	    return (d.parametersgroup == "Banking") && (d.parameters == "Avg. Payment delay days with Distri.")
+	}).weightagewithingroup)
+	var avgDelayDayScore = toolkit.number(ratingData.categoriesdata.find(function (d) {
+		var _id = ratingMaster.find(function (d) {
+		    return (d.parametersgroup == "Banking") &&
+		    	(d.parameters == "Avg. Payment delay days with Distri.") &&
+		    	(d.categories.indexOf(avgDelayDayCategory)>-1)
+		})._id
+	    return d.id == toolkit.redefine(_id, '')
+	}).score)
+
+	res.push({
+		Id: "w05",
+		Name: "Avg. Payment delay days with Distri.",
+		Category: avgDelayDayCategory,
+		Score: avgDelayDayScore,
+		Weight: avgDelayDayWeight,
+		WeightScore: kendo.toString(toolkit.number(avgDelayDayScore * avgDelayDayWeight) / 100, 'n2'),
+		Value: avgDelayDayValue
+	})
+
+	// =====
+
+	var ODCCValue = ''
+	var ABBOFEMIValue = ''
+	var ABBValue = ''
+	var EMIValue = ''
+
+
+	var odValue = ''
+	var odCategory = ''
+
+	var isCurrent = (csc().data().Bank.Data.filter(function (d) {
+		return d.DataBank[0].BankAccount.FundBased.AccountType == "Current"
+	}).length == csc().data().Bank.Data.length)
+
+	if (isCurrent) {
+		var op2 = csc().data().Bank.Data.map(function (d) {
+			var avg = _.sumBy(d.DataBank[0].BankDetails, 'AvgBalon') / d.DataBank[0].BankDetails.length
+			return avg
+		})
+
+		var abb = _.sum(op2) / op2.length
+		var emi = (accdet.loandetails.requestedlimitamount * (1 + accdet.loandetails.proposedrateinterest / 100)) / accdet.loandetails.limittenor
+		var abbOfEmi = toolkit.number(abb / emi)
+
+		if (abbOfEmi > 1) {
+			odCategory = 'ABB >100% of EMI'
+		} else if (abbOfEmi >= 0.9 && abbOfEmi <= 1) {
+			odCategory = 'ABB =>90% to 100% of EMI'
+		} else if (abbOfEmi >= 0.75 && abbOfEmi < 0.9) {
+			odCategory = 'ABB=>75% to 90% of EMI'
+		} else if (abbOfEmi < 0.75) {
+			odCategory = 'ABB <75% of EMI'
+		}
+
+		ABBValue = kendo.toString(abb, 'n2')
+		EMIValue = kendo.toString(emi, 'n2')
+		ABBOFEMIValue = kendo.toString(abbOfEmi, 'p2')
+
+		// console.log('abb', abb)
+		// console.log('emi', emi)
+		// console.log('abbOfEmi', abbOfEmi)
+	} else {
+		var op1 = csc().data().Bank.Data.map(function (d) {
+			var max = _.max(_.map(d.DataBank[0].BankDetails, function (e) {
+				return toolkit.number(e.AvgBalon / e.OdCcLimit)
+			}))
+			return max
+		})
+		odValue = toolkit.number(_.sum(op1) / op1.length)
+
+		var odCategory = ''
+		if (odValue > 110) {
+			odCategory = 'above 110'
+		} else if (odCategory > 105 && odValue <= 110) {
+			odCategory = "105-110"
+		} else if (odCategory > 98 && odValue <= 105) {
+			odCategory = '98 to 105'
+		} else if (odCategory <= 98) {
+			odCategory = 'Less than 98%'
+		}
+
+		ODCCValue = kendo.toString(odValue, 'p2')
+	}
+
+	var odDayWeight = toolkit.number(ratingData.parametersdata.find(function (d) {
+	    return (d.parametersgroup == "Banking") && (d.parameters == "OD/CC Utilization (average of last 3 months) ABB vs Proposed EMI")
+	}).weightagewithingroup)
+	var odScore = toolkit.number(ratingData.categoriesdata.find(function (d) {
+		var _id = ratingMaster.find(function (d) {
+		    return (d.parametersgroup == "Banking") &&
+		    	(d.parameters == "OD/CC Utilization (average of last 3 months) ABB vs Proposed EMI") &&
+		    	(d.categories == odCategory)
+		})._id
+	    return d.id == toolkit.redefine(_id, '')
+	}).score)
+
+	res.push({
+		Id: "w06",
+		Name: "OD/CC Utilization (average of last 3 months) ABB vs Proposed EMI",
+		Category: odCategory,
+		Score: odScore,
+		Weight: odDayWeight,
+		WeightScore: kendo.toString(toolkit.number(odScore * odDayWeight) / 100, 'n2'),
+		Value: ODCCValue,
+		Expand: false,
+		Children: [{
+			Id: 'w07',
+			Name: 'If (A/C type is OD/CC)<br />and Max(OD/CC Utilization per month)>0)<br />then Max(OD/CC Utilization per month)<br />else<br />" "',
+			Value: ODCCValue,
+			Expand: false,
+			Children: [{
+				Id: 'w08',
+				Name: "OD/CC Utilization per month = ('Avg. Bal on 1+7+14+21+28')/(OD/CC Limit per Months)",
+				Value: ODCCValue
+			}]
+		}, {
+			Id: 'w09',
+			Name: "If (A/C type is Current)<br />and check if ABB <75% of EMI<br />ABB=>75% to 90% of EMI<br />ABB =>90% to 100% of EMI<br />ABB >100% of EMI",
+			Value: ABBOFEMIValue,
+			Expand: false,
+			Children: [{
+				Id: 'w10',
+				Name: "ABB = Average (Current Account<br />Average Balance)",
+				Value: ABBValue,
+				Expand: false,
+				Children: [{
+					Id: 'w12',
+					Name: 'Current Account Average Balance =<br />Sum of Current Account Average Balance for all Banks / Count of Current Account Average Balance',
+					Value: ABBValue,
+					Expand: false,
+					Children: [{
+						Id: 'w13',
+						Name: 'Current Account Average Balance for each bank = Sum of Avg. Bal on 1+7+14+21+28 / Count of Avg. Bal on 1+7+14+21+28',
+						Value: ABBValue,
+						Expand: false,
+					}]
+				}]
+			}, {
+				Id: 'w14',
+				Name: "EMI = [ Proposed amount * (1+Proposed Rate/100) ] / Limit Tenor",
+				Value: EMIValue
+			}]
+		}]
+	})
+
+	var bankingScore = _.sumBy(res, function (d) {
+		return kendo.parseFloat(d.WeightScore)
+	})
+	var bankingWeight = toolkit.number(ratingData.parametersgroupdata.find(function (d) {
+	    return (d.parametersgroup == "Banking")
+	}).weightageofgroupincreditscore)
+
+	res = [{
+		Id: "w01",
+		Name: "Banking",
+		IsHeader: true,
+		Score: bankingScore,
+		Weight: bankingWeight,
+		WeightScore: kendo.toString(toolkit.number(bankingScore * bankingWeight) / 100, 'n2'),
+	}].concat(res)
+
+	// console.log('banking', res)
+
+	csc().datasource(csc().datasource().concat(res))
+}
+	</script>
+
+{{template "form.html"}}

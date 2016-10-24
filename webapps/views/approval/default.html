@@ -1,0 +1,387 @@
+<script type="text/javascript">
+  model.PageTopMenu('{{.TopMenu}}');
+  model.PageId('{{.Menuname}}');
+  model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
+  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+  model.Access = ko.observable('{{.Menuid}}');
+  model.View = ko.observable('{{.View}}');
+  model.Create= ko.observable('{{.Create}}');
+  model.Delete= ko.observable('{{.Delete}}');
+  model.Process= ko.observable('{{.Process}}');
+  model.Edit= ko.observable('{{.Edit}}');
+  model.User= ko.observable('{{.Username}}');
+</script>
+
+<script type="text/javascript" src="/static/bullet-chart/d3.v3.min.js"></script>
+<script type="text/javascript" src="/static/bullet-chart/bullet-horizontal.js"></script>
+<script type="text/javascript" src="/static/bullet-chart/bullet-vertical.js"></script>
+<link rel="stylesheet" href="/static/bullet-chart/bullet.css">
+<script type="text/javascript" src="/static/core/loanapproval.js"></script>
+<script type="text/javascript" src="/static/core/approval-form.js"></script>
+<script type="text/javascript" src="/static/core/loanapprovalcustom.js"></script>
+
+<style>
+  .section-title h5 {
+    text-align: left;
+    /*font-size: 18px;*/
+    margin-top: 0px;
+    font-weight: bold;
+  }
+  .panel-asik label {
+    font-size: 14px;
+    margin-top: 3px;
+  }
+  .panel-asik h3 {
+    text-align: left;
+    padding-bottom: 4px;
+    font-size: 12px;
+    margin-bottom: 8px;
+    font-weight: bold;
+    margin-top: 0px;
+  }
+  .panel-asik .clearfix.with-space {
+    margin-bottom: 8px;
+  }
+  .number-label{
+    font-weight: bolder;
+    font-size: 20px;
+  }
+  .text-label{
+    font-weight: bolder;
+    font-size: 15px;
+  }
+
+  .mgtop-10{
+    margin-top: -10px;
+  }
+  .panel-asik .panel-heading {
+    padding: 4px 15px;
+  }
+
+  #tab0 {
+    font-size: 11px;
+  }
+  /*.k-grid table {
+    margin-bottom: 5px;
+    background-color: white;
+  }*/
+  .table-divider {
+    width: 1% !important;
+      border: none !important;
+    background-color: #fafafa !important;
+  }
+  .dummy-td {
+    border: none !important;
+    background-color: #fafafa !important;
+  }
+  .k-grid td {
+    white-space: normal !important;
+  }
+  .k-widget {
+    border: none !important;
+  }
+  .text-bold {
+    font-weight: bold !important;
+  }
+  .k-grid tr td {
+    border-width: 1px !important;
+  }
+  .chartscroll{
+    overflow-y: scroll;
+  }
+  .header-bgcolor2 {
+    background-color: #0B7A75 !important;
+    color: white !important;
+  }
+  .leftside{
+    text-align: left;
+    /*padding: 5px !important;*/
+
+  }
+  .rightside{
+    text-align: right;
+    /*padding: 5px !important;*/
+  }
+  #accordion{
+    margin-bottom: 10px;
+  }
+  #overview{
+    padding:10px;
+  }
+  #imgComm{
+    float: right;
+    cursor: pointer;
+  }
+  #setComments{
+    padding-bottom: 11px
+  }
+  .pp{
+    line-height: 150%;
+  }
+
+  .panel-heading {
+    border-bottom: 0px;
+  }
+
+  .panel-default>.panel-heading {
+    background-color: transparent;
+  }
+  div.panel-default.col-sm-12.col-full {
+    position: relative;
+  }
+  div.panel-default.col-sm-12.col-full > div.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .panel-default.content {
+    margin-bottom: 15px;
+  }
+
+  .col-full > .panel-heading {
+      margin-bottom: -15px;
+  }
+
+
+  .panel-default.content > .panel-heading {
+    background-color: #313d50;
+    color: white;
+    border-radius: 7px;
+    padding: 5px;
+  }
+  .panel-default.content > .panel-body,
+  .panel-default.content > .panel-default,
+  .panel-default.content .panel-row > .panel-default,
+  .panel-default.content .panel-row > .panel-body {
+    margin-top: 5px;
+    background-color: #ededed;
+    border-radius: 7px;
+  }
+
+  .btn-footer {
+    background-color: #00aef1;
+    border-color: #00aef1;
+    color: white;
+  }
+
+  .left-scroller {
+    position: absolute;
+    top: 33px;
+    left: 2px;
+    bottom: 10px;
+    width: 20px;
+    z-index: 1;
+  }
+  .left-scroller .wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .left-scroller .wrapper:before {
+    content: " ";
+    position: absolute;
+    left: 6px;
+    width: 2px;
+    top: 0px;
+    bottom: 0px;
+    opacity: 0.8;
+  }
+  .left-scroller .wrapper a {
+    display: block;
+    position: absolute;
+    left: 0px;
+    width: 14px;
+    height: 14px;
+    border-radius: 7px;
+  }
+  .left-scroller .wrapper:before,
+  .left-scroller .wrapper a {
+    background-color: #202935;
+  }
+  .left-scroller .wrapper a:nth-child(1) {
+    top: 0px;
+  }
+  .left-scroller .wrapper a:nth-child(2) {
+    top: 50px;
+  }
+  .left-scroller .wrapper a:nth-child(3) {
+    top: 100px;
+  }
+
+  .tooltipster-left-scroller {
+    border-radius: 5px;
+    border: none;
+    background: #202935;
+    color: white;
+  }
+  .tooltipster-left-scroller .tooltipster-content {
+    font-family: Lato, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+    padding: 4px 8px;
+  }
+  .tooltipster-left-scroller .tooltipster-content .tooltipster-arrow {
+    top: -1px;
+  }
+</style>
+
+{{template "filter.html"}}
+
+<div>
+  <div class="col-sm-12 col-sm-12 ez panel-content">
+    <div class="panel ez no-padding hardcore">
+      <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+
+      <div class="panel-body">
+
+        <div class="col-md-6 no-padding">
+          <div class="left-scroller">
+            <div class="wrapper">
+              <a href="#" data-bind="click: r.scrollTo('ad')" title="Account Details"></a>
+              <a href="#" data-bind="click: r.scrollTo('o')" title="Overview"></a>
+              <a href="#" data-bind="click: r.scrollTo('bs')" title="Banking Snapshot"></a>
+              <a href="#" data-bind="click: r.scrollTo('kpp')" title="Key Policy Parameters"></a>
+              <a href="#" data-bind="click: r.scrollTo('kfr')" title="Key Financial Ratios"></a>
+              <a href="#" data-bind="click: r.scrollTo('kfp')" title="Key Financial Parameters"></a>
+              <a href="#" data-bind="click: r.scrollTo('pmd')" title="Promoter & Management Details"></a>
+            </div>
+          </div>
+          <div class="col-sm-12 no-padding chartscroll divided-col col-full" style="padding-left: 11px">
+
+            <!-- Account Details -->
+            <div class="panel-default col-sm-12 col-full" id="ad">
+              {{ template "accountdetails.html" }}
+            </div>
+
+            <!-- Overview -->
+            <div class="panel-default col-sm-12 col-full" id="o">
+              {{ template "overview.html" }}
+            </div>
+
+            <!-- Banking O/S Snapshot -->
+            <div class="panel-default col-sm-12 col-full" id="bs">
+              {{ template "bankingsnapshot.html" }}
+            </div>
+
+            <!-- Key Policy Parameters -->
+            <div class="panel-default col-sm-12 col-full" id="kpp">
+              {{template "keypolicyparameters.html"}}
+            </div>
+
+            <!-- Key Financial Ratios -->
+            <div class="panel-default col-sm-12 col-full" id="kfr">
+                {{template "keyfinancialratios.html"}}
+            </div>
+
+            <!-- Key Financial Parameters -->
+            <div class="panel-default col-sm-12 col-full" id="kfp">
+                {{template "keyfinancialparameters.html"}}
+            </div>
+
+            <!-- Promoter & Management Details -->
+            <div class="panel-default col-sm-12 col-full" id="pmd">
+                <div class="panel-heading pmd"><h3 class="text-center">Promoter & Management Details</h3></div>
+                {{template "cibildetails.html"}}
+                {{template "redflags.html"}}
+                {{template "realestateposition.html"}}
+
+                <div class="footer col-sm-12">
+                  <button onclick="r.showDetails('pmdb')" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
+                  <button data-bind="" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Full Form</button>
+                </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-md-6 no-padding divided-col col-full" style="background-color: #202935">
+          <style>
+            .k-tabstrip-items .k-state-default {
+              border: none;
+              width: 49.5%;
+            }
+            .k-tabstrip-items .k-state-active {
+              background-color: #202935;
+              color: white;
+              width: 50.7%;
+            }
+            .k-tabstrip-items .k-state-active .k-link {
+              color: white;
+            }
+            .k-tabstrip .k-content.k-state-active {
+              background-color: #202935;
+              color: white;
+            }
+          </style>
+          <div id="tabstrip">
+              <ul>
+                  <li class="k-state-active">
+                      Decision Committee Final Sanction
+                  </li>
+                  <li>
+                      Credit Analyst Comments
+                  </li>
+              </ul>
+              {{template "comments.html"}}
+          </div>
+          <script type="text/javascript">
+            $(document).ready(function() {
+                $("#tabstrip").kendoTabStrip({
+                  animation: false
+                });
+            });
+          </script>
+        </div>
+        <div class="col-md-12">
+          <!-- ========================================================== -->
+            <div>
+              <!--loanapproval page-->
+              <div class="col-sm-12 col-sm-12 ez panel-content" style="display: none">
+                <div class="panel ez no-padding hardcore">
+                  <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+                  <div class="panel-heading"></div>
+
+                  <!-- loan approval start -->
+                  <div class="panel-body">
+                    <div class="tab-content cotainer-tab">
+                      <div class="tab-pane active" id="tab0">
+                        <table class="table table-bordered KI" id="headerpdf">
+                          <thead >
+                              <tr class="header-table hiddenrow">
+                                  <td class="text-center header-bgcolor">X 10 FINANCIAL SERVICES LTD.</td>
+                              </tr>
+                              <tr class="hiddenrow">
+                                  <td data-bind="text:loanapproval.companyname" class="sub-bgcolor center"></td>
+                              </tr>
+                          </thead>
+                        </table>
+                        <div class="clearfix"></div>
+                        <div id="setComments">
+                          <!-- <div id="accordion" class="header-bgcolor2" style="height: 73px;text-align: center;padding-top: 30px;">
+                          Credit Analyst : <span data-bind="text:loanapproval.creditanalyst"></span>
+                          </div> -->
+                        </div>
+
+                        {{template "allfield.html"}}
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> <!--end of loanapproval-->
+            </div>
+        </div>
+        <!-- <div class="col-md-12">
+          <img class="img-responsives no-margin tooltipster" title="Comments" id="imgComm" data-bind="click:apcom.showComments" src="/static/img/user_comment.png">
+        </div> -->
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  
+</script>

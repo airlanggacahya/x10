@@ -1,0 +1,241 @@
+<script type="text/javascript">
+  model.PageTopMenu("Data Entry");
+  model.PageId('{{.Menuname}}');
+  model.BreadCrumbs.push(new BreadCrumb("Data Entry", "Data Entry", "#", "", ""));
+  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+  model.Access = ko.observable('{{.Menuid}}');
+  model.View = ko.observable('{{.View}}');
+  model.Create= ko.observable('{{.Create}}');
+  model.Delete= ko.observable('{{.Delete}}');
+  model.Process= ko.observable('{{.Process}}');
+  model.Edit= ko.observable('{{.Edit}}')
+  model.User= ko.observable('{{.Username}}');
+</script>
+
+<style type="text/css">
+  table {
+    font-size: 10px;
+  }
+
+  .table>thead>tr>th {
+    vertical-align: middle;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .text-right {
+    text-align: right;
+  }
+
+  .no-padding {
+    padding: 0px;
+  }
+
+  .spacer {
+    padding: 5px;
+  }
+  .comment-container{
+    margin-top: -10px;
+    padding-bottom: 5px;
+  }
+  .no-margin{
+    margin: 0px;
+  }
+  .comment-a{
+    text-decoration: none!important;
+  }
+  .k-grid td , th{
+    padding:7px;
+    min-width: 80px;
+  }
+
+  .k-grid .onlyNumb{
+    text-align: right;
+  }
+
+  .container-companysummary{
+    max-height: 450px;
+    overflow: scroll;
+    border: 1px solid #e4e4e4;
+    padding: 0px;
+  }
+
+  .container-cibil{
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+   .width-container{
+    width: 58.333333%
+  }
+
+@media (min-width: 1000px){
+    .width-container{
+      width: 64.333333%
+    }
+    .container-cibil {
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+}
+
+@media (min-width: 1200px){
+  .width-container{
+    width: 67.333333%
+  }
+  .container-cibil {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+}
+
+  .swal2-cancel{
+    margin-left: 10px;
+  }
+  .swal-custom {
+    width: 22% !important;
+    margin-left: -32% !important;
+    margin-top: -3% !important;
+    top: 40% !important;
+    position: absolute;
+  }
+  .custom-table>tbody>tr>td {
+    padding: 0px;
+  }
+  .CBComment{
+    z-index: 99999999;
+  }
+
+  .comment-body{
+    max-height: 500px;
+    overflow-y: scroll;
+  }
+
+  .no-border td{
+    border: none!important;
+  }
+</style>
+<script src="/static/core/cibilnew.js"></script>
+
+<!-- <div class="spacer"></div> -->
+{{template "filter.html"}}
+
+<div data-bind="with: cibil">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="col-md-12 col-sm-12 ez panel-content">
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="col-md-12 col-sm-12 ez panel-content">
+        <div class="panel-body">
+          <div class="row">
+            <!-- <div class="col-md-12"></div> -->
+            <!-- <div class="col-md-12"><span class="pull-right" style="margin-bottom: 13px"></span></div> -->
+            <div class="col-md-12">
+              <div class="row">
+                <!-- <div class="col-md-8"> -->
+                  <!-- <div class="row"> -->
+                    <!-- <div class="col-md-4"></div> -->
+                    <div class="col-md-6 comment-container">
+                      <label>Comment: </label>
+                      <a href="#" class="comment-a">
+                      <img class="btn-comment img-responsives no-margin" style="height: 33px !important;" data-bind="click:cibil.ShowComment" src="/static/img/user_comment.png" >
+                      </a>
+                      <button class="btn btn-sm btn-confirm" onclick="updateConfirmCibil(1)">Confirm</button>
+                      <button class="btn btn-sm btn-danger btn-unconfirm" onclick="updateConfirmCibil(0)">Unconfirm</button>
+                      <button class="btn btn-sm btn-freeze" data-bind="click:cibil.eventfreeze">Freeze</button>
+                      <button class="btn btn-sm btn-unfreeze" style="display:none" data-bind="click:cibil.eventunfreeze">Unfreeze</button>
+                    </div>
+                    <div class="col-md-6" style="text-align: right;"><span class="confirmdate"></span></div>
+                    <!-- <div class="col-md-1"></div> -->
+                  <!-- </div> -->
+                <!-- </div> -->
+                <!-- <div class="col-md-4"> -->
+
+                <!-- </div> -->
+              </div>
+              <!-- <div class="spacer"></div> -->
+              <div class="row container-all">
+                <div class="col-md-9 container-cibil width-container" id="test">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <ul class="reportSummary active" data-collapsible="accordion" style="margin-left: -41px;">
+                        <li>
+                          <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i><span data-bind="text:r.titleCibil()">Company Summary</span><i class="fa fa-chevron-down pull-right"></i></div>
+                          <div class="collapsible-body no-margin no-padding">
+                            {{template "cibilgridnew.html"}}
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 container-cibil" style="margin-left: 5%">
+                  <div class="row">
+                    <div class="col-ms-12">
+                      <ul class="promoters active" data-collapsible="accordion" style="margin-left: -41px;">
+                        <li>
+                          <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Promoters / Directors / Guarantors<i class="fa fa-chevron-down pull-right"></i></div>
+                          <div class="collapsible-body no-padding no-margin">
+                          {{template "panelcibilnew.html"}}
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <ul class="entryreportCibil active" data-collapsible="accordion" style="margin-left: -41px;">
+                    <li>
+                      <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Please enter following details for the Borrower<i class="fa fa-chevron-down pull-right"></i></div>
+                      <div class="collapsible-body no-margin no-padding">
+                      {{template "entryreportcibilnew.html"}}
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <ul class="collapsiblecibil" data-collapsible="accordion" style="margin-left: -41px;">
+        <li>
+          <div class="collapsible-header header-bgcolor active"><i class="fa fa-list"></i>Company CIBIL Score <i class="fa fa-chevron-down pull-right"></i></div>
+          <div id="companyCibil" class="collapsible-body">
+            {{template "panelcibildetails.html"}}
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-12">
+      <ul class="collapsibleguarantor" data-collapsible="accordion" style="margin-left: -41px;">
+        <li>
+          <div class="collapsible-header header-bgcolor active"><i class="fa fa-list"></i>Promotors / Directors / Guarantors CIBIL Score<i class="fa fa-chevron-down pull-right"></i></div>
+          <div id="companyCibil" class="collapsible-body">
+            {{template "panelcibilguarantors.html"}}
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div>
+<div id="CBComment" class="modal fade modal-history">
+  <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title">Comments</h4>
+        </div>
+        <div class="modal-body comment-body">
+          {{template "cibilcomment.html"}}
+        </div>
+      </div>
+  </div>
+</div>
+
+</div>

@@ -451,40 +451,14 @@ function checkConfirmedOrNot(statusnow, confirmedval, verifyval, res, emptydata,
 
 app.formatnum =  function(number, decimalPlace) {
    decimalPlace = (typeof decimalPlace === "undefined" ? 0 : decimalPlace);
-
-   var suffix = ((String(number).indexOf(".") > -1) ? String(number).split(".")[1].substring(0, decimalPlace) : "");
-   var prefix = ((String(number).indexOf(".") > -1) ? String(number).split(".")[0] : String(number)).split("").reverse().join("");
-
-   var result = "";
-    for (var i = 0; i < prefix.length; i++) {
-      result += prefix[i];
-      if (i == 2)
-          result += ",";
-      else if (i > 2 && ((i - 2) % 2 == 0))
-          result += ",";
-    }
-
-    result = result.split("").reverse().join("")
-
-    if (suffix.length > 0) if (parseInt(suffix, 10) != 0) result = result + "." + suffix;
-    result = result.replace(/- /g, "-");
-
-    if(String(number).length % 2 != 0) {
-      var res = result.split('')
-      // var remove = res.splice(0,1,'')
-      result = res.join('')
-    }
-
-    result = result.replace(/\s+/g, '');
-    result = result.replace(/^\,+|\,+$/g, '');
-    return result;
+   return kendo.toString(number, 'n' + decimalPlace)
 }
 
 app.masterRTR = [
     { alias: 'TotalObligationPOS', name: 'Total Obligations - POS (Rs lacs)' },
     { alias: 'TotalObligationEMI', name: 'Total Obligations - EMI (Rs)' },
     { alias: 'CloseWithin3MonthPOS', name: 'Close Within 3 Month - POS (Rs lacs)' },
-    { alias: 'TotalObligationEMI', name: 'Close Within 3 Month - EMI (Rs)' },
+    { alias: 'CloseWithin3MonthEMI', name: 'Close Within 3 Month - EMI (Rs)' },
     { alias: 'PBSLPOS', name: 'P.B.S.L - POS (Rs lacs)' },
     { alias: 'PBSLEMI', name: 'P.B.S.L - EMI (Rs)' },
     { alias: 'BalancePOS', name: 'Balance Transfer - POS (Rs lacs)' },
@@ -494,7 +468,7 @@ app.masterRTR = [
     { alias: 'X10IntObligation', name: 'X10 Int. Obligation (Rs)' },
     { alias: 'SumExtenalYearly', name: 'External Yearly Repayment (Rs. Lacs)' },
     { alias: 'YearlyRepayment', name: 'External Yearly Repayment (Rs. Lacs) incl. X10 Int' },
-    { alias: 'EMI', name: 'Total EMI Bounce' },
+    { alias: 'SumBounces', name: 'Total EMI Bounce' },
     { alias: 'MAXofDPDTrack', name: 'MAX of DPD Track' },
 ]
 
@@ -514,12 +488,13 @@ app.masterBank = [
     { alias: 'ODInterestPaid', name: 'OD Details -  Total Interest Paid ' },
     { alias: 'AMLAvgCredits', name: 'AML - Average Credits' },
     { alias: 'AMLAvgDebits', name: 'AML - Average Debits' },
+    { alias: 'BankingToTurnoverRatio', name: 'Banking to Turnover Ratio' },
     { alias: 'ABB', name: 'Average ABB' }
 ]
 
 app.masterAccount = [
-    { alias: 'ACSProduct', name: 'Account Setup Details - Product' },
-    { alias: 'ACSScheme', name: 'Account Setup Details - Scheme' },
+    { alias: 'ACSProduct', name: 'Account Setup Details - Product' ,master : "Products"},
+    { alias: 'ACSScheme', name: 'Account Setup Details - Scheme', master : "Scheme" },
     { alias: 'ACSPDRemarks', name: 'Account Setup Details - PD Remarks' },
     { alias: 'PDCustomerMargin', name: 'Account Setup Details - Customer Margin' },
 
@@ -531,7 +506,7 @@ app.masterAccount = [
     { alias: 'BDCustomerSegmentClasification', name: 'Borrower Details - Business Segment' , master : "RatingMastersCustomerSegment"  },
     { alias: 'BDBorrowerConstitution', name: 'Borrower Details - Borrower Constitution' , master : "BorrowerConstitutionList" },
     { alias: 'BDMarketReference', name: 'Borrower Details - Market Reference' ,master : "MarketReferences" },
-    { alias: 'BDExternalRating', name: 'Borrower Details - External Rating' },
+    { alias: 'BDExternalRating', name: 'Borrower Details - External Rating',master : "ExternalRatings" },
     { alias: 'BDManagement', name: 'Borrower Details - Management' },
 
     { alias: 'LDProposedLoanAmount', name: 'Loan Details - Requested Loan Amount' },

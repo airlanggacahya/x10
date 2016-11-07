@@ -5,6 +5,7 @@ import (
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"fmt"
+	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -68,6 +69,19 @@ func (c *DataCapturingController) GetCustomerProfile(k *knot.WebContext) interfa
 	return results
 }
 
+// func (c *DataCapturingController) GetCustomerProfile(k *knot.WebContext) interface{} {
+// 	k.Config.OutputType = knot.OutputJson
+
+// 	var results = CustomerProfiles{}
+// 	err := new(DataConfirmController).GetDataConfirmed(custid, dealno, new(CustomerProfiles).TableName(), &results)
+
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	return results
+// }
+
 func (c *DataCapturingController) GetCustomerProfileList(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
@@ -127,6 +141,25 @@ func (c *DataCapturingController) GetCustomerProfileDetail(k *knot.WebContext) i
 		return CreateResult(false, nil, e.Error())
 	} else if csr == nil {
 		return CreateResult(false, nil, "No data found !")
+	}
+
+	return results
+}
+
+func (c *DataCapturingController) GetCustomerProfileDetailConfirmed(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	fmt.Println("masuk GetCustomerProfileDetail")
+	p := struct {
+		CustomerId string
+		Dealno     string
+	}{}
+
+	k.GetPayload(&p)
+
+	var results = CustomerProfiles{}
+	err := new(DataConfirmController).GetDataConfirmed(p.CustomerId, p.Dealno, new(CustomerProfiles).TableName(), &results)
+	if err != nil {
+		return err
 	}
 
 	return results
@@ -274,6 +307,9 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 	if p.Status == 1 {
 		p.ConfirmedBy = Username
 		p.ConfirmedDate = time.Now()
+		if err := new(DataConfirmController).SaveDataConfirmed(cast.ToString(p.ApplicantDetail.CustomerID), p.ApplicantDetail.DealNo.(string), p.TableName(), &p, true); err != nil {
+			return err
+		}
 	} else if p.Status == 2 {
 		p.VerifiedBy = Username
 		p.VerifiedDate = time.Now()

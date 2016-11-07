@@ -40,12 +40,12 @@ left.TemplateWCASSETS = {
 left.TemplateTNW = {
 	value: 0,
 	growth: 0,
-	title:"Total Net worth",
+	title:"Total Net Worth",
 }
 left.TemplateADNW = {
 	value: 0,
 	growth: 0,
-	title:"Adjusted Net worth",
+	title:"Adjusted Net Worth",
 }
 left.TemplateTOTOBW = {
 	value: 0,
@@ -68,7 +68,6 @@ left.loadRatioData = function(){
 	left.ratioDataAudited.Other
 	left.dataYear([])
 	left.dataStickChart([]);
-	console.log(r.rootdates())
 	$("#TOTOBW").removeClass("fa fa-caret-down");
 	$("#TOTOBW").removeClass("fa fa-caret-up");
 	$("#TNW").removeClass("fa fa-caret-down");
@@ -121,10 +120,8 @@ left.loadRatioData = function(){
 			});
 		}else if(data.FieldAlias == "TO"){
 			$.each(data.Values, function(g, value){
-				// console.log("+++++++++", value)
 				$.each(left.ratioDataAudited.Year(), function(i, year){
 					if(value.Date.indexOf(year) != -1){
-						// console.log(value.Value)
 						left.dataTurnOver.push(value.Value)
 					}
 				})
@@ -134,12 +131,10 @@ left.loadRatioData = function(){
 
 	$.each(r.rootdata(), function(e, data){
 		if(data.FieldAlias == "OIBI"){
-			
-			console.log(data.FieldAlias)
+
 			$.each(data.Values, function(g, value){
 				$.each(left.ratioDataAudited.Year(), function(i, year){
 					if(value.Date.indexOf(year) != -1){
-						console.log(value.Value)
 						left.templateSeries()[1].data.push(value.Value)
 						left.dataStickChart.push(
 							{
@@ -154,11 +149,9 @@ left.loadRatioData = function(){
 			})
 		}if(data.FieldAlias == "SALES"){
 			left.templateSeries()[1].data = [];
-			console.log(data.FieldAlias)
 			$.each(data.Values, function(g, value){
 				$.each(left.ratioDataAudited.Year(), function(i, year){
 					if(value.Date.indexOf(year) != -1){
-						console.log(value.Value)
 						left.templateSeries()[0].data.push(value.Value)
 						left.dataStickChart.push(
 							{
@@ -180,7 +173,8 @@ left.loadRatioData = function(){
 					var growth = toolkit.number((value.Value - data.Values[g - 1].Value) / data.Values[g - 1].Value * 100);
 					left.TNW.value(value.Value);
 					left.TNW.growth(kendo.format('{0:n2}', growth) + ' %');
-					if(value.Value > growth){
+
+					if(growth > 0){
 						$("#TNW").css("color", "#627f4f");
 						$("#TNW1").css("color", "#627f4f");
 						$("#TNW").addClass("fa fa-caret-up");
@@ -190,9 +184,8 @@ left.loadRatioData = function(){
 						$("#TNW").addClass("fa fa-caret-down");
 					}
 				}
-				// })
 			})
-		}else if(data.FieldAlias == "WCASSETS"){
+		}else if(data.FieldAlias == "WORKINGCAPITALASSETS" || data.FieldAlias == 'WCASSETS'){
 			var onyear = left.ratioDataAudited.Year();
 			var ind = left.ratioDataAudited.Year().length - 1;
 			$.each(data.Values, function(g, value){
@@ -201,7 +194,8 @@ left.loadRatioData = function(){
 					var growth = toolkit.number((value.Value - data.Values[g - 1].Value) / data.Values[g - 1].Value * 100);
 					left.WCASSETS.value(value.Value);
 					left.WCASSETS.growth(kendo.format('{0:n2}', growth) + ' %');
-					if(value.Value > growth){
+
+					if(growth > 0){
 						$("#WCASSETS").css("color", "#627f4f");
 						$("#WCASSETS1").css("color", "#627f4f");
 						$("#WCASSETS").addClass("fa fa-caret-up");
@@ -211,9 +205,8 @@ left.loadRatioData = function(){
 						$("#WCASSETS").addClass("fa fa-caret-down");
 					}
 				}
-				// })
 			})
-		}else if(data.FieldAlias == "ADNW"){
+		}else if(data.FieldAlias == "ADJUSTEDNW"){
 			var onyear = left.ratioDataAudited.Year();
 			var ind = left.ratioDataAudited.Year().length - 1;
 			$.each(data.Values, function(g, value){
@@ -222,7 +215,8 @@ left.loadRatioData = function(){
 					var growth = toolkit.number((value.Value - data.Values[g - 1].Value) / data.Values[g - 1].Value * 100);
 					left.ADNW.value(value.Value);
 					left.ADNW.growth(kendo.format('{0:n2}', growth) + ' %');
-					if(value.Value > growth){
+
+					if(growth > 0){
 						$("#ADNW").css("color", "#627f4f");
 						$("#ADNW1").css("color", "#627f4f");
 						$("#ADNW").addClass("fa fa-caret-up");
@@ -232,7 +226,6 @@ left.loadRatioData = function(){
 						$("#ADNW").addClass("fa fa-caret-down");
 					}
 				}
-				// })
 			})
 		}else if(data.FieldAlias == "TOTOBW"){
 			var onyear = left.ratioDataAudited.Year();
@@ -243,7 +236,8 @@ left.loadRatioData = function(){
 					var growth = toolkit.number((value.Value - data.Values[g - 1].Value) / data.Values[g - 1].Value * 100);
 					left.TOTOBW.value(value.Value);
 					left.TOTOBW.growth(kendo.format('{0:n2}', growth) + ' %');
-					if(value.Value > growth){
+
+					if(growth > 0){
 						$("#TOTOBW").css("color", "#627f4f");
 						$("#TOTOBW1").css("color", "#627f4f");
 						$("#TOTOBW").addClass("fa fa-caret-up");
@@ -253,10 +247,9 @@ left.loadRatioData = function(){
 						$("#TOTOBW").addClass("fa fa-caret-down");
 					}
 				}
-				// })
 			})
 		}
-		
+
 	})
 
 	left.initEvents()
@@ -268,12 +261,11 @@ left.loadRatioData = function(){
 			// $("#profitableratios").data("kendoChart").refresh();
 			$("#operatingratios").data("kendoChart").refresh();
 			$("#leverageratios").data("kendoChart").refresh();
-		}catch(err){
-			console.log(err)
+		}catch(e){
+
 		}
-		
 	});
-	
+
 }
 
 left.initEvents = function () {
@@ -315,7 +307,7 @@ left.createChart = function(){
             // style: "smooth",
              markers: {
                size: 3
-            }		 	
+            }
         },
         series: [{
             name: "EBITDA",
@@ -346,7 +338,7 @@ left.createChart = function(){
 	          dashType: "dashDot",
 	          visible: true
 	        },
-	        
+
         },
         tooltip: {
             visible: true,
@@ -359,134 +351,69 @@ left.createChart = function(){
     	$("#chartline").getKendoChart().refresh();
     }
 
-	// $("#chartstick").kendoChart({
-	// 	chartArea: {
-	//         width: 200,
-	//         height: 200,
-	//         background: "#f3c60c"
-	//     },
- //        title: {
- //            text: ""
- //        },
- //        legend: {
- //            visible: true,
- //            position: "bottom",
- //            orientation: "horizontal",
- //            offsetX: 20,
-	// 	    offsetY: 15,
-	// 	    labels: {
-	// 	        //font: "9px Arial,Helvetica,sans-serif"
-	// 	    }
- //        },
- //        seriesDefaults: {
- //            type: "column",
- //            missingValues: "gap",
- //            stack: {
- //                    type: "100"
- //                }
-
-
- //        },
- //        series: left.templateSeries(),
- //        // seriesColors: ["#cd1533", "#d43851"],
- //        valueAxis: {
- //            line: {
- //                visible: false
- //            },
- //            labels: {
-	// 	        visible: false
-	// 	    }
-
- //        },
- //        categoryAxis: {
- //            categories: left.dataYear(),
- //            majorGridLines: {
- //                visible: false
- //            }
- //        },
- //        tooltip: {
- //            visible: true,
- //             template: "#=series.name# : #= value  # </br> turnover : #= series.turnover[series.index] #"
- //             // template : kendo.template($("#templateChart").html()),
- //        }
- //    });
-
-    $("#chartstick").kendoChart({
-		title: { "text" : "" },
-		chartArea: {
-	        // width: 275,
-	        height: 155,
-	        background: "transparent"
+	$("#chartstick").kendoChart({
+	  	dataSource: {
+	      data:left.dataStickChart(),
+	      group: {
+	        field: "name",
+	        dir: "desc"
+	      },
+	      sort: [
+	        { field: "categoryOrder", dir: "asc" },
+	    		{ field: "name", dir: "desc" }
+	      ]
 	    },
-		legend: {
-	       	visible: true,
-	        position: "bottom",
-	        orientation: "horizontal",
-	        offsetX: 20,
-		    offsetY: 15,
-		    labels: {
-		        //font: "9px Arial,Helvetica,sans-serif"
-		    }
+	    chartArea: {
+	      height: 150,
+	      background:"transparent"
 	    },
-	    dataSource: {
-	        data:left.dataStickChart(),
-	        group: {
-	            field: "name",
-	            dir: "desc"
-	        },
-	        sort: [
-	            { field: "categoryOrder", dir: "asc" },
-	            { field: "name", dir: "desc" }
-	        ]
+	    legend: {
+	      position: "bottom"
 	    },
-	    plotArea: {
-            margin: -5
-        },
 	    seriesDefaults: {
-	        type: "bar",
-	        missingValues: "gap",
-            stack: {
-                type: "100"
-            }
+            type: "bar",
+            stack: true,
+	   		overlay: {
+	        	gradient: "none"
+	      	}
 	    },
 	    series: [{
-	        type: "column",
-	        field: "value",
-	        padding: 0
+	      type: "column",
+	      field: "value",
+	      padding: 0
 	    }],
-	    seriesColors: [ecisColors[0], ecisColors[4]],
+	    seriesColors : ecisColors,
 	    valueAxis: {
-	        line: { visible: false },
-	        labels: {
-		        visible: false
+	      line: { visible: false },
+	      labels: {
+	        visible: false
 		    },
-	        majorGridLines: {
-	            visible: false
-	        }
+	      majorGridLines: {
+	        visible: false
+	      }
 	    },
 	    categoryAxis: {
-	        field: "categoryOrder",
-	        majorGridLines: {
-                visible: false
-            }
-	        // crosshair: {
-	        //   dashType: "dashDot",
-	        //   visible: true
-	        // },
+	      field: "categoryOrder",
+	      majorGridLines: {
+	            visible: false
+	        }
+	      // crosshair: {
+	      //   dashType: "dashDot",
+	      //   visible: true
+	      // },
 	    },
 	    tooltip: {
-	        visible: true,
-	        template: function(e){
-	        	console.log(e.dataItem.name);
-	        	return "<div style='text-align: left;'> "+e.dataItem.name+ " - "+e.dataItem.categoryOrder+" : "+e.dataItem.value+"</br> Turnover : "+e.dataItem.turnover +"</div>";
-	        }
-	    }    
+	      visible: true,
+	      template: "#= series.name #: #= value # <br /> Turnover: #= dataItem.turnover #"
+	    }
 	});
-
-	
 }
 
-
+var clickDiv = function(id) {
+	return function(){
+		$('#'+id+' a').simulateClick("click")
+	}
+}
 $(function(){
 	// left.loadRatioData();
 	// left.createChartLine();

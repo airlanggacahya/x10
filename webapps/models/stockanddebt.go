@@ -1,8 +1,12 @@
 package models
 
 import (
+	. "eaciit/x10/webapps/connection"
+	"github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
+	// tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	// "log"
 	"time"
 )
 
@@ -13,6 +17,8 @@ type StockandDebtModel struct {
 	AOM           []AOM
 	AA            []AA
 	Flag          int
+	IsConfirm     bool      `bson:"IsConfirm,omitempty"`
+	IsFreeze      bool      `bson:"IsFreeze,omitempty"`
 	DateFlag      time.Time `bson:"DateFlag,omitempty"`
 }
 
@@ -46,10 +52,59 @@ func NewStockandDebtModel() *StockandDebtModel {
 	m := new(StockandDebtModel)
 	return m
 }
+
 func (e *StockandDebtModel) RecordID() interface{} {
 	return e.Id
 }
 
 func (m *StockandDebtModel) TableName() string {
 	return "StockandDebt"
+}
+
+func (m *StockandDebtModel) Confirm(id string, status bool, ctx *orm.DataContext) (StockandDebtModel, error) {
+	stock, e := m.getById(id)
+	if e != nil {
+		return stock, e
+	}
+
+	stock.IsConfirm = status
+	stock.DateFlag = time.Now()
+
+	e = ctx.Save(&stock)
+
+	return stock, e
+}
+
+func (m *StockandDebtModel) Freeze(id string, status bool, ctx *orm.DataContext) (StockandDebtModel, error) {
+	stock, e := m.getById(id)
+	if e != nil {
+		return stock, e
+	}
+
+	stock.IsFreeze = status
+	e = ctx.Save(&stock)
+
+	return stock, e
+}
+
+func (m *StockandDebtModel) getById(id string) (StockandDebtModel, error) {
+	cn, e := GetConnection()
+	defer cn.Close()
+	result := StockandDebtModel{}
+
+	idObject := bson.ObjectIdHex(id)
+	csr, e := cn.NewQuery().
+		Where(dbox.Eq("_id", idObject)).
+		From("StockandDebt").
+		Cursor(nil)
+
+	if csr == nil {
+		return result, e
+	} else {
+		defer csr.Close()
+	}
+
+	e = csr.Fetch(&result, 1, true)
+
+	return result, e
 }

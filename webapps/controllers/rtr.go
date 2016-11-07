@@ -66,6 +66,7 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 
 	t := []tk.M{}
 	err := k.GetPayload(&t)
+	tk.Printfn("----------->", t)
 	if err != nil {
 		tk.Println(err.Error())
 	}
@@ -104,7 +105,7 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 	defer qinsert.Close()
 
 	arr := []RTRBottom{}
-	for _, val := range t {
+	for idx, val := range t {
 		ar := RTRBottom{}
 
 		list[0].Months[0].Value = val.GetString("Month0")
@@ -137,21 +138,51 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 		ar.EMI = val.GetFloat64("EMI")
 		ar.EMI = val.GetFloat64("EMI")
 		ar.Bounces = int64(val.GetFloat64("Bounces"))
+		ar.DpdMaxTrack = val.GetInt("DpdMaxTrack")
 		//ar.EMIBalance = val.GetFloat64("EMIBalance")
 		ar.LoanTenor = int64(val.GetFloat64("LoanTenor"))
 		ar.LoanStart = cast.String2Date(strings.Split(val.GetString("LoanStart"), "T")[0], "yyyy-MM-dd")
 		ar.LoanEnd = cast.String2Date(strings.Split(val.GetString("LoanEnd"), "T")[0], "yyyy-MM-dd")
 		//ar.EMIDue = val.GetFloat64("EMIDue")
-		ar.Id = bson.ObjectIdHex(val.GetString("Id"))
+
+		if val.GetString("Id") == "" {
+			ar.Id = bson.NewObjectId()
+		} else {
+			ar.Id = bson.ObjectIdHex(val.GetString("Id"))
+		}
+
 		ar.DateConfirmed = time.Now()
-		ar.Confirmed = val.Get("Confirmed").(bool)
-		ar.IsBankAnalys = val.Get("IsBankAnalys").(bool)
+
+		if val.Get("IsBankAnalys") != nil {
+			ar.IsBankAnalys = val.Get("IsBankAnalys").(bool)
+		}
+
+		if val.Get("Confirmed") != nil {
+			ar.Confirmed = val.Get("Confirmed").(bool)
+		}
+
+		ar.Status = val.GetInt("Status")
+		ar.DateFreeze = cast.String2Date(strings.Split(val.GetString("DateFreeze"), "T")[0], "yyyy-MM-dd")
+		ar.DateSave = cast.String2Date(strings.Split(val.GetString("DateSave"), "T")[0], "yyyy-MM-dd")
+
 		arr = append(arr, ar)
 
 		insdata := map[string]interface{}{"data": ar}
 		em = qinsert.Exec(insdata)
+
+		c.WriteLog(em)
 		if em != nil {
 			return CreateResult(false, nil, em.Error())
+		}
+		if ar.Status == 1 {
+			del := false
+			if idx == 0 {
+				del = true
+			}
+
+			if err := new(DataConfirmController).SaveDataConfirmed(ar.CustomerId, ar.DealNo, "RepaymentRecords", &ar, del); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -268,6 +299,7 @@ func (c *RtrController) Create(k *knot.WebContext) interface{} {
 		//	ar.EMIDue = val.GetFloat64("EMIDue")
 		ar.IsBankAnalys = false
 		ar.Id = bson.NewObjectId()
+		ar.Bounces = int64(val.GetInt("Bounces"))
 		arr = append(arr, ar)
 
 		insdata := map[string]interface{}{"data": ar}

@@ -131,6 +131,12 @@ r.dataEntryCibilReport = ko.observable({
     Status: 0
 });
 
+r.cibilStatus = ko.observable(1)
+r.isConfirm = ko.observable(0)
+r.isFreeze = ko.observable(0)
+r.ConfirmText = ko.observable("Confirm")
+r.FreezeText = ko.observable("Freeze")
+
 r.getData = function() {
 
   var param = {CustomerId: filter().CustomerSearchVal()}
@@ -157,6 +163,32 @@ r.getData = function() {
 
       r.setData();
       r.setDataEntry(r.reportDraft());
+
+      r.cibilStatus(1)
+      if(data[1].CibilReport.length > 1) {
+        r.cibilStatus(data[2].CibilDraft.Status)
+        if(data[2].CibilDraft.Status == 0 && data[1].CibilReport[0].Status != undefined) {
+          r.cibilStatus(data[1].CibilReport[0].Status)
+        }
+      }
+
+      if(data[1].CibilReport.length > 0 && data[1].CibilReport[0].IsConfirm != undefined) {
+        r.isConfirm = ko.observable(data[1].CibilReport[0].IsConfirm)
+        if(data[1].CibilReport[0].IsConfirm == 1) {
+          r.ConfirmText("Re-Enter")
+        } else {
+          r.ConfirmText("Confirm")
+        }
+      }
+
+      if(data[1].CibilReport.length > 0 && data[1].CibilReport[0].IsFreeze != undefined) {
+        r.isFreeze = ko.observable(data[1].CibilReport[0].IsFreeze)
+        if(data[1].CibilReport[0].IsFreeze == 1) {
+          r.FreezeText("Unfreeze")
+        } else {
+          r.FreezeText("Freeze")
+        }
+      }
     }
   })
 }
@@ -487,17 +519,7 @@ r.setDataEntry = function(data) {
   r.dataEntryCibilReport().DetailReportSummary([])
 
   if(data.DetailReportSummary == null) {
-    $.each(r.detailreportsummary(), function(k, v){
-      temp = {}
-      $.each(v, function(ki, vi){
-        if(ki != "CreditFacilities")
-          temp[ki] = ""
-        else
-          temp[ki] = vi
-      })
-
-      r.dataEntryCibilReport().DetailReportSummary.push(temp)
-    })
+    r.addDetailReportSummary()
   } else {
     r.dataEntryCibilReport().DetailReportSummary(data.DetailReportSummary)
   }
@@ -520,8 +542,24 @@ r.addCreditTypeSummary = function (){
   //model.dataEntryCibilReport().CreditTypeSummary(model.dataEntryCibilReport().CreditTypeSummary());
 }
 
+r.addDetailReportSummary = function(){
+  r.dataEntryCibilReport().DetailReportSummary.push({
+    CreditFacilities: ko.observable(''),
+    CurrentBalanceOtherThanStandard: ko.observable(''),
+    CurrentBalanceStandard: ko.observable(''),
+    NoOfLawSuits: ko.observable(''),
+    NoOfOtherThanStandard: ko.observable(''),
+    NoOfStandard: ko.observable(''),
+    NoOfWilfulDefaults: ko.observable('')
+  })
+}
+
 r.removeCreditTypeSummary = function (){
   r.dataEntryCibilReport().CreditTypeSummary.remove(this);
+}
+
+r.removeDetailReportSummary = function (){
+  r.dataEntryCibilReport().DetailReportSummary.remove(this);
 }
 
 r.addDataReport = function(data) {
@@ -602,6 +640,7 @@ var saveCibilReport = function(status){
         $(".collapsiblecibil").hide()
         $(".collapsibleguarantor").hide()
         $(".guarantorhide").hide()
+        $(".comment-container").show()
 
         $(".reportSummary").show()
         $(".promoters").show()
@@ -639,6 +678,7 @@ var saveCibilReport = function(status){
           $(".collapsibleguarantor").hide()
           $(".guarantorhide").hide()
 
+          $(".comment-container").show()
           $(".reportSummary").show()
           $(".promoters").show()
           $(".entryreportCibil").hide()
@@ -667,18 +707,29 @@ var updateConfirmPromotors = function(status){
   })
 }
 
-var updateConfirmCibil = function(status){
-  var param = {CustomerId: filter().CustomerSearchVal()}
-  param["DealNo"] = filter().DealNumberSearchVal()
-  param["IsConfirm"] = status
-  var url = "/datacapturing/updateconfirmcibil"
-
-
-  ajaxPost(url, param, function(data) {
-    if(data.success) {
-      updateConfirmPromotors(status)
+var updateConfirmCibil = function(){
+    var status = 1
+    if(r.isConfirm() == 1) {
+      status = 0
     }
-  })
+    var param = {CustomerId: filter().CustomerSearchVal()}
+    param["DealNo"] = filter().DealNumberSearchVal()
+    param["IsConfirm"] = status
+    var url = "/datacapturing/updateconfirmcibil"
+
+
+    ajaxPost(url, param, function(data) {
+      if(data.success) {
+        if(status == 0){
+          swal("Please Edit / Enter Data", "", "success");
+        } else {
+          swal("Successfully Confirmed", "", "success");
+        }
+
+        updateConfirmPromotors(status)
+      }
+    })
+
 }
 
 var setRatingForCibil = function(rating) {
@@ -766,28 +817,16 @@ var checkConfirmCibil = function(cibilList) {
   }
 
   if(statusCibil == 1) {
-    $(".btn-freeze").attr('disabled', true)
-    $(".btn-unfreeze").attr('disabled', true)
-    $(".btn-confirm").hide()
-    $(".btn-unconfirm").show()
+    // $(".btn-freeze").attr('disabled', true)
+    // $(".btn-unfreeze").attr('disabled', true)
     cibil.unfreeze(false, 1)
     if(cibilList != null) {
-      if(cibilList.IsFreeze) {
-        $(".btn-freeze").hide();
-        $(".btn-unfreeze").show();
-      }else {
-        $(".btn-freeze").show()
-        $(".btn-unfreeze").hide()
-      }
-
       $(".confirmdate").text("Last Confirmed at " + moment(cibilList.AcceptRejectTime).format("DD-MM-YYYY HH:mm A"));
     }
 
   } else {
-    $(".btn-freeze").removeAttr('disabled')
-    $(".btn-unfreeze").removeAttr('disabled')
-    $(".btn-confirm").show()
-    $(".btn-unconfirm").hide()
+    // $(".btn-freeze").removeAttr('disabled')
+    // $(".btn-unfreeze").removeAttr('disabled')
 
     if(cibilList != null) {
       // $(".confirmdate").text("Data Rejected on " + moment(cibilList.AcceptRejectTime).format("DD-MM-YYYY HH:mm A"));
@@ -926,7 +965,7 @@ function backToMain(){
   $(".collapsiblecibil").hide()
   $(".collapsibleguarantor").hide()
   $(".guarantorhide").hide()
-
+  $(".comment-container").show()
   $(".reportSummary").show()
   $(".promoters").show()
   $(".entryreportCibil").hide()
@@ -938,14 +977,22 @@ function refreshFilter(){
    refreshcomment();
 }
 
+r.checkConfirm = function(){
+    if(r.isConfirm()==1) {
+      return true
+    } else {
+      return false
+    }
+}
+
 $(document).ready(function () {
   r.rating("")
   checkConfirmPromotors(r.customerProfile(), r.promotorsscore())
   checkConfirmCibil(null)
 
-  $('.reportSummary').collapsible({
-    accordion : true
-  });
+  // $('.reportSummary').collapsible({
+  //   accordion : true
+  // });
 
   $('.creditTypeSummary').collapsible({
     accordion : true
@@ -986,7 +1033,9 @@ cibil.lastcomment = ko.observable("");
 
 cibil.unfreeze = function(what, cibil){
   if(cibil == 0) {
-    $(".container-all button").prop( "disabled", !what );
+    //$(".container-all button").prop( "disabled", !what );
+    $(".btn-disabled").prop( "disabled", !what );
+    //$(".btn-disabled1").prop( "disabled", !what );
 
     $(".container-all .k-widget").each(function(i,e){
 
@@ -1008,16 +1057,9 @@ cibil.unfreeze = function(what, cibil){
       }
 
     });
-
-   if(!what) {
-      $(".btn-freeze").hide();
-      $(".btn-unfreeze").show();
-    }else {
-      $(".btn-freeze").show()
-      $(".btn-unfreeze").hide()
-    }
   } else {
-    $(".container-all button").prop( "disabled", !what );
+    //$(".container-all button").prop( "disabled", !what );
+    $(".btn-disabled").prop( "disabled", !what );
 
     $(".container-all .k-widget").each(function(i,e){
 
@@ -1051,10 +1093,15 @@ cibil.SendFreeze = function(what){
           var data = res;
           if(data.success){
             cibil.unfreeze(!what,0);
-            if(what)
-            swal("Success","Data Freezed","success");
-            else
-            swal("Success","Data Unfreezed","success");
+            r.isFreeze(what)
+
+            if(what) {
+              swal("Success","Data Freezed","success");
+              r.FreezeText("Unfreeze")
+            } else {
+              swal("Success","Data Unfreezed","success");
+              r.FreezeText("Freeze")
+            }
 
           }else{
             swal("Warning","Freezing failed","warning");
@@ -1064,7 +1111,7 @@ cibil.SendFreeze = function(what){
 }
 
 cibil.eventfreeze = function (){
-   cibil.SendFreeze(true);
+  cibil.SendFreeze(!r.isFreeze());
 }
 
 cibil.eventunfreeze = function(){

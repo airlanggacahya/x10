@@ -106,7 +106,7 @@
                           <label for="Acc" class="control-label">Name :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="name" name="name" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].Name" validationMessage="Name required" required/>
+                          <input type="text" id="Name"  name="name" class="form-control input-sm Name" data-bind="value: detail.biodata()[$index()].Name" validationMessage="Name required" required/>
                         </div>
                       </div>
 
@@ -115,7 +115,7 @@
                           <label for="Acc" class="control-label">Father’s/Spouse Name :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" class="form-control input-sm" id="fathername" name="fathername" data-bind="value: detail.biodata()[$index()].FatherName" validationMessage="Father's Name required" required/>
+                          <input type="text" id="FatherName" class="form-control input-sm FatherName" id="fathername" name="fathername" data-bind="value: detail.biodata()[$index()].FatherName" validationMessage="Father's Name required" required/>
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -124,7 +124,7 @@
                         </div>
                         <div class="col-sm-8 widthfield">
                           <!-- <input  type="checkbox" data-bind="detail.biodata()[$index()].gender, attr: {id: 'gender'+ $index()}" data-off-text="Female" data-on-text="Male" checked="false" id="gender"> -->
-                          <select id="genderdropdown" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].Gender, data: detail.genderList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select one', select:function(e){ changegender(e, $index()) }}"></select>
+                          <select id="Gender" class="Gender" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].Gender, data: detail.genderList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changegender(e, $index()) }}"></select>
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -132,7 +132,7 @@
                           <label for="Acc" class="control-label">Date of Birth :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="datebirth" data-bind="kendoDatePicker: {value: detail.biodata()[$index()].DateOfBirth, format: 'dd-MM-yyyy', change:function(){ changeDateOfBirth(this.value(), $index()) }}" required>
+                          <input type="text" id="DateOfBirth" class="DateOfBirth" data-bind="kendoDatePicker: {value: detail.biodata()[$index()].DateOfBirth, format: 'dd-MM-yyyy', change:function(){ changeDateOfBirth(this.value(), $index()) }}" required>
                           <span class="k-invalid-msg" data-for="datebirth"></span>
                         </div>
                       </div>
@@ -142,7 +142,7 @@
                         </div>
                         <div class="col-sm-8 widthfield">
                           <!-- <input type="checkbox" data-bind="value: detail.biodata()[$index()].ismaried,  attr: {id: 'ismaried'+ $index()}" data-off-text="Maried" data-on-text="Single" checked="false"> -->
-                          <select id="Martialdropdown" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].MaritalStatus, data: detail.maritalStatusList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select one', select:function(e){ changemaritalstatus(e, $index()) }}"></select>
+                          <select id="MaritalStatus" class="MaritalStatus" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].MaritalStatus, data: detail.maritalStatusList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changemaritalstatus(e, $index()) }}"></select>
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -150,7 +150,7 @@
                           <label for="Acc" class="control-label">Anniversary Date :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="anniversarrydate" data-bind="kendoDatePicker: {value: detail.biodata()[$index()].AnniversaryDate, format: 'dd-MM-yyyy', change:function(){ changeAnniversaryDate(this.value(), $index()) }}" required>
+                          <input type="text" id="AnniversaryDate" class="AnniversaryDate" data-bind="kendoDatePicker: {value: detail.biodata()[$index()].AnniversaryDate, format: 'dd-MM-yyyy', change:function(){ changeAnniversaryDate(this.value(), $index()) }}" required>
                           <span class="k-invalid-msg" data-for="datebirth"></span>
                         </div>
                       </div>
@@ -159,7 +159,7 @@
                           <label for="Acc" class="control-label">Shareholding Percentage :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="holdingpercent" data-bind="kendoNumericTextBox: {value: detail.biodata()[$index()].ShareHoldingPercentage, format: '#.00 \\%', change:function(){ changeshareholding(this.value(), $index()) }}" required>
+                          <input type="text" id="ShareHoldingPercentage" class="ShareHoldingPercentage" data-bind="kendoNumericTextBox: {value: detail.biodata()[$index()].ShareHoldingPercentage, format: '#.00 \\%', change:function(){ changeshareholding(this.value(), $index()) }}" required>
                           <span class="k-invalid-msg" data-for="holdingpercent"></span>
                         </div>
                       </div>
@@ -169,7 +169,7 @@
                         </div>
                         <div class="col-sm-8 widthfield">
                           <!-- <input data-bind="value: detail.biodata()[$index()].guarantor, attr: {id: 'guarantor'+ $index()}" type="checkbox" data-off-text="No" data-on-text="Yes" checked="false"> -->
-                          <select id="Guarantodropdown" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].Guarantor, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select one', select:function(e){ changeguarantor(e, $index()) }}"></select>
+                          <select id="Guarantodropdown" class="Guarantor" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].Guarantor, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changeguarantor(e, $index()) }}"></select>
                         </div>
                       </div>
 
@@ -179,7 +179,7 @@
                         </div>
                         <div class="col-sm-8 widthfield">
                           <!-- <input data-bind="value: detail.biodata()[$index()].guarantor, attr: {id: 'guarantor'+ $index()}" type="checkbox" data-off-text="No" data-on-text="Yes" checked="false"> -->
-                          <select id="Guarantodropdown" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].Director, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select one', select:function(e){ changedirector(e, $index()) }}"></select>
+                          <select id="Guarantodropdown" class="Director" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].Director, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changedirector(e, $index()) }}"></select>
                         </div>
                       </div>
 
@@ -189,7 +189,7 @@
                         </div>
                         <div class="col-sm-8 widthfield">
                           <!-- <input data-bind="value: detail.biodata()[$index()].guarantor, attr: {id: 'guarantor'+ $index()}" type="checkbox" data-off-text="No" data-on-text="Yes" checked="false"> -->
-                          <select id="Guarantodropdown" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].Promotor, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select one', select:function(e){ changepromotor(e, $index()) }}"></select>
+                          <select id="Guarantodropdown" class="Promotor" data-bind="kendoDropDownList: { value: detail.biodata()[$index()].Promotor, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changepromotor(e, $index()) }}"></select>
                         </div>
                       </div>
 
@@ -198,7 +198,7 @@
                           <label for="Acc" class="control-label">Educational Qualification :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="education" name="education" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].Education" validationMessage="education required" required/>
+                          <input type="text" id="Education" name="education" class="form-control input-sm Education" data-bind="value: detail.biodata()[$index()].Education" validationMessage="education required" required/>
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -206,7 +206,7 @@
                           <label for="Acc" class="control-label">Designation :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="designation" name="designation" data-bind="kendoDropDownList: {value:detail.biodata()[$index()].Designation, data: detail.desain, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select designation', select:function(e){ changedesignation(e, $index()) }}" required>
+                          <input type="text" id="Designation" class="Designation" name="designation" data-bind="kendoDropDownList: {value:detail.biodata()[$index()].Designation, data: detail.desain, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changedesignation(e, $index()) }}" required>
                           <span class="k-invalid-msg" data-for="designation"></span>
                         </div>
                       </div>
@@ -215,7 +215,7 @@
                           <label for="Acc" class="control-label">PAN Number:</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="pan" name="pan" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].PAN" validationMessage="PAN required" required  />
+                          <input type="text" id="PAN" name="pan" class="form-control input-sm PAN" data-bind="value: detail.biodata()[$index()].PAN" validationMessage="PAN required" required  />
                         </div>
                       </div>
                     </div>
@@ -225,7 +225,7 @@
                           <label for="Acc" class="control-label">Residence Address :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="address" name="address" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].Address" validationMessage="Address required" required  />
+                          <input type="text" id="Address" name="address" class="form-control input-sm Address" data-bind="value: detail.biodata()[$index()].Address" validationMessage="Address required" required  />
                         </div>
                       </div>
 
@@ -234,7 +234,7 @@
                           <label for="Acc" class="control-label">Landmark :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="landmark" name="landmark" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].Landmark" validationMessage="Landmark required" required  />
+                          <input type="text" id="Landmark" name="landmark" class="form-control input-sm Landmark" data-bind="value: detail.biodata()[$index()].Landmark" validationMessage="Landmark required" required  />
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -242,7 +242,7 @@
                           <label for="Acc" class="control-label">City :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="city" name="city" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].City" validationMessage="City required" required  />
+                          <input type="text" id="City" name="city" class="form-control input-sm City" data-bind="value: detail.biodata()[$index()].City" validationMessage="City required" required  />
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -250,7 +250,7 @@
                           <label for="Acc" class="control-label">State :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="state" name="state" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].State" validationMessage="State required" required  />
+                          <input type="text" id="State" name="state" class="form-control input-sm State" data-bind="value: detail.biodata()[$index()].State" validationMessage="State required" required  />
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -258,7 +258,7 @@
                           <label for="Acc" class="control-label">Pin Code :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="pincode" name="pincode" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].Pincode" validationMessage="Pincode required" required  />
+                          <input type="text" id="Pincode" name="pincode" class="form-control input-sm Pincode" data-bind="value: detail.biodata()[$index()].Pincode" validationMessage="Pincode required" required  />
                         </div>
                       </div>
 
@@ -267,7 +267,7 @@
                           <label for="Acc" class="control-label">Tel1 :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="phone" name="phone" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].Phone" validationMessage="Phone required" required/>
+                          <input type="text" id="Phone" name="phone" class="form-control input-sm Phone" data-bind="value: detail.biodata()[$index()].Phone" validationMessage="Phone required" required/>
                         </div>
                       </div>
 
@@ -276,7 +276,7 @@
                           <label for="Acc" class="control-label">Moblie Number :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="hp" name="hp" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].Mobile" validationMessage="Mobile NUmber required" required  />
+                          <input type="text" id="Mobile" name="hp" class="form-control input-sm Mobile" data-bind="value: detail.biodata()[$index()].Mobile" validationMessage="Mobile NUmber required" required  />
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -284,7 +284,7 @@
                           <label for="Acc" class="control-label">Ownership :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="ownership" name="ownership" data-bind="kendoDropDownList: {value: detail.biodata()[$index()].Ownership, data: detail.ownershiplist, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select ownership', select:function(e){ changeownership(e, $index()) }}" required>
+                          <input type="text" id="Ownership" class="Ownership" name="ownership" data-bind="kendoDropDownList: {value: detail.biodata()[$index()].Ownership, data: detail.ownershiplist, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changeownership(e, $index()) }}" required>
                           <span class="k-invalid-msg" data-for="ownership"></span>
                         </div>
                       </div>
@@ -293,7 +293,7 @@
                           <label for="Acc" class="control-label">No. of Years in this Address :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="noyear" name="noyear" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].NoOfYears" validationMessage="No. of Years required" required  />
+                          <input type="text" id="NoOfYears" name="noyear" class="form-control input-sm NoOfYears" data-bind="value: detail.biodata()[$index()].NoOfYears" validationMessage="No. of Years required" required  />
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -301,7 +301,7 @@
                           <label for="Acc" class="control-label">Market Value :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="valueplot" name="valueplot" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].ValueOfPot" validationMessage="Value of Plot required" required  />
+                          <input type="text" id="ValueOfPot" name="valueplot" class="form-control input-sm ValueOfPot" data-bind="value: detail.biodata()[$index()].ValueOfPot" validationMessage="Value of Plot required" required  />
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -309,7 +309,7 @@
                           <label for="Acc" class="control-label">Vehicles Owned :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="vehiclesowned" name="vehiclesowned" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].VehiclesOwned" validationMessage="Vehicles Owned required" required  />
+                          <input type="text" id="VehiclesOwned" name="vehiclesowned" class="form-control input-sm VehiclesOwned" data-bind="value: detail.biodata()[$index()].VehiclesOwned" validationMessage="Vehicles Owned required" required  />
                         </div>
                       </div>
                       <div class="col-sm-12 form-group">
@@ -317,7 +317,7 @@
                           <label for="Acc" class="control-label">Net Worth :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="networth" name="networth" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].NetWorth" validationMessage="Net Worth required" required  />
+                          <input type="text" id="NetWorth" name="networth" class="form-control input-sm NetWorth" data-bind="value: detail.biodata()[$index()].NetWorth" validationMessage="Net Worth required" required  />
                         </div>
                       </div>
                        <div class="col-sm-12 form-group">
@@ -325,7 +325,7 @@
                           <label for="Acc" class="control-label">E-mail :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="email" name="email" class="form-control input-sm" data-bind="value: detail.biodata()[$index()].Email" validationMessage="Email required" required  />
+                          <input type="text" id="email" name="email" class="form-control input-sm Email" data-bind="value: detail.biodata()[$index()].Email" validationMessage="Email required" required  />
                         </div>
                       </div>
                     </div>

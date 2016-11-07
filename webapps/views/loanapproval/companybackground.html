@@ -11,7 +11,7 @@
 <script type="text/html" id="topcust-product-template">
     <!-- ko foreach: loanApproval.companyBackgroundData().mostLength -->
         <tr>
-            <!-- ko if: $index() == 0 -->
+            <!-- ko if: $index() == 0-->
                 <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
                     Top Customers Name
                 </td>
@@ -38,7 +38,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="k-grid">
-                <table class="table-bordered" style="word-break: break-word" data-bind="template: { name: 'topcust-product-template' }">
+                <table class="table-bordered companyTable" style="word-break: break-word" data-bind="template: { name: 'topcust-product-template' }">
                 </table>
             </div>
         </div>

@@ -125,6 +125,9 @@ type BankAnalysis struct {
 	IsConfirmed   bool          `bson:"IsConfirmed"`
 	DateConfirmed time.Time     `bson:"DateConfirmed,omitempty"`
 	DataBank      []DataBank    `bson:"DataBank"`
+	IsFreeze      bool          `bson:"IsFreeze"`
+	DateFreeze    time.Time     `bson:"DateFreeze"`
+	Status        int           `bson: "Status"`
 }
 
 type BankAnalysisV2 struct {
@@ -134,6 +137,9 @@ type BankAnalysisV2 struct {
 	IsConfirmed   bool          `bson:"IsConfirmed"`
 	DateConfirmed time.Time     `bson:"DateConfirmed,omitempty"`
 	DataBank      []DataBankV2  `bson:"DataBank"`
+	IsFreeze      bool          `bson:"IsFreeze"`
+	DateFreeze    time.Time     `bson:"DateFreeze"`
+	Status        int           `bson: "Status"`
 }
 
 type DataBank struct {
@@ -231,6 +237,42 @@ func (b *BankAnalysis) GetDataV2(CustomerId int, DealNo string) ([]BankAnalysisV
 		return nil, nil, err
 	}
 	defer query.Close()
+
+	ressum := b.GenerateBankSummaryV2(res)
+	return res, ressum, nil
+}
+
+func (b *BankAnalysis) GetDataV2Confirmed(CustomerId int, DealNo string) ([]BankAnalysisV2, []Summary, error) {
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	res := []BankAnalysisV2{}
+
+	// wh := []*dbox.Filter{}
+	// wh = append(wh, dbox.Eq("CustomerId", CustomerId))
+	// wh = append(wh, dbox.Eq("DealNo", DealNo))
+
+	// query, err := conn.NewQuery().
+	// 	Select().
+	// 	From("BankAnalysisV2").
+	// 	Where(wh...).
+	// 	Cursor(nil)
+	// if err != nil {
+	// 	return nil, nil, err
+	// }
+	// err = query.Fetch(&res, 0, false)
+	// if err != nil {
+	// 	return nil, nil, err
+	// }
+	// defer query.Close()
+
+	err = new(DataConfirmController).GetDataConfirmed(cast.ToString(CustomerId), DealNo, "BankAnalysisV2", &res)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	ressum := b.GenerateBankSummaryV2(res)
 	return res, ressum, nil
@@ -480,7 +522,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 			return value
 		})()
 
-		return toolkit.Div(sumCreditByTotalCredit, sales+otherIncome) * 100
+		return toolkit.Div(sumCreditByTotalCredit, sales+otherIncome) //* 100
 	})()
 
 	bank.InwardBounces = (func() float64 {
@@ -536,7 +578,331 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 				}).Exec().Result.Avg
 			}).Exec().Result.Avg
 
-			emi := (fm.AccountDetails.LDRequestedLimitAmount * (float64(1) + fm.AccountDetails.LDProposedRateInterest/float64(100))) / fm.AccountDetails.LDLimitTenor
+			multiplier := (float64(1) + fm.AccountDetails.LDProposedRateInterest/float64(100))
+			left := fm.AccountDetails.LDRequestedLimitAmount * multiplier
+			emi := toolkit.Div(left, fm.AccountDetails.LDLimitTenor)
+			abbOfEmi := toolkit.Div(abb, emi)
+
+			return abbOfEmi
+		} else {
+			odValue := crowd.From(&res).Avg(func(y interface{}) interface{} {
+				details := y.(BankAnalysisV2).DataBank[0].BankDetails
+
+				return crowd.From(&details).Max(func(x interface{}) interface{} {
+					return toolkit.Div(x.(BankDetails).AvgBalon, x.(BankDetails).OdCcLimit)
+				}).Exec().Result.Max
+			}).Exec().Result.Avg
+
+			return odValue * 100
+		}
+	})()
+
+	return bank, nil
+}
+
+func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo string) (*BankAllSummary, error) {
+	custid, _ := strconv.ParseInt(CustomerId, 10, 64)
+	res, ressum, err := new(BankAnalysis).GetDataV2Confirmed(int(custid), DealNo)
+	if err != nil {
+		return nil, err
+	}
+
+	BSMonthlyCredits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).TotalCredit
+	}).Exec().Result.Sum
+	BSMonthlyDebits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).TotalDebit
+	}).Exec().Result.Sum
+	BSNoOfCredits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).NoOfCredit
+	}).Exec().Result.Sum
+	BSNoOfDebits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).NoOfDebit
+	}).Exec().Result.Sum
+	BSOWChequeReturns := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).OwCheque
+	}).Exec().Result.Sum
+	BSIWChequeReturns := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).IwCheque
+	}).Exec().Result.Sum
+
+	BSImpMargin := (func() float64 {
+		fm := new(FormulaModel)
+		fm.CustomerId = CustomerId
+		fm.DealNo = DealNo
+		fm.GetDataAccountDetails()
+		fm.GetDataBalanceSheet()
+		fm.GetRatioFormula()
+
+		customerMargin := fm.AccountDetails.PDCustomerMargin
+
+		period := fm.GetLastAuditedYear()
+		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
+		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
+
+		multiplier := customerMargin
+		if ebitdaMargin < customerMargin {
+			multiplier = ebitdaMargin
+		}
+
+		totalCreditMultiplied := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+			return x.(Summary).TotalCredit * multiplier
+		}).Exec().Result.Sum
+
+		return totalCreditMultiplied
+	})()
+
+	BSOWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
+		return x.(Summary).OwReturnPercentage
+	}).Exec().Result.Avg
+	BSIWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
+		return x.(Summary).LwReturnPercentage
+	}).Exec().Result.Avg
+	BSDRCRRatio := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
+		return x.(Summary).DrCrReturnPercentage
+	}).Exec().Result.Avg
+
+	ODSactionLimit := crowd.From(&res).Sum(func(x interface{}) interface{} {
+		account := x.(BankAnalysisV2).DataBank[0].BankAccount
+
+		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+			return account.FundBased.SancLimit
+		}
+
+		return 0
+	}).Exec().Result.Sum
+	ODUtilizationPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
+		return x.(Summary).Utilization
+	}).Exec().Result.Avg
+	ODAvgUtilization := (func() float64 {
+		values := []float64{}
+
+		for _, each := range res {
+			account := each.DataBank[0].BankAccount
+			details := each.DataBank[0].BankDetails
+
+			if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+				res := crowd.From(&details).Max(func(x interface{}) interface{} {
+					avgBalon := x.(BankDetails).AvgBalon
+					limit := x.(BankDetails).OdCcLimit
+					return toolkit.Div(avgBalon, limit)
+				}).Exec().Result.Max
+
+				values = append(values, res.(float64))
+			}
+		}
+
+		return crowd.From(&values).Avg(func(x interface{}) interface{} {
+			return x.(float64)
+		}).Exec().Result.Avg
+	})()
+
+	ODInterestPaid := crowd.From(&res).Sum(func(x interface{}) interface{} {
+		account := x.(BankAnalysisV2).DataBank[0].BankAccount
+		details := x.(BankAnalysisV2).DataBank[0].BankDetails
+
+		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+			interestPerMonth := account.FundBased.InterestPerMonth
+			actualInterestPaidValue := crowd.From(&details).Avg(func(x interface{}) interface{} {
+				return x.(BankDetails).ActualInterestPaid
+			}).Exec().Result.Avg
+			values := []float64{interestPerMonth, actualInterestPaidValue}
+
+			return crowd.From(&values).Max(func(x interface{}) interface{} {
+				return x.(float64)
+			}).Exec().Result.Max
+		}
+
+		return 0
+	}).Exec().Result.Sum
+
+	aml := (func() []toolkit.M {
+		holder := map[string]toolkit.M{}
+
+		for _, eachAnalysis := range res {
+			for _, eachDetail := range eachAnalysis.DataBank[0].BankDetails {
+				month := eachDetail.Month.Format("Jan-2006")
+				if _, ok := holder[month]; !ok {
+					eachHolder := toolkit.M{}
+					eachHolder["Month"] = month
+					eachHolder["CreditCash"] = eachDetail.CreditCash
+					eachHolder["DebitCash"] = eachDetail.DebitCash
+					holder[month] = eachHolder
+				} else {
+					holder[month]["CreditCash"] = holder[month]["CreditCash"].(float64) + eachDetail.CreditCash
+					holder[month]["DebitCash"] = holder[month]["DebitCash"].(float64) + eachDetail.DebitCash
+				}
+			}
+		}
+
+		for key, each := range holder {
+			ressumTotalCredit := 0.0
+			ressumTotalDebit := 0.0
+
+		loopGetTargetRessum:
+			for _, eachRessum := range ressum {
+				if eachRessum.Month.Format("Jan-2016") == key {
+					ressumTotalCredit = eachRessum.TotalCredit
+					ressumTotalDebit = eachRessum.TotalDebit
+					break loopGetTargetRessum
+				}
+			}
+
+			each["CreditCashCalc"] = toolkit.Div(each["CreditCash"].(float64), ressumTotalCredit*100.0)
+			each["DebitCashCalc"] = toolkit.Div(each["DebitCash"].(float64), ressumTotalDebit*100.0)
+		}
+
+		holderArr := []toolkit.M{}
+		for _, val := range holder {
+			holderArr = append(holderArr, val)
+		}
+		return holderArr
+	})()
+
+	AMLAvgCredits := crowd.From(&aml).Avg(func(x interface{}) interface{} {
+		return x.(toolkit.M).GetFloat64("CreditCashCalc")
+	}).Exec().Result.Avg
+	AMLAvgDebits := crowd.From(&aml).Avg(func(x interface{}) interface{} {
+		return x.(toolkit.M).GetFloat64("DebitCashCalc")
+	}).Exec().Result.Avg
+
+	ABB := (func() float64 {
+		valueParentLeft := float64(0)
+		valueParentRight := float64(0)
+
+		for _, each := range res {
+			// account := each.DataBank[0].BankAccount
+			details := each.DataBank[0].CurrentBankDetails
+
+			// if !strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+			valueLeft := crowd.From(&details).Sum(func(x interface{}) interface{} {
+				return x.(CurrentBankDetails).AvgBalon
+			}).Exec().Result.Sum
+			valueRight := crowd.From(&details).Sum(func(x interface{}) interface{} {
+				if x.(CurrentBankDetails).AvgBalon > 0 {
+					return 1
+				}
+
+				return 0
+			}).Exec().Result.Sum
+
+			calculated := toolkit.Div(valueLeft, valueRight)
+
+			valueParentLeft = valueParentLeft + calculated
+			if calculated > 0 {
+				valueParentRight++
+			}
+			// }
+		}
+
+		return toolkit.Div(valueParentLeft, valueParentRight)
+	})()
+
+	bank := new(BankAllSummary)
+	bank.BSMonthlyCredits = BSMonthlyCredits
+	bank.BSMonthlyDebits = BSMonthlyDebits
+	bank.BSNoOfCredits = BSNoOfCredits
+	bank.BSNoOfDebits = BSNoOfDebits
+	bank.BSOWChequeReturns = BSOWChequeReturns
+	bank.BSIWChequeReturns = BSIWChequeReturns
+	bank.BSImpMargin = BSImpMargin
+	bank.BSOWReturnPercent = BSOWReturnPercent
+	bank.BSIWReturnPercent = BSIWReturnPercent
+	bank.BSDRCRRatio = BSDRCRRatio
+	bank.ODSactionLimit = ODSactionLimit
+	bank.ODUtilizationPercent = ODUtilizationPercent
+	bank.ODAvgUtilization = ODAvgUtilization
+	bank.ODInterestPaid = ODInterestPaid
+	bank.AMLAvgCredits = AMLAvgCredits
+	bank.AMLAvgDebits = AMLAvgDebits
+	bank.ABB = ABB
+
+	bank.BankingToTurnoverRatio = (func() float64 {
+		totalCredit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+			return x.(Summary).TotalCredit
+		}).Exec().Result.Sum
+		sumCreditByTotalCredit := toolkit.Div(totalCredit*12, float64(len(ressum)))
+
+		fm := NewFormulaModel()
+		fm.CustomerId = CustomerId
+		fm.DealNo = DealNo
+		fm.GetDataBalanceSheet()
+
+		sales := (func() float64 {
+			res := new(RatioFormula).
+				GetValue(fm, "balancesheet", "SALES", fm.GetLastAuditedYear())
+			value, _ := strconv.ParseFloat(toolkit.Sprintf("%v", res), 64)
+
+			return value
+		})()
+
+		otherIncome := (func() float64 {
+			res := new(RatioFormula).
+				GetValue(fm, "balancesheet", "OIBI", fm.GetLastAuditedYear())
+			value, _ := strconv.ParseFloat(toolkit.Sprintf("%v", res), 64)
+
+			return value
+		})()
+
+		return toolkit.Div(sumCreditByTotalCredit, sales+otherIncome) //* 100
+	})()
+
+	bank.InwardBounces = (func() float64 {
+		totalOwCheque := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+			return x.(Summary).OwCheque
+		}).Exec().Result.Sum
+
+		totalNoOfDebit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+			return x.(Summary).NoOfDebit
+		}).Exec().Result.Sum
+
+		totalNoOfCredit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+			return x.(Summary).NoOfCredit
+		}).Exec().Result.Sum
+
+		res := toolkit.Div(totalOwCheque, totalNoOfDebit)
+		if res != 0 {
+			res = toolkit.Div(totalOwCheque, totalNoOfCredit)
+		}
+
+		return res
+	})()
+
+	bank.SactionLimit = crowd.From(&res).Sum(func(x interface{}) interface{} {
+		account := x.(BankAnalysisV2).DataBank[0].BankAccount
+		return account.FundBased.SancLimit
+	}).Exec().Result.Sum
+
+	bank.ODCCUtilizationABBvsProposedEMIIsCurrent = (func() bool {
+		totalCurrent := 0
+		for _, each := range res {
+			if each.DataBank[0].BankAccount.FundBased.AccountType == "Current" {
+				totalCurrent++
+			}
+		}
+
+		return (totalCurrent == len(res))
+	})()
+
+	bank.ODCCUtilizationABBvsProposedEMI = (func() float64 {
+
+		if bank.ODCCUtilizationABBvsProposedEMIIsCurrent {
+			fm := new(FormulaModel)
+			fm.CustomerId = CustomerId
+			fm.DealNo = DealNo
+			fm.GetDataAccountDetails()
+
+			abb := crowd.From(&res).Avg(func(y interface{}) interface{} {
+				details := y.(BankAnalysisV2).DataBank[0].BankDetails
+
+				return crowd.From(&details).Avg(func(x interface{}) interface{} {
+					return x.(BankDetails).AvgBalon
+				}).Exec().Result.Avg
+			}).Exec().Result.Avg
+
+			multiplier := (float64(1) + fm.AccountDetails.LDProposedRateInterest/float64(100))
+			left := fm.AccountDetails.LDRequestedLimitAmount * multiplier
+			emi := toolkit.Div(left, fm.AccountDetails.LDLimitTenor)
 			abbOfEmi := toolkit.Div(abb, emi)
 
 			return abbOfEmi
@@ -928,6 +1294,7 @@ func (b *BankAnalysis) GenerateBankSummaryV2(res []BankAnalysisV2) []Summary {
 
 	for _, val := range res {
 		det := val.DataBank[0].BankDetails
+		cur := val.DataBank[0].CurrentBankDetails
 		credit := Credit{}
 		debit := Debit{}
 		noofdebit := NoOfDebit{}
@@ -953,6 +1320,13 @@ func (b *BankAnalysis) GenerateBankSummaryV2(res []BankAnalysisV2) []Summary {
 				ow.TotalMonth1 = det[i].OwCheque
 				iw.TotalMonth1 = det[i].IwCheque
 				month.Month1 = det[i].Month
+
+				credit.TotalMonth1 = credit.TotalMonth1 + cur[i].CreditNonCash + cur[i].CreditCash
+				debit.TotalMonth1 = debit.TotalMonth1 + cur[i].DebitNonCash + cur[i].DebitCash
+				noofdebit.TotalMonth1 = noofdebit.TotalMonth1 + cur[i].NoOfDebit
+				noofcredit.TotalMonth1 = noofcredit.TotalMonth1 + cur[i].NoOfCredit
+				ow.TotalMonth1 = ow.TotalMonth1 + cur[i].OwCheque
+				iw.TotalMonth1 = iw.TotalMonth1 + cur[i].IwCheque
 			}
 			if i == 1 {
 				credit.TotalMonth2 = det[i].CreditNonCash + det[i].CreditCash
@@ -962,6 +1336,13 @@ func (b *BankAnalysis) GenerateBankSummaryV2(res []BankAnalysisV2) []Summary {
 				ow.TotalMonth2 = det[i].OwCheque
 				iw.TotalMonth2 = det[i].IwCheque
 				month.Month2 = det[i].Month
+
+				credit.TotalMonth2 = credit.TotalMonth2 + cur[i].CreditNonCash + cur[i].CreditCash
+				debit.TotalMonth2 = debit.TotalMonth2 + cur[i].DebitNonCash + cur[i].DebitCash
+				noofdebit.TotalMonth2 = noofdebit.TotalMonth2 + cur[i].NoOfDebit
+				noofcredit.TotalMonth2 = noofcredit.TotalMonth2 + cur[i].NoOfCredit
+				ow.TotalMonth2 = ow.TotalMonth2 + cur[i].OwCheque
+				iw.TotalMonth2 = iw.TotalMonth2 + cur[i].IwCheque
 			}
 			if i == 2 {
 				credit.TotalMonth3 = det[i].CreditNonCash + det[i].CreditCash
@@ -971,6 +1352,13 @@ func (b *BankAnalysis) GenerateBankSummaryV2(res []BankAnalysisV2) []Summary {
 				ow.TotalMonth3 = det[i].OwCheque
 				iw.TotalMonth3 = det[i].IwCheque
 				month.Month3 = det[i].Month
+
+				credit.TotalMonth3 = credit.TotalMonth3 + cur[i].CreditNonCash + cur[i].CreditCash
+				debit.TotalMonth3 = debit.TotalMonth3 + cur[i].DebitNonCash + cur[i].DebitCash
+				noofdebit.TotalMonth3 = noofdebit.TotalMonth3 + cur[i].NoOfDebit
+				noofcredit.TotalMonth3 = noofcredit.TotalMonth3 + cur[i].NoOfCredit
+				ow.TotalMonth3 = ow.TotalMonth3 + cur[i].OwCheque
+				iw.TotalMonth3 = iw.TotalMonth3 + cur[i].IwCheque
 			}
 			if i == 3 {
 				credit.TotalMonth4 = det[i].CreditNonCash + det[i].CreditCash
@@ -980,6 +1368,13 @@ func (b *BankAnalysis) GenerateBankSummaryV2(res []BankAnalysisV2) []Summary {
 				ow.TotalMonth4 = det[i].OwCheque
 				iw.TotalMonth4 = det[i].IwCheque
 				month.Month4 = det[i].Month
+
+				credit.TotalMonth4 = credit.TotalMonth4 + cur[i].CreditNonCash + cur[i].CreditCash
+				debit.TotalMonth4 = debit.TotalMonth4 + cur[i].DebitNonCash + cur[i].DebitCash
+				noofdebit.TotalMonth4 = noofdebit.TotalMonth4 + cur[i].NoOfDebit
+				noofcredit.TotalMonth4 = noofcredit.TotalMonth4 + cur[i].NoOfCredit
+				ow.TotalMonth4 = ow.TotalMonth4 + cur[i].OwCheque
+				iw.TotalMonth4 = iw.TotalMonth4 + cur[i].IwCheque
 			}
 			if i == 4 {
 				credit.TotalMonth5 = det[i].CreditNonCash + det[i].CreditCash
@@ -989,6 +1384,13 @@ func (b *BankAnalysis) GenerateBankSummaryV2(res []BankAnalysisV2) []Summary {
 				ow.TotalMonth5 = det[i].OwCheque
 				iw.TotalMonth5 = det[i].IwCheque
 				month.Month5 = det[i].Month
+
+				credit.TotalMonth5 = credit.TotalMonth5 + cur[i].CreditNonCash + cur[i].CreditCash
+				debit.TotalMonth5 = debit.TotalMonth5 + cur[i].DebitNonCash + cur[i].DebitCash
+				noofdebit.TotalMonth5 = noofdebit.TotalMonth5 + cur[i].NoOfDebit
+				noofcredit.TotalMonth5 = noofcredit.TotalMonth5 + cur[i].NoOfCredit
+				ow.TotalMonth5 = ow.TotalMonth5 + cur[i].OwCheque
+				iw.TotalMonth5 = iw.TotalMonth5 + cur[i].IwCheque
 			}
 			if i == 5 {
 				credit.TotalMonth6 = det[i].CreditNonCash + det[i].CreditCash
@@ -998,8 +1400,16 @@ func (b *BankAnalysis) GenerateBankSummaryV2(res []BankAnalysisV2) []Summary {
 				ow.TotalMonth6 = det[i].OwCheque
 				iw.TotalMonth6 = det[i].IwCheque
 				month.Month6 = det[i].Month
+
+				credit.TotalMonth6 = credit.TotalMonth6 + cur[i].CreditNonCash + cur[i].CreditCash
+				debit.TotalMonth6 = debit.TotalMonth6 + cur[i].DebitNonCash + cur[i].DebitCash
+				noofdebit.TotalMonth6 = noofdebit.TotalMonth6 + cur[i].NoOfDebit
+				noofcredit.TotalMonth6 = noofcredit.TotalMonth6 + cur[i].NoOfCredit
+				ow.TotalMonth6 = ow.TotalMonth6 + cur[i].OwCheque
+				iw.TotalMonth6 = iw.TotalMonth6 + cur[i].IwCheque
 			}
 		}
+
 		credits = append(credits, credit)
 		debits = append(debits, debit)
 		noofdebits = append(noofdebits, noofdebit)

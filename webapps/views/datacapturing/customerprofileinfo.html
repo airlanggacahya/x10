@@ -30,12 +30,25 @@ model.User= ko.observable('{{.Username}}');
 customerprofile = ko.observable({id: ""});
 customerprofile().FinancialReport = ko.observable();
 customerprofile().Status = ko.observable();
+customerprofile().Freeze = ko.observable(false);
+customerprofile().DateSave = ko.observable('');
+var formVisibility = ko.observable(false)
 model.All = ko.observable("customerprofile");
-
 
 // filter().DealNumberSearchVal.subscribe(function(value){
 //   refreshdata();
 // })
+
+function initEvents() {
+    filter().CustomerSearchVal.subscribe(function () {
+        formVisibility(false)
+    })
+    filter().DealNumberSearchVal.subscribe(function () {
+        formVisibility(false)
+    })
+
+    //$('#refresh').remove()
+}
 
 formatnum =  function(number, decimalPlace) {
    decimalPlace = (typeof decimalPlace === "undefined" ? 0 : decimalPlace);
@@ -69,7 +82,12 @@ formatnum =  function(number, decimalPlace) {
 }
 
 function refreshFilter(){
+  info.formVisibility(false)
   refreshdata();
+  initEvents()
+  setTimeout(function(){
+    $("input").css("z-index", "0")
+  }, 500)
 }
 
 filter().CustomerSearchVal.subscribe(function(val){
@@ -84,20 +102,33 @@ function refreshdata(){
     // console.log(data);
     console.log(data);
     if (data.length > 0) {
+      info.formVisibility(true)
+      formVisibility(true)
       model.All(data[0]);
+      checkConfirmedOrNot(data[0].Status, 1, 2, data[0], [], "Customer Application");
       data[0].ApplicantDetail.DateOfIncorporation = data[0].ApplicantDetail.DateOfIncorporation+"";
       $(".grid2").getKendoGrid().dataSource.data([])
       $(".grid2").getKendoGrid().refresh()
       $(".grid3").getKendoGrid().dataSource.data([])
       $(".grid3").getKendoGrid().refresh()
       detail.biodata([]);
+      $('.form-last-confirmation-info').html('');
       customerprofile().Status(data[0].Status);
       if(data[0].Status == 1){
-        $('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(data[0].ConfirmedDate),"dd-MM-yyyy h:mm:ss tt") )
+        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(data[0].ConfirmedDate),"dd-MM-yyyy h:mm:ss tt") )
+        info.ButtonLogic(1)
+      } else if(data[0].Status == 0){
+        if(data[0].DateSave != ""){
+          $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(data[0].DateSave),"dd-MM-yyyy h:mm:ss tt") )
+          info.ButtonLogic(0)
+        }else{
+          $('.form-last-confirmation-info').html('');
+          info.ButtonLogic(0)
+        }
+        
       } else if(data[0].Status == 2){
-        $('.form-last-confirmation-info').html('Last verified on: '+kendo.toString(new Date(data[0].VerifiedDate),"dd-MM-yyyy h:mm:ss tt") )
-      } else{
-        $('.form-last-confirmation-info').html('')
+        $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(data[0].DateFreeze),"dd-MM-yyyy h:mm:ss tt") )
+        info.ButtonLogic(2)
       }
       customerprofile().id = data[0].Id;
       customerprofile().ConfirmedBy = data[0].ConfirmedBy;
@@ -163,14 +194,14 @@ function refreshdata(){
       //   detail.detailReference.push({Name: '',Address: '',ContactNo: '',RelationAplicant: ''});
       // }
       //data[0].DetailOfPromoters.Biodata = detail.biodata()
-      $("#cf").show();
-      $("#edit").show();
-      $("#ceedit").hide();
-      $("#vf").show();
-      $("#reset").show();
+      // $("#cf").show();
+      // $("#edit").show();
+      // $("#ceedit").hide();
+      // $("#vf").show();
+      // $("#reset").show();
+      info.initEvents();
       $("#pdf").show();
-      disableedit();
-      buttonlogicstatus(customerprofile().Status());
+      // buttonlogicstatus(customerprofile().Status());
     }else if(filter().CustomerSearchVal() != "" && filter().DealNumberSearchVal() != "" ){
        swal("warning","Data not available", "warning");
     }else{
@@ -227,21 +258,21 @@ function pushaddressfakeComplete(){
   );
 }
 
-function buttonlogicstatus(status){
-  if (status == 0) {
-    $("#vf").prop( "disabled", true );
-    $("#cf").prop( "disabled", false );
-    $("#edit").prop( "disabled", false );
-  } else if(status == 1){
-    $("#vf").prop( "disabled", false );
-    $("#cf").prop( "disabled", true );
-    $("#edit").prop( "disabled", true );
-  } else if(status == 2){
-    $("#vf").prop( "disabled", true );
-    $("#cf").prop( "disabled", true );
-    $("#edit").prop( "disabled", true );
-  }
-}
+// function buttonlogicstatus(status){
+//   if (status == 0) {
+//     $("#vf").prop( "disabled", true );
+//     $("#cf").prop( "disabled", false );
+//     $("#edit").prop( "disabled", false );
+//   } else if(status == 1){
+//     $("#vf").prop( "disabled", false );
+//     $("#cf").prop( "disabled", true );
+//     $("#edit").prop( "disabled", true );
+//   } else if(status == 2){
+//     $("#vf").prop( "disabled", true );
+//     $("#cf").prop( "disabled", true );
+//     $("#edit").prop( "disabled", true );
+//   }
+//}
 
 // function onSelectDealno(e){
 //   var dataItem = this.dataItem(e.item);
@@ -265,17 +296,17 @@ var editmode = ko.observable(false);
 function enableedit(){
   $(".cotainer-tab input").prop("disabled", false);
   $(".cotainer-tab textarea").prop("disabled", false);
-  $("#genderdropdown").data("kendoDropDownList").enable(true);
-  $("#Martialdropdown").data("kendoDropDownList").enable(true);
-  $("#Guarantodropdown").data("kendoDropDownList").enable(true);
-  $("#designation").data("kendoDropDownList").enable(true);
-  $("#ownership").data("kendoDropDownList").enable(true);
-  // $("#di").data("kendoDatePicker").enable(true);
-  // $("#datebirth").data("kendoDatePicker").enable(true);
-  $("#anniversarrydate").data("kendoDatePicker").enable(true);
+  // $("#genderdropdown").data("kendoDropDownList").enable(true);
+  // $("#Martialdropdown").data("kendoDropDownList").enable(true);
+  // $("#Guarantodropdown").data("kendoDropDownList").enable(true);
+  // $("#designation").data("kendoDropDownList").enable(true);
+  // $("#ownership").data("kendoDropDownList").enable(true);
+  // // $("#di").data("kendoDatePicker").enable(true);
+  // // $("#datebirth").data("kendoDatePicker").enable(true);
+  // $("#anniversarrydate").data("kendoDatePicker").enable(true);
   $("#doi").data("kendoDatePicker").enable(true);
-  // $("#id").data("kendoDatePicker").enable(true);
-  $("#holdingpercent").data("kendoNumericTextBox").enable(true);
+  // // $("#id").data("kendoDatePicker").enable(true);
+  // $("#holdingpercent").data("kendoNumericTextBox").enable(true);
   editmode(true);
   // $("#a").data("kendoDropDownList").enable(true);
   // $("#b").data("kendoDropDownList").enable(true);
@@ -283,7 +314,7 @@ function enableedit(){
   // $("#d").data("kendoDropDownList").enable(true);
   $("#edit").hide();
   $("#ceedit").show();
-  $(".btnsave").show();
+  $(".btnsave").hide();
   EnableAllkendo(true);
   // for(var i in detail.biodata()){
   //   if(detail.biodata()[i].PropertyOwnedkendo().length == 0){
@@ -293,6 +324,7 @@ function enableedit(){
 }
 
 function disableedit(){
+  info.edit(false);
   try{
     for(var i in detail.biodata()){
         for(var x in detail.biodata()[i].PropertyOwnedkendo()){
@@ -303,11 +335,12 @@ function disableedit(){
   }
 
   editmode(false);
-  $("#edit").show();
+  // $("#edit").show();
   $("#ceedit").hide();
   $(".btnsave").hide();
   $(".cotainer-tab input").prop("disabled", true);
   $(".cotainer-tab textarea").prop("disabled", true);
+  $("#doi").data("kendoDatePicker").enable(false);
   $("#genderdropdown").data("kendoDropDownList").enable(false);
   $("#Martialdropdown").data("kendoDropDownList").enable(false);
   $("#Guarantodropdown").data("kendoDropDownList").enable(false);
@@ -361,15 +394,16 @@ function reset(){
   ApplicantDetail.Detail([]);
   customerprofile().NonRefundableProcessingFeesDetails({});
   disableedit();
-  $("#cf").hide();
-  $("#vf").hide();
+  // $("#cf").hide();
+  // $("#vf").hide();
   $("#edit").hide();
   $("#ceedit").hide();
   $("#reset").hide();
-  $("#pdf").hide();
+  // $("#pdf").hide();
 }
 
 function blanked(){
+  info.formVisibility(false)
   try{
   customerprofile().ApplicantDetail({});
   ApplicantDetail.Detail([]);
@@ -379,12 +413,12 @@ function blanked(){
   customerprofile().FinancialReport().PreviousLoansDetail = [];
   customerprofile().NonRefundableProcessingFeesDetails({})
   disableedit();
-  $("#cf").hide();
-  $("#vf").hide();
+  // $("#cf").hide();
+  // $("#vf").hide();
   $("#edit").hide();
   $("#ceedit").hide();
   $("#reset").hide();
-  $("#pdf").hide();
+  // $("#pdf").hide();
   detail.biodata([]);
   $(".grid1").getKendoGrid().dataSource.read()
   $(".grid2").getKendoGrid().dataSource.read()
@@ -395,6 +429,10 @@ function blanked(){
 }
 
 function confirmorverify(status){
+  if(customerprofile().Status() == 0 && status == 2){
+    sweetAlert("Please Confirm Data First", "", "warning");
+    return;
+  }
   // if(status==1){
   //   var dt = detail.biodata();
   //   _.each(dt,function(e,i){
@@ -482,19 +520,30 @@ function confirmorverify(status){
   //   }
   // }
 
-  customerprofile().Status(status);
+  if(status == 1){
+    customerprofile().Status(status);
+    info.getConfirmed();
+  }else if (status == 2){
+    customerprofile().Status(status);
+    info.getFreeze();
+  }else{
+    customerprofile().Status(0);
+    info.getReEnter();
+  }
+  
 
   save();
-
-  buttonlogicstatus(status);
-  $("#edit").hide();
+  // buttonlogicstatus(status);
+  // $("#edit").hide();
   $("#ceedit").hide();
 }
 
-function save(){
+function save1(){
   param = {};
   param.Id = customerprofile().id;
   param.Status = customerprofile().Status();
+  param.DateSave = (new Date()).toISOString();
+  param.DateFreeze = (new Date()).toISOString();
   param.ConfirmedBy = customerprofile().ConfirmedBy;
   param.ConfirmedDate = customerprofile().ConfirmedDate;
   param.NonRefundableProcessingFeesDetails = customerprofile().NonRefundableProcessingFeesDetails();
@@ -520,18 +569,78 @@ function save(){
   var url = "{{BaseUrl}}datacapturing/savecustomerprofiledetail";
   ajaxPost(url, param, function(data) {
     if (data){
-      swal("success", "Data already saved...", "success");
-      refreshdata();
+      swal("Sucessfully Saved", "", "success");
+      // if(customerprofile().Status() == 1){
+      //   $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+      //   info.ButtonLogic(1)
+      // } else if(customerprofile().Status() == 0){
+        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+      //   info.ButtonLogic(0)
+      // } else if(customerprofile().Status() == 2){
+      //   $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+      //   info.ButtonLogic(2)
+      // } 
+    }
+  }, undefined);
+}
+
+function save(){
+  param = {};
+  param.Id = customerprofile().id;
+  param.Status = customerprofile().Status();
+  param.DateSave = (new Date()).toISOString();
+  param.DateFreeze = (new Date()).toISOString();
+  param.ConfirmedBy = customerprofile().ConfirmedBy;
+  param.ConfirmedDate = customerprofile().ConfirmedDate;
+  param.NonRefundableProcessingFeesDetails = customerprofile().NonRefundableProcessingFeesDetails();
+  param.FinancialReport = customerprofile().FinancialReport();
+  param.DetailOfPromoters = customerprofile().DetailofPromoters();
+  param.ApplicantDetail = customerprofile().ApplicantDetail();
+  param.ApplicantDetail.RegisteredAddress = ApplicantDetail.Detail()[0];
+  param.ApplicantDetail.AddressCorrespondence = ApplicantDetail.Detail()[1];
+  param.ApplicantDetail.SiteWorkAddress = ApplicantDetail.Detail()[2];
+  param.ApplicantDetail.DateOfIncorporation = ApplicantDetail.DateIncorporation();
+  param.ApplicantDetail.AmountLoan = customerprofile().ApplicantDetail().AmountLoan.split(",").join("");
+
+  $.each(detail.biodata(),function(i,v){
+    $.each(detail.biodata()[i].PropertyOwnedkendo(),function(ii,vv){
+      detail.biodata()[i].PropertyOwnedkendo()[ii].MarketValue = parseFloat(vv.MarketValue)
+    })
+    detail.biodata()[i].PropertyOwned = detail.biodata()[i].PropertyOwnedkendo();
+  })
+
+  param.DetailOfPromoters.Biodata = detail.biodata();
+  param.DetailOfPromoters.DetailOfReference = detail.detailReference();
+
+  var url = "{{BaseUrl}}datacapturing/savecustomerprofiledetail";
+  ajaxPost(url, param, function(data) {
+    if (data){
+      if(customerprofile().Status() == 1){
+        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        info.ButtonLogic(1)
+      } else if(customerprofile().Status() == 0){
+        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        info.ButtonLogic(0)
+      } else if(customerprofile().Status() == 2){
+        $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        info.ButtonLogic(2)
+      } 
     }
   }, undefined);
 }
 
 $(document).ready(function(){
+  info.initEvents();
   reset();
+  // setTimeout(function(){
+  //   $("input").css("z-index", "-1")
+  // }, 500)
+  
 });
 
 </script>
 <script src="/static/core/detailsofpromotersdirectorsguarantors.js"></script>
+<script src="/static/core/customerprofileinfo.js"></script>
 
 <style type="text/css">
   .btnsave{
@@ -550,26 +659,51 @@ $(document).ready(function(){
   color: #27ae60;
   margin-right: 10px;
 }
+.fixed{
+  position: fixed;
+  z-index: 100;
+  width: 100%;
+  margin-top: -23px;
+  margin-left: -26px;
+  background-color: #f0f3f4;
+}
+
+.static{
+  position: static;
+  margin-top: -17px;
+  margin-bottom: -11px;
+}
+
+input[disabled]{
+  cursor: default !important;
+}
 </style>
 
 
 {{template "filter.html"}}
-<div>
-  <div class="col-sm-12 col-sm-12 ez panel-content">
+<div data-bind="with: info, visible: (formVisibility() == true)" style="display: none">
+  <div class="col-sm-12 col-sm-12 ez panel-content" data-bind="visible: (formVisibility() == true)">
       <div class="panel ez no-padding hardcore">
         <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
         <div class="panel-body">
           <!-- <div class="form-last-confirmation-info"></div> -->
-          <div class="panel-nav-button">
-            <button  type="button" id="ceedit" btn-sm class="btn btn-sm btn-success" onclick="disableedit()">Cancel Edit</button>
-            <button  type="button" id="edit" btn-sm class="btn btn-sm btn-save" onclick="enableedit()"> Edit</button>
-             <button  type="button" id="cf" btn-sm class="btn btn-sm btn-confirm" onclick="confirmorverify(1)">Confirm</button>
-             <button  type="button" id="vf" btn-sm class="btn btn-sm btn-freeze" onclick="confirmorverify(2)">Verify</button>
-             <!-- <button type="button" btn-sm class="btn btn-sm btn-default" > View All</button> -->
-             <button  type="button" id="pdf" btn-sm class="btn btn-sm btn-primary" onclick="exportPDF();">Download as PDF</button>
-            <!-- <button  id="pdf" class="btn-pdf" onclick="exportPDF();"><span></span></button> -->
-            <span class="form-last-confirmation-info pull-right"></span>
+          
+          <div class="panel-body btnFixed static">
+            <div class="panel-nav-button " >
+              <!-- <button  type="button" id="ceedit" btn-sm class="btn btn-sm btn-success" onclick="disableedit()">Cancel Edit</button> -->
+              <button  type="button" id="save" btn-sm class="btn btn-sm btn-save" data-bind="visible: (edit() != true)" onclick="save1()">Save</button>
+              <button  type="button" id="edit" btn-sm class="btn btn-sm btn-save" onclick="enableedit()"> Edit</button>
+               <button  type="button" id="cf" btn-sm class="btn btn-sm btn-confirm" onclick="confirmorverify(1)">Confirm</button>
+               <button  type="button" id="re" btn-sm class="btn btn-sm btn-confirm" onclick="confirmorverify(0)">Re-Enter</button>
+               <button  type="button" id="vf" btn-sm class="btn btn-sm btn-unfreeze" onclick="confirmorverify(2)">Freeze</button>
+               <button  type="button" id="uvf" btn-sm class="btn btn-sm btn-freeze" onclick="confirmorverify(1)">Unfreeze</button>
+               <!-- <button type="button" btn-sm class="btn btn-sm btn-default" > View All</button> -->
+               <button  type="button" id="pdf" btn-sm class="btn btn-sm btn-primary" onclick="exportPDF();">Download as PDF</button>
+              <!-- <button  id="pdf" class="btn-pdf" onclick="exportPDF();"><span></span></button> -->
+              <span class="form-last-confirmation-info pull-right"></span>
+            </div>
           </div>
+          
           <!-- <ul id= "ontabs" class="nav nav-tabs" style=" margin-bottom: 1%;">
             <li id="li1" class="active"><a href="#tab0" data-toggle="tab">All Details</a></li>
             <li id="li1"><a href="#tab1" data-toggle="tab">Applicant Details</a></li>
@@ -657,7 +791,8 @@ $(document).ready(function(){
 <script type="text/javascript">
   function exportPDF(){
       kendo.drawing.drawDOM($("#tab0")).then(function(group){
-          kendo.drawing.pdf.saveAs(group, customerprofile().ApplicantDetail().CustomerName  + " - " + customerprofile().ApplicantDetail().DealNo + ".pdf");
+          var ondate = kendo.toString(new Date(),"dd-MM-yyyy HH mm");
+          kendo.drawing.pdf.saveAs(group, customerprofile().ApplicantDetail().CustomerName  + " - " + customerprofile().ApplicantDetail().DealNo +" "+ondate+".pdf");
         });
   }
 
@@ -687,7 +822,7 @@ $(document).ready(function(){
             $("#tab0 .collapsible-body").each(function(i,e){
               $(e).css("display","block");
             });
-        },1000);
+        },500);
 
     },1000);
 

@@ -1,4 +1,16 @@
-var apcom = {}
+var apcom = {
+	Amount: ko.observable(),
+	RecommendedCondition: ko.observable(),
+	Recommendations: ko.observable(),
+	Date: ko.observable(),
+	LeftAmount: ko.observable(),
+	ROI: ko.observable(),
+	PF: ko.observable(),
+	PG: ko.observable(),
+	Security: ko.observable(),
+	OtherConditions: ko.observable(),
+	CommitteeRemarks: ko.observable(),
+}
 
 apcom.dataBasisRecommendation = ko.observableArray([
 	{title: "Date", value: ""},
@@ -52,29 +64,27 @@ apcom.formCreditAnalyst = ko.mapping.fromJS(apcom.templateCreditAnalys)
 apcom.loadCommentData = function(){
 	apcom.loadSection();
 	apcom.dataTempRiskMitigants([])
+	apcom.accountCommentFinancials([])
+	
 	var customerid = r.customerId().split('|')[0]
   	var dealno = r.customerId().split('|')[1]
+	
 	var param = {
 		DealNo : dealno, 
 		CustomerId: customerid,
 	}
-	ajaxPost("/accountdetail/getaccountdetail", param, function(res){
+
+	ajaxPost("/accountdetail/getaccountdetailconfirmed", param, function(res){
 		
 		var data = res.Data;
 	    apcom.accountCommentFinancials(data.BorrowerDetails.CommentsonFinancials);
-	    // console.log(apcom.accountCommentFinancials())
 	})
 
-	var url2 = "/approval/getdcandcreditanalys"
-	var param2 ={
-		DealNo : dealno, 
-		CustomerId: customerid,
-	}
 	apcom.dataBasisRecommendation([])
 	apcom.tempFinalComment([])
-	ajaxPost(url2, param2, function(res){
+
+	ajaxPost("/approval/getdcandcreditanalys", param, function(res){
 		var data = res;
-	    // console.log(data)
 	    if(res.success != false){
 	    	apcom.dataTempRiskMitigants(data[0].CreditAnalys.CreditAnalysRisks)
 	    	if(apcom.dataTempRiskMitigants.length == 0){
@@ -82,34 +92,32 @@ apcom.loadCommentData = function(){
 	    	}
 		    ko.mapping.fromJS(data[0].CreditAnalys, apcom.formCreditAnalyst);
 		    ko.mapping.fromJS(data[1].DCFinalSanction, apcom.sanction);
-		    var arr = [
-		    	{title: "Date", value: data[1].DCFinalSanction.Date},
-				{title: "Amount", value: data[1].DCFinalSanction.Amount},
-				{title: "ROI", value: data[1].DCFinalSanction.ROI},
-				{title: "PF", value: data[1].DCFinalSanction.PF},
-				{title: "PG", value: data[1].DCFinalSanction.PG},
-				{title: "Security", value: data[1].DCFinalSanction.Security},
-				{title: "Other Conditions", value: data[1].DCFinalSanction.OtherConditions},
-				{title: "Committee Remarks", value: data[1].DCFinalSanction.CommitteeRemarks},
-		    ]
 
-		    var arr1 =[
-		    	{title: "Amount", value: data[0].CreditAnalys.FinalComment.Amount},
-				{title: "RecommendedCondition", value: data[0].CreditAnalys.FinalComment.RecommendedCondition},
-				{title: "Recommendations", value: data[0].CreditAnalys.FinalComment.Recommendations}
-		    ]
-		    var falsedate = moment(arr[0].value).format('DD-MMM-YYYY');
-		    // console.log(typeof falsedate); 
-		    if( falsedate == "01-Jan-0001"){
-		    	arr[0].value = "";
-		    }
-		    apcom.tempFinalComment(arr1)
-		    apcom.dataBasisRecommendation(arr)
-		    apcom.loadSection();
-	    }else{
-	    	// swal("Error", res.message, "error")
+		    apcom.Date("")
+			apcom.LeftAmount("")
+			apcom.ROI("")
+			apcom.PF("")
+			apcom.PG("")
+			apcom.Security("")
+			apcom.OtherConditions("")
+			apcom.CommitteeRemarks("")
+			apcom.Amount("")
+			apcom.RecommendedCondition("")
+			apcom.Recommendations("")
+
+		    apcom.Date(moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY') == "01-Jan-0001" ? "" : moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY'));
+		    apcom.LeftAmount(data[1].DCFinalSanction.Amount);
+		    apcom.ROI(data[1].DCFinalSanction.ROI);
+		    apcom.PF(data[1].DCFinalSanction.PF);
+		    apcom.PG(data[1].DCFinalSanction.PG);
+		    apcom.Security(data[1].DCFinalSanction.Security);
+		    apcom.OtherConditions(data[1].DCFinalSanction.OtherConditions);
+		    apcom.CommitteeRemarks(data[1].DCFinalSanction.CommitteeRemarks);
+
+		    apcom.Amount(data[0].CreditAnalys.FinalComment.Amount)
+			apcom.RecommendedCondition(data[0].CreditAnalys.FinalComment.RecommendedCondition)
+			apcom.Recommendations(data[0].CreditAnalys.FinalComment.Recommendations)
 	    }
-	    
 	});
 }
 
@@ -119,17 +127,18 @@ apcom.sendCreditAnalyst = function(){
 	apcom.formCreditAnalyst.CustomerId(parseInt(r.customerId().split('|')[0]))
 	var dataGrid = $("#grid1").data("kendoGrid").dataSource.data();
 	var dataGrid1 = $("#grid3").data("kendoGrid").dataSource.data();
-	// console.log(dataGrid);
+
 	$.each(dataGrid, function(i, items){
 		apcom.formCreditAnalyst.CreditAnalysRisks.push(
 			{Risks: items.Risks, Mitigants: items.Mitigants}
 		)
 	});
+
 	apcom.formCreditAnalyst.FinalComment.Amount(dataGrid1[0].value)
 	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(dataGrid1[1].value)
 	apcom.formCreditAnalyst.FinalComment.Recommendations(dataGrid1[2].value)
 	var param = ko.mapping.toJS(apcom.formCreditAnalyst)
-	// console.log(param.FinalComment.Amount)
+	
 	var url = "/approval/savecreditanalys";
 	if(r.customerId().split('|')[0] != "" && r.customerId().split('|')[1] != ""){
 		ajaxPost(url, param , function(res){
@@ -249,145 +258,70 @@ apcom.editorField = function(container, options){
 }
 apcom.loadSection = function(){
 	$('#commentdate').kendoDatePicker({format: 'dd-MMM-yyyy'});
-	$(".caret1").click(function(){
-		if($("#content1").is(':visible')){
-			$("#content1").hide()
-			if($("#caret1").hasClass('fa-caret-down')){
-                $("#caret1").removeClass('fa-caret-down');
-                $("#caret1").addClass('fa-caret-right');
-             }else{
-                $("#caret1").removeClass('fa-caret-right');
-                $("#caret1").addClass('fa-caret-down');
-            }
-		}else{
-			$("#content1").show()
-			if($("#caret1").hasClass('fa-caret-right')){
-                $("#caret1").removeClass('fa-caret-right');
-                $("#caret1").addClass('fa-caret-down');
-            }else{
-                $("#caret1").removeClass('fa-caret-down');
-                $("#caret1").addClass('fa-caret-right');
-            }
-		}
-	})
 
-	$(".caret2").click(function(){
-		if($("#content2").is(':visible')){
-			$("#content2").hide()
-			if($("#caret2").hasClass('fa-caret-down')){
-                $("#caret2").removeClass('fa-caret-down');
-                $("#caret2").addClass('fa-caret-right');
-             }else{
-                $("#caret2").removeClass('fa-caret-right');
-                $("#caret2").addClass('fa-caret-down');
-            }
-		}else{
-			$("#content2").show()
-			if($("#caret2").hasClass('fa-caret-right')){
-                $("#caret2").removeClass('fa-caret-right');
-                $("#caret2").addClass('fa-caret-down');
-            }else{
-                $("#caret2").removeClass('fa-caret-down');
-                $("#caret2").addClass('fa-caret-right');
-            }
-		}
-	});
-
-	$(".caret3").click(function(){
-		if($("#content3").is(':visible')){
-			$("#content3").hide()
-			if($("#caret3").hasClass('fa-caret-down')){
-                $("#caret3").removeClass('fa-caret-down');
-                $("#caret3").addClass('fa-caret-right');
-             }else{
-                $("#caret3").removeClass('fa-caret-right');
-                $("#caret3").addClass('fa-caret-down');
-            }
-		}else{
-			$("#content3").show()
-			if($("#caret3").hasClass('fa-caret-right')){
-                $("#caret3").removeClass('fa-caret-right');
-                $("#caret3").addClass('fa-caret-down');
-            }else{
-                $("#caret3").removeClass('fa-caret-down');
-                $("#caret3").addClass('fa-caret-right');
-            }
-		}
-	});
-
-	$(".caret4").click(function(){
-		if($("#content4").is(':visible')){
-			$("#content4").hide()
-			if($("#caret4").hasClass('fa-caret-down')){
-                $("#caret4").removeClass('fa-caret-down');
-                $("#caret4").addClass('fa-caret-right');
-             }else{
-                $("#caret4").removeClass('fa-caret-right');
-                $("#caret4").addClass('fa-caret-down');
-            }
-		}else{
-			$("#content4").show()
-			if($("#caret4").hasClass('fa-caret-right')){
-                $("#caret4").removeClass('fa-caret-right');
-                $("#caret4").addClass('fa-caret-down');
-            }else{
-                $("#caret4").removeClass('fa-caret-down');
-                $("#caret4").addClass('fa-caret-right');
-            }
-		}
-	});
+	for (let i = 1; i <= 3; i++) {
+		$(".caret"+i).click(function(){
+			console.log(".caret"+i)
+			if($("#content"+i).is(':visible')){
+				$("#content"+i).hide()
+				if($("#caret"+i).hasClass('fa-caret-down')){
+					$("#caret"+i).removeClass('fa-caret-down');
+					$("#caret"+i).addClass('fa-caret-right');
+				}else{
+	                $("#caret"+i).removeClass('fa-caret-right');
+	                $("#caret"+i).addClass('fa-caret-down');
+	            }
+			}else{
+				$("#content"+i).show()
+				if($("#caret"+i).hasClass('fa-caret-right')){
+	                $("#caret"+i).removeClass('fa-caret-right');
+	                $("#caret"+i).addClass('fa-caret-down');
+	            }else{
+	                $("#caret"+i).removeClass('fa-caret-down');
+	                $("#caret"+i).addClass('fa-caret-right');
+	            }
+			}
+		})
+	}
 
 	$("#grid3").html("");
 	$("#grid3").kendoGrid({
 		dataSource: {
-			data:  apcom.tempFinalComment(),
-			schema:{
-				model:{
+			data: apcom.tempFinalComment(),
+			schema: {
+				model: {
 					id: "title",
 					fields: {
-						title:{editable: false,},
-						value:{editable: true},
+						title: { editable: false },
+						value: { editable: true },
 					}
 				}
 			}
 		},
-
 		resizable: true,
 		editable: true,
-		// edit: function (e) {
-	 //        var fieldName = e.container.find("input").attr("name");
-	 //        if(due.form.Freeze() == true || due.form.Status() == 1){
-	 //        	this.closeCell();
-	 //        }
-
-		// },
 		navigatable: true,
 		batch: true,
-		columns:[
-			{
-				field: "title",
-				title: "",
-				headerAttributes: { "class": "sub-bgcolor" }, 
-				width: 75,
-			},
-			{
-				field: "value",
-				title: "",
-				headerAttributes: { "class": "sub-bgcolor" }, 
-				width: 100,
-				editor: apcom.editorField,
-				template: function(d){
-					if(d.title == "Date" && d.value != ""){
-
-						return moment(d.value).format('DD-MMM-YYYY')
-					}else{
-						return d.value
-					}
-					return ""
+		columns:[{
+			field: "title",
+			title: "",
+			headerAttributes: { "class": "sub-bgcolor" }, 
+			width: 75,
+		}, {
+			field: "value",
+			title: "",
+			headerAttributes: { "class": "sub-bgcolor" }, 
+			width: 100,
+			editor: apcom.editorField,
+			template: function(d){
+				if(d.title == "Date" && d.value != ""){
+					return moment(d.value).format('DD-MMM-YYYY')
+				}else{
+					return d.value
 				}
+				return ""
 			}
-
-		],
+		}],
 
 	});
 
@@ -437,15 +371,21 @@ apcom.loadSection = function(){
 		],
 
 	});
+
+	var grid1Data = apcom.dataTempRiskMitigants()
+	if (grid1Data.length == 0) {
+		grid1Data = [{ Risks: "", Mitigants: "" }]
+	}
+
 	$("#grid1").html("");
 	$("#grid1").kendoGrid({
 		dataSource: {
-			data:  apcom.dataTempRiskMitigants(),
+			data: grid1Data,
 			schema:{
 				model:{
-					id: "Risk",
+					id: "Risks",
 					fields: {
-						Risk:{editable: true,},
+						Risks:{editable: true,},
 						Mitigants:{editable: true},
 					}
 				}
@@ -468,6 +408,10 @@ apcom.loadSection = function(){
                 animation: 'grow',
                 delay: 0,
             });
+
+            $('#grid1 .k-grid-content tr:gt(0)').each(function (i, e) {
+            	$(e).find('td:last button:first').css('visibility', 'hidden')
+            })
 		},
 		navigatable: true,
 		batch: true,
@@ -499,9 +443,14 @@ apcom.loadSection = function(){
 				headerAttributes: { "class": "sub-bgcolor" }, 
 				width: 30,
 				template: function(d){
-					return '<center><span class="tooltipster inbtn" title="Remove" onclick="apcom.removeRowRiskMitigants(\''+d.uid+'\')"><i class="fa fa-times"></i></span></center>'
-				},
-				headerTemplate: '<center><span class="tooltipster inbtn" title="Add" onclick="apcom.addRowRiskMitigants()"><i class="fa fa-plus-square-o"></i></span></center>',
+					return [
+						'<center>',
+							'<button class="btn btn-xs btn-primary tooltipster inbtn" title="Add" onclick="apcom.addRowRiskMitigants()"><i class="fa fa-plus"></i></button>',
+							'&nbsp;',
+							'<button class="btn btn-xs btn-danger tooltipster inbtn" title="Remove" onclick="apcom.removeRowRiskMitigants(\''+d.uid+'\')"><i class="fa fa-trash"></i></button>',
+						'</center>'
+					].join('')
+				}
 			}
 
 		],
@@ -552,11 +501,7 @@ apcom.LoadRiskInput = function(container, options){
 	$('<textarea style="width: 96%;" data-text-field="text" data-value-field="value" data-bind="value:' + options.field + '"></textarea>')
 		.appendTo(container);
 }
-$(function(){
-	$('.appComment').collapsible({
-      accordion : true
-    });
-    
-    apcom.loadSection();
-    // apcom.loadCommentData();
-}) 
+
+function getComments(){
+    apcom.loadCommentData();
+}

@@ -9,9 +9,12 @@ type CreditScoreCardItem struct {
 	Weight      interface{}
 	WeightScore interface{}
 	Order       int
+	Value       float64
+	DataType    string
 
 	from       string
 	fieldId    string
+	period     string
 	categories []RatingMaster
 }
 

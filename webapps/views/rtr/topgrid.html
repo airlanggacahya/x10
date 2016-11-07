@@ -19,6 +19,7 @@
 		Yrp : 0,
 		SumBounces: 0,
 		SumExtenalYearly: 0,
+    DpdMaxTrack : 0
 	}];
 
 </script>
@@ -41,34 +42,34 @@
 <script id="rowTemplateTop" type="text/x-kendo-tmpl">
    <tr>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#: app.formatnum(OBLIPos)#</span>
+      	<span>#: app.formatnum(OBLIPos,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#: app.formatnum(OBLIEmi)#</span>
+      	<span>#: app.formatnum(OBLIEmi,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(CWMPos)#</span>
+      	<span>#:app.formatnum(CWMPos,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(CWMEmi)#</span>
+      	<span>#:app.formatnum(CWMEmi,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(PBSLPos)#</span>
+      	<span>#:app.formatnum(PBSLPos,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(PBSLEmi)#</span>
+      	<span>#:app.formatnum(PBSLEmi,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(BTPos)#</span>
+      	<span>#:app.formatnum(BTPos,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(BTEmi)#</span>
+      	<span>#:app.formatnum(BTEmi,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(TCLPos)#</span>
+      	<span>#:app.formatnum(TCLPos,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(TCLEmi)#</span>
+      	<span>#:app.formatnum(TCLEmi,2)#</span>
       </td>
       <!-- <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
       	<span>#:DPLLoan#</span>
@@ -92,13 +93,16 @@
       	<span>#:app.formatnum(IntOBLI)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(SumExtenalYearly)#</span>
+      	<span>#:app.formatnum(SumExtenalYearly,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-      	<span>#:app.formatnum(Yrp)#</span>
+      	<span>#:app.formatnum(Yrp,2)#</span>
       </td>
       <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
       	<span>#:SumBounces#</span>
+      </td>
+      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+        <span>#:DpdMaxTrack#</span>
       </td>
   </tr>
 </script>
@@ -138,7 +142,7 @@ function CreateTopGrid(){
 				],
 				width: 100
 			},
-			{ title : "Total Considered Liability",
+			{ title : "Total Considered Liability Incl. X10",
 				columns : [
 					{ field : "TCLPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
 					{ field : "TCLEmi", title : "EMI (Rs lacs)", width: 100, attributes: { style: 'background: rgb(238, 238, 238)' }  },
@@ -160,8 +164,9 @@ function CreateTopGrid(){
 			{ title : "External Yearly <br/> Repayment (Rs. Lacs)", width: 135, field : "SumExtenalYearly", attributes: { style: 'background: rgb(238, 238, 238)', class: "wrap" } },
 			{ title : "External Yearly <br/> Repayment (Rs. Lacs) incl. X10 Int" , field : "Yrp", width: 125, attributes: { style: 'background: rgb(238, 238, 238)' } },
 			{ title : "EMI Bounces <br/>(Last 6 Months)", width: 100, field : "SumBounces", attributes: { style: 'background: rgb(238, 238, 238)' } },
+      { title : "Max. of DPD Track", width: 80, field : "DpdMaxTrack", attributes: { style: 'background: rgb(238, 238, 238)' } },
 		],
-		rowTemplate: kendo.template($("#rowTemplateTop").html())
+		rowTemplate: kendo.template($("#rowTemplateTop").html()),
 	});
 }
 
@@ -172,3 +177,15 @@ $(document).ready(function(){
 })
 
 </script>
+
+<style>
+#topgrid .k-grid-header
+{
+padding: 0 !important;
+}
+
+#topgrid .k-grid-content
+{
+overflow-y: visible;
+}
+</style>

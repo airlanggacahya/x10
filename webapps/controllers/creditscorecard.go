@@ -80,33 +80,42 @@ func (a *CreditScoreCardController) GetAllData(r *knot.WebContext) interface{} {
 	}
 
 	id := t.GetString("customerid") + "|" + t.GetString("dealno")
-	// dealno := t.GetString("dealno")
+	dealno := t.GetString("dealno")
 	customerid := t.GetString("customerid")
 	tk.Println(id)
 	//get data grid
 	c, err := GetConnection()
 	defer c.Close()
-	csr, e := c.NewQuery().
-		Where(dbox.And(dbox.Eq("customerid", id))).
-		From("RatioInputData").
-		Cursor(nil)
-	defer csr.Close()
-	if e != nil {
-		res.SetError(e)
+	// csr, e := c.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("customerid", id), dbox.Eq("confirmed", true))).
+	// 	From("RatioInputData").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if e != nil {
+	// 	res.SetError(e)
+	// 	return res
+	// } else if csr.Count() == 0 {
+	// 	res.SetError(errors.New("Balance Sheet not found"))
+	// 	return res
+	// }
+
+	ratio := []tk.M{}
+	// err = csr.Fetch(&ratio, 0, false)
+	// if err != nil {
+	// 	res.SetError(err)
+	// 	return res
+	// }
+
+	err = new(DataConfirmController).GetDataConfirmed(customerid, dealno, new(RatioInputData).TableName(), &ratio)
+	if err != nil {
+		res.SetError(err)
 		return res
-	} else if csr.Count() == 0 {
+	} else if len(ratio) == 0 {
 		res.SetError(errors.New("Balance Sheet not found"))
 		return res
 	}
 
-	ratio := []tk.M{}
-	err = csr.Fetch(&ratio, 0, false)
-	if err != nil {
-		res.SetError(err)
-		return res
-	}
-
-	csr, e = c.NewQuery().
+	csr, e := c.NewQuery().
 		From("BalanceSheetInput").
 		Cursor(nil)
 	defer csr.Close()
@@ -130,7 +139,7 @@ func (a *CreditScoreCardController) GetAllData(r *knot.WebContext) interface{} {
 	// 	From("RepaymentRecords").
 	// 	Cursor(nil)
 
-	arr, summary, err := new(RTRBottom).GetData(t.GetString("customerid"), t.GetString("dealno"))
+	arr, summary, err := new(RTRBottom).GetDataConfirmed(t.GetString("customerid"), t.GetString("dealno"))
 
 	if err != nil {
 		res.SetError(err)
@@ -140,32 +149,37 @@ func (a *CreditScoreCardController) GetAllData(r *knot.WebContext) interface{} {
 		return res
 	}
 
-	// rtr := []tk.M{}
-	// err = csr.Fetch(&rtr, 0, false)
-	// if err != nil {
-	// 	res.SetError(err)
-	// 	return res
-	// }
-
-	csr, e = c.NewQuery().
-		Where(dbox.And(dbox.Eq("_id", id))).
-		From("AccountDetails").
-		Cursor(nil)
-	defer csr.Close()
-	if e != nil {
-		res.SetError(e)
-		return res
-	} else if csr.Count() == 0 {
-		res.SetError(errors.New("Account Detail data not found"))
-		return res
-	}
-
-	accdet := []tk.M{}
-	err = csr.Fetch(&accdet, 0, false)
+	rtr := []tk.M{}
+	err = csr.Fetch(&rtr, 0, false)
 	if err != nil {
 		res.SetError(err)
 		return res
 	}
+
+	// csr, e = c.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("_id", id))).
+	// 	From("AccountDetails").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if e != nil {
+	// 	res.SetError(e)
+	// 	return res
+	// } else if csr.Count() == 0 {
+	// 	res.SetError(errors.New("Account Detail data not found"))
+	// 	return res
+	// }
+
+	accdet := []tk.M{}
+	err = new(DataConfirmController).GetDataConfirmed(customerid, dealno, new(AccountDetail).TableName(), &accdet)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+	// err = csr.Fetch(&accdet, 0, false)
+	// if err != nil {
+	// 	res.SetError(err)
+	// 	return res
+	// }
 
 	csr, e = c.NewQuery().
 		From("RatingMaster").
@@ -205,28 +219,35 @@ func (a *CreditScoreCardController) GetAllData(r *knot.WebContext) interface{} {
 		return res
 	}
 
-	csr, e = c.NewQuery().
-		Where(dbox.And(
-			dbox.Eq("CustomerId", tk.ToInt(customerid, tk.RoundingAuto)),
-			// dbox.Eq("CustomerName", customerna),
-		)).
-		From("BankAnalysisV2").
-		Cursor(nil)
-	defer csr.Close()
-	if e != nil {
-		res.SetError(e)
-		return res
-	} else if csr.Count() == 0 {
-		res.SetError(errors.New("Bank Analysis data not found"))
-		return res
-	}
+	// csr, e = c.NewQuery().
+	// 	Where(dbox.And(
+	// 	dbox.Eq("CustomerId", tk.ToInt(customerid, tk.RoundingAuto)),
+	// 	// dbox.Eq("CustomerName", customerna),
+	// )).
+	// 	From("BankAnalysisV2").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if e != nil {
+	// 	res.SetError(e)
+	// 	return res
+	// } else if csr.Count() == 0 {
+	// 	res.SetError(errors.New("Bank Analysis data not found"))
+	// 	return res
+	// }
 
 	bank := []BankAnalysisV2{}
-	err = csr.Fetch(&bank, 0, false)
+	// err = csr.Fetch(&bank, 0, false)
+	// if err != nil {
+	// 	res.SetError(err)
+	// 	return res
+	// }
+
+	err = new(DataConfirmController).GetDataConfirmed(customerid, dealno, "BankAnalysisV2", &bank)
 	if err != nil {
 		res.SetError(err)
 		return res
 	}
+
 	banksum := new(BankAnalysis).GenerateBankSummaryV2(bank)
 
 	data := tk.M{}
@@ -336,10 +357,12 @@ func (c *CreditScoreCardController) GetCscData(k *knot.WebContext) interface{} {
 	}
 
 	csc := []struct {
-		Id         bson.ObjectId `bson:"_id" , json:"_id" `
-		CustomerId string        `bson:"CustomerId"`
-		DealNo     string        `bson:"DealNo"`
-		Data       []interface{} `bson:"Data"`
+		Id          bson.ObjectId `bson:"_id" , json:"_id" `
+		CustomerId  string        `bson:"CustomerId"`
+		DealNo      string        `bson:"DealNo"`
+		Data        []interface{} `bson:"Data"`
+		FinalScore  string        `bson:"FinalScore"`
+		FinalRating string        `bson:"FinalRating"`
 	}{}
 	err = q.Fetch(&csc, 0, false)
 	if err != nil {
@@ -412,6 +435,7 @@ func (c *CreditScoreCardController) GetCreditScoreCardData(k *knot.WebContext) i
 	res := new(tk.Result)
 
 	fm := new(FormulaModel)
+	// fm.RatingId = "JDOC4HUbxGnUALw64WmFDcII"
 	if err := k.GetPayload(fm); err != nil {
 		res.SetError(err)
 		return res

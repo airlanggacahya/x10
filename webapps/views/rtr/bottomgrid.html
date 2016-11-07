@@ -95,6 +95,18 @@
 
 var confirmed = ko.observable(false)
 var ArrDPD = ko.observableArray([])
+var formVisibility = ko.observable(false)
+
+function initEvents() {
+    filter().CustomerSearchVal.subscribe(function () {
+        formVisibility(false)
+    })
+    filter().DealNumberSearchVal.subscribe(function () {
+        formVisibility(false)
+    })
+
+    //$('#refresh').remove()
+}
 
 function DeleteData(id){
     var callData = {_id : id};
@@ -144,8 +156,8 @@ function dateeditor(container,options){
     $('<input class="dtp" data-bind="value:' + options.field + '">')
         .appendTo(container);
 
-    $(".dtp").kendoDatePicker({format: "dd/MM/yyyy", 
-        change:function(x){ 
+    $(".dtp").kendoDatePicker({format: "dd/MM/yyyy",
+        change:function(x){
             var val = x.sender.element.getKendoDatePicker().value();
             var h = moment(val).hour();
             var grid =  $("#bottomgrid").getKendoGrid();
@@ -176,6 +188,27 @@ function dateeditor(container,options){
     $(".dtp").attr("readonly", true);
 }
 
+function calcMaxMonth(months){
+    var max = 0
+    var value = 0
+    _.each(months, function(month){
+        if(month.Value != "") {
+            var temp = month.Value.replace("DPD", "")
+            if(temp == "30+") {
+                value = 32
+            } else {
+                value = parseInt(temp)
+            }
+
+            if(value > max) {
+                max = value
+            }
+        }
+    })
+
+    return max
+}
+
 function getData(){
     $("#bottomgrid").html("");
     $("#topgrid").html("");
@@ -191,9 +224,9 @@ function getData(){
         { title : "Amount (Rs Lacs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "Amount", width: 120, editor : checkeditor, template : function(o) {
 
             if(o.IsBankAnalys) {
-                return "<label style=\"width:100%; height: 100%; text-align: right; \">" + app.formatnum(o.Amount) + "</label>"
+                return "<label style=\"width:100%; height: 100%; text-align: right; \">" + app.formatnum(o.Amount,2) + "</label>"
             } else {
-                return "<label style=\"width:100%; text-align: right; \">" + app.formatnum(o.Amount) + "</label>"
+                return "<label style=\"width:100%; text-align: right; \">" + app.formatnum(o.Amount,2) + "</label>"
             }
         } },
         { title : "POS (Rs Lacs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "POS", width: 120, editor : checkeditor, attributes: { style: 'background: rgb(238, 238, 238)' }, template : function(o) {
@@ -219,25 +252,56 @@ function getData(){
     ajaxPost(url+"/getdatabottomgrid",callData, function(res){
 
         if(res.message != "") {
-            swal("Warning",res.message,"warning");
             $('#btnconfirm').hide()
+            $('#buttonsection').hide()
+            swal("Warning",res.message,"warning");
             return
         } else if(res.data[0].data.length == 0) {
             swal("Warning","Please fill Banking Analysis form first","warning");
             $('#btnconfirm').hide()
             return
+        }else{
+            formVisibility(true)
+            var data = res.data[0].data;
+            var sts = 0;
+            var con = 0
+            var re =0;
+            var co =0
+            $.each(data, function(i, items){
+
+                if(items.Status == 0){
+                    sts++;
+                }else if(items.Status == 1){
+                    re++;
+                }else if(items.Status == 2){
+                    con++;
+                }
+            });
+            if(sts == data.length){
+                condSave()
+                $('.form-last-confirmation-info').html('Last Save on: '+kendo.toString( data[0].DateSave,"dd-MM-yyyy h:mm:ss tt") )
+                rtr.Freeze(false)
+            }else if( re == data.length){
+                condConfirm()
+                $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString( data[0].DateFreeze,"dd-MM-yyyy h:mm:ss tt") )
+                rtr.Freeze(true)
+            }else if(con == data.length){
+                condFreeze();
+                $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString( data[0].DateConfirmed,"dd-MM-yyyy h:mm:ss tt") )
+                rtr.Freeze(true)
+            }
         }
 
 
-        if(res.data[0].data[0].Confirmed){
-            confirmed(true)
-            $('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(res.data[0].data[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
-            $('#btnconfirm').html('Re Enter').removeClass('btn-success').addClass('btn-reenter')
-        } else{
-            confirmed(false)
-            $('.form-last-confirmation-info').html('')
-            $('#btnconfirm').html('Confirm').removeClass('btn-reenter').addClass('btn-success')
-        }
+        // if(res.data[0].data[0].Confirmed){
+        //     confirmed(true)
+        //     $('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(res.data[0].data[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
+        //     $('#btnconfirm').html('Re Enter').removeClass('btn-success').addClass('btn-reenter')
+        // } else{
+        //     confirmed(false)
+        //     $('.form-last-confirmation-info').html('')
+        //     $('#btnconfirm').html('Confirm').removeClass('btn-reenter').addClass('btn-success')
+        // }
 
         $('#btnconfirm').show()
 
@@ -245,6 +309,7 @@ function getData(){
 
         datagrid = res.data[0].data
 
+        var maxGlobal = 0
         if(res.data[0].data[0]) {
             cacah = 0
             $.each(res.data[0].data[0].Months, function(k, v){
@@ -255,6 +320,7 @@ function getData(){
             ArrDPD([])
             $.each(res.data[0].data, function(k,v){
                 sumBounces = 0
+                var max = 0
 
                 $.each(v.Months, function(k1,v1){
                     datagrid[k]["Month"+k1] = v1.Value
@@ -267,17 +333,32 @@ function getData(){
                     }
                 })
 
+                if(v.DpdMaxTrack == 0) {
+                    max = calcMaxMonth(v.Months)
+                } else {
+                    max = v.DpdMaxTrack
+                }
+
+                if(max > maxGlobal) {
+                    maxGlobal = max
+                }
+
                 datagrid[k]["Bounces"] = ArrDPD().length;
-                 ArrDPD([]);
+                datagrid[k]["DpdMaxTrack"] = max
+
+                ArrDPD([]);
             })
         }
 
         col.push({ title : "Bounces", headerAttributes: { "class": "header-bgcolor wrap" }, field : "Bounces",
-            width: 80, attributes: { style: 'background: rgb(238, 238, 238)' }})
+            width: 80, attributes: { style: 'background: rgb(238, 238, 238)' }}),
+        col.push({ title : "Max. of DPD Track", headerAttributes: { "class": "header-bgcolor wrap" }, field : "DpdMaxTrack",
+            width: 80, attributes: { style: 'background: rgb(238, 238, 238)' }}),
         col.push({ title : "Yearly Repayment (Rs Lacs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "YearlyRepayment", width: 160, template : "<label style=\"width:100%; text-align: right;\">#:app.formatnum(YearlyRepayment,2)#</label>", attributes: { style: 'background: rgb(238, 238, 238)' }})
 
         col.push({ headerAttributes: { "class": "header-bgcolor wrap" }, template : "<button type='button' btn-sm='' class='btn btn-sm btn-danger tooltipster' title='Delete' onclick='DeleteData(\"#: Id #\");'> <span class='glyphicon glyphicon-trash'></span>&nbsp; </button>", width: 50 })
         NewestData(datagrid);
+
         CreateBottomGrid(filter().CustomerSearchVal(), filter().DealNumberSearchVal(), datagrid, col)
 
         topgriddata[0].OBLIPos = res.data[1].summary.TotalObligationPOS
@@ -299,6 +380,7 @@ function getData(){
         topgriddata[0].Yrp = res.data[1].summary.YearlyRepayment
         topgriddata[0].SumBounces = res.data[1].summary.SumBounces
         topgriddata[0].SumExtenalYearly = res.data[1].summary.SumExtenalYearly
+        topgriddata[0].DpdMaxTrack = (res.data[1].summary.DPDTrack == -1 || res.data[1].summary.DPDTrack == 0)?maxGlobal:res.data[1].summary.DPDTrack
 
         CreateTopGrid();
     });
@@ -317,57 +399,6 @@ function CreateBottomGrid(cust, deal, data, col){
                                 read: function(yo){
                                     yo.success(data);
                                 },
-                                update: function(yo){
-                                    var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
-                                    var rowChange = $.grep(data, function(item) {
-                                        return item.dirty
-                                    });
-
-                                    var notValidGlobal = false
-
-                                    $.each(rowChange, function(k, v){
-                                        _.each(v, function(k1, v1){
-                                            if((v1 != "Id" && v1 != "SNo" && v1 != "Amount" && v1 != "POS") && k1 == "" && parseInt(k1) != 0){
-                                                notValidGlobal = true
-                                            }
-                                        })
-                                    })
-
-                                    var callData = [];
-
-                                    for(var i in yo.data["models"]){
-                                        var dt = yo.data["models"][i];
-                                        dt["CustomerId"] = filter().CustomerSearchVal()
-                                        dt["DealNo"] = filter().DealNumberSearchVal()
-                                        callData.push(dt);
-                                    }
-
-                                    // if(notValidGlobal) {
-                                    //     if(!NotValid) {
-                                    //         NotValid = false;
-                                    //         var dt = callData;
-                                    //         _.each(dt,function(e,i){
-                                    //             _.each(e,function(ex,ix){
-                                    //                 if((ix != "Id" && ix != "SNo" && ix != "Amount" && ix != "POS") && ex == "" && parseInt(ex) != 0){
-                                    //                    NotValid = true;
-                                    //                   }
-                                    //               });
-                                    //         });
-                                    //              if(NotValid){
-                                    //                 NotValid = false
-                                    //              swal("Warning","Please complete all fields","warning");
-                                    //                     return;
-                                    //         }
-                                    //     }
-                                    // } else if(!NotValid) {
-
-                                        ajaxPost(url+"/update",callData, function(res){
-                                            yo.success(res.data);
-                                            swal("Success","Data saved","success");
-                                            getData()
-                                        });
-                                    // }
-                                 },
                                 create: function(yo){
 
                                     NotValid = false;
@@ -535,7 +566,7 @@ function CreateBottomGrid(cust, deal, data, col){
     if(confirmed()){
         $("#bottomgrid").kendoGrid({
             dataSource: dataSource,
-            height:350,
+            height:310,
             navigatable: true,
             pageable: false,
             toolbar: ["create", "save", "cancel"],
@@ -548,6 +579,10 @@ function CreateBottomGrid(cust, deal, data, col){
                     //pos.enable(true)
                     $(e.container).find('input[name="POS"]').attr("readonly", true);
                 }
+
+                if (rtr.Freeze() == true) {
+                    this.closeCell();
+                }
              },
              dataBound: function (e) {
                     $("#bottomgrid").find(".tooltipster").tooltipster({
@@ -557,13 +592,13 @@ function CreateBottomGrid(cust, deal, data, col){
                         delay: 0,
                         position: 'top',
                     });
-                    var grid = this;
-                    if (!$.isEmptyObject(lastEditIndex)) {
-                        var cell = grid.tbody.children().eq(lastEditIndex.row).children().eq(lastEditIndex.col);
-             
-                        grid.current(cell);
-                        grid.table.focus();
-                    }
+                    // var grid = this;
+                    // if (!$.isEmptyObject(lastEditIndex)) {
+                    //     var cell = grid.tbody.children().eq(lastEditIndex.row).children().eq(lastEditIndex.col);
+
+                    //     grid.current(cell);
+                    //     grid.table.focus();
+                    // }
                 }
         });
         $('.btn-danger').hide()
@@ -573,8 +608,8 @@ function CreateBottomGrid(cust, deal, data, col){
             dataSource: dataSource,
             navigatable: true,
             pageable: false,
-            height:350,
-            toolbar: ["create", "save", "cancel"],
+            height:310,
+            toolbar: ["create", "cancel"],
             columns : col,
              editable: {
                 createAt: "bottom"
@@ -586,6 +621,12 @@ function CreateBottomGrid(cust, deal, data, col){
                     //pos.enable(true)
                     $(e.container).find('input[name="POS"]').attr("readonly", true);
                 }
+
+                if (rtr.Freeze() == true) {
+                    this.closeCell();
+                }
+
+
              },
              change: function(e){
                 refresh(this);
@@ -600,7 +641,7 @@ function CreateBottomGrid(cust, deal, data, col){
                     });
 
                     var grid = this;
-             
+
                     // grid.current(cell);
                     grid.table.focus();
                 }
@@ -611,12 +652,127 @@ function CreateBottomGrid(cust, deal, data, col){
     $(".k-grid-cancel-changes").attr("class","btn btn-sm btn-reset k-grid-cancel-changes mgright pull-left");
     $(".k-grid-cancel-changes").text("Cancel");
 
-    $(".k-grid-save-changes").attr("class","btn btn-sm btn-save k-grid-save-changes mgright pull-left");
-    $(".k-grid-save-changes").text("Save");
+    // $(".k-grid-save-changes").attr("class","btn btn-sm .btn-save k-grid-save-changes mgright pull-left");
+    // $(".k-grid-save-changes").text("Save");
 
     $(".k-grid-add").attr("class","btn btn-sm btn-add k-grid-add mgright pull-left");
     $(".k-grid-add").text("Add");
 
+}
+
+condSave = function(){
+    $(".btn-reenter").hide();
+    $(".btn-confirm").show();
+    $(".btn-unfreeze").hide();
+    $(".btn-freeze").show();
+    $(".btn-save").show()
+    $(".k-grid-add").show()
+    $(".k-grid-cancel-changes").show()
+}
+
+condConfirm = function(){
+    $(".btn-reenter").show();
+    $(".btn-confirm").hide();
+    $(".btn-freeze").show();
+    $(".btn-unfreeze").hide();
+    $(".btn-save").show();
+    $(".btn-save").prop("disabled", true)
+    setTimeout(function(){
+        $(".k-grid-add").hide()
+        $(".k-grid-cancel-changes").hide()
+    }, 200)
+
+}
+
+condFreeze = function(){
+    $(".btn-reenter").show();
+    $(".btn-confirm").hide();
+    $(".btn-unfreeze").show();
+    $(".btn-freeze").hide();
+    $(".btn-save").show();
+    $(".btn-save").prop("disabled", true);
+    setTimeout(function(){
+        $(".k-grid-add").hide()
+        $(".k-grid-cancel-changes").hide()
+    }, 200)
+}
+
+condReenter = function(){
+    $(".btn-reenter").hide();
+    $(".btn-confirm").hide();
+    $(".btn-unfreeze").show()
+    $(".btn-freeze").hide();
+    $(".btn-save").show()
+    $(".btn-save").prop("disabled", true);
+}
+
+onsave = function(){
+    var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
+    $.each(data, function(i, item){
+        item.Status = 0;
+        item.DateSave = new Date();
+        if (item.CustomerId == undefined) {
+            item.CustomerId = filter().CustomerSearchVal()
+        }
+
+        if (item.DealNo == undefined) {
+            item.DealNo = filter().DealNumberSearchVal()
+        }
+    })
+    ajaxPost("/rtr/update",data, function(res){
+        // yo.success(res.data);
+        condSave()
+        swal("Success","Data saved","success");
+        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        getData()
+    })
+}
+
+onreenter = function(){
+    var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
+    $.each(data, function(i, item){
+        item.Status = 0;
+        item.DateSave = new Date();
+    })
+    ajaxPost("/rtr/update",data, function(res){
+        // yo.success(res.data);
+        condReenter()
+        swal("Please Edit / Enter Data", "", "success");
+        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        getData()
+    })
+}
+
+onFreeze = function(){
+    if(rtr.Freeze() == false){
+        swal("Please Confirm Data First");
+        return;
+    }
+    var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
+    $.each(data, function(i, item){
+        item.Status = 2;
+        item.DateFreeze = new Date();
+    })
+    ajaxPost("/rtr/update",data, function(res){
+        // yo.success(res.data);
+        condFreeze();
+        swal("Successfully Freezed", "", "success");
+        $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        getData()
+    })
+}
+
+onUnfreeze = function(){
+    var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
+    $.each(data, function(i, item){
+        item.Status = 1;
+    })
+    ajaxPost("/rtr/update",data, function(res){
+        // yo.success(res.data);
+        swal("Successfully Unfreezed", "", "success");
+        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        getData()
+    })
 }
 
 function bslsDropDownEditor(container, options) {
@@ -628,7 +784,7 @@ function bslsDropDownEditor(container, options) {
                 dataTextField: "Text",
                 dataValueField: "Text",
                 dataSource: [{"Value":"BSL","Text":"BSL"},{"Value":"PBSL","Text":"PBSL"}],
-                optionLabel: "Select one..",
+                optionLabel: "Select One..",
 
             });
 }
@@ -643,9 +799,9 @@ function bouncesDropDownEditor(container, options) {
                 // valueField: "Clear",
                 dataSource: [{"Value":"Clear","Text":"Clear"},{"Value":"Not Start","Text":"Not Start"},{"Value":"DPD15","Text":"DPD15"},{"Value":"DPD30","Text":"DPD30"},{"Value":"DPD30+","Text":"DPD30+"}],
                 // index: 0
-                optionLabel: "Select one..",
+                optionLabel: "Select One..",
                 change: monthValue
-    
+
                 // }
                 // }
 
@@ -660,7 +816,7 @@ function loanStatusDropDownEditor(container, options) {
                 dataTextField: "Text",
                 dataValueField: "Text",
                 dataSource: [{"Value":"Closed","Text":"Closed"},{"Value":"Live","Text":"Live"},{"Value":"Balance Transfer","Text":"Balance Transfer"}],
-                optionLabel: "Select one.."
+                optionLabel: "Select One.."
             });
 }
 
@@ -672,7 +828,7 @@ function typeOfLoanDropDownEditor(container, options) {
                 dataTextField: "Text",
                 dataValueField: "Text",
                 dataSource: [{"Value":"Type of Loans","Text":"Type of Loans"},{"Value":"Auto Loan","Text":"Auto Loan"},{"Value":"Bill Discounting","Text":"Bill Discounting"},{"Value":"Business Loan","Text":"Business Loan"},{"Value":"Commercial Vehicle","Text":"Commercial Vehicle"},{"Value":"Currency Loans","Text":"Currency Loans"},{"Value":"Equipment Loan","Text":"Equipment Loan"},{"Value":"Home Loan","Text":"Home Loan"},{"Value":"Letter of Credit","Text":"Letter of Credit"},{"Value":"Loan Against Receivables","Text":"Loan Against Receivables"},{"Value":"Loan Against Securities","Text":"Loan Against Securities"},{"Value":"Mortgage Loan (LAP)","Text":"Mortgage Loan (LAP)"},{"Value":"OD/CC","Text":"OD/CC"},{"Value":"Packing Credit","Text":"Packing Credit"},{"Value":"Personal Loan","Text":"Personal Loan"},{"Value":"Term Loan (EMI)","Text":"Term Loan (EMI)"}],
-                optionLabel: "Select one.."
+                optionLabel: "Select One.."
             });
 }
 
@@ -685,10 +841,13 @@ function confirm(){
             data[v].Confirmed = true;
             data[v].DateConfirmed = new Date()
         }
+        data[v].Status = 1;
     })
     ajaxPost("/rtr/update",data, function(res){
         // yo.success(res.data);
-        swal("Success","Data saved","success");
+        condConfirm()
+        swal("Successfully Confirmed", "", "success");
+        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
         getData()
     });
 }
@@ -696,25 +855,31 @@ function confirm(){
 function monthValue(e){
     var data = $("#bottomgrid").data("kendoGrid").dataSource.data();
     $.each(data, function(i, items){
+        var max = 0
+        months = []
         ArrDPD([])
-        console.log(items["Month"+0])
-        $.each(items.Months, function(w, month){
+        for(var w = 0;w<6;w++){
+            months.push({Value: items["Month"+w]})
             if((items["Month"+w]).indexOf("DPD") != -1){
                 ArrDPD.push((items["Month"+w]))
             }
-        })
+        }
+
+        max = calcMaxMonth(months)
 
         items["Bounces"] = ArrDPD().length
+        items["DpdMaxTrack"] = max
         $("#bottomgrid tbody>tr").eq(i).find("td:eq(20)").text(items.Bounces)
+        $("#bottomgrid tbody>tr").eq(i).find("td:eq(21)").text(items.DpdMaxTrack)
     })
-    
+
 }
 
 $(document).ready(function(){
     $('.tooltip').tooltipster();
 
     //CreateBottomGrid();
-
+    $("#btnconfirm").hide();
     $("#topgrid").hide();
     $("#bottomgrid").hide();
 })
@@ -722,6 +887,8 @@ $(document).ready(function(){
 function refreshFilter(){
     $("#topgrid").show();
     $("#bottomgrid").show();
+    $("#btnconfirm").show();
+    initEvents()
     // $("body").css("overflow", "hidden");
 
     getData()

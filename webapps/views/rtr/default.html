@@ -12,16 +12,28 @@ model.Edit= ko.observable('{{.Edit}}')
 model.User= ko.observable('{{.Username}}');
 // $('#btnconfirm').hide()
 </script>
+<script src="/static/core/rtr.js"></script>
 
 {{template "filter.html"}}
 <div>
-  <div class="col-sm-12 col-sm-12 ez panel-content">
+  <div class="col-sm-12 col-sm-12 ez panel-content" style="display: none" data-bind="visible: (formVisibility() == true)">
       <div class="panel ez no-padding padd hardcore">
-        <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+        <!-- <div class="panel-heading"> -->
+        <!-- </div> -->
         <!-- <div class="form-last-confirmation-info"></div> -->
-        <button id="btnconfirm" class="btn btn-sm btn-confirm" onclick="confirm()">Confirm</button>
-        <span class="form-last-confirmation-info pull-right"></span>
-        <div class="panel-body">
+        
+        <div class="panel-body" style="margin-top: -37px;">
+            <div class="panel-body" id="buttonsection">
+            <!-- <div class="panel-nav-button pull-left"> -->
+                <button class="btn btn-sm btn-save" onclick="onsave()">Save</button>
+                <!-- <button class="btn btn-sm btn-reset">Reset</button> -->
+                <button class="btn btn-sm btn-confirm" onclick="confirm()">Confirm</button>
+                <button class="btn btn-sm btn-reenter" onclick="onreenter()">Re-Enter</button>
+                <button class="btn btn-sm btn-freeze" onclick="onFreeze()">Freeze</button>
+                <button class="btn btn-sm btn-unfreeze" onclick="onUnfreeze()">Unfreeze</button>
+                <span class="form-last-confirmation-info pull-right"></span>
+              <!-- </div> -->
+            </div>
         		{{template "topgrid.html"}}
         		{{template "bottomgrid.html"}}
         </div>

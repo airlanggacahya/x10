@@ -35,14 +35,78 @@ loanapproval = {
     officebuiltuparea : ko.observable(""),
     officemarketvalue : ko.observable(""),
     promotersarr : ko.observableArray([]),
-
+    proposedlimitamount : ko.observable(""),
+    firstagreementdate : ko.observable(""),
+    limittenor : ko.observable(""),
+    existinglimitamount : ko.observable(""),
+    recentagreementdate : ko.observable(""),
+    roi : ko.observable(""),
+    existingroi : ko.observable(""),
+    vintagex10 : ko.observable(""),
+    proposedfee : ko.observable(""),
+    existingpf : ko.observable(""),
+    comercialcibilreport : ko.observable(""),
+    maxdelaydays : ko.observable(""),
+    maxpaymentdays : ko.observable(""),
+    averagedelaydays : ko.observable(""),
+    standarddeviation : ko.observable(""),
+    averagepaymentdays : ko.observable(""),
+    existingcustomer : ko.observable(""),
     valueregistered : ko.observable(""),
     brhead : ko.observable(""),
     rmname : ko.observable(""),
     propertyowned : ko.observable([]),
     companybackground : ko.observableArray([]),
     pdCustomerMargin: ko.observable(""),
-    pdComments: ko.observable("")
+    pdComments: ko.observable(""),
+    averagetransactionpaymentdelay: ko.observable(""),
+    delaystandarddeviation: ko.observable(""),
+    averagetransactionpayment: ko.observable(""),
+    daystandarddeviation: ko.observable(""),
+    averageutilization: ko.observable(""),
+    maxdpd: ko.observable(""),
+    numberdelay: ko.observable(""),
+    numberearly: ko.observable(""),
+    numberpayment: ko.observable(""),
+    stocksell: ko.observable(""),
+    govt: ko.observable(""),
+    corporate: ko.observable(""),
+    iriscomp: ko.observable(""),
+    savex: ko.observable(""),
+    rashi: ko.observable(""),
+    supertron: ko.observable(""),
+    compuage: ko.observable(""),
+    avnet: ko.observable(""),
+    promotorbio: ko.observableArray([]),
+    pddone: ko.observable(""),
+    pddate: ko.observable(""),
+    pdplace: ko.observable(""),
+    personmet: ko.observable(""),
+    pdremarks: ko.observable(""),
+    topCustomersName: ko.observableArray([]),
+    topproducts: ko.observableArray([]),
+    expansionplan: ko.observable(""),
+    commentfinance: ko.observable(""),
+    referencecheck: ko.observableArray([]),
+    marketref: ko.observable(""),
+    detailpromoters: ko.observableArray([]),
+    officeaddress: ko.observable(""),
+    officeownership: ko.observable(""),
+    officeactivity: ko.observable(""),
+    officelandarea: ko.observable(""),
+    officebuiltuparea: ko.observable(""),
+    officemarketvalue: ko.observable(""),
+    promotersarr: ko.observableArray([]),
+    amountofbusiness: ko.observable(""),
+    valueregistered: ko.observable(""),
+    propertyowned: ko.observableArray([]),
+    companybackground: ko.observableArray([]),
+    pdCustomerMargin: ko.observable(""),
+    pdComments: ko.observable(""),
+    distributorList: ko.observableArray([{Label : "", Result: ""}]),
+
+    topcustomerfinal: ko.observable(""),
+    topproductsfinal: ko.observable("")
 }
 
 loanApproval = {
@@ -136,12 +200,152 @@ loanApproval = {
         Rating : ko.observable("")
       }
     },
+    loanSummary : {
+      scheme : ko.observable("")
+    },
+    commercialCibil: {
+      assessment: ko.observable(),
+      comments: ko.observableArray([])
+    },
+    outstandingData: ko.observable("")
 };
+
+loanApproval.reset = function(){
+    due.dataVerifications("");
+    due.dataDefaulterList("");
+    due.dataTemp("");
+    due.Name("");
+    due.dataCustomer("")
+    due.templateForm = {
+        Id: "",
+        CustomerId: "",
+        DealNo: "",
+        Verification: [],
+        Defaulter: [],
+        Background: [],
+        Status: 0,
+        Freeze: false,
+        LastConfirmed : (new Date()).toISOString(),
+    };
+    due.formVisible(false);
+    due.form = ko.mapping.fromJS(due.templateForm);
+
+    loanapproval.companyname("")
+    loanapproval.logindate("")
+    loanapproval.businessaddress("")
+    loanapproval.product("")
+    loanapproval.location("")
+    loanapproval.internalrating("")
+    loanapproval.businesssince("")
+    loanapproval.businesssegment("")
+    loanapproval.leaddistributor("")
+    loanapproval.creditanalyst("")
+    loanapproval.proposedlimitamount("")
+    loanapproval.existingcustomer("")
+    loanapproval.firstagreementdate("")
+    loanapproval.limittenor("")
+    loanapproval.existinglimitamount("")
+    loanapproval.recentagreementdate("")
+    loanapproval.roi("")
+    loanapproval.existingroi("")
+    loanapproval.vintagex10("")
+    loanapproval.proposedfee("")
+    loanapproval.existingpf("")
+    loanapproval.comercialcibilreport("")
+    loanapproval.maxdelaydays("")
+    loanapproval.maxpaymentdays("")
+    loanapproval.averagedelaydays("")
+    loanapproval.standarddeviation("")
+    loanapproval.averagepaymentdays("")
+    loanapproval.averagetransactionpaymentdelay("")
+    loanapproval.delaystandarddeviation("")
+    loanapproval.averagetransactionpayment("")
+    loanapproval.daystandarddeviation("")
+    loanapproval.averageutilization("")
+    loanapproval.maxdpd("")
+    loanapproval.numberdelay("")
+    loanapproval.numberearly("")
+    loanapproval.numberpayment("")
+    loanapproval.stocksell("")
+    loanapproval.govt("")
+    loanapproval.corporate("")
+    loanapproval.iriscomp("")
+    loanapproval.savex("")
+    loanapproval.rashi("")
+    loanapproval.supertron("")
+    loanapproval.compuage("")
+    loanapproval.avnet("")
+    loanapproval.promotorbio([])
+    loanapproval.pddone("")
+    loanapproval.pddate("")
+    loanapproval.pdplace("")
+    loanapproval.personmet("")
+    loanapproval.pdremarks("")
+    loanapproval.topCustomersName([])
+    loanapproval.topproducts([])
+    loanapproval.expansionplan("")
+    loanapproval.commentfinance("")
+    loanapproval.referencecheck([])
+    loanapproval.marketref("")
+    loanapproval.detailpromoters([])
+    loanapproval.officeaddress("")
+    loanapproval.officeownership("")
+    loanapproval.officeactivity("")
+    loanapproval.officelandarea("")
+    loanapproval.officebuiltuparea("")
+    loanapproval.officemarketvalue("")
+    loanapproval.promotersarr([])
+    loanapproval.amountofbusiness("")
+    loanapproval.valueregistered("")
+    loanapproval.propertyowned([])
+    loanapproval.companybackground([])
+    loanapproval.pdCustomerMargin("")
+    loanapproval.pdComments("")
+    loanapproval.distributorList([{Label : "", Result: ""}])
+
+    loanapproval.topcustomerfinal("");
+    loanapproval.topproductsfinal("");
+
+    promoter.Name(""),
+    promoter.Address(""),
+    promoter.Ownership(""),
+    promoter.NoOfYears(""),
+    promoter.NetWorth(""),
+    promoter.PropertyType(""),
+    promoter.PropertyAddress(""),
+    promoter.PropertyMarket(""),
+
+    promoters = [];
+
+    loanApproval.loanSummary.scheme("")
+    loanApproval.loanDetail.proposedLimitAmount(),
+    loanApproval.loanDetail.proposedROI(),
+    loanApproval.loanDetail.proposedProFee(),
+    loanApproval.loanDetail.limitTenor(),
+    loanApproval.loanDetail.ifExistingCustomer(),
+    loanApproval.loanDetail.ifYesExistingLimitAmount(),
+    loanApproval.loanDetail.existingROI(),
+    loanApproval.loanDetail.existingProcessingFee(),
+    loanApproval.loanDetail.firstAgreementDate(),
+    loanApproval.loanDetail.vintageWithX10(),
+    loanApproval.loanDetail.recentAgreementDate(),
+    loanApproval.loanDetail.poBacked(),
+    loanApproval.loanDetail.projectPOValue(),
+    loanApproval.loanDetail.expectedPayment()
+
+    loanApproval.paymentTrack.highestAverageDelay(0)
+    loanApproval.commercialCibil.assessment()
+    loanApproval.commercialCibil.comments([])
+    loanApproval.companyBackgroundData("")
+    loanApproval.promoterBackgroundData("")
+    loanApproval.propertyOwnershipData("")
+    loanApproval.outstandingData("")
+}
 
 loanApproval.setData = function(data){
     // Loan Detail
     loanApproval.loanDetail.proposedLimitAmount(numberWithCommas( data.AD[0].loandetails.requestedlimitamount));
-    loanApproval.loanDetail.ifExistingCustomer((data.AD[0].loandetails.ifExistingCustomer) ? "Yes" : "No");
+    loanApproval.loanDetail.ifExistingCustomer((data.AD[0].loandetails.ifexistingcustomer) ? "Yes" : "No");
     loanApproval.loanDetail.proposedROI(data.AD[0].loandetails.proposedrateinterest + "%");
     loanApproval.loanDetail.ifYesExistingLimitAmount(numberWithCommas(data.AD[0].loandetails.ifyeseistinglimitamount));
     loanApproval.loanDetail.proposedProFee(data.AD[0].loandetails.proposedpfee + "%");
@@ -198,12 +402,13 @@ loanApproval.setData = function(data){
     loanApproval.borrowerDetails.businessMix.compuage(data.AD[0].distributormix.compuagein + "%");
     loanApproval.borrowerDetails.businessMix.avnet(data.AD[0].distributormix.avnetin + "%");
 
-    if(data.AD[0].distributormix.Data)
+    if(data.AD[0].distributormix.Data) {
       if(data.AD[0].distributormix.Data[0].Label != undefined){
         loanApproval.borrowerDetails.businessMix.distributorMix.data(data.AD[0].distributormix.Data)
       } else {
         loanApproval.borrowerDetails.businessMix.distributorMix.data([{Label : "", Result: ""}])
       }
+    }
 
     setDataCreditScoreCard(loanApproval.creditScoreData())
 
@@ -230,11 +435,16 @@ var setDataCreditScoreCard = function(data) {
         return o.IsHeader
       })
 
+      var industri = _.find(header,function(x){ return x.Name.toLowerCase().indexOf("industry") > -1});
+      var management = _.find(header,function(x){ return x.Name.toLowerCase().indexOf("management") > -1});
+      var financial = _.find(header,function(x){ return x.Name.toLowerCase().indexOf("financial") > -1});
+      var banking = _.find(header,function(x){ return x.Name.toLowerCase().indexOf("banking") > -1});
+
       if(header.length > 0) {
-        loanApproval.ratingRef.IndustryAndBusiness(header[0].Score)
-        loanApproval.ratingRef.ManagementPromotorsRisk(header[1].Score)
-        loanApproval.ratingRef.FinancialRisk(header[2].Score)
-        loanApproval.ratingRef.BankingRisk(header[3].Score)
+        loanApproval.ratingRef.IndustryAndBusiness(industri.Score)
+        loanApproval.ratingRef.ManagementPromotorsRisk(management.Score)
+        loanApproval.ratingRef.FinancialRisk(financial.Score)
+        loanApproval.ratingRef.BankingRisk(banking.Score)
       }
     }
   }

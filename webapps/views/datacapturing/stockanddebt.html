@@ -28,7 +28,21 @@
 
     Mode = ko.observable(0);
 
-    stockanddebt = ko.observable({Id: '', CustomerId : '',Flag : 0,AOM : [],AA : []})
+    stockanddebt = ko.observable({
+      Id: '',
+      CustomerId : '',
+      Flag : 0,
+      AOM : [],
+      AA : []
+    })
+
+    stockanddebtCloning = {
+      IsConfirm: ko.observable(false),
+      IsFreeze: ko.observable(false),
+      ConfirmText: ko.observable("Confirm"),
+      FreezeText: ko.observable("Freeze"),
+      DateConfirm: ko.observable("")
+    }
 
     //flag :
       //1 -> save draft
@@ -39,59 +53,38 @@
 
   //function
     function addAOM(){
-      // var date = kendo.toString(selectdateval(), 'MMMM yyyy');
-
-      // t = true;
-      // $.each( stockanddebt().AOM ,function(k,v){
-      //   if(v.OperatingRatioString == date){
-      //     t = false;
-      //   }
-      // })
-
-      // if (t){
-      //   swal("Success","Adjusted Operating Metrics Has Been Addded", "success");
-      //   if(selectdateseqval() == "first"){
-      //     stockanddebt().AOM.unshift({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: '',InventoryAmount: '',LessPayablesAmount: '',WCRequirement: ''});
-      //   } else if(selectdateseqval() == "last"){
-      //     stockanddebt().AOM.push({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: '',InventoryAmount: '',LessPayablesAmount: '',WCRequirement: ''});
-      //   }
-      //   selectdateval(new Date());
-      //   selectdateseqval("first");
-      //   AOM(stockanddebt().AOM);
-      // } else{
-      //   swal("Warning","This Month already added", "warning");
-      // }
       var date = kendo.toString(selectdateval(), 'MMMM yyyy');
       AOM.push({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
       // swal("Success","Adjusted Operating Metrics Has Been Addded", "success");
     }
 
+    removeAOM = function(aom) {
+      swal({
+        title: "Are you sure you want to Delete?",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: "Delete",
+      }).then(function() {
+        AOM.remove(aom)
+      }, function(dismiss) {
+      });
+    }
+
     function addAA(){
-      // var date = kendo.toString(selectdateval(), 'MMMM yyyy');
-
-      // t = true;
-      // $.each( stockanddebt().AA ,function(k,v){
-      //   if(v.BulanString == date){
-      //     t = false;
-      //   }
-      // })
-
-      // if (t){
-      //   swal("Success","Ageing Analysis Has Been Addded", "success");
-      //   if(selectdateseqval() == "first"){
-      //     stockanddebt().AA.unshift({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
-      //   } else if(selectdateseqval() == "last"){
-      //     stockanddebt().AA.push({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
-      //   }
-      //   selectdateval(new Date());
-      //   selectdateseqval("first");
-      //   AA(stockanddebt().AA);
-      // } else{
-      //   swal("Warning","This Month already added", "warning");
-      // }
       var date = kendo.toString(selectdateval(), 'MMMM yyyy');
       AA.push({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
-      // swal("Success","Ageing Analysis Has Been Addded", "success");
+    }
+
+    removeAA = function(aa) {
+      swal({
+        title: "Are you sure you want to Delete?",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: "Delete",
+      }).then(function() {
+        AA.remove(aa)
+      }, function(dismiss) {
+      });
     }
 
     isLoading = function (what) {
@@ -105,14 +98,109 @@
       var url = "{{BaseUrl}}datacapturing/getstockanddebtdetail";
       isLoading(true)
       ajaxPost(url, param, function(data) {
-        // console.log(data[0].Flag);
-        // if()
         PrepareDataRatioReport(param, data, customerId);
+        if(data.length > 0) {
+          setStatus(data[0], checkConfirm)
+        }
       }, undefined);
     }
 
+    var setStatus = function(data, callback){
+      if(data.IsConfirm != undefined) {
+        stockanddebtCloning.IsConfirm(data.IsConfirm)
+      }
+
+      if(data.IsFreeze != undefined) {
+        stockanddebtCloning.IsFreeze(data.IsFreeze)
+      }
+
+      if(data.DateFlag != undefined) {
+        stockanddebtCloning.DateConfirm(data.DateFlag)
+      }
+
+      if(typeof callback == "function"){
+        callback()
+      }
+    }
+
+    var checkConfirm = function(){
+      stockanddebtCloning.ConfirmText("Confirm")
+      stockanddebtCloning.FreezeText("Freeze")
+
+      $(".modezero").attr("disabled", false);
+
+      $('.form-last-confirmation-info').html("")
+
+      if(stockanddebtCloning.IsConfirm()){
+        $(".modezero").attr("disabled", true);
+        stockanddebtCloning.ConfirmText("Re-Enter")
+
+        $('.form-last-confirmation-info').html('Last confirmed on: ' + moment(new Date(stockanddebtCloning.DateConfirm())).format("DD-MM-YYYY HH:mm A"))
+      }
+
+      if(stockanddebtCloning.IsFreeze()){
+        $(".modezero").attr("disabled", true);
+        stockanddebtCloning.FreezeText("Unfreeze")
+      }
+    }
+
+    var checkAlertFreeze = function(callback){
+      swal({
+        title: "Are you sure?",
+        type: "info",
+        showCancelButton: true,
+        confirmButtonText: (stockanddebtCloning.IsFreeze() ? "Unfreeze it" : 'Yes, freeze it'),
+        // closeOnConfirm: false
+      }).then(function () {
+        callback()
+      });
+    }
+
+    var checkBtnFreeze = ko.pureComputed(function(){
+      return (stockanddebtCloning.IsFreeze())? "btn-unfreeze":"btn-freeze"
+    })
+    var setConfirm = function(){
+      return function(){
+        param = {Id: stockanddebt().Id, IsConfirm: !stockanddebtCloning.IsConfirm()}
+
+        var url = "{{BaseUrl}}datacapturing/confirmstockanddebt";
+        ajaxPost(url, param, function(data) {
+          setStatus(data, checkConfirm)
+
+          if(!stockanddebtCloning.IsConfirm()){
+            swal("Please Edit / Enter Data", "", "success");
+          } else {
+            swal("Successfully Confirmed", "", "success");
+          }
+
+        }, undefined);
+      }
+    }
+
+    var setFreeze = function(){
+      return function(){
+        if(!stockanddebtCloning.IsFreeze() && !stockanddebtCloning.IsConfirm()){
+          sweetAlert("Oops...", "Please Confirm First", "error");
+          return
+        } else {
+          checkAlertFreeze(function(){
+            param = {Id: stockanddebt().Id, IsFreeze: !stockanddebtCloning.IsFreeze()}
+
+            var url = "{{BaseUrl}}datacapturing/freezestockanddebt";
+            ajaxPost(url, param, function(data) {
+              setStatus(data, checkConfirm)
+              if(!stockanddebtCloning.IsFreeze()){
+                swal("Successfully Unfreezed", "", "success");
+              } else {
+                swal("Successfully Freezed", "", "success");
+              }
+            }, undefined);
+          });
+        }
+      }
+    }
+
     function changeDate(v,i,mode){
-      console.log(v,i);
       var date = kendo.toString(v, 'MMMM yyyy');
 
       if (mode == "AOM"){
@@ -148,16 +236,23 @@
       AOM([]);
       AA([]);
       var date = kendo.toString(selectdateval(), 'MMMM yyyy');
+
       AOM.push({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
+
       AA.push({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+
       tmp = moment().subtract(1, 'month')._d;
       date = kendo.toString(tmp, 'MMMM yyyy');
       AOM.push({Id: "", OperatingRatio: tmp, OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
+
       AA.push({Id: "", BulanString: date,Bulan: tmp,ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+
       tmp = moment().subtract(2, 'month')._d;
       date = kendo.toString(tmp, 'MMMM yyyy');
       AOM.push({Id: "", OperatingRatio: tmp, OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
+
       AA.push({Id: "", BulanString: date,Bulan: tmp,ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+
       stockanddebt().AOM = AOM();
       stockanddebt().AA = AA();
     }
@@ -168,7 +263,6 @@
       $("#btndraft").hide();
       $("#btnconfirm").hide();
       $("#btnceedit").hide();
-      $(".filtermen").hide();
       if(stockanddebt().Flag == 0){
         $("#btnnewentry").show();
         $("#btnedit").hide();
@@ -204,7 +298,6 @@
       $("#btndraft").show();
       $("#btnconfirm").show();
       $("#btnceedit").show();
-      $(".filtermen").show();
       Mode(1);
       $(".modezero").prop("disabled", false);
     }
@@ -218,44 +311,75 @@
       stockanddebt().Flag = 3;
       awal();
       savedata();
+      swal("Successfully Verified", "", "success");
     }
 
     function confirm(){
       stockanddebt().Flag = 2;
       awal();
       savedata();
+      swal("Successfully Confirmed", "", "success");
     }
 
     function save(){
-      stockanddebt().Flag = 1;
-      awal();
-      savedata();
+      return function(){
+        stockanddebt().Flag = 1;
+        awal();
+        savedata();
+        swal("Successfully Saved", "", "success");
+      }
     }
 
-    function wcrupdate(i){
-      a = parseInt(AOM()[i].ReceivablesAmount);
-      b = parseInt(AOM()[i].InventoryAmount);
-      c = parseInt(AOM()[i].LessPayablesAmount);
-      total = a+b-c;
-      AOM()[i].WCRequirement = total+"";
+    function wcrupdate(i, label){
+      return function(){
+        temp = $($('.'+label)[i]).val()
+        model.dataFocus =  ko.observable(temp)
 
-      $($('.WCRequirement')[i]).val(AOM()[i].WCRequirement)
+        $($('.'+label)[i]).val(parseFloat(temp).toFixed(2))
 
-      if ( trigger() ){
-        k1 = ( Turnover() != 0 ) ? ( (a / Turnover())*365 ) : 0;
-        k2 = ( Turnover() != 0 ) ? ( (b / Turnover())*365 ) : 0;
-        k3 = ( COG() != 0 ) ? ( (c / COG())*365 ) : 0;
-        tk = k1 + k2 - k3;
+        a = parseInt(AOM()[i].ReceivablesAmount.split(",").join(""));
+        b = parseInt(AOM()[i].InventoryAmount.split(",").join(""));
+        c = parseInt(AOM()[i].LessPayablesAmount.split(",").join(""));
 
-        AOM()[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : kendo.toString(k1, "N2");
-        AOM()[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : kendo.toString(k2, "N2");
-        AOM()[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : kendo.toString(k3, "N2");
-        AOM()[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : kendo.toString(tk, "N2");
+        total = a+b-c;
+        AOM()[i].WCRequirement = parseFloat(total).toFixed(2);
 
-        $($('.ReceivablesDays')[i]).val(AOM()[i].ReceivablesDays)
-        $($('.InventoryDays')[i]).val(AOM()[i].InventoryDays)
-        $($('.LessPayablesDays')[i]).val(AOM()[i].LessPayablesDays)
-        $($('.WCDays')[i]).val(AOM()[i].WCDays)
+        $($('.WCRequirement')[i]).val(AOM()[i].WCRequirement)
+
+        if ( trigger() ){
+          k1 = ( Turnover() != 0 ) ? ( (a / Turnover())*365 ) : 0;
+          k2 = ( Turnover() != 0 ) ? ( (b / Turnover())*365 ) : 0;
+          k3 = ( COG() != 0 ) ? ( (c / COG())*365 ) : 0;
+          tk = k1 + k2 - k3;
+
+          AOM()[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : parseFloat(k1).toFixed(2);
+          AOM()[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : parseFloat(k2).toFixed(2);
+          AOM()[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : parseFloat(k3).toFixed(2);
+          AOM()[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : parseFloat(tk).toFixed(2);
+
+          $($('.ReceivablesDays')[i]).val(AOM()[i].ReceivablesDays)
+          $($('.InventoryDays')[i]).val(AOM()[i].InventoryDays)
+          $($('.LessPayablesDays')[i]).val(AOM()[i].LessPayablesDays)
+          $($('.WCDays')[i]).val(AOM()[i].WCDays)
+        }
+      }
+    }
+
+    model.labelFocus =  ko.observable("")
+    model.indexFocus =  ko.observable(-1)
+    model.dataFocus =  ko.observable("")
+
+    function wcrfocus(i, data, label){
+      return function(){
+        if(model.labelFocus() != "" && model.indexFocus() != -1 && model.dataFocus() != "") {
+          var temp = model.dataFocus().split(",").join("")
+          $($('.'+model.labelFocus())[model.indexFocus()]).val(parseFloat(temp,2).toFixed(2))
+        }
+
+        $($('.'+label)[i]).val(data.split(",").join(""))
+        model.labelFocus(label)
+        model.indexFocus(i)
+        model.dataFocus(data)
       }
     }
 
@@ -268,7 +392,7 @@
       var url = "{{BaseUrl}}datacapturing/savestockanddebtdetail";
       ajaxPost(url, param, function(data) {
         if (data){
-          swal("success", "Data already saved...", "success");
+          // swal("success", "Data already saved...", "success");
           refreshFilter();
         }
       }, undefined);
@@ -283,7 +407,9 @@
 
         if (res.Message != '') {
           isLoading(false)
-
+          swal("Warning", res.Message, "warning")
+          // Materialize.toast(res.Message, 5000);
+          //   $('.toast').css("background-color","#F26419").css("color","white")
           repairtable()
 
           return
@@ -359,23 +485,32 @@
 
           WCDays = ReceivablesDays + InventoryDays - LessPayablesDays;
 
-          data[0].AOM[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : kendo.toString(ReceivablesDays, "N2");
-          data[0].AOM[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : kendo.toString(InventoryDays, "N2");
-          data[0].AOM[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : kendo.toString(LessPayablesDays, "N2");
-          data[0].AOM[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : kendo.toString(WCDays, "N2");
+          data[0].AOM[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : parseFloat(ReceivablesDays).toFixed(2);
+          data[0].AOM[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : parseFloat(InventoryDays).toFixed(2);
+          data[0].AOM[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : parseFloat(LessPayablesDays).toFixed(2);
+          data[0].AOM[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : parseFloat(WCDays).toFixed(2);
         })
       }
 
       if(data != undefined && data.length > 0){
         data = data[0];
-        console.log(data.Flag)
         if(data.Flag == 2){
-          $('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(data.DateFlag),"dd-MM-yyyy h:mm:ss tt") )
+          $('.form-last-confirmation-info').html("Last Confirmed at " + moment(data.DateFlag).format("DD-MM-YYYY HH:mm A"))
+          //$('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(data.DateFlag),"dd-MM-yyyy h:mm:ss tt") )
         } else if(data.Flag == 3){
-          $('.form-last-confirmation-info').html('Last verified on: '+kendo.toString(new Date(data.DateFlag),"dd-MM-yyyy h:mm:ss tt") )
+          $('.form-last-confirmation-info').html("Last Verified at " + moment(data.DateFlag).format("DD-MM-YYYY HH:mm A"))
+          //$('.form-last-confirmation-info').html('Last verified on: '+kendo.toString(new Date(data.DateFlag),"dd-MM-yyyy h:mm:ss tt") )
         } else{
           $('.form-last-confirmation-info').html('')
         }
+
+        for (i=0; i<data.AOM.length; i++) {
+          data.AOM[i].ReceivablesAmount = parseFloat(data.AOM[i].ReceivablesAmount).toFixed(2)
+          data.AOM[i].InventoryAmount = parseFloat(data.AOM[i].InventoryAmount).toFixed(2)
+          data.AOM[i].LessPayablesAmount = parseFloat(data.AOM[i].LessPayablesAmount).toFixed(2)
+          data.AOM[i].WCRequirement = parseFloat(data.AOM[i].WCRequirement).toFixed(2)
+        }
+
         stockanddebt({
           Id: data.Id,
           CustomerId : data.CustomerId,
@@ -387,9 +522,9 @@
         AA(data.AA);
       }else{
         stockanddebt({Id: '', CustomerId : customerId,Flag : 0,AOM : [],AA : []})
-        resetmen();
+        checkConfirm()
       }
-      awal();
+      checkConfirm()
     }
 
     function constructData(res) {
@@ -468,7 +603,21 @@
     }
   // end function
 
+  function scroll(){
+    var elementPosition = $('.btnFixed').offset();
+    $(window).scroll(function(){
+        if($(window).scrollTop() > elementPosition.top){
+              $('.btnFixed').removeClass('static');
+              $('.btnFixed').addClass('fixed');
+        } else {
+            $('.btnFixed').removeClass('fixed');
+            $('.btnFixed').addClass('static');
+        }
+    });
+  }
+
   $(document).ready(function () {
+    scroll();
     awal();
 
     $('.AOM').collapsible({
@@ -497,6 +646,12 @@
     /*border: 1px solid #e4e4e4;*/
         padding: 2px 7px;
         height: 37px;
+  }
+  .heighfix > .heighfix {
+    padding: 0;
+  }
+  .heighfix .span{
+    vertical-align: bottom;
   }
 
     .heighfixhead{
@@ -558,14 +713,13 @@
       margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
   }
   .form-last-confirmation-info {
-    padding-top: 50px;
-    padding-bottom: 10px;
-    padding-right: 10px;
+    margin-top: 15px;
     text-align: right;
-    font-style: italic;
     color: #27ae60;
   }
-
+  .panel-nav-custom {
+    left: 0;
+  }
   .text-center {
     text-align: center;
   }
@@ -574,6 +728,25 @@
     border-collapse:separate;
     border-spacing:2px;
   }
+
+  .fixed{
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    margin-top: -23px;
+    margin-left: -9px;
+    background-color: #f0f3f4;
+    height: 14%;
+  }
+
+  .static{
+    position: static;
+  }
+  .btnFixed{
+    margin-top: -2px;
+      margin-bottom: 5px;
+  }
+
 </style>
 
 {{template "filter.html"}}
@@ -581,24 +754,33 @@
   <div class="col-sm-12 ez panel-content" data-bind="visible: (stockanddebt().CustomerId != '')">
     <div class="row" style="padding-left: 10px; padding-right: 10px;">
       <div class="col-sm-12 panel ez no-padding hardcore">
-        <div class="col-sm-12 panel-heading">
-          <!-- <h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4> -->
-          <div class="panel-nav-button">
-            <button id="btnverify" btn-sm class="btn btn-sm btn-success" onclick="verify()"> <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp; Verify</button>
-            <button id="btnnewentry" btn-sm class="btn btn-sm btn-primary" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Make New Entry</button>
-            <button id="btnedit" btn-sm class="btn btn-sm btn-warning" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Draft</button>
-            <button id="btnupdate" btn-sm class="btn btn-sm btn-primary" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-pencil"></span>&nbsp; Update Draft</button>
-            <button id="btnconfirm" btn-sm class="btn btn-sm btn-success" onclick="confirm()"> <span class="glyphicon glyphicon-ok"></span>&nbsp; Confirm</button>
-            <button id="btndraft" btn-sm class="btn btn-sm btn-primary" onclick="save()"> <span class="glyphicon glyphicon-share-alt"></span>&nbsp; Save Draft</button>
-            <button id="btnceedit" btn-sm class="btn btn-sm btn-primary" onclick="resetmen()"> <span class="glyphicon glyphicon-refresh"></span>&nbsp; Reset</button>
+        <!-- <div class="panel-body"> -->
+          <div class="col-sm-12 panel-heading btnFixed">
+            <div class="col-md-6">
+              <!-- <h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4> -->
+              <div class="panel-nav-button panel-nav-custom">
+                <button class="btn btn-save button-font btn-dis" style="width: 70px" data-bind="click: save(),enable: (!stockanddebtCloning.IsConfirm())">Save</button>
+                <button class="btn btn-confirm button-font btn-dis" style="width: 70px" data-bind="text: stockanddebtCloning.ConfirmText, click: setConfirm(), enable: (!stockanddebtCloning.IsFreeze())">Confirm</button>
+                <button class="btn btn-freeze button-font" style="width: 70px" data-bind="text: stockanddebtCloning.FreezeText, click: setFreeze(), css: checkBtnFreeze">Freeze</button>
+
+                <!-- <button id="btnverify" btn-sm class="btn btn-sm btn-confirm" onclick="verify()"> <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp; Verify</button> -->
+                <!-- <button id="btnnewentry" btn-sm class="btn btn-sm btn-primary" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Make New Entry</button>
+                <button id="btnedit" btn-sm class="btn btn-sm btn-warning" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Draft</button>
+                <button id="btnupdate" btn-sm class="btn btn-sm btn-save" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-pencil"></span>&nbsp; Update Draft</button>
+                <button id="btnconfirm" btn-sm class="btn btn-sm btn-confirm" onclick="confirm()"> <span class="glyphicon glyphicon-ok"></span>&nbsp; Confirm</button>
+                <button id="btndraft" btn-sm class="btn btn-sm btn-save" onclick="save()"> <span class="glyphicon glyphicon-share-alt"></span>&nbsp; Save Draft</button>
+                <button id="btnceedit" btn-sm class="btn btn-sm btn-reset" onclick="resetmen()"> <span class="glyphicon glyphicon-refresh"></span>&nbsp; Reset</button> -->
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-last-confirmation-info"></div>
+            </div>
           </div>
-        </div>
-        <div class="form-last-confirmation-info"></div>
+        <!-- </div> -->
         <div class="panel-body col-sm-12">
           <div class="col-sm-12">
             <div class="col-sm-5 filtermen">
               <div class="col-sm-7">
-                <!-- <input class="form-control input-sm" data-bind="kendoDatePicker: {value: selectdateval, start:'year',depth: 'year',format: 'MMMM yyyy'}" /> -->
               </div>
             </div>
           </div>
@@ -610,7 +792,7 @@
                   <div class="collapsible-body">
                     <div class="panel">
                       <div class="panel-heading">
-                        <div class="filtermen" style="float:right; margin-right: 7px !important; margin-bottom: 10px !important; "><button class="btn btn-sm btn-primary pull-right" onclick="addAOM()"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Add Month</button></div>
+                        <div class="filtermen" style="float:right; margin-right: 7px !important; margin-bottom: 10px !important; "><button class="btn btn-sm btn-add pull-right" onclick="addAOM()" data-bind="enable: (!stockanddebtCloning.IsConfirm())"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Add Month</button></div>
                       </div>
                       <div class="panel-body">
                         <div class="col-sm-12">
@@ -627,22 +809,43 @@
                           </div>
                           <div class="col-sm-10" style="overflow-x: scroll;overflow-y: hidden;border: 1px solid #e4e4e4;">
                             <!-- <div class="container-inner" style="width: 50000px;" data-bind="foreach: AOM, visible: (stockanddebt().Flag == 0) || (stockanddebt().Flag > 1) || (Mode() == 1)"> -->
-                            <div class="container-inner" style="width: 50000px;">
+                            <div class="container-inner" 
+                              data-bind="style: { width: function(){ return (AOM().length * 190) + 'px' }() }">
                               <div data-bind="foreach: AOM">
-                                <div class="" style="text-align: center;float:left;width:150px;">
-                                  <div class="col-sm-12 heighfix"> <input id="datemen" class="form-control input-sm" data-bind="kendoDatePicker: {value: OperatingRatioString, start:'year',depth: 'year',format: 'MMMM yyyy', change:function(){ changeDate(this.value(), $index(), 'AOM') }}" /> </div>
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm ReceivablesDays" disabled data-bind="value:ReceivablesDays" /> </div>
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm InventoryDays" disabled data-bind="value:InventoryDays" /> </div>
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm LessPayablesDays" disabled data-bind="value:LessPayablesDays" /> </div>
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm WCDays" disabled data-bind="value:WCDays" /> </div>
-                                  <div class="col-sm-12 heighfix"> <input type="number" class="form-control input-sm modezero" data-bind="value:ReceivablesAmount, event:{change: wcrupdate( $index() )}" /> </div>
-                                  <div class="col-sm-12 heighfix"> <input type="number" class="form-control input-sm modezero" data-bind="value:InventoryAmount, event:{change: wcrupdate( $index() )}" /> </div>
-                                  <div class="col-sm-12 heighfix"> <input type="number" class="form-control input-sm modezero" data-bind="value:LessPayablesAmount, event:{change: wcrupdate( $index() )}" /> </div>
-                                  <div class="col-sm-12 heighfix"> <input type="number" class="form-control input-sm WCRequirement" disabled data-bind="value:WCRequirement" /> </div>
+
+                                <div class="" style="text-align: center;float:left;width:190px;">
+                                  <div class="col-sm-12 heighfix"> 
+                                    <div class="heighfix no-padding" style="width: 80%; float: left;">
+                                      <input id="datemen" class="form-control input-sm" data-bind="kendoDatePicker: {value: OperatingRatioString, start:'year',depth: 'year',format: 'MMMM yyyy', change:function(){ changeDate(this.value(), $index(), 'AOM') }}" /> 
+                                    </div>
+                                    <div class="heighfix no-padding" style="width: 20%; float: right;">
+                                      <button class="btn btn-flat btn-sm btn-danger noable" style="float: right" data-bind="click: removeAOM"><i class="fa fa-trash"></i></button>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm ReceivablesDays" disabled data-bind="value: (ReceivablesDays == 'NA') ? ReceivablesDays : parseFloat(ReceivablesDays).toFixed(2)" /> </div>
+                                  
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm InventoryDays" disabled data-bind="value: (InventoryDays == 'NA') ? InventoryDays : parseFloat(InventoryDays).toFixed(2)" /> </div>
+                                  
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm LessPayablesDays" disabled data-bind="value: (LessPayablesDays == 'NA') ? LessPayablesDays : parseFloat(LessPayablesDays).toFixed(2)" /> </div>
+                                  
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm WCDays" disabled data-bind="value: (WCDays == 'NA') ? WCDays : parseFloat(WCDays).toFixed(2)" /> </div>
+                                  
+                                  <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero ReceivablesAmount" data-bind="value: (ReceivablesAmount == 'NA') ? ReceivablesAmount : parseFloat(ReceivablesAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'ReceivablesAmount'), click: wcrfocus($index(), $data.ReceivablesAmount, 'ReceivablesAmount')}" /> </div>
+                                  
+                                  <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero InventoryAmount" data-bind="value: (InventoryAmount == 'NA') ? InventoryAmount : parseFloat(InventoryAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'InventoryAmount' ), click: wcrfocus($index(), $data.InventoryAmount, 'InventoryAmount')}" /> </div>
+                                  
+                                  <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero LessPayablesAmount" data-bind="value: (LessPayablesAmount == 'NA') ? LessPayablesAmount : parseFloat(LessPayablesAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'LessPayablesAmount' ), click: wcrfocus($index(), $data.LessPayablesAmount, 'LessPayablesAmount')}" /> </div>
+                                  
+                                  <div class="col-sm-12 heighfix"> <input class="form-control input-sm WCRequirement" disabled data-bind="value: (WCRequirement == 'NA') ? WCRequirement : parseFloat(WCRequirement).toFixed(2)" /> </div>
                                 </div>
                               </div>
                             </div>
                           </div>
+                        </div>
+                        <div class="col-md-12">
+                          <br>
+                          * All amounts are in Rs. Lacs
                         </div>
                       </div>
                     </div>
@@ -663,29 +866,44 @@
                                   <th class="sub-bgcolor text-center">Month</th>
                                   <th class="sub-bgcolor text-center">Current Asset</th>
                                   <th class="sub-bgcolor text-center">0-90 Days</th>
-                                  <th class="sub-bgcolor text-center">90 Days</th>
-                                  <th class="sub-bgcolor text-center">180 Days</th>
+                                  <th class="sub-bgcolor text-center">>90 Days</th>
+                                  <th class="sub-bgcolor text-center">>180 Days</th>
                                 </tr>
                               </thead>
                               <tbody data-bind="foreach: AA">
                                 <tr>
-                                  <td rowspan="2" style="vertical-align: middle"><input id="datemen" class="form-control input-sm" data-bind="kendoDatePicker: {value: BulanString, start:'year',depth: 'year',format: 'MMMM yyyy', change:function(){ changeDate(this.value(), $index(), 'AA') }}" /></td>
+                                  <td rowspan="2" style="vertical-align: middle">
+                                    <div class="no-padding" style="width: 80%; float: left;">
+                                      <input id="datemen" class="form-control input-sm" data-bind="kendoDatePicker: {value: BulanString, start:'year',depth: 'year',format: 'MMMM yyyy', change:function(){ changeDate(this.value(), $index(), 'AA') }}" />
+                                    </div>
+                                    <div class="no-padding" style="width: 20%; float: right;">
+                                      <button class="btn btn-flat btn-sm btn-danger noable" style="float: right" data-bind="click: removeAA"><i class="fa fa-trash"></i></button>
+                                    </div>
+                                  </td>
                                   <td>Receivable</td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: ReceivableMin90" /></td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: ReceivableMore90" /></td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: ReceivableMore180" /></td>
+                                  <td>
+                                    <input class="form-control input-sm modezero" 
+                                    data-bind="value: parseFloat(ReceivableMin90).toFixed(2)" /></td>
+                                  <td>
+                                    <input class="form-control input-sm modezero" data-bind="value: parseFloat(ReceivableMore90).toFixed(2)" />
+                                  </td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(ReceivableMore180).toFixed(2)" /></td>
                                 </tr>
                                 <tr>
                                   <td>Inventory</td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: InventoryMin90" /></td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: InventoryMore90" /></td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: InventoryMore180" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(InventoryMin90).toFixed(2)" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(InventoryMore90).toFixed(2)" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(InventoryMore180).toFixed(2)" /></td>
                                 </tr>
                               </tbody>
                             </table>
                           </div>
                         </div>
-                        <div class="col-sm-12 filtermen" style="padding-top: 10px;padding-left: 5px;"><button class="btn btn-sm btn-primary" onclick="addAA()"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Add Month</button>
+                        <div class="col-sm-12 filtermen" style="padding-top: 10px;padding-left: 5px;"><button class="btn btn-sm btn-add" onclick="addAA()" data-bind="enable: (!stockanddebtCloning.IsConfirm())"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Add Month</button>
+                        </div>
+                        <div class="col-md-12">
+                          <br>
+                          * All amounts are in Rs. Lacs
                         </div>
                       </div>
                     </div>
@@ -699,22 +917,3 @@
     </div>
   </div>
 </div>
-<!-- Modal -->
-<!-- <div class="modal fade" id="modalAOM" style="z-index: 10000;">
-  <div class="modal-dialog">
-
-    <div class="modal-content">
-      <div class="modal-header" style="">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Adjusted Operating Metrics</h4>
-      </div>
-      <div class="modal-body">
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div> -->

@@ -1,8 +1,11 @@
 <script type="text/javascript">
-	r.constructDataKeyFinancialRatios = function (res,ress) {
+  var diiscolor = ["#ff9300", "#00da9c", "#00aef1", "#ff0045"]
 
-  	// Leverage Ratios
-  	if ( r.FR()[2].row().length > 2 ){
+    r.constructDataKeyFinancialRatios = function (res,ress) {
+    var diiscolor = ["#ff9300", "#00da9c", "#00aef1", "#ff0045"]
+
+    // Leverage Ratios
+    if ( r.FR()[2].row().length > 2 ){
       var dataleverageratiosseries = []
       _.each(r.FR()[0].ColumnHeader(), function(v,i){
         if(i != 0){
@@ -13,21 +16,21 @@
               r.FR()[2].row()[2].rowData[ i ]
             ],
             name: r.FR()[0].ColumnHeader()[ i ].replace("(Audited)", ""),
-            color: ecisColors[i]
+            color: diiscolor[i-1]
           })
         }
       })
 
       dataleverageratioscategories = [
-        r.FR()[2].row()[0].rowData[ 0 ].substring(0,13) + "...",
-        r.FR()[2].row()[1].rowData[ 0 ].substring(0,13) + "...",
-        r.FR()[2].row()[2].rowData[ 0 ].substring(0,13) + "..."
+        r.FR()[2].row()[0].rowData[ 0 ].substring(0, 7) + "...",
+        "\n" + r.FR()[2].row()[1].rowData[ 0 ].substring(0, 7) + "...",
+        r.FR()[2].row()[2].rowData[ 0 ].substring(0, 7) + "..."
       ]
-      r.generateleverageratios(dataleverageratiosseries,dataleverageratioscategories);
+      r.generateleverageratios(dataleverageratiosseries, dataleverageratioscategories);
     }
     // End Leverage Ratios
 
-		// Operating Ratios
+        // Operating Ratios
     if ( r.FR()[5].row().length > 5 ){
       data1 = []
       data2 = []
@@ -46,23 +49,23 @@
           name: [
             "WC Requirement",
           ],
-          color: ecisColors[0]
+          color: diiscolor[1]
         },
         {
           data: data2,
           name: [
             "WC Gap",
           ],
-          color: ecisColors[1]
+          color: diiscolor[2]
         }
       ]
-              
+
       r.generateoperatingratios(dataleverageratiosseries,dataleverageratioscategories);
     }
-		// End Operating Ratios
+        // End Operating Ratios
 
-		// Coverage Ratios
-		if ( r.FR()[3].row().length > 1 ){
+        // Coverage Ratios
+        if ( r.FR()[3].row().length > 1 ){
       data1 = []
       data2 = []
       dataleverageratioscategories = []
@@ -80,20 +83,20 @@
           name: [
             "DSCR",
           ],
-          color: ecisColors[0]
+          color: diiscolor[1]
         },
         {
           data: data2,
           name: [
             "ISCR",
           ],
-          color: ecisColors[1]
+          color: diiscolor[2]
         }
       ]
 
       r.generatecoverageratios(dataleverageratiosseries,dataleverageratioscategories);
     }
-		// End Coverage Ratios
+        // End Coverage Ratios
 
     // Liquidity Ratios
     if ( r.FR()[4].row().length > 0 ){
@@ -105,7 +108,7 @@
               r.FR()[4].row()[0].rowData[ i ]
             ],
             name: r.FR()[0].ColumnHeader()[ i ].replace("(Audited)", ""),
-            color: ecisColors[i]
+            color: diiscolor[i - 1]
           })
         }
       })
@@ -114,20 +117,30 @@
       ]
       r.generateliquidityratios(dataleverageratiosseries,dataleverageratioscategories);
     }
-		// End Liquidity Ratios
+        // End Liquidity Ratios
   }
 
-  r.generateleverageratios = function (dataseries,datacategories){
+  r.generateleverageratios = function (leverageRatioData){
+    var series = [
+      { field: 'FY13', name: 'FY13' },
+      { field: 'FY14', name: 'FY14' },
+      { field: 'FY15', name: 'FY15' },
+    ]
+
     $("#leverageratios").kendoChart({
+      dataSource: {
+        data: leverageRatioData
+      },
       chartArea: {
         height: 150,
         background:"transparent"
       },
       categoryAxis: {
-        categories: datacategories,
+        field: 'name',
         labels: {
-          // rotation: "auto",
-          color: "black"
+          font:"9px Arial,Helvetica,sans-serif",
+          color: "black",
+          // rotation: 10
         },
         majorGridLines: {
             visible: false
@@ -135,6 +148,7 @@
       },
       valueAxis: {
         labels: {
+          font:"9px Arial,Helvetica,sans-serif",
           color: "black",
           step:2
         },
@@ -157,24 +171,51 @@
           color: "black"
         }
       },
-      series: dataseries,
+      seriesColors: diiscolor,
+      series: series,
       tooltip: {
         visible: true,
-        template: "#= series.name #: #= value #"
+        template: function (d) {
+          return d.category + '<br />' + d.series.name + ' : ' + d.value
+        }
       }
     });
   }
 
-  r.generateoperatingratios = function (dataseries,datacategories){
-  	$("#operatingratios").kendoChart({
+  r.generateoperatingratios = function (operatingRatio){
+    var data = [
+      { name: 'FY13' },
+      { name: 'FY14' },
+      { name: 'FY15' }
+    ]
+    var series = []
+
+    operatingRatio.forEach(function (d) {
+      for (var p in d) {
+        if (d.hasOwnProperty(p) && p.indexOf('FY') > -1) {
+          data.find(function (k) { return k.name == p })[d.code] = (d[p])
+        }
+      }
+
+      series.push({
+        field: d.code,
+        name: d.name[0].split(' (')[0]
+      })
+    })
+
+    $("#operatingratios").kendoChart({
+      dataSource: {
+        data: data
+      },
       chartArea: {
         height: 150,
         background:"transparent"
       },
       categoryAxis: {
-        categories: datacategories,
+        field: 'name',
         labels: {
           // rotation: "auto",
+          font:"9px Arial,Helvetica,sans-serif",
           color: "black"
         },
         majorGridLines: {
@@ -184,7 +225,8 @@
       valueAxis: {
         labels: {
           color: "black",
-          step:2
+          step:2,
+          font:"9px Arial,Helvetica,sans-serif"
         },
         majorGridLines: {
             visible: false
@@ -192,6 +234,9 @@
       },
       seriesDefaults: {
           type: "column",
+            overlay: {
+              gradient: "none"
+          }
       },
       legend: {
         position: "bottom",
@@ -200,24 +245,51 @@
           color: "black"
         }
       },
-      series: dataseries,
+      seriesColors: diiscolor,
+      series: series,
       tooltip: {
         visible: true,
-        template: "#= series.name #: #= value #"
+        template: function (d) {
+          return d.category + '<br />' + d.series.name + ' : ' + d.value
+        }
       }
     });
   }
 
-  r.generatecoverageratios = function (dataseries,datacategories){
+  r.generatecoverageratios = function (coverageRatios){
+    var data = [
+      { name: 'FY13' },
+      { name: 'FY14' },
+      { name: 'FY15' }
+    ]
+    var series = []
+
+    coverageRatios.forEach(function (d) {
+      for (var p in d) {
+        if (d.hasOwnProperty(p) && p.indexOf('FY') > -1) {
+          data.find(function (k) { return k.name == p })[d.code] = Math.abs(d[p])
+        }
+      }
+
+      series.push({
+        field: d.code,
+        name: d.name[0].split(' (')[0]
+      })
+    })
+
     $("#coverageratios").kendoChart({
+      dataSource: {
+        data: data
+      },
       chartArea: {
         height: 150,
         background:"transparent"
       },
       categoryAxis: {
-        categories: datacategories,
+        field: 'name',
         labels: {
           // rotation: "auto",
+          font:"9px Arial,Helvetica,sans-serif",
           color: "black"
         },
         majorGridLines: {
@@ -226,6 +298,7 @@
       },
       valueAxis: {
         labels: {
+          font:"9px Arial,Helvetica,sans-serif",
           color: "black",
           step:2
         },
@@ -248,24 +321,35 @@
           color: "black"
         }
       },
-      series: dataseries,
+      seriesColors: diiscolor,
+      series: series,
       tooltip: {
         visible: true,
-        template: "#= series.name #: #= value #"
+        template: function (d) {
+          return d.category + '<br />' + d.series.name + ' : ' + d.value
+        }
       }
     });
   }
 
-  r.generateliquidityratios = function (dataseries,datacategories){
+  r.generateliquidityratios = function (liquidityRatios){
+    var series = [
+      { field: 'FY13', name: 'FY13' },
+      { field: 'FY14', name: 'FY14' },
+      { field: 'FY15', name: 'FY15' },
+    ]
+
     $("#liquidityratios").kendoChart({
+      dataSource: {
+        data: liquidityRatios
+      },
       chartArea: {
         height: 150,
         background:"transparent"
       },
       categoryAxis: {
-        categories: datacategories,
         labels: {
-          // rotation: "auto",
+          font:"9px Arial,Helvetica,sans-serif",
           color: "black"
         },
         majorGridLines: {
@@ -274,6 +358,7 @@
       },
       valueAxis: {
         labels: {
+          font:"9px Arial,Helvetica,sans-serif",
           color: "black",
           step:2
         },
@@ -283,6 +368,9 @@
       },
       seriesDefaults: {
           type: "bar",
+            overlay: {
+              gradient: "none"
+          }
       },
       legend: {
         position: "bottom",
@@ -291,46 +379,116 @@
           color: "black"
         }
       },
-      series: dataseries,
+      seriesColors: diiscolor,
+      series: series,
       tooltip: {
         visible: true,
-        template: "#= series.name #: #= value #"
+        template: function (d) {
+          return "Current Ratio | "+d.series.name + ' : ' + d.value
+        }
       }
     });
+  }
+
+  // jangan di buat susah bruuuuhhhhh
+  NOPAL_SENG_NGGAWE_BUILD_KEY_FINANCIAL_RATIOS_IKI_PENTING_SENG_LAWAS_RAUSAH_DIGAWE_RA_BENEEERRRR = function (res) {
+    var leverageRatio = [
+      { name: "Debt to Equity", code: "DERATIO" },
+      { name: "Net Debt to Equity", code: "NETDERATIO" },
+      { name: "TOL / TNW", code: "TOLTNW" } // , divider: 10000 },
+    ]
+
+    var operatingRatio = [
+      { name: "WC Requirement (in Lacs)", code: "WCREQ" },
+      { name: "WC Gap ( Lacs) (MPBF Method)", code: "WCGAPMPBF" },
+    ]
+
+    var coverageRatios = [
+      { name: "ISCR", code: "INCR" },
+      { name: "DSCR", code: "DSCR" },
+    ]
+
+    var liquidityRatios = [
+      { name: "Current Ratio", code: "CURATIO" },
+    ]
+
+    // confuse?, good luck understanding this code
+
+    var arr = [
+      { data: leverageRatio, generator: r.generateleverageratios },
+      { data: operatingRatio, generator: r.generateoperatingratios },
+      { data: coverageRatios, generator: r.generatecoverageratios },
+      { data: liquidityRatios, generator: r.generateliquidityratios }
+    ]
+
+    //nggolek column sing audited kabeh
+    columns = res.Data.AuditStatus
+    columns = _.filter(columns, function(o){
+       return (o.Status == "AUDITED")
+    })
+
+    columns = _.orderBy(columns, ['Date'], ['asc'])
+    res.Data.FormData.forEach(function (d) {
+      arr.forEach(function (k) {
+        k.data.forEach(function (e) {
+
+          if (d.FieldAlias == e.code) {
+            columns.forEach(function (g) {
+              var found = d.Values.find(function (f) {
+                return f.Date == g.Date
+              })
+
+              //format date ben jupuk tahun 2 angka mburine
+              yearFormatted = moment(g.Date,"DD-MM-YYYY").format("YY")
+
+              e['FY' + yearFormatted] = kendo.toString(toolkit.redefine(found, { Value: 0 }).Value, "n2")
+
+              if (e.hasOwnProperty('divider')) {
+                e['FY' + yearFormatted] = toolkit.number(e['FY' + yearFormatted] / e.divider)
+              }
+            })
+          }
+        })
+      })
+    })
+
+    arr.forEach(function (d) {
+      d.generator(d.data)
+    })
   }
 </script>
 
 <div class="panel-heading"><h3 class="text-center">Key Financial Ratios</h3></div>
 
 <div class="panel-default col-sm-6 content no-padding" style="border-right: 2px solid #fafafa">
-  <div class="panel-heading text-center">Leverage Ratios</div>
+  <div class="panel-heading">Leverage Ratios</div>
   <div class="panel-body" style="padding-bottom: 0px;margin-bottom: -8px;">
-		<div id="leverageratios"></div>
-	</div>
+        <div id="leverageratios"></div>
+    </div>
 </div>
 
 <div class="panel-default col-sm-6 content no-padding" style="border-left: 2px solid #fafafa">
-	<div class="panel-heading">Operating Ratios</div>
+    <div class="panel-heading">Operating Ratios</div>
   <div class="panel-body" style="padding-bottom: 0px;margin-bottom: -8px;">
-			<div id="operatingratios"></div>
+            <div id="operatingratios"></div>
   </div>
 </div>
 
 <div class="panel-default col-sm-6 content no-padding" style="border-right: 2px solid #fafafa">
-	<div class="panel-heading">Coverage Ratios</div>
+    <div class="panel-heading">Coverage Ratios</div>
   <div class="panel-body" style="padding-bottom: 0px">
-			<div id="coverageratios"></div>
+            <div id="coverageratios"></div>
   </div>
 </div>
 
-<div class="panel-default col-sm-6 content no-padding" style="border-left: 2px solid #fafafa">
-	<div class="panel-heading">Liquidity Ratios</div>
+<div class="panel-default col-sm-6 content no-padding most-bottom" style="border-left: 2px solid #fafafa">
+    <div class="panel-heading">Liquidity Ratios</div>
   <div class="panel-body" style="padding-bottom: 0px">
       <div id="liquidityratios"></div>
   </div>
 </div>
 
-<div class="footer col-sm-12">
-  <button onclick="r.showDetails('kfrb')" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
-  <button data-bind="" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Full Form</button>
+<div class="footer clearfix">
+  <button onClick="r.showDetails('kfrb')" class="btn btn-sm btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
+  <button data-bind="click: r.openFull" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Form</button>
 </div>

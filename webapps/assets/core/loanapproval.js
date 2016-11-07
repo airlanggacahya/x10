@@ -19,38 +19,7 @@ due.templateForm = {
 };
 due.formVisible = ko.observable(false);
 due.form = ko.mapping.fromJS(due.templateForm);
-due.getForm = function(){
-	due.form.Background([]);
-	due.form.Verification([]);
-	due.form.Defaulter([]);
-	var customerId = filter().CustomerSearchVal();
-	var dealNo = filter().DealNumberSearchVal();
-	due.form.CustomerId(customerId);
-	due.form.DealNo(dealNo);
-	if(due.form.Status == "" || due.form.Status() != 1){
-		due.form.Status(0)
-	}
 
-	// if(due.form.Status() == ""){
-	// 	due.form.Status(0)
-	// }
-
-	if(due.form.Freeze() == ""){
-		due.form.Freeze(false)
-	}
-	var dataVerification = $("#gridverification0").data("kendoGrid").dataSource.data()
-	$.each(dataVerification, function(i, ver){
-		due.form.Verification.push({Particulars : ver.Particulars,Result: ver.Result,Mitigants : ver.Mitigants,});
-	});
-	var dataDefaulters = $("#gridDefaulterList0").data("kendoGrid").dataSource.data()
-	$.each(dataDefaulters, function(i, App){
-		due.form.Defaulter.push({Source : App.Source,Applicable: App.Applicable,BankName : App.BankName,Amount: App.Amount, Status: App.Status});
-	});
-	var dataBackground = $("#background0").data("kendoGrid").dataSource.data()
-	$.each(dataBackground, function(i, Back){
-		due.form.Background.push({Name : Back.Name,Designation: Back.Designation,CIBILScore: Back.CIBILScore, ShareHolding: Back.ShareHolding,RedFlags: Back.RedFlags});
-	});
-}
 var loanapproval = {
     companyname : ko.observable(""),
     logindate : ko.observable(""),
@@ -142,6 +111,227 @@ var promoter = {
 
 var promoters = [];
 
+loanApproval = {
+    loanSummary: {
+        scheme: ko.observable()
+    },
+    loanDetail: {
+        proposedLimitAmount: ko.observable(),
+        proposedROI: ko.observable(),
+        proposedProFee: ko.observable(),
+        limitTenor: ko.observable(),
+        ifExistingCustomer: ko.observable(),
+        ifYesExistingLimitAmount: ko.observable(),
+        existingROI: ko.observable(),
+        existingProcessingFee: ko.observable(),
+        firstAgreementDate: ko.observable(),
+        vintageWithX10: ko.observable(),
+        recentAgreementDate: ko.observable(),
+        poBacked: ko.observable(),
+        projectPOValue: ko.observable(),
+        expectedPayment: ko.observable()
+    },
+    paymentTrack: {
+        highestAverageDelay: ko.observable(0)
+    },
+    commercialCibil: {
+        assessment: ko.observable(),
+        comments: ko.observableArray()
+    },
+    companyBackgroundData: ko.observable(""),
+    promoterBackgroundData: ko.observable(""),
+    propertyOwnershipData: ko.observable(""),
+    outstandingData: ko.observable(""),
+    refresh: function() {
+        loanApproval.reset();
+        loanApproval.getReport(getSearchVal());
+        due.getCostumerData();
+        due.getData();
+    },
+    isFirstLoad: ko.observable(true),
+    isLoading: ko.observable(true),
+    loading: function (what) {
+        $('.apx-loading')[what ? 'show' : 'hide']()
+        $('.panel-content')[what ? 'hide' : 'show']()
+
+        if (loanApproval.isFirstLoad() && what == true)
+            loanApproval.isFirstLoad(false);
+
+        loanApproval.isLoading(what);
+    }
+};
+
+loanApproval.reset = function(){
+
+    $("#compbackgrid").html("")
+
+    due.dataVerifications("");
+    due.dataDefaulterList("");
+    due.dataTemp("");
+    due.Name("");
+    due.dataCustomer("")
+    due.templateForm = {
+        Id: "",
+        CustomerId: "",
+        DealNo: "",
+        Verification: [],
+        Defaulter: [],
+        Background: [],
+        Status: 0,
+        Freeze: false,
+        LastConfirmed : (new Date()).toISOString(),
+    };
+    due.formVisible(false);
+    due.form = ko.mapping.fromJS(due.templateForm);
+
+    loanapproval.companyname("")
+    loanapproval.logindate("")
+    loanapproval.businessaddress("")
+    loanapproval.product("")
+    loanapproval.location("")
+    loanapproval.internalrating("")
+    loanapproval.businesssince("")
+    loanapproval.businesssegment("")
+    loanapproval.leaddistributor("")
+    loanapproval.creditanalyst("")
+    loanapproval.proposedlimitamount("")
+    loanapproval.existingcustomer("")
+    loanapproval.firstagreementdate("")
+    loanapproval.limittenor("")
+    loanapproval.existinglimitamount("")
+    loanapproval.recentagreementdate("")
+    loanapproval.roi("")
+    loanapproval.existingroi("")
+    loanapproval.vintagex10("")
+    loanapproval.proposedfee("")
+    loanapproval.existingpf("")
+    loanapproval.comercialcibilreport("")
+    loanapproval.maxdelaydays("")
+    loanapproval.maxpaymentdays("")
+    loanapproval.averagedelaydays("")
+    loanapproval.standarddeviation("")
+    loanapproval.averagepaymentdays("")
+    loanapproval.averagetransactionpaymentdelay("")
+    loanapproval.delaystandarddeviation("")
+    loanapproval.averagetransactionpayment("")
+    loanapproval.daystandarddeviation("")
+    loanapproval.averageutilization("")
+    loanapproval.maxdpd("")
+    loanapproval.numberdelay("")
+    loanapproval.numberearly("")
+    loanapproval.numberpayment("")
+    loanapproval.stocksell("")
+    loanapproval.govt("")
+    loanapproval.corporate("")
+    loanapproval.iriscomp("")
+    loanapproval.savex("")
+    loanapproval.rashi("")
+    loanapproval.supertron("")
+    loanapproval.compuage("")
+    loanapproval.avnet("")
+    loanapproval.promotorbio([])
+    loanapproval.pddone("")
+    loanapproval.pddate("")
+    loanapproval.pdplace("")
+    loanapproval.personmet("")
+    loanapproval.pdremarks("")
+    loanapproval.topCustomersName([])
+    loanapproval.topproducts([])
+    loanapproval.expansionplan("")
+    loanapproval.commentfinance("")
+    loanapproval.referencecheck([])
+    loanapproval.marketref("")
+    loanapproval.detailpromoters([])
+    loanapproval.officeaddress("")
+    loanapproval.officeownership("")
+    loanapproval.officeactivity("")
+    loanapproval.officelandarea("")
+    loanapproval.officebuiltuparea("")
+    loanapproval.officemarketvalue("")
+    loanapproval.promotersarr([])
+    loanapproval.amountofbusiness("")
+    loanapproval.valueregistered("")
+    loanapproval.propertyowned([])
+    loanapproval.companybackground([])
+    loanapproval.pdCustomerMargin("")
+    loanapproval.pdComments("")
+    loanapproval.distributorList([{Label : "", Result: ""}])
+
+    loanapproval.topcustomerfinal("");
+    loanapproval.topproductsfinal("");
+
+    promoter.Name(""),
+    promoter.Address(""),
+    promoter.Ownership(""),
+    promoter.NoOfYears(""),
+    promoter.NetWorth(""),
+    promoter.PropertyType(""),
+    promoter.PropertyAddress(""),
+    promoter.PropertyMarket(""),
+
+    promoters = [];
+
+    loanApproval.loanSummary.scheme("")
+    loanApproval.loanDetail.proposedLimitAmount(),
+    loanApproval.loanDetail.proposedROI(),
+    loanApproval.loanDetail.proposedProFee(),
+    loanApproval.loanDetail.limitTenor(),
+    loanApproval.loanDetail.ifExistingCustomer(),
+    loanApproval.loanDetail.ifYesExistingLimitAmount(),
+    loanApproval.loanDetail.existingROI(),
+    loanApproval.loanDetail.existingProcessingFee(),
+    loanApproval.loanDetail.firstAgreementDate(),
+    loanApproval.loanDetail.vintageWithX10(),
+    loanApproval.loanDetail.recentAgreementDate(),
+    loanApproval.loanDetail.poBacked(),
+    loanApproval.loanDetail.projectPOValue(),
+    loanApproval.loanDetail.expectedPayment()
+
+    loanApproval.paymentTrack.highestAverageDelay(0)
+    loanApproval.commercialCibil.assessment()
+    loanApproval.commercialCibil.comments([])
+    loanApproval.companyBackgroundData({
+        mostLength: ko.observableArray([]),
+        topCustomersName: ko.observableArray([]),
+        topTable: {}
+    })
+    loanApproval.promoterBackgroundData("")
+    loanApproval.propertyOwnershipData("")
+    loanApproval.outstandingData("")
+}
+
+due.getForm = function(){
+    due.form.Background([]);
+    due.form.Verification([]);
+    due.form.Defaulter([]);
+    var customerId = filter().CustomerSearchVal();
+    var dealNo = filter().DealNumberSearchVal();
+    due.form.CustomerId(customerId);
+    due.form.DealNo(dealNo);
+    if(due.form.Status == "" || due.form.Status() != 1){
+        due.form.Status(0)
+    }
+
+    // if(due.form.Status() == ""){
+    //  due.form.Status(0)
+    // }
+
+    if(due.form.Freeze() == ""){
+        due.form.Freeze(false)
+    }
+    var dataVerification = $("#gridverification0").data("kendoGrid").dataSource.data()
+    $.each(dataVerification, function(i, ver){
+        due.form.Verification.push({Particulars : ver.Particulars,Result: ver.Result,Mitigants : ver.Mitigants,});
+    });
+    var dataDefaulters = $("#gridDefaulterList0").data("kendoGrid").dataSource.data()
+    $.each(dataDefaulters, function(i, App){
+        due.form.Defaulter.push({Source : App.Source,Applicable: App.Applicable,BankName : App.BankName,Amount: App.Amount, Status: App.Status});
+    });
+    var dataBackground = $("#background0").data("kendoGrid").dataSource.data()
+    $.each(dataBackground, function(i, Back){
+        due.form.Background.push({Name : Back.Name,Designation: Back.Designation,CIBILScore: Back.CIBILScore, ShareHolding: Back.ShareHolding,RedFlags: Back.RedFlags});
+    });
+}
 var resetpromoters = function(){
     promoter.Name("");
     promoter.Address("");
@@ -164,88 +354,90 @@ var keyPolicyParam = function(norm) {
     ];
 
     var render = function(datas) {
-        _.each(datas.filter(function (d) {
-            return d.ShowInLoanApprovalScreen
-        }), function(data) {
-            if(data.ShowInLoanApprovalReport == false) {
-                return;
-            }
-            if(data.CalculatedValue != undefined) {
-                var getFixedCalculatedValue = parseFloat((function () {
-                    return (function(val){
-                        if(data.CalculatedValue.ValueType == "percentage")
-                            return val * 100;
-                        return val;
-                    })(data.CalculatedValue.Value)
-                })()).toFixed(2);
+        if(datas != null){
+            _.each(datas.filter(function (d) {
+                return d.ShowInLoanApprovalScreen
+            }), function(data) {
+                if(data.ShowInLoanApprovalReport == false) {
+                    return;
+                }
+                if(data.CalculatedValue != undefined) {
+                    var getFixedCalculatedValue = parseFloat((function () {
+                        return (function(val){
+                            if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
+                                return val * 100;
+                            return val;
+                        })(data.CalculatedValue.Value)
+                    })()).toFixed(2);
 
-                if(data.CalculatedValue.Value != 0) {
-                    if(data.CalculatedValue.ValueType == "percentage")
-                        data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
-                    else
-                        data.calculatedvaluetodisplay = getFixedCalculatedValue;
+                    if(data.CalculatedValue.Value != 0) {
+                        if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
+                            data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
+                        else
+                            data.calculatedvaluetodisplay = getFixedCalculatedValue;
+                    } else {
+                        data.calculatedvaluetodisplay = "NA"
+                    }
+
+                    if(data.Operator == "min"){
+                        data.ismet = (getFixedCalculatedValue > data.Value1) ? "Met" : "Not Met";
+                    } else if(data.Operator == "max"){
+                        data.ismet = (getFixedCalculatedValue < data.Value1) ? "Met" : "Not Met";
+                    } else if(data.Operator == "greater than or equal"){
+                        data.ismet = (getFixedCalculatedValue >= data.Value1) ? "Met" : "Not Met";
+                    } else if(data.Operator == "lower than or equal"){
+                        data.ismet = (getFixedCalculatedValue <= data.Value1) ? "Met" : "Not Met";
+                    } else if(data.Operator == "equal"){
+                        data.ismet = (getFixedCalculatedValue == data.Value1) ? "Met" : "Not Met";
+                    } else if(data.Operator == "between"){
+                        data.ismet = (getFixedCalculatedValue > data.Value1 && getFixedCalculatedValue < data.Value2) ? "Met" : "Not Met";
+                    }
                 } else {
-                    data.calculatedvaluetodisplay = "NA"
+                    _.each(columns, function(column){
+                        column.field = column.field.toLowerCase();
+                    })
+                    data.calculatedvaluetodisplay = "No Internal Rating"
+                    data.ismet = "No Internal Rating";
                 }
 
-                if(data.Operator == "min"){
-                    data.ismet = (getFixedCalculatedValue > data.Value1) ? "Met" : "Not Met";
-                } else if(data.Operator == "max"){
-                    data.ismet = (getFixedCalculatedValue < data.Value1) ? "Met" : "Not Met";
-                } else if(data.Operator == "greater than or equal"){
-                    data.ismet = (getFixedCalculatedValue >= data.Value1) ? "Met" : "Not Met";
-                } else if(data.Operator == "lower than or equal"){
-                    data.ismet = (getFixedCalculatedValue <= data.Value1) ? "Met" : "Not Met";
-                } else if(data.Operator == "equal"){
-                    data.ismet = (getFixedCalculatedValue == data.Value1) ? "Met" : "Not Met";
-                } else if(data.Operator == "between"){
-                    data.ismet = (getFixedCalculatedValue > data.Value1 && getFixedCalculatedValue < data.Value2) ? "Met" : "Not Met";
-                }
-            } else {
-                _.each(columns, function(column){
-                    column.field = column.field.toLowerCase();
-                })
-                data.calculatedvaluetodisplay = "No Internal Rating"
-                data.ismet = "No Internal Rating";
-            }
-
-            attr.push(data);
-        })
-        $("#gridpolicyparameter").html("")
-        $("#gridpolicyparameter").kendoGrid({
-            dataSource : { data: attr() },
-            scrollable:false,
-            columns: columns
-        });
+                attr.push(data);
+            })
+            $("#gridpolicyparameter").html("")
+            $("#gridpolicyparameter").kendoGrid({
+                dataSource : { data: attr() },
+                scrollable:false,
+                columns: columns
+            });
+        }
     }
 
     $(function () {
         ajaxPost("/creditscorecard/getcscdata", getSearchVal(), function(cscData){
 
             if(cscData.Data != undefined){
-                var score = _.sum(cscData.Data[0].Data.filter(function (d) {
-                    return d.IsHeader
-                }).map(function (d) {
-                    return kendo.parseFloat(d.WeightScore)
-                }));
+                // var score = _.sum(cscData.Data[0].Data.filter(function (d) {
+                //     return d.IsHeader
+                // }).map(function (d) {
+                //     return kendo.parseFloat(d.WeightScore)
+                // }));
 
-                var rating = (function () {
-                    if (score <= 4.5) {
-                        return "XFL5"
-                    } else if (score < 6) {
-                        return "XFL4"
-                    } else if (score < 7) {
-                        return "XFL3"
-                    } else if (score <= 8.5) {
-                        return "XFL2"
-                    } else {
-                        return "XFL1"
-                    }
-                })();
-                loanapproval.internalrating(rating);
+                // var rating = (function () {
+                //     if (score <= 4.5) {
+                //         return "XFL5"
+                //     } else if (score < 6) {
+                //         return "XFL4"
+                //     } else if (score < 7) {
+                //         return "XFL3"
+                //     } else if (score <= 8.5) {
+                //         return "XFL2"
+                //     } else {
+                //         return "XFL1"
+                //     }
+                // })();
+                loanapproval.internalrating(cscData.Data[0].FinalRating);
 
                 ajaxPost("/normmaster/getnormdata", {
-                    Internalrating: rating,
+                    Internalrating: loanapproval.internalrating().replace("-",""),
                     Customerid: filter().CustomerSearchVal(),
                     Dealno: filter().DealNumberSearchVal()
                 }, function(param) {
@@ -479,96 +671,53 @@ var outstanding = function(param){
 };
 
 var companyBackground = function(param) {
-    var attr = {
-        topTable: {},
-        topCustomersName: ko.observableArray(),
-        topProducts: ko.observableArray()
-    }
+    if(param != undefined) {
+        var attr = {
+            topTable: {},
+            topCustomersName: ko.observableArray(),
+            topProducts: ko.observableArray()
+        }
 
-    attr.topTable.pdDone = param.accountsetupdetails.pdinfo.pddoneby;
+        attr.topTable.pdDone = param.accountsetupdetails.pdinfo.pddoneby;
 
-    var pddt = new Date(param.accountsetupdetails.pdinfo.pddate);
-    pddat = moment(pddt).format("DD/MM/YYYY");
-    attr.topTable.pdDate = pddat;
+        var pddt = new Date(param.accountsetupdetails.pdinfo.pddate);
+        pddat = moment(pddt).format("DD/MM/YYYY");
+        attr.topTable.pdDate = pddat;
 
-    attr.topTable.pdPlace = param.accountsetupdetails.pdinfo.pdplace;
-    attr.topTable.personMet = param.accountsetupdetails.pdinfo.personmet;
-    attr.topTable.pdCustomerMargin = param.accountsetupdetails.pdinfo.customermargin + "%";
-    attr.topTable.pdRemarks = param.accountsetupdetails.pdinfo.pdremarks;
-    attr.topTable.pdComments = param.accountsetupdetails.pdinfo.pdcomments;
+        attr.topTable.pdPlace = param.accountsetupdetails.pdinfo.pdplace;
+        attr.topTable.personMet = param.accountsetupdetails.pdinfo.personmet;
+        attr.topTable.pdCustomerMargin = param.accountsetupdetails.pdinfo.customermargin + "%";
+        attr.topTable.pdRemarks = param.accountsetupdetails.pdinfo.pdremarks;
+        attr.topTable.pdComments = param.accountsetupdetails.pdinfo.pdcomments;
 
-    loanapproval.companybackground([]);
-    loanapproval.companybackground.push(attr.topTable);
-    rendercompbacground(loanapproval.companybackground());
+        loanapproval.companybackground([]);
+        loanapproval.companybackground.push(attr.topTable);
+        rendercompbacground(loanapproval.companybackground());
 
-    attr.mostLength = ko.computed(function() {
-        if(attr.topCustomersName().length > attr.topProducts().length)
-            return attr.topCustomersName()
+        attr.mostLength = ko.computed(function() {
+            if(attr.topCustomersName().length > attr.topProducts().length)
+                return attr.topCustomersName()
+            else
+                return attr.topProducts()
+        })
+
+        if(param.borrowerdetails.TopCustomerNames != undefined)
+            attr.topCustomersName(param.borrowerdetails.TopCustomerNames);
         else
-            return attr.topProducts()
-    })
+            attr.topCustomersName(param.borrowerdetails.topcustomernames);
 
-    if(param.borrowerdetails.TopCustomerNames != undefined)
-        attr.topCustomersName(param.borrowerdetails.TopCustomerNames);
-    else
-        attr.topCustomersName(param.borrowerdetails.topcustomernames);
+        if(param.borrowerdetails.ProductNameandDetails != undefined)
+            attr.topProducts(param.borrowerdetails.ProductNameandDetails);
+        else
+            attr.topProducts(param.borrowerdetails.productnameanddetails);
 
-    if(param.borrowerdetails.ProductNameandDetails != undefined)
-        attr.topProducts(param.borrowerdetails.ProductNameandDetails);
-    else
-        attr.topProducts(param.borrowerdetails.productnameanddetails);
-
-    return attr
+        return attr
+    } else {
+        return ""
+    }
 }
 
-loanApproval = {
-    loanSummary: {
-        scheme: ko.observable()
-    },
-    loanDetail: {
-        proposedLimitAmount: ko.observable(),
-        proposedROI: ko.observable(),
-        proposedProFee: ko.observable(),
-        limitTenor: ko.observable(),
-        ifExistingCustomer: ko.observable(),
-        ifYesExistingLimitAmount: ko.observable(),
-        existingROI: ko.observable(),
-        existingProcessingFee: ko.observable(),
-        firstAgreementDate: ko.observable(),
-        vintageWithX10: ko.observable(),
-        recentAgreementDate: ko.observable(),
-        poBacked: ko.observable(),
-        projectPOValue: ko.observable(),
-        expectedPayment: ko.observable()
-    },
-    paymentTrack: {
-        highestAverageDelay: ko.observable(0)
-    },
-    commercialCibil: {
-        assessment: ko.observable(),
-        comments: ko.observableArray()
-    },
-    companyBackgroundData: ko.observable(""),
-    promoterBackgroundData: ko.observable(""),
-    propertyOwnershipData: ko.observable(""),
-    outstandingData: ko.observable(""),
-    refresh: function() {
-        loanApproval.getReport(getSearchVal());
-        due.getCostumerData();
-        due.getData();
-    },
-    isFirstLoad: ko.observable(true),
-    isLoading: ko.observable(true),
-    loading: function (what) {
-        $('.apx-loading')[what ? 'show' : 'hide']()
-        $('.panel-content')[what ? 'hide' : 'show']()
-
-        if (loanApproval.isFirstLoad() && what == true)
-            loanApproval.isFirstLoad(false);
-
-        loanApproval.isLoading(what);
-    }
-};
+loanApproval.test = ko.observableArray([])
 
 loanApproval.getReport = function(param){
     ajaxPost("/loanapproval/getalldata", param, function(data){
@@ -589,7 +738,13 @@ loanApproval.getReport = function(param){
             }
         }
 
-        if (data.Data.AD[0] != undefined){
+        var validation = true;
+        if (data.Data.AD[0] != undefined)
+        validation = checkConfirmedOrNot(data.Data.AD[0].status, 1, 1, true, false, "Account Detail");
+
+        if (data.Data.AD[0] != undefined && validation){
+
+
             var datetime = new Date(data.Data.AD[0].accountsetupdetails.logindate);
             dt = moment(datetime).format("DD/MM/YYYY HH:mm:ss");
             loanapproval.logindate (dt);
@@ -691,10 +846,14 @@ loanApproval.getReport = function(param){
                 new promoterBackground(data.Data.CP[0].detailofpromoters.biodata)
                 );
 
+
+        loanApproval.test(data.Data.AD[0])
+        loanapproval.companybackground([])
+
         if(data.Data.AD[0] != undefined)
             loanApproval.companyBackgroundData(
                 new companyBackground(data.Data.AD[0])
-                );
+            );
 
         if(data.Data.CP[0] != undefined)
             loanApproval.propertyOwnershipData(
@@ -818,6 +977,7 @@ var rendercompbacground = function(res){
 }
 
 $(document).ready(function(){
+    loanApproval.reset();
     loanApproval.loading(true);
     loanApproval.isLoading(false)
     due.LoadGrid();
@@ -911,7 +1071,7 @@ due.LoadGrid = function(){
                         field: "Amount",
                         title: "Amount (in CR)",
                         headerAttributes: { "class": "col-sm-2" },
-                        attributes: { "class": "right"},
+                        attributes: { "class": "text-center"},
                         editor: due.amountInput,
                     },
                     {

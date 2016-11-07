@@ -114,13 +114,29 @@
   .no-border td{
     border: none!important;
   }
+  .jancok:hover {
+    background-color: white !important;
+    background-image: none !important;
+  }
+  .panel {
+    background-color: white;
+  }
+  .panel-heading-collapsible {
+    min-height: 3rem;
+    line-height: 3rem;
+    padding: 0 1rem;
+    border-bottom: 1px solid #ddd;
+    background-color: #313d50;
+    color: white;
+    text-align: center;
+  }
 </style>
 <script src="/static/core/cibilnew.js"></script>
 
 <!-- <div class="spacer"></div> -->
 {{template "filter.html"}}
 
-<div data-bind="with: cibil">
+<div data-bind="with: cibil" style="background-color: white;">
   <div class="row">
     <div class="col-md-12">
       <div class="col-md-12 col-sm-12 ez panel-content">
@@ -138,14 +154,12 @@
                   <!-- <div class="row"> -->
                     <!-- <div class="col-md-4"></div> -->
                     <div class="col-md-6 comment-container">
-                      <label>Comment: </label>
+                      <label style="font-weight: bold !important;">Comment: </label>
                       <a href="#" class="comment-a">
                       <img class="btn-comment img-responsives no-margin" style="height: 33px !important;" data-bind="click:cibil.ShowComment" src="/static/img/user_comment.png" >
                       </a>
-                      <button class="btn btn-sm btn-confirm" onclick="updateConfirmCibil(1)">Confirm</button>
-                      <button class="btn btn-sm btn-danger btn-unconfirm" onclick="updateConfirmCibil(0)">Unconfirm</button>
-                      <button class="btn btn-sm btn-freeze" data-bind="click:cibil.eventfreeze">Freeze</button>
-                      <button class="btn btn-sm btn-unfreeze" style="display:none" data-bind="click:cibil.eventunfreeze">Unfreeze</button>
+                      <button class="btn btn-sm btn-confirm btn-disabled1" onclick="updateConfirmCibil()" data-bind="text: ConfirmText, enable: (cibil.cibilStatus() == 1)"></button>
+                      <button class="btn btn-sm btn-freeze" data-bind="text: FreezeText, click:cibil.eventfreeze">Freeze</button>
                     </div>
                     <div class="col-md-6" style="text-align: right;"><span class="confirmdate"></span></div>
                     <!-- <div class="col-md-1"></div> -->
@@ -160,28 +174,26 @@
                 <div class="col-md-9 container-cibil width-container" id="test">
                   <div class="row">
                     <div class="col-md-12">
-                      <ul class="reportSummary active" data-collapsible="accordion" style="margin-left: -41px;">
-                        <li>
-                          <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i><span data-bind="text:r.titleCibil()">Company Summary</span><i class="fa fa-chevron-down pull-right"></i></div>
-                          <div class="collapsible-body no-margin no-padding">
-                            {{template "cibilgridnew.html"}}
-                          </div>
-                        </li>
-                      </ul>
+                      <div class="panel reportSummary">
+                        <div class="panel-heading panel-heading-collapsible">
+                          <span data-bind="text:r.titleCibil()">Company Summary</span>
+                        </div>
+                        <div class="panel-body no-margin no-padding">
+                          {{template "cibilgridnew.html"}}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div class="col-md-3 container-cibil" style="margin-left: 5%">
                   <div class="row">
                     <div class="col-ms-12">
-                      <ul class="promoters active" data-collapsible="accordion" style="margin-left: -41px;">
-                        <li>
-                          <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Promoters / Directors / Guarantors<i class="fa fa-chevron-down pull-right"></i></div>
-                          <div class="collapsible-body no-padding no-margin">
+                      <div class="panel promoters">
+                        <div class="panel-heading panel-heading-collapsible">Promoters / Directors / Guarantors</div>
+                        <div class="panel-body no-margin no-padding">
                           {{template "panelcibilnew.html"}}
-                          </div>
-                        </li>
-                      </ul>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

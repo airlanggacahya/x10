@@ -2,6 +2,7 @@ package controllers
 
 import (
 	. "eaciit/x10/webapps/connection"
+	. "eaciit/x10/webapps/models"
 	// "errors"
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
@@ -92,68 +93,85 @@ func (c *LoanApprovalController) GetAllData(k *knot.WebContext) interface{} {
 		return res
 	}
 
-	id := t.GetString("customerid") + "|" + t.GetString("dealno")
+	// id := t.GetString("customerid") + "|" + t.GetString("dealno")
 	dealno := t.GetString("dealno")
 	customerid := t.GetString("customerid")
 
 	conn, err := GetConnection()
 	defer conn.Close()
 	//=====================================================AD
-	csr, e := conn.NewQuery().
-		Where(dbox.And(dbox.Eq("_id", id))).
-		From("AccountDetails").
-		Cursor(nil)
-	defer csr.Close()
-	if e != nil {
-		res.SetError(e)
-		return res
-	}
+	// csr, e := conn.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("_id", id))).
+	// 	From("AccountDetails").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if e != nil {
+	// 	res.SetError(e)
+	// 	return res
+	// }
 
 	AD := []tk.M{}
-	err = csr.Fetch(&AD, 0, false)
-	if err != nil && csr.Count() > 0 {
+	// err = csr.Fetch(&AD, 0, false)
+	// if err != nil && csr.Count() > 0 {
+	// 	res.SetError(err)
+	// 	return res
+	// }
+
+	err = new(DataConfirmController).GetDataConfirmed(customerid, dealno, new(AccountDetail).TableName(), &AD)
+	if err != nil {
 		res.SetError(err)
 		return res
 	}
 
 	//==================================================CP
-	csr, e = conn.NewQuery().
-		Where(dbox.And(dbox.Eq("_id", id))).
-		From("CustomerProfile").
-		Cursor(nil)
-	defer csr.Close()
-	if e != nil {
-		res.SetError(e)
-		return res
-	}
+	// csr, e := conn.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("_id", id))).
+	// 	From("CustomerProfile").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if e != nil {
+	// 	res.SetError(e)
+	// 	return res
+	// }
 
 	CP := []tk.M{}
-	err = csr.Fetch(&CP, 0, false)
-	if err != nil && csr.Count() > 0 {
+	// err = csr.Fetch(&CP, 0, false)
+	// if err != nil && csr.Count() > 0 {
+	// 	res.SetError(err)
+	// 	return res
+	// }
+	err = new(DataConfirmController).GetDataConfirmed(customerid, dealno, "CustomerProfile", &CP)
+	if err != nil {
 		res.SetError(err)
 		return res
 	}
 
 	//==================================================RTR
-	csr, e = conn.NewQuery().
-		Where(dbox.And(dbox.Eq("CustomerId", customerid), dbox.Eq("DealNo", dealno))).
-		From("RepaymentRecords").
-		Cursor(nil)
-	defer csr.Close()
-	if e != nil {
-		res.SetError(e)
-		return res
-	}
+	// csr, e = conn.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("CustomerId", customerid), dbox.Eq("DealNo", dealno))).
+	// 	From("RepaymentRecords").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if e != nil {
+	// 	res.SetError(e)
+	// 	return res
+	// }
 
 	RTR := []tk.M{}
-	err = csr.Fetch(&RTR, 0, false)
-	if err != nil && csr.Count() > 0 {
+	// err = csr.Fetch(&RTR, 0, false)
+	// if err != nil && csr.Count() > 0 {
+	// 	res.SetError(err)
+	// 	return res
+	// }
+
+	err = new(DataConfirmController).GetDataConfirmed(customerid, dealno, "RepaymentRecords", &RTR)
+	if err != nil {
 		res.SetError(err)
 		return res
 	}
 
 	//==================================================CIBILCOMPANY
-	csr, e = conn.NewQuery().
+	csr, e := conn.NewQuery().
 		Where(dbox.And(dbox.Eq("Profile.customerid", cast.ToInt(customerid, cast.RoundingAuto)), dbox.Eq("Profile.dealno", dealno))).
 		From("CibilReport").
 		Cursor(nil)
@@ -189,19 +207,24 @@ func (c *LoanApprovalController) GetAllData(k *knot.WebContext) interface{} {
 	}
 
 	//==================================================BA
-	csr, e = conn.NewQuery().
-		Where(dbox.And(dbox.Eq("CustomerId", cast.ToInt(customerid, cast.RoundingAuto)), dbox.Eq("DealNo", dealno))).
-		From("BankAnalysisV2").
-		Cursor(nil)
-	defer csr.Close()
-	if e != nil {
-		res.SetError(e)
-		return res
-	}
+	// csr, e = conn.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("CustomerId", cast.ToInt(customerid, cast.RoundingAuto)), dbox.Eq("DealNo", dealno))).
+	// 	From("BankAnalysisV2").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if e != nil {
+	// 	res.SetError(e)
+	// 	return res
+	// }
 
 	BA := []tk.M{}
-	err = csr.Fetch(&BA, 0, false)
-	if err != nil && csr.Count() > 0 {
+	// err = csr.Fetch(&BA, 0, false)
+	// if err != nil && csr.Count() > 0 {
+	// 	res.SetError(err)
+	// 	return res
+	// }
+	err = new(DataConfirmController).GetDataConfirmed(customerid, dealno, "BankAnalysisV2", &BA)
+	if err != nil {
 		res.SetError(err)
 		return res
 	}

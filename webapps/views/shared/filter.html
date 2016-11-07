@@ -112,18 +112,23 @@ function showFilter(show) {
   $(".jf-tbl")[show ? 'show' : 'hide']()
   $("#replacedfilter")[show ? 'hide' : 'show']()
   if (show) {
-    if($(".app-menu .k-animation-container .jf-tbl").length == 0){
+    if($("#menubackup .jf-tbl").length == 0){
       $(".jf-tbl").appendTo("#filtercontainer");
-      $("#filtercontainer").appendTo(".app-menu .k-animation-container");
+      $("#filtercontainer").appendTo("#menubackup");
     }
       $(".app-title").css("margin-bottom",150);
   } else {
-    if($(".app-menu .k-animation-container #replacedfilter").length == 0){
+    if($("#menubackup #replacedfilter").length == 0){
       $("#replacedfilter").appendTo("#filtercontainer");
-      $("#filtercontainer").appendTo(".app-menu .k-animation-container");
+      $("#filtercontainer").appendTo("#menubackup");
     }
       $(".app-title").css("margin-bottom",120);
   }
+
+   if($("#menubackup #filtercontainer").length > 0){
+        $("#filtercontainer").show();
+      }
+
 }
 
 $("#replacedfilter").click(function(e){
@@ -205,6 +210,7 @@ $(document).ready(function(){
       setTimeout(function(){
        refreshFilter();
       },500);
+      if($("#myTopnav").getKendoMenu() != undefined)
       showFilter(false);
     } else if(parse("customerid") != "Not found" && parse("dealno") != "Not found" ){
       filter().CustomerSearchVal( parse("customerid") );
@@ -212,8 +218,10 @@ $(document).ready(function(){
       setTimeout(function(){
        refreshFilter();
       },500);
+      if($("#myTopnav").getKendoMenu() != undefined)
       showFilter(false);
     } else {
+      if($("#myTopnav").getKendoMenu() != undefined)
       showFilter(true);
     }
 
@@ -246,6 +254,19 @@ function parse(val) {
 //       }
 //     }
 // })
+
+$("body").click(function(e){  
+  var check = $(e.toElement).closest("#filtercontainer");
+  if((check.length==0 && !$(e.toElement).is("li"))&& filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" ){
+    showFilter(false);
+  }
+});
+
+$(document).scroll(function(e){  
+  if(filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" ){
+    showFilter(false);
+  }
+});
 
 $(".filter-button").click(function(event) { 
   showFilter(false)

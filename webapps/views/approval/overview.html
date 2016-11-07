@@ -1,94 +1,22 @@
 <style type="text/css">
 	.zero{
 		font-size: 30px;
+		width: 30px;
 		color: white;
-		margin-left: -12px;
-		margin-right:18px;
 		-ms-transform: rotate(7deg);
 		-webkit-transform: rotate(7deg);
 		transform: rotate(-90deg);
 	}
-
 	.no{
 		font-size: 30px;
+		width: 30px;
 		color: white;
 		transform: scaleX(-1);
-		margin-right:18px;
-		margin-right:18px;
 	}
-
 	.yes{
 		font-size: 30px;
+		width: 30px;
 		color: white;
-		margin-left: -12px;
-		margin-right:18px;
-	}
-  	.panel-row {
-	  	display: -webkit-box;
-	  	display: -webkit-flex;
-	  	display: -ms-flexbox;
-	  	display:         flex;
-  	}
-  	.panel-row [class*='col-'] {
-	 	display: flex;
-	 	flex-direction: column;
-  	}
-
-  	#distributormax{
-	    height: 110%;
-	    margin-left: -43px;
-	    margin-top: -17px;
-	    margin-bottom: -20px;
-	}
-
-	#defaulterstatus{
-    	width: 100%;
-	    height: 30%;
-	    margin-left: 3%;
-	    margin-top: -25%;
-	}
-
-	#verificationcheck{
-    	width: 100%;
-	    height: 30%;
-	    margin-left: 3%;
-	    margin-top: -25%;
-	}
-
-	@media (max-width: 1200px){
-		#defaulterstatus{
-	    	width: 70%;
-		    height: 70%;
-		    /*margin-left: -3%;*/
-		    margin-top: -17%;
-		}
-
-		#verificationcheck{
-	   		 width: 70%;
-		    height: 70%;
-		    /*margin-left: -3%;*/
-		    margin-top: -17%;
-		}
-	}
-
-	@media (min-width: 1750px){
-		#defaulterstatus{
-	    	width: 70%;
-		    height: 60%;
-		    margin-left: 21%;
-		    margin-top: -12%;
-		}
-
-		#verificationcheck{
-	    	width: 70%;
-		    height: 60%;
-		    margin-left: 21%;
-		    margin-top: -12%;
-		}
-	}
-
-	.panel-morning{
-		height: 80px;
 	}
 	.panel-morning > .panel-body{
 		padding: 0px;
@@ -112,24 +40,24 @@
 
 <div class="panel-heading"><h3 class="text-center">Overview</h3></div>
 
-<div class="panel-group clearfix panel-overview">
+<div class="panel-group clearfix panel-overview most-bottom">
 
 	<div class="panel-default clearfix content no-padding">
 		<div class="panel-heading text-center">Loan Details</div>
 
 		<div class="panel-row">
 			<div class="panel-default col-sm-6 panel-morning" style="border-right: 2px solid #fafafa">
-				<div class="panel-heading text-center">Proposed Loans</div>
+				<div class="panel-heading text-center">Proposed Loan</div>
 
 				<div class="panel-body clearfix text-center">
 					<div class="col-md-4 no-padding" style="padding-right: 4px;">
 						<div><span type="text" class="number-label" disabled data-bind="text: r.LD.Amount()" /></div>
-						<div><label>Amount</label></div>
+						<div><label>Amount (Rs. Lacs)</label></div>
 					</div>
 
 					<div class="col-md-4 no-padding" style="padding-left: 4px; padding-right: 4px;">
 						<div><span type="text" class="number-label" disabled data-bind="text: r.LD.Tenor()" /></div>
-						<div><label>Tenor</label></div>
+						<div><label>Tenor (Months)</label></div>
 					</div>
 
 					<div class="col-md-4 no-padding" style="padding-left: 4px;">
@@ -145,12 +73,12 @@
 				<div class="panel-body clearfix text-center">
 					<div class="col-md-6 no-padding" style="padding-right: 4px;">
 						<div><span type="text" class="number-label" disabled data-bind="text: 0" /></div>
-						<div><label>Avg. utilization of existing limit</label></div>
+						<div><label>Avg. Limit Utilization</label></div>
 					</div>
 
 					<div class="col-md-6 no-padding" style="padding-left: 4px;">
 						<div><span type="text" class="number-label" disabled data-bind="text: 0" /></div>
-						<div><label>Principal repayment delays</label></div>
+						<div><label>Delayed Repayments</label></div>
 					</div>
 				</div>
 			</div>
@@ -158,60 +86,59 @@
 
 	</div>
 
-	<div class="panel-default clearfix content no-padding">
+	<div class="panel-default clearfix content no-padding" style="line-height: 2">
 		<div class="panel-heading text-center">Borrower Profile</div>
 
-		<div class="panel-row" style="line-height: 2">
-			<div class="panel-default col-sm-8 no-padding" style="border-right: 2px solid #fafafa">
-				<div class="panel-row" style="background-color: #8195b0; color: white">
-					<div class="col-sm-12">Business</div>
-				</div>
-				<div class="panel-row" style="border-top: 1px solid #fafafa">
+		<div class="panel-row" style="background-color: #8195b0; color: white; margin-top: 5px; margin-bottom: -4px">
+			<div class="col-sm-8" style="border-right: 2px solid #fafafa">Business</div>
+			<div class="col-sm-4 no-padding text-center">Business Mix</div>
+		</div>
+
+		<div class="panel-row">
+			<div class="col-sm-8 no-padding" style="border-right: 2px solid #fafafa; margin-top: 5px">
+				<div class="panel-row">
 					<div class="col-sm-5" style="background-color: #bfbfbf; color: white">Segment</div>
 					<div class="col-sm-7" style="background-color: #e6e6e6" data-bind="text: Segmen"></div>
 				</div>
 				<div class="panel-row" style="border-top: 1px solid #fafafa">
-					<div class="col-sm-5" style="background-color: #bfbfbf; color: white">Vintage</div>
+					<div class="col-sm-5" style="background-color: #bfbfbf; color: white">Vintage (Years)</div>
 					<div class="col-sm-7" style="background-color: #e6e6e6" data-bind="text: ko.computed(function () { return kendo.toString(Vintage(), 'n2') }, Vintage)"></div>
 				</div>
-			</div>
-
-			<div class="panel-default col-sm-4" style="border-left: 2px solid #fafafa">
-
-			</div>
-		</div>
-
-		<div class="panel-row" style="line-height: 2">
-			<div class="panel-default col-sm-8 no-padding" style="border-right: 2px solid #fafafa">
 				<div class="panel-row" style="background-color: #8195b0; color: white">
 					<div class="col-sm-12">Distributor</div>
 				</div>
 				<div class="panel-row" style="border-top: 1px solid #fafafa">
-					<div class="col-sm-5" style="background-color: #bfbfbf; color: white">Distributor</div>
+					<div class="col-sm-5" style="background-color: #bfbfbf; color: white">Lead Distributor</div>
 					<div class="col-sm-7" style="background-color: #e6e6e6" data-bind="text: Distributor"></div>
 				</div>
 				<div class="panel-row" style="border-top: 1px solid #fafafa">
-					<div class="col-sm-5" style="background-color: #bfbfbf; color: white">Avg. Repayment Delay</div>
+					<div class="col-sm-5" style="background-color: #bfbfbf; color: white">Avg. Repayment Delay (Days)</div>
 					<div class="col-sm-7" style="background-color: #e6e6e6" data-bind="text: ko.computed(function () { return kendo.toString(AvgRDD(), 'n2') }, AvgRDD)"></div>
 				</div>
 			</div>
 
-			<div class="panel-default col-sm-4" style="border-left: 2px solid #fafafa">
-				<div class="panel-row">
-					<div class="col-sm-12">
-						<style type="text/css">
-							.k-chart > svg {
-					            height: 280px;
-					            width: 390px;
-					        }
-						</style>
-						<div class="nopadding" id="distributormax"></div>
+			<div class="panel-default col-sm-2 no-padding" style="border-right: 2px solid #fafafa">
+				<div class="clearfix text-center" style="height: 100%;">
+					<div class="col-sm-12 no-padding" style="height: 100%">
+						<div class="col-sm-12 no-padding middle-centered">
+							<div id="customermix" style="height: 86%"></div>
+							<div class="col-sm-12 no-padding text-center">Customer</div>
+						</div>
 					</div>
 				</div>
-				<div class="panel-row">
-					<div class="col-sm-12 text-center">Distributor Mix</div>
+			</div>
+
+			<div class="panel-default col-sm-2 no-padding">
+				<div class="clearfix text-center" style="height: 100%;">
+					<div class="col-sm-12 no-padding" style="height: 100%">
+						<div class="col-sm-12 no-padding middle-centered">
+							<div id="distributormax" ></div>
+							<div class="col-sm-12 no-padding text-center">Distributor</div>
+						</div>
+					</div>
 				</div>
 			</div>
+
 		</div>
 
 	</div>
@@ -221,13 +148,18 @@
 		<div class="panel-heading text-center">Ratings & References</div>
 
 		<div class="panel-row">
-			<div class="panel-body col-sm-2 no-padding text-center" style="border-right: 2px solid #fafafa">
-				<div><span type="text" class="number-label" disabled data-bind="text: ko.computed(function () { return kendo.toString(internalrating(), 'n2') }, internalrating)" /></div>
-				<div><label>XFL-1234</label></div>
-				<div><label>Internal Rating</label></div>
+			
+			<div class="panel-body col-sm-2 no-padding text-center" style="border-right: 2px solid #fafafa; padding-top: 26px;">
+				<div class="middle-centered">
+					<div>
+						<span type="text" class="number-label" disabled data-bind="text: ko.computed(function () { return kendo.toString(internalscore(), 'n2') }, internalscore)" />
+					</div>
+					<div><label data-bind="text: internalratingxfl">XFL-0</label></div>
+					<div><label>Internal Rating</label></div>
+				</div>
 			</div>
 
-			<div class="col-sm-6 no-padding">
+			<div class="panel-body col-sm-6 no-padding">
 
 				<script type="text/javascript" id="rating-template">
 					function ratingClasses(param) {
@@ -249,55 +181,56 @@
 				</script>
 
 				<div class="panel-default" style="color: white">
-					<div class="col-sm-6">
-						<div class="panel">
-							<div class="panel-body" style="margin: 0px -10px 0px -10px;" data-bind="style: { backgroundColor: ratingColor(externalrating()) }">
-								<div class="col-sm-6">
-									<span data-bind="attr: { class: ratingClasses(externalrating()) }"></span>
-								</div>
-								<div class="col-sm-6" style="margin-left: -27px;">
-									External Rating
+					<div class="panel-row">
+						<div class="col-sm-6 no-padding ratingbox er">
+							<div class="panel-body" data-bind="style: { backgroundColor: ratingColor(externalrating()), height: '100%', padding: '10px' }">
+								<div class="panel-row">
+									<div class="col-sm-4 no-padding">
+										<span data-bind="attr: { class: ratingClasses(externalrating()) }"></span>
+									</div>
+									<div class="col-sm-8 no-padding">
+										<span class="middle-left">External Rating</span>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="col-sm-6 no-padding">
-						<div class="panel">
-							<div class="panel-body" style="margin: 0px 1px 0px 1px;" data-bind="style: { backgroundColor: ratingColor(pdremarks()) }">
-								<div class="col-sm-6">
-									<span data-bind="attr: { class: ratingClasses(pdremarks()) }"></span>
-								</div>
-								<div class="col-sm-6" style="margin-left: -27px;">
-									PD Remarks
+						<div class="col-sm-6 no-padding ratingbox pdr" style="border-left: 2px solid #fafafa">
+							<div class="panel-body" data-bind="style: { backgroundColor: ratingColor(pdremarks()), height: '100%', padding: '10px' }">
+								<div class="panel-row">
+									<div class="col-sm-4 no-padding">
+										<span data-bind="attr: { class: ratingClasses(pdremarks()) }"></span>
+									</div>
+									<div class="col-sm-8 no-padding">
+										<span class="middle-left">PD Remarks</span>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="clearfix"></div>
-				<div class="panel-default" style="color: white">
-					<div class="col-sm-6">
-						<div class="panel">
-							<div class="panel-body" style="margin: 0px -10px 0px -10px;" data-bind="style: { backgroundColor: ratingColor(commercialcibil()) }">
-								<div class="col-sm-6">
-									<span data-bind="attr: { class: ratingClasses(commercialcibil()) }"></span>
-								</div>
-								<div class="col-sm-6" style="margin-left: -27px;">
-									Commercial Cibil
+				<div class="panel-default" style="color: white; margin-top: 2px">
+					<div class="panel-row">
+						<div class="col-sm-6 no-padding ratingbox cc">
+							<div class="panel-body" data-bind="style: { backgroundColor: ratingColor(commercialcibil()), height: '100%', padding: '10px' }">
+								<div class="panel-row">
+									<div class="col-sm-4 no-padding">
+										<span data-bind="attr: { class: ratingClasses(commercialcibil()) }"></span>
+									</div>
+									<div class="col-sm-8 no-padding">
+										<span class="middle-left">Commercial CIBIL</span>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="col-sm-6 no-padding">
-						<div class="panel">
-							<div class="panel-body" style="margin: 0px 1px 0px 1px;" data-bind="style: { backgroundColor: ratingColor(referencecheck()) }">
-								<div class="col-sm-6">
-									<span class="fa fa-thumbs-o-down no" data-bind="visible: referencecheck() == false"></span>
-									<span class="fa fa-thumbs-o-down zero" data-bind="visible: referencecheck() == 'zero' "></span>
-									<span class="fa fa-thumbs-o-up yes" data-bind="visible: referencecheck() == true"></span>
-								</div>
-								<div class="col-sm-6" style="margin-left: -27px;">
-									Reference Check
+						<div class="col-sm-6 no-padding ratingbox rc" style="border-left: 2px solid #fafafa">
+							<div class="panel-body" data-bind="style: { backgroundColor: ratingColor(referencecheck()), height: '100%', padding: '10px' }">
+								<div class="panel-row">
+									<div class="col-sm-4 no-padding">
+										<span data-bind="attr: { class: ratingClasses(referencecheck()) }"></span>
+									</div>
+									<div class="col-sm-8 no-padding">
+										<span class="middle-left">Reference Check</span>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -305,15 +238,24 @@
 				</div>
 			</div>
 
-			<div class="panel-default col-sm-5" style="border-left: 2px solid #fafafa">
-				<div class="panel-body clearfix text-center" style="margin-top: 20px;">
-					<div class="col-sm-6">
-						<div id="defaulterstatus"></div>
-						<div class="col-sm-12 text-center">Defaulter Status</div>
+			<div class="panel-default col-sm-2" style="border-left: 2px solid #fafafa">
+				<div class="clearfix text-center" style="height: 100%;">
+					<div class="col-sm-12" style="height: 100%">
+						<div class="middle-centered">
+							<div id="defaulterstatus"></div>
+							<div class="col-sm-12 text-center">Defaulter Status</div>
+						</div>
 					</div>
-					<div class="col-sm-6">
-						<div id="verificationcheck" ></div>
-						<div class="col-sm-12 text-center">Verification Check</div>
+				</div>
+			</div>
+
+			<div class="panel-default col-sm-2" style="border-left: 2px solid #fafafa">
+				<div class="clearfix text-center" style="height: 100%;">
+					<div class="col-sm-12" style="height: 100%">
+						<div class="middle-centered">
+							<div id="verificationcheck" ></div>
+							<div class="col-sm-12 text-center">Verification Check</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -322,9 +264,9 @@
 
 </div>
 
-<div class="footer col-sm-12">
-	<button onClick="r.showDetails('ldb')" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
-	<button data-bind="" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Full Form</button>
+<div class="footer clearfix">
+	<button onClick="r.showDetails('ldb')" class="btn btn-sm btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
+	<button data-bind="click: r.openFull" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Form</button>
 </div>
 
 <script>
@@ -336,7 +278,6 @@
 
 	r.setLD = function(ad){
 		if(ad != null) {
-			console.log(ad)
 			r.LD.Amount(ad.loandetails.requestedlimitamount)
 			r.LD.Tenor(ad.loandetails.limittenor)
 			r.LD.ROI(ad.loandetails.proposedrateinterest + "%")
@@ -347,72 +288,65 @@
 	Distributor = ko.observable('')
 	AvgRDD = ko.observable('')
 	Vintage = ko.observable('')
+	customerMixData = ko.observableArray([])
 	distributormaxData = ko.observableArray([])
 
   	function borrowerdetails(){
-		Segmen(r.AllData().Data.AD[0].borrowerdetails.customersegmentclasification)
-		Distributor(r.AllData().Data.AD[0].accountsetupdetails.leaddistributor)
-		Vintage(r.AllData().Data.AD[0].borrowerdetails.businessvintage)
+		if(r.AllData().Data.AD[0] != undefined) {
+			Segmen(r.AllData().Data.AD[0].borrowerdetails.customersegmentclasification)
+			Distributor(r.AllData().Data.AD[0].accountsetupdetails.leaddistributor)
+			Vintage(r.AllData().Data.AD[0].borrowerdetails.businessvintage)
+
+			var leaddib = _.find(r.AllData().Data.AD[0].vendordetails,
+				function(x){ 
+					return x.distributorname ==  r.AllData().Data.AD[0].accountsetupdetails.leaddistributor
+				})
+		}
 
 		AvgRDD(0)
-		total = 0
-		totalarr = r.AllData().Data.AD[0].vendordetails.length
-		_.each(r.AllData().Data.AD[0].vendordetails, function(v,i){
-			total += v.avgtransactionweightedpaymentdays
-		})
-		AvgRDD(total/totalarr)
+		if(leaddib != undefined){
+			AvgRDD(leaddib.averagedelaydays)
+		}
+
+		var i = 0
+		customerMixData([])
+		if(r.AllData().Data.AD[0] != undefined) 
+			_.each(r.AllData().Data.AD[0].customerbussinesmix, function(value, category, list){
+				if(category != "status"){
+					category = category == "stocksellin" ? "Stock & Sell" :
+							   category == "b2bgovtin" ? "B2B - Govt." :
+							   category == "b2bcorporatein" ? "B2B - Corporate" : ""
+
+					customerMixData.push({
+						category: category,
+						value: value,
+						color: r.colors.pie1[i]
+					})
+					i++
+				}
+			})
 
 		distributormaxData([])
-		ii = 0
-		_.each(r.AllData().Data.AD[0].distributormix, function(v,i){
-			i = i == "iriscomputerslimitedin" ? "Iris Computers Limited" : 
-				i == "rashiin" ? "Rashi" :
-				i == "compuagein"? "Compuage" : 
-				i == "savexin" ? "Savex" :
-				i == "supertronin"? "Supertron" :
-				i == "avnetin" ? "Avnet" : "";
-
-
-			distributormaxData.push({
-				category: i,
-		    value: v,
-		    color: ecisColors[ii]
+		if(r.AllData().Data.AD[0] != undefined) 
+			_.each(r.AllData().Data.AD[0].distributormix.Data, function(dm, i){
+				distributormaxData.push({
+					category: dm.Label,
+					value: dm.Result,
+					color: r.colors.pie1[i]
+				})
 			})
-			ii++;
-		})
-
-
-
-		distributormaxCreate()
-	}
-
-	function distributormaxCreate() {
-	$("#distributormax").html("");
-    $("#distributormax").kendoChart({
-        legend: {
-            visible: false
-        },
-        chartArea: {
-            background: "",
-            height: 80
-        },
-        series: [{
-            type: "pie",
-            data: distributormaxData()
-        }],
-        tooltip: {
-            visible: true,
-            template: "#=category # : #=value #%"
-        }
-    });
 	}
 
 	function startme(){
 		borrowerdetails()
 		ratingsandreferences()
+
 	}
 
-	internalrating = ko.observable(0)
+	internalscore = ko.observable(0)
+	internalrating = ko.observable("")
+	internalratingxfl = ko.observable('')
+
 	externalrating = ko.observable('zero')
 	commercialcibil = ko.observable('zero')
 	pdremarks = ko.observable('zero')
@@ -423,150 +357,227 @@
 	verificationcheckData = ko.observableArray([])
 
 	function ratingsandreferences(){
-		internalrating(0)
+		internalscore(0)
+		internalratingxfl('XFL-0')
+
 		ajaxPost("/creditscorecard/getcscdata", { 
-	    CustomerId: filter().CustomerSearchVal(), 
-	    DealNo: filter().DealNumberSearchVal(), 
-	  }, function(res){
-	  	if(res.Data.length > 0){
-		    var score = _.sum(res.Data[0].Data.filter(function (d) {
+		    CustomerId: filter().CustomerSearchVal(), 
+		    DealNo: filter().DealNumberSearchVal(), 
+		}, function(res){
+	  		if(res.Data.length > 0){
+		    	var score = _.sum(res.Data[0].Data.filter(function (d) {
 					return d.IsHeader
 				}).map(function (d) {
 					return kendo.parseFloat(d.WeightScore)
 				}));
-				internalrating(score)
-			}
-	  });
 
-		externalrating( (r.AllData().Data.AD[0].borrowerdetails.externalrating == 'Moderate Safety') ? 'zero' : (r.AllData().Data.AD[0].borrowerdetails.externalrating.indexOf("Safety") == -1) ? false : true )
+				internalscore(score)
+				internalrating(
+					score <= 4.5 ? "XFL-5" : 
+					score < 6 ? "XFL-4" : 
+					score < 7 ? "XFL-3" : 
+					score <= 8.5 ? "XFL-2" : "XFL-1"
+					);
+				internalratingxfl((function () {
+                    if (score <= 4.5) {
+                        return "XFL-5"
+                    } else if (score < 6) {
+                        return "XFL-4"
+                    } else if (score < 7) {
+                        return "XFL-3"
+                    } else if (score <= 8.5) {
+                        return "XFL-2"
+                    } else {
+                        return "XFL-1"
+                    }
+                })())
+			}
+	  	});
+		if(r.AllData().Data.AD.length > 0){
+		externalrating( 
+			(r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('moderate') > -1 || 
+			r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('adequate') > -1
+				? 'zero' : 
+			(r.AllData().Data.AD[0].borrowerdetails.externalrating.indexOf("Safety") == -1) ? false : true ))
 		commercialcibil(r.AllData().Data.AD[0].loandetails.commercialcibilreport)
 		pdremarks( (r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks == "Satisfactory") ? true : false )
 		referencecheck( (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Positive") ? true : (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Negative") ? false : 'zero' )
+}
+		try {
+			$(".ratingbox").each(function (i, e) {
+		    	$(e).tooltipster('destroy');
+		  	})
+		} catch (e) {
+		}
+		$(".ratingbox.er").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].borrowerdetails.externalrating))
+		$(".ratingbox.cc").tooltipster(r.ratingReferenceTooltip(commercialcibil()))
+		$(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks))
+		$(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip(referencecheck()))
 
 		ajaxPost("/duediligence/getduediligenceinputdata", { 
-	    CustomerId: filter().CustomerSearchVal(), 
-	    DealNo: filter().DealNumberSearchVal(), 
-	  }, function(res){
-	  	if (res.Data.length > 0){
-		  	var data = res.Data[0]
-
-		  	clr = 0
-		  	noclr = 0
-		  	_.each(data.Defaulter, function(v,i){
-					if(v.Status == "NOT CLEAR"){
-						noclr++;
-					} else if (v.Status == "CLEAR"){
-						clr++;
+		    CustomerId: filter().CustomerSearchVal(), 
+		    DealNo: filter().DealNumberSearchVal(), 
+	  	}, function(res){
+	  		if (res.Data.length > 0){
+				defaulterstatusData((function () {
+					var colors = {
+						CLEAR: r.pieColors2[0],
+						"NOT CLEAR": r.pieColors2[1],
+						Unavailable: "#313d50"
 					}
-				})
-				total = clr + noclr
 
-				verificationcheckData([{
-			      category: "Clear",
-			      value: ( clr / total ) * 100,
-			      color: threecolors[0]
-			  },{
-			      category: "Not Clear",
-			      value: ( noclr / total ) * 100,
-			      color: threecolors[2]
-			  }])
+					var op1 = _.groupBy(res.Data[0].Defaulter, 'Status')
+					var op2 = _.map(op1, function (v, k, i) {
+						if (k == '') {
+							k = 'Unavailable'
+						}
 
-		  	p = 0
-		  	m = 0
-		  	n = 0
-				_.each(data.Verification, function(v,i){
-					if(v.Result == "Positive"){
-						p++;
-					} else if (v.Result == "Moderate"){
-						m++;
-					} else if (v.Result == "Negative"){
-						n++;
+						var name = ''
+						if (v.length == 1) {
+							name = v[0].Source
+						} else if (v.length > 1) {
+							name = v.map(function (d) { return d.Source }).join(', ')
+						}
+
+					    return {
+					    	category: k,
+					    	name: name,
+					    	value: (v.length / res.Data[0].Defaulter.length) * 100,
+					    	color: colors[k]
+					    }
+					})
+
+					return op2
+				})())
+
+				verificationcheckData((function () {
+					var colors = {
+						Positif: r.pieColors2[2],
+						Positive: r.pieColors2[2],
+						Negative: r.pieColors2[1],
+						Moderate: r.pieColors2[0],
+						Unavailable: "#313d50"
 					}
-				})
-				total = p + m + n
 
-				defaulterstatusData([{
-			      category: "Positive",
-			      value: ( p / total ) * 100,
-			      // color: ecisColors[0]
-			  },{
-			      category: "Moderate",
-			      value: ( m / total ) * 100,
-			      // color: ecisColors[1]
-			  },{
-			      category: "Negative",
-			      value: ( n / total ) * 100,
-			      // color: ecisColors[2]
-			  }])
+					var op1 = _.groupBy(res.Data[0].Verification, 'Result')
+					var op2 = _.map(op1, function (v, k, i) {
+						if (k == '') {
+							k = 'Unavailable'
+						}
 
-			  defaulterstatusCreate()
+					    return {
+					    	category: k,
+					    	value: (v.length / res.Data[0].Verification.length) * 100,
+					    	color: colors[k]
+					    }
+					})
+
+					return op2
+				})())
+
+			  	defaulterstatusCreate()
 				verificationcheckCreate()
+				customerMixCreate()
+				distributormaxCreate()
 			}
-
-	  });
+	  	});
 	}
 
-  function defaulterstatusCreate() {
-  	$("#defaulterstatus").html("");
-    $("#defaulterstatus").kendoChart({
-        legend: {
-            visible: false
-        },
-        chartArea: {
-            background: "",
-            height: 60
-        },
-        seriesDefaults: {
-		     holeSize: 25,
-		 },
-        seriesColors : threecolors,
-        series: [{
-            type: "donut",
-            data: defaulterstatusData()
-        }],
-        tooltip: {
-            visible: true,
-            template: "#=category # #= kendo.toString(value,'N2')#%"
-        },
-       //  legend: {
-	      //   position: "bottom",
-	      //   // orientation: "horizontal",
-	      //   // labels: {
-	      //   //   color: "white"
-	      //   // }
-	      // },
-    });
+  	function defaulterstatusCreate() {
+	  	$("#defaulterstatus").html("");
+	    $("#defaulterstatus").kendoChart({
+	        legend: {
+	            visible: false
+	        },
+	        chartArea: {
+	            background: "",
+	            height: 60
+	        },
+	        seriesDefaults: {
+			     holeSize: 25,
+			 },
+	        series: [{
+	            type: "donut",
+	            data: defaulterstatusData()
+	        }],
+	        tooltip: {
+	            visible: true,
+	            template: function (d) {
+	            	return  '(' + d.dataItem.name + ')<br />' + d.dataItem.category + ' : ' + kendo.toString(d.dataItem.value, 'n2') + ' %'
+	            }
+	        },
+	    });
 	}
 
 	function verificationcheckCreate() {
-	$("#verificationcheck").html("");
-    $("#verificationcheck").kendoChart({
-        legend: {
-            visible: false
-        },
-        chartArea: {
-            background: "",
-            height: 60
-        },
-        seriesColors : threecolors,
-          seriesDefaults: {
-		     holeSize: 25,
-		 },
-        series: [{
-            type: "donut",
-            data: verificationcheckData()
-        }],
-        tooltip: {
-            visible: true,
-            template: "#=category # #=value #%"
-        },
-       //  legend: {
-	      //   position: "bottom",
-	      //   // orientation: "horizontal",
-	      //   // labels: {
-	      //   //   color: "white"
-	      //   // }
-	      // },
-    });
+		$("#verificationcheck").html("");
+	    $("#verificationcheck").kendoChart({
+	        legend: {
+	            visible: false
+	        },
+	        chartArea: {
+	            background: "",
+	            height: 60
+	        },
+	          seriesDefaults: {
+			     holeSize: 25,
+			 },
+	        series: [{
+	            type: "donut",
+	            data: verificationcheckData()
+	        }],
+	        tooltip: {
+	            visible: true,
+	            template: "#=category # : #= kendo.toString(value, 'n2') # %"
+	        },
+	    });
+	}
+
+	function customerMixCreate() {
+		$("#customermix").html("");
+	    $("#customermix").kendoChart({
+	        legend: {
+	            visible: false
+	        },
+	        chartArea: {
+	            background: "",
+	            height: 100
+	        },
+	        series: [{
+	            type: "pie",
+	            data: customerMixData(),
+	            overlay: {
+		            gradient: "none"
+		        }
+	        }],
+	        tooltip: {
+	            visible: true,
+	            template: "#=category # : #=value #%"
+	        }
+	    });
+	}
+
+	function distributormaxCreate() {
+		$("#distributormax").html("");
+	    $("#distributormax").kendoChart({
+	        legend: {
+	            visible: false
+	        },
+	        chartArea: {
+	            background: "",
+	            height: 100
+	        },
+	        series: [{
+	            type: "pie",
+	            data: distributormaxData(),
+	            overlay: {
+		            gradient: "none"
+		        }
+	        }],
+	        tooltip: {
+	            visible: true,
+	            template: "#=category # : #=value #%"
+	        }
+	    });
 	}
 </script>

@@ -748,16 +748,21 @@
     var subarr = _.find(model.menu(),function(x){
       return x.title() == model.PageTopMenu()
     })
+
     var aa = []
-    _.each(subarr.submenu(), function(v,i){
-      if(v.submenu().length > 0){
-         _.each(v.submenu(), function(vv,ii){
-          aa.push(vv)
-         })
-      }else{
-        aa.push(v)
-      }
-    })
+
+    if (subarr != undefined) {
+      _.each(subarr.submenu(), function(v,i){
+        if(v.submenu().length > 0){
+           _.each(v.submenu(), function(vv,ii){
+            aa.push(vv)
+           })
+        }else{
+          aa.push(v)
+        }
+      })
+    }
+    
     model.CurrentSubMenu(aa);
     setTimeout(function(){
       $("#horizontal-menu a:contains('"+model.currentTitle()+"')").closest("li").addClass("tab-current");
@@ -886,29 +891,51 @@
     });
   }
 
+  getScrollBarWidth = function() {
+    var $outer = $('<div>').css({visibility: 'hidden', width: 100, overflow: 'scroll'}).appendTo('body');
+    var widthWithScroll = $('<div>').css({width: '100%'}).appendTo($outer).outerWidth();
+    $outer.remove();
+    return 100 - widthWithScroll;
+  };
+
+  var setSubmenuWidth = function(e) {
+      e.width($(window).width());
+  }
+
   function rendermenu(){
        var margin = parseInt($("#filtercontainer").css('marginTop'));
       $("#myTopnav").kendoMenu({
         animation: false,
         open: function(e) {
           var item = $(e.item);
-          item.find(".horizontal-menu").width($(window).width() - $("#sidebar-wrapper").width());
+          setSubmenuWidth(item.find(".horizontal-menu"))
           $(window).resize(function(){
-            item.find(".horizontal-menu").width($(this).width() - $("#sidebar-wrapper").width());
+            setSubmenuWidth(item.find(".horizontal-menu"))
           });
-          $("#filtercontainer").css('margin-top', margin + 45);
-        },
-        close: function(e) {
-          // $("#filtercontainer").css('margin-top', margin);
+          $('#submenu-top').offset({ left: 0 })
         },
         closeOnClick : true,
         deactivate: function(e){
-          $("#myTopnav").getKendoMenu().open($(".active").parent());
           if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null){
-            showFilter(false);
+            if(typeof showFilter === 'function')
+              showFilter(false);
           }
         }
       });
+
+      $("#myTopnavhide .tab-current").parent().appendTo("#menubackup nav");
+
+      $(".horizontal-menu").width($(window).width());
+
+    if(typeof showFilter === 'function'){
+      if(filter().CustomerSearchVal() == "" && filter().DealNumberSearchVal() == ""){
+        showFilter(true);
+      }else{
+        showFilter(false);
+      }
+    }else{
+       $(".panel-body").css("margin-top",45);
+    }
 
       window.autoHideLoaderForTheFirstTime()
 
@@ -1020,8 +1047,8 @@
     padding: 7px;
     margin-top: 6px;
     margin-left: 6px;
-    border: 1px solid;
-    border-radius: 5px;
+    /*border: 1px solid;*/
+    /*border-radius: 5px;*/
   }
   .custom-bar:hover{
     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
@@ -1035,7 +1062,7 @@
         <div class="navbar-fixed-top app-top" id="nav-dex">
           <div class="app-wrapper">
 
-            <div class="sidebar-top no-padding pull-left">
+            <div class="sidebar-top no-padding pull-left" style="position: absolute;">
               <div id="sidebar-title">
                 Additional Filters
               </div>
@@ -1060,6 +1087,7 @@
                   $("#sidebar-wrapper").show()
                   $("#sidebar-title").show()
                   $("#sidebar-wrapper").width('16.66666667%')
+                  $("#myTopnav").css("margin-left", '17.66666667%');
                 }
               } else {
                 $(".sidebar-top").removeClass("col-sm-2 toggled-title")
@@ -1067,6 +1095,7 @@
                 $("#sidebar-wrapper").hide()
                 $("#sidebar-title").hide()
                 $("#sidebar-wrapper").width(0)
+                $("#myTopnav").css("margin-left", 50);
               }
               open = !open
             }
@@ -1114,16 +1143,18 @@
               <!-- /ko -->
             </script>
 
-            <div class="app-menu">
-              <ul class="nav navbar-nav" id="myTopnav" data-bind="template: { name: 'template-menu', foreach: menu }"></ul>
+            <div class="app-menu" >
+              <ul style="margin-left: 50px;" class="nav navbar-nav" id="myTopnav" data-bind="template: { name: 'template-menu', foreach: menu }"></ul>
+              <ul class="nav navbar-nav" id="myTopnavhide" data-bind="template: { name: 'template-menu', foreach: menu }" style="display: none;"></ul>
               <div class="clear"></div>
+              <div id="menubackup" class="horizontal-menu tabs tabs-style-linemove k-content">
+                <nav>
+                  
+                </nav>
+              </div>
             </div>
 
             <style type="text/css">
-
-              .horizontal-menu {
-                  width: 380px;
-              }
               .horizontal-menu:after {
                   content: ".";
                   display: block;
@@ -1133,7 +1164,7 @@
               }
             </style>
 
-            <ul class="nav navbar-nav navbar-right m-n hidden-xs nav-user">
+            <ul class="nav navbar-nav navbar-right m-n hidden-xs nav-user pull-right" style="position: absolute;right: -5px;">
               <li class="dropdown hidden-xs">
                 <a id="idmenu" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="true">
                   <span class="thumb-sm avatar pull-left">
@@ -1155,7 +1186,7 @@
         </div>
 
         <div class="app-title">
-          <div id="filtercontainer" class="col-sm-12"></div>
+          <div id="filtercontainer" class="col-sm-12" style="display: none"></div>
         <!--   <div style="display: inline-block" class="pull-right">
             <ol class="breadcrumb pull-right" data-bind="template:{name:'breadcrumbTemplate', foreach:BreadCrumbs}"></ol>
           </div> -->
@@ -1205,9 +1236,16 @@
       model.Processing = false;
       getServerDateTime();
       model.getDataMenu();
-
-      
   });
+
+  $(window).on('resize ajaxComplete', function(){
+    $(".horizontal-menu").width($(window).width());
+    $('#submenu-top').offset({ left: 0 })
+  })
+
+  $('#myTopnav').hover(function(){
+    $('#submenu-top').offset({ left: 0 })
+  })
 </script>
 
 </body>
@@ -1272,12 +1310,12 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
         </button>
-        <h4 class="modal-title modal-title">Banks Data</h4>
+        <h4 class="modal-title modal-title">Bank Data</h4>
       </div>
       <div class="modal-body">
         <div class="panel">
           <div class="panel-heading">
-            <h4 class="no-margin">Banks Account</h4>
+            <h4 class="no-margin">Bank Account</h4>
           </div>
           <div class="panel-body" data-bind="with: bankaccount">
             <div class="row">
@@ -1305,7 +1343,7 @@
                 <hr>
                 <div class="form-group col-sm-6">
                   <div class="form-group col-sm-12">
-                    <label  class="form-control-label col-sm-4">Nature Of Facility:</label>
+                    <label  class="form-control-label col-sm-4">Nature of Facility:</label>
                     <div class="col-sm-8">
                       <input class="form-control input-sm" id="naturefacility">
                     </div>
@@ -1317,9 +1355,9 @@
                     </div>
                   </div>
                   <div class="form-group col-sm-12">
-                    <label  class="form-control-label col-sm-4">Sanction Limit:</label>
-                    <div id="nfbsl" class="col-sm-8">
-                      <input type="number" id="nfbsanclimit" class="form-control input-sm" validationMessage="NFB Sanc Limit Rs Lacs Required" required  />
+                    <label  class="form-control-label col-sm-4">Sanction Limit (Rs. Lacs):</label>
+                    <div id="nfbsl" class="col-sm-8" style="margin-left: -10px;">
+                      <input type="number" id="nfbsanclimit" class="input-sm" data-bind="" validationMessage="NFB Sanc Limit Rs Lacs Required" required  />
                     </div>
                   </div>
                   <div class="form-group col-sm-12">
@@ -1363,21 +1401,21 @@
                   </div>
 
                   <div class="form-group col-sm-12">
-                    <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">Sanction Limit:</label>
-                    <div class="col-sm-8">
-                      <input type="number" id="sanclimit" class="form-control input-sm" validationMessage="Sanc Limit Rs.Lacs required" data-bind="value: sanclimit"/>
+                    <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">Sanction Limit (Rs. Lacs):</label>
+                    <div id="ee" class="col-sm-8" style="margin-left: -10px;">
+                      <input type="number" id="sanclimit" class="input-sm" validationMessage="Sanc Limit Rs.Lacs required"/>
                     </div>
                   </div>
 
                   <div class="form-group col-sm-12">
                     <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">ROI Per Annum (%) :</label>
-                    <div class="col-sm-8">
-                      <input type="number" id="roiperannum" class="form-control input-sm" validationMessage="ROI PER ANNUM required" data-bind="value: roiperannum"/>
+                    <div id="aa" class="col-sm-8" style="margin-left: -10px;">
+                      <input type="number" id="roiperannum" class=" input-sm" validationMessage="ROI PER ANNUM required"/>
                     </div>
                   </div>
 
                   <div class="form-group col-sm-12">
-                    <label for="inputEmail3" class="col-sm-4 form-control-label">Interest Per Month :</label>
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">Interest Per Month (Rs. Lacs):</label>
                     <div class="col-sm-8">
                       <input type="number" disabled="disabled" id="interestpermonth" class="form-control input-sm" validationMessage="Interest Per Month required" data-bind="value: interestpermonth"/>
                     </div>
@@ -1398,7 +1436,7 @@
                 <div class="panel-body">
                   <div class="row">
                     <div class="col-sm-12">
-                       <div class="panel-heading"><h4 class="no-margin">Banks Details</h4></div>
+                       <div class="panel-heading"><h4 class="no-margin">Bank Details</h4></div>
                       <div id="bankdetailgridform"></div>
                     </div>
                   </div>
@@ -1435,7 +1473,7 @@
                 <div class="panel-body">
                   <div class="row">
                     <div class="col-sm-12">
-                       <div class="panel-heading"><h4 class="no-margin">Banks Details</h4></div>
+                       <div class="panel-heading"><h4 class="no-margin">Bank Details</h4></div>
                       <div id="currentbankdetailgridform"></div>
                     </div>
                   </div>
@@ -1449,8 +1487,8 @@
         </div>
         <div class="modal-footer">
           <button id="cancelbtn" class="btn btn-danger" type="button" class="btn btn-default"> Cancel</button>
-          <button id="savebtn" class="btn btn-success" type="button" class="btn btn-default">Save Bank Data</button>
-          <button id="updatebtn" class="btn btn-warning" type="button" class="btn btn-default">Update Bank Data</button>
+          <button id="savebtn" class="btn btn-success" type="button" class="btn btn-default">Save</button>
+          <button id="updatebtn" class="btn btn-warning" type="button" class="btn btn-default">Update</button>
         </div>
       </div>
     </div>

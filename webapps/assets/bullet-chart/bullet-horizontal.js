@@ -240,16 +240,25 @@ function bulletWidth(x) {
 
 })();
 
-function renderHorizontalBulletChart(selector, data) {
-  var margin = {top: 5, right: 40, bottom: 20, left: 120},
-    width = 960 - margin.left - margin.right,
+function renderHorizontalBulletChart(selector, data, requestedWidth) {
+  if (typeof requestedWidth === 'undefined') {
+    requestedWidth = 500
+  }
+
+  var margin = {top: 5, right: 40, bottom: 20, left: 160},
+    width = requestedWidth - margin.left - margin.right - 10,
     height = 50 - margin.top - margin.bottom;
 
   var chart = d3.bulletHorizontal()
       .width(width)
       .height(height);
 
-  var svg = d3.select(selector).selectAll("svg")
+  $(selector).addClass('bullet-container')
+  $(selector).empty()
+  $(selector).html('<div class="bullet-horizontal-wrapper"></div>')
+  $(selector).find('.bullet-horizontal-wrapper')
+
+  var svg = d3.select(selector + ' .bullet-horizontal-wrapper').selectAll("svg")
       .data(data)
       .enter().append("svg")
       .attr("class", "bullet")

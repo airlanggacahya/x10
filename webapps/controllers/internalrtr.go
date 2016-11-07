@@ -59,27 +59,27 @@ func (c *InternalRtrController) FetchAccountDetail(customerID string, DealNo str
 	return &results[0], nil
 }
 
-func (d *InternalRtrController) GetAccountDetails(k *knot.WebContext) interface{} {
-	k.Config.OutputType = knot.OutputJson
-	res := new(tk.Result)
+// func (d *InternalRtrController) GetAccountDetails(k *knot.WebContext) interface{} {
+// 	k.Config.OutputType = knot.OutputJson
+// 	res := new(tk.Result)
 
-	payload := struct {
-		CustomerId string
-		DealNo     string
-	}{}
-	err := k.GetPayload(&payload)
-	if err != nil {
-		res.SetError(err)
-		return res
-	}
+// 	payload := struct {
+// 		CustomerId string
+// 		DealNo     string
+// 	}{}
+// 	err := k.GetPayload(&payload)
+// 	if err != nil {
+// 		res.SetError(err)
+// 		return res
+// 	}
 
-	// tk.Printf("---- %#v\n", payload)
-	data, err := d.FetchAccountDetail(payload.CustomerId, payload.DealNo)
-	if err != nil {
-		res.SetError(err)
-		return res
-	}
+// 	// tk.Printf("---- %#v\n", payload)
+// 	data, err := d.FetchAccountDetail(payload.CustomerId, payload.DealNo)
+// 	if err != nil {
+// 		res.SetError(err)
+// 		return res
+// 	}
 
-	res.SetData(data)
-	return res
-}
+// 	res.SetData(data)
+// 	return res
+// }

@@ -33,10 +33,10 @@
   .k-grid-edit-changes{
     margin-right : 10px;
   }
-  .banksdata-action{
+  /*.banksdata-action{
     margin-right : 10px;
     margin-top: -5px;
-  }
+  }*/
   .k-grid  .k-grid-header  .k-header  .k-link {
       height: auto;
   }
@@ -78,15 +78,53 @@
 .k-grid  .k-grid-header  .k-header {
     white-space: normal;
 }
+
+.fixed{
+  position: fixed;
+    z-index: 100;
+    width: 100%;
+    margin-top: -8px;
+    margin-left: -36px;
+    background-color: #f0f3f4;
+}
+
+.static{
+  position: static;
+}
+input[disabled]{
+   cursor: default !important;
+}
+.hed{
+  font-size: 18px;
+  margin-top: -4px;
+  font-weight: 800;
+}
 </style>
 
-<div>
-	<div class="col-md-12 col-sm-12 ez panel-content" style="padding: 20px">
+<div id="Bank-Container" style="display: none" data-bind="visible: (formVisibility() == true)">
+	<div class="col-md-12 col-sm-12 ez panel-content" style="padding: 20px;margin-top: -14px;">
 		<div class="panel ez">
-			<!-- <div class="panel-heading"><h3 class="no-margin">Banking Analysis</h3></div> -->
+			<div class="panel-heading" style="margin-top: -10px;" >
+        <div class="panel-body btnFixed" data-bind="visible:(isempty() != true && databank().length > 0)">
+          <!-- <div class="col-md-3" style="margin-left: -16px;">
+            <div class="col-md-4"><label style="margin-top: 5px;">Bank Stt Till:</label></div>
+            <div class="col-md-8" style="margin-left: -25px;"><input type="text" id="bankstt" class="form-control input-sm banksdata-action" validationmessage="Bank Stt Till required" data-bind="value: bankaccount.bankstttill"></div>
+          </div>
+          <button type="button" id="add" style="margin-left: -39px;" class="btn btn-add btn-sm btn-flat mgright banksdata-action">Add Bank Data</button> -->
+          <button id="bconfirm" class="btn btn-sm btn-confirm separator ontop" style="margin-right: inherit;">
+            <span>Confirm</span>
+          </button>
+          <button class="btn btn-sm btn-freeze separator" data-bind="visible: (unfreeze() == false)" style="margin-right: inherit;" onclick="onFreeze()">
+            Freeze
+          </button>
+          <button class="btn btn-sm btn-unfreeze separator" id="unf" data-bind="visible: (unfreeze() == true)" style="margin-right: inherit;" onclick="setUnFreeze()">
+            Unfreeze
+          </button>
+          <span class="form-last-confirmation-info pull-right"></span>
+        </div>   
+      </div>
       <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
-      <div class="form-last-confirmation-info"></div>
-			<div id="summary-panel" class="panel-body" style="margin-top: -16px">
+			<div id="summary-panel" class="panel-body" style="margin-top: -32px;" data-bind="visible:(isempty() != true)">
 				<div class="clearfix"></div>
 				
         <div id="toptables">
@@ -113,47 +151,55 @@
 	</div>
 </div>
 
-<div>
-  <div class="col-md-12 col-sm-12 ez panel-content" style="padding: 20px">
+<div class="col-md-12" data-bind="visible:(isempty())" style="margin-bottom: 30px"></div>
+
+<div >
+  <div class="col-md-12 col-sm-12 ez panel-content"  style="padding: 20px;margin-top: -28px;">
     <div class="panel ez">
       <div class="panel-heading">
-        <h4 class="no-margin">Banks Data</h4>
+        <center><div class="hed">Bank Account Details</div></center>
+        <div class="pull-right">
+          <!-- <button type="button" id="bconfirm" class="btn btn-confirm btn-sm btn-flat mgright banksdata-action">Confirm All</button> -->
+          <div class="clearfix"></div>
+          <div class="col-md-12 pull-right" style="margin-right: -42px;">
+          <div class="col-md-8" style="margin-right: -22px;">
+            <div class="col-md-5"><label style="margin-top: 7px;">Bank Stt Till:</label></div>
+            <div class="col-md-7"><input type="text" id="bankstt" class="form-control input-sm banksdata-action" validationmessage="Bank Stt Till required" data-bind="value: bankaccount.bankstttill"></div>
+          </div>
+          <div class="col-md-4">
+            <button type="button" id="add" class="btn btn-add btn-sm btn-flat mgright banksdata-action">Add Bank Data</button>
+          </div>
+          </div>
+        </div>
       </div>
 
       <div class="panel-body">
-        <div class="col-md-4 pull-right">
-          <div class="col-md-4"><label class="no-margin pull-right">Bank Stt Till:</label></div>
-          <div class="col-md-8"><input type="text" id="bankstt" class="form-control input-sm mgright banksdata-action pull-right" validationmessage="Bank Stt Till required" data-bind="value: bankaccount.bankstttill"></div>
-        </div>
-
-        <div class="col-md-6 pull-left no-padding">
-          <button type="button" id="add" class="btn btn-add btn-sm btn-flat mgright banksdata-action">Add Bank Data</button>
-          <button type="button" id="bconfirm" class="btn btn-confirm btn-sm btn-flat mgright banksdata-action">Confirm All</button>
-        </div>
+        <button type="button" style="display: none" data-bind="attr:{id:'bedit0'},click: editBankData(0),visible:(isempty() != true)"  class="btn btn-warning banksdata-action">Edit</button>
       </div>
+      <div data-bind="visible:(isempty() != true)">
+        <div class="panel-body" data-bind="foreach:databank"   style="margin-top: -34px;">
+          <div class="clearfix"></div>
+            <div >
+              <button type="button" data-bind="visible: ($index() > 0),attr:{id:'bedit'+$index()} ,click: editBankData($index())" class="btn btn-warning mgright pull-left banksdata-action">Edit</button>
+              <!--<button type="button" data-bind="visible:false,attr:{id:'update'+$index()},click: updateDataBank($index())" class="btn btn-primary mgright pull-right saveupdate banksdata-action">Update</button>-->
+            </div>
+            <div>
 
-      <div class="panel-body" data-bind="foreach:databank">
-        <div class="clearfix"></div>
-          <div>
-            <button type="button" data-bind="attr:{id:'bedit'+$index()},click: editBankData($index())" class="btn btn-warning mgright pull-left banksdata-action">Edit</button>
-            <!--<button type="button" data-bind="visible:false,attr:{id:'update'+$index()},click: updateDataBank($index())" class="btn btn-primary mgright pull-right saveupdate banksdata-action">Update</button>-->
+            </div>
+          <div class="clearfix"></div>
+          <div style="margin-top:20px;">
+            <div class="headerdatabankgrid header-bgcolor"><span data-bind="text:DataBank[0].BankAccount.BankName"></span></div>
+            <div data-bind="attr:{id:'fundgrid'+$index()}"></div>
+            <div data-bind="attr:{id:'bankdetailgrid'+$index()}"></div>
+            <div data-bind="attr:{id:'headersecfbs'+$index()}" style="margin-top: 15px" class="headersecfb k-header header-bgcolor">Security for Fund Based</div>
+            <div class="SFFB" data-bind="attr:{id:'secfbs'+$index()}"><span data-bind="text:DataBank[0].BankAccount.FundBased.SecurityOfFB"></span></div>
+            <div data-bind="attr:{id:'headernfbs'+$index()}" style='background-color:#313d50 !important;margin-top: 15px;' class="headernfb">Non-Fund Based Detail</div>
+            <div data-bind="attr:{id:'nonfundgrid'+$index()}"></div>
+            <div data-bind="attr:{id:'headercurrents'+$index()}" class="headernfb">Current Detail</div>
+            <div data-bind="attr:{id:'currentgrid'+$index()}"></div>
+            <div data-bind="attr:{id:'currentbankdetailgrid'+$index()}"></div>
+            &nbsp;
           </div>
-          <div>
-
-          </div>
-        <div class="clearfix"></div>
-        <div style="margin-top:20px;">
-          <div class="headerdatabankgrid header-bgcolor"><span data-bind="text:DataBank[0].BankAccount.BankName"></span></div>
-          <div data-bind="attr:{id:'fundgrid'+$index()}"></div>
-          <div data-bind="attr:{id:'bankdetailgrid'+$index()}"></div>
-          <div data-bind="attr:{id:'headersecfbs'+$index()}" class="headersecfb k-header header-bgcolor">Security for FB</div>
-          <div class="SFFB" data-bind="attr:{id:'secfbs'+$index()}"><span data-bind="text:DataBank[0].BankAccount.FundBased.SecurityOfFB"></span></div>
-          <div data-bind="attr:{id:'headernfbs'+$index()}" class="headernfb">NFB Detail</div>
-          <div data-bind="attr:{id:'nonfundgrid'+$index()}"></div>
-          <div data-bind="attr:{id:'headercurrents'+$index()}" class="headernfb">Current Detail</div>
-          <div data-bind="attr:{id:'currentgrid'+$index()}"></div>
-          <div data-bind="attr:{id:'currentbankdetailgrid'+$index()}"></div>
-          &nbsp;
         </div>
       </div>
     </div>

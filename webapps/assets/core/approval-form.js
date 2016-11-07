@@ -13,31 +13,113 @@ r.AllData = ko.observable('')
 r.AccountDetail = ko.observable('')
 r.AllData2 = ko.observable('')
 r.AllData3 = ko.observable('')
+r.notMetsCriteria = ko.observableArray([])
 
 r.bankingODCC = ko.observable(0)
 r.bankingABB = ko.observable(0)
+r.emiBounce = ko.observable(0)
+r.monthlyEMI = ko.observable(0)
 schemeAD = ko.observable('')
+r.formVisibility = ko.observable(false)
 
-r.sAD = function(ad, asd){
+r.initEvents = function () {
+  filter().CustomerSearchVal.subscribe(function () {
+    r.formVisibility(false)
+  })
+  filter().DealNumberSearchVal.subscribe(function () {
+    r.formVisibility(false)
+  })
+
+  //$('#refresh').remove()
+}
+
+r.colors = {
+  pie1: ["#0070aa", "#00e3ba", "#39a8e4", "#00bb7f", "#53b5f2", "#04E762"],
+  unavailable: "#313d50"
+}
+r.pieColors2 = ["#ff9300", "#ff0045", "#00da9c", "#0c4979", "#00aef1"];
+
+r.toTitleCase = function(str) {
+    return str.replace(/([^\W_]+[^\s-]*) */g, function(txt){
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+}
+
+r.getTooltipOption = function(position){
+  return {
+    theme: 'tooltipster-left-scroller',
+    animation: 'grow',
+    delay: 0,
+    touchDevices: false,
+    trigger: 'hover',
+    position: position
+  }
+}
+
+r.sAD = function(ad, asd, bd){
   loanapproval.companyname(ad.CustomerName);
   loanapproval.logindate(moment(new Date(asd.logindate)).format("DD/MM/YYYY HH:mm:ss"));
   loanapproval.businessaddress(ad.registeredaddress.AddressRegistered);
+  loanapproval.businesssegment(bd.customersegmentclasification);
+  loanapproval.businesssince(moment(bd.datebusinessstarted).format("DD/MM/YYYY"));
+
   loanapproval.location(asd.cityname);
   loanapproval.product(asd.product);
-  schemeAD(asd.scheme);
   loanapproval.leaddistributor(asd.leaddistributor);
   loanapproval.creditanalyst(asd.creditanalyst);
   loanapproval.brhead(asd.brhead);
   loanapproval.rmname(asd.rmname);
+  schemeAD(asd.scheme);
+
+  $(".ad-tooltip").each(function () {
+    var opt = r.getTooltipOption('top')
+    opt.content = $(this).children('input').val()
+    try {
+      $(this).tooltipster('destroy');
+    } catch (e) {
+    }
+    $(this).tooltipster(opt)
+  })
+
 }
 
 r.scrollTo = function(param){
-  return function () {
-    var top = $("#"+ param)[0].offsetTop
+  var curElem = $("#left-col > .shown");
 
-    $('.chartscroll').animate({
-      scrollTop: top
-    })
+  var showElem = function(elem) {
+    elem.removeClass("hidden");
+    elem.addClass("shown");
+    return elem;
+  }
+
+  var moveTo = function(destination){
+    $("#left-col > .shown").addClass("hidden");
+    $("#left-col > .shown").removeClass("shown");
+
+    return showElem(destination)
+  }
+
+  return function () {
+    var elem = "";
+    if(param == 'before') {
+      if(curElem.prev().length > 0){
+        elem = moveTo(curElem.prev())
+      }
+    } else if (param == 'next'){
+      if(curElem.next().length > 0){
+        elem = moveTo(curElem.next())
+      }
+    } else {
+      elem = moveTo($("#left-col > #" + param))
+    }
+
+    if(elem != ""){
+      $(".left-scroller .tooltipstered.active").removeClass("active")
+      $(".left-scroller ." + elem.attr("id")).addClass("active")
+      elem.find('.k-chart').each(function (i, e) {
+        $(e).data('kendoChart').redraw()
+      })
+    }
   }
 };
 
@@ -46,9 +128,41 @@ r.showDetails = function(param){
   $('body').animate({
     scrollTop: top - 130
   })
+  $(".collapsible-header.active").trigger("click")
+  $("#"+ param +" .collapsible-header").trigger("click")
 };
 
+r.openFull = function() {
+  var top = $("#tab0").offset().top
+  $('body').animate({
+    scrollTop: top - 130
+  })
+  $(".collapsible-header.active").trigger("click")
+}
+
+var setHeight = function() {
+  var topmenuHeight = $("#myTopnav").height()
+  var submenuHeight = $("#menubackup").height()
+
+  var colHeight = $(window).height() - topmenuHeight - submenuHeight - 32;
+  $("#scroll-button").css("top", (colHeight / 2) + "px")
+  $(".divided-col.col-full").css("height", colHeight + "px")
+  $(".divided-col.col-full").find('.col-full').each(function (i, e) {
+    $(e).css("min-height", colHeight + "px" )
+  })
+  $(".divided-col.col-full .content-container").css("max-height", (colHeight - 33) + "px")
+}
+
+r.ratingReferenceTooltip = function(param){
+  var opt = r.getTooltipOption('top');
+  opt.content = (param === false) ? "Negative" :
+                (param === true) ? "Positive" :
+                (param == 'zero') ? "Moderate" : param
+  return opt;
+}
+
 refreshFilter = function(){
+  r.initEvents()
   if (r.getCustomerId() === false) {
       return
   }
@@ -61,24 +175,28 @@ refreshFilter = function(){
   r.isLoading(true)
   app.ajaxPost('/loanapproval/getalldata', param, function (res) {
     if (res.Message != '') {
-      sweetAlert("Oops...", res.Message, "error");
+      sweetAlert("Warning", res.Message, "warning");
+      alert("---->masuk1")
       r.isLoading(false)
       return
     }
     r.AllData(res)
 
-    r.sAD(
-      res.Data.CP[0].applicantdetail,
-      res.Data.AD[0].accountsetupdetails
-      );
+    if(res.Data.CP[0] != undefined && res.Data.AD[0] != undefined)
+      r.sAD(
+        res.Data.CP[0].applicantdetail,
+        res.Data.AD[0].accountsetupdetails,
+        res.Data.AD[0].borrowerdetails
+        );
 
     createKeyParametersandIndicators(res.Data.NORM)
-    createMainPromotorDetails(res.Data.AD[0].promotordetails)
+    if(res.Data.AD[0]){
+      createMainPromotorDetails(res.Data.AD[0].promotordetails)
+      schemeAD(r.AllData().Data.AD[0].accountsetupdetails.scheme);
+    }
     createCibilDetails(r.AllData().Data.CP[0].detailofpromoters.biodata)
-    schemeAD(r.AllData().Data.AD[0].accountsetupdetails.scheme);
     r.AccountDetail( r.AllData().Data.AD[0] )
     r.isLoading(false)
-    r.getNormData(param)
     r.getCreditScoreCard(param)
 
     r.setLD(r.AccountDetail())
@@ -113,7 +231,11 @@ refreshFilter = function(){
         swal("Warning", "Red Flags Data Not Found", "warning");
     }
     getBankAsik();
+    getRTRAsoy();
     startme();
+
+    getComments();
+
     loanapproval.marketref(res.Data.AD[0].borrowerdetails.marketreference);
     createreferencecheckgrid(res.Data.AD[0].borrowerdetails.refrencecheck);
 
@@ -126,7 +248,7 @@ refreshFilter = function(){
   })
     getredflag()
     getreportdata()
-
+    r.formVisibility(true)
     loanApproval.loading(true)
     loanApproval.loading(false)
     promoters = [];
@@ -166,9 +288,30 @@ r.getNormData = function (param) {
     }
     r.isLoading(false)
 
+    res.Data.forEach(function(data){
+        if(data.CalculatedValue != undefined) {
+                    var getFixedCalculatedValue = parseFloat((function () {
+                        return (function(val){
+                            if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
+                                return val * 100;
+                            return val;
+                        })(data.CalculatedValue.Value)
+                    })()).toFixed(2);
+
+                    data.CalculatedValue.Value = getFixedCalculatedValue;
+
+
+                        if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
+                            data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
+                        else
+                            data.calculatedvaluetodisplay = getFixedCalculatedValue;
+                  }
+    })
+
     var persentageAsik = 20
-    var data = res.Data.filter(function (d) {
-      return (['min', 'max'].indexOf(d.Operator) > -1)
+    res.Data = res.Data.filter(function (d) {  return d.ShowInLoanApprovalScreen   });
+    var data = res.Data.filter(function (d) { 
+      return (['min', 'max'].indexOf(d.Operator) > -1) &&  d.ShowInLoanApprovalScreen
     }).map(function (d) {
         var o = {}
         o.operator = d.Operator
@@ -176,84 +319,181 @@ r.getNormData = function (param) {
         o.subtitle = d.NormLabel
         o.measures = [d.CalculatedValue.Value] // actual
         o.markers = [d.Value1] // norm
+
+        thirdRange = d.Value1 + (d.Value1 * persentageAsik / 100)
         o.ranges = [
             (d.Value1 - (d.Value1 * persentageAsik / 100)) / 2,
             d.Value1 - (d.Value1 * persentageAsik / 100),
-            d.Value1 + (d.Value1 * persentageAsik / 100)
+            (d.CalculatedValue.Value > thirdRange) ? d.CalculatedValue.Value : 
+              ((d.Value1 > thirdRange) ? d.Value1 : thirdRange)
+            // (d.Value1 > d.CalculatedValue.Value) ? d.Value1 : d.CalculatedValue.Value
         ]
 
         return o
     })
 
-      r.AllData2(data)
-      renderVerticalBulletChart('.bullet-vertical', data)
+    r.AllData2(data)
 
-      var addClass = function (o, klass) {
-        $(o).attr('class', $(o).attr('class') + ' ' + klass)
+    /////// Vertical Bullet Chart
+    var eachChartWidth = 100;
+    renderVerticalBulletChart('.bullet-vertical', data, eachChartWidth)
+    
+    var titleContainer = $("<div>").attr("class", "title-container")
+      .css("width", $(".bullet-vertical .bullet-vertical-wrapper").width())
+    $(".bullet-vertical").append(titleContainer)
+
+    _.each(data, function(d, i) {
+      var title = $("<div>").attr("class", "title title"+i)
+        .css("width", eachChartWidth+"px")
+        .css("display", "inline-block")
+        .css("vertical-align", "top")
+        .css("text-align", "right")
+      $(".bullet-vertical .title-container").append(title)
+
+      var mainT = $("<div>").text(d.title)
+        .attr("class", "child-t main-title")
+        .css("line-height", "1.5")
+      $(".bullet-vertical .title.title"+i).append(mainT)
+
+      var subT = $("<div>").text(d.subtitle)
+        .attr("class", "child-t sub-title")
+      $(".bullet-vertical .title.title"+i).append(subT)
+    })
+
+    var addClass = function (o, klass) {
+      $(o).attr('class', $(o).attr('class') + ' ' + klass)
+    }
+
+    data.forEach(function (d, i) {
+      var rects = $('.bullet-vertical .bullet-vertical-wrapper svg:eq(' + i + ') .range')
+      switch (d.operator) {
+        case 'max': {
+          addClass(rects[0], 'color-high')
+          addClass(rects[1], 'color-normal')
+          addClass(rects[2], 'color-low')
+        } break;
+        case 'min': {
+          addClass(rects[0], 'color-low')
+          addClass(rects[1], 'color-normal')
+          addClass(rects[2], 'color-high')
+        } break;
       }
+    })
 
-      data.forEach(function (d, i) {
-        var rects = $('.bullet-vertical-wrapper svg:eq(' + i + ') .wrap .range')
-        switch (d.operator) {
-          case 'min': {
-            addClass(rects[0], 'color-high')
-            addClass(rects[1], 'color-normal')
-            addClass(rects[2], 'color-low')
-          } break;
-          case 'max': {
-            addClass(rects[0], 'color-low')
-            addClass(rects[1], 'color-normal')
-            addClass(rects[2], 'color-high')
-          } break;
-        }
+    bulletTooltipOption = function(isMet, norm, actualValue){
+      var opt = r.getTooltipOption('top');
+      opt.contentAsHTML = true,
+      opt.content = "Status: "+isMet+"<br /> Norm: "+norm+"<br /> Actual Value: "+actualValue
+      return opt;
+    }
+
+    getIsMet = function(d) {
+      switch (d.Operator) {
+        case 'min': { return d.CalculatedValue.Value > d.Value1 } break;
+        case 'max': { return d.CalculatedValue.Value < d.Value1 } break;
+        case 'greater than or equal': { return d.CalculatedValue.Value >= d.Value1 } break;
+        case 'lower than or equal': { return d.CalculatedValue.Value <= d.Value1 } break;
+        case 'equal': { return d.CalculatedValue.Value == d.Value1 } break;
+        case 'between': { return (d.CalculatedValue.Value >= d.Value1) && (d.CalculatedValue.Value <= d.Value2) } break;
+      }
+    }
+
+    _.each(res.Data, function(d, i){
+      bullet = $('.bullet-vertical .bullet-vertical-wrapper svg:eq(' + i + ')')
+      try{
+        bullet.tooltipster('destroy');
+      } catch(e){}
+
+      $(bullet).tooltipster(bulletTooltipOption(
+        (getIsMet(d) == true) ? 'Met' : 'Not Met', 
+        d.NormLabel, 
+        d.CalculatedValue.Value)
+      )
+
+      $(bullet).find('.measure').attr("height", 3).attr("y", 6)
+    })
+
+    var criteriaStatus = res.Data.map(function (d) {
+      return { criteria: d.Criteria, isMet: getIsMet(d) }
+    })
+
+    var summary = _.map(
+      _.groupBy(
+        _.map(criteriaStatus, function(data){ return data.isMet })
+      ), function (value, key) {
+        var category = (key == 'true') ? 'Met' : 'Not Met'
+        var color = (key == 'true') ? r.pieColors2[2] : r.pieColors2[1]
+        return { category: category, value: value.length, color: color }
       })
 
-        var summary = _.map(_.groupBy(res.Data.map(function (d) {
-            switch (d.Operator) {
-                case 'min': { return d.CalculatedValue.Value > d.Value1 } break;
-                case 'max': { return d.CalculatedValue.Value < d.Value1 } break;
-                case 'greater than or equal': { return d.CalculatedValue.Value >= d.Value1 } break;
-                case 'lower than or equal': { return d.CalculatedValue.Value <= d.Value1 } break;
-                case 'equal': { return d.CalculatedValue.Value == d.Value1 } break;
-                case 'between': { return (d.CalculatedValue.Value >= d.Value1) && (d.CalculatedValue.Value <= d.Value2) } break;
-            }
-        })), function (value, key) {
-            var category = (key == 'true') ? 'Met' : 'Not Met'
-            return { category: category, value: value.length }
+    var nmCrits = _.compact(
+        _.map(criteriaStatus, function(data){ 
+          return data.isMet == false ? data.criteria : "" 
         })
+      )
 
-        $('.bulley-summary').kendoChart({
-            dataSource: {
-                data: summary
-            },
-            chartArea:{
-                background:"transparent",
-            },
-            seriesDefaults: {
-                holeSize: 30,
-            },
-            legend: {
-                position: "bottom"
-            },
-            series: [{
-                type: "donut",
-                field: 'value',
-                color: function (d) {
-                  if (d.category == "Met") {
-                    return threecolors[0]
-                  } else {
-                    return threecolors[2]
-                  }
-                }
-            }],
-            categoryAxis: {
-                field: 'category'
-            },
-            tooltip : {
-                visible: true,
-                template: "#=category # : #=value #"
+    var chunk = 5;
+    r.notMetsCriteria([])
+    for (var i = 0; i < nmCrits.length; i += chunk) {
+        r.notMetsCriteria().push(nmCrits.slice(i, i + chunk))
+    }
+    
+    var j = 1;
+    $("#not-met-table").html("")
+    _.each(r.notMetsCriteria(), function(cols, i) {
+      var col = $("<div>").attr("class", "col-sm-4 no-padding col"+i)
+      $("#not-met-table").append(col)
+
+      _.each(cols, function(criteria){
+        var cell = $("<div>").attr("class", "panel-row col-sm-12 no-padding cell"+j)
+        $(".col"+i).append(cell)
+
+        var numbering = $("<div>").attr("class", "col-fake").text(j+". ")
+          .css("font-size", "9px")
+          .css("line-height", "1.5")
+          .css("width", "17px")
+        $(".cell"+j).append(numbering)
+
+        var critText = $("<div>").attr("class", "col-fake").text(criteria)
+          .css("font-size", "9px")
+          .css("line-height", "1.5")
+          .css("margin-bottom", "2px")
+          .css("margin-right", "5px")
+        $(".cell"+j).append(critText)
+        j++
+      })
+    })
+
+    summary.forEach(function (d) {
+      $('.block.' + d.category.toLowerCase().replace(/\ /g, '-') + ' .value').html(d.value)
+    })
+
+    $('.bulley-summary').kendoChart({
+        dataSource: {
+            data: summary
+        },
+        chartArea:{
+            background:"transparent",
+        },
+        legend: {
+            visible: false,
+            position: "right"
+        },
+        series: [{
+            type: "pie",
+            field: 'value',
+            overlay: {
+              gradient: "none"
             }
-        });
+        }],
+        categoryAxis: {
+            field: 'category'
+        },
+        tooltip : {
+            visible: true,
+            template: "#=category # : #=value #"
+        }
+    });
   })
 }
 
@@ -261,6 +501,11 @@ r.getCreditScoreCard = function(param, callback) {
   app.ajaxPost('/creditscorecard/getcscdatav1', param, function (res) {
     if(status == "") {
       r.AllData3(res.Data[0])
+       var param = {}
+        param.Customerid = r.customerId().split('|')[0]
+        param.Dealno = r.customerId().split('|')[1]
+        param.Internalrating = res.Data[0].FinalRating.replace("-","")
+        r.getNormData(param)
     }
 
     loanApproval.refresh()
@@ -283,21 +528,21 @@ var createcibildonut = function(){
         seriesDefaults: {
          holeSize: 45,
      },
-      seriesColors : threecolors,
+      seriesColors : r.pieColors2,
       series: [{
           type: "donut",
           data: [{
               category: "Above 700",
               value: above700.length,
-              // color: "#42f47d"
+              color: r.pieColors2[2]
           }, {
               category: "600 - 700",
               value: beetween600700.length,
-              // color: "#f4f442"
+              color: r.pieColors2[0],
           }, {
               category: "Below 600",
               value: below600.length,
-              // color: "#f44b42"
+              color: r.pieColors2[1],
           }]
       }],
       tooltip : {
@@ -307,9 +552,26 @@ var createcibildonut = function(){
   });
 }
 
+var getRTRAsoy = function () {
+  r.emiBounce(0)
+  r.monthlyEMI(0)
+
+    var param = {
+      customerid: filter().CustomerSearchVal(),
+      dealno: filter().DealNumberSearchVal()
+    }
+
+    ajaxPost("/rtr/getdatabottomgrid", param, function(res){
+      r.emiBounce(res.data[1].summary.SumBounces)
+      r.monthlyEMI(res.data[1].summary.TotalObligationEMI)
+    })
+}
+
+r.bankingODCCSancLimit = ko.observable(0);
 var getBankAsik = function () {
   r.bankingABB(0)
   r.bankingODCC(0)
+  r.bankingODCCSancLimit(0)
 
     var customerId = filter().CustomerSearchVal();
   var dealNo = filter().DealNumberSearchVal();
@@ -330,123 +592,66 @@ var getBankAsik = function () {
     var details = res.data.Detail;
     createBankingandOsSnapshot(res.data.Summary);
 
-    _.each(details, function(detail){
-        _.each(detail.DataBank[0].BankDetails, function(bankDetail){
-            if(bankDetail.OdCcLimit > 0.01){
-                odccs.push(bankDetail.AvgBalon / bankDetail.OdCcLimit);
-            } else {
-                odccs.push(0);
-            }
-        });
-    });
+    var abbdata = details.map(function (d) {
+      var left = _.reduce(d.DataBank[0].CurrentBankDetails, function(memo, num){
+        return memo + num.AvgBalon;
+      }, 0)
+      var right = _.filter(d.DataBank[0].CurrentBankDetails, function(x){
+        return x.AvgBalon > 0;
+      }).length
 
-    _.each(details, function(detail){
-        var aml = {};
-        var eachDataBank = detail.DataBank[0];
+      return toolkit.number(left / right)
+    })
+    var abbavg = _.sum(abbdata) / abbdata.filter(function (d) { return d > 0 }).length
 
-        aml.Bank        = eachDataBank.BankAccount.BankName;
-        aml.SancLimit   = eachDataBank.BankAccount.FundBased.SancLimit;
+    var odccdata = details.filter(function (d) {
+        return d.DataBank[0].BankAccount.FundBased.AccountType == 'OD/CC'
+    }).map(function (d) {
+        return _.max(_.map(d.DataBank[0].BankDetails, function (bd) {
+            return toolkit.number(bd.AvgBalon / bd. OdCcLimit);
+        }))
+    })
+    var odccavg = _.sum(odccdata) / odccdata.length
 
-        aml.OdCcUtilization = 0;
-        aml.InterestPerMonth = 0;
-        aml.abb = 0;
-        aml.util = 0;
+    var odccdatasanc = details.filter(function (d) {
+        return d.DataBank[0].BankAccount.FundBased.AccountType == 'OD/CC'
+    }).map(function (d) {
+        return d.DataBank[0].BankAccount.FundBased.SancLimit
+    })
 
-        // var utilarr = _.map(eachDataBank.BankDetails, function (bd) {
-        //         return toolkit.number(bd.AvgBalon / bd. OdCcLimit);
-        //     });
-        // aml.util =  _.reduce(utilarr, function(memo, num){ return memo + num; }, 0)/ _.filter(utilarr, function(x){ return x > 0; }).length ;
-        // aml.util = isFinite(aml.util) ? aml.util : 0;
+    var odccsancsum = _.sum(odccdatasanc)
 
-        if (eachDataBank.BankAccount.FundBased.AccountType.toLowerCase().indexOf('od') > -1) {
-
-            aml.OdCcUtilization = _.max(_.map(eachDataBank.BankDetails, function (bd) {
-                return toolkit.number(bd.AvgBalon / bd. OdCcLimit);
-            }))
-
-            var interestPerMonth    = eachDataBank.BankAccount.FundBased.InterestPerMonth;
-            var actualInterestPaids = _.map(eachDataBank.BankDetails, function(bd) {
-                return bd.ActualInterestPaid;
-            })
-
-            var actualInterestPaidValue = toolkit.number(_.sum(actualInterestPaids) / actualInterestPaids.length)
-            aml.InterestPerMonth = _.max([interestPerMonth, actualInterestPaidValue])
-        }else{
-            aml.abb = _.reduce(eachDataBank.BankDetails, function(memo, num){ return memo + num.AvgBalon; }, 0)/_.filter(eachDataBank.BankDetails, function(x){ return x.AvgBalon > 0; }).length ;
-        }
-
-        amls.push(aml);
-    });
-
-    var abbavg = _.reduce(amls, function(memo, num){ return memo + num.abb; }, 0) /  _.filter(amls, function(x){ return x.abb > 0; }).length ;
-    var odccavg = _.reduce(amls, function(memo, num){ return memo + num.SancLimit; }, 0) ;
+    odccavg = isNaN(odccavg)? 0 : odccavg;
+    abbavg = isNaN(abbavg)? 0 : abbavg;
 
     r.bankingABB(abbavg)
+    r.bankingODCCSancLimit(odccsancsum);
     r.bankingODCC(odccavg)
-    r.generateAML(res.data)
+    r.generateAML(res.data.Summary)
   })
 }
 
 r.generateAML = function(data){
-  var detail = data.Detail;
-  var res = [];
-  _.each(detail,function(e,i){
-      var db = e.DataBank[0].BankDetails;
-      _.each(db,function(ex,ix){
-          var dt = _.find(res,function(x){ return x.Month == ex.Month ;});
-          if(dt==undefined){
-              res.push({ Month : ex.Month , CreditCash : ex.CreditCash, DebitCash : ex.DebitCash});
-          }else{
-              dt.CreditCash += ex.CreditCash;
-              dt.DebitCash += ex.DebitCash;
-          }
-      })
-  });
+  var series = [{
+    name: 'Credit Cash',
+    field: 'credit'
+  }, {
+    name: 'Debit Cash',
+    field: 'debit'
+  }]
 
-  summaryRes = []
-  for(var i in data.Summary){
-    summaryRes.push({Month: moment(data.Summary[i]["Month"].split("T")[0]).format("MMM-YY"), TotalCredit: data.Summary[i]["TotalCredit"], TotalDebit: data.Summary[i]["TotalDebit"]})
-  }
-
-  _.each(res,function(e,i){
-      e.Month = moment(e.Month.split("T")[0]).format("MMM-YY");
-      var dt = _.find(summaryRes,function(x){ return x.Month == e.Month ;});
-      e.CreditCash = parseInt(e.CreditCash / dt.TotalCredit*100);
-      e.CreditCash = isFinite(e.CreditCash) ? e.CreditCash : 0;
-      e.DebitCash = parseInt(e.DebitCash / dt.TotalDebit*100);
-      e.DebitCash = isFinite(e.DebitCash) ? e.DebitCash : 0;
-  });
-
-  r.CreateChartAMLAsik(res);
-}
-
-r.CreateChartAMLAsik = function(data) {
-  category = []
-  data1 = [
-    {
-      name: "CreditCash",
-      data: []
-    },
-    {
-      name: "DebitCash",
-      data: []
-    },
-  ]
-  _.map(data, function(k, v){
-
-    category.push(k.Month)
-    data1[0].data.push(k.CreditCash)
-    data1[1].data.push(k.DebitCash)
+  var parsedData = data.map(function (d) {
+     return {
+        category: moment(d.Month).format("MMM-YYYY"),
+        credit: d.TotalCredit,
+        debit: d.TotalDebit
+     }
   })
 
-  category.reverse();
-  data1[0].data.reverse();
-  data1[1].data.reverse();
-
   $("#amlChart").kendoChart({
-                // title: {
-                //     text: "test"
-                // },
+    dataSource: {
+      data: parsedData,
+    },
                   chartArea: {
                   height: 150,
                   background:"transparent"
@@ -455,13 +660,16 @@ r.CreateChartAMLAsik = function(data) {
                     position: "bottom"
                 },
                 seriesDefaults: {
-                    type: "column"
+                    type: "column",
+                    overlay: {
+                      gradient: "none"
+                    }
                 },
-                series: data1,
+                series: series,
                 seriesColors : ecisColors,
                 valueAxis: {
                     labels: {
-                        format: "{0}%",
+                    //     format: "{0}%",
                         skip:2,
                         step:2
                     },
@@ -471,7 +679,7 @@ r.CreateChartAMLAsik = function(data) {
                     axisCrossingValue: 0,
                 },
                 categoryAxis: {
-                    categories: category,
+                    field: 'category',
                     line: {
                         visible: false
                     },
@@ -481,8 +689,7 @@ r.CreateChartAMLAsik = function(data) {
                 },
                 tooltip: {
                     visible: true,
-                    format: "{0}%",
-                    template: "#= series.name #: #= value #%"
+                    template: "#= series.name #: #= value #"
                 }
             });
 }
@@ -497,6 +704,7 @@ var getredflag = function(){
 
 	ajaxPost("/duediligence/getduediligenceinputdata", param, function(res){
         if (res.Data.length != 0){
+            r.formVisibility(true)
             var data = res.Data[0];
             redflags(data.Background)
             createRedFlags();
@@ -537,6 +745,8 @@ var getreportdata = function(){
   }
 
   ajaxPost("/ratio/getreportdata", param, function(res){
+    NOPAL_SENG_NGGAWE_BUILD_KEY_FINANCIAL_RATIOS_IKI_PENTING_SENG_LAWAS_RAUSAH_DIGAWE_RA_BENEEERRRR(res)
+
         r.rootdata([])
         r.rootdates([])
         if (res.Data.AuditStatus.length != 0){
@@ -553,23 +763,22 @@ var getreportdata = function(){
 
 }
 
-var threecolors = ["#2E933C","#F0A202","#b71d1d"];
-
-var setHeight = function() {
-  // if(screen.height > 670)
-    var colHeight = $(window).height() - 131 - $("#submenu-top li").height();
-    $(".divided-col.col-full").css("height", colHeight + "px" )
-    $(".col-full").css("min-height", colHeight + "px" )
-    $(".divided-col.col-full .content-container").css("max-height", (colHeight - 33) + "px" )
-}
-
-$( document ).ready(function(){
+$(document).ready(function(){
+  r.initEvents()
+  setTimeout(function(){
+    setHeight()
+  }, 2000);
+}).ajaxComplete(function(){
   setHeight()
 })
-
 $(window).resize(function() {
   setHeight()
+  $("#left-col > .shown").find('.k-chart').each(function (i, e) {
+    $(e).data('kendoChart').redraw()
+  })
 });
+
+
 
 r.KFI = ko.observableArray([
    {
@@ -778,7 +987,7 @@ r.KFI = ko.observableArray([
             Id : ko.observable('TOTOBW'),
             subsection: "Liabilities",
             alias : ko.observable('Total Outside Debts'),
-            ratio : ko.observable('TOTAL Outside borrowings (B)'),
+            ratio : ko.observable('Total Outside Borrowings (B)'),
             row : ko.observableArray([])
          },
          {
@@ -879,7 +1088,7 @@ r.FR = ko.observableArray([
             row : ko.observableArray([])
          },
          {
-            Id : ko.observable('LEVERAGEINCLX10'),
+            Id : ko.observable('TOLTNW'),
             subsection: '',
             alias : ko.observable('TOL / TNW (Adj. NW)'),
             ratio : ko.observable('TOL/TNW'),
@@ -894,7 +1103,7 @@ r.FR = ko.observableArray([
       ColumnHeader: ko.observableArray([]),
       Data : [
          {
-            Id : ko.observable('ISCRWITHX10'),
+            Id : ko.observable('INCR'),
             subsection: '',
             alias : ko.observable('ISCR'),
             ratio : ko.observable('Interest Coverage Ratio'),
@@ -961,15 +1170,15 @@ r.FR = ko.observableArray([
          {
             Id : ko.observable('WCREQ'),
             subsection: '',
-            alias : ko.observable('W C Requirement ( Lacs)'),
-            ratio : ko.observable('W C Requirement ( Lacs)'),
+            alias : ko.observable('WC Requirement ( Lacs)'),
+            ratio : ko.observable('WC Requirement ( Lacs)'),
             row : ko.observableArray([])
          },
          {
             Id : ko.observable('WCGAPMPBF'),
             subsection: '',
-            alias : ko.observable('W C Gap ( Lacs) (MPBF Method)'),
-            ratio : ko.observable('W C Gap ( Lacs) (MPBF Method)'),
+            alias : ko.observable('WC Gap ( Lacs) (MPBF Method)'),
+            ratio : ko.observable('WC Gap ( Lacs) (MPBF Method)'),
             row : ko.observableArray([])
          },
          // {
@@ -1142,14 +1351,14 @@ r.KI = ko.observableArray([
             Id : ko.observable('WCGAPMPBF'),
             subsection: "",
             alias : ko.observable('WC GAP (MPBF Method)'),
-            ratio : ko.observable('W C Gap ( Lacs) (MPBF Method)'),
+            ratio : ko.observable('WC Gap ( Lacs) (MPBF Method)'),
             row : ko.observableArray([])
          },
       ],
       row : ko.observableArray([])
    }
 ])
-
+r.KRHEADER = ko.observableArray([]);
 r.ConstructDataRatioPDF = function(res,ress){
   _.map(r.KFI(), function(v, i){
     r.KFI()[i].ColumnHeader([])
@@ -1159,11 +1368,12 @@ r.ConstructDataRatioPDF = function(res,ress){
     r.KFI()[i].ColumnHeader.push(v.SectionAlias())
     _.each(ress, function(column){
        if(column.Status == "PROVISION") {
-          // r.KFI()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Prov.)")
+          // r.KRHEADER.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Prov.)")
        }else if (column.Status == "ESTIMATED"){
-          // r.KFI()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Estimated)")
+          // r.KRHEADER.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Estimated)")
        } else if(column.Status == "AUDITED"){
           r.KFI()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Audited)")
+          r.KRHEADER.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Audited)")
        }
     })
     //end create header
@@ -1212,7 +1422,7 @@ r.ConstructDataRatioPDF = function(res,ress){
        //end create row
     })
   })
-
+r.KRHEADER([]);
   _.map(r.FR(), function(v, i){
     r.FR()[i].ColumnHeader([])
     r.FR()[i].row([])
@@ -1221,12 +1431,15 @@ r.ConstructDataRatioPDF = function(res,ress){
        r.FR()[i].ColumnHeader.push("Name")
        _.each(ress, function(column){
           if(column.Status == "PROVISION") {
+            r.KRHEADER.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+"")
              // r.FR()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Prov.)")
           } else if(column.Status == "ESTIMATED") {
              // r.FR()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Estimated)")
+          r.KRHEADER.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+"")
           }
           else if(column.Status == "AUDITED"){
              r.FR()[i].ColumnHeader.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Audited)")
+             r.KRHEADER.push("FY "+moment(column.Date,"DD-MM-YYYY").format("YY")+" (Audited)")
           }
        })
     } else {
@@ -1253,7 +1466,7 @@ r.ConstructDataRatioPDF = function(res,ress){
             // v2.alias(row.FieldName)
             rowData.push(v2.alias())
             _.each(ress, function(column) {
-              if(column.Status == "AUDITED"){
+              // if(column.Status == "AUDITED"){
                 var rowSelected = row.Values.find(function(g){return g.Date == column.Date})
                 if(rowSelected!=undefined) {
                    if(typeof rowSelected.Value === "number") {
@@ -1268,7 +1481,7 @@ r.ConstructDataRatioPDF = function(res,ress){
                 } else {
                    rowData.push("")
                 }
-              }
+              // }
             })
 
             r.FR()[i].row.push({"rowData" : rowData})
@@ -1345,16 +1558,20 @@ r.ConstructDataRatioPDF = function(res,ress){
 }
 
 $(function () {
-  var space = 100 / $('.left-scroller a').length
+  var space = 100 / ($('.left-scroller a').length - 1)
   $('.left-scroller a').each(function (i, e) {
     $(e).css('top', (i * space) + '%')
-    $(e).tooltipster({
-      theme: 'tooltipster-left-scroller',
-      animation: 'grow',
-      delay: 0,
-      touchDevices: false,
-      trigger: 'hover',
-      position: 'right'
-    })
+    $(e).tooltipster(r.getTooltipOption('right'))
   })
+  setTimeout(function(){
+    $(".collapsible-header").each(function(i,e){
+     $(e).trigger("click");
+    });
+  },1000);
+
+  $('#top-link-block').removeClass('hidden').affix({
+        // how far to scroll down before link "slides" into view
+        offset: {top:100}
+    });
 })
+

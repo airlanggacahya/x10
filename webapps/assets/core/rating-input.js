@@ -7,10 +7,12 @@ r.templateNewData = {
 	Parameters: "",
 	Categories: "",
     TimePeriod: '',
+    ValueType: "text",
 	From : "",
 	FieldId : "",
 	MultipleCategories: [],
 };
+r.newRatingMode = ko.observable(false);
 r.masterData = ko.observable({});
 r.newData = ko.mapping.fromJS(r.templateNewData);
 r.mode = ko.observable('main')
@@ -23,6 +25,15 @@ r.optionParametersGroup = ko.computed(function () {
 		return d != '';
 	})
 }, r.dataRatingMaster);
+r.optionValueTypes = ko.observableArray([
+	{		text : "Default",
+		value : ""
+	},
+	{
+		text : "Percentage",
+		value : "percentage"
+	}
+	]);
 r.optionParameters = ko.computed(function () {
 	return _.map(_.groupBy(r.dataRatingMaster(), 'Parameters'), function (v, k) {
 		return k
@@ -34,7 +45,12 @@ r.optionParameters = ko.computed(function () {
 r.getMasterAD = function (callback) {
 	r.dataRatingMaster([])
 	app.ajaxPost("/accountdetail/getmasteraccountdetail", {}, function (res) {
-		r.masterData(res.Data);
+		var master = {}
+		res.Data.forEach(function (each) {
+			master[each.Field] = each.Items.map(function (d) { return d.name })
+		})
+		
+		r.masterData(master);
 		if (typeof callback == 'function') {
 			callback()
 		}
@@ -48,7 +64,15 @@ r.getMasterAD();
 r.getRatingMaster = function (callback) {
 	r.dataRatingMaster([])
 	r.isLoading(true)
-	app.ajaxPost("/rating/getratingmaster", {}, function (res) {
+	
+	var param = {};
+
+	if(r.newRatingMode())
+		param.Id = r.lastId()
+	else
+		param.Id = r.selectedRatingModelId()
+
+	app.ajaxPost("/rating/getratingmaster", param, function (res) {
 		r.isLoading(false)
 		r.dataRatingMaster(_.orderBy(res, 'Order'))
 		r.dataRatingMasterpure(r.dataRatingMaster())
@@ -132,7 +156,7 @@ r.constructData = function (res) {
 
 	return flat;
 }
-
+r.lastId = ko.observable("");
 r.expand = ko.observable(false);
 
 r.expandfunction = function () {
@@ -145,6 +169,9 @@ r.expandfunction = function () {
 }
 
 r.render = function () {
+	if($(".grid").data("kendoTreeList")!=undefined)
+	saveExpanded();
+
 	var columnData = r.data()
 	var data = r.constructData(r.dataRatingMaster())
 	data.forEach(function (d) {
@@ -189,7 +216,7 @@ r.render = function () {
 			return o
 		})
 	})
-
+	setExpanded(data);
 	var dataSource = new kendo.data.TreeListDataSource({
 		data: data,
 		schema: {
@@ -282,7 +309,7 @@ r.render = function () {
 			}
 
 			var value = d.columnData[i].Score
-			return '<input type="number" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-field-id="' + d.id + '" data-field="' + d.Name + '" data-sub-section="' + d.SubSection + '" data-section="' + d.Section + '" value="' + value + '" style="border: none; background-color: transparent; width: 60%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />'
+			return '<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-field-id="' + d.id + '" data-field="' + d.Name + '" data-sub-section="' + d.SubSection + '" data-section="' + d.Section + '" value="' + value + '" style="border: none; background-color: transparent; width: 60%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />'
 		}
 
 		columns.push(columnField)
@@ -381,8 +408,8 @@ r.render = function () {
 
     		if (d.Type == 'Field') {
 	    		return [
-	        		// "<button class='btn btn-xs btn-primary tooltipster' title='Move up' data-direction='up' onclick=\"r.moveTo(this, '" + d.id + "')\"><i class='fa fa-arrow-up'></i></button>",
-	        		// "<button class='btn btn-xs btn-success tooltipster' title='Move down' data-direction='down' onclick=\"r.moveTo(this, '" + d.id + "')\"><i class='fa fa-arrow-down'></i></button>",
+	        		"<button class='btn btn-xs btn-primary tooltipster' title='Move up' data-direction='up' onclick=\"r.moveTo(this, '" + d.id + "')\"><i class='fa fa-arrow-up'></i></button>",
+	        		"<button class='btn btn-xs btn-success tooltipster' title='Move down' data-direction='down' onclick=\"r.moveTo(this, '" + d.id + "')\"><i class='fa fa-arrow-down'></i></button>",
 	        		// "&nbsp;",
 	        		// "<button class='btn btn-xs btn-warning tooltipster' title='Show History' onclick=\"r.getFilledFields(this, '" + d.id + "')\"><i class='fa fa-history'></i></button>",
 	        		// "&nbsp;",
@@ -418,9 +445,13 @@ r.render = function () {
 					.val(e.Name)
 			})
 
-			$('.grid .k-grid-content input[data-rating]').each(function (i, e) {
-				$(e).number(true, 2)
-			})
+			// $('.grid .k-grid-content input[data-rating]').each(function (i, e) {
+			// 	$(e).number(true, 2)
+			// })
+
+			// $('.grid .k-grid-content input[data-type="Field"]').each(function (i, e) {
+			// 	$(e).number(true, 0)
+			// })
 
 			// $('.grid .k-grid-content input').each(function (i, e) {
 			// 	console.log($(e))
@@ -529,12 +560,12 @@ r.getFilledData = function () {
 
     els.filter('[data-type="Field"][data-rating="' + d.Id + '"][data-field]').each(function (i, e) {
     	var value = parseFloat($(e).val())
-    	if (value == 0) {
-    		return
-    	}
+    	// if (value == 0) {
+    	// 	return
+    	// }
 
   		o.CategoriesData.push({
-  			Id: $(e).attr('data-field-id'),
+  			Id:  $(e).attr('data-field-id'),
   			Definition: '',
   			Profile: '',
   			Score: value
@@ -571,9 +602,9 @@ r.getFilledData = function () {
 	return newData // .concat(otherData)
 }
 r.needToSaveMaster = ko.observable(false)
-r.saveRatingMaster = function (callback) {
+r.saveRatingMaster = function (callback,datamaster) {
 	var param = {}
-	param.Data = r.dataRatingMaster()
+	param.Data =  datamaster; 
 
 	r.isLoading(true)
 	app.ajaxPost("/rating/saveratingmaster", param, function (res) {
@@ -635,19 +666,21 @@ r.validateBeforeSave = function() {
 		valid = r.validateLev2(key, val)
 
 		if(!valid) {
-			text = "Total “Weightage of Parameter” on “"+key+"” is below 100%"
+			text = "Total “Weightage of Parameter” on “"+key+"” is not 100%"
 			return valid
 		}
 	})
 
 	if(valid && !r.checkValid(totalLev1)) {
 		valid = false
-		text = "Total \"Weightage of Parameter Group\" is below 100%"
+		text = "Total \"Weightage of Parameter Group\" is not 100%"
 	}
 
 	console.log(text)
 	return text
 }
+
+r.newFilleData = ko.observableArray([]);
 
 r.save = function () {
 	result = r.validateBeforeSave()
@@ -658,9 +691,25 @@ r.save = function () {
 		type: "warning",
 		})
 	} else {
+		var datamaster = JSON.parse(JSON.stringify(r.dataRatingMaster()))
+		r.newFilleData([]);
+		var datapre = JSON.parse(JSON.stringify(r.getFilledData()[0].CategoriesData));
+		datamaster.forEach(function(dt){
+			var pre = _.find(datapre,function(x){ return x.Id == dt.Id});
+			var Id =  r.selectedRatingModelId() + dt.ParametersGroup + dt.Parameters + dt.Categories + dt.Operator + dt.Value1 + dt.Value2;
+			if(pre!=undefined){
+				pre.Id = Id;
+			}
+			dt.Id = Id;
+		});
+
+		var datafinal = JSON.parse(JSON.stringify(r.getFilledData()[0]));
+		datafinal.CategoriesData = datapre;
+		r.newFilleData().push(datafinal);
+
 		var doSave = function () {
 			var param = {}
-			param.Data = r.getFilledData()
+			param.Data = r.newFilleData();
 
 			r.isLoading(true)
 			app.ajaxPost('/rating/saveratingdata', param, function (res) {
@@ -668,23 +717,25 @@ r.save = function () {
 					r.isLoading(false)
 					return
 				}
+				r.newRatingMode(false);
 
 				if (res.Data.length > 0) {
 					r.selectedRatingModelId(res.Data[0])
 				}
 
 				r.isLoading(false)
-				r.refresh()
+				// r.refresh()
+				r.openRating(r.selectedRatingModelId());
 			}, function () {
 				r.isLoading(false)
 			})
 		}
 
-		if (r.needToSaveMaster()) {
-			r.saveRatingMaster(doSave)
-		} else {
-			doSave()
-		}
+		// if (r.needToSaveMaster()) {
+			r.saveRatingMaster(doSave,datamaster);
+		// } else {
+			// doSave()
+		// }
 	}
 }
 r.refresh = function (callback) {
@@ -784,24 +835,26 @@ r.openRating = function (id) {
 };
 r.newRatingModel = function () {
 	r.mode('detail')
+	r.newRatingMode(true);
 
-
-	r.getRatingMaster(function () {
-		r.isLoading(true)
+	// r.getRatingMaster(function () {
+		r.isLoading(true);
 
 		ajaxPost('/rating/newratingdata', {}, function (res) {
-			r.selectedRatingModelId(res.Id)
-			r.data([res])
-			r.render()
+			r.lastId(res.lastId)
+			r.selectedRatingModelId(res.data.Id)
+			r.data([res.data])
+			r.getRatingMaster(r.render)
 
-			r.isLoading(false)
+			// r.isLoading(false)
 		}, function () {
 			r.isLoading(false)
 		})
-	})
+	// })
 };
 r.backToMain = function () {
 	r.mode('main')
+	r.newRatingMode(false);
 	r.selectedRatingModelId('')
 
 	r.refreshMain()
@@ -814,8 +867,7 @@ r.deleteRating = function (id) {
 		showCancelButton: true,
 		confirmButtonColor: "#DD6B55",
 		confirmButtonText: "Yes, delete it",
-		closeOnConfirm: false
-	}, function() {
+	}).then(function() {
 		var param = {}
 		param.Id = id
 
@@ -825,7 +877,7 @@ r.deleteRating = function (id) {
 	            return;
 	        }
 
-	        swal("Success!", "Item deleted!", "success");
+	        swal("Success", "Item deleted", "success");
 	    	r.refreshMain()
 	    });
 	});
@@ -1036,17 +1088,23 @@ r.normalisasi = function(){
 }
 
 r.edit = function (o, id) {
+	if(r.newRatingMode()){
+		swal("Warning","Please save this new rating first","warning");
+		return
+	}
+
 	var rowData = r.dataRatingMaster().filter(function (d) { return d.Parameters == id });
 	$('.modal-add-new').modal('show');
 	ko.mapping.fromJS(rowData[0], r.newData);
 	r.newData.MultipleCategories([]);
 	r.newDataBackup = [];
 	rowData.forEach(function(x){
-		r.newData.MultipleCategories().push(ko.mapping.fromJS(x));
+		r.newData.MultipleCategories.push(ko.mapping.fromJS(x));
 		r.newDataBackup.push(x); 	
 	});
 	r.dropDownModeChange(r.newData.FieldId(),false);
 	r.normalisasi();
+	formula.changeFrom()
 }
 
 r.emptyDropDown = function (o) {
@@ -1152,9 +1210,9 @@ r.saveNewData = function (e) {
  //  	r.refresh();
  //  	$('.modal-add-new').modal('hide');
 	// } else{
-    swal("Success!", "New item saved!", "success");
+    // swal("Success", "New item saved", "success");
   	// r.refresh();
-  	$('.modal-add-new').modal('hide');
+  	// $('.modal-add-new').modal('hide');
 	// }
 };
 
@@ -1165,6 +1223,7 @@ r.showFormAdd = function () {
 	ko.mapping.fromJS(r.templateNewData, r.newData)
 	r.newData.MultipleCategories([]);
 	r.dropDownMode(false);
+	r.newDataBackup = [];
 	$('.modal-add-new').modal('show')
 }
 
@@ -1241,6 +1300,12 @@ r.removeBeforeSave = function(param){
 }
 
 r.remove = function (o, id, sec, subsec) {
+	if(r.newRatingMode()){
+		swal("Warning","Please save this new rating first","warning");
+		return
+	}
+
+
   var text = '';
   if (subsec != "" && sec != ""){
     text = "Category Inside This will be deleted too"
@@ -1302,7 +1367,7 @@ r.remove = function (o, id, sec, subsec) {
       });
     }
     swal("Success", "Item deleted", "success");
-    r.refresh()
+    r.refresh(r.saveFinishing());
   });
 }
 
@@ -1348,6 +1413,9 @@ $(function () {
 function changeparamgroup(e){
 	var dataItem = this.dataItem(e.item);
 	console.log(dataItem);
+	if(dataItem.toLowerCase() == "select one"){
+		r.newData.ParametersGroup("");
+	}
 	r.dataRatingMaster([]);
 	$.each(r.dataRatingMasterpure(), function(k,v){
 		if (v.ParametersGroup == dataItem){
@@ -1356,6 +1424,12 @@ function changeparamgroup(e){
 	})
 }
 
+function changeparam(e){
+	var dataItem = this.dataItem(e.item);
+	if(dataItem.toLowerCase() == "select one"){
+		r.newData.Parameters("");
+	}
+}
 
 var formula = {}
 formula.data = ko.observableArray([])
@@ -1386,14 +1460,15 @@ r.dropDownModeChange = function(name,reset){
 		return d.alias == name
 	});
 	var deletedfield = 0;
-	if(field.master != undefined){
-		r.dropDownMode(true);
-		if(reset){
+	if(reset){
 				r.newData.MultipleCategories([]);
 		}
+
+	if(field.master != undefined){
+		r.dropDownMode(true);
 		r.masterData()[field.master].forEach(function(x){
 			if(reset){
-				r.newData.MultipleCategories().push(ko.mapping.fromJS({
+				r.newData.MultipleCategories.push(ko.mapping.fromJS({
 					Categories : x,
 					Operator : "equal",
 					Value1 : x,
@@ -1404,7 +1479,7 @@ r.dropDownModeChange = function(name,reset){
 					return cx.Value1() === x;
 				});
 				if(dt == undefined){
-						r.newData.MultipleCategories().push(ko.mapping.fromJS({
+						r.newData.MultipleCategories.push(ko.mapping.fromJS({
 						Categories : x,
 						Operator : "equal",
 						Value1 : x,
@@ -1466,7 +1541,14 @@ formula.optionFrom = ko.computed(function () {
 }, formula.data)
 
 formula.changeFrom = function () {
-		var value = this.value()
+
+		var value = ""
+
+		if (typeof this.value === "function")
+		value = this.value()
+		else
+		value = r.newData.From();
+	
 		if (value == '') {
 				r.newData.TimePeriod('')
 			return
@@ -1482,7 +1564,7 @@ formula.changeFrom = function () {
 			}
 		}
 
-					r.newData.TimePeriod('not applicable')
+		r.newData.TimePeriod('not applicable')
 }
 
 formula.optionFields =  ko.computed(function () {
@@ -1600,11 +1682,7 @@ r.normalisasiData = function(infox){
 
   })
 
-  var param = {}
-  param.Data = r.data()
-  // console.log(param)
-  app.ajaxPost('/rating/saveratingdata', param, function (res) {
-  });
+
 
   app.ajaxPost("/rating/addratingmaster", info, function (res) {
     if (res.Message != '') {
@@ -1612,14 +1690,147 @@ r.normalisasiData = function(infox){
         return;
     }
   });
-  	r.refresh();
+}
+
+r.saveFinishing = function(){
+	// var info = ko.mapping.toJS(infox);
+
+	// if (info.Id == '') {
+	// 	var rowByParametersGroup = r.dataRatingMaster().filter(function (d) {
+	// 		return d.ParametersGroup == info.ParametersGroup
+	// 	})
+	// 	if (rowByParametersGroup.length > 0) {
+	// 		var rowByParameters = rowByParametersGroup.filter(function (d) {
+	// 			return d.SubSection == info.SubSection
+	// 		})
+	// 		if (rowByParameters.length > 0) {
+	// 			rowByParametersGroup = rowByParameters
+	// 		}
+	// 	}
+
+	// 	if (rowByParametersGroup.length > 0) {
+	// 		info.Order = _.maxBy(rowByParametersGroup, 'Order').Order + 1
+	// 	} else {
+	// 		info.Order = _.maxBy(r.dataRatingMaster(), 'Order').Order + 1
+	// 	}
+	// }
+
+ //  //check parameter group
+ //  $.each(r.data(), function(i,v){
+ //    Id = $('[data-rating-id]').attr('data-rating-id');
+ //    addnewparametergroup = true;
+ //    addnewparameter = true;
+
+ //    if(v.Id == Id){
+ //      $.each(v.ParametersGroupData, function(i2,v2){
+ //        if(info.ParametersGroup == v2.ParametersGroup){
+ //          addnewparametergroup = false;
+ //        }
+ //      })
+
+ //      if (addnewparametergroup){
+ //        r.data()[i].ParametersGroupData.push({
+ //          ParametersGroup: info.ParametersGroup,
+ //          Use: true,
+ //          WeightageOfGroupInCreditScore: 0,
+ //        })
+ //      }
+
+ //      $.each(v.ParametersData, function(i2,v2){
+ //        if(info.Parameters == v2.Parameters && info.ParametersGroup == v2.ParametersGroup){
+ //          addnewparameter = false;
+ //        }
+ //      })
+
+ //      if (addnewparameter){
+ //        r.data()[i].ParametersData.push({
+ //          Parameters: info.Parameters,
+ //          ParametersGroup: info.ParametersGroup,
+ //          Use: true,
+ //          WeightageOfGroupInCreditScore: 0,
+ //        })
+ //      }
+
+ //    }
+
+ //  })
+
+  //   var param = {}
+  // param.Data = r.data()
+  // // console.log(param)
+  // app.ajaxPost('/rating/saveratingdata', param, function (res) {
+  // 	r.save();
+  // });
+
+  var callme = function(){  
+	  	setTimeout(function(){
+	  		var datamaster = JSON.parse(JSON.stringify(r.dataRatingMaster()))
+			r.newFilleData([]);
+			var datapre = JSON.parse(JSON.stringify(r.getFilledData()[0].CategoriesData));
+			datamaster.forEach(function(dt){
+				var pre = _.find(datapre,function(x){ return x.Id == dt.Id});
+				var Id =  r.selectedRatingModelId() + dt.ParametersGroup + dt.Parameters + dt.Categories + dt.Operator + dt.Value1 + dt.Value2;
+				if(pre!=undefined){
+					pre.Id = Id;
+				}
+				dt.Id = Id;
+			});
+
+			var datafinal = JSON.parse(JSON.stringify(r.getFilledData()[0]));
+			datafinal.CategoriesData = datapre;
+			r.newFilleData().push(datafinal);
+
+			var doSave = function () {
+				var param = {}
+				param.Data = r.newFilleData();
+
+				r.isLoading(true)
+				app.ajaxPost('/rating/saveratingdata', param, function (res) {
+					if (res.Message != '') {
+						r.isLoading(false)
+						return
+					}
+					r.newRatingMode(false);
+
+					if (res.Data.length > 0) {
+						r.selectedRatingModelId(res.Data[0])
+					}
+
+					r.isLoading(false)
+					// r.refresh()
+					r.openRating(r.selectedRatingModelId());
+				}, function () {
+					r.isLoading(false)
+				})
+			}
+			doSave();
+		},1500);
+	}
+
+  	r.refresh(callme);
+}
+
+r.newDataValidation = function(){
+	if(r.newData.ParametersGroup() == "" || r.newData.Parameters() == "" || r.newData.ParametersGroup() == r.newData.Parameters() || r.newData.MultipleCategories().length == 0 ){
+		return true;
+	}
+	return false;
 }
 
 r.restructureNewMaster = function(){
 	var dt =  r.dataRatingMaster();
-	var dts = _.orderBy(_.filter(r.dataRatingMaster(),function(d){ 
-			return d.Parameters === r.newData.Parameters()  
+	var dts = [];
+
+	if(r.newDataValidation()){
+		swal("Warning","Data not valid","warning");
+		return;
+	}
+
+	if(r.newDataBackup.length>0)
+	dts = _.orderBy(_.filter(r.dataRatingMaster(),function(d){ 
+			return d.Parameters === r.newDataBackup[0].Parameters && d.ParametersGroup === r.newDataBackup[0].ParametersGroup
 		}),'Order');
+
 	var startorder = 0;
 
 	var data = _.find(r.data(),function	(x){ return	 x.Id == r.selectedRatingModelId() });
@@ -1629,23 +1840,18 @@ r.restructureNewMaster = function(){
 			var idx = _.findIndex(r.newDataBackup, function(o) { return o.Id == x.Id; });
 			var idnew = "";
 			if(idx >-1){
-				var ndt = r.newData.MultipleCategories()[idx];
-				idnew =  ndt.Categories() + ndt.Operator() + ndt.Value1() + ndt.Value2();
-				cate = _.find(categories,function(xdt){ return	xdt.Id == x.Id });
+				var cate = _.find(categories,function(xdt){ return	xdt.Id == x.Id });
 				if(cate != undefined)
 				cate.Id = idnew;
 			}
 			r.removeBeforeSave({Id : x.Id});
 	});
 
-	if (dts.length>0){
-		startorder = dts[0].Order;
-	}
-
 	r.dataRatingMaster(_.reject(r.dataRatingMaster(),function(d){ 
 			return d.Parameters === r.newData.Parameters()  
 		}));
 
+	startorder = r.findOrder();
 	
 	r.newData.MultipleCategories().forEach(function(x,key){
 		var newDt = {
@@ -1657,18 +1863,21 @@ r.restructureNewMaster = function(){
 			ParametersGroup : r.newData.ParametersGroup(),
 			TimePeriod : r.newData.TimePeriod(),
 			Value1 : x.Value1(),
+			ValueType : r.newData.ValueType(),
 			Value2 : x.Value2(),
 			Order :startorder,
 			Id : r.selectedRatingModelId()  + r.newData.ParametersGroup() + r.newData.Parameters() + x.Categories() + x.Operator() + x.Value1() + x.Value2()
 		};
 
-		if(startorder>0){
-			startorder += 1;
-		}
-
 		r.dataRatingMaster().push(newDt);
 		r.normalisasiData(newDt);
+
+		if(key==r.newData.MultipleCategories().length-1)
+		r.saveFinishing();
 	});
+	
+	swal("Success", "New item saved", "success");
+  	$('.modal-add-new').modal('hide');
 }
 
 app.ajaxPost("/ratio/GetFormulaData", { ForModule: "" }, function (res) {
@@ -1739,3 +1948,59 @@ r.newDataBackup = [];
 r.removeBackUp	= function (id){
 	r.newDataBackup = _.filter(r.newDataBackup,function	(x){ return	x.Id != id });
 }
+
+r.findOrder = function(){
+	if(r.newDataBackup.length > 0){
+		var section = r.newDataBackup[0].ParametersGroup;
+		var subSection = r.newDataBackup[0].Parameters;
+		//check tanpa edit parameter group dan parameter
+		var idx = _.findIndex($('[data-field-id]'),function(x){ return $(x).attr("data-sub-section") == subSection && $(x).attr("data-section") == section}); 
+		var valid = _.find($('[data-field-id]'),function(x){ return $(x).attr("data-sub-section") == subSection && $(x).attr("data-section") == section}); 
+		var filter = _.find($('[data-field-id]'),function(x){ return $(x).attr("data-sub-section") == subSection && $(x).attr("data-section") == section}); 
+
+		if(section != r.newData.ParametersGroup()){
+			return $('[data-field-id]').length+1;
+		}
+
+		if(valid != undefined){
+			return idx
+		}
+	}
+
+	var section = r.newData.ParametersGroup();
+	//cek jika ganti nama parameter
+	idx = _.findIndex($('[data-field-id]'),function(x){ return $(x).attr("data-section") == section}); 
+	valid = _.find($('[data-field-id]'),function(x){ return $(x).attr("data-section") == section});
+	var validall = _.filter($('[data-field-id]'),function(x){ return $(x).attr("data-section") == section});
+	if(valid != undefined){
+			return (idx+1)+validall.length;
+	}
+
+	return $('[data-field-id]').length+1;
+}
+
+
+ function saveExpanded() {
+      var treeview = $(".grid").data("kendoTreeList");
+      var expandedItemsIds = {};
+      treeview.element.find("[aria-expanded='true']").each(function () {
+        var item = treeview.dataItem(this);
+        if (item.expanded) {
+            expandedItemsIds[item.id] = true;
+        }
+      });
+      createCookie('expanded', kendo.stringify(expandedItemsIds));
+    }
+
+    function setExpanded(data) {
+    	var expanded = readCookie('expanded');
+    	eraseCookie('expanded');
+    	   if (expanded) {
+		      expanded = JSON.parse(expanded);
+		      for (var i = 0; i < data.length; i++) {
+		        if (expanded[data[i].id]) {
+		          data[i].expanded = true;
+		        }
+		      }
+		  }
+    }

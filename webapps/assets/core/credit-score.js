@@ -192,7 +192,6 @@ frp.render = function () {
 
 		// var color = "inherit" // colors[counter % data.length].soft
 		if (d.IsHeader === true) {
-			var color = colors[counter % data.length].base
 			$trRow1.addClass('colored sub-bgcolor')
 		}
 
@@ -252,7 +251,7 @@ frp.render = function () {
 					if (String(d.Value).indexOf('%') > -1) {
 						value = kendo.toString(parseFloat(d.Value.replace(/\%/g, '')), 'n2') + ' %'
 					} else {
-						value = kendo.toString(parseFloat(d.Value), 'n7')
+						value = kendo.toString(parseFloat(d.Value), 'n2')
 					}
 				}
 				

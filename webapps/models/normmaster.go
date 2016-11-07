@@ -26,6 +26,7 @@ type NormMaster struct {
 	FieldId                  string
 	InternalRating           string
 	TimePeriod               string
+	ValueType                string
 	Product                  string
 	Order                    int
 	ShowInLoanApprovalReport bool

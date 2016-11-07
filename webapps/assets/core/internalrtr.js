@@ -79,8 +79,11 @@ intrtr.getData = function(){
 		CustomerId : customerId,
 		DealNo : dealNo
 	}
-	ajaxPost("/internalrtr/getaccountdetails", param, function(res){
+	ajaxPost("/accountdetail/getaccountdetailconfirmed", param, function(res){
 		var data = res.Data;
+		if(res.Message != ""){
+			swal("Warning", res.Message, "warning");
+		}
 		// console.log(res)
 		if(data != null){
 			intrtr.form.Product(data.AccountSetupDetails.Product);
@@ -98,7 +101,7 @@ intrtr.getData = function(){
 				CustomerId : customerId,
 				DealNo : items,
 			}
-			ajaxPost("/internalrtr/getaccountdetails", par, function(res){
+			ajaxPost("/accountdetail/getaccountdetailconfirmed", par, function(res){
 				var ondata = res.Data;
 				console.log(res.Data)
 				if(res.Data !== null){

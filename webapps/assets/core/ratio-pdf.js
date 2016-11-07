@@ -228,7 +228,7 @@ r.KFI = ko.observableArray([
             Id : ko.observable('TOTOBW'),
             subsection: "Liabilities",
             alias : ko.observable('Total Outside Debts'),
-            ratio : ko.observable('TOTAL Outside borrowings (B)'),
+            ratio : ko.observable('Total Outside Borrowings (B)'),
             row : ko.observableArray([])
          },
          {
@@ -329,7 +329,7 @@ r.FR = ko.observableArray([
             row : ko.observableArray([])
          },
          {
-            Id : ko.observable('LEVERAGEINCLX10'),
+            Id : ko.observable('TOLTNW'),
             subsection: '',
             alias : ko.observable('TOL / TNW (Adj. NW)'),
             ratio : ko.observable('TOL/TNW'),
@@ -344,7 +344,7 @@ r.FR = ko.observableArray([
       ColumnHeader: ko.observableArray([]),
       Data : [
          {
-            Id : ko.observable('ISCRWITHX10'),
+            Id : ko.observable('INCR'),
             subsection: '',
             alias : ko.observable('ISCR'),
             ratio : ko.observable('Interest Coverage Ratio'),
@@ -650,24 +650,33 @@ r.refresh = function () {
             return
          }
 
-         r.data(res.Data.FormData)
-         columns = res.Data.AuditStatus
+         if(res.Data.AuditStatus.length > 0) {
+            r.data(res.Data.FormData)
+            columns = res.Data.AuditStatus
 
-         columns = _.filter(columns, function(o){
-            return (o.Status == "PROVISION" || o.Status == "AUDITED" || o.Status == "ESTIMATED") && o.Na == "A"
-         })
+            columns = _.filter(columns, function(o){
+               return (o.Status == "PROVISION" || o.Status == "AUDITED" || o.Status == "ESTIMATED") && o.Na == "A"
+            })
 
-         r.dates(_.orderBy(columns, ['Status','Date'], ['desc','desc']))
+            r.dates(_.orderBy(columns, ['Status','Date'], ['desc','desc']))
 
-         findEstimated = _.find(r.dates(), function(o) {
-            return o.Status == "ESTIMATED"
-         })
+            findEstimated = _.find(r.dates(), function(o) {
+               return o.Status == "ESTIMATED"
+            })
 
-         r.dates.remove(findEstimated)
-         r.dates.unshift(findEstimated)
+            r.dates.remove(findEstimated)
+            r.dates.unshift(findEstimated)
 
-         r.isLoading(false)
-         r.render()
+            r.isLoading(false)
+            r.render()
+
+            var tab = r.parse()
+            r.checkTabs(tab)
+         } else {
+            sweetAlert("Oops...", "Data Not Found", "error");
+            r.isLoading(false)
+            return
+         }
       })
    }
 
@@ -933,18 +942,18 @@ r.checkTabs = function(id) {
       r.currentTab(id)
       $(".borderon").removeClass("tab-current")
       $("."+id).addClass("tab-current")
-      $('html, body').animate({ scrollTop: $("#" + id).offset().top }, 'slow');
+      $('html, body').animate({ scrollTop: $("#" + id).offset().top - 60}, 'slow');
       //$(".tabhidden").hide();
       //$("#" + id).show();
    } else {
       r.currentTab("tab1")
-      $('html, body').animate({ scrollTop: $("#tab1").offset().top }, 'slow');
+      $('html, body').animate({ scrollTop: $("#tab1").offset().top - 60}, 'slow');
       //$(".tabhidden").hide();
       //$("#tab1").show();
    }
    setTimeout(function(){
       if(id != "")
-      $('html, body').animate({ scrollTop: $("#" + id).offset().top }, 'slow');
+      $('html, body').animate({ scrollTop: $("#" + id).offset().top - 60}, 'slow');
    },500);
 }
 
@@ -1143,6 +1152,9 @@ r.constructData = function (res) {
 
          _.map(v1, function(v2, i2){
             var row = _.find(res, {'FieldAlias':v2.Id()})
+            if(v2.Id() == "LEVERAGEINCLX10") {
+               console.log(row)
+            }
             var rowData = []
 
             if(row == undefined) {
@@ -1308,6 +1320,17 @@ r.getCustomerId = function () {
    return [customer, dealNumber].join('|')
 }
 
+r.parse = function(){
+   var result = "Not found",
+   tmp = location.search
+            .substr(1)
+            .split("=");
+
+   if (tmp.length > 1) result = decodeURIComponent(tmp[1]);
+
+   return result;
+}
+
 window.refreshFilter = function () {
    $(".hiddenrow").hide()
    r.checkTabs(r.currentTab())
@@ -1316,7 +1339,7 @@ window.refreshFilter = function () {
 
 window.onscroll = function(){
 
-    if ($(window).scrollTop() >= 196){
+    if ($(window).scrollTop() >= 100){
       $("table").css("margin-top", "100px")
       $('.tabfixed').show();
       $(".borderon").removeClass("tab-current")

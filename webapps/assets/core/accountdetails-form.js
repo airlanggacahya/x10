@@ -16,7 +16,7 @@ adf.optionTemporaryData = ko.observable();
 adf.optionBorrowerConstitutionList = ko.observableArray([]);
 adf.optionDependenceOnSuppliers = ko.observableArray([]);
 adf.optionBusinessVintages = ko.observableArray([]);
-adf.optionChangeConfirm = ko.observable(" Confirm All");
+adf.optionChangeConfirm = ko.observable(" Confirm");
 adf.optionSectionAccountConfirm = ko.observable(" Confirm");
 adf.optionSectionBorrowerConfirm = ko.observable(" Confirm");
 adf.optionSectionPromoterConfirm = ko.observable(" Confirm");
@@ -118,7 +118,7 @@ adf.dataDetailsSecurity = ko.observableArray([]);
 adf.PdDate = ko.observable("")
 adf.templatePDInfo = {
 	PdDoneBy: '',
-	PdDate: (new Date()).toISOString(),
+	PdDate: '',
 	PdPlace: '',
 	PersonMet: '',
 	CustomerMargin: 0,
@@ -127,7 +127,7 @@ adf.templatePDInfo = {
 }
 adf.templatePDInfo1 = {
 	PdDoneBy: '',
-	PdDate: (new Date()).toISOString(),
+	PdDate: '',
 	PdPlace: '',
 	PersonMet: '',
 	CustomerMargin: 0,
@@ -172,7 +172,7 @@ adf.templateBorrowerDetails = {
 	ExternalRating: '',
 	Management: '',
 	MarketReference: '',
-	DateBusinessStarted: (new Date()).toISOString(),
+	DateBusinessStarted: '',
 	BorrowerConstitution: '',
 	TopCustomerNames: [""],
 	ProductNameandDetails: [""],
@@ -192,7 +192,7 @@ adf.templateBorrowerDetails1 = {
 	ExternalRating: '',
 	Management: '',
 	MarketReference: '',
-	DateBusinessStarted: (new Date()).toISOString(),
+	DateBusinessStarted: '',
 	BorrowerConstitution: '',
 	TopCustomerNames: [""],
 	ProductNameandDetails: [""],
@@ -258,16 +258,16 @@ adf.templateLoanDetails = {
 	LimitTenor: 0.0,
 	ProposedRateInterest: 0.0,
 	ProposedPFee: 0.0,
-	IfExistingCustomer: false,
+	IfExistingCustomer: ko.observable(),
 	IfYesEistingLimitAmount: 0.0,
 	ExistingRoi: 0.0,
 	ExistingPf: 0.0,
-	FirstAgreementDate: (new Date()).toISOString(),
-	RecenetAgreementDate: (new Date()).toISOString(),
+	FirstAgreementDate: '',
+	RecenetAgreementDate: '',
 	VintageWithX10: 0.0,
-	CommercialCibilReport: false,
+	CommercialCibilReport: ko.observable(),
 	InterestOutgo : 0.0,
-	IfBackedByPO : false,
+	IfBackedByPO : ko.observable(),
 	POValueforBacktoBack : 0.0,
 	ExpectedPayment: 0.0,
 	TypeSecurity: '',
@@ -280,16 +280,16 @@ adf.templateLoanDetails1 = {
 	LimitTenor: 0.0,
 	ProposedRateInterest: 0.0,
 	ProposedPFee: 0.0,
-	IfExistingCustomer: false,
+	IfExistingCustomer: ko.observable(),
 	IfYesEistingLimitAmount: 0.0,
 	ExistingRoi: 0.0,
 	ExistingPf: 0.0,
-	FirstAgreementDate: (new Date()).toISOString(),
-	RecenetAgreementDate: (new Date()).toISOString(),
+	FirstAgreementDate: '',
+	RecenetAgreementDate: '',
 	VintageWithX10: 0.0,
-	CommercialCibilReport: false,
+	CommercialCibilReport: ko.observable(),
 	InterestOutgo : 0.0,
-	IfBackedByPO : false,
+	IfBackedByPO : ko.observable,
 	POValueforBacktoBack : 0.0,
 	ExpectedPayment: 0.0,
 	TypeSecurity: '',
@@ -342,6 +342,8 @@ adf.templateForm = {
 	Status: 0,
 	Freeze: false,
 	DateConfirmed : (new Date()).toISOString(),
+	DateFreeze : (new Date()).toISOString(),
+	DateSave: '',
 }
 
 adf.templateTempForm = {
@@ -357,6 +359,10 @@ adf.templateTempForm = {
 	CustomerBussinesMix: adf.templateCustomerBussinesMix1,
 	DistributorMix: adf.templateDistributorMix1,
 	Status: 0,
+	Freeze: false,
+	DateConfirmed : (new Date()).toISOString(),
+	DateFreeze : (new Date()).toISOString(),
+	DateSave: '',
 }
 
 adf.form = ko.mapping.fromJS(toolkit.clone(adf.templateForm))
@@ -410,28 +416,28 @@ adf.getForm = function () {
 }
 
 adf.setForm = function (data) {
-	// console.log("-------",data.PromotorDetails[0].RealEstatePosition[0])
 
-	// console.log(adf.form)
-
-	data.PromotorDetails.forEach(function (d) {
-		d.RealEstatePosition = d.RealEstatePosition.map(function (d) {
-			return { value: d }
+	// console.log("---------->",data)
+	if(data != null){
+		data.PromotorDetails.forEach(function (d) {
+			d.RealEstatePosition = d.RealEstatePosition.map(function (d) {
+				return { value: d }
+			})
+			// adf.Tempform.PromotorDetails.RealEstatePosition(d.RealEstatePosition)
 		})
-		// adf.Tempform.PromotorDetails.RealEstatePosition(d.RealEstatePosition)
-	})
+		ko.mapping.fromJS(data, adf.form)
+		ko.mapping.fromJS(data, adf.Tempform)
 
-	ko.mapping.fromJS(data, adf.form)
-	ko.mapping.fromJS(data, adf.Tempform)
+		if (data.PromotorDetails.length == 0) {
+			adf.addMorePromotor()
+		}
+
+		if (data.VendorDetails.length == 0) {
+			adf.addMoreVendor()
+		}
+
+	}
 	// adf.Tempform.PromotorDetails.RealEstatePosition(data)
-
-	if (data.PromotorDetails.length == 0) {
-		adf.addMorePromotor()
-	}
-
-	if (data.VendorDetails.length == 0) {
-		adf.addMoreVendor()
-	}
 
 	adf.form.PromotorDetails().forEach(function (d) {
 		if (d.RealEstatePosition().length == 0) {
@@ -491,32 +497,24 @@ adf.LoadPromotorEducation = function(){
 		};
 	});
 }
-adf.isExistingCustomer = ko.computed(function () {
-	var value = adf.form.LoanDetails.IfExistingCustomer()
-	if (typeof value === 'string') {
-		value = (value.toLowerCase() === 'true');
-	}
+// adf.isExistingCustomer = ko.computed(function () {
+// 	console.log('--------->>>>>>',adf.form.LoanDetails.IfExistingCustomer())
+// 	var value = adf.form.LoanDetails.IfExistingCustomer()
+// 	if (typeof value === 'string') {
+// 		value = (value.toLowerCase() === 'true');
+// 	}
 
-	return value
-}, adf.form.LoanDetails.IfExistingCustomer)
+// 	return value
+// }, adf.form.LoanDetails.IfExistingCustomer)
 
 adf.save = function () {
-
 	generatemc();
-
-	var loop = 0;
-	$.each(adf.form.VendorDetails(), function(i, item){
-		if(item.DistributorName() == ""){
-			// swal("Warning", "Distributor Name on Distributor / Vendor Repayment Track is Empty", "warning");
-			loop = loop + 0;
-		}else{
-			loop= loop + 1;
-		}
-
-		console.log(loop)
-	})
+	$('.form-last-confirmation-info').html('');
+	$('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
 	adf.form.BorrowerDetails.RefrenceCheck([])
 	var dataGrid = $("#refrence").data().kendoGrid.dataSource.data();
+	var date = (new Date()).toISOString();
+	adf.form.DateSave(date);
 	$.each(dataGrid, function(i, item){
 		console.log(item)
 		adf.form.BorrowerDetails.RefrenceCheck.push(
@@ -529,8 +527,6 @@ adf.save = function () {
 			}
 		)
 	});
-	// adf.form.LoanDetails.FirstAgreementDate = kendo.parseDate(new Date(adf.FirstAgreementDate()), "dd-MMM-yyyy")
-	// adf.form.BorrowerDetails.TopCustomerNames( adf.form.BorrowerDetails.TopCustomerNames() );
 	var res1 = adf.form.CustomerBussinesMix.B2BGovtIn() + adf.form.CustomerBussinesMix.StockSellIn() + adf.form.CustomerBussinesMix.B2BCorporateIn();
 	var res2 = 0;
 	$.each(adf.form.DistributorMix.Data(), function(i, items){
@@ -543,23 +539,85 @@ adf.save = function () {
 		swal("Warning", "Customer Business mix Exceed 100", "warning");
 
 	}else{
-		// console.log(adf.form.LoanDetails.FirstAgreementDate())
-		if(loop == adf.form.VendorDetails().length){
-			var url = "/accountdetail/saveaccountdetail"
-			var param = adf.getForm()
-			param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
-			adf.isLoading(true)
-			app.ajaxPost(url, param, function (res) {
-				adf.isLoading(false)
-				swal("Success", "Data saved", "success");
-				var data = ko.mapping.toJS(adf.form)
-				ko.mapping.fromJS(data, adf.Tempform)
-			}, function () {
-				adf.isLoading(false)
-			});
-		}else{
-			swal("Warning", "Some of Distributor Name on Distributor / Vendor Repayment Track is Empty", "warning");
-		}
+
+			var ondate5= adf.form.AccountSetupDetails.LoginDate()
+			if(!adf.blankdate(adf.form.AccountSetupDetails.LoginDate()) ){
+				var date5 = kendo.toString(new Date(),"yyyy-MM-dd")+"T00:00:00.000Z";
+				adf.form.AccountSetupDetails.LoginDate(date5)
+			}
+		
+			if(!adf.blankdate(adf.PdDate())){
+				var ondate4 = adf.PdDate();
+				// var date4 = (new Date(adf.PdDate()).toISOString());
+				var date4 = kendo.toString(new Date(adf.PdDate()),"yyyy-MM-dd")+"T00:00:00.000Z"
+				adf.form.AccountSetupDetails.PdInfo.PdDate(date4);
+			}else{
+				adf.form.AccountSetupDetails.PdInfo.PdDate("1970-01-01T00:00:00.000Z");
+			}
+			if(!adf.blankdate(adf.form.LoanDetails.FirstAgreementDate())){
+				var ondate1 = kendo.toString(new Date(adf.form.LoanDetails.FirstAgreementDate()),"yyyy-MM-dd")+"T00:00:00.000Z"
+			// var date1 = (new Date(adf.form.LoanDetails.FirstAgreementDate()).toISOString())
+			adf.form.LoanDetails.FirstAgreementDate(ondate1);
+			}else{
+				adf.form.LoanDetails.FirstAgreementDate("1970-01-01T00:00:00.000Z");
+
+			}
+
+			if(!adf.blankdate(adf.form.BorrowerDetails.DateBusinessStarted())){
+				var ondate3 = kendo.toString(new Date(adf.form.BorrowerDetails.DateBusinessStarted()),"yyyy-MM-dd")+"T00:00:00.000Z"
+				// var date3 = (new Date(adf.form.BorrowerDetails.DateBusinessStarted()).toISOString())
+				adf.form.BorrowerDetails.DateBusinessStarted(ondate3);
+			}else{
+				adf.form.BorrowerDetails.DateBusinessStarted("1970-01-01T00:00:00.000Z");
+
+			}
+
+
+			if(!adf.blankdate(adf.form.LoanDetails.RecenetAgreementDate())){
+
+				var ondate2 = kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"yyyy-MM-dd")+"T00:00:00.000Z"
+				// var date2 = (new Date(adf.form.LoanDetails.RecenetAgreementDate()).toISOString())
+				adf.form.LoanDetails.RecenetAgreementDate(ondate2);
+			}else{
+				adf.form.LoanDetails.RecenetAgreementDate("1970-01-01T00:00:00.000Z");
+
+			}
+		
+		
+		var url = "/accountdetail/saveaccountdetail"
+		var param = adf.getForm()
+		// param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
+		adf.isLoading(true)
+		app.ajaxPost(url, param, function (res) {
+			adf.isLoading(false)
+
+			if(adf.PdDate().toString().indexOf("1970") >-1){
+				adf.PdDate("")
+			}
+			if(adf.form.LoanDetails.FirstAgreementDate().toString().indexOf("1970") >-1){
+				adf.form.LoanDetails.FirstAgreementDate("");
+			}else{
+				var date1 = kendo.toString(new Date(adf.form.LoanDetails.FirstAgreementDate()),"dd-MMM-yyyy")
+				adf.form.LoanDetails.FirstAgreementDate(date1)
+			}
+			if(adf.form.LoanDetails.RecenetAgreementDate().toString().indexOf("1970") >-1){
+				adf.form.LoanDetails.RecenetAgreementDate("");
+			}else{
+				var date2 = kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"dd-MMM-yyyy");
+				adf.form.LoanDetails.RecenetAgreementDate(date2)
+			}
+			if(adf.form.BorrowerDetails.DateBusinessStarted().toString().indexOf("1970") >-1){
+				adf.form.BorrowerDetails.DateBusinessStarted("");
+			}else{
+				var date3 =  kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"dd-MMM-yyyy");
+				adf.form.BorrowerDetails.DateBusinessStarted(date3)
+			}
+			
+			swal("Successfully Saved", "", "success");
+		}, function () {
+			adf.isLoading(false)
+		});
+		
 
 	}
 
@@ -609,26 +667,41 @@ adf.getSaveAccount = function(){
 	});
 }
 adf.getConfirm = function(){
-
+	// if(adf.form.LoanDetails.FirstAgreementDate()== "" || adf.form.BorrowerDetails.DateBusinessStarted() == "" || adf.PdDate() == ""){
+	// 	adf.form.AccountSetupDetails.PdInfo.PdDate("1970-01-01T00:00:00.000Z")
+	// 	adf.form.LoanDetails.FirstAgreementDate(null);
+	// 	adf.form.LoanDetails.RecenetAgreementDate(null);
+	// 	adf.form.BorrowerDetails.DateBusinessStarted(null);
+	// }
+	// adf.isoAllDate()
 	generatemc()
 	var sts =''
-	if(adf.optionChangeConfirm() == " Confirm All"){
-		adf.optionChangeConfirm(" Re Enter All");
+	if(adf.optionChangeConfirm() == " Confirm"){
+		adf.optionChangeConfirm(" Re-Enter");
 		adf.form.DateConfirmed(new Date())
 		setTimeout(function(){
 			$('.form-last-confirmation-info').html('');
-			$('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
-		},1000)
+			$('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+		},500)
 		try{
 			$('#tipster').tooltipster('destroy')
 		}catch(e){
 
 		}
-		$('#tipster').tooltipster({
+		if(adf.PdDate() != ""){
+			$('#tipster').tooltipster({
 				contentAsHTML: true,
 		    	interactive: true,
 		    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
 			})
+
+		}else{
+			$('#tipster').tooltipster({
+				contentAsHTML: true,
+		    	interactive: true,
+		    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>	</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+			})
+		}
 		adf.form.Status(1);
 		adf.form.AccountSetupDetails.Status(1);
 		adf.form.BorrowerDetails.Status(1);
@@ -645,9 +718,14 @@ adf.getConfirm = function(){
 		adf.form.CustomerBussinesMix.Status(1);
 		adf.form.DistributorMix.Status(1);
 		adf.EnableAllfieldsOnconfirm(false)
+		setTimeout(function(){
+			for(var i = 0; i< adf.form.PromotorDetails().length; i++){
+				$("#cibil"+i).data("kendoNumericTextBox").enable(false)
+			}
+		}, 500)
 		$("#onreset").prop( "disabled", true );
 		$("#LoanAmount").prop( "disabled", true );
-		adf.optionChangeConfirm(" Re Enter All")
+		adf.optionChangeConfirm(" Re-Enter")
 		adf.optionSectionAccountConfirm(" Re Enter")
 		adf.optionSectionDistributorConfirm(" Re Enter")
 		adf.optionSectionBorrowerConfirm(" Re Enter")
@@ -656,7 +734,10 @@ adf.getConfirm = function(){
 		adf.optionSectionLoanConfirm(" Re Enter")
 		adf.optionSectionCustomerConfirm(" Re Enter")
 		adf.optionSectionDistributorConfirm(" Re Enter")
-		sts = "Confirm"
+		$("#addpromotor").prop("disabled", true);
+		$("#addvendor").prop("disabled", true);
+		$("#addvendor1").prop("disabled", true);
+		sts = "Confirmed"
 		$("#onreset1").prop("disabled", true);
 		$("#onreset2").prop("disabled", true);
 		$("#onreset3").prop("disabled", true);
@@ -674,6 +755,8 @@ adf.getConfirm = function(){
 		adf.form.Status(0);
 		adf.form.AccountSetupDetails.Status(0);
 		adf.form.BorrowerDetails.Status(0);
+		var date = (new Date()).toISOString();
+		adf.form.DateConfirmed(date);
 		$.each(adf.form.PromotorDetails(), function(i, item){
 			item.Status(0)
 		});
@@ -686,17 +769,19 @@ adf.getConfirm = function(){
 		adf.form.CustomerBussinesMix.Status(0);
 		adf.form.DistributorMix.Status(0);
 		$("#onreset").prop( "disabled", false );
+		$("#onsave").prop( "disabled", false );
 		$("#LoanAmount").prop( "disabled", true );
 		$("#addpromotor").prop("disabled", false);
 		$("#addvendor").prop("disabled", false);
+		$("#addvendor1").prop("disabled", false);
 		setTimeout(function(){
-			adf.optionChangeConfirm(" Confirm All");
+			adf.optionChangeConfirm(" Confirm");
 			adf.sectionDisable("#city", false)
 			adf.sectionDisable("#DealNo", false)
 			adf.sectionDisable("#loginDate", false)
 		}, 100)
 
-		adf.optionChangeConfirm(" Confirm All")
+		adf.optionChangeConfirm(" Confirm")
 		adf.optionSectionAccountConfirm(" Confirm")
 		adf.optionSectionDistributorConfirm(" Confirm")
 		adf.optionSectionBorrowerConfirm(" Confirm")
@@ -727,99 +812,160 @@ adf.getConfirm = function(){
 			swal("Warning", "Customer Business mix Exceed 100", "warning");
 
 		}else{
-			var loop = 0;
-			$.each(adf.form.VendorDetails(), function(i, item){
-				if(item.DistributorName() == ""){
-					// swal("Warning", "Distributor Name on Distributor / Vendor Repayment Track is Empty", "warning");
-					loop = loop + 0;
+
+			// if(adf.PdDate() != "" || adf.form.LoanDetails.FirstAgreementDate() != "" || adf.form.BorrowerDetails.DateBusinessStarted() != "" || adf.PdDate() != ""){
+			// 	var ondate1 = adf.form.LoanDetails.FirstAgreementDate()
+			// 	var date1 = (new Date(adf.form.LoanDetails.FirstAgreementDate()).toISOString())
+			// 	adf.form.LoanDetails.FirstAgreementDate(date1);
+
+			// 	var ondate2 = adf.form.LoanDetails.RecenetAgreementDate()
+			// 	var date2 = (new Date(adf.form.LoanDetails.RecenetAgreementDate()).toISOString())
+			// 	adf.form.LoanDetails.RecenetAgreementDate(date2);
+
+			// 	var ondate3 = adf.form.BorrowerDetails.DateBusinessStarted()
+			// 	var date3 = (new Date(adf.form.BorrowerDetails.DateBusinessStarted()).toISOString())
+			// 	adf.form.BorrowerDetails.DateBusinessStarted(date3);
+
+			// 	var ondate4 = adf.PdDate();
+			// 	if(adf.PdDate() != ""){
+			// 		var date4 = (new Date(adf.PdDate()).toISOString());
+			// 		adf.form.AccountSetupDetails.PdInfo.PdDate(date4);
+			// 	}
+
+				var ondate5= adf.form.AccountSetupDetails.LoginDate()
+			if(!adf.blankdate(adf.form.AccountSetupDetails.LoginDate()) ){
+				var date5 = kendo.toString(new Date(),"yyyy-MM-dd")+"T00:00:00.000Z";
+				adf.form.AccountSetupDetails.LoginDate(date5)
+			}
+		
+			if(!adf.blankdate(adf.PdDate())){
+				var ondate4 = adf.PdDate();
+				// var date4 = (new Date(adf.PdDate()).toISOString());
+				var date4 = kendo.toString(new Date(adf.PdDate()),"yyyy-MM-dd")+"T00:00:00.000Z"
+				adf.form.AccountSetupDetails.PdInfo.PdDate(date4);
+			}else{
+				adf.form.AccountSetupDetails.PdInfo.PdDate("1970-01-01T00:00:00.000Z");
+			}
+			if(!adf.blankdate(adf.form.LoanDetails.FirstAgreementDate())){
+				var ondate1 = kendo.toString(new Date(adf.form.LoanDetails.FirstAgreementDate()),"yyyy-MM-dd")+"T00:00:00.000Z"
+			// var date1 = (new Date(adf.form.LoanDetails.FirstAgreementDate()).toISOString())
+			adf.form.LoanDetails.FirstAgreementDate(ondate1);
+			}else{
+				adf.form.LoanDetails.FirstAgreementDate("1970-01-01T00:00:00.000Z");
+
+			}
+
+			if(!adf.blankdate(adf.form.BorrowerDetails.DateBusinessStarted())){
+				var ondate3 = kendo.toString(new Date(adf.form.BorrowerDetails.DateBusinessStarted()),"yyyy-MM-dd")+"T00:00:00.000Z"
+				// var date3 = (new Date(adf.form.BorrowerDetails.DateBusinessStarted()).toISOString())
+				adf.form.BorrowerDetails.DateBusinessStarted(ondate3);
+			}else{
+				adf.form.BorrowerDetails.DateBusinessStarted("1970-01-01T00:00:00.000Z");
+
+			}
+
+
+			if(!adf.blankdate(adf.form.LoanDetails.RecenetAgreementDate())){
+
+				var ondate2 = kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"yyyy-MM-dd")+"T00:00:00.000Z"
+				// var date2 = (new Date(adf.form.LoanDetails.RecenetAgreementDate()).toISOString())
+				adf.form.LoanDetails.RecenetAgreementDate(ondate2);
+			}else{
+				adf.form.LoanDetails.RecenetAgreementDate("1970-01-01T00:00:00.000Z");
+
+			}
+
+
+			var url = "/accountdetail/saveaccountdetail"
+			var param = adf.getForm()
+			// param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
+			adf.isLoading(true)
+			app.ajaxPost(url, param, function (res) {
+				adf.isLoading(false)
+				// if(ondate5 != ""){
+				// 	adf.form.AccountSetupDetails.PdInfo.PdDate(ondate4)
+				// }
+				// adf.form.AccountSetupDetails.LoginDate(ondate5)
+				// adf.form.LoanDetails.FirstAgreementDate(ondate1);
+				// adf.form.LoanDetails.RecenetAgreementDate(ondate2);
+				// adf.form.BorrowerDetails.DateBusinessStarted(ondate3);
+				// if(adf.PdDate().toString().indexOf("1970") >-1)
+				// 		adf.PdDate("")
+
+				// 		if(adf.form.LoanDetails.FirstAgreementDate().toString().indexOf("1970") >-1)
+				// 		adf.form.LoanDetails.FirstAgreementDate("");
+
+				// 		if(adf.form.LoanDetails.RecenetAgreementDate().toString().indexOf("1970") >-1)
+				// 		adf.form.LoanDetails.RecenetAgreementDate("");
+
+				// 		if(adf.form.BorrowerDetails.DateBusinessStarted().toString().indexOf("1970") >-1)
+				// 		adf.form.BorrowerDetails.DateBusinessStarted("");
+
+				if(adf.PdDate().toString().indexOf("1970") >-1){
+				adf.PdDate("")
+				}
+				if(adf.form.LoanDetails.FirstAgreementDate().toString().indexOf("1970") >-1){
+					adf.form.LoanDetails.FirstAgreementDate("");
 				}else{
-					loop= loop + 1;
+					var date1 = kendo.toString(new Date(adf.form.LoanDetails.FirstAgreementDate()),"dd-MMM-yyyy")
+					adf.form.LoanDetails.FirstAgreementDate(date1)
+				}
+				if(adf.form.LoanDetails.RecenetAgreementDate().toString().indexOf("1970") >-1){
+					adf.form.LoanDetails.RecenetAgreementDate("");
+				}else{
+					var date2 = kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"dd-MMM-yyyy");
+					adf.form.LoanDetails.RecenetAgreementDate(date2)
+				}
+				if(adf.form.BorrowerDetails.DateBusinessStarted().toString().indexOf("1970") >-1){
+					adf.form.BorrowerDetails.DateBusinessStarted("");
+				}else{
+					var date3 =  kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"dd-MMM-yyyy");
+					adf.form.BorrowerDetails.DateBusinessStarted(date3)
 				}
 
-				console.log("----->>> 731",loop)
-			})
-			// console.log(adf.form.LoanDetails.FirstAgreementDate())
-			if(loop == adf.form.VendorDetails().length){
-				var url = "/accountdetail/saveaccountdetail"
-				var param = adf.getForm()
-				param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
-				adf.isLoading(true)
-				app.ajaxPost(url, param, function (res) {
-					adf.isLoading(false)
-					var data = ko.mapping.toJS(adf.form)
-					ko.mapping.fromJS(data, adf.Tempform)
-					swal("Success", "Data "+sts, "success");
-				}, function () {
-					adf.isLoading(false)
-				});
-			}else{
-				// if(adf.form.Status() == 1){
-				// 	adf.EnableAllfieldsOnconfirm(true)
-				// 	adf.optionChangeConfirm(" Confirm All")
-				// 	adf.optionSectionAccountConfirm(" Confirm")
-				// 	adf.optionSectionDistributorConfirm(" Confirm")
-				// 	adf.optionSectionBorrowerConfirm(" Confirm")
-				// 	adf.optionSectionPromoterConfirm(" Confirm")
-				// 	adf.optionSectionVendorConfirm(" Confirm")
-				// 	adf.optionSectionLoanConfirm(" Confirm")
-				// 	adf.optionSectionCustomerConfirm(" Confirm")
-				// 	adf.optionSectionDistributorConfirm(" Confirm")
-				// 	$("#onreset1").prop("disabled", false);
-				// 	$("#onreset2").prop("disabled", false);
-				// 	$("#onreset3").prop("disabled", false);
-				// 	$("#onreset4").prop("disabled", false);
-				// 	$("#onreset5").prop("disabled", false);
-				// 	$("#onreset6").prop("disabled", false);
-				// 	$("#onreset7").prop("disabled", false);
-				// 	$("#onreset8").prop("disabled", false);
-				// 	$("#onreset").prop( "disabled", false );
-				// 	$("#LoanAmount").prop( "disabled", true );
-				// 	$("#addpromotor").prop("disabled", false);
-				// 	$("#addvendor").prop("disabled", false);
-				// 	$("#avg").prop("disabled", true)
-				// 	$("#max").prop("disabled", true)
-				// 	setTimeout(function(){
-				// 		adf.optionChangeConfirm(" Confirm All");
-				// 		$("#city").prop( "disabled", false);
-				// 		$("#DealNo").prop( "disabled", false);
-				// 		// ($("#loginDate").data("kendoDatePicker")).readonly();
-				// 	}, 100)
-				// 	adf.form.Status(0)
-				// }else{
-				// 	adf.EnableAllfieldsOnconfirm(false)
-				// 	adf.optionChangeConfirm(" Re Enter All")
-				// 	adf.optionSectionAccountConfirm(" Re Enter")
-				// 	adf.optionSectionDistributorConfirm(" Re Enter")
-				// 	adf.optionSectionBorrowerConfirm(" Re Enter")
-				// 	adf.optionSectionPromoterConfirm(" Re Enter")
-				// 	adf.optionSectionVendorConfirm(" Re Enter")
-				// 	adf.optionSectionLoanConfirm(" Re Enter")
-				// 	adf.optionSectionCustomerConfirm(" Re Enter")
-				// 	adf.optionSectionDistributorConfirm(" Re Enter")
-				// 	sts = "Confirm"
-				// 	$("#onreset1").prop("disabled", true);
-				// 	$("#onreset2").prop("disabled", true);
-				// 	$("#onreset3").prop("disabled", true);
-				// 	$("#onreset4").prop("disabled", true);
-				// 	$("#onreset5").prop("disabled", true);
-				// 	$("#onreset6").prop("disabled", true);
-				// 	$("#onreset7").prop("disabled", true);
-				// 	$("#onreset8").prop("disabled", true);
-				// 	$("#avg").prop("disabled", true)
-				// 	$("#max").prop("disabled", true)
-				// 	adf.sectionDisable("#c-2", false)
-				// 	adf.form.Status(1)
-				// }
-				swal("Warning", "Some of Distributor Name on Distributor / Vendor Repayment Track is Empty", "warning");
-			}
+				var data = ko.mapping.toJS(adf.form)
+				ko.mapping.fromJS(data, adf.Tempform)
+				if(sts.indexOf("Confirmed") != -1){
+					swal("Successfully "+sts, "", "success");
+				}else{
+					swal("Please Edit / Enter Data", "", "success");
+				}
+				
+			}, function () {
+				adf.isLoading(false)
+			});
 
 		}
 
 	$(".mincibil").prop("disabled", true);
 
 }
-adf.getVerify = function(){
 
+adf.blankdate = function(val){
+	if(val == undefined)
+		return true
+
+	if(val == "")
+		return true
+
+	if(val == null){
+		return true
+	}
+}
+
+
+adf.getVerify = function(){
+	if(adf.form.Status() == 0){
+		sweetAlert("Warning", "Please Confirm First", "warning");
+		return;
+	}
+	// adf.isoAllDate()
+	setTimeout(function(){
+		$('.form-last-confirmation-info').html('');
+		$('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+	},1000)
+	var date = (new Date()).toISOString()
+	adf.form.DateFreeze(date)
 	var res1 = adf.form.CustomerBussinesMix.B2BGovtIn() + adf.form.CustomerBussinesMix.StockSellIn() + adf.form.CustomerBussinesMix.B2BCorporateIn();
 	var res2 = 0;
 	$.each(adf.form.DistributorMix.Data(), function(i, items){
@@ -843,7 +989,7 @@ adf.getVerify = function(){
 			adf.isLoading(false)
 			var data = ko.mapping.toJS(adf.form)
 			ko.mapping.fromJS(data, adf.Tempform)
-			swal("Success", "Successfully freeze", "success");
+			swal("Successfully Freezed", "", "success");
 			setTimeout(function(){
 				adf.EnableAllfields(false)
 				$("#onreset").prop("disabled", true);
@@ -1391,6 +1537,7 @@ adf.getDistributtorMixConfirm = function(){
 
 }
 adf.getUnfreeze = function(){
+	$('.form-last-confirmation-info').html('');
 	$("#LoanAmount").prop( "disabled", true );
 	var res1 = adf.form.CustomerBussinesMix.B2BGovtIn() + adf.form.CustomerBussinesMix.StockSellIn() + adf.form.CustomerBussinesMix.B2BCorporateIn();
 	var res2 = 0;
@@ -1409,7 +1556,7 @@ adf.getUnfreeze = function(){
 		adf.form.Freeze(false);
 		var url = "/accountdetail/saveaccountdetail"
 		var param = adf.getForm()
-		adf.form.AccountSetupDetails.Status(0)
+		// adf.form.AccountSetupDetails.Status(0)
 		adf.isLoading(true)
 		app.ajaxPost(url, param, function (res) {
 			adf.isLoading(false)
@@ -1421,53 +1568,59 @@ adf.getUnfreeze = function(){
 			adf.optionSectionLoanConfirm(" Confirm")
 			adf.optionSectionCustomerConfirm(" Confirm")
 			adf.optionSectionDistributorConfirm(" Confirm")
-			swal("Success", "Successfully unfreeze", "success");
+			swal("Successfully Unfreezed", "", "success");
 			adf.optionConfirm(true)
-			adf.EnableAllfields(true)
-			setTimeout(function(){
+			if(adf.form.Status() == 1){
+				adf.EnableAllfields(false)
 				$("#city").prop( "disabled", true);
 				$("#DealNo").prop( "disabled", true);
+				$("#onconfirm").prop( "disabled", false);
 				// ($("#loginDate").data("kendoDatePicker")).readonly();
 				$("#LoanAmount").prop( "disabled", true );
-			}, 500)
-			$("#onreset").prop("disabled", false);
-			$("#onreset1").prop("disabled", false);
-			adf.sectionDisable("#c-1", true)
-			adf.form.AccountSetupDetails.Status(0)
-
-			adf.sectionDisable("#c-2", true)
-			$("#onreset2").prop("disabled", false);
-			adf.form.BorrowerDetails.Status(0)
-			$("#onreset3").prop("disabled", false);
-
-			adf.sectionDisable("#c-3", true)
-			$.each(adf.form.PromotorDetails(), function(i, item){
-				item.Status(0);
-			})
-
-			adf.sectionDisable("#c-4", true)
-			$("#onreset4").prop("disabled", false);
-			$.each(adf.form.VendorDetails(), function(i, item){
-				item.Status(0);
-			})
-
-			adf.sectionDisable("#c-5", true)
-			adf.form.LoanDetails.Status(0)
-			$("#onreset5").prop("disabled", false);
-			if(adf.loadIfBackedByPO() == false){
-				$("#BackToBack").getKendoNumericTextBox().enable(false)
-				$("#Expected").getKendoNumericTextBox().enable(false)
+				$("#addpromotor").prop( "disabled", true );
+			}else{
+				adf.EnableAllfields(true)
 			}
+			setTimeout(function(){
+			}, 500)
+			// $("#onreset").prop("disabled", false);
+			// $("#onreset1").prop("disabled", false);
+			// adf.sectionDisable("#c-1", true)
+			// adf.form.AccountSetupDetails.Status(0)
 
-			adf.sectionDisable("#c-7", true)
-			adf.form.CustomerBussinesMix.Status(0)
-			$("#onreset6").prop("disabled", false);
+			// adf.sectionDisable("#c-2", true)
+			// $("#onreset2").prop("disabled", false);
+			// adf.form.BorrowerDetails.Status(0)
+			// $("#onreset3").prop("disabled", false);
 
-			adf.sectionDisable("#c-8", true)
-			adf.form.DistributorMix.Status(0)
-			$("#onreset8").prop("disabled", false);
-			$("#avg").prop("disabled", true)
-			$("#max").prop("disabled", true)
+			// adf.sectionDisable("#c-3", true)
+			// $.each(adf.form.PromotorDetails(), function(i, item){
+			// 	item.Status(0);
+			// })
+
+			// adf.sectionDisable("#c-4", true)
+			// $("#onreset4").prop("disabled", false);
+			// $.each(adf.form.VendorDetails(), function(i, item){
+			// 	item.Status(0);
+			// })
+
+			// adf.sectionDisable("#c-5", true)
+			// adf.form.LoanDetails.Status(0)
+			// $("#onreset5").prop("disabled", false);
+			// if(adf.loadIfBackedByPO() == false){
+			// 	$("#BackToBack").getKendoNumericTextBox().enable(false)
+			// 	$("#Expected").getKendoNumericTextBox().enable(false)
+			// }
+
+			// adf.sectionDisable("#c-7", true)
+			// adf.form.CustomerBussinesMix.Status(0)
+			// $("#onreset6").prop("disabled", false);
+
+			// adf.sectionDisable("#c-8", true)
+			// adf.form.DistributorMix.Status(0)
+			// $("#onreset8").prop("disabled", false);
+			// $("#avg").prop("disabled", true)
+			// $("#max").prop("disabled", true)
 		}, function () {
 			adf.isLoading(false)
 		});
@@ -1501,15 +1654,16 @@ adf.sectionDisable= function(elm, what){
 }
 adf.getReset = function(){
 	swal({
-		title: "Are you sure, you want to Reset?",
+		title: "Are you sure you want to Reset?",
 		text: "Reset will clear all the data entered",
 		type: 'warning',
 		showCancelButton: true,
 		confirmButtonColor: '#3085d6',
 		cancelButtonColor: '#d33',
-		confirmButtonText: "Reset input",
+		confirmButtonText: "Reset",
 	}).then(function() {
-		adf.getRatingMaster(adf.getData);
+		ko.mapping.fromJS(adf.optionTemporaryData(), adf.form)
+		// adf.getRatingMaster(adf.getData);
 	}, function(dismiss) {
 		if (dismiss === 'cancel') {
 			console.log("dismiss");
@@ -1525,21 +1679,60 @@ adf.initFreshForm = function (customerId, dealNo) {
 }
 
 adf.reloadStatus = function(status){
-	console.log("------->>>statusny", status)
-	if(status == 1){
+	if(status == 1 && adf.form.Freeze() == true){
+		// alert("masuk")
 		// $("#onreset").prop("disabled", true);
 		// adf.EnableAllfields(false)
 		adf.optionSectionAccountConfirm(" Re Enter");
 		adf.optionSectionDistributorConfirm(" Re Enter");
 		adf.optionSectionBorrowerConfirm(" Re Enter");
-		adf.optionSectionPromoterConfirm(" Re Enter");
 		adf.optionSectionVendorConfirm(" Re Enter");
 		adf.optionSectionLoanConfirm(" Re Enter");
 		adf.optionSectionCustomerConfirm(" Re Enter");
 		adf.optionSectionDistributorConfirm(" Re Enter");
-		adf.optionChangeConfirm(" Re Enter All");
+		adf.optionChangeConfirm(" Re-Enter");
 		// adf.EnableAllfields(false)
 		setTimeout(function(){
+			adf.optionSectionPromoterConfirm(" Re Enter"); 
+			adf.sectionDisable("#c-2", false);
+			adf.sectionDisable("#c-1", false);
+			adf.sectionDisable("#c-3", false);
+			adf.sectionDisable("#c-4", false);
+			adf.sectionDisable("#c-5", false);
+			adf.sectionDisable("#c-7", false);
+			adf.sectionDisable("#c-8", false);
+			$("#onconfirm").prop("disabled", true);
+			$("#onsave").prop("disabled", true);
+			$(".onfreeze").prop("disabled", false);
+			$("#onreset").prop("disabled", true );
+			
+		},500);
+		$("#LoanAmount").prop("disabled", true );
+		$("#onreset1").prop("disabled", true);
+		$("#onreset2").prop("disabled", true);
+		$("#onreset3").prop("disabled", true);
+		$("#addpromotor").prop("disabled", true);
+		$("#addvendor").prop("disabled", true);
+		$("#addvendor1").prop("disabled", true);
+		$("#onreset4").prop("disabled", true);
+		$("#onreset5").prop("disabled", true);
+		$("#onreset6").prop("disabled", true);
+		$("#onreset7").prop("disabled", true);
+		$("#onreset8").prop("disabled", true);
+		$("#avg").prop("disabled", true)
+		$("#max").prop("disabled", true)
+	}else if(status == 1 && adf.form.Freeze() != true){
+		adf.optionSectionAccountConfirm(" Re Enter");
+		adf.optionSectionDistributorConfirm(" Re Enter");
+		adf.optionSectionBorrowerConfirm(" Re Enter");
+		adf.optionSectionVendorConfirm(" Re Enter");
+		adf.optionSectionLoanConfirm(" Re Enter");
+		adf.optionSectionCustomerConfirm(" Re Enter");
+		adf.optionSectionDistributorConfirm(" Re Enter");
+		adf.optionChangeConfirm(" Re-Enter");
+		// adf.EnableAllfields(false)
+		setTimeout(function(){
+			adf.optionSectionPromoterConfirm(" Re Enter"); 
 			adf.sectionDisable("#c-2", false);
 			adf.sectionDisable("#c-1", false);
 			adf.sectionDisable("#c-3", false);
@@ -1548,16 +1741,18 @@ adf.reloadStatus = function(status){
 			adf.sectionDisable("#c-7", false);
 			adf.sectionDisable("#c-8", false);
 			$("#onconfirm").prop("disabled", false);
-			$(".btn-freeze").prop("disabled", true);
+			$("#onsave").prop("disabled", true);
+			$(".onfreeze").prop("disabled", false);
+			$("#onreset").prop("disabled", true );
+			$("#addpromotor").prop("disabled", true);
+			$("#addvendor").prop("disabled", true);
+			$("#addvendor1").prop("disabled", true);
 			
-		},700);
-		$("#onreset").prop("disabled", true );
+		},500);
 		$("#LoanAmount").prop("disabled", true );
 		$("#onreset1").prop("disabled", true);
 		$("#onreset2").prop("disabled", true);
 		$("#onreset3").prop("disabled", true);
-		$("#addpromotor").prop("disabled", true);
-		$("#addvendor").prop("disabled", true);
 		$("#onreset4").prop("disabled", true);
 		$("#onreset5").prop("disabled", true);
 		$("#onreset6").prop("disabled", true);
@@ -1565,7 +1760,6 @@ adf.reloadStatus = function(status){
 		$("#onreset8").prop("disabled", true);
 		$("#avg").prop("disabled", true)
 		$("#max").prop("disabled", true)
-		
 	}else if(status == 0) {
 		adf.optionSectionAccountConfirm(" Confirm");
 		adf.optionSectionDistributorConfirm(" Confirm");
@@ -1575,7 +1769,7 @@ adf.reloadStatus = function(status){
 		adf.optionSectionLoanConfirm(" Confirm");
 		adf.optionSectionCustomerConfirm(" Confirm");
 		adf.optionSectionDistributorConfirm(" Confirm");
-		adf.optionChangeConfirm(" Confirm All");
+		adf.optionChangeConfirm(" Confirm");
 		// adf.EnableAllfields(false)
 		// $("#LoanAmount").prop( "disabled", true );
 
@@ -1586,19 +1780,25 @@ adf.reloadStatus = function(status){
 			adf.sectionDisable("#city", false)
 			adf.sectionDisable("#DealNo", false)
 			adf.sectionDisable("#loginDate", false)
+			$("#addpromotor").prop("disabled", false);
+			$("#addvendor").prop("disabled", false);
+			$("#addvendor1").prop("disabled", false);
 		},700);
 		adf.sectionDisable("#c-3", true);
 		adf.sectionDisable("#c-4", true);
 		adf.sectionDisable("#c-5", true);
 		adf.sectionDisable("#c-7", true);
 		adf.sectionDisable("#c-8", true);
+		for(var i = 0; i< adf.form.PromotorDetails().length; i++){
+			$("#cibil"+i).data("kendoNumericTextBox").enable(false)
+		}
 		$("#onreset").prop("disabled", false);
+		$("#onsave").prop("disabled", false);
+		$(".onfreeze").prop("disabled", false);
 		$("#LoanAmount").prop("disabled", false);
 		$("#onreset1").prop("disabled", false);
 		$("#onreset2").prop("disabled", false);
 		$("#onreset3").prop("disabled", false);
-		$("#addpromotor").prop("disabled", false);
-		$("#addvendor").prop("disabled", false);
 		$("#onreset4").prop("disabled", false);
 		$("#onreset5").prop("disabled", false);
 		$("#onreset6").prop("disabled", false);
@@ -1642,15 +1842,15 @@ adf.reloadStatus = function(status){
 
 	// 	}
 	// })
-	if(adf.form.LoanDetails.Status() == 0){
-		setTimeout(function(){
-			adf.optionSectionLoanConfirm(" Confirm");
-			$("#onreset5").prop("disabled", false);
-			adf.sectionDisable("#c-5", true)
-		}, 500)
+	// if(adf.form.LoanDetails.Status() == 0){
+	// 	setTimeout(function(){
+	// 		adf.optionSectionLoanConfirm(" Confirm");
+	// 		$("#onreset5").prop("disabled", false);
+	// 		adf.sectionDisable("#c-5", true)
+	// 	}, 500)
 
 
-	}
+	// }
 	if(adf.form.CustomerBussinesMix.Status() == 0){
 		adf.optionSectionCustomerConfirm(" Confirm");
 		$("#onreset6").prop("disabled", false);
@@ -1663,9 +1863,14 @@ adf.reloadStatus = function(status){
 		adf.sectionDisable("#c-8", true)
 
 	}
+
+	setTimeout(function(){
+		adf.loanDetailEnable()
+	}, 500)
 }
 
 adf.getData = function () {
+	// alert("masuk")
 	adf.formVisibility(true)
 
 	var customerId = filter().CustomerSearchVal()
@@ -1673,39 +1878,39 @@ adf.getData = function () {
 
 	adf.isLoading(true)
 
-	var url = "/datacapturing/getcustomerprofiledetail"
+	var url = "/datacapturing/getcustomerprofiledetailconfirmed"
 	var param = {
 		CustomerId: customerId,
 		DealNo: dealNo
 	}
 	app.ajaxPost(url, param, function (res) {
-		if (res.length > 0) {
-			res = checkConfirmedOrNot(res[0].Status, 1, 2, res, [], "Customer Application");
+		if (typeof res.ApplicantDetail == "undefined") {
+			res = checkConfirmedOrNot(res.Status, 1, 2, res, [], "Customer Application");
 
 		}
-
-		if (res.length > 0) {
-			res[0].DetailOfPromoters.Biodata = _.map(res[0].DetailOfPromoters.Biodata,function(x){ 
+		// console.log("----------->>> data res", res.DetailOfPromoters)
+		if (res.Status == 1) {
+			res.DetailOfPromoters.Biodata = _.map(res.DetailOfPromoters.Biodata,function(x){ 
 				 x.Name = toTitleCase(x.Name)
 				 return x  
 			})
 
 			setTimeout(function(){
-				adf.form.AccountSetupDetails.CityName(res[0].ApplicantDetail.RegisteredAddress.CityRegistered)
+				adf.form.AccountSetupDetails.CityName(res.ApplicantDetail.RegisteredAddress.CityRegistered)
 			}, 500);
 			setTimeout(function(){
-				$.each(res[0].DetailOfPromoters.Biodata, function(i, item){
+				$.each(res.DetailOfPromoters.Biodata, function(i, item){
 					if(adf.form.PromotorDetails()[i] != undefined){
 						adf.form.PromotorDetails()[i].CibilScore(item.CIBILScore)
 					}
 					// console.log(adf.form.PromotorDetails()[i].CibilScore())
 					//
 				})
-				adf.form.LoanDetails.ProposedLoanAmount(res[0].ApplicantDetail.AmountLoan/100000)
+				adf.form.LoanDetails.ProposedLoanAmount(res.ApplicantDetail.AmountLoan/100000)
 				// console.log(res[0].ApplicantDetail.AmountLoan)
 			}, 500);
 
-			adf.optionPromotors(_.sortBy(res[0].DetailOfPromoters.Biodata, 'Name'));
+			adf.optionPromotors(_.sortBy(res.DetailOfPromoters.Biodata, 'Name'));
 			var date = moment(adf.form.AccountSetupDetails.PdInfo.PdDate()).format('DD-MMM-YYYY');
 			adf.PdDate(date);
 		}
@@ -1722,16 +1927,34 @@ adf.getData = function () {
 			adf.isLoading(false)
 			
 			if (res.Message == "data not found") {
+				adf.setForm(res.Data)
+				adf.PdDate("")
+				adf.form.LoanDetails.FirstAgreementDate("");
+				adf.form.LoanDetails.RecenetAgreementDate("");
+				adf.form.BorrowerDetails.DateBusinessStarted("");
+				adf.form.LoanDetails.IfBackedByPO("");
+				adf.form.LoanDetails.IfExistingCustomer("");
+				adf.addRowReffrence();
 				adf.initFreshForm(customerId, dealNo)
 				adf.reloadStatus(0)
 				if(adf.form.Freeze() == true){
 					adf.EnableAllfields(false)
-					$('#tipster').tooltipster('destroy')
-					$('#tipster').tooltipster({
+
+					if(adf.PdDate() ==""){
+						$('#tipster').tooltipster('destroy')
+						$('#tipster').tooltipster({
 							contentAsHTML: true,
 					    	interactive: true,
-					    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+					    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
 						})
+					}else{
+						$('#tipster').tooltipster('destroy')
+						$('#tipster').tooltipster({
+							contentAsHTML: true,
+					    	interactive: true,
+					    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy") +"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+						})
+					}
 				}else if(adf.form.Freeze() == false){
 					adf.EnableAllfields(true)
 					try{
@@ -1743,23 +1966,50 @@ adf.getData = function () {
 				}
 			} else {
 				setTimeout(function(){
+					console.log(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
 					adf.reloadStatus(res.Data.Status)
-					if(adf.form.Freeze() == true || adf.form.Status() == 1){
-						adf.EnableAllfields(false)
-						$('#tipster').tooltipster({
-							contentAsHTML: true,
-					    	interactive: true,
-					    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
-						})
-					}else if(adf.form.Freeze() == false){
-						adf.EnableAllfields(true)
+					console.log("------>>1856",res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
+
+					if(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970") >-1)
+						adf.PdDate("")
+
+						if(res.Data.LoanDetails.FirstAgreementDate.indexOf("1970") >-1)
+						adf.form.LoanDetails.FirstAgreementDate("");
+
+						if(res.Data.LoanDetails.RecenetAgreementDate.indexOf("1970") >-1)
+						adf.form.LoanDetails.RecenetAgreementDate("");
+
+						if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1)
+						adf.form.BorrowerDetails.DateBusinessStarted("");
+
+
+					if(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970") >-1 || res.Data.LoanDetails.FirstAgreementDate.indexOf("1970") >-1 || res.Data.LoanDetails.RecenetAgreementDate.indexOf("1970") >-1){
+						
+						
+
+						adf.form.AccountSetupDetails.LoginDate((new Date).toISOString())
+						if(adf.form.Freeze() == true || adf.form.Status() == 1){
+
+							adf.EnableAllfields(false)
+							$('#tipster').tooltipster({
+								contentAsHTML: true,
+						    	interactive: true,
+						    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+							})
+						}else if(adf.form.Freeze() == false){
+							adf.EnableAllfields(true)
+						}
 					}
+					
 					if(res.Data.DistributorMix.Data == null){
 						adf.form.DistributorMix.Data([
 							{Label: ko.observable(""), Result: ko.observable(0)}
 						]);
 					}
+
 				}, 1000)
+				adf.form.BorrowerDetails.DateBusinessStarted("");
+				adf.form.LoanDetails.IfBackedByPO("");
 				
 				res.Data.AccountSetupDetails.LeadDistributor = toTitleCase(res.Data.AccountSetupDetails.LeadDistributor); 
 				res.Data.PromotorDetails = _.map(res.Data.PromotorDetails,function(x){ 
@@ -1767,11 +2017,17 @@ adf.getData = function () {
 				 return x  
 				})
 
-				if(res.Data.Status == 1){
-	        $('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(res.Data.DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
-	      } else{
-	        $('.form-last-confirmation-info').html('')
-	      }
+				if(res.Data.Status == 1 && res.Data.Freeze != true){
+			        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(res.Data.DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
+			    } else if(res.Data.Status == 1 && res.Data.Freeze == true){
+			        $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.Data.DateFreeze),"dd-MM-yyyy h:mm:ss tt") )
+			    }else if(res.Data.Status == 0 && res.Data.Freeze == true){
+			        $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.Data.DateFreeze),"dd-MM-yyyy h:mm:ss tt") )
+			    }else if(res.Data.DateSave != '' && res.Data.Freeze != true){
+			    	$('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(res.Data.DateSave),"dd-MM-yyyy h:mm:ss tt") )
+			    }else{
+			    	$('.form-last-confirmation-info').html('');
+			    }
 				if (!(res.Data.PromotorDetails instanceof Array)) {
 					res.Data.PromotorDetails = [res.Data.PromotorDetails]
 				}
@@ -1780,6 +2036,7 @@ adf.getData = function () {
 				adf.FirstAgreementDate(res.Data.LoanDetails.FirstAgreementDate)
 				adf.optionTemporaryData(res.Data)
 				adf.setForm(res.Data)
+				// adf.loanDetailEnable()
 				
 				setTimeout(function(){
 					adf.LoadPromotorEducation();
@@ -1831,15 +2088,33 @@ window.refreshFilter = function () {
 	adf.form.BorrowerDetails.RefrenceCheck([])
 	adf.getRatingMaster(adf.getData)
 	adf.loadRefrenceGrid();
-	if(adf.PdDate() == ""){
-		adf.PdDate((new Date()).toISOString())
-	}
-	$('#PD').tooltipster('destroy')
-	$('#PD').tooltipster({
-		contentAsHTML: true,
-    	interactive: true,
-    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
-	})
+	// if(adf.PdDate() == ""){
+	// 	adf.PdDate((new Date()).toISOString())
+	// }
+	$('.form-last-confirmation-info').html('');
+	setTimeout(function(){
+		console.log("--------->>>>1953",adf.PdDate())
+		if(adf.PdDate().indexOf("1970") > -1 || adf.PdDate() == ''){
+			adf.PdDate("")
+			$('#PD').tooltipster('destroy')
+			$('#PD').tooltipster({
+				contentAsHTML: true,
+		    	interactive: true,
+		    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+			})
+		}else{
+			// adf.PdDate("")
+			console.log(adf.PdDate())
+			$('#PD').tooltipster('destroy')
+			$('#PD').tooltipster({
+				contentAsHTML: true,
+		    	interactive: true,
+		    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+			})
+		}
+	}, 1000)
+	
+	
 }
 adf.initEvents = function () {
 	filter().CustomerSearchVal.subscribe(function () {
@@ -1998,7 +2273,7 @@ $("#AD-Container input").prop( "disabled", !what );
 $("#AD-Container .noable").prop( "disabled", !what );
 $(".ontop").prop( "disabled", !what );
 
-$("#AD-Container .btn").prop( "disabled", !what );
+// $("#AD-Container .btn").prop( "disabled", !what );
 $("#AD-Container textarea").prop( "disabled", !what );
 
   $("#AD-Container .k-widget").each(function(i,e){
@@ -2021,6 +2296,10 @@ $("#AD-Container textarea").prop( "disabled", !what );
   }
 
 });
+
+  for(var i = 0; i< adf.form.PromotorDetails().length; i++){
+		$("#cibil"+i).data("kendoNumericTextBox").enable(false)
+	}
 
 }
 
@@ -2053,16 +2332,21 @@ adf.EnableAllfieldsOnconfirm = function(what){
 
 	});
 
+	$(".cibilscored").prop("disabled", true);
+
 }
 
 adf.modalPdInfo = function(){
 	// alert('masuk');
+	// adf.PdDate('');
+	if(adf.PdDate() == ""){
+		adf.PdDate("")
+	}
 	$("#PDdate").kendoDatePicker({
 		format: 'dd-MMM-yyyy',
 	});
 	$("#PDinfo").modal('show', true);
 	// var todayDate = kendo.toString(kendo.parseDate(new Date()), 'dd-MMM-yyyy')
-	// adf.PdDate(todayDate);
 }
 
 adf.addTopCustomerNames = function(index){
@@ -2191,11 +2475,11 @@ adf.loadRefrenceGrid = function(){
 			{
 				title: '',
 				template: function(d){
-					if (adf.form.Status() == 2 && adf.form.BorrowerDetails.Status() == 1) {
+					if (adf.form.Freeze == true && adf.form.BorrowerDetails.Status() == 1) {
 			          return '<button class="btn btn-flat btn-sm btn-danger noable" onclick="adf.removeRowReffrence(\''+d.uid+'\')" readonly><i class="fa fa-trash"></i></button>'
-			        }else if(adf.form.Status() != 2  && adf.form.BorrowerDetails.Status() == 1){
+			        }else if(adf.form.Freeze != true  && adf.form.BorrowerDetails.Status() == 1){
 			        	return '<button class="btn btn-flat btn-sm btn-danger noable" onclick="adf.removeRowReffrence(\''+d.uid+'\')" readonly><i class="fa fa-trash"></i></button>'
-			        }else if(adf.form.Status() == 2  && adf.form.BorrowerDetails.Status() == 0){
+			        }else if(adf.form.Freeze == true  && adf.form.BorrowerDetails.Status() == 0){
 			        	return '<button class="btn btn-flat btn-sm btn-danger noable" onclick="adf.removeRowReffrence(\''+d.uid+'\')" readonly><i class="fa fa-trash"></i></button>'
 			        }else if(adf.form.Status() == 1  && adf.form.BorrowerDetails.Status() == 0){
 			        	return '<button class="btn btn-flat btn-sm btn-danger noable" onclick="adf.removeRowReffrence(\''+d.uid+'\')" readonly><i class="fa fa-trash"></i></button>'
@@ -2213,18 +2497,19 @@ adf.loadRefrenceGrid = function(){
 		editable: true,
 		edit: function (e) {
 	        var fieldName = e.container.find("input").attr("name");
-	        if (adf.form.Status() == 2 && adf.form.BorrowerDetails.Status() == 1) {
+	        if (adf.form.Freeze == true && adf.form.BorrowerDetails.Status() == 1) {
 	            this.closeCell();
 	        // }else if (adf.form.Status() == 2 && adf.form.BorrowerDetails.Status() == 0) {
 	        //     this.closeCell();
-	        }else if(adf.form.Status() != 2  && adf.form.BorrowerDetails.Status() == 1){
+	        }else if(adf.form.Freeze != true  && adf.form.BorrowerDetails.Status() == 1){
 	        	this.closeCell();
-	        }else if(adf.form.Status() == 2  && adf.form.BorrowerDetails.Status() == 0){
+	        }else if(adf.form.Freeze == true  && adf.form.BorrowerDetails.Status() == 0){
 	        	this.closeCell();
 	        }else if(adf.form.Status() == 1  && adf.form.BorrowerDetails.Status() == 0){
 	        	this.closeCell();
+	        }else if(adf.form.Status() == 0  && adf.form.Freeze() == true){
+	        	this.closeCell();
 	        }
-
 		}
 
 	})
@@ -2232,7 +2517,7 @@ adf.loadRefrenceGrid = function(){
 
 
 
-adf.addRowReffrence = function(d){
+adf.addRowReffrence = function(){
 	// adf.index() = adf.index()+1;
 	var grid = $('#refrence').data('kendoGrid');
 	var allData = $('#refrence').data('kendoGrid').dataSource.data();
@@ -2257,12 +2542,21 @@ adf.loadPdTooltipster = ko.observable("PD Done By : "+ adf.form.AccountSetupDeta
 
 adf.onclickDismissModal = function(){
 
-	$('#PD').tooltipster('destroy')
-	$('#PD').tooltipster({
-		contentAsHTML: true,
-    	interactive: true,
-    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
-	})
+	if(adf.PdDate() == ""){
+		$('#PD').tooltipster('destroy')
+		$('#PD').tooltipster({
+			contentAsHTML: true,
+	    	interactive: true,
+	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+		})
+	}else{
+		$('#PD').tooltipster('destroy')
+		$('#PD').tooltipster({
+			contentAsHTML: true,
+	    	interactive: true,
+	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+		})
+	}
 }
 
 adf.setAccountReset = function(){
@@ -2411,23 +2705,61 @@ function ComputedGO(){
 	adf.form.LoanDetails.InterestOutgo( parseFloat(val));
 	return parseFloat(val);
 }
-// adf.isExistingCustomer = ko.computed(function () {
-// 	var value = adf.form.LoanDetails.IfExistingCustomer()
-// 	if (typeof value === 'string') {
-// 		value = (value.toLowerCase() === 'true')
-// 	}
+adf.isExistingCustomer = ko.computed(function () {
+	var value = adf.form.LoanDetails.IfExistingCustomer()
+	if(typeof value === "undefined"){
+		value = "";
+	}else if (typeof value === 'string') {
+		value = (value.toLowerCase() === 'true')
+	}
 
-// 	return value
-// }, adf.form.LoanDetails.IfExistingCustomer)
+	return value
+}, adf.form.LoanDetails.IfExistingCustomer)
 
 adf.loadIfBackedByPO = ko.computed(function(){
 	var value = adf.form.LoanDetails.IfBackedByPO()
-	if (typeof value === 'string') {
+	if(typeof value === "undefined"){
+		value = "";
+	}else if (typeof value === 'string') {
 		value = (value.toLowerCase() === 'true')
 	}
 
 	return value
 }, adf.form.LoanDetails.IfBackedByPO)
+
+adf.loanDetailEnable = function(){
+	if(adf.form.LoanDetails.IfBackedByPO() == false){
+		$("#BackToBack").data("kendoNumericTextBox").enable(false)
+		$("#Expected").data("kendoNumericTextBox").enable(false)
+	}
+
+	if(adf.form.LoanDetails.IfExistingCustomer() == false){
+		$("#IfYesEistingLimitAmount").data("kendoNumericTextBox").enable(false);
+		$("#ExistingRoi").data("kendoNumericTextBox").enable(false);
+		$("#ExistingPf").data("kendoNumericTextBox").enable(false);
+		$("#FirstAgreementDate").data("kendoDatePicker").enable(false);
+		$("#RecenetAgreementDate").data("kendoDatePicker").enable(false);
+		$("#VintageWithX10").data("kendoNumericTextBox").enable(false);
+		$("#CommercialCibilReport").data("kendoDropDownList").enable(false);
+	}
+
+}
+
+adf.form.LoanDetails.IfBackedByPO.subscribe(function(value){
+	
+})
+
+adf.form.LoanDetails.CommercialCibilReport.subscribe(function(value){
+	if(typeof value == ""){
+		adf.form.LoanDetails.CommercialCibilReport(null)
+	}
+})
+
+adf.form.LoanDetails.IfExistingCustomer.subscribe(function(value){
+	if(typeof value == ""){
+		adf.form.LoanDetails.IfExistingCustomer(null)
+	}
+})
 
 adf.form.LoanDetails.TypeSecurity.subscribe(function(value){
 	// alert(value);
@@ -2476,28 +2808,32 @@ function generatemc(){
 
 adf.loadAccountDetailMaster = function(){
 	ajaxPost("/accountdetail/getmasteraccountdetail", {}, function (res) {
-		var data = res.Data;
-		adf.optionLeadDistributors(_.sortBy(res.Data.LeadDistributors));
-		$.each(res.Data.Scheme, function(i, items){
+		var master = {}
+		res.Data.forEach(function (each) {
+			master[each.Field] = each.Items.map(function (d) { return d.name })
+		})
+
+		adf.optionLeadDistributors(_.sortBy(master.LeadDistributors));
+		$.each(master.Scheme, function(i, items){
 			adf.optionSchemeList.push(
 				{text: items, value: items}
 			)
 		});
-		adf.optionProducts(_.sortBy(res.Data.Products));
-		$.each(res.Data.ExternalRatings, function(i, ex){
+		adf.optionProducts(_.sortBy(master.Products));
+		$.each(master.ExternalRatings, function(i, ex){
 			adf.optionExternalRatings.push(
 				{text: ex, value: ex}
 			);
 		});
-		adf.optionManagements(res.Data.Managements);
-		adf.optionRatingMastersCustomerSegment(res.Data.RatingMastersCustomerSegment);
-		adf.optionBorrowerConstitutionList(res.Data.BorrowerConstitutionList);
-		adf.optionMarketReferences(res.Data.MarketReferences);
-		adf.optionSourceList(res.Data.Source);
-		adf.optionEducationalQualificationOfMainPromoters(res.Data.EducationalQualificationOfMainPromoters);
-		adf.optionResiOwnershipStatus(res.Data.ResiOwnershipStatus);
-		adf.optionOfficeOwnershipStatus(res.Data.OfficeOwnershipStatus);
-		adf.dataTypeSecurity(res.Data.TypeSecurity)
+		adf.optionManagements(master.Managements);
+		adf.optionRatingMastersCustomerSegment(master.RatingMastersCustomerSegment);
+		adf.optionBorrowerConstitutionList(master.BorrowerConstitutionList);
+		adf.optionMarketReferences(master.MarketReferences);
+		adf.optionSourceList(master.Source);
+		adf.optionEducationalQualificationOfMainPromoters(master.EducationalQualificationOfMainPromoters);
+		adf.optionResiOwnershipStatus(master.ResiOwnershipStatus);
+		adf.optionOfficeOwnershipStatus(master.OfficeOwnershipStatus);
+		adf.dataTypeSecurity(master.TypeSecurity)
 	})
 }
 
@@ -2516,8 +2852,42 @@ return function(){
 	}
 }
 
+adf.scroll = function(){
+	var elementPosition = $('.btnFixed').offset();
+	$(window).scroll(function(){
+	    if($(window).scrollTop() > elementPosition.top){
+	          $('.btnFixed').removeClass('static');
+	          $('.btnFixed').addClass('fixed');
+	    } else {
+	        $('.btnFixed').removeClass('fixed');
+	       	$('.btnFixed').addClass('static');
+	    }    
+	});
+}
+
+adf.isoAllDate = function(){
+	var date1 = (new Date(adf.form.LoanDetails.FirstAgreementDate()).toISOString())
+	adf.form.LoanDetails.FirstAgreementDate(date1);
+
+	var date2 = (new Date(adf.form.LoanDetails.RecenetAgreementDate()).toISOString())
+	adf.form.LoanDetails.RecenetAgreementDate(date2);
+
+	var date3 = (new Date(adf.form.BorrowerDetails.DateBusinessStarted()).toISOString())
+	adf.form.BorrowerDetails.DateBusinessStarted(date3);
+	if(adf.PdDate() != ""){
+		var date4 = (new Date(adf.PdDate()).toISOString());
+		adf.form.AccountSetupDetails.PdInfo.PdDate(date4);
+	}
+
+	if(adf.form.AccountSetupDetails.LoginDate() == ""){
+		var date4 = (new Date().toISOString());
+		adf.form.AccountSetupDetails.LoginDate(date4)
+	}
+}
+
 $(function () {
 	adf.loadAccountDetailMaster()
+	adf.scroll()
 	adf.initEvents()
 	adf.initData()
 	adf.resetForm()
@@ -2533,4 +2903,6 @@ $(function () {
     	interactive: true,
     	content: $("<p class='info'>PD Done By : <span>&nbsp;</span><br>PD Date : <span>&nbsp;</span><br>PD Place : <span>&nbsp;</span><br>Person Met : <span>&nbsp;</span><br>PD Remarks: <span>&nbsp;</span></p>")
 	})
+
+	
 })

@@ -129,13 +129,13 @@ model.User= ko.observable('{{.Username}}');
 				<div class="panel-body">
 					<div class="controls" style="text-align: left;">
 						<button id="onsave" class="btn btn-sm btn-save separator ontop" style="margin-right: inherit;" onclick="due.saveAll()">
-							Save all
+							Save
 						</button>
 						<button id="onreset" class="btn btn-sm btn-reset btn-confirm separator ontop" style="margin-right: inherit;" onclick="due.getReset()">
 							Reset
 						</button>
 						<button id="onconfirm" class="btn btn-sm btn-confirm separator ontop" style="margin-right: inherit;" data-bind="visible: (due.form.Status() == 0)" onclick="due.setConfirm()">
-							<span>Confirm All</span>
+							<span>Confirm</span>
 						</button>
 						<button id="onconfirm" class="btn btn-sm btn-reenter separator ontop" style="margin-right: inherit;" data-bind="visible: (due.form.Status() == 1)"onclick="due.setReEnter()">
 							<span>Re Enter</span>

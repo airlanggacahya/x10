@@ -2,6 +2,8 @@ package models
 
 import (
 	. "eaciit/x10/webapps/connection"
+	// "errors"
+	// "fmt"
 	"github.com/eaciit/cast"
 	"github.com/eaciit/crowd"
 	db "github.com/eaciit/dbox"
@@ -41,6 +43,10 @@ type RTRBottom struct {
 	Confirmed       bool       `bson:"Confirmed,omitempty"`
 	DateConfirmed   time.Time  `bson:"DateConfirmed,omitempty"`
 	Bounces         int64      `bson:"Bounce,omitempty"`
+	DateFreeze      time.Time
+	DateSave        time.Time
+	Status          int
+	DpdMaxTrack     int
 }
 
 // ======= RTR
@@ -100,7 +106,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 		return nil, nil, err
 	}
 
-	customerId, _ := strconv.Atoi(strings.TrimSpace(custid))
+	// customerId, _ := strconv.Atoi(strings.TrimSpace(custid))
 
 	if len(arr) == 0 && custid != "" {
 
@@ -108,17 +114,22 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 
 		bankAnalys := []BankAnalysisV2{}
 
-		query = append(query[0:0], db.And(db.Eq("CustomerId", customerId), db.Eq("DealNo", dealno)))
-		csr, err := cMongo.NewQuery().
-			From("BankAnalysisV2").
-			Where(query...).
-			Cursor(nil)
+		// query = append(query[0:0], db.And(db.Eq("CustomerId", customerId), db.Eq("DealNo", dealno)))
+		// csr, err := cMongo.NewQuery().
+		// 	From("BankAnalysisV2").
+		// 	Where(query...).
+		// 	Cursor(nil)
 
-		if err != nil {
-			return nil, nil, err
-		}
+		// if err != nil {
+		// 	return nil, nil, err
+		// }
 
-		err = csr.Fetch(&bankAnalys, 0, false)
+		// err = csr.Fetch(&bankAnalys, 0, false)
+		// if err != nil {
+		// 	return nil, nil, err
+		// }
+
+		err = new(DataConfirmController).GetDataConfirmed(custid, dealno, "BankAnalysisV2", &bankAnalys)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -138,7 +149,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 					ar.Bank = val.BankAccount.BankName
 					ar.TypeOfLoan = val.BankAccount.FundBased.AccountType
 					ar.BSLStatus = ""
-					ar.LoanStatus = ""
+					ar.LoanStatus = "Live"
 					ar.Amount = val.BankAccount.FundBased.SancLimit
 					ar.POS = val.BankAccount.FundBased.SancLimit
 					ar.EMI = val.BankAccount.FundBased.InterestPerMonth * 100000
@@ -180,35 +191,48 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 		}
 	}
 
-	conn, err := GetConnection()
-	defer conn.Close()
-	if err != nil {
-		return nil, nil, err
-	}
+	// conn, err := GetConnection()
+	// defer conn.Close()
+	// if err != nil {
+	// 	return nil, nil, err
+	// }
 
-	query = append(query[0:0], db.And(db.Eq("customerid", custid), db.Eq("dealno", dealno)))
-	csr, err = conn.NewQuery().From(new(AccountDetail).TableName()).Where(query...).Cursor(nil)
-	if err != nil {
-		return nil, nil, err
-	}
+	// query = append(query[0:0], db.And(db.Eq("customerid", custid), db.Eq("dealno", dealno)))
+	// csr, err = conn.NewQuery().From(new(AccountDetail).TableName()).Where(query...).Cursor(nil)
+	// if err != nil {
+	// 	return nil, nil, err
+	// }
 	accoutDetails := AccountDetail{}
-	err = csr.Fetch(&accoutDetails, 1, true)
-	if err != nil {
-		tk.Println("fetch error on account details part", err.Error())
-		// return nil, nil, err
-	}
+	// err = csr.Fetch(&accoutDetails, 1, true)
+	// if err != nil {
+	// 	tk.Println("fetch error on account details part", err.Error())
+	// 	// return nil, nil, err
+	// }
 
-	query = append(query[0:0], db.And(db.Eq("applicantdetail.CustomerID", customerId), db.Eq("applicantdetail.DealNo", dealno)))
-	csr, err = conn.NewQuery().From(new(CustomerProfiles).TableName()).Where(query...).Cursor(nil)
+	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(AccountDetail).TableName(), &accoutDetails)
 	if err != nil {
 		return nil, nil, err
 	}
-	customerProfiles := CustomerProfiles{}
-	err = csr.Fetch(&customerProfiles, 1, true)
+
+	// query = append(query[0:0], db.And(db.Eq("applicantdetail.CustomerID", customerId), db.Eq("applicantdetail.DealNo", dealno)))
+	// csr, err = conn.NewQuery().From(new(CustomerProfiles).TableName()).Where(query...).Cursor(nil)
+
+	// ------------------- customer profile confirmed ----------------------------
+
+	var customerProfiles = CustomerProfiles{}
+	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(CustomerProfiles).TableName(), &customerProfiles)
 	if err != nil {
-		tk.Println("fetch error on customer profile", err.Error())
-		// return nil, nil, err
+		return nil, nil, err
 	}
+
+	// ------------------- customer profile confirmed ----------------------------
+
+	// customerProfiles := CustomerProfiles{}
+	// err = csr.Fetch(&customerProfiles, 1, true)
+	// if err != nil {
+	// 	tk.Println("fetch error on customer profile", err.Error())
+	// 	// return nil, nil, err
+	// }
 
 	smry := new(RTRSummary)
 
@@ -262,7 +286,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 			}
 
 			if strings.TrimSpace(strings.ToLower(v.LoanStatus)) == "live" {
-				if v.Amount > 0 && arr[k].EMIBalance > 0 && v.LoanTenor > 0 {
+				if v.Amount > 0 && arr[k].EMIBalance > 0 && v.LoanTenor > 0 && strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) != "od/cc" {
 					err, rate := r.FindRate(v.Amount, v.EMI, v.LoanTenor)
 					if err != nil {
 						return nil, nil, err
@@ -270,6 +294,8 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 					tk.Println(rate, "=====rate")
 					POS := tk.Div(v.EMI*(1-math.Pow((1+rate), -float64(arr[k].EMIBalance))), rate)
 					arr[k].POS = POS / 100000
+				} else if strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "od/cc" {
+					arr[k].POS = arr[k].Amount
 				} else {
 					arr[k].POS = 0
 				}
@@ -280,7 +306,6 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 		}
 
 		summary := r.CalculateSummary(arr)
-
 		divider := 100000.0
 		x10IntObligation := (accoutDetails.LoanDetails.InterestOutgo * divider)
 		yearlyRepaymentCalc := (x10IntObligation / divider) + summary.GetFloat64("SumExtenalYearly")
@@ -315,27 +340,45 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 		}).Exec().Result.Sum
 
 		smry.DPDTrack = (func() int32 {
-			bank, err := new(BankAnalysis).GenerateAllSummary(tk.Sprintf("%v", customerId), dealno)
-			if err != nil {
-				bank = new(BankAllSummary)
-			}
+			// bank, err := new(BankAnalysis).GenerateAllSummary(tk.Sprintf("%v", customerId), dealno)
+			// if err != nil {
+			// 	bank = new(BankAllSummary)
+			// }
 
-			if bank.SactionLimit == 0 {
-				return (-1)
-			}
+			// if bank.SactionLimit == 0 {
+			// 	return (-1)
+			// }
 
-			return crowd.From(&arr).Max(func(x interface{}) interface{} {
+			crowdwtf := crowd.From(&arr).Max(func(x interface{}) interface{} {
 				months := x.(RTRBottom).Months
 				value := crowd.From(&months).Max(func(y interface{}) interface{} {
+					var n int64
 					s := strings.Replace(y.(MonthRtr).Value, "DPD", "", -1)
-					s = strings.Replace(s, "+", "", -1)
-					n, _ := strconv.ParseInt(s, 10, 32)
+					if s == "" {
+						n = 0
+					} else if strings.ToLower(s) == "30+" {
+						n = 32
+					} else {
+						s = strings.Replace(s, "+", "", -1)
+						n, _ = strconv.ParseInt(s, 10, 32)
+					}
 
 					return n
-				}).Exec().Result.Max.(int64)
+				}).Exec().Result.Max
 
-				return int32(value)
-			}).Exec().Result.Max.(int32)
+				if value == nil {
+					return int32(0)
+				}
+
+				return int32(value.(int64))
+			}).Exec().Result.Max
+
+			if crowdwtf == nil {
+				return 0
+			}
+
+			return crowdwtf.(int32)
+
 		})()
 	}
 
@@ -351,6 +394,356 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 	// 	return mav
 	// }))
 
+	return arr, smry, nil
+}
+
+func (r *RTRBottom) GetDataConfirmed(custid, dealno string) ([]RTRBottom, *RTRSummary, error) {
+	arr := []RTRBottom{}
+
+	err := new(DataConfirmController).GetDataConfirmed(custid, dealno, "RepaymentRecords", &arr)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	accoutDetails := AccountDetail{}
+
+	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(AccountDetail).TableName(), &accoutDetails)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// ------------------- customer profile confirmed ----------------------------
+
+	var customerProfiles = CustomerProfiles{}
+	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(CustomerProfiles).TableName(), &customerProfiles)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// ------------------- customer profile confirmed ----------------------------
+
+	smry := new(RTRSummary)
+
+	if len(arr) > 0 {
+		for k, v := range arr {
+			var minDate time.Time
+
+			if accoutDetails.AccountSetupDetails.LoginDate.IsZero() {
+				if !v.LoanEnd.IsZero() {
+					minDate = v.LoanEnd
+				}
+			} else if v.LoanEnd.IsZero() {
+				minDate = accoutDetails.AccountSetupDetails.LoginDate
+			} else {
+				if accoutDetails.AccountSetupDetails.LoginDate.Before(v.LoanEnd) {
+					minDate = accoutDetails.AccountSetupDetails.LoginDate
+				} else {
+					minDate = v.LoanEnd
+				}
+			}
+
+			if !minDate.IsZero() && !v.LoanStart.IsZero() {
+				year, month, _, _, _, _ := diff(minDate, v.LoanStart)
+
+				allmonth := month
+				allmonth += year * 12
+
+				arr[k].EMIDue = int64(allmonth)
+
+				// if minDate.Year() == v.LoanStart.Year() {
+				// 	arr[k].EMIDue = int64(minDate.Month()) - int64(v.LoanStart.Month())
+				// } else {
+				// 	sub := int64(minDate.Sub(v.LoanStart).Hours())
+				// 	arr[k].EMIDue = int64(sub / (24 * 30))
+				// }
+			}
+
+			arr[k].EMIBalance = arr[k].LoanTenor - arr[k].EMIDue
+
+			result := 0.0
+			if strings.TrimSpace(strings.ToLower(v.LoanStatus)) == "live" {
+				if strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "od/cc" || strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "bill discounting" || strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "letter of credit" || arr[k].EMIBalance >= 12 {
+					result = v.EMI * 12
+				} else if arr[k].EMIBalance < 12 {
+					result = v.EMI * float64(arr[k].EMIBalance)
+				}
+
+				arr[k].YearlyRepayment = result / 100000
+			} else {
+				arr[k].YearlyRepayment = result
+			}
+
+			if strings.TrimSpace(strings.ToLower(v.LoanStatus)) == "live" {
+				if v.Amount > 0 && arr[k].EMIBalance > 0 && v.LoanTenor > 0 && strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) != "od/cc" {
+					err, rate := r.FindRate(v.Amount, v.EMI, v.LoanTenor)
+					if err != nil {
+						return nil, nil, err
+					}
+					tk.Println(rate, "=====rate")
+					POS := tk.Div(v.EMI*(1-math.Pow((1+rate), -float64(arr[k].EMIBalance))), rate)
+					arr[k].POS = POS / 100000
+				} else if strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "od/cc" {
+					arr[k].POS = arr[k].Amount
+				} else {
+					arr[k].POS = 0
+				}
+			} else {
+				arr[k].POS = 0
+			}
+
+		}
+
+		summary := r.CalculateSummary(arr)
+		divider := 100000.0
+		x10IntObligation := (accoutDetails.LoanDetails.InterestOutgo * divider)
+		yearlyRepaymentCalc := (x10IntObligation / divider) + summary.GetFloat64("SumExtenalYearly")
+		TCLPOS := (summary.GetFloat64("POSInLacs") - summary.GetFloat64("EMIBalance3Month")) + accoutDetails.LoanDetails.RequestedLimitAmount
+		TCLEMI := (summary.GetFloat64("EMIInLacs") - summary.GetFloat64("EMI3Month")) + (x10IntObligation / divider)
+
+		x10ExistingPOS := 0.0 // UNKNOWN FORMULA
+		dPLCustMargin := 0.0  // UNKNOWN FORMULA
+
+		smry.TotalObligationPOS = summary.GetFloat64("POSInLacs")
+		smry.TotalObligationEMI = summary.GetFloat64("EMIInLacs")
+		smry.CloseWithin3MonthPOS = summary.GetFloat64("EMIBalance3Month")
+		smry.CloseWithin3MonthEMI = summary.GetFloat64("EMI3Month")
+		smry.PBSLPOS = summary.GetFloat64("PosPBSL")
+		smry.PBSLEMI = summary.GetFloat64("EmiPBSL")
+		smry.BalancePOS = summary.GetFloat64("PosBalance")
+		smry.BalanceEMI = summary.GetFloat64("EmiBalance")
+		smry.DPLAmountOfLimit = accoutDetails.LoanDetails.RequestedLimitAmount
+		smry.DPLCustMargin = dPLCustMargin
+		smry.DPLTenor = accoutDetails.LoanDetails.LimitTenor
+		smry.DPLROI = accoutDetails.LoanDetails.ProposedRateInterest
+		smry.X10ExistingPOS = x10ExistingPOS
+		smry.X10IntObligation = x10IntObligation
+		smry.YearlyRepayment = yearlyRepaymentCalc
+		smry.TCLPOS = TCLPOS
+		smry.TCLEMI = TCLEMI
+		smry.SumBounces = int64(summary.GetFloat64("SumBounces"))
+		smry.SumExtenalYearly = summary.GetFloat64("SumExtenalYearly")
+
+		smry.EMI = crowd.From(&arr).Sum(func(x interface{}) interface{} {
+			return x.(RTRBottom).EMI
+		}).Exec().Result.Sum
+
+		smry.DPDTrack = (func() int32 {
+			// bank, err := new(BankAnalysis).GenerateAllSummary(tk.Sprintf("%v", customerId), dealno)
+			// if err != nil {
+			// 	bank = new(BankAllSummary)
+			// }
+
+			// if bank.SactionLimit == 0 {
+			// 	return (-1)
+			// }
+
+			crowdwtf := crowd.From(&arr).Max(func(x interface{}) interface{} {
+				months := x.(RTRBottom).Months
+				value := crowd.From(&months).Max(func(y interface{}) interface{} {
+					var n int64
+					s := strings.Replace(y.(MonthRtr).Value, "DPD", "", -1)
+					if s == "" {
+						n = 0
+					} else if strings.ToLower(s) == "30+" {
+						n = 32
+					} else {
+						s = strings.Replace(s, "+", "", -1)
+						n, _ = strconv.ParseInt(s, 10, 32)
+					}
+
+					return n
+				}).Exec().Result.Max
+
+				if value == nil {
+					return int32(0)
+				}
+
+				return int32(value.(int64))
+			}).Exec().Result.Max
+
+			if crowdwtf == nil {
+				return 0
+			}
+
+			return crowdwtf.(int32)
+
+		})()
+	}
+
+	// var dpdTrack = _.max(rtr.map(function (d) {
+
+	// 	var mav = _.max(d.Months.map(function(dx){
+	// 		var vals = parseInt(dx.Value.replace(/DPD/g, '').replace(/\+/g, ''), 10);
+	// 	    return isNaN(vals)? 0 : vals
+	// 	}) , function(x){
+	// 		return x
+	// 	});
+
+	// 	return mav
+	// }))
+
+	return arr, smry, nil
+}
+
+func (r *RTRBottom) GetDataForAccountDetails(custid, dealno string) ([]RTRBottom, *RTRSummary, error) {
+	arr := []RTRBottom{}
+
+	// cMongo, em := GetConnection()
+	// defer cMongo.Close()
+	// if em != nil {
+	// 	return nil, nil, em
+	// }
+
+	// query := []*db.Filter{}
+	// query = append(query, db.And(
+	// 	db.Eq("CustomerId", custid),
+	// 	db.Eq("DealNo", dealno)))
+	// csr, err := cMongo.NewQuery().
+	// 	From("RepaymentRecords").
+	// 	Where(query...).
+	// 	Cursor(nil)
+	// if err != nil {
+	// 	return nil, nil, err
+	// }
+	// defer csr.Close()
+	// if csr != nil {
+	// 	err = csr.Fetch(&arr, 0, false)
+
+	// 	if err != nil {
+	// 		return nil, nil, err
+	// 	}
+	// } else if err != nil {
+	// 	return nil, nil, err
+	// }
+
+	err := new(DataConfirmController).GetDataConfirmed(custid, dealno, "RepaymentRecords", &arr)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	accoutDetails := AccountDetail{}
+
+	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(AccountDetail).TableName(), &accoutDetails)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// ------------------- customer profile confirmed ----------------------------
+
+	var customerProfiles = CustomerProfiles{}
+	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(CustomerProfiles).TableName(), &customerProfiles)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// ------------------- customer profile confirmed ----------------------------
+
+	smry := new(RTRSummary)
+
+	if len(arr) > 0 {
+		for k, v := range arr {
+			var minDate time.Time
+
+			if accoutDetails.AccountSetupDetails.LoginDate.IsZero() {
+				if !v.LoanEnd.IsZero() {
+					minDate = v.LoanEnd
+				}
+			} else if v.LoanEnd.IsZero() {
+				minDate = accoutDetails.AccountSetupDetails.LoginDate
+			} else {
+				if accoutDetails.AccountSetupDetails.LoginDate.Before(v.LoanEnd) {
+					minDate = accoutDetails.AccountSetupDetails.LoginDate
+				} else {
+					minDate = v.LoanEnd
+				}
+			}
+
+			if !minDate.IsZero() && !v.LoanStart.IsZero() {
+				year, month, _, _, _, _ := diff(minDate, v.LoanStart)
+
+				allmonth := month
+				allmonth += year * 12
+
+				arr[k].EMIDue = int64(allmonth)
+
+				// if minDate.Year() == v.LoanStart.Year() {
+				// 	arr[k].EMIDue = int64(minDate.Month()) - int64(v.LoanStart.Month())
+				// } else {
+				// 	sub := int64(minDate.Sub(v.LoanStart).Hours())
+				// 	arr[k].EMIDue = int64(sub / (24 * 30))
+				// }
+			}
+
+			arr[k].EMIBalance = arr[k].LoanTenor - arr[k].EMIDue
+
+			result := 0.0
+			if strings.TrimSpace(strings.ToLower(v.LoanStatus)) == "live" {
+				if strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "od/cc" || strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "bill discounting" || strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "letter of credit" || arr[k].EMIBalance >= 12 {
+					result = v.EMI * 12
+				} else if arr[k].EMIBalance < 12 {
+					result = v.EMI * float64(arr[k].EMIBalance)
+				}
+
+				arr[k].YearlyRepayment = result / 100000
+			} else {
+				arr[k].YearlyRepayment = result
+			}
+
+			if strings.TrimSpace(strings.ToLower(v.LoanStatus)) == "live" {
+				if v.Amount > 0 && arr[k].EMIBalance > 0 && v.LoanTenor > 0 && strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) != "od/cc" {
+					err, rate := r.FindRate(v.Amount, v.EMI, v.LoanTenor)
+					if err != nil {
+						return nil, nil, err
+					}
+					tk.Println(rate, "=====rate")
+					POS := tk.Div(v.EMI*(1-math.Pow((1+rate), -float64(arr[k].EMIBalance))), rate)
+					arr[k].POS = POS / 100000
+				} else if strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "od/cc" {
+					arr[k].POS = arr[k].Amount
+				} else {
+					arr[k].POS = 0
+				}
+			} else {
+				arr[k].POS = 0
+			}
+
+		}
+
+		summary := r.CalculateSummary(arr)
+		divider := 100000.0
+		x10IntObligation := (accoutDetails.LoanDetails.InterestOutgo * divider)
+		yearlyRepaymentCalc := (x10IntObligation / divider) + summary.GetFloat64("SumExtenalYearly")
+		TCLPOS := (summary.GetFloat64("POSInLacs") - summary.GetFloat64("EMIBalance3Month")) + accoutDetails.LoanDetails.RequestedLimitAmount
+		TCLEMI := (summary.GetFloat64("EMIInLacs") - summary.GetFloat64("EMI3Month")) + (x10IntObligation / divider)
+
+		x10ExistingPOS := 0.0 // UNKNOWN FORMULA
+		dPLCustMargin := 0.0  // UNKNOWN FORMULA
+
+		smry.TotalObligationPOS = summary.GetFloat64("POSInLacs")
+		smry.TotalObligationEMI = summary.GetFloat64("EMIInLacs")
+		smry.CloseWithin3MonthPOS = summary.GetFloat64("EMIBalance3Month")
+		smry.CloseWithin3MonthEMI = summary.GetFloat64("EMI3Month")
+		smry.PBSLPOS = summary.GetFloat64("PosPBSL")
+		smry.PBSLEMI = summary.GetFloat64("EmiPBSL")
+		smry.BalancePOS = summary.GetFloat64("PosBalance")
+		smry.BalanceEMI = summary.GetFloat64("EmiBalance")
+		smry.DPLAmountOfLimit = accoutDetails.LoanDetails.RequestedLimitAmount
+		smry.DPLCustMargin = dPLCustMargin
+		smry.DPLTenor = accoutDetails.LoanDetails.LimitTenor
+		smry.DPLROI = accoutDetails.LoanDetails.ProposedRateInterest
+		smry.X10ExistingPOS = x10ExistingPOS
+		smry.X10IntObligation = x10IntObligation
+		smry.YearlyRepayment = yearlyRepaymentCalc
+		smry.TCLPOS = TCLPOS
+		smry.TCLEMI = TCLEMI
+		smry.SumBounces = int64(summary.GetFloat64("SumBounces"))
+		smry.SumExtenalYearly = summary.GetFloat64("SumExtenalYearly")
+
+		smry.EMI = crowd.From(&arr).Sum(func(x interface{}) interface{} {
+			return x.(RTRBottom).EMI
+		}).Exec().Result.Sum
+
+	}
 	return arr, smry, nil
 }
 
@@ -448,8 +841,10 @@ func (r *RTRBottom) CalculateSummary(datas []RTRBottom) tk.M {
 func (r *RTRBottom) FindRate(amt float64, pmt float64, nper int64) (error, float64) {
 	tk.Println(amt, "amount", pmt, "payment", nper, "nper")
 	rate := math.Pow((pmt*float64(nper))/(amt*100000), 1/float64(nper)) - 1
+	ratemin := math.Pow((pmt*float64(nper))/(amt*100000), 1/float64(nper)) - 1
 	tk.Println(rate, "awal rate")
 	iterate := 0.0001
+	iteratemin := -0.0001
 	idx := 0
 	list := []tk.M{}
 	lastdiff := tk.M{}
@@ -458,8 +853,14 @@ func (r *RTRBottom) FindRate(amt float64, pmt float64, nper int64) (error, float
 		idx += 1
 		for i := 0; i < 250; i++ {
 			rate += iterate
+			ratemin += iteratemin
 			var diff = (amt * 100000) - (pmt * (1 - math.Pow((1+rate), -(float64(nper)+1))) / rate)
-			list = append(list, tk.M{"rate": rate, "diff": math.Abs(diff)})
+			var diffmin = (amt * 100000) - (pmt * (1 - math.Pow((1+ratemin), -(float64(nper)+1))) / ratemin)
+			if math.Abs(diff) < math.Abs(diffmin) {
+				list = append(list, tk.M{"rate": rate, "diff": math.Abs(diff)})
+			} else {
+				list = append(list, tk.M{"rate": ratemin, "diff": math.Abs(diffmin)})
+			}
 		}
 
 		minval := tk.M{}

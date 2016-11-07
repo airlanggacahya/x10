@@ -9,6 +9,19 @@ r.startDate = ko.observable();
 r.masterBalanceSheetInput =  ko.observableArray([]);
 r.masterCustomerProfile = ko.observableArray([]);
 r.datePicker = ko.observable("");
+r.confirmLabel = ko.observable("Confirm")
+r.IsFrozen = ko.observable(false)
+r.formVisibility = ko.observable(false)
+r.initEvents = function () {
+    filter().CustomerSearchVal.subscribe(function () {
+        r.formVisibility(false)
+    })
+    filter().DealNumberSearchVal.subscribe(function () {
+        r.formVisibility(false)
+    })
+
+    //$('#refresh').remove()
+}
 r.isLoading = function (what) {
     $('.apx-loading')[what ? 'show' : 'hide']()
     $('.app-content')[what ? 'hide' : 'show']()
@@ -179,15 +192,16 @@ r.refresh = function () {
     if (r.getCustomerId() === false) {
         return
     }
-
     r.isLoading(true)
     r.isEmptyRatioInputData(true)
+    r.isFrozen(false)
     r.getMasterBalanceSheetInput(function () {
         var param = {}
         param.customerId = r.customerId()
 
-        ajaxPost("/ratio/getratioinputdata", param, function (res) {
+        ajaxPost("/ratio/getratioinputdataall", param, function (res) {
             if (res.Data != null){
+                r.formVisibility(true)
                 if (res.Data.AuditStatus.length > 0){
                     $.each(res.Data.AuditStatus, function(i,v){
                         var xxx = v.Date.split("-")
@@ -240,17 +254,18 @@ r.refresh = function () {
             r.isEmptyRatioInputData(false)
             r.setData(res.Data)
             r.isFrozen(res.Data.Frozen)
+            r.IsFrozen(res.Data.IsFrozen)
             r.isConfirmed(res.Data.Confirmed)
+            if(r.isConfirmed()) {
+                r.confirmLabel("Re-Enter")
+            } else {
+                r.confirmLabel("Confirm")
+            }
             r.isLoading(false)
             $("#selectTypeDate").find("select").data("kendoDropDownList").value( r.TypeDate() )
             r.render()
-            // if(r.datePicker() == ".cell-year"){
-                // $(".cell-date").hide()
-                // $(".cell-year").show()
-            // }else{
-            //     $(".cell-date").show()
-            //     $(".cell-year").hide()
-            // }
+
+            r.endisKendoDropDown(r.isFrozen())
         }, function () {
             r.isLoading(false)
         });
@@ -262,7 +277,13 @@ r.save = function () {
     }
 
     r.isLoading(true)
-    var param = $.extend(true, { Id: '' }, r.getData());
+
+    var Id = ''
+    if(r.data().Id != undefined) {
+        Id = r.data().Id
+    }
+
+    var param = $.extend(true, { Id: Id }, r.getData());
     app.ajaxPost("/ratio/saveratioinputdata", param, function (res) {
         if (res.Message != '') {
             r.clear()
@@ -270,7 +291,7 @@ r.save = function () {
             r.isLoading(false)
             return;
         } else {
-            swal("Success!", "Changes saved!", "success");
+            swal("Success", "Changes saved", "success");
         }
 
         r.isLoading(false)
@@ -342,6 +363,12 @@ r.getData = function () {
 
     return o
 }
+
+r.jancok = ko.observable();
+var test = function(){
+    r.jancok(this)
+}
+
 r.render = function () {
     var d = new Date();
     console.log("Date0 : ", d)
@@ -378,32 +405,36 @@ r.render = function () {
     var $tr1 = $('<tr />')
         .appendTo($wrapper)
         .addClass('row-header')
-        .addClass('header-bgcolor')
+        .attr("id", "name1")
+        .css('background-color', '#313d50 !important')
         .css('vertical-align', 'bottom')
-        .css('color', '#a8a8a8')
+        .css('color', 'white')
         .hide()
 
     var $tr1left = $('<tr />')
         .appendTo($wrapperleft)
         .addClass('row-header')
-        .addClass('header-bgcolor')
+        .css('background-color', '#313d50 !important')
         .css('vertical-align', 'bottom')
-        .css('color', '#a8a8a8')
+        .css('color', 'white')
 
     var $tr1setengah = $('<tr />')
         .appendTo($wrapper)
         .addClass('row-header')
-        .addClass('header-bgcolor')
+        .css('background-color', '#313d50 !important')
+        .css('color', 'white')
 
     var $tr1setengahfixed = $('<tr />')
         .appendTo($wrapperfixed)
         .addClass('row-header')
-        .addClass('header-bgcolor')
+        .css('background-color', '#313d50 !important')
+        .css('color', 'white')
 
     var $tr2 = $('<tr />')
         .appendTo($wrapper)
         .addClass('row-header')
-        .addClass('header-bgcolor')
+        .css('background-color', '#313d50 !important')
+        .css('color', 'white')
         .hide()
     // var $tr3 = $('<tr />')
     //     .appendTo($wrapper)
@@ -411,7 +442,8 @@ r.render = function () {
     var $tr4 = $('<tr />')
         .appendTo($wrapper)
         .addClass('row-header')
-        .addClass('header-bgcolor')
+        .css('background-color', '#313d50 !important')
+        .css('color', 'white')
         .hide()
     // var $tr5 = $('<tr />')
     //     .appendTo($wrapper)
@@ -419,12 +451,17 @@ r.render = function () {
     var $tr6 = $('<tr />')
         .appendTo($wrapper)
         .addClass('row-header')
-        .addClass('header-bgcolor')
+        .css('background-color', '#313d50 !important')
+        .css('color', 'white')
+        .attr("id", "sete")
+
+    $('<td />').appendTo($tr6).attr("id", "td61").css("background-color","#F0F3F4").hide()
 
     var $tr6fixed = $('<tr />')
         .appendTo($wrapperfixed)
         .addClass('row-header')
-        .addClass('header-bgcolor')
+        .css('background-color', '#313d50 !important')
+        .css('color', 'white')
 
     $('<td />')
         .html('Particulars<br>(in Rs. Lacs)')
@@ -689,6 +726,7 @@ r.render = function () {
                 },330);
             }
         }
+
         var $NA = $('<td />').appendTo($tr6).addClass('cell-na').css("background-color",color)
         var $NAfixed = $('<td />').appendTo($tr6fixed).addClass('cell-na').css("background-color",color).css("width","152px").css("padding","2px")
 
@@ -918,21 +956,21 @@ r.render = function () {
                 .addClass('row-section')
                 .addClass("rowsection"+section.Order)
 
-            var $onleft = $('<td />').appendTo($trRowSectionleft).addClass("td"+section.Order).addClass("palingkiriori header-bgcolor").css("border-left-color","#397d81").css("border-right-color","#397d81")
-            var $on = $('<td />').appendTo($trRowSection).addClass("td"+section.Order).addClass("palingkiri header-bgcolor").css("border-left-color","#397d81").css("border-right-color","#397d81")
+            var $onleft = $('<td />').appendTo($trRowSectionleft).addClass("td"+section.Order).addClass("palingkiriori").css('background-color', '#313d50 !important').css('color', 'white !important').css("border-left-color","#397d81").css("border-right-color","#397d81")
+            var $on = $('<td />').appendTo($trRowSection).addClass("td"+section.Order).addClass("palingkiri").css('background-color', '#313d50 !important').css('color', 'white !important').css("border-left-color","#397d81").css("border-right-color","#397d81")
 
             r.data().AuditStatus.forEach(function (au) {
                 var $cell = $('<td />').appendTo($trRowSection)
                     .attr('data-id', au.Id)
                     .attr('id', au.Date)
-                    .addClass("header-bgcolor")
+                    .css('background-color', '#313d50 !important').css('color', 'white !important')
                     .css("height",'35px').css("border-left-color","#397d81").css("border-right-color","#397d81")
             })
             r.data().ProvisionStatus.forEach(function (au) {
                 var $cell = $('<td />').appendTo($trRowSection)
                     .attr('data-id', au.Id)
                     .attr('id', au.Date)
-                    .addClass("header-bgcolor")
+                    .css('background-color', '#313d50 !important').css('color', 'white !important')
                     .css("height",'35px').css("border-left-color","#397d81").css("border-right-color","#397d81")
             })
 
@@ -1053,6 +1091,7 @@ r.render = function () {
                         .attr('type', "number")
                         .attr('min', 0)
                         .attr('placeholder', yy)
+                        .attr('data-bind', 'event: {change:}')
                         .addClass('cell align-right')
                         .addClass('inputmasterform')
                         .css("width","100%")
@@ -1214,6 +1253,20 @@ r.render = function () {
         }
      $(".form-container").show();
     },1500);
+
+    $('.cell').click(function(){
+       var val = $(this).val()
+       if(val == 0) {
+        $(this).val("")
+       }
+    })
+
+    $('.cell').blur(function(){
+       var val = $(this).val()
+       if(val == "") {
+        $(this).val(0)
+       }
+    })
 };
 r.confirm = function () {
     if (r.getCustomerId() === false) {
@@ -1227,11 +1280,18 @@ r.confirm = function () {
     //     confirmButtonText: "Yes, confirm it!",
     //     closeOnConfirm: false
     // }, function () {
+    var param = {};
+    param.CustomerID = r.customerId()
+
+    if(r.confirmLabel() == "Confirm"){
+        param.Confirmed = true
+        param.Frozen = true
+    } else {
+        param.Confirmed = false
+        param.Frozen = false
+    }
         r.isLoading(true)
 
-        var param = {};
-        param.CustomerID = r.customerId()
-        param.Confirmed = true
         app.ajaxPost("/ratio/confirm", param, function (res) {
             if (res.Message != '') {
                 r.clear()
@@ -1239,11 +1299,16 @@ r.confirm = function () {
                 r.isLoading(false)
                 return;
             } else {
-                swal("Success!", "Changes saved!", "success");
+                if(r.confirmLabel() == "Re-Enter"){
+                    swal("Please Edit / Enter Data", "", "success");
+                }else{
+                    swal("Successfully Confirmed", "", "success");
+                }
             }
 
             // r.setData(res.Data)
             // r.isConfirmed(r.data().Confirmed)
+
             r.refresh()
             r.isLoading(false)
             // r.render()
@@ -1252,9 +1317,15 @@ r.confirm = function () {
         });
     // });
 }
+
 r.freeze = function (isFrozen) {
     return function () {
         if (r.getCustomerId() === false) {
+            return
+        }
+
+        if(!r.isConfirmed() && isFrozen) {
+            sweetAlert("Oops...", "Please Confirm First", "error");
             return
         }
 
@@ -1262,14 +1333,15 @@ r.freeze = function (isFrozen) {
             title: "Are you sure?",
             type: "info",
             showCancelButton: true,
-            confirmButtonText: (isFrozen ? "Yes, freeze it!" : 'Unfreeze it!'),
+            confirmButtonText: (isFrozen ? "Yes, freeze it" : 'Unfreeze it'),
             // closeOnConfirm: false
         }).then(function () {
             r.isLoading(true)
 
             var param = {};
             param.CustomerID = r.customerId()
-            param.Frozen = isFrozen
+            param.IsFrozen = isFrozen
+            console.log(param)
             app.ajaxPost("/ratio/freeze", param, function (res) {
                 if (res.Message != '') {
                     r.clear()
@@ -1277,18 +1349,85 @@ r.freeze = function (isFrozen) {
                     r.isLoading(false)
                     return;
                 } else {
-                    swal("Success!", "Changes saved!", "success");
+                    if(isFrozen == true){
+                        swal("Successfully Freezed", "", "success");
+                    }else{
+                        swal("Successfully Unfreezed", "", "success");
+                    }
+                    
+                }
+
+                if (res.Data != null){
+                    if (res.Data.AuditStatus.length > 0){
+                        $.each(res.Data.AuditStatus, function(i,v){
+                            var xxx = v.Date.split("-")
+                            var ccc = "Mar"
+                            if(xxx[1] == "12"){
+                                ccc = "Dec"
+                            }
+                            xxx[1] = ccc
+                            res.Data.AuditStatus[i].Date = xxx.join("-")
+                        })
+                    }
+                    if (res.Data.FormData.length > 0){
+                        $.each(res.Data.FormData, function(i,v){
+                            var xxx = v.Date.split("-")
+                            var ccc = "Mar"
+                            if(xxx[1] == "12"){
+                                ccc = "Dec"
+                            }
+                            xxx[1] = ccc
+                            res.Data.FormData[i].Date = xxx.join("-")
+                        })
+                    }
+                    if (res.Data.ProvisionStatus.length > 0){
+                        $.each(res.Data.ProvisionStatus, function(i,v){
+                            var xxx = v.Date.split("-")
+                            var ccc = "Mar"
+                            if(xxx[1] == "12"){
+                                ccc = "Dec"
+                            }
+                            xxx[1] = ccc
+                            res.Data.ProvisionStatus[i].Date = xxx.join("-")
+                        })
+                    }
                 }
 
                 r.setData(res.Data)
                 r.isFrozen(r.data().Frozen)
+                r.IsFrozen(r.data().IsFrozen)
                 r.isLoading(false)
                 r.render()
+
+                r.endisKendoDropDown(r.isFrozen())
+
             }, function () {
                 r.isLoading(false)
             });
         });
     }
+}
+
+r.endisKendoDropDown = function(what){
+    $(".container-select").each(function(i,e){
+      var $ddl = $(e).find("select").getKendoDropDownList();
+      console.log($ddl)
+      if($ddl == undefined)
+        var $ddl = $(e).find("input").getKendoDropDownList();
+
+      $('#selectDateAudited').find("input").data('kendoDatePicker').enable(!what);
+      $('#selectDateProjected').find("input").data('kendoDatePicker').enable(!what);
+
+      var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+      if($ddl != undefined)
+      {
+        $ddl.enable(!what);
+      }else if ($txt != undefined){
+        $txt.enable(!what);
+      }
+
+    });
 }
 
 r.exportExcel = function(target, title){
@@ -1297,12 +1436,11 @@ r.exportExcel = function(target, title){
     $('.palingkiri').show();
     $('.palingkiriori').hide();
     target = toolkit.$(target);
-
+    console.log(target)
     $('#fake-table').remove();
 
     var body = $('body');
-    var fakeTable = $('<table />').attr('id', 'fake-table').appendTo(body)
-
+    var fakeTable = $('<table />').attr('id', 'fake-table').appendTo(body);
     if (target.attr('name') != 'table') {
         target = target.find('table:eq(0)');
     }
@@ -1324,7 +1462,7 @@ r.exportExcel = function(target, title){
         } else if(value == "NA"){
             value = "Not Available"
         }
-        $(e).closest('td').html(value)
+        $(e).closest('td').html(value).css("color", "black");
     })
 
     $("#fake-table input[data-role='datepicker']").each(function (i, e) {
@@ -1337,8 +1475,14 @@ r.exportExcel = function(target, title){
         $(e).closest('td').html(value)
     })
 
+    $("#fake-table #name1").show()
+    $("#fake-table #td61").show()
+    var ondate = kendo.toString(new Date(),"dd-MM-yyyy HH mm");
+    var ind = title.indexOf("-") + 2;
+    title = title.slice(ind);
+    var name = title+" "+ ondate.toString();
     var downloader = $('<a />').attr('href', '#')
-        .attr('download', title + '.xls')
+        .attr('download', name + '.xls')
         .attr('onclick', 'return ExcellentExport.excel(this, \'fake-table\', \'sheet1\')')
         .html('export')
         .appendTo(body);
@@ -1349,16 +1493,33 @@ r.exportExcel = function(target, title){
     setTimeout(function () {
         fakeTable.remove();
         downloader.remove();
-        // $(".row-field").hide();
-        // $(".row-sub-section").hide();
+        // // $(".row-field").hide();
+        // // $(".row-sub-section").hide();
         $('.palingkiri').hide();
         $('.palingkiriori').show();
     }, 400);
 }
 window.refreshFilter = function () {
+    r.initEvents();
     r.refresh()
 }
+
+r.scroll = function(){
+    var elementPosition = $('.btnFixed').offset();
+    $(window).scroll(function(){
+        if($(window).scrollTop() > elementPosition.top){
+              $('.btnFixed').removeClass('static');
+              $('.btnFixed').addClass('fixed');
+        } else {
+            $('.btnFixed').removeClass('fixed');
+            $('.btnFixed').addClass('static');
+        }    
+    });
+}
+
+
 $(function () {
+    r.scroll()
     $('.box-footer').hide();
     $('#refresh').removeClass('btn-default').addClass('btn-primary');
     $('#refresh').html('Select')
@@ -1368,6 +1529,7 @@ $(function () {
 
 r.prepareSelectOption = function(){
     // console.log( r.TypeDate() )
+    console.log("sarif")
     $('<select />').appendTo( $("#selectTypeDate") ).kendoDropDownList({
         dataSource: {
             data: r.picker()
@@ -1395,9 +1557,6 @@ r.prepareselectDateAudited = function(){
     $('<span style="font-size: 12px;font-weight: bold;">Audited Date: </span>').appendTo( $div1 )
 
     var $div2 = $('<div />').appendTo( $("#selectDateAudited") ).css("float","left")
-
-    console.log(r.TypeDate(), new Date(2009, momonth, 31))
-    console.log(r.TypeDate(), new Date(2016, momonth, 31))
 
     $('<input />').css("width","120px").appendTo( $div2 ).kendoDatePicker({
         min: new Date(2009, momonth, 31),

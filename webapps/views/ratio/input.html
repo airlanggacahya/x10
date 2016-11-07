@@ -80,58 +80,78 @@ model.User= ko.observable('{{.Username}}');
 	}*/
 	.k-numerictextbox {border-radius: 0}
 	.cell-year {display: none;}
+
+	.fixed{
+		position: fixed;
+	    z-index: 100;
+	    width: 100%;
+	    margin-top: -1px;
+	    margin-left: -25px;
+	    background-color: #f0f3f4;
+	    padding: 16px;
+	}
+
+	.static{
+		position: static;
+		margin-top: 14px;
+	}
 </style>
 
 {{template "filter.html"}}
 
-<div data-bind="with: ratioInput" >
-	<div class="col-md-12 col-sm-12 ez panel-content">
-		<div class="panel ez">
-			<!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
-			<div class="panel-body" style="padding-top: 0">
-				<div class="form-last-confirmation-info"></div>
-				<div class="filter col-md-12 align-right no-padding hardcore">
-					<!-- <button class="btn btn-sm btn-primary" data-bind="click: refresh">
-						<i class="fa fa-refresh"></i> Refresh
-					</button> -->
-					<div style="float: left; margin-right: 50px;">
-						<button class="btn btn-save button-font" style="width: 70px" data-bind="click: save, visible: (r.customerId() != '')">Save</button>
-						<button class="btn btn-confirm button-font" style="width: 70px" data-bind="click: (confirm), visible: (r.customerId() != '')">Confirm</button>
-						<button class="btn btn-freeze button-font" style="width: 70px" data-bind="click: freeze(true), visible: (r.customerId() != '') && (!r.isFrozen())">Freeze</button>
-						<button class="btn btn-details button-font" style="width: 70px" data-bind="click: freeze(false), visible: (r.customerId() != '') && (r.isFrozen())">Unfreeze</button>
-					</div>
-					<div style="float: left;">
-						<div id="selectTypeDate" data-bind="visible: (r.customerId() != '')" style="float: left; width: 150px; margin-right: 20px;"></div>
+<div data-bind="visible: (r.formVisibility() == true)" style="display: none">
+	<div data-bind="with: ratioInput">
+		<div class="col-md-12 col-sm-12 ez panel-content">
+			<div class="panel ez">
+				<!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+				<div class="panel-body" style="padding-top: 0">
+					<!-- <div class="form-last-confirmation-info"></div> -->
+					<div class="filter col-md-12 align-right no-padding hardcore btnFixed static">
+						<!-- <button class="btn btn-sm btn-primary" data-bind="click: refresh">
+							<i class="fa fa-refresh"></i> Refresh
+						</button> -->
+						<div style="float: left; margin-right: 50px;">
+							<button class="btn btn-save button-font btn-dis" style="width: 70px" data-bind="click: save, visible: (r.customerId() != ''), enable: (!IsFrozen() && !isFrozen())">Save</button>
+							<button class="btn btn-confirm button-font btn-dis" style="width: 70px" data-bind="text: confirmLabel, click: (confirm), visible: (r.customerId() != ''), enable: !IsFrozen()">Confirm</button>
+							<button class="btn btn-freeze button-font" style="width: 70px" data-bind="click: freeze(true), visible: (r.customerId() != '') && (!r.IsFrozen())">Freeze</button>
+							<button class="btn btn-details button-font" style="width: 70px" data-bind="click: freeze(false), visible: (r.customerId() != '') && (r.IsFrozen())">Unfreeze</button>
+						</div>
+						<div class="container-select" style="float: left;">
+							<div id="selectTypeDate" data-bind="visible: (r.customerId() != '')" style="float: left; width: 150px; margin-right: 20px;"></div>
 
-						<div id="selectDateAudited" data-bind="visible: (r.customerId() != '')" style="float: left; margin-right: 20px;"></div>
+							<div id="selectDateAudited" data-bind="visible: (r.customerId() != '')" style="float: left; margin-right: 20px;"></div>
 
-						<div id="selectDateProjected" data-bind="visible: ( (r.customerId() != '') && (r.AuditedDate() != '') )" style="float: left; margin-right: 20px;"></div>
+							<div id="selectDateProjected" data-bind="visible: ( (r.customerId() != '') && (r.AuditedDate() != '') )" style="float: left; margin-right: 20px;"></div>
+						</div>
+						<div style="float: right;">
+							<button class="btn btn-add button-font btn-dis" data-bind="visible: (r.customerId() != ''), enable: !IsFrozen()" onclick="r.exportExcel('.divright', filter().CustomerSearchText()+' - '+filter().DealNumberSearchVal())">Export as Excel</button>
+						</div>
 					</div>
-					<div style="float: right;">
-						<button class="btn btn-add button-font" data-bind="visible: (r.customerId() != '')" onclick="r.exportExcel('.divright', r.customerId())">Export as Excel</button>
+					<div class="col-sm-12 no-padding">
+						<span class="form-last-confirmation-info" style="float: right"></span>&nbsp;
 					</div>
-				</div>
-				<div class="clearfix"></div>
-				<div class="form-container">
-					<br>
-					<div class="form-ratio-input">
-						<center>
-							<h3 style="text-decoration: none; border: none; margin-left: 100px;">Select Customer and Deal Number</h3>
-						</center>
+
+					<div class="clearfix"></div>
+					<div class="form-container">
+						<br>
+						<div class="form-ratio-input">
+							<center>
+								<h3 style="text-decoration: none; border: none; margin-left: 100px;">Select Customer and Deal Number</h3>
+							</center>
+						</div>
+						<div class="form-ratio-header"></div>
 					</div>
-					<div class="form-ratio-header"></div>
 				</div>
 			</div>
 		</div>
+
 	</div>
 
+	<div id="fixedheader" style="position: fixed; top: 52px;left: 16px;width: 1008px;display: none;background-color: #efefef;">
+		<div style="width: 400px;float: left;min-height: 50px;padding-top: 8px;text-align: center;border: 1px solid #e4e4e4;">Particulars<br>(in Rs. Lacs)</div>
+		<div id="divrightfixed" style="width: 605px;float: left;overflow-x: scroll;border: 1px solid #e4e4e4;"></div>
+	</div>
 </div>
-
-<div id="fixedheader" style="position: fixed; top: 52px;left: 16px;width: 1008px;display: none;background-color: #efefef;">
-	<div style="width: 400px;float: left;min-height: 50px;padding-top: 8px;text-align: center;border: 1px solid #e4e4e4;">Particulars<br>(in Rs. Lacs)</div>
-	<div id="divrightfixed" style="width: 605px;float: left;overflow-x: scroll;border: 1px solid #e4e4e4;"></div>
-</div>
-
 <style type="text/css">
 	.mar-20{
 		    margin-top: -20px;

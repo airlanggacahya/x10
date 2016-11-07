@@ -3,10 +3,10 @@ package models
 import (
 	"time"
 
-	. "eaciit/x10/webapps/connection"
+	// . "eaciit/x10/webapps/connection"
 	"fmt"
 	"github.com/eaciit/crowd"
-	"github.com/eaciit/dbox"
+	// "github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
 	"github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
@@ -119,6 +119,8 @@ type AccountDetail struct {
 	Status              int
 	Freeze              bool      `bson:"Freeze,omitempty"`
 	DateConfirmed       time.Time `bson:"DateConfirmed,omitempty"`
+	DateFreeze          time.Time `bson:"DateFreeze,omitempty"`
+	DateSave            string    `bson:"DateSave,omitempty"`
 }
 
 type AccountSetupDetails struct {
@@ -248,29 +250,34 @@ type DataDistributor struct {
 }
 
 func (a *AccountDetail) GetDataForFormulaBuilder(customerId, dealNo string) (AccountDetailSummary, AccountDetail, error) {
-	conn, err := GetConnection()
-	defer conn.Close()
-	if err != nil {
-		return AccountDetailSummary{}, AccountDetail{}, err
-	}
+	// conn, err := GetConnection()
+	// defer conn.Close()
+	// if err != nil {
+	// 	return AccountDetailSummary{}, AccountDetail{}, err
+	// }
 
-	wh := []*dbox.Filter{dbox.Eq("customerid", customerId), dbox.Eq("dealno", dealNo)}
+	// wh := []*dbox.Filter{dbox.Eq("customerid", customerId), dbox.Eq("dealno", dealNo)}
 
-	query, err := conn.NewQuery().
-		Select().
-		From(new(AccountDetail).TableName()).
-		Where(wh...).
-		Cursor(nil)
-	if err != nil {
-		return AccountDetailSummary{}, AccountDetail{}, err
-	}
+	// query, err := conn.NewQuery().
+	// 	Select().
+	// 	From(new(AccountDetail).TableName()).
+	// 	Where(wh...).
+	// 	Cursor(nil)
+	// if err != nil {
+	// 	return AccountDetailSummary{}, AccountDetail{}, err
+	// }
 
 	res := []AccountDetail{}
-	err = query.Fetch(&res, 0, false)
+	// err = query.Fetch(&res, 0, false)
+	// if err != nil {
+	// 	return AccountDetailSummary{}, AccountDetail{}, err
+	// }
+	// defer query.Close()
+
+	err := new(DataConfirmController).GetDataConfirmed(customerId, dealNo, new(AccountDetail).TableName(), &res)
 	if err != nil {
 		return AccountDetailSummary{}, AccountDetail{}, err
 	}
-	defer query.Close()
 
 	if len(res) == 0 {
 		return AccountDetailSummary{}, AccountDetail{}, nil
@@ -344,14 +351,33 @@ func (a *AccountDetail) GetDataForFormulaBuilder(customerId, dealNo string) (Acc
 
 	realEstateSumValue := float64(0)
 	if len(acc.PromotorDetails) > 0 {
-		realEstateSumValue = asFloat(crowd.From(&acc.PromotorDetails).Max(func(x interface{}) interface{} {
-			return x.(PromotorDetails).RealEstatePosition
-		}).Exec().Result.Max)
+		tempdata := make(map[string]float64, 0)
+
+		for _, val := range acc.PromotorDetails {
+			tempdata[val.PromoterName] = 0.0
+			for _, vx := range val.RealEstatePosition {
+				tempdata[val.PromoterName] += vx
+			}
+		}
+
+		for _, val := range tempdata {
+			if realEstateSumValue < val {
+				realEstateSumValue = val
+			}
+		}
+		// realEstateSumValue = asFloat(crowd.From(&acc.PromotorDetails).Max(func(x interface{}) interface{} {
+		// 	return x.(PromotorDetails).RealEstatePosition
+		// }).Exec().Result.Max)
 	}
 
-	loanValue := acc.LoanDetails.RequestedLimitAmount
-	final.PDRealEstateSumValue = toolkit.Div(realEstateSumValue, loanValue)
+	_, rtrdata, err := new(RTRBottom).GetDataForAccountDetails(customerId, dealNo)
+	TCLPOS := 0.0
+	if err == nil {
+		TCLPOS = rtrdata.TCLPOS
+	}
 
+	// loanValue := acc.LoanDetails.RequestedLimitAmount
+	final.PDRealEstateSumValue = toolkit.Div(realEstateSumValue, TCLPOS)
 	if len(acc.PromotorDetails) == 1 {
 		final.PDResiOwnershipStatus = acc.PromotorDetails[0].ResiOwnershipStatus
 	} else {
@@ -371,6 +397,9 @@ func (a *AccountDetail) GetDataForFormulaBuilder(customerId, dealNo string) (Acc
 				final.PDOfficeOwnershipStatus = each.OfficeOwnershipStatus
 				break
 			}
+		}
+		if final.PDOfficeOwnershipStatus == "" && len(acc.PromotorDetails) > 0 {
+			final.PDOfficeOwnershipStatus = acc.PromotorDetails[0].OfficeOwnershipStatus
 		}
 	}
 

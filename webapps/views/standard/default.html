@@ -1,0 +1,134 @@
+<script type="text/javascript">
+  model.PageTopMenu('{{.TopMenu}}');
+  model.PageId('{{.Menuname}}');
+  model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
+  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+  model.Access = ko.observable('{{.Menuid}}');
+  model.View = ko.observable('{{.View}}');
+  model.Create= ko.observable('{{.Create}}');
+  model.Delete= ko.observable('{{.Delete}}');
+  model.Process= ko.observable('{{.Process}}');
+  model.Edit= ko.observable('{{.Edit}}')
+  model.User= ko.observable('{{.Username}}');
+</script>
+
+<script src="/static/core/standard.js"></script>
+
+<style>
+    .toolbar-col{
+        text-align : center;
+    }
+
+    #btnSave{
+        margin-right : 5px;
+    }
+
+    #btnReset{
+        margin-right : 5px;
+    }
+
+    .btn-save {
+        color: #fff;
+        background-color: #00da9c;
+        border-color: #00da9c;
+    }
+
+    .btn-refresh {
+        color: #fff;
+        background-color: #0c6eb6;
+        border-color: #0c6eb6;
+    }
+
+    #avgdelaydaysgrid tbody tr #btnAdd {
+        display:none;
+    }
+
+    #avgdelaydaysgrid tbody tr:first-child #btnAdd{
+        display:inline;
+    }
+
+    #avgpaymentdelaygrid tbody tr #btnAdd {
+        display:none;
+    }
+
+    #avgpaymentdelaygrid tbody tr:first-child #btnAdd{
+        display:inline;
+    }
+
+    #avgpaymentdaysgrid tbody tr #btnAdd {
+        display:none;
+    }
+
+    #avgpaymentdaysgrid tbody tr:first-child #btnAdd{
+        display:inline;
+    }
+</style>
+
+<div class="col-md-12 col-sm-12 ez panel-content" style="padding: 20px">
+    <div class="panel ez">
+        <div class="form-last-confirmation-info"></div>
+        
+        <div class="panel-body">
+            <div class="clearfix"></div>
+            <div class="gridbox">
+                <div class="col-md-12" style="margin-bottom: 10px;">
+                    <div id="avgdelaydaysgrid"></div>
+                </div>
+                <div class="col-md-12" style="margin-bottom: 10px;">
+                    <div id="avgpaymentdelaygrid"></div>
+                </div>
+                <div class="col-md-12">
+                    <div id="avgpaymentdaysgrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/x-kendo-template" id="customcommand1">
+    <div class="toolbar-col">
+        <button class="btn btn-xs btn-success tooltipster tooltipstered" id="btnAdd" onclick="addData(1)"><i class="fa fa-plus"></i></button>
+        <button class="btn btn-xs btn-primary tooltipster tooltipstered" id="btnEdit" onclick="editDataMaster(this,1)"><i class="fa fa-edit"></i></button>
+        <button class="btn btn-xs btn-danger tooltipster tooltipstered" id="btnDelete" onclick="deleteDataMaster(this,1)"><i class="fa fa-trash"></i></button>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="customcommand2">
+    <div class="toolbar-col">
+        <button class="btn btn-xs btn-success tooltipster tooltipstered" id="btnAdd" onclick="addData(2)"><i class="fa fa-plus"></i></button>
+        <button class="btn btn-xs btn-primary tooltipster tooltipstered" id="btnEdit" onclick="editDataMaster(this,2)"><i class="fa fa-edit"></i></button>
+        <button class="btn btn-xs btn-danger tooltipster tooltipstered" id="btnDelete" onclick="deleteDataMaster(this,2)"><i class="fa fa-trash"></i></button>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="customcommand3">
+    <div class="toolbar-col">
+        <button class="btn btn-xs btn-success tooltipster tooltipstered" id="btnAdd" onclick="addData(3)"><i class="fa fa-plus"></i></button>
+        <button class="btn btn-xs btn-primary tooltipster tooltipstered" id="btnEdit" onclick="editDataMaster(this,3)"><i class="fa fa-edit"></i></button>
+        <button class="btn btn-xs btn-danger tooltipster tooltipstered" id="btnDelete" onclick="deleteDataMaster(this,3)"><i class="fa fa-trash"></i></button>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="delaydaystoolbartemplate">
+    <div class="toolbar">
+        <button class="btn btn-save mgright pull-left" id='btnSave' onclick=saveMasterStandard(1)>Save Changes</button>
+        <button class="btn btn-warning mgright pull-left" id='btnReset' onclick=cancelChanges(1)>Reset</button>
+        <button class="btn btn-refresh mgright pull-left" id='btnRefresh' onclick=refreshGrid(1)>Refresh</button>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="paymentdelaytoolbartemplate">
+    <div class="toolbar">
+        <button class="btn btn-save mgright pull-left" id='btnSave' onclick=saveMasterStandard(2)>Save Changes</button>
+        <button class="btn btn-warning mgright pull-left" id='btnReset' onclick=cancelChanges(2)>Reset</button>
+        <button class="btn btn-refresh mgright pull-left" id='btnRefresh' onclick=refreshGrid(2)>Refresh</button>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="paymentdaytoolbartemplate">
+    <div class="toolbar">
+        <button class="btn btn-save mgright pull-left" id='btnSave' onclick=saveMasterStandard(3)>Save Changes</button>
+        <button class="btn btn-warning mgright pull-left" id='btnReset' onclick=cancelChanges(3)>Reset</button>
+        <button class="btn btn-refresh mgright pull-left" id='btnRefresh' onclick=refreshGrid(3)>Refresh</button>
+    </div>
+</script>

@@ -127,7 +127,7 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 {{template "filter.html"}}
 
 
-<div data-bind="with: intrtr.form">
+<div data-bind="with: intrtr.form, visible: (intrtr.formVisibility() == true)" style="display: none" >
 	<div class="col-md-12 col-sm-12 ez panel-content">
 		<div class="panel ez">
 			<!-- <div class="panel-heading"><h3 class="no-margin">Banking Analysis</h3></div> -->

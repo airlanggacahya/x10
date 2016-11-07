@@ -2,55 +2,46 @@
 	<script id="rowTemplateTop" type="text/x-kendo-tmpl">
 	  <tr>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:OBLIPos#</span>
+	      	<span>#:TotalObligationPOS#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:OBLIEmi#</span>
+	      	<span>#:TotalObligationEMI#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:CWMPos#</span>
+	      	<span>#:CloseWithin3MonthPOS#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:CWMEmi#</span>
+	      	<span>#:CloseWithin3MonthEMI#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:PBSLPos#</span>
+	      	<span>#:PBSLPOS#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:PBSLEmi#</span>
+	      	<span>#:PBSLEMI#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:BTPos#</span>
+	      	<span>#:BalancePOS#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:BTEmi#</span>
+	      	<span>#:BalanceEMI#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:TCLPos#</span>
+	      	<span>#:TCLPOS#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:TCLEmi#</span>
+	      	<span>#:TCLEMI#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:DPLLoan#</span>
+	      	<span>#:X10IntObligation#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:DPLMargin#</span>
+	      	<span>#:SumExtenalYearly#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:DPLTenor#</span>
+	      	<span>#:YearlyRepayment#</span>
 	      </td>
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:DPLROI#</span>
-	      </td>
-	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	         #:IntOBLI#
-	      </td>
-	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:ExisPos#</span>
-	      </td>
-	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
-	      	<span>#:Yrp#</span>
+	      	<span>#:SumBounces#</span>
 	      </td>
 	  </tr>
 	</script>
@@ -72,7 +63,7 @@
     linkDueDiligence = '<a target="_blank" href="/duediligence/form'+add_url+'">Due Diligence</a>'
     $('.linkDueDiligence').append(linkDueDiligence)
 
-    linkCibilForm = '<a target="_blank" href="/datacapturing/cibilnew'+add_url+'">Cibil Form</a>'
+    linkCibilForm = '<a target="_blank" href="/datacapturing/cibilnew'+add_url+'">CIBIL Form</a>'
     $('.linkCibilForm').append(linkCibilForm)
 
     linkKeyFinancialReport = '<a target="_blank" href="/ratio/pdf'+add_url+'">Key Financial Report</a>'
@@ -137,11 +128,13 @@
 	        dataSource : {
 	            data : res,
 	        },
+			scrollable:false,
 	        columns :
 	        [
 	            {
 	                title : "Source",
 	                headerAttributes: { "class": "sub-bgcolor col-sm-2" },
+	                attributes: { "class": "col-sm-2" },
 	                field : "source"
 	            },
 	            {
@@ -173,65 +166,67 @@
 	    var DataTmp = []
 
 	    var render = function(datas) {
-	        _.each(datas.filter(function (d) {
-	            return d.ShowInLoanApprovalScreen
-	        }), function(data) {
-	            if(data.ShowInLoanApprovalScreen == false) {
-	                return;
-	            }
-	            if(data.CalculatedValue != undefined) {
-	                var getFixedCalculatedValue = parseFloat((function () {
-	                    return (function(val){
-	                        if(data.CalculatedValue.ValueType == "percentage")
-	                            return val * 100;
-	                        return val;
-	                    })(data.CalculatedValue.Value)
-	                })()).toFixed(2);
+	    	if(datas != null){
+		        _.each(datas.filter(function (d) {
+		            return d.ShowInLoanApprovalScreen
+		        }), function(data) {
+		            if(data.ShowInLoanApprovalScreen == false) {
+		                return;
+		            }
+		            if(data.CalculatedValue != undefined) {
+		                var getFixedCalculatedValue = parseFloat((function () {
+		                    return (function(val){
+		                        if(data.CalculatedValue.ValueType == "percentage")
+		                            return val * 100;
+		                        return val;
+		                    })(data.CalculatedValue.Value)
+		                })()).toFixed(2);
 
-	                if(data.CalculatedValue.Value != 0) {
-	                    if(data.CalculatedValue.ValueType == "percentage")
-	                        data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
-	                    else
-	                        data.calculatedvaluetodisplay = getFixedCalculatedValue;
-	                } else {
-	                    data.calculatedvaluetodisplay = "n/a"
-	                }
+		                if(data.CalculatedValue.Value != 0) {
+		                    if(data.CalculatedValue.ValueType == "percentage")
+		                        data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
+		                    else
+		                        data.calculatedvaluetodisplay = getFixedCalculatedValue;
+		                } else {
+		                    data.calculatedvaluetodisplay = "n/a"
+		                }
 
-	                if(data.Operator == "min"){
-	                    data.ismet = (getFixedCalculatedValue > data.Value1) ? "Met" : "Not Met";
-	                } else if(data.Operator == "max"){
-	                    data.ismet = (getFixedCalculatedValue < data.Value1) ? "Met" : "Not Met";
-	                } else if(data.Operator == "greater than or equal"){
-	                    data.ismet = (getFixedCalculatedValue >= data.Value1) ? "Met" : "Not Met";
-	                } else if(data.Operator == "lower than or equal"){
-	                    data.ismet = (getFixedCalculatedValue <= data.Value1) ? "Met" : "Not Met";
-	                } else if(data.Operator == "equal"){
-	                    data.ismet = (getFixedCalculatedValue == data.Value1) ? "Met" : "Not Met";
-	                } else if(data.Operator == "between"){
-	                    data.ismet = (getFixedCalculatedValue > data.Value1 && getFixedCalculatedValue < data.Value2) ? "Met" : "Not Met";
-	                }
-	            } else {
-	                _.each(columns, function(column){
-	                    column.field = column.field.toLowerCase();
-	                })
-	                data.calculatedvaluetodisplay = "No Internal Rating"
-	                data.ismet = "No Internal Rating";
-	            }
+		                if(data.Operator == "min"){
+		                    data.ismet = (getFixedCalculatedValue > data.Value1) ? "Met" : "Not Met";
+		                } else if(data.Operator == "max"){
+		                    data.ismet = (getFixedCalculatedValue < data.Value1) ? "Met" : "Not Met";
+		                } else if(data.Operator == "greater than or equal"){
+		                    data.ismet = (getFixedCalculatedValue >= data.Value1) ? "Met" : "Not Met";
+		                } else if(data.Operator == "lower than or equal"){
+		                    data.ismet = (getFixedCalculatedValue <= data.Value1) ? "Met" : "Not Met";
+		                } else if(data.Operator == "equal"){
+		                    data.ismet = (getFixedCalculatedValue == data.Value1) ? "Met" : "Not Met";
+		                } else if(data.Operator == "between"){
+		                    data.ismet = (getFixedCalculatedValue > data.Value1 && getFixedCalculatedValue < data.Value2) ? "Met" : "Not Met";
+		                }
+		            } else {
+		                _.each(columns, function(column){
+		                    column.field = column.field.toLowerCase();
+		                })
+		                data.calculatedvaluetodisplay = "No Internal Rating"
+		                data.ismet = "No Internal Rating";
+		            }
 
-	            DataTmp.push(data);
-	        })
+		            DataTmp.push(data);
+		        })
 
-	        $("#gridKeyParametersandIndicators").html("")
-	        $("#gridKeyParametersandIndicators").kendoGrid({
-	            dataSource : { data: DataTmp },
-	            columns: [
-					        { title: "Criteria", field: "Criteria", headerAttributes: { "class": "sub-bgcolor" }},
-					        { title: "Norm", field: "NormLabel", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center"} },
-					        { title: "Actual", field: "calculatedvaluetodisplay", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center"} },
-					        { title: "Met / Not Met", field: "ismet", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center"} }
+		        $("#gridKeyParametersandIndicators").html("")
+		        $("#gridKeyParametersandIndicators").kendoGrid({
+		            dataSource : { data: DataTmp },
+		            columns: [
+						        { title: "Criteria", field: "Criteria", headerAttributes: { "class": "sub-bgcolor" }},
+						        { title: "Norm", field: "NormLabel", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center"} },
+						        { title: "Actual", field: "calculatedvaluetodisplay", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center"} },
+						        { title: "Met / Not Met", field: "ismet", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center"} }
 
-					    ]
-	        });
+						    ]
+		        });
+		    }
 	    }
 
 	    $(function () {
@@ -279,6 +274,9 @@
 		var column = [
       { title: "Name", field: "name", width: 250, headerAttributes: { "class": "sub-bgcolor col-sm-2" }}
     ]
+    var columnkey = [
+      { title: "Name", field: "name", width: 250, headerAttributes: { "class": "sub-bgcolor col-sm-2" }}
+    ]
 
 		if( r.FR()[0].ColumnHeader().length > 2 ){
 			_.each(r.FR()[0].ColumnHeader(),function(v,i){
@@ -287,6 +285,10 @@
 			  }
 			})
 		}
+
+		 _.each(r.KRHEADER(),function(v,i){
+		  				columnkey.push({ title: v.replace("(Audited)", ""), field: "v"+i, headerAttributes: { "class": "sub-bgcolor col-sm-2" }})
+		});
 
     // -------------- LeverageRatios -----------------------------
 			var dataLeverageRatios = []
@@ -316,6 +318,7 @@
 			$("#gridLeverageRatios").html("")
 	    $("#gridLeverageRatios").kendoGrid({
 	        dataSource : { data: dataLeverageRatios },
+	        scrollable: false,
 	        columns: [{
 		      	title:"Leverage Ratios",
 		      	headerAttributes: { class: "header-bgcolor" },
@@ -354,6 +357,7 @@
 			$("#gridOperatingRatios").html("")
 	    $("#gridOperatingRatios").kendoGrid({
 	        dataSource : { data: dataOperatingRatios },
+	        scrollable: false,
 	        columns: [{
 		      	title:"Operating Ratios",
 		      	headerAttributes: { class: "header-bgcolor" },
@@ -390,6 +394,7 @@
 			$("#gridCoverageRatios").html("")
 	    $("#gridCoverageRatios").kendoGrid({
 	        dataSource : { data: dataCoverageRatios },
+	        scrollable: false,
 	        columns: [{
 		      	title:"Coverage Ratios",
 		      	headerAttributes: { class: "header-bgcolor" },
@@ -426,6 +431,7 @@
 			$("#gridLiquidityRatios").html("")
 	    $("#gridLiquidityRatios").kendoGrid({
 	        dataSource : { data: dataLiquidityRatios },
+	        scrollable: false,
 	        columns: [{
 		      	title:"Liquidity Ratios",
 		      	headerAttributes: { class: "header-bgcolor" },
@@ -433,41 +439,93 @@
 					}]
 	    });
     // -------------- End LiquidityRatios -------------------------
-
+    		var listignore = [];
     // -------------- KeyRatios -----------------------------
 			var dataKeyRatios = []
 			if ( r.FR()[6].row().length > 4 ){
 				_.each(r.FR()[6].row(),function(v,i){
-						if(i > 1 && i < 5){
-						  var tmp = {}
-						  tmp.name = v.rowData[0]
-						  if(v.rowData.length > 4){
-						    tmp.v1 = "n/a"
-						    tmp.v2 = "n/a"
-						    tmp.v3 = "n/a"
-						    tmp.v4 = v.rowData[4]
-						  } else if(v.rowData.length > 3){
-						    tmp.v1 = "n/a"
-						    tmp.v2 = "n/a"
-						    tmp.v3 = v.rowData[3]
-						  } else if(v.rowData.length > 2){
-						    tmp.v1 = "n/a"
-						    tmp.v2 = v.rowData[2]
-						  } else{
-						  	tmp.v1 = "n/a"
-						    tmp.v2 = "n/a"
-						  }
+						// if(i > 1 && i < 5){
+				  var tmp = {}
+				  tmp.name = v.rowData[0]
+				    _.each(r.KRHEADER(),function(v1,i1){
+					   	tmp["v"+i1] = v.rowData[i1+1]
+					 });
+
+
+				  // if(v.rowData.length > 4){
+				  //   tmp.v1 = v.rowData[1]
+				  //   tmp.v2 = v.rowData[2]
+				  //   tmp.v3 = v.rowData[3]
+				  //   tmp.v4 = v.rowData[4]
+				  // } else if(v.rowData.length > 3){
+				  //   tmp.v1 = v.rowData[1]
+				  //   tmp.v2 = v.rowData[2]
+				  //   tmp.v3 = v.rowData[3]
+				  // } else if(v.rowData.length > 2){
+				  //   tmp.v1 = v.rowData[1]
+				  //   tmp.v2 = v.rowData[2]
+				  // } else{
+				  // 	tmp.v1 = "n/a"
+				  //   tmp.v2 = "n/a"
+				  // }
+						  // if(v.rowData.length > 4){
+						  //   tmp.v1 = "n/a"
+						  //   tmp.v2 = "n/a"
+						  //   tmp.v3 = "n/a"
+						  //   tmp.v4 = v.rowData[4]
+						  // } else if(v.rowData.length > 3){
+						  //   tmp.v1 = "n/a"
+						  //   tmp.v2 = "n/a"
+						  //   tmp.v3 = v.rowData[3]
+						  // } else if(v.rowData.length > 2){
+						  //   tmp.v1 = "n/a"
+						  //   tmp.v2 = v.rowData[2]
+						  // } else{
+						  // 	tmp.v1 = "n/a"
+						  //   tmp.v2 = "n/a"
+						  // }
 						  dataKeyRatios.push(tmp)
-					  }
+					  // }
 				})
 			}
+			
+				var colcount = r.KRHEADER().length;
+				var isvalid = false;
+				var cleanit = false;
+				for(;colcount>-1;){
+					cleanit = false;
+					if(!isvalid){
+					dataKeyRatios.forEach(function(x){
+							if(x["v"+(colcount-1)] == 0){
+								cleanit = true;
+						}
+					});
+					}
+					if(cleanit){
+						dataKeyRatios.forEach(function(x){
+									x["v"+(colcount-1)] = "n/a"
+								});
+					}	
+
+					if(isvalid){
+						dataKeyRatios.forEach(function(x){
+							x["v"+(colcount-1)] = "n/a"
+						});
+					}
+					if(!cleanit){
+						isvalid = true;
+					}
+					colcount=colcount-1;
+				}
+
 			$("#gridKeyRatios").html("")
 	    $("#gridKeyRatios").kendoGrid({
 	        dataSource : { data: dataKeyRatios },
+	        scrollable: false,
 	        columns: [{
 		      	title:"Key Ratios",
 		      	headerAttributes: { class: "header-bgcolor" },
-						columns: column
+						columns: columnkey
 					}]
 	    });
     // -------------- End KeyRatios -------------------------
@@ -518,11 +576,12 @@
 			$("#gridPnL").html("")
 	    $("#gridPnL").kendoGrid({
 	        dataSource : { data: dataPnL },
+	        scrollable: false,
 	        columns: [{
 		      	title:"P & L",
 		      	headerAttributes: { class: "header-bgcolor" },
-						columns: column
-					}]
+				columns: column
+			}]
 	    });
     // -------------- End PnL -------------------------
 
@@ -536,9 +595,9 @@
 
 					if(v == 8 || v == 0){
 						tmp.v1 = " "
-				    tmp.v2 = " "
-				    tmp.v3 = " "
-				    tmp.v4 = " "
+					    tmp.v2 = " "
+					    tmp.v3 = " "
+					    tmp.v4 = " "
 					} else{
 					  if(r.KFI()[1].row()[v].rowData.length > 4){
 					    tmp.v1 = r.KFI()[1].row()[v].rowData[1]
@@ -563,11 +622,12 @@
 			$("#gridBalanceSheet").html("")
 	    $("#gridBalanceSheet").kendoGrid({
 	        dataSource : { data: dataBalanceSheet },
+	        scrollable: false,
 	        columns: [{
 		      	title:"Balance Sheet",
 		      	headerAttributes: { class: "header-bgcolor" },
-						columns: column
-					}]
+				columns: column
+			}]
 	    });
     // -------------- End BalanceSheet -------------------------
 	}
@@ -592,9 +652,10 @@
 					}
 				}
 			},
+	        scrollable: false,
 			columns : [{
-	      title:"CIBIL Details",
-	      headerAttributes: { class: "header-bgcolor" },
+				title:"CIBIL Details",
+				headerAttributes: { class: "header-bgcolor" },
 				columns:[
 					{
 						field: "Name",
@@ -606,6 +667,7 @@
 						field: "CIBILScore",
 						title: "CIBIL Score",
 						headerAttributes: { "class": "sub-bgcolor" },
+						attributes: { "class": "text-center" },
 						width: 100,
 					}
 
@@ -632,9 +694,10 @@
 					}
 				}
 			},
+	        scrollable: false,
 			columns : [{
-	      title:"Red Flags",
-	      headerAttributes: { class: "header-bgcolor" },
+				title:"Red Flags",
+				headerAttributes: { class: "header-bgcolor" },
 				columns:[
 					{
 						field: "Name",
@@ -676,9 +739,10 @@
 					}
 				}
 			},
+	        scrollable: false,
 			columns : [{
-	      title:"Main Promotor Details",
-	      headerAttributes: { class: "header-bgcolor" },
+				title:"Main Promotor Details",
+				headerAttributes: { class: "header-bgcolor" },
 				columns:[
 					{
 						field: "promotername",
@@ -729,6 +793,25 @@
 	}
 
 	var createBankingDetails = function(res){
+		var multiplyer = 0;
+		var customermargin =r.AllData().Data.AD[0].accountsetupdetails.pdinfo.customermargin
+        if (r.rootdates().length != 0){
+            idxlatestaudited = _.findLastIndex(r.rootdates(),['Status','AUDITED'])
+            latestauditeddate = r.rootdates()[idxlatestaudited].Date
+            ebitdamargin = _.find(r.rootdata(),{'FieldAlias':"EBITDAMARGIN"})
+            var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
+            var multiplyer = _.min([latestebidmargin,customermargin])
+            
+            for (var i = 0 ; i < res.length ; i++){
+                res[i].ImpMargin = multiplyer*res[i].TotalCredit
+            }
+            // createBankingGrid(res.data.Summary,multiplyer);
+        }
+        // else{
+        //     createBankingGrid(res.data.Summary,0);
+        // }
+
+
 	    for(var i in res){
 	        res[i]["Month"] = moment(res[i]["Month"].split("T")[0]).format("MMM-YYYY")
 	    }
@@ -750,6 +833,7 @@
 	                { field: "DrCrReturnPercentage", aggregate: "average" },
 	            ]
 			},
+	        scrollable: true,
 	        columns : [{
 	            title:"Banking Details",
 	            headerAttributes: { class: "header-bgcolor" },
@@ -776,7 +860,7 @@
 	                attributes:{ "style": "text-align:right" },
 	                template : "#: kendo.toString(TotalDebit,'N0') #"
 	            }, {
-	                title:"No. Of Debits",
+	                title:"No. of Debits",
 	                field:"NoOfDebit",
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
@@ -784,7 +868,7 @@
 	                attributes:{ "style": "text-align:right" },
 	                template : "#: kendo.toString(NoOfDebit,'N0') #"
 	            }, {
-	                title:"No. Of Credits",
+	                title:"No. of Credits",
 	                field:"NoOfCredit",
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
@@ -816,13 +900,14 @@
 	                attributes:{ "style": "text-align:right" },
 	                template : "#: kendo.toString(Utilization,'P1') #"
 	            }, {
-	                title:"Imp Margin",
+	                title:"Imp Margin <br> (Margin Taken : "+ kendo.toString(multiplyer*100,"n1") +"%)",
 	                field:"ImpMargin",
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
-	                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+	                width:150,
+	                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n2') #</div>",
 	                attributes:{ "style": "text-align:right" },
-	                template : "#: kendo.toString(ImpMargin,'N2') #"
+	                template : "#: app.formatnum(ImpMargin,2) #"
 	            }, {
 	                title:"O/W Return %",
 	                field:"OwReturnPercentage",
@@ -853,26 +938,6 @@
 	}
 
 	var createOutstandingDebt = function(){
-	  var topgriddata = [{
-			OBLIPos : 0,
-			OBLIEmi : 0,
-			CWMPos : 0,
-			CWMEmi : 0,
-			PBSLPos : 0,
-			PBSLEmi :0,
-			BTPos : 0,
-			BTEmi : 0,
-			TCLPos : 0,
-			TCLEmi : 0,
-			DPLLoan : 0,
-			DPLMargin : 0,
-			DPLTenor : 0,
-			DPLROI : 0,
-	      	IntOBLI : 0,
-			ExisPos : 0,
-			Yrp : 0
-		}];
-
 		callData = {}
 	  callData["customerid"] = filter().CustomerSearchVal()
 	  callData["dealno"] = filter().DealNumberSearchVal()
@@ -884,110 +949,232 @@
 	          return
 	      }
 
-	      topgriddata[0].OBLIPos = res.data[1].summary.TotalObligationPOS
-	      topgriddata[0].OBLIEmi = res.data[1].summary.TotalObligationEMI
-	      topgriddata[0].CWMPos = res.data[1].summary.CloseWithin3MonthPOS
-	      topgriddata[0].CWMEmi = res.data[1].summary.CloseWithin3MonthEMI.toFixed(2)
-	      topgriddata[0].PBSLPos = res.data[1].summary.PBSLPOS
-	      topgriddata[0].PBSLEmi = res.data[1].summary.PBSLEMI
-	      topgriddata[0].BTPos = res.data[1].summary.BalancePOS
-	      topgriddata[0].BTEmi = res.data[1].summary.BalanceEMI
-	      topgriddata[0].TCLPos = res.data[1].summary.TCLPOS
-	      topgriddata[0].TCLEmi = res.data[1].summary.TCLEMI.toFixed(2)
-	      topgriddata[0].DPLMargin = res.data[1].summary.DPLCustMargin
-	      topgriddata[0].DPLLoan = res.data[1].summary.DPLAmountOfLimit
-	      topgriddata[0].DPLTenor = res.data[1].summary.DPLTenor
-	      topgriddata[0].DPLROI = res.data[1].summary.DPLROI
-	      topgriddata[0].IntOBLI = res.data[1].summary.X10IntObligation
-	      topgriddata[0].ExisPos = res.data[1].summary.X10ExistingPOS
-	      topgriddata[0].Yrp = res.data[1].summary.YearlyRepayment
-
 	      $("#gridOutstandingDebt").kendoGrid({
-					dataSource : {
-						data : topgriddata
-					},
-					columns : [{
-	            title:"Outstanding Debt",
-	            headerAttributes: { class: "header-bgcolor" },
+				dataSource : {
+					data : [res.data[1].summary]
+				},
+        		scrollable: true,
+				columns : [{
+            		title:"Outstanding Debt",
+            		headerAttributes: { class: "header-bgcolor" },
+					columns : [{ 
+						title : "Total Obligations", 
+						headerAttributes: { "class": "sub-bgcolor" },
+						width: 100,
+						columns : [{  
+							title : "POS (Rs lacs)", 
+							field : "TotalObligationPOS", 
+							headerAttributes: { "class": "sub-bgcolor" },
+							width: 90, 
+							attributes: { 
+								"class": "text-center", 
+								style: 'background: rgb(238, 238, 238)' 
+							}  
+						}, { 
+							field : "TotalObligationEMI", 
+							headerAttributes: { "class": "sub-bgcolor" }, 
+							title : "EMI (Rs lacs)", 
+							width: 90, 
+							attributes: { style: 'background: rgb(238, 238, 238)' }  
+						}]
+					}, { 
+						title : "Close Within 3 Month",
+						columns : [
+							{ field : "CloseWithin3MonthPOS", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+							{ field : "CloseWithin3MonthEMI", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+						],
+						width: 100, headerAttributes: { "class": "sub-bgcolor" }
+					}, { title : "P.B.S.L",
 							columns : [
-								{ title : "Total Obligations",
-									columns : [
-										{ field : "OBLIPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-										{ field : "OBLIEmi", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-									],
-									width: 100
-								 },
-								{ title : "Close Within 3 Month",
-									columns : [
-										{ field : "CWMPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-										{ field : "CWMEmi", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-									],
-									width: 100
-								 },
-								{ title : "P.B.S.L",
-									columns : [
-										{ field : "PBSLPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-										{ field : "PBSLEmi", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-									],
-									width: 100
-								},
-								{ title : "Balance Transfer",
-									columns : [
-										{ field : "BTPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-										{ field : "BTEmi", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-									],
-									width: 100
-								},
-								{ title : "Total Considered Liability",
-									columns : [
-										{ field : "TCLPos", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-										{ field : "TCLEmi", title : "EMI (Rs lacs)", width: 100, headerAttributes: { "class": "sub-bgcolor" },attributes: { style: 'background: rgb(238, 238, 238)' }  },
-									],
-									width: 60
-								 },
-								// { title : "Detail of Proposed Loan",
-								// 	// columns : [
-								// 	// 	{field : "DPLLoan", headerAttributes: { "class": "sub-bgcolor" }, title : "Proposed Amount of Limit (Rs Lacs)", width: 190, attributes: { style: 'background: rgb(238, 238, 238)' } },
-								// 	// 	{field : "DPLMargin", headerAttributes: { "class": "sub-bgcolor" }, title : "Cust. Margin", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' } },
-								// 	// 	{field : "DPLTenor", headerAttributes: { "class": "sub-bgcolor" }, title : "Tenor (month)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' } },
-								// 	// 	{field : "DPLROI", headerAttributes: { "class": "sub-bgcolor" }, title : "ROI(%)", width: 70, attributes: { style: 'background: rgb(238, 238, 238)' } },
-					   //  //            {field : "IntOBLI", headerAttributes: { "class": "sub-bgcolor" }, title : "X10 Int. Obligation (Rs)" , width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
-								// 	// ],
-								// 	width: 100
-								// },
-								{field : "IntOBLI", title : "X10 Int. Obligation (Rs)" , width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
-								// { title : "X10 Existing Pos (Rs)", field : "ExisPos", width: 130, attributes: { style: 'background: rgb(238, 238, 238)' }  },
-								{ title : "External Yearly Repayment (Rs. Lacs) incl. X10 Int" , field : "Yrp", width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
-								{ title : "xternal Yearly Repayment (Rs. Lacs)", width: 130, field : "SumBounces", attributes: { style: 'background: rgb(238, 238, 238)', class: "wrap" } },
-								{ title : "EMI Bounces Last 6 Months", width: 130, field : "SumExtenalYearly", attributes: { style: 'background: rgb(238, 238, 238)' } },
+								{ field : "PBSLPOS", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+								{ field : "PBSLEMI", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
 							],
-					}],
-					rowTemplate: kendo.template($("#rowTemplateTop").html())
-				});
+							width: 100, headerAttributes: { "class": "sub-bgcolor" }
+						},
+						{ title : "Balance Transfer",
+							columns : [
+								{ field : "BalancePOS", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+								{ field : "BalanceEMI", headerAttributes: { "class": "sub-bgcolor" }, title : "EMI (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+							],
+							width: 100, headerAttributes: { "class": "sub-bgcolor" }
+						},
+						{ title : "Total Considered Liability",
+							columns : [
+								{ field : "TCLPOS", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
+								{ field : "TCLEMI", title : "EMI (Rs lacs)", width: 100, headerAttributes: { "class": "sub-bgcolor" },attributes: { style: 'background: rgb(238, 238, 238)' }  },
+							],
+							width: 60, headerAttributes: { "class": "sub-bgcolor" }
+						 },
+						{ field : "X10IntObligation", title : "X10 Int. Obligation (Rs)", headerAttributes: { "class": "sub-bgcolor" } , width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
+						{ field : "SumExtenalYearly", title : "External Yearly Repayment (Rs. Lacs) incl. X10 Int", headerAttributes: { "class": "sub-bgcolor" } , width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
+						{ field : "YearlyRepayment", title : "xternal Yearly Repayment (Rs. Lacs)", headerAttributes: { "class": "sub-bgcolor" }, width: 130, attributes: { style: 'background: rgb(238, 238, 238)', class: "wrap" } },
+						{ field : "SumBounces", title : "EMI Bounces Last 6 Months", headerAttributes: { "class": "sub-bgcolor" }, width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
+					],
+				}],
+				rowTemplate: kendo.template($("#rowTemplateTop").html())
+			});
 	  })
 	}
 //= End BankingandOsSnapshot =====================================================
-
 </script>
 <style type="text/css">
+    .summary{
+        padding-left : 10px;
+    }
 	h3{
 		font-size: 16px;
 	}
 	.k-grid-footer{
 		padding: 0 !important;
 	}
-  .no-padding{
-      padding-left : 0px;
-      padding-right : 0px;
-  }
-  .summary{
-      padding-left : 10px;
-  }
+	.no-padding{
+		padding-left : 0px;
+		padding-right : 0px;
+	}
+	.summary{
+		padding-left : 10px;
+	}
 
-  .payment-table tr td {
-  	white-space: nowrap !important;
-  }
+	.payment-table tr td {
+		white-space: nowrap !important;
+	}
+
+	.center, .text-center {
+	    text-align: center;
+	}
+
+    #tab0 {
+      font-size: 11px;
+    }
+    .k-grid table {
+      margin-bottom: 5px;
+      color: #444;
+    }
+    .k-grid table td {
+      background-color: white;
+    }
+
+    .k-grid-header .k-header {
+      color: #444;
+    }
+    .table-divider {
+      width: 1% !important;
+      border: none !important;
+      background-color: #fafafa !important;
+    }
+    .dummy-td {
+      border: none !important;
+      background-color: #fafafa !important;
+    }
+    .k-grid td {
+      white-space: normal !important;
+    }
+    .k-widget {
+      border: none !important;
+    }
+    .text-bold {
+      font-weight: bold !important;
+    }
+    .k-grid tr td {
+      border-width: 1px !important;
+    }
+    .center, .text-center {
+      text-align: center;
+    }
+
+    textarea {
+        resize: none;
+    }
+    .k-grid  .k-grid-header  .k-header  .k-link {
+	    height: auto;
+	}
+	  
+	.k-grid  .k-grid-header  .k-header {
+	    white-space: normal;
+	}
+
+	#gridOutstandingDebt .k-grid-header,
+	#gridBankingDetails .k-grid-header{
+	   padding: 0 !important;
+	}
+
+	#gridOutstandingDebt .k-grid-content,
+	#gridBankingDetails .k-grid-content{
+	   overflow-y: visible;
+	}
+
 </style>
+
+<ul class="collapsible" data-collapsible="accordion" id="lsb">
+  <li>
+    <div class="collapsible-noreplace header-bgcolor ">
+      <i class="fa fa-list"></i>Account Details<i class="fa fa-chevron-down pull-right"></i>
+    </div>
+    <div class="collapsible-body row">
+      <div class="col-sm-12">
+        <div class="container-fluid">
+		    <div class="row">
+		        <div class="col-sm-12">
+		            <div class="k-grid">
+		                <table class="custom-label table-bordered">
+		                    <tr>
+		                        <td class="col-sm-2 text-bold">Company Name</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.companyname"></span></td> 
+		                        <td class="table-divider"></td>
+		                        <td class="col-sm-2 text-bold">Login Date</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.logindate"></span></td> 
+		                    </tr>
+		                    <tr>
+		                        <td class="col-sm-2 text-bold">Business Address</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.businessaddress"></span></td> 
+		                        <td class="table-divider"></td>
+		                        <td class="col-sm-2 text-bold">Location</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.location"></span></td> 
+		                    </tr>
+		                    <tr>
+		                        <td class="col-sm-2 text-bold">Product</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.product"></span></td> 
+		                        <td class="table-divider"></td>
+		                        <td class="col-sm-2 text-bold">Lead Distributor</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.leaddistributor"></span></td>
+		                    </tr>
+		                 <!--    <tr>
+		                        <td class="col-sm-2 text-bold">Business Segment</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.businesssegment"></span></td> 
+		                        <td class="table-divider"></td>
+		                        <td class="col-sm-2 text-bold">Business Since</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.businesssince"></span></td> 
+		                    </tr> -->
+		                    <tr>
+		                      <!--   <td class="col-sm-2 text-bold">Internal Rating</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.internalrating"></span></td>
+		                        <td class="table-divider"></td> -->
+		                        <td class="col-sm-2 text-bold">RM Name</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.rmname"></span></td>
+		                        <td class="table-divider"></td>
+		                        <td class="col-sm-2 text-bold">Credit Analyst</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.creditanalyst"></span></td>
+		                    </tr>
+		                    <tr>
+		                       	<td class="col-sm-2 text-bold">BR Head</td>
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.brhead"></span></td>
+		                        <td class="table-divider"></td>
+		                        <td class="col-sm-2 text-bold">Scheme</td>
+		                        <td class="col-sm-4"><span data-bind="text: schemeAD"></span></td>
+		                        <td class="table-divider"></td>
+		                    </tr>
+		                </table>
+		                <br />
+		                <div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span></div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+      </div>
+    </div>
+  </li>
+</ul>
+
 <ul class="collapsible" data-collapsible="accordion" id="ldb">
 	<li>
     <div class="collapsible-noreplace header-bgcolor active"><i class="fa fa-list"></i>Loan Detail<i class="fa fa-chevron-down pull-right"></i></div>
@@ -1006,24 +1193,24 @@
 				                        <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.ifExistingCustomer"></span></td>
 				                    </tr>
 				                    <tr>
-				                        <td class="col-sm-2 text-bold">Proposed Rate Of Interest (ROI)</td>
+				                        <td class="col-sm-2 text-bold">Proposed Rate of Interest (ROI %)</td>
 				                        <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.proposedROI"></span></td>
 				                        <td class="table-divider"></td>
-				                        <td class="col-sm-2 text-bold">If Yes, Existing Limit Amount</td>
+				                        <td class="col-sm-2 text-bold">If Yes, Existing Limit Amount (Rs. Lacs)</td>
 				                        <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.ifYesExistingLimitAmount"></span></td>
 				                    </tr>
 				                    <tr>
 				                        <td class="col-sm-2 text-bold">Proposed Pro Fee %</td>
 				                        <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.proposedProFee"></span></td>
 				                        <td class="table-divider"></td>
-				                        <td class="col-sm-2 text-bold">Existing ROI</td>
+				                        <td class="col-sm-2 text-bold">Existing ROI (%)</td>
 				                        <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.existingROI"></span></td>
 				                    </tr>
 				                    <tr>
 				                        <td class="col-sm-2 text-bold">Limit Tenor (Months)</td>
 				                        <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.limitTenor"></span></td>
 				                        <td class="table-divider"></td>
-				                        <td class="col-sm-2 text-bold">Existing Processing Fee</td>
+				                        <td class="col-sm-2 text-bold">Existing Processing Fee %</td>
 				                        <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.existingProcessingFee"></span></td>
 				                    </tr>
 				                    <tr>
@@ -1034,7 +1221,7 @@
 				                        <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.firstAgreementDate"></span></td>
 				                    </tr>
 				                    <tr>
-				                        <td class="col-sm-2 text-bold">Project PO Value</td>
+				                        <td class="col-sm-2 text-bold">Project PO Value (Rs. Lacs)</td>
 				                        <td class="col-sm-4" data-bind="text:loanApproval.loanDetail.projectPOValue">&nbsp;</td>
 				                        <td class="table-divider"></td>
 				                        <td class="col-sm-2 text-bold">Vintage With X10 (Months)</td>
@@ -1054,7 +1241,7 @@
 				                    </tr>
 				                </table>
 		                    <br>
-		                    <div>More Detail : <span class="linkADForm"></span></div>
+		                    <div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span></div>
 				            </div>
 				        </div>
 				    </div>
@@ -1069,63 +1256,28 @@
     <div class="collapsible-noreplace header-bgcolor active"><i class="fa fa-list"></i>Payment Track<i class="fa fa-chevron-down pull-right"></i></div>
     <div class="collapsible-body row">
       <div class="col-sm-12">
-				<div class="container-fluid">
+				<!-- <div class="container-fluid">
 				    <div class="row">
 				        <div class="col-sm-12">
 				            <div class="k-grid k-widget">
-			                <table class="payment-table">
+			                <table class="custom-label table-bordered">
 			                    <thead class="k-grid-header">
-			                        <tr>
-			                            <th colspan="5" class="sub-bgcolor k-header ">
-			                                Distributor / Vendor Payment Track
-			                            </th>
-			                            <th class="table-divider" rowspan="6"></th>
-			                            <th colspan="2" class="sub-bgcolor k-header ">
-			                                X10 Finance Existing Customer Payment Track
-			                            </th>
-			                        </tr>
+			                        
 			                    </thead>
 			                    <tr>
-			                        <td class="col-sm-2 text-bold">Max Delay Days</td>
-			                        <td class="col-sm-1 datacol right"><span data-bind="text:loanApproval.paymentTrack.maxdelaydays"></span></td>
-			                        <td rowspan="5"></td>
-			                        <td class="col-sm-2 text-bold">Average Transaction Weigthed Payment Delay Days</td>
-			                        <td class="col-sm-1 right"><span data-bind="text:loanApproval.paymentTrack.averagetransactionpaymentdelay"></span></td>
-			                        <td rowspan="5"></td>
-			                        <td class="col-sm-3 text-bold">Average Utilization Of Existing Limit</td>
-			                        <td class="col-sm-1 right" style="min-width: 100px;"><span>0</span></td>
+			                        
 			                    </tr>
 			                    <tr>
-			                        <td class="col-sm-2 text-bold">Max Payment Days</td>
-			                        <td class="col-sm-1 right"><span data-bind="text:loanApproval.paymentTrack.maxpaymentdays"></span></td>
-			                        <td class="col-sm-2 text-bold">Standard Deviation</td>
-			                        <td class="col-sm-1 right"><span data-bind="text:loanApproval.paymentTrack.delaystandarddeviation"></span></td>
-			                        <td class="col-sm-2 text-bold">Max DPD in Closed Loan in Days</td>
-			                        <td class="col-sm-1 right"><span>0</span></td>
+			                        
 			                    </tr>
 			                    <tr>
-			                        <td class="col-sm-2 text-bold">Average Delay Days</td>
-			                        <td class="col-sm-1 right"><span data-bind="text:loanApproval.paymentTrack.averagedelaydays"></span></td>
-			                        <td class="col-sm-2 text-bold">Average Transaction Weighted Payment Days</td>
-			                        <td class="col-sm-1 right"><span data-bind="text:loanApproval.paymentTrack.averagetransactionpayment"></span></td>
-			                        <td class="col-sm-2 text-bold">Number Of Instance Of Delay Payment of Princial Repayment</td>
-			                        <td class="col-sm-1 right"><span>0</span></td>
+			                        
 			                    </tr>
 			                    <tr>
-			                        <td class="col-sm-2 text-bold">Standard Deviation</td>
-			                        <td class="col-sm-1 right"><span data-bind="text:loanApproval.paymentTrack.standarddeviation"></span></td>
-			                        <td class="col-sm-2 text-bold">Standard Deviation</td>
-			                        <td class="col-sm-1 right"><span data-bind="text:loanApproval.paymentTrack.daystandarddeviation"></span></td>
-			                        <td class="col-sm-2 text-bold">Number Of Instances Of Early Closure Of Principal Repayment</td>
-			                        <td class="col-sm-1 right"><span>0</span></td>
+			                        
 			                    </tr>
 			                    <tr>
-			                        <td class="col-sm-2 text-bold">Average Payment Days</td>
-			                        <td class="col-sm-1 right"><span data-bind="text:loanApproval.paymentTrack.averagepaymentdays"></span></td>
-			                        <td class="col-sm-2 text-bold">Amount Of Business Done in Last 12 Months With Lead Distributor in Lacs</td>
-			                        <td class="col-sm-1 right"><span data-bind="text:loanApproval.paymentTrack.amountofbusiness"></span></td>
-			                        <td class="col-sm-2 text-bold">Number Of Instances If Payment On Due Date</td>
-			                        <td class="col-sm-1 right"><span>0</span></td>
+			                        
 			                    </tr>
 			                    <tr>
 			                        <td class="col-sm-2 text-bold">Average Delay Days (Highest)</td>
@@ -1137,11 +1289,86 @@
 			                    </tr>
 			                </table>
 			                <br>
-			                <div>More Detail : <span class="linkADForm"></span> , <span class="linkInternalRTRForm"></span></div>
+			                <div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span> , <span class="linkInternalRTRForm"></span></div>
 				            </div>
 				        </div>
 				    </div>
-				</div>
+				</div> -->
+			<div class="container-fluid">
+		    <div class="row">
+		        <div class="col-sm-12">
+		            <div class="k-grid k-widget">
+		                <table>
+		                    <thead class="k-grid-header">
+		                        <tr>
+		                            <th colspan="5" class="sub-bgcolor k-header ">
+		                                Lead Distributor Payment Track
+		                            </th>
+		                            <th class="table-divider" rowspan="6"></th>
+		                            <th colspan="2" class="sub-bgcolor k-header ">
+		                                X10 Finance Existing Customer Payment Track
+		                            </th>
+		                        </tr>
+		                    </thead>
+		                    <tr>
+		                        <td class="col-sm-2 text-bold">Max Delay Days</td>
+		                        <td class="col-sm-1 datacol text-center"><span data-bind="text:loanApproval.paymentTrack.maxdelaydays"></span></td>
+		                        <td class="table-divider" rowspan="5"></td>
+		                        <td class="col-sm-2 text-bold">Average Transaction Weighted Payment Delay Days</td>
+		                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.averagetransactionpaymentdelay"></span></td>
+		                        <td class="table-divider" rowspan="5"></td>
+		                        <td class="col-sm-3 text-bold">Average Utilization of Existing Limit</td>
+		                        <td class="col-sm-1 text-center" style="min-width: 100px;"><span>0</span></td>	
+		                    </tr>
+		                    <tr>
+		                        <td class="col-sm-2 text-bold">Max Payment Days</td>
+		                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.maxpaymentdays"></span></td>
+		                        <td class="col-sm-2 text-bold">Standard Deviation</td>
+		                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.delaystandarddeviation"></span></td>
+		                        <td class="col-sm-2 text-bold">Max DPD in Closed Loan in Days</td>
+		                        <td class="col-sm-1 text-center"><span>0</span></td>
+		                    </tr>
+		                    <tr>
+		                        <td class="col-sm-2 text-bold">Average Delay Days</td>
+		                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.averagedelaydays"></span></td>
+		                        <td class="col-sm-2 text-bold">Average Transaction Weighted Payment Days</td>
+		                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.averagetransactionpayment"></span></td>
+		                        <td class="col-sm-2 text-bold">Number of Instances of Delay Payment of Princial Repayment</td>
+		                        <td class="col-sm-1 text-center"><span>0</span></td>
+		                    </tr>
+		                    <tr>
+		                        <td class="col-sm-2 text-bold">Standard Deviation</td>
+		                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.standarddeviation"></span></td>
+		                        <td class="col-sm-2 text-bold">Standard Deviation</td>
+		                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.daystandarddeviation"></span></td>
+		                        <td class="col-sm-2 text-bold">Number of Instances of Early Closure of Principal Repayment</td>
+		                        <td class="col-sm-1 text-center"><span>0</span></td>
+		                    </tr>
+		                    <tr>
+		                        <td class="col-sm-2 text-bold">Average Payment Days</td>
+			                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.averagepaymentdays"></span></td>
+			                        <td class="col-sm-2 text-bold">Amount of Business Done in Last 12 Months With Lead Distributor in Lacs</td>
+			                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.amountofbusiness"></span></td>
+			                        <td class="col-sm-2 text-bold">Number of Instances of Payment on Due Date</td>
+			                        <td class="col-sm-1 text-center"><span>0</span></td>
+		                    </tr>
+		                    <tr>
+		                        <td class="col-sm-2 text-bold">Average Delay Days (Highest)</td>
+		                        <td class="col-sm-2 text-center"><span data-bind="text:loanApproval.paymentTrack.highestAverageDelay"></span></td>
+		                        <td class="dummy-td"></td>
+		                        <td class="dummy-td"></td>
+		                        <td class="dummy-td"></td>
+		                        <td class="dummy-td"></td>
+		                        <td class="dummy-td"></td>
+		                        <td class="dummy-td"></td>
+		                    </tr>
+		                </table>
+		            </div>
+	                <br>
+	                <div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span> , <span class="linkInternalRTRForm"></span></div>
+		        </div>
+		    </div>
+		</div>
       </div>
     </div>
   </li>
@@ -1153,85 +1380,92 @@
     <div class="collapsible-body row">
       <div class="col-sm-12">
         <div class="k-grid">
-        		<div class="panel">
-        			<div class="panel-body">
-        				<table class="custom-label table-bordered">
-		                <tr>
-		                    <td class="col-sm-2 text-bold">Business Segment</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.customersegmentclasification"></span></td>
-		                    <td class="table-divider"></td>
-		                    <td class="col-sm-2 text-bold">External Rating</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.externalrating"></span></td>
-		                </tr>
-		                <tr>
-		                    <td class="col-sm-2 text-bold">Business Since</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.datebusinessstarted"></span></td>
-		                    <td class="table-divider"></td>
-		                    <td class="col-sm-2 text-bold">Dependence on suppliers</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.dependeceonsuppliers"></span></td>
-		                </tr>
-		                <tr>
-		                    <td class="col-sm-2 text-bold">Diversification: no. of clients / customers</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.diversificationcustomers"></span></td>
-		                    <td class="table-divider"></td>
-		                    <td class="col-sm-2 text-bold">Mgt - One Man / Board based</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.management"></span></td>
-		                </tr>
-		            </table>
-        			</div>
-        		</div>
+    		<div class="panel">
+    			<div class="panel-body">
+    				<table class="custom-label table-bordered">
+	                <tr>
+	                    <td class="col-sm-2 text-bold">Business Segment</td>
+	                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.customersegmentclasification"></span></td>
+	                    <td class="table-divider"></td>
+	                    <td class="col-sm-2 text-bold">External Rating</td>
+	                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.externalrating"></span></td>
+	                </tr>
+	                <tr>
+	                    <td class="col-sm-2 text-bold">Business Since</td>
+	                    <td class="col-sm-4"><span data-bind="text:loanapproval.businesssince"></span></td>
+	                    <td class="table-divider"></td>
+	                    <td class="col-sm-2 text-bold">Dependence on Suppliers</td>
+	                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.dependeceonsuppliers"></span></td>
+	                </tr>
+	                <tr>
+	                    <td class="col-sm-2 text-bold">Diversification: No. of Clients / Customer</td>
+	                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.diversificationcustomers"></span></td>
+	                    <td class="table-divider"></td>
+	                    <td class="col-sm-2 text-bold">Management - One Man / Board based</td>
+	                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.management"></span></td>
+	                </tr>
+	            </table>
+    			</div>
+    		</div>
 
             <div class="panel">
-							<div class="panel-heading">
-								<h3 class="no-margin">
-									Business Mix
-								</h3>
-							</div>
-							<div class="panel-body">
-								<div class="col-sm-6">
-									<table>
-	                  <thead class="k-grid-header">
-	                      <tr>
-	                          <th colspan="2" class="sub-bgcolor k-header">Customer Business Mix</th>
-	                      </tr>
-	                  </thead>
-	                  <tr>
-	                      <td class="col-sm-2 text-bold">Stock & Sell - in %</td>
-	                      <td class="col-sm-2 right"><span data-bind="text:loanApproval.borrowerDetails.businessMix.stocksell"></span>
-	                      </td>
-	                  </tr>
-	                  <tr>
-	                      <td class="col-sm-2 text-bold">B2B - Govt.- in %</td>
-	                      <td class="col-sm-2 right"><span data-bind="text:loanApproval.borrowerDetails.businessMix.govt"></span></td>
-	                  </tr>
-	                  <tr>
-	                      <td class="col-sm-2 text-bold">B2B - Corporate  - in %</td>
-	                      <td class="col-sm-2 right"><span data-bind="text:loanApproval.borrowerDetails.businessMix.corporate"></span></td>
-	                  </tr>
-	              	</table>
-								</div>
-								<div class="col-sm-6">
-									<table>
-	                  <thead class="k-grid-header">
-	                      <tr>
-	                          <th colspan="2" class="sub-bgcolor k-header">Distributor Business Mix</th>
-	                      </tr>
-	                  </thead>
-	                  <tbody data-bind="foreach: loanApproval.borrowerDetails.businessMix.distributorMix.data">
-	                  	<tr>
-	                  		<td class="col-sm-2 text-bold" data-bind="text: Label"></td>
-	                  		<td class="col-sm-2 right" data-bind="text: Result"></td>
-	                  	</tr>
-	                  </tbody>
-	              	</table>
-								</div>
-	              <div class="col-md-12">
-	              	<br>
-	              	<div>More Detail : <span class="linkADForm"></span></div>
-	              </div>
-							</div>
-						</div>
+				<div class="panel-heading">
+					<h3 class="no-margin">
+						Business Mix
+					</h3>
+				</div>
+				<div class="panel-body">
+					<div class="panel-row">
+						<div class="col-sm-6 no-padding" style="margin-right: 1%">
+							<table>
+								<thead class="k-grid-header">
+									<tr>
+									  <th colspan="2" class="sub-bgcolor k-header">Customer Business Mix</th>
+									</tr>
+								</thead>
+								<tr>
+									<td class="col-sm-2 text-bold">Stock & Sell - in %</td>
+									<td class="col-sm-2 text-center">
+										<span data-bind="text:loanApproval.borrowerDetails.businessMix.stocksell"></span>
+									</td>
+								</tr>
+								<tr>
+									<td class="col-sm-2 text-bold">B2B - Govt.- in %</td>
+									<td class="col-sm-2 text-center">
+										<span data-bind="text:loanApproval.borrowerDetails.businessMix.govt"></span></td>
+								</tr>
+								<tr>
+									<td class="col-sm-2 text-bold">B2B - Corporate  - in %</td>
+									<td class="col-sm-2 text-center">
+										<span data-bind="text:loanApproval.borrowerDetails.businessMix.corporate"></span>
+									</td>
+								</tr>
+		              		</table>
+		              	</div>
 
+		              	<div class="col-sm-6 no-padding">
+		              		<table>
+		                  		<thead class="k-grid-header">
+		                      		<tr>
+		                          		<th colspan="2" class="sub-bgcolor k-header">Distributor Business Mix</th>
+		                      		</tr>
+		                  		</thead>
+		                  		<tbody data-bind="foreach: loanApproval.borrowerDetails.businessMix.distributorMix.data">
+		                  			<tr>
+				                  		<td class="col-sm-2 text-bold" data-bind="text: Label"></td>
+				                  		<td class="col-sm-2 text-center" data-bind="text: Result + '%'"></td>
+		                  			</tr>
+		                  		</tbody>
+		              		</table>
+		              	</div>
+		            </div>
+
+	              	<div class="col-md-12">
+	              		<br>
+	              		<div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span></div>
+	              	</div>
+	            </div>
+	        </div>
         </div>
       </div>
     </div>
@@ -1245,176 +1479,177 @@
       <div class="col-sm-12">
         <div class="k-grid">
             <div class="panel">
-							<div class="panel-heading">
-								<h3 class="no-margin">
-									Ratings
-								</h3>
-							</div>
-							<div class="panel-body">
-								<table class="custom-label table-bordered">
+				<div class="panel-heading">
+					<h3 class="no-margin">
+						Ratings
+					</h3>
+				</div>
+				<div class="panel-body">
+					<table class="custom-label table-bordered">
 		                <tr>
 		                    <td class="col-sm-2 text-bold">Industry & Business Risk</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.IndustryAndBusiness"></span></td>
+		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.IndustryAndBusiness"></span></td>
 		                    <td class="table-divider"></td>
 		                    <td class="col-sm-2 text-bold">Management / Promoters Risk</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.ManagementPromotorsRisk"></span></td>
+		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.ManagementPromotorsRisk"></span></td>
 		                </tr>
 		                <tr>
 		                    <td class="col-sm-2 text-bold">Financial Risk</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.FinancialRisk"></span></td>
+		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.FinancialRisk"></span></td>
 		                    <td class="table-divider"></td>
 		                    <td class="col-sm-2 text-bold">Banking Risk</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.BankingRisk"></span></td>
+		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.BankingRisk"></span></td>
 		                </tr>
 		                <tr>
 		                    <td class="col-sm-2 text-bold">Overall Score</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.OverallScore"></span></td>
+		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.OverallScore"></span></td>
 		                		<td class="table-divider"></td>
 		                		<td class="col-sm-2 text-bold">Internal Rating</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.InternalRating"></span></td>
+		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.InternalRating"></span></td>
 		                </tr>
-		                <tr>
+		       <!--          <tr>
 		                		<td class="col-sm-2 text-bold">External Rating</td>
 		                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.AD.ExternalRating"></span></td>
-		                </tr>
+		                </tr> -->
 		            </table>
 		            <br>
-		            <div>More Detail : <span class="linkADForm"></span> , <span class="linkCreditScoreCard"></span></div>
-							</div>
-						</div>
-						<div class="panel">
-							<div class="panel-heading">
-								<h3 class="no-margin">
-									Commercial CIBIL Assessment
-								</h3>
-							</div>
-							<div class="panel-body">
-	              <table class="custom-label table-bordered">
-	              	<tr>
-                    <td class="col-sm-2 text-bold">Rating</td>
-                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.Cibil.Rating"></span></td>
-                    <td class="table-divider"></td>
-                    <td class="col-sm-2 text-bold" style="border: none;"></td>
-                    <td class="col-sm-4 non-border" style="border: none;"></td>
-	                </tr>
-	              </table>
-	              <br>
-	              <div>More Detail : <span class="linkCibilForm"></span></div>
-							</div>
-						</div>
-						<div class="panel">
-							<div class="panel-heading">
-								<h3 class="no-margin">
-									Background Check
-								</h3>
-							</div>
-							<div class="panel-body">
-								<script type="text/html" id="topcust-product-template">
-								    <!-- ko foreach: loanApproval.companyBackgroundData().mostLength -->
-								        <tr>
-								            <!-- ko if: $index() == 0 -->
-								                <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
-								                    Top Customers Name
-								                </td>
-								                <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
-								                <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
-								                    Products
-								                </td>
-								                <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
-								            <!-- /ko -->
-								            <!-- ko ifnot: $index() == 0 -->
-								                <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
-								                <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
-								            <!-- /ko -->
-								        </tr>
-								    <!-- /ko -->
-								</script>
+		            <div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span> , <span class="linkCreditScoreCard"></span></div>
+		        </div>
+		    </div>
 
-								<div class="container-fluid no-padding">
-								    <div class="row">
-								        <div class="col-sm-12">
-								            <div id="compbackgrid"></div>
-								        </div>
-								    </div>
-								    <br>
-								    <div class="row">
-								        <div class="col-sm-12">
-								            <div class="k-grid">
-								                <table class="table-bordered" style="word-break: break-word" data-bind="template: { name: 'topcust-product-template' }">
-								                </table>
-								            </div>
-								        </div>
-								    </div>
-								    <div class="row">
-								        <div class="col-sm-12">
-								            <div class="k-grid">
-								                <table class="table-bordered">
-								                    <tr>
-								                        <td class="col-sm-2 center text-bold">Expansion Plan</td>
-								                        <td class="col-sm-4" data-bind="text:loanapproval.expansionplan"></td>
-								                        <td class="col-sm-2 center text-bold">Comments On Financial</td>
-								                        <td class="col-sm-4" data-bind="text:loanapproval.commentfinance"></td>
-								                    </tr>
-								                </table>
-								            </div>
-								        </div>
-								    </div>
-								</div>
-								<br>
-								<div>More Detail : <span class="linkADForm"></span></div>
-							</div>
-						</div>
-						<div class="panel">
-							<div class="panel-heading">
-								<h3 class="no-margin">
-									Reference Check
-								</h3>
-							</div>
-							<div class="panel-body">
-	              <div class="container-fluid no-padding">
-								    <div class="row">
-								        <div class="col-sm-12">
-								            <div class="k-grid col-sm-6 no-padding">
-								                <table class="table-bordered">
-								                    <tr>
-								                        <td class="col-sm-4">Market Reference</td>
-								                        <td class="col-sm-8">
-								                            <center><span data-bind="text:loanapproval.marketref"></span></center>
-								                        </td>
-								                    </tr>
-								                </table>
-								            </div>
-								        </div>
-								    </div>
-								    <div class="row">
-								        <div class="col-sm-12">
-								            <div id="referencecheckgrid"></div>
-								        </div>
-								    </div>
-								</div>
-								<br>
-	              <div>More Detail : <span class="linkADForm"></span></div>
-							</div>
-						</div>
-						<div class="panel">
-							<div class="panel-heading">
-								<h3 class="no-margin">
-									Compliance & Verifications
-								</h3>
-							</div>
-							<div class="panel-body">
-								<div class="container-fluid no-padding">
+		    <div class="panel clearfix">
+				<div class="panel-heading">
+					<h3 class="no-margin">
+						Commercial CIBIL Assessment
+					</h3>
+				</div>
+				<div class="panel-body k-grid">
+					<div class="col-sm-6 no-padding">
+		              <table class="custom-label table-bordered">
+		              	<tr>
+		                    <td class="col-sm-2 text-bold">Rating</td>
+		                    <td class="col-sm-4 text-center">
+		                    	<span data-bind="text:loanApproval.ratingRef.Cibil.Rating"></span>
+		                	</td>
+		                </tr>
+		              </table>
+		              <br />
+		              <div>More...&nbsp;&nbsp;&nbsp;<span class="linkCibilForm"></span></div>
+		            </div>
+				</div>
+			</div>
+			
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="no-margin">
+						Background Check
+					</h3>
+				</div>
+				<div class="panel-body">
+					<script type="text/html" id="topcust-product-template">
+					    <!-- ko foreach: loanApproval.companyBackgroundData().mostLength -->
+					        <tr>
+					            <!-- ko if: $index() == 0 -->
+					                <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
+					                    Top Customers Name
+					                </td>
+					                <td class="col-sm-4 text-center" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
+					                <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
+					                    Products
+					                </td>
+					                <td class="col-sm-4 text-center" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
+					            <!-- /ko -->
+					            <!-- ko ifnot: $index() == 0 -->
+					                <td class="col-sm-4 text-center" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
+					                <td class="col-sm-4 text-center" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
+					            <!-- /ko -->
+					        </tr>
+					    <!-- /ko -->
+					</script>
 
-									<div id="gridverification0"></div>
-									&nbsp;
-									<div id="gridDefaulterList0"></div>
+					<div class="container-fluid no-padding">
+					    <div class="row">
+					        <div class="col-sm-12">
+					            <div id="compbackgrid"></div>
+					        </div>
+					    </div>
+					    <br>
+					    <div class="row">
+					        <div class="col-sm-12">
+					            <div class="k-grid">
+					                <table class="table-bordered" style="word-break: break-word" data-bind="template: { name: 'topcust-product-template' }">
+					                </table>
+					            </div>
+					        </div>
+					    </div>
+					    <div class="row">
+					        <div class="col-sm-12">
+					            <div class="k-grid">
+					                <table class="table-bordered">
+					                    <tr>
+					                        <td class="col-sm-2 center text-bold">Expansion Plan</td>
+					                        <td class="col-sm-4" data-bind="text:loanapproval.expansionplan"></td>
+					                        <td class="col-sm-2 center text-bold">Comments on Financial</td>
+					                        <td class="col-sm-4" data-bind="text:loanapproval.commentfinance"></td>
+					                    </tr>
+					                </table>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+					<br>
+					<div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span></div>
+				</div>
+			</div>
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="no-margin">
+						Reference Check
+					</h3>
+				</div>
+				<div class="panel-body">
+				    <div class="row">
+				        <div class="col-sm-12">
+				            <div class="k-grid col-sm-6 no-padding">
+				                <table class="table-bordered">
+				                    <tr>
+				                        <td class="col-sm-4">Market Reference</td>
+				                        <td class="col-sm-8">
+				                            <center><span data-bind="text:loanapproval.marketref"></span></center>
+				                        </td>
+				                    </tr>
+				                </table>
+				            </div>
+				        </div>
+				    </div>
+				    <div class="row">
+				        <div class="col-sm-12">
+				            <div id="referencecheckgrid"></div>
+				        </div>
+				    </div>
+					<br>
+      				<div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span></div>
+				</div>
+			</div>
+			<div class="panel">
+				<div class="panel-heading">
+					<h3 class="no-margin">
+						Compliance & Verifications
+					</h3>
+				</div>
+				<div class="panel-body">
+					<div class="container-fluid no-padding">
 
-								</div>
+						<div id="gridverification0"></div>
+						&nbsp;
+						<div id="gridDefaulterList0"></div>
 
-								<br>
-								<div>More Detail : <span class="linkDueDiligence"></span></div>
-							</div>
-						</div>
+					</div>
+
+					<br>
+					<div>More...&nbsp;&nbsp;&nbsp;<span class="linkDueDiligence"></span></div>
+				</div>
+			</div>
         </div>
       </div>
     </div>
@@ -1431,15 +1666,15 @@
 				        <div class="col-sm-12">
 				            <div class="k-grid">
 				                <div class="container-fluid no-padding">
-												    <div class="row">
-												        <div class="col-sm-12">
-												            <div id="gridKeyParametersandIndicators">
-												            </div>
-												        </div>
-												    </div>
-												</div>
+								    <div class="row">
+								        <div class="col-sm-12">
+								            <div id="gridKeyParametersandIndicators">
+								            </div>
+								        </div>
+								    </div>
+								</div>
 		                    <br>
-		                    <div>More Detail : <span class="linkKeyFinancialReport"></span></div>
+		                    <div>More...&nbsp;&nbsp;&nbsp;<span class="linkKeyFinancialReport"></span></div>
 				            </div>
 				        </div>
 				    </div>
@@ -1483,7 +1718,7 @@
 												    </div>
 												</div>
 		                    <br>
-		                    <div>More Detail : <span class="linkKeyFinancialReport"></span></div>
+		                    <div>More...&nbsp;&nbsp;&nbsp;<span class="linkKeyFinancialReport"></span></div>
 				            </div>
 				        </div>
 				    </div>
@@ -1515,7 +1750,7 @@
 												    </div>
 												</div>
 		                    <br>
-		                    <div>More Detail : <span class="linkKeyFinancialReport"></span></div>
+		                    <div>More...&nbsp;&nbsp;&nbsp;<span class="linkKeyFinancialReport"></span></div>
 				            </div>
 				        </div>
 				    </div>
@@ -1536,7 +1771,7 @@
 				            <div class="k-grid">
 				            		<div id="gridCibilDetails"></div>
 				            		<br>
-				            		<div>More Detail : <span class="linkCibilForm"></span></div>
+				            		<div>More...&nbsp;&nbsp;&nbsp;<span class="linkCibilForm"></span></div>
 				            </div>
 				        </div>
 				    </div>
@@ -1548,7 +1783,7 @@
 				            <div class="k-grid">
 				            		<div id="gridRedFlags"></div>
                 				<br>
-                				<div>More Detail : <span class="linkLoanAprovalReport"></span></div>
+                				<div>More...&nbsp;&nbsp;&nbsp;<span class="linkDueDiligence"></span></div>
 				            </div>
 				        </div>
 				    </div>
@@ -1560,7 +1795,7 @@
 				            <div class="k-grid">
 				            		<div id="gridMainPromotorDetails"></div>
                 				<br>
-                				<div>More Detail : <span class="linkADForm"></span></div>
+                				<div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span></div>
 				            </div>
 				        </div>
 				    </div>
@@ -1572,33 +1807,39 @@
 
 <ul class="collapsible" data-collapsible="accordion" id="bosb">
 	<li>
-    <div class="collapsible-noreplace header-bgcolor active"><i class="fa fa-list"></i>Banking & O/S Snapshot<i class="fa fa-chevron-down pull-right"></i></div>
-    <div class="collapsible-body row">
-      <div class="col-sm-12">
-				<div class="container-fluid">
+		<div class="collapsible-noreplace header-bgcolor active"><i class="fa fa-list"></i>Banking & O/S Snapshot<i class="fa fa-chevron-down pull-right"></i></div>
+		<div class="collapsible-body row">
+      	<div class="col-sm-12">
+			<div class="container-fluid">
 			    <div class="row">
-		        <div class="col-sm-12">
-	            <div class="k-grid k-widget">
-                <div id="gridOutstandingDebt" ></div>
-              	<br>
-              	<div>More Detail : <span class="linkExternalRepaymentTrack"></span></div>
-	            </div>
-		        </div>
+			        <div class="col-sm-12">
+				        <div class="k-grid k-widget">
+				        	<div id="gridOutstandingDebt" ></div>
+				        </div>
+			      		<br />
+			      		<div>More...&nbsp;&nbsp;&nbsp;<span class="linkExternalRepaymentTrack"></span></div>
+			      		<br />
+			        </div>
 			    </div>
+			</div>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="k-grid k-widget">
+							<div id="gridBankingDetails" ></div>
+						</div>
+			      		<br />
+						<div>More...&nbsp;&nbsp;&nbsp;<span class="linkBankingAnalysis"></span></div>
+					</div>
 				</div>
-				<br><br>
-				<div class="container-fluid">
-			    <div class="row">
-						<div class="col-sm-12">
-	            <div class="k-grid k-widget">
-                <div id="gridBankingDetails" ></div>
-                <br>
-                <div>More Detail : <span class="linkBankingAnalysis"></span></div>
-	            </div>
-		        </div>
-		      </div>
-		    </div>
+			</div>
       </div>
     </div>
   </li>
 </ul>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$(".collapsible-header.header-bgcolor.active").trigger("click")
+	})
+</script>

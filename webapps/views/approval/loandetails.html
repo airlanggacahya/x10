@@ -7,7 +7,6 @@
 
 	r.setLD = function(ad){
 		if(ad != null) {
-			console.log(ad)
 			r.LD.Amount(ad.loandetails.requestedlimitamount)
 			r.LD.Tenor(ad.loandetails.limittenor)
 			r.LD.ROI(ad.loandetails.proposedrateinterest + "%")

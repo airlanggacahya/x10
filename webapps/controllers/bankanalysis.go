@@ -408,12 +408,18 @@ func (c *BankAnalysisController) CreateBankAnalysis(k *knot.WebContext) interfac
 
 	for _, val := range res {
 		arr := val.DataBank[0].BankDetails
+		arr2 := val.DataBank[0].CurrentBankDetails
 
 		for idx := range arr {
 			arr[idx].Month = t.BankDetails[idx].Month
 		}
 
+		for idx := range arr2 {
+			arr2[idx].Month = t.BankDetails[idx].Month
+		}
+
 		val.DataBank[0].BankDetails = arr
+		val.DataBank[0].CurrentBankDetails = arr2
 
 		ba := map[string]interface{}{"data": val}
 
@@ -457,14 +463,16 @@ func (c *BankAnalysisController) GetDataBankV2(k *knot.WebContext) interface{} {
 
 	err = fm.GetData()
 	if err != nil {
-		ress.SetError(err)
-		return ress
+		// ress.SetError(err)
+		// return ress
+		return CreateResult(true, nil, err.Error())
+
 	}
 
 	bs, err := fm.CalculateBalanceSheet()
 	if err != nil {
-		ress.SetError(err)
-		return ress
+		// ress.SetError(err)
+		return CreateResult(true, nil, err.Error())
 	}
 
 	ress.SetData(bs)
@@ -477,15 +485,23 @@ func (c *BankAnalysisController) GetDataBankV2(k *knot.WebContext) interface{} {
 		return CreateResult(false, nil, err.Error())
 	}
 
-	csr, err := conn.NewQuery().Select().From("AccountDetails").Where(dbox.And(dbox.Eq("customerid", fm.CustomerId), dbox.Eq("dealno", fm.DealNo))).Cursor(nil)
-	if err != nil {
-		ress.SetError(err)
-		return ress
-	}
+	// csr, err := conn.NewQuery().Select().From("AccountDetails").Where(dbox.And(dbox.Eq("customerid", fm.CustomerId), dbox.Eq("dealno", fm.DealNo))).Cursor(nil)
+	// if err != nil {
+	// 	ress.SetError(err)
+	// 	return ress
+	// }
 
 	accdet := []tk.M{}
-	err = csr.Fetch(&accdet, 0, false)
-	defer csr.Close()
+	// err = csr.Fetch(&accdet, 0, false)
+	// defer csr.Close()
+
+	err = new(DataConfirmController).GetDataConfirmed(fm.CustomerId, fm.DealNo, new(AccountDetail).TableName(), &accdet)
+	if err != nil {
+		// ress.SetError(err)
+		// return ress
+		return CreateResult(true, nil, err.Error())
+
+	}
 
 	result := tk.M{}.Set("Detail", res).Set("Summary", ressum).Set("Ratio", ress).Set("AccountDetail", accdet)
 	return CreateResult(true, result, "")
@@ -581,13 +597,24 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 	defer query.Close()
 	tk.Println(query.Count())
 
-	for _, val := range res {
+	for idx, val := range res {
 		// fmt.Println("-----------", val.IsConfirmed, val.DateConfirmed, "\n")
 		if val.IsConfirmed {
 			val.IsConfirmed = false
+			val.Status = 0
 		} else {
 			val.IsConfirmed = true
 			val.DateConfirmed = time.Now()
+			val.Status = 1
+
+			del := false
+			if idx == 0 {
+				del = true
+			}
+
+			if err := new(DataConfirmController).SaveDataConfirmed(cast.ToString(val.CustomerId), val.DealNo, "BankAnalysisV2", &val, del); err != nil {
+				return err
+			}
 		}
 		// fmt.Println("-----------", val.IsConfirmed, val.DateConfirmed, "\n")
 
@@ -604,6 +631,124 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 	}
 
 	return true
+}
+
+func (c *BankAnalysisController) SetFreeze(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	param := struct {
+		CustomerId int
+		DealNo     string
+	}{}
+
+	err := k.GetPayload(&param)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	res := []BankAnalysisV2{}
+
+	wh := []*dbox.Filter{}
+	wh = append(wh, dbox.Eq("CustomerId", param.CustomerId))
+	wh = append(wh, dbox.Eq("DealNo", param.DealNo))
+
+	query, err := conn.NewQuery().Select().From("BankAnalysisV2").Where(wh...).Cursor(nil)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	err = query.Fetch(&res, 0, false)
+	defer query.Close()
+
+	for _, val := range res {
+		if val.IsFreeze {
+			val.IsFreeze = false
+			val.Status = 0
+		} else {
+			val.IsFreeze = true
+			val.DateFreeze = time.Now()
+			val.Status = 1
+		}
+
+		has := map[string]interface{}{"data": val}
+		oninsert := conn.NewQuery().
+			From("BankAnalysisV2").
+			SetConfig("multiexec", true).
+			Save()
+		err = oninsert.Exec(has)
+
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
+	}
+
+	return true
+
+}
+
+func (c *BankAnalysisController) UnFreeze(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	param := struct {
+		CustomerId int
+		DealNo     string
+	}{}
+
+	err := k.GetPayload(&param)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	res := []BankAnalysisV2{}
+
+	wh := []*dbox.Filter{}
+	wh = append(wh, dbox.Eq("CustomerId", param.CustomerId))
+	wh = append(wh, dbox.Eq("DealNo", param.DealNo))
+
+	query, err := conn.NewQuery().Select().From("BankAnalysisV2").Where(wh...).Cursor(nil)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	err = query.Fetch(&res, 0, false)
+	defer query.Close()
+
+	for _, val := range res {
+		if val.IsFreeze {
+			val.IsFreeze = false
+			val.Status = 1
+		} else {
+			val.IsFreeze = true
+			val.DateFreeze = time.Now()
+			val.Status = 1
+		}
+
+		has := map[string]interface{}{"data": val}
+		oninsert := conn.NewQuery().
+			From("BankAnalysisV2").
+			SetConfig("multiexec", true).
+			Save()
+		err = oninsert.Exec(has)
+
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
+	}
+
+	return true
+
 }
 
 func (c *BankAnalysisController) GetDateTemplate(k *knot.WebContext) interface{} {

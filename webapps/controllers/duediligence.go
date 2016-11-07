@@ -219,6 +219,13 @@ func (c *DueDiligenceController) DueDiligenceFormSaveInput(k *knot.WebContext) i
 		return res
 	}
 
+	if payload.Status == 1 {
+		if err := new(DataConfirmController).SaveDataConfirmed(payload.CustomerId, payload.DealNo, payload.TableName(), payload, true); err != nil {
+			res.SetError(err)
+			return res
+		}
+	}
+
 	return res
 }
 

@@ -15,6 +15,8 @@ due.templateForm = {
 	Status: 0,
 	Freeze: false,
 	LastConfirmed : (new Date()).toISOString(),
+	DateFreeze: (new Date()).toISOString(),
+	DateSave: (new Date()).toISOString(),
 };
 due.formVisible = ko.observable(false);
 due.form = ko.mapping.fromJS(due.templateForm);
@@ -29,7 +31,7 @@ due.getForm = function(){
 	if(due.form.Status == "" || due.form.Status() != 1){
 		due.form.Status(0)
 	}
-	
+
 	// if(due.form.Status() == ""){
 	// 	due.form.Status(0)
 	// }
@@ -87,34 +89,34 @@ due.LoadGrid = function(){
 			{
 				field: "Source",
 				title: "Source",
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 60,
 			},
 			{
 				field: "Applicable",
 				title: "Applicable",
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 25,
 				editor: due.LoadApplicable,
 			},
 			{
 				field: "BankName",
 				title: "Bank Name",
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 100,
 				// editor: due.LoadMitigantInput,
 			},
 			{
 				field: "Amount",
 				title: "Amount (in CR)",
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 30,
 				editor: due.amountInput,
 			},
 			{
 				field: "Status",
 				title: "Current Status",
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 30,
 				editor: due.loadCurrentStatus,
 			},
@@ -160,14 +162,14 @@ due.LoadGrid = function(){
 			{
 				field: "Result",
 				title: "Result",
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 35,
 				editor: due.LoadResultDropDown,
 			},
 			{
 				field: "Mitigants",
 				title: "Mitigants in Case of Negative Result",
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 200,
 				editor: due.LoadMitigantInput,
 			},
@@ -210,7 +212,7 @@ due.LoadGrid = function(){
 			{
 				field: "Name",
 				title: "Name",
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 50,
 				editor: due.LoadNameDropDown,
 				template: function(d){
@@ -239,12 +241,12 @@ due.LoadGrid = function(){
 			{
 				field: "RedFlags",
 				title: "Red Flags",
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 100,
 				// editor: due.LoadMitigantInput,
 			},
 			{
-				headerAttributes: { "class": "sub-bgcolor" }, 
+				headerAttributes: { "class": "sub-bgcolor" },
 				width: 20,
 				template: function(d){
 					return '<center><button class="btn btn-flat btn-sm btn-danger noable" onclick="due.removeRowBackground(\''+d.uid+'\')"><i class="fa fa-trash"></i></button></center>'
@@ -345,7 +347,7 @@ due.LoadResultDropDown = function(container, options){
 			dataTextField: 'text',
 			dataValueField: 'value',
 			dataSource: [{'text': 'Positive', 'value': 'Positive'},{'text': 'Moderate', 'value': 'Moderate'}, {'text': 'Negative', 'value': 'Negative'}],
-			optionLabel: 'Select one',
+			optionLabel: 'Select One',
 		});
 }
 
@@ -356,7 +358,7 @@ due.loadCurrentStatus = function(container, options){
 			dataTextField: 'text',
 			dataValueField: 'value',
 			dataSource: [{'text': 'CLEAR', 'value': 'CLEAR'},{'text': 'NOT CLEAR', 'value': 'NOT CLEAR'}],
-			optionLabel: 'Select one',
+			optionLabel: 'Select One',
 		});
 }
 
@@ -367,7 +369,7 @@ due.LoadApplicable = function(container, options){
 			dataTextField: 'text',
 			dataValueField: 'value',
 			dataSource: [{'text': 'Yes', 'value': 'Yes'},{'text': 'No', 'value': 'No'}],
-			optionLabel: 'Select one',
+			optionLabel: 'Select One',
 		});
 }
 
@@ -419,7 +421,7 @@ due.LoadNameDropDown = function(container, options){
 			dataTextField: 'text',
 			dataValueField: 'value',
 			dataSource: due.Name(),
-			optionLabel: 'Select one',
+			optionLabel: 'Select One',
 			// select: function(d){
 			// 	var dataItem = this.dataItem(d.item);
    //              $.each(due.dataCustomer(), function(i, item){
@@ -481,7 +483,9 @@ due.saveAll = function(){
 	ajaxPost("/duediligence/duediligenceformsaveinput", param, function(res){
 		due.isLoading(false)
 		// console.log(res)
-		swal("Success", "Data saved", "success");
+		$('.form-last-confirmation-info').show()
+		$('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(due.form.LastConfirmed()),"dd-MM-yyyy h:mm:ss tt") );
+		swal("Successfully Saved", "", "success");
 	}, function(){
 		due.isLoading(false);
 	});
@@ -522,11 +526,19 @@ due.getData = function(){
 			due.form.Verification(data.Verification)
 			due.dataTemp(data)
 			due.LoadGrid();
-			if(data.Status == 1){
-				$('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(data.LastConfirmed),"dd-MM-yyyy h:mm:ss tt") );
+			if(data.Status == 1 && data.Freeze == false){
+				$('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(data.LastConfirmed),"dd-MM-yyyy h:mm:ss tt") );
 				due.enableConfirm(false);
+				$("#onreset").prop("disabled", true)
+				$("#onsave").prop("disabled", true)
+			}else if(data.Status == 1 && data.Freeze == true){
+				$('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(data.DateFreeze),"dd-MM-yyyy h:mm:ss tt") );
+				due.enableConfirm(false)
+			}else{
+				$('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(data.DateSave),"dd-MM-yyyy h:mm:ss tt") );
 			}
 		}else{
+			due.EnableAllfields(true)
 			ajaxPost("/duediligence/getverificationcheck", {}, function(res){
 			   console.log(res)
 			   	$.each(res.Data, function(w, data){
@@ -565,15 +577,16 @@ due.getData = function(){
 
 due.getReset = function(){
 	// alert("reset")
-	due.form.Background(due.dataTemp().Background)
-	due.form.CustomerId(due.dataTemp().CustomerId)
-	due.form.DealNo(due.dataTemp().DealNo)
-	due.form.Defaulter(due.dataTemp().Defaulter)
-	// due.form.Freeze(due.dataTemp().Freeze)
-	due.form.Id(due.dataTemp().Id)
-	// due.form.Status(due.dataTemp().Status)
-	due.form.Verification(due.dataTemp().Verification)
-	due.LoadGrid();
+	due.getData()
+	// due.form.Background(due.dataTemp().Background)
+	// due.form.CustomerId(due.dataTemp().CustomerId)
+	// due.form.DealNo(due.dataTemp().DealNo)
+	// due.form.Defaulter(due.dataTemp().Defaulter)
+	// // due.form.Freeze(due.dataTemp().Freeze)
+	// due.form.Id(due.dataTemp().Id)
+	// // due.form.Status(due.dataTemp().Status)
+	// due.form.Verification(due.dataTemp().Verification)
+	// due.LoadGrid();
 }
 
 // due.setConfirm = function(){
@@ -623,9 +636,11 @@ due.setConfirm = function(){
 		due.enableConfirm(false);
 
 		// console.log(res)
-		swal("Success", "Data Confirmed", "success");
+		swal("Successfully Confirmed", "", "success");
+		$("#onreset").prop("disabled", true)
+		$("#onsave").prop("disabled", true)
 		$('.form-last-confirmation-info').show()
-		$('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(due.form.LastConfirmed()),"dd-MM-yyyy h:mm:ss tt") );
+		$('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(due.form.LastConfirmed()),"dd-MM-yyyy h:mm:ss tt") );
 	}, function(){
 		due.isLoading(false);
 	});
@@ -640,7 +655,9 @@ due.setReEnter = function(){
 	ajaxPost("/duediligence/duediligenceformsaveinput", param, function(res){
 		due.isLoading(false);
 		// $('.form-last-confirmation-info').hide()
-		$('.form-last-confirmation-info').hide();
+		swal("Please Edit / Enter Data", "", "success");
+		$("#onreset").prop("disabled", false)
+		$("#onsave").prop("disabled", false)
 		due.enableConfirm(true);
 	}, function(){
 		due.isLoading(false);
@@ -650,7 +667,7 @@ due.setReEnter = function(){
 due.setFreeze = function(){
 	// due.isLoading(true)
 	// due.form.Status(1);
-	
+	due.form.DateFreeze((new Date()).toISOString())
 	due.getForm();
 	due.form.Freeze(true);
 	var param = ko.mapping.toJS(due.form)
@@ -658,7 +675,9 @@ due.setFreeze = function(){
 		due.LoadGrid();
 		due.isLoading(false)
 		// due.EnableAllfields(true);
-		swal("Success", "Form Freeze", "success");
+		swal("Successfully Freezed", "", "success");
+		$('.form-last-confirmation-info').show()
+		$('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(due.form.LastConfirmed()),"dd-MM-yyyy h:mm:ss tt") );
 		due.EnableAllfields(false)
 	}, function(){
 		due.isLoading(false);
@@ -667,7 +686,7 @@ due.setFreeze = function(){
 due.setUnFreeze = function(){
 	// due.isLoading(true)
 	// due.form.Status(1);
-	
+
 	due.getForm();
 	due.form.Freeze(false);
 	var param = ko.mapping.toJS(due.form)
@@ -689,7 +708,7 @@ due.EnableAllfields = function(what){
 	$(".ontop").prop( "disabled", !what );
 
 	$("#AD-Container .btn").prop( "disabled", !what );
-	
+
 	if(due.form.Status()==1)
 	$("#AD-Container .btn").prop( "disabled", true );
 
@@ -727,18 +746,18 @@ due.dateNow = function(){
 
 	if(dd<10) {
 	    dd='0'+dd
-	} 
+	}
 
 	if(mm<10) {
 	    mm='0'+mm
-	} 
+	}
 
 	today = mm+'/'+dd+'/'+yyyy;
 	return today;
 }
 
 $(function(){
-	
+
 	due.LoadGrid();
 	due.getData();
 	due.initEvents();

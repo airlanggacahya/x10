@@ -7,6 +7,7 @@ import (
 	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"strings"
 	"time"
 )
 
@@ -304,8 +305,29 @@ func (c *RatioController) RemoveMasterBalanceSheetInput(k *knot.WebContext) inte
 	return res
 }
 
-func (c *RatioController) FetchRatioInputDataByCustomerID(customerID string) (*RatioInputData, error) {
+func (c *RatioController) FetchRatioInputDataByCustomerIDNotConfirmed(customerID string) (*RatioInputData, error) {
 	query := toolkit.M{"where": dbox.Eq("customerid", customerID)}
+	csr, err := c.Ctx.Find(new(RatioInputData), query)
+	defer csr.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]RatioInputData, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return nil, err
+	}
+
+	if (len(results)) == 0 {
+		return nil, errors.New("data not found")
+	}
+
+	return &results[0], nil
+}
+
+func (c *RatioController) FetchRatioInputDataByCustomerID(customerID string) (*RatioInputData, error) {
+	query := toolkit.M{"where": dbox.And(dbox.Eq("customerid", customerID), dbox.Eq("confirmed", true))}
 	csr, err := c.Ctx.Find(new(RatioInputData), query)
 	defer csr.Close()
 	if err != nil {
@@ -336,13 +358,13 @@ func (c *RatioController) Freeze(k *knot.WebContext) interface{} {
 		return res
 	}
 
-	rowData, err := c.FetchRatioInputDataByCustomerID(payload.CustomerID)
+	rowData, err := c.FetchRatioInputDataByCustomerIDNotConfirmed(payload.CustomerID)
 	if err != nil {
 		res.SetError(err)
 		return res
 	}
 
-	rowData.Frozen = payload.Frozen
+	rowData.IsFrozen = payload.IsFrozen
 
 	if err := c.Ctx.Save(rowData); err != nil {
 		res.SetError(err)
@@ -364,7 +386,7 @@ func (c *RatioController) Confirm(k *knot.WebContext) interface{} {
 		return res
 	}
 
-	rowData, err := c.FetchRatioInputDataByCustomerID(payload.CustomerID)
+	rowData, err := c.FetchRatioInputDataByCustomerIDNotConfirmed(payload.CustomerID)
 	if err != nil {
 		res.SetError(err)
 		return res
@@ -375,9 +397,39 @@ func (c *RatioController) Confirm(k *knot.WebContext) interface{} {
 	rowData.ConfirmedFormData = rowData.FormData
 
 	rowData.Confirmed = payload.Confirmed
+	rowData.Frozen = payload.Frozen
 	rowData.LastConfirm = time.Now()
 
 	if err := c.Ctx.Save(rowData); err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	if payload.Confirmed {
+		cust := strings.Split(rowData.CustomerID, "|")[0]
+		deal := strings.Split(rowData.CustomerID, "|")[1]
+		if err := new(DataConfirmController).SaveDataConfirmed(cust, deal, rowData.TableName(), rowData, true); err != nil {
+			return err
+		}
+	}
+
+	res.SetData(rowData)
+	return res
+}
+
+func (c *RatioController) GetRatioInputDataALL(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	res := new(toolkit.Result)
+
+	payload := NewRatioInputData()
+	if err := k.GetPayload(&payload); err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	rowData, err := c.FetchRatioInputDataByCustomerIDNotConfirmed(payload.CustomerID)
+	if err != nil {
 		res.SetError(err)
 		return res
 	}

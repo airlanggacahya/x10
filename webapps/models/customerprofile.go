@@ -102,6 +102,8 @@ type CustomerProfiles struct {
 	ConfirmedDate                      time.Time `bson:"ConfirmedDate"`
 	Status                             int       `bson:"Status"`
 	StatusCibil                        int       `bson:"StatusCibil"`
+	DateSave                           string    `bson: "DateSave,omitempty"`
+	DateFreeze                         string    `bson: "DateFreeze,omitempty"`
 }
 
 type RegisteredAddress struct {

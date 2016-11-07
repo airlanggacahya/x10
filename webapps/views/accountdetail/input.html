@@ -83,36 +83,61 @@ mincibil = ko.observable(0);
 	#tipster{
 		cursor: pointer;
 	}
+
+	.fixed{
+		position: fixed;
+	    z-index: 100;
+	    width: 100%;
+	    margin-top: -23px;
+	    margin-left: -36px;
+	    background-color: #f0f3f4;
+	}
+
+	.static{
+		position: static;
+	}
+	input[disabled]{
+	   cursor: default !important;
+	}
+
+	.btnFixed{
+		margin-top: -15px;
+    	margin-bottom: -11px;
+	}
 </style>
 
 {{template "filter.html"}}
 
-<div data-bind="with: adf">
+<div style="display: none" data-bind="with: adf, visible: adf.formVisibility">
 	<div class="col-md-12 col-sm-12 ez panel-content">
 		<div class="panel ez">
 			<!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
 			<div class="panel-body">
 				<!-- <div class="form-last-confirmation-info"></div> -->
-				<div class="controls" style="text-align: left;">
-					<button id="onsave"  data-bind="visible: (adf.formVisibility() == true)" class="btn btn-sm btn-save separator ontop" onclick="adf.save()" style="margin-right: inherit;">
-						Save all
-					</button>
-					<button id="onreset" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-reset separator" style="margin-right: inherit;" onclick="adf.getReset()">
-						Reset
-					</button>
-					<button id="onconfirm"
-					data-bind="visible: (adf.formVisibility() == true), css: (adf.optionChangeConfirm().toLowerCase() == ' re enter' ? 'btn-reenter' : 'btn-confirm')" class="btn btn-sm separator ontop" style="margin-right: inherit;" onclick="adf.getConfirm()">
-						<span data-bind="text: adf.optionChangeConfirm">Confirm All
-					</button>
-					<button data-bind="visible: (adf.formVisibility() == true && adf.form.Freeze()  != true )" class="btn btn-sm btn-freeze separator" style="margin-right: inherit;" onclick="adf.getVerify()">
-						Freeze
-					</button>
-					<button data-bind="visible: (adf.formVisibility() == true && adf.form.Freeze()  == true)" class="btn btn-sm btn-unfreeze separator" style="margin-right: inherit;" onclick="adf.getUnfreeze()">
-						Unfreeze
-					</button>
-					<span class="form-last-confirmation-info pull-right"></span>
+				<div class="col-md-12">
+					<div class="panel-body btnFixed">
+						<div class="controls" style="text-align: left;">
+							<button id="onsave"  data-bind="visible: (adf.formVisibility() == true)" class="btn btn-sm btn-save separator ontop" onclick="adf.save()" style="margin-right: inherit;">
+								Save
+							</button>
+							<button id="onreset" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-reset separator" style="margin-right: inherit;" onclick="adf.getReset()">
+								Reset
+							</button>
+							<button id="onconfirm"
+							data-bind="visible: (adf.formVisibility() == true), css: (adf.optionChangeConfirm().toLowerCase() == ' re enter' ? 'btn-reenter' : 'btn-confirm')" class="btn btn-sm separator ontop" style="margin-right: inherit;" onclick="adf.getConfirm()">
+								<span data-bind="text: adf.optionChangeConfirm">Confirm
+							</button>
+							<button data-bind="visible: (adf.formVisibility() == true && adf.form.Freeze()  != true )" class="btn btn-sm btn-freeze onfreeze separator" style="margin-right: inherit;" onclick="adf.getVerify()">
+								Freeze
+							</button>
+							<button data-bind="visible: (adf.formVisibility() == true && adf.form.Freeze()  == true)" class="btn btn-sm btn-unfreeze onfreeze separator" style="margin-right: inherit;" onclick="adf.getUnfreeze()">
+								Unfreeze
+							</button>
+							<span class="form-last-confirmation-info pull-right"></span>
+						</div>
+					</div>
 				</div>
-
+				<div class="clearfix"></div>
 				<div class="form-container" style="padding-top: 10px;">
 
 
@@ -125,7 +150,7 @@ mincibil = ko.observable(0);
 	    		<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Account Set-Up Details<i class="fa fa-chevron-down pull-right"></i></div>
 	    		<div id="companyCibil" class="collapsible-body">
 	    			<div class="panel " id="header-detail">
-			  			<div class="panel-heading">
+			  			<!-- <div class="panel-heading">
 
 					        <div class="panel-body">
 								<div class="pull-left">
@@ -140,7 +165,7 @@ mincibil = ko.observable(0);
 									</button>
 				            	</div>
 							</div>
-					    </div>
+					    </div> -->
 						<div class="panel-body"  data-bind="with: AccountSetupDetails">
 							 <div class="col-sm-6">
 				            	<div class="form-group" id="city">
@@ -212,7 +237,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Lead Distributor</label>
 					            	<div class="col-sm-8">
-					            		<input id="acct" data-bind="kendoDropDownList: { data: adf.optionLeadDistributors, value: LeadDistributor, optionLabel: 'Please Select' }" type="text" class="acct input-sm form-control" style="width: 100%;">
+					            		<input id="acct" data-bind="kendoDropDownList: { data: adf.optionLeadDistributors, value: LeadDistributor, optionLabel: 'Select One' }" type="text" class="acct input-sm form-control" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -222,7 +247,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Product</label>
 					            	<div class="col-sm-8">
-					            		<input data-bind="kendoDropDownList: { data: adf.optionProducts, value: Product, optionLabel: 'Please Select' }" type="text" class="acct input-sm form-control" style="width: 100%;">
+					            		<input data-bind="kendoDropDownList: { data: adf.optionProducts, value: Product, optionLabel: 'Select One' }" type="text" class="acct input-sm form-control" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -231,7 +256,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Scheme</label>
 					            	<div class="col-sm-8">
-					            		<input data-bind="kendoDropDownList: { data: adf.optionSchemeList, value: Scheme, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Please Select' }" type="text" class="acct input-sm form-control" style="width: 100%;">
+					            		<input data-bind="kendoDropDownList: { data: adf.optionSchemeList, value: Scheme, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Select One' }" type="text" class="acct input-sm form-control" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -244,7 +269,7 @@ mincibil = ko.observable(0);
 			<li id="c-2">
 	    		<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Borrower Details<i class="fa fa-chevron-down pull-right"></i></div>
 	    		<div id="companyCibil" class="collapsible-body">
-	    			<div class="panel-body">
+	    			<!-- <div class="panel-body">
 						<div class="pull-left">
 			            	<button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('borrower')" style="margin-right: inherit;">
 								Save
@@ -256,7 +281,7 @@ mincibil = ko.observable(0);
 								Confirm
 							</button>
 		            	</div>
-					</div>
+					</div> -->
 
 					<div class="panel">
 						<div class="panel-heading">
@@ -269,17 +294,17 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Business Segment</label>
 					            	<div class="col-sm-8">
-					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionRatingMastersCustomerSegment, value: CustomerSegmentClasification, optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;">
+					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionRatingMastersCustomerSegment, value: CustomerSegmentClasification, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
 				            </div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">Diversification: No. of clients / customers</label>
+					            	<label class="form-label col-sm-4">Diversification: No. of Clients / Customers</label>
 					            	<div class="col-sm-8">
 				    					<input class="borr" data-bind="kendoNumericTextBox: { value: DiversificationCustomers, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
-					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionDiversificationCustomers, value: DiversificationCustomers, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
+					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionDiversificationCustomers, value: DiversificationCustomers, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -290,7 +315,7 @@ mincibil = ko.observable(0);
 					            	<label class="form-label col-sm-4">Dependence on Suppliers</label>
 					            	<div class="col-sm-8">
 				    							<input class="borr" data-bind="kendoNumericTextBox: { value: DependenceOnSuppliers, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
-					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionDependenceOnSuppliers, value: DependenceOnSuppliers, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
+					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionDependenceOnSuppliers, value: DependenceOnSuppliers, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -300,7 +325,7 @@ mincibil = ko.observable(0);
 					            	<label class="form-label col-sm-4">Business Vintage</label>
 					            	<div class="col-sm-8">
 				    							<input class="borr" data-bind="kendoNumericTextBox: { value: BusinessVintage, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
-					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionBusinessVintages, value: BusinessVintage, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
+					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionBusinessVintages, value: BusinessVintage, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -310,7 +335,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">External Rating</label>
 					            	<div class="col-sm-8">
-					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionExternalRatings, value: ExternalRating, dataTextField:'text', dataValueField: 'value', optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;">
+					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionExternalRatings, value: ExternalRating, dataTextField:'text', dataValueField: 'value', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -319,7 +344,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Borrower Constitution</label>
 					            	<div class="col-sm-8">
-					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionBorrowerConstitutionList, value: BorrowerConstitution, optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;">
+					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionBorrowerConstitutionList, value: BorrowerConstitution, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -329,7 +354,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Management</label>
 					            	<div class="col-sm-8">
-					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionManagements, value: Management,  optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;">
+					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionManagements, value: Management,  optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -441,7 +466,7 @@ mincibil = ko.observable(0);
 					            	<label class="form-label col-sm-4">Market Reference</label>
 
 					            	<div class="col-sm-8">
-					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionMarketReferences, value: MarketReference, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;">
+					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionMarketReferences, value: MarketReference, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 					            	</div>
 
 				            	</div>
@@ -460,7 +485,7 @@ mincibil = ko.observable(0);
 								<div class="form-group">
 									<label class="col-sm-4 form-label align-right">Market Reference </label>
 									<div class="col-sm-4">
-										<input class="borr" data-bind="kendoDropDownList: { data: adf.optionMarketReferences, value: MarketReference, optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;">
+										<input class="borr" data-bind="kendoDropDownList: { data: adf.optionMarketReferences, value: MarketReference, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 									</div>
 									<div class="clearfix"></div>
 								</div>
@@ -493,19 +518,19 @@ mincibil = ko.observable(0);
 	    			<div class="panel " id="header-detail">
 			  			<div class="panel-heading">
 					      <div class="panel-body">
-									<div class=" pull-left">
-			            	<button id="addpromotor" class="btn btn-sm btn-add" onclick="adf.addMorePromotor(this)">
-			            		Add Main Promoter
-			            	</button>
-			            	<button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('promotor')" style="margin-right: inherit;">
+								<div class=" pull-left">
+				            	<button id="addpromotor" class="btn btn-sm btn-add" onclick="adf.addMorePromotor(this)">
+				            		Add Main Promoter
+				            	</button>
+				            	<!-- <button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('promotor')" style="margin-right: inherit;">
 										Save
-										</button>
-										<button id="onreset3" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-reset separator" style="margin-right: inherit;" onclick="adf.setPromoterReset()">
-											Reset
-										</button>
-										<button id="onconfirm" data-bind="visible: (adf.formVisibility() == true ), text: adf.optionSectionPromoterConfirm, css: (adf.optionSectionPromoterConfirm().toLowerCase() == ' re enter' ? 'btn-reenter' : 'btn-confirm')" class="btn btn-sm separator" style="margin-right: inherit;" onclick="adf.getPromoterConfirm()">
-											Confirm
-										</button>
+								</button>
+								<button id="onreset3" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-reset separator" style="margin-right: inherit;" onclick="adf.setPromoterReset()">
+									Reset
+								</button>
+								<button id="onconfirm" data-bind="visible: (adf.formVisibility() == true ), text: adf.optionSectionPromoterConfirm, css: (adf.optionSectionPromoterConfirm().toLowerCase() == ' re enter' ? 'btn-reenter' : 'btn-confirm')" class="btn btn-sm separator" style="margin-right: inherit;" onclick="adf.getPromoterConfirm()">
+									Confirm
+								</button> -->
 					        </div>
 								</div>
 						  </div>
@@ -520,7 +545,7 @@ mincibil = ko.observable(0);
 			            		<label class="form-label">Experience in Same Line of Business (Yrs)</label>
 			            	</div>
 			            	<div class="form-group">
-			            		<label class="form-label">Educational Qualification of main Promoter</label>
+			            		<label class="form-label">Educational Qualification of Main Promoter</label>
 			            	</div>
 			            	<div class="form-group">
 			            		<label class="form-label">Residence Ownership Status</label>
@@ -539,10 +564,10 @@ mincibil = ko.observable(0);
 			            	<div class="wrapper" data-bind="foreach: PromotorDetails">
 			            		<div class="vendor-col-column">
 				        			<div class="form-group" data-bind="visible: ($index() == 0)">
-				        				<input class="promoter" data-bind="kendoDropDownList: { data: adf.optionPromotors, value: PromoterName, dataValueField: 'Name', dataTextField: 'Name', optionLabel: 'Please Select', change: adf.changePromotorName($data) },attr:{'id':'promotor'+$index()}" type="text" class="input-sm form-control" style="width: 100%;">
+				        				<input class="promoter" data-bind="kendoDropDownList: { data: adf.optionPromotors, value: PromoterName, dataValueField: 'Name', dataTextField: 'Name', optionLabel: 'Select One', change: adf.changePromotorName($data) },attr:{'id':'promotor'+$index()}" type="text" class="input-sm form-control" style="width: 100%;">
 				        			</div>
 				        			<div class="form-group" data-bind="visible: ($index() > 0)">
-				        				<input class="promoter" data-bind="kendoDropDownList: { data: adf.optionPromotors, value: PromoterName, dataValueField: 'Name', dataTextField: 'Name', optionLabel: 'Please Select', change: adf.changePromotorName($data) }, attr:{'id':'promotor'+$index()}" type="text" class="input-sm form-control" style="width: 152px;">
+				        				<input class="promoter" data-bind="kendoDropDownList: { data: adf.optionPromotors, value: PromoterName, dataValueField: 'Name', dataTextField: 'Name', optionLabel: 'Select One', change: adf.changePromotorName($data) }, attr:{'id':'promotor'+$index()}" type="text" class="input-sm form-control" style="width: 152px;">
 					            		<button class="btn btn-sm btn-danger promoter noable" style="float: right;" data-bind="click: adf.removePromotor($data)">
 					            			<i class="fa fa-trash"></i>
 					            		</button>
@@ -553,18 +578,18 @@ mincibil = ko.observable(0);
 				        				<input class="promoter" data-bind="kendoNumericTextBox: { value: ExperienceInSameLineOfBusiness, format: 'n0', spinners:false }" type="text" style="width: 100%;">
 				        			</div>
 				        			<div class="form-group">
-				        				<span class="tooltipster" data-bind="attr:{'id':'edu'+$index()}" title="Educational"><input class="promoter tooltipster" data-bind="kendoDropDownList: { data: adf.optionEducationalQualificationOfMainPromoters, value: EducationalQualificationOfMainPromoter, optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;"></span>
+				        				<span class="tooltipster" data-bind="attr:{'id':'edu'+$index()}" title="Educational"><input class="promoter tooltipster" data-bind="kendoDropDownList: { data: adf.optionEducationalQualificationOfMainPromoters, value: EducationalQualificationOfMainPromoter, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"></span>
 
 				        			</div>
 				        			<div class="form-group">
-				        				<input class="promoter" data-bind="kendoDropDownList: { data: adf.optionResiOwnershipStatus, value: ResiOwnershipStatus, optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;">
+				        				<input class="promoter" data-bind="kendoDropDownList: { data: adf.optionResiOwnershipStatus, value: ResiOwnershipStatus, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 				        			</div>
 				        			<div class="form-group">
-			            				<input class="promoter" data-bind="kendoDropDownList: { data: adf.optionOfficeOwnershipStatus, value: OfficeOwnershipStatus, optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;">
+			            				<input class="promoter" data-bind="kendoDropDownList: { data: adf.optionOfficeOwnershipStatus, value: OfficeOwnershipStatus, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 				        			</div>
 				        			<div class="form-group">
 				        				<!-- <input class="promoter" data-bind="kendoNumericTextBox: { value: CibilScore, format: 'n0', enabled: false, spinners:false,change:function(e){ changecibilscore(this, $index()) } }" type="text" style="width: 100%;"> -->
-				        				<input class="promoter" data-bind="kendoNumericTextBox: { value: CibilScore, format: 'n0', enabled: false, spinners:false }" type="text" style="width: 100%;">
+				        				<input class="promoter cibilscored" disabled="disabled" data-bind="attr:{id: 'cibil'+$index()}, kendoNumericTextBox: { value: CibilScore, format: 'n0', enabled: false, spinners:false }" type="text" style="width: 100%;">
 				        			</div>
 				        			<div class="form-group">
 					            		<input class="promoter" data-bind="kendoNumericTextBox: { value: adf.sumRealEstate($data), format: 'n0', enabled: false, spinners:false }" type="text" style="width: 100%; margin-right: 8px;">
@@ -601,7 +626,7 @@ mincibil = ko.observable(0);
 		        			<div class="relative" style="padding-bottom: -12px !important">
 				        		<div class="vendor-col-header1">
 				        			<div class="form-group">
-				            			<label class="input-label">Minimal CIBIL Score</label>
+				            			<label class="input-label">Minimum CIBIL Score</label>
 					            	</div>
 					            </div>
 					            <div class="vendor-col-content">
@@ -614,7 +639,7 @@ mincibil = ko.observable(0);
 					            	</div>
 					            </div>
 		        			</div>
-		        		
+
 		        		</div>
 							</div>
 
@@ -644,14 +669,14 @@ mincibil = ko.observable(0);
 											<div class="col-md-2">
 												<input class="input-sm form-control noable" disabled />
 											</div>
-											
+
 										</div>
 									</div>
 								</div> -->
 								<div class="relative" style="margin-left: -12px;">
 					            	<div class="vendor-col-header">
 					            		<div class="form-group">
-						            		<label class="form-label">Average Delay Days(Avg)</label>
+						            		<label class="form-label">Average Delay Days(Averaged)</label>
 						            	</div>
 						            	<div class="form-group">
 						            		<label class="form-label">Average Delays Days (Highest)</label>
@@ -671,10 +696,10 @@ mincibil = ko.observable(0);
 			  				</div>
 					        <div class="panel-body" style="margin-left: -5px;">
 								<div class="pull-left">
-					            	<button id="addvendor" class="btn btn-sm btn-add" onclick="adf.addMoreVendor(this)">
+					            	<button id="addvendor1" class="btn btn-sm btn-add" onclick="adf.addMoreVendor(this)">
 					            		Add Vendor
 					            	</button>
-					            	<button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('vendor')" style="margin-right: inherit;">
+					            	<!-- <button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('vendor')" style="margin-right: inherit;">
 										Save
 									</button>
 									<button id="onreset4" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-reset separator" style="margin-right: inherit;" onclick="adf.setVendorReset()">
@@ -682,7 +707,7 @@ mincibil = ko.observable(0);
 									</button>
 									<button id="onconfirm" data-bind="visible: (adf.formVisibility() == true ), text:adf.optionSectionVendorConfirm, css: (adf.optionSectionVendorConfirm().toLowerCase() == ' re enter' ? 'btn-reenter' : 'btn-confirm')" class="btn btn-sm separator" style="margin-right: inherit;" onclick="adf.getDistributorConfirm()">
 										Confirm
-									</button>
+									</button> -->
 				            	</div>
 							</div>
 					    </div>
@@ -728,12 +753,12 @@ mincibil = ko.observable(0);
 						        		<div class="vendor-col-column">
 						        			<div class="form-group" data-bind="visible: ($index() == 0)">
 						        				<!-- <input data-bind="value: DistributorName" type="text" class="input-sm form-control" placeholder="Enter value" style="float: left; width: 100%; margin-right: 5px;"> -->
-						        				<input class="vendor" data-bind="kendoDropDownList: { data: adf.optionLeadDistributors, value: DistributorName, optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoDropDownList: { data: adf.optionLeadDistributors, value: DistributorName, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 							            		<div class="clearfix"></div>
 						        			</div>
 						        			<div class="form-group" data-bind="visible: ($index() > 0)">
 						        				<!-- <input data-bind="value: DistributorName" type="text" class="input-sm form-control" placeholder="Enter value" style="float: left; width: 152px; margin-right: 5px;"> -->
-						        				<input class="vendor" data-bind="kendoDropDownList: { data: adf.optionLeadDistributors, value: DistributorName, optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 152px;">
+						        				<input class="vendor" data-bind="kendoDropDownList: { data: adf.optionLeadDistributors, value: DistributorName, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 152px;">
 							            		<button class="btn btn-sm btn-danger" style="float: right;" data-bind="click: adf.removeVendor($data)">
 							            			<i class="fa fa-trash"></i>
 							            		</button>
@@ -781,7 +806,7 @@ mincibil = ko.observable(0);
 	    	<li id="c-5">
 	    		<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Loan Details<i class="fa fa-chevron-down pull-right"></i></div>
 	    		<div id="companyCibil" class="collapsible-body">
-	    			<div class="panel-body">
+	    			<!-- <div class="panel-body">
 						<div class="pull-left">
 			            	<button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('loan')" style="margin-right: inherit;">
 								Save
@@ -793,7 +818,7 @@ mincibil = ko.observable(0);
 								Confirm
 							</button>
 		            	</div>
-					</div>
+					</div> -->
 
 					<div class="panel">
 						<div class="panel-heading">
@@ -870,7 +895,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Type of Security</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoDropDownList: { data: adf.dataTypeSecurity, value: TypeSecurity, optionLabel: 'Please Select' }" type="text" style="width: 100%;">
+					            		<input class="loan" data-bind="kendoDropDownList: { data: adf.dataTypeSecurity, value: TypeSecurity, optionLabel: 'Select One' }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -879,7 +904,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Details of Security</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoDropDownList: { data: adf.dataDetailsSecurity, value: DetailsSecurity, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Please Select' }" type="text" style="width: 100%;">
+					            		<input class="loan" data-bind="kendoDropDownList: { data: adf.dataDetailsSecurity, value: DetailsSecurity, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Select One' }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -897,7 +922,7 @@ mincibil = ko.observable(0);
 			            	<div class="form-group">
 				            	<label class="form-label col-sm-7">If Backed By PO</label>
 				            	<div class="col-sm-5">
-				            		<input class="loan" data-bind="kendoDropDownList: { data: adf.optionYesNo, value: IfBackedByPO, dataValueField: 'value', dataTextField: 'text' }" type="text" style="width: 100%;">
+				            		<input class="loan" data-bind="kendoDropDownList: { data: adf.optionYesNo, value: IfBackedByPO, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Select One' }" type="text" style="width: 100%;">
 				            	</div>
 				            	<div class="clearfix"></div>
 			            	</div>
@@ -913,7 +938,7 @@ mincibil = ko.observable(0);
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-7">Expected Payment from project in 120 days (Rs. Lacs)</label>
+				            	<label class="form-label col-sm-7">Expected Payment from Project in 120 days (Rs. Lacs)</label>
 				            	<div class="col-sm-5">
 				            		<input id="Expected" data-bind="kendoNumericTextBox: { value: ExpectedPayment, format: 'n0', enabled:adf.loadIfBackedByPO , spinners:false }" type="text" style="width: 100%;">
 				            	</div>
@@ -933,7 +958,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">If Existing Customer </label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoDropDownList: { data: adf.optionYesNo, value: IfExistingCustomer, dataValueField: 'value', dataTextField: 'text' }" type="text" style="width: 100%;">
+					            		<input class="loan" data-bind="kendoDropDownList: { data: adf.optionYesNo, value: IfExistingCustomer, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Select One' }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -942,7 +967,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">If Yes, Existing Limit Amount (Rs. Lacs)</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoNumericTextBox: { value: IfYesEistingLimitAmount, format: 'n0', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
+					            		<input id="IfYesEistingLimitAmount" data-bind="kendoNumericTextBox: { value: IfYesEistingLimitAmount, format: 'n0', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -952,7 +977,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Existing ROI %</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoNumericTextBox: { value: ExistingRoi, format: '#.00 \\%', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
+					            		<input id="ExistingRoi" data-bind="kendoNumericTextBox: { value: ExistingRoi, format: '#.00 \\%', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -961,7 +986,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Existing Processing Fee %</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoNumericTextBox: { value: ExistingPf, format: '#.00 \\%',  enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
+					            		<input id="ExistingPf" data-bind="kendoNumericTextBox: { value: ExistingPf, format: '#.00 \\%',  enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -971,7 +996,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">First Agreement Date</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoDatePicker: { value: FirstAgreementDate, format: 'dd-MMM-yyyy', enabled: adf.isExistingCustomer }" class="input-sm form-control" style="width: 100%;">
+					            		<input id="FirstAgreementDate" data-bind="kendoDatePicker: { value: FirstAgreementDate, format: 'dd-MMM-yyyy', enabled: adf.isExistingCustomer }" class="input-sm form-control" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -980,7 +1005,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Recent Agreement Date</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoDatePicker: { value: RecenetAgreementDate, format: 'dd-MMM-yyyy', enabled: adf.isExistingCustomer }" class="input-sm form-control" style="width: 100%;">
+					            		<input id="RecenetAgreementDate" data-bind="kendoDatePicker: { value: RecenetAgreementDate, format: 'dd-MMM-yyyy', enabled: adf.isExistingCustomer }" class="input-sm form-control" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -990,7 +1015,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Vintage with X10 (in months)</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoNumericTextBox: { value: VintageWithX10, format: 'n0', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
+					            		<input id="VintageWithX10" data-bind="kendoNumericTextBox: { value: VintageWithX10, format: 'n0', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -999,7 +1024,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Commercial CIBIL Report</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoDropDownList: { data: adf.optionPositiveNegative, value: CommercialCibilReport, dataValueField: 'value', dataTextField: 'text', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
+					            		<input id="CommercialCibilReport" data-bind="kendoDropDownList: { data: adf.optionPositiveNegative, value: CommercialCibilReport, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Select One', enabled: adf.isExistingCustomer}" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1040,7 +1065,7 @@ mincibil = ko.observable(0);
 	    		<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Customer Business Mix  <i class="fa fa-chevron-down pull-right"></i></div>
 	    		<div id="companyCibil" class="collapsible-body">
 	    			<div class="panel " id="header-detail">
-			  			<div class="panel-heading">
+			  			<!-- <div class="panel-heading">
 
 					        <div class="panel-body">
 								<div class="pull-left">
@@ -1055,7 +1080,7 @@ mincibil = ko.observable(0);
 									</button>
 				            	</div>
 							</div>
-					    </div>
+					    </div> -->
 						<div class="panel-body" data-bind="with: CustomerBussinesMix" id="c-6">
 							<div class="col-sm-6">
 				            	<div class="form-group">
@@ -1098,8 +1123,8 @@ mincibil = ko.observable(0);
 
 					        <div class="panel-body">
 								<div class="pull-left">
-									<button class="btn btn-sm btn-success separator" data-bind="visible: (adf.formVisibility() == true )" style="margin-right: inherit;" onclick="adf.addDistributorMix()">Add Vendor</button>
-					            	<button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('distributor')" style="margin-right: inherit;">
+									<button id="addvendor" class="btn btn-sm btn-success separator" data-bind="visible: (adf.formVisibility() == true )" style="margin-right: inherit;" onclick="adf.addDistributorMix()">Add Vendor</button>
+					            	<!-- <button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('distributor')" style="margin-right: inherit;">
 										Save
 									</button>
 									<button id="onreset8" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-reset separator" style="margin-right: inherit;" onclick="adf.setDistributorMixReset()">
@@ -1107,7 +1132,7 @@ mincibil = ko.observable(0);
 									</button>
 									<button id="onconfirm" data-bind="visible: (adf.formVisibility() == true ), text: adf.optionSectionDistributorConfirm, css: (adf.optionSectionDistributorConfirm().toLowerCase() == ' re enter' ? 'btn-reenter' : 'btn-confirm')" class="btn btn-sm separator" style="margin-right: inherit;" onclick="adf.getDistributtorMixConfirm()">
 										Confirm
-									</button>
+									</button> -->
 				            	</div>
 							</div>
 					    </div>
@@ -1176,7 +1201,7 @@ mincibil = ko.observable(0);
 					            <div class="col-sm-6">
 					            	<div class="form-group">
 					            		<div class="col-md-6">
-						            	<span><input class="col-sm-4 mix" data-bind="kendoDropDownList: { value: Label, data: adf.optionLeadDistributors, optionLabel: 'Please Select' }" type="text" class="input-sm form-control" style="width: 50%;margin-left: -11px;background-color: #fafafa;"/></span><label class="form-label" style="line-height: 14px;"></label>
+						            	<span><input class="col-sm-4 mix" data-bind="kendoDropDownList: { value: Label, data: adf.optionLeadDistributors, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 50%;margin-left: -11px;background-color: #fafafa;"/></span><label class="form-label" style="line-height: 14px;"></label>
 						            	</div>
 						            	<div class="col-sm-5">
 						            		<div class="col-md-8">
@@ -1263,10 +1288,10 @@ mincibil = ko.observable(0);
 			            	<div class="form-group">
 				            	<label class="form-label col-sm-3">PD Remarks</label>
 				            	<div class="col-sm-7">
-				            		<input class="input-sm form-control" data-bind="kendoDropDownList : {data: adf.optionPDRemarks(), value: adf.form.AccountSetupDetails.PdInfo.PdRemarks, dataValueField: 'value', dataTextField: 'text',optionLabel: 'Please Select'}">
+				            		<input class="input-sm form-control" data-bind="kendoDropDownList : {data: adf.optionPDRemarks(), value: adf.form.AccountSetupDetails.PdInfo.PdRemarks, dataValueField: 'value', dataTextField: 'text',optionLabel: 'Select One'}">
 				            	</div>
 				            	<div class="clearfix"></div>
-			            	</div>  
+			            	</div>
 
 			            	<div class="form-group">
 				            	<label class="form-label col-sm-3">PD Comments</label>

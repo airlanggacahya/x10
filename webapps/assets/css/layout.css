@@ -16,6 +16,11 @@ body {
 *:after {
   box-sizing: inherit;
 }
+
+a:focus, i:focus {
+  outline: none;
+}
+
 .is-loading .app {
   opacity: 0.4;
 }
@@ -39,7 +44,7 @@ body {
 .app-top > .app-wrapper > div {
   float: left;
   padding-right: 7px;
-  height: 52px;
+  height: 45px;
 }
 
 .app-top .app-identity {
@@ -68,6 +73,12 @@ body {
   background-color: #e6e6e6;
   color: black !important;
 }
+
+.app-top .app-menu ul.nav.navbar-nav > li > a.k-state-active{
+  background-color: #e6e6e6;
+  color: black !important;
+}
+
 .app-top .app-menu ul.nav.navbar-nav > li > ul.dropdown-menu li a {
   font-size: 11px;
   color: #000 !important;
@@ -819,19 +830,41 @@ body {
 .panel {
   background-color: #fafafa;
 }
+.panel-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
 
-/*.dropdown-menu{
-      border-top-color: blue;
-    }*/
-#myTopnav > li.k-item.k-state-default.k-state-border-down > div > ul{
+.panel-row > div,
+.panel-row > [class*='col-'],
+.panel-column {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-direction: column;
+}
+.panel-column > .panel-fit {
+  flex-grow: 1;
+}
+
+#submenu-top {
   padding: 0;
-  left: 31px;
+  left: 5px;
   background-color: #e6e6e6;
+  border: 0;
+  top: 1px;
+}
+
+.k-state-active.k-state-border-down{
+  color: black!important;
 }
 
 #myTopnav {
   background-color: #202935;
-  border-color: #202935;
+  border: 0;
 }
 
 #myTopnav > .k-item {
@@ -842,7 +875,6 @@ body {
   content: "";
   position: absolute;
   width: 100%;
-  height: 2px;
   bottom: 0;
   left: 0;
   background-color: #000;
@@ -851,6 +883,10 @@ body {
   transform: scaleX(0);
   -webkit-transition: all 0.3s ease-in-out 0s;
   transition: all 0.3s ease-in-out 0s;
+}
+
+#myTopnav .k-widget {
+  border-width: 0;
 }
 
 #myTopnav >li:hover:before {
@@ -1270,6 +1306,19 @@ button:focus {
   border-color: #DF2935;
 }
 
+.middle-centered{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.middle-left{
+  position: absolute;
+  top: 50%;
+  transform: translate(0%, -50%);
+}
+
 @media screen and (max-width: 1500px) {
     .img-responsives{
       height: 40px!important;
@@ -1324,3 +1373,16 @@ button:focus {
     word-wrap:break-word!important;
     white-space:normal;
   }
+
+  #menubackup{
+        box-shadow: 1px 1px 5px grey;
+        border: 0;
+  }
+
+  #replacedfilter{
+    cursor: pointer;
+  }
+
+.divided-col .k-item.k-state-default.k-last.k-state-hover span{
+  color:white!important;
+}

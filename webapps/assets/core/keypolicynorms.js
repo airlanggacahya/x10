@@ -9,6 +9,7 @@ formula.templateFinancial = {
     Criteria: '',
     InternalRating: 'all',
     TimePeriod: '',
+    ValueType: '',
     Product: '',
     Order: 0,
     ShowInLoanApprovalReport: true,
@@ -18,6 +19,15 @@ formula.templateFinancial = {
     Value2: '',
     NormLabel: ''
 }
+formula.optionValueTypes = ko.observableArray([
+	{		text : "Default",
+		value : ""
+	},
+	{
+		text : "Percentage",
+		value : "percentage"
+	}
+	]);
 formula.optionTimePeriod = ko.observableArray([
 	{ value: "estimated preferred", text: "Estimated Preferred" },
 	{ value: "provisional preferred", text: "Provisional Preferred" },
@@ -375,7 +385,7 @@ formula.deleteFinancial = function (id) {
 		type: "warning",
 		showCancelButton: true,
 		confirmButtonColor: "#DD6B55",
-		confirmButtonText: "Yes, delete it!"
+		confirmButtonText: "Yes, delete it"
 	}).then(function() {
 		formula.isLoading(true)
 
@@ -390,7 +400,7 @@ formula.deleteFinancial = function (id) {
 			formula.isLoading(false)
 			formula.refresh()
 
-        	swal("Success!", "Data deleted!", "success");
+        	swal("Success!", "Data deleted", "success");
 		}, function () {
 			$('.modal-financial').modal('hide')
 			formula.isLoading(true)
@@ -423,44 +433,44 @@ formula.saveFinancial = function () {
 	var param = ko.mapping.toJS(formula.financial)
 
 	if ($.trim(param.From) == '') {
-		swal("Error!", "Section cannot be empty!", "error");
+		swal("Error!", "Section cannot be empty", "error");
 		return
 	}
 	if ($.trim(param.FieldId) == '') {
-		swal("Error!", "Field cannot be empty!", "error");
+		swal("Error!", "Field cannot be empty", "error");
 		return
 	}
 	if ($.trim(param.Criteria) == '') {
-		swal("Error!", "Criteria cannot be empty!", "error");
+		swal("Error!", "Criteria cannot be empty", "error");
 		return
 	}
 	if ($.trim(param.InternalRating) == '') {
-		swal("Error!", "Internal Rating cannot be empty!", "error");
+		swal("Error!", "Internal Rating cannot be empty", "error");
 		return
 	}
 	if ($.trim(param.Product) == '') {
-		swal("Error!", "Product Category cannot be empty!", "error");
+		swal("Error!", "Product Category cannot be empty", "error");
 		return
 	}
 	if ($.trim(param.TimePeriod) == '') {
-		swal("Error!", "Actuals as per Time Period cannot be empty!", "error");
+		swal("Error!", "Actuals as per Time Period cannot be empty", "error");
 		return
 	}
 	if ($.trim(param.Operator) == '') {
-		swal("Error!", "Operator cannot be empty!", "error");
+		swal("Error!", "Operator cannot be empty", "error");
 		return
 	}
 	if ($.trim(param.NormLabel) == '') {
-		swal("Error!", "Norm Label cannot be empty!", "error");
+		swal("Error!", "Norm Label cannot be empty", "error");
 		return
 	}
 	if ($.trim(param.Value1) == '') {
-		swal("Error!", "Value cannot be empty!", "error");
+		swal("Error!", "Value cannot be empty", "error");
 		return
 	}
 	if (param.Operator == 'between') {
 		if ($.trim(param.Value2) == '') {
-			swal("Error!", "Value cannot be empty!", "error");
+			swal("Error!", "Value cannot be empty", "error");
 			return
 		}
 	}
@@ -488,12 +498,12 @@ formula.saveFinancial = function () {
 			formula.isLoading(false)
 			return;
 		}
-
+		formula.financialIsNew(false)
 		$('.modal-financial').modal('hide')
 		formula.isLoading(false)
 		formula.refresh()
 
-        swal("Success!", "Changes saved!", "success");
+        swal("Success", "Changes saved", "success");
 	}, function () {
 		$('.modal-financial').modal('hide')
 		formula.isLoading(true)

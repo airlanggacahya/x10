@@ -11,9 +11,11 @@ import (
 )
 
 func MoveFile(From string, To string) {
-	args := []string{"/C", "move", From, To}
-	if err := exec.Command("cmd", args...).Run(); err != nil {
-		tk.Printf("Error: %#v\n", err)
+	args := []string{"mv", From, To}
+	args0 := strings.Join(args, " ")
+
+	if err := exec.Command("/bin/sh", "-c", args0).Run(); err != nil {
+		tk.Printf("Error: %#v\n", err.Error())
 	}
 }
 
@@ -22,8 +24,10 @@ func ProcessInbox(PathFrom string, PathTo string) {
 
 	if len(folders) > 0 {
 		for _, files := range folders {
-			pdffile := PathFrom + "\\" + files.Name()
-			MoveFile(pdffile, PathTo)
+			formattedName := strings.Replace(files.Name(), " ", "\\ ", -1)
+			pdffile := PathFrom + "/" + formattedName
+			pdffileto := PathTo + "/" + formattedName
+			MoveFile(pdffile, pdffileto)
 		}
 	} else {
 		tk.Println("Inbox Empty")
@@ -31,35 +35,26 @@ func ProcessInbox(PathFrom string, PathTo string) {
 
 }
 
-func DeleteFolderTemp(PathFolder string) {
-	pathfold := `"` + PathFolder + `"`
-	args := []string{"/C", `rmdir /s /q ` + pathfold}
-	tk.Println(args)
-	if err := exec.Command("cmd", args...).Run(); err != nil {
-		tk.Printf("Error: %#v\n", err)
-	}
-}
-
 func ProcessFile(From string, SuccessPath string, FailedPath string, ReportType string) {
 	file, _ := ioutil.ReadDir(From)
 
 	for _, f := range file {
+		formattedName := strings.Replace(f.Name(), " ", "\\ ", -1)
 		filename := strings.TrimRight(f.Name(), ".pdf")
 
 		if filename == f.Name() {
 			if f.IsDir() == false {
-				MoveFile(From+"\\"+f.Name(), FailedPath)
+				MoveFile(From+"/"+formattedName, FailedPath)
 			}
 		} else {
 			ConvertPdfToXml(From, From, f.Name())
-			ExtractPdfDataCibilReport(From, From, f.Name(), ReportType)
-			//DeleteFolderTemp(From + "\\" + filename)
-			err := os.RemoveAll(From + "\\" + filename)
-			// err := RemoveContents(From + "\\" + filename)
-			if err != nil {
-				tk.Println(err.Error)
-			}
-			MoveFile(From+"\\"+f.Name(), SuccessPath)
+
+			//ExtractPdfDataCibilReport(From, From, formattedName, ReportType)
+			// err := os.RemoveAll(From + "/" + filename)
+			// if err != nil {
+			// 	tk.Println(err.Error)
+			// }
+			//MoveFile(From+"/"+formattedName, SuccessPath)
 		}
 
 	}

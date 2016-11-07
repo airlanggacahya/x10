@@ -34,11 +34,17 @@ refreshFilter = function () {
 			return
 		}
 
-		r.data(res.Data.FormData)
-		r.dates(_.orderBy(res.Data.AuditStatus, 'Date', 'asc'))
-		r.isLoading(false)
-		r.render("PROFIT & LOSS ACCOUNT")
-		r.render("RATIO")
+    if(res.Data.AuditStatus.length > 0) {
+      r.data(res.Data.FormData)
+      r.dates(_.orderBy(res.Data.AuditStatus, 'Date', 'asc'))
+      r.isLoading(false)
+      r.render("PROFIT & LOSS ACCOUNT")
+      r.render("RATIO")
+    } else {
+      sweetAlert("Oops...", "Data Not Found", "error");
+      r.isLoading(false)
+      return
+    }
 	})
 }
 r.render = function (a) {
@@ -65,7 +71,7 @@ r.render = function (a) {
 	})
 
 	var columns = [
-    { title: 'Particulars (in Rs. Lacs)', headerAttributes: { "class": "header-bgcolor" }, template: function (d) {
+    { title: 'Particulars (in Rs. Lacs)', headerAttributes: { style: 'color:white; background-color: #313d50;' }, template: function (d) {
     	var isFormula = d.IsFromFormula
     	if (typeof isFormula === 'undefined') {
     		isFormula = false
@@ -110,7 +116,7 @@ r.render = function (a) {
     		width: 120,
     		attributes: { style: 'text-align: right;' },
     		headerAttributes: {
-    			"class": "header-bgcolor",
+    			style: 'color:white; background-color: #313d50;'
     			// 'data-label-1': '',
     			// 'data-label-2': d.Status+" "+columnTitle,
     			// 'data-label-3': columnTitle,
@@ -121,9 +127,11 @@ r.render = function (a) {
     			}
 
           if (e.SubSection == "KEY RATIOS") {
-            if (lastAuditedYear != d.Date) {
-              return 'n/a'
-            }
+            return "<span data-what='key-ratio' data-name='" + e.Name + "'>" + e.ColumnData[i].FormattedValue + "</span>"
+
+            // if (lastAuditedYear != d.Date) {
+            //   return 'n/a'
+            // }
           }
 
     			return e.ColumnData[i].FormattedValue
@@ -136,7 +144,7 @@ r.render = function (a) {
 	    		width: 120,
 	    		attributes: { style: 'text-align: right;background-color: rgb(195, 220, 236);' },
 	    		headerAttributes: {
-	    			"class": "header-bgcolor",
+	    			style: 'color:white; background-color: #313d50;'
 	    			// 'data-label-1': '',
 	    			// 'data-label-2': '% Growth in '+columnTitle,
 	    			// 'data-label-3': columnTitle,
@@ -195,6 +203,57 @@ r.render = function (a) {
 				// $('<th />').addClass('k-header header-bgcolor').attr('role', 'columnheader').appendTo($tr2).html($(e).attr('data-label-2'))
 				// $('<th />').addClass('k-header header-bgcolor').attr('role', 'columnheader').appendTo($tr3).html($(e).attr('data-label-3'))
 			})
+
+      // when the time comes, this legendary loop will need to be recoded
+      // ==========> LEGENDARY LOOP START
+      $('[data-what="key-ratio"]').parent().parent().each(function (i, e) {
+        var isFound = false
+        var writeNA = function (d) {
+            $(d).find('span').html('n/a')
+        }
+
+        $(e).find('td').get().reverse().forEach(function (f, j) {
+          if (isFound) {
+            writeNA(f)
+            return
+          }
+
+          var text = $(f).find('span').text()
+          if ($.trim(text) == '') {
+            writeNA(f)
+            return
+          }
+
+          var number = toolkit.getNumberFromString(text)
+          if (number == 0) {
+            writeNA(f)
+            return
+          }
+
+          switch ($(e).find('span:eq(0)').attr('data-name')) {
+            case 'Leverage Including X10 (TOL/TNW)':
+            case 'Gearing (times) including X10 Loan':
+              if (number > 20) {
+                writeNA(f)
+                return
+              }
+            break
+
+            case 'BTO% against FY 14 TO':
+              if (number > 10000) {
+                writeNA(f)
+                return
+              }
+            break
+          }
+
+          if (number > 0) {
+            isFound = true
+          }
+
+        })
+      })
+      // ==========> LEGENDARY LOOP FINISH
 
       $('.grid .k-grid-header-locked tr').css('min-height', '30px').css('height', '30px')
 			$('thead tr').css('min-height', '30px').css('height', '30px')
@@ -439,7 +498,7 @@ r.panel_scrollrelocated = function () {
 };
 
 r.exportExcel = function(title){
- 
+
   $("#fake-table").remove();
   $("#temp-table").remove();
 
@@ -447,29 +506,33 @@ r.exportExcel = function(title){
   var tempTable = $("<table/>").attr("id", "temp-table").appendTo(body);
   var head = $("<thead/>").attr("id", "head").appendTo(tempTable);
   var tr = $("<tr/>").appendTo(head);
-  $("body > div.app > div > div > div > div > div.app-content > div:nth-child(7) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-locked > table > thead > tr > th.header-bgcolor").clone(true).appendTo(tr);
-  $("body > div.app > div > div > div > div > div.app-content > div:nth-child(7) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-wrap > table > thead > tr>").clone(true).appendTo(tr)
-  
+  $("body > div.app > div > div.div-container > div:nth-child(8) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-locked > table > thead > tr > th").eq(0).clone(true).appendTo(tr)
+  // $("body > div.app > div > div > div > div > div.app-content > div:nth-child(7) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-locked > table > thead > tr > th.header-bgcolor").clone(true).appendTo(tr);
+  // $("body > div.app > div > div > div > div > div.app-content > div:nth-child(7) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-wrap > table > thead > tr>").clone(true).appendTo(tr)
+  $("body > div.app > div > div.div-container > div:nth-child(8) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-wrap > table > thead > tr>").clone(true).appendTo(tr)
+
   var tbody1 = $("<tbody/>");
-  var len = $("body > div.app > div > div > div > div > div.app-content > div:nth-child(7) > div > div > div.panel-body > div.form-container > div > div.k-grid-content-locked > table > tbody >").clone(true);
+  var len = $("body > div.app > div > div.div-container > div:nth-child(8) > div > div > div.panel-body > div.form-container > div > div.k-grid-content-locked > table > tbody>").clone(true);
 
   var tdon = len
   // len.clone(true).appendTo(tbody1);
 
   var tbody = tbody1.appendTo(tempTable);
-  
+
   var tr1 = $("<tbody/>")
-  $("body > div.app > div > div > div > div > div.app-content > div:nth-child(7) > div > div > div.panel-body > div.form-container > div > div.k-grid-content.k-auto-scrollable > table > tbody>tr").clone(true).appendTo(tr1)
+ $("body > div.app > div > div.div-container > div:nth-child(8) > div > div > div.panel-body > div.form-container > div > div.k-grid-content.k-auto-scrollable > table > tbody>tr").clone(true).appendTo(tr1)
   $.each(len, function(i, items){
     var temptr = $("<tr/>").appendTo(tbody1)
     tdon.eq(i).find("td").eq(0).appendTo(tbody1.find("tr").eq(i))
+    $("#temp-table > thead> tr> th").eq(i).removeClass("header-bgcolor")
     tr1.find("tr").eq(i).find("td").appendTo(tbody1.find("tr").eq(i))
   })
-  var name = title+" "+r.fileType();
+  var ondate = kendo.toString(new Date(),"dd-MMM-yyyy_HHmm");
+  var name = title+"_"+r.fileType()+"_"+ ondate.toString();
   var target = toolkit.$("#temp-table");
   var downloader = $('<a />').attr('href', '#')
     .attr('download', name + '.xls')
-    .attr('onclick', 'return ExcellentExport.excel(this, \'temp-table\', \'sheet1\')')
+    .attr('onclick', 'return ExcellentExport.excel(this, \'temp-table\', \'Sheet1\')')
     .html('export')
     .appendTo(body);
   tempTable.find('td').css('height', 'inherit');

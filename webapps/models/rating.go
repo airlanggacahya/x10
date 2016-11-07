@@ -6,6 +6,7 @@ import (
 	"github.com/eaciit/orm"
 	"gopkg.in/mgo.v2/bson"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -16,6 +17,7 @@ type RatingMaster struct {
 	Parameters      string
 	Categories      string
 	Order           int
+	ValueType       string
 
 	From       string
 	FieldId    string
@@ -41,8 +43,39 @@ func (m *RatingMaster) TableName() string {
 }
 
 func (m *RatingMaster) IsValue1String() bool {
+	if m.ValueType == "percentage" {
+		return true
+	}
 	_, err := strconv.ParseFloat(fmt.Sprintf("%v", m.Value1), 64)
 	return err != nil
+}
+
+func (m *RatingMaster) IsValue1Percentage() float64 {
+	if strings.Contains(fmt.Sprintf("%v", m.Value1), "%") || m.ValueType == "percentage" {
+		vtmp := strings.Replace(fmt.Sprintf("%v", m.Value1), "%", "", 1)
+		res, err := strconv.ParseFloat(strings.TrimSpace(fmt.Sprintf("%v", vtmp)), 64)
+		if err == nil {
+			return res / 100
+		} else {
+			return -99
+		}
+	} else {
+		return -99
+	}
+}
+
+func (m *RatingMaster) IsValue2Percentage() float64 {
+	if strings.Contains(fmt.Sprintf("%v", m.Value2), "%") || m.ValueType == "percentage" {
+		vtmp := strings.Replace(fmt.Sprintf("%v", m.Value2), "%", "", 1)
+		res, err := strconv.ParseFloat(strings.TrimSpace(fmt.Sprintf("%v", vtmp)), 64)
+		if err == nil {
+			return res / 100
+		} else {
+			return -99
+		}
+	} else {
+		return -99
+	}
 }
 
 func (m *RatingMaster) GetValue1AsString() string {
@@ -129,5 +162,13 @@ func GetLatestRatingData() (*RatingData, int, error) {
 		return nil, 0, err
 	}
 
-	return results[0], len(results), nil
+	res := results[0]
+
+	for _, val := range results {
+		if res.CreatedAt.Before(val.CreatedAt) {
+			res = val
+		}
+	}
+
+	return res, len(results), nil
 }

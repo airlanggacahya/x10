@@ -175,11 +175,17 @@ function bulletWidth(x) {
 
 })();
 
-function renderVerticalBulletChart(selector, data) {
-  var eachWidth = 180
-  var margin = {top: 5, right: 40, bottom: 50, left: 120},
-    width = eachWidth - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+function renderVerticalBulletChart(selector, data, eachWidth) {
+  var thickness = 15
+  
+  var margin = {}
+  margin.top = 5 
+  margin.right = 35 
+  margin.bottom = 5
+  margin.left = eachWidth - margin.right - thickness
+
+  var width = eachWidth - margin.left - margin.right
+  var height = 140 - margin.top - margin.bottom;
 
   var chart = d3.bulletVertical()
       .orient("bottom")
@@ -201,16 +207,16 @@ function renderVerticalBulletChart(selector, data) {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .call(chart);
 
-  var title = svg.append("g")
-      .style("text-anchor", "end")
-      .attr("transform", "translate(" + width + "," + (height + 20) + ")");
+  // var title = svg.append("g")
+  //     .style("text-anchor", "end")
+  //     .attr("transform", "translate(" + width + "," + (height + 20) + ")");
 
-  title.append("text")
-      .attr("class", "title")
-      .text(function(d) { return d.title; });
+  // title.append("text")
+  //     .attr("class", "title")
+  //     .text(function(d) { return d.title; });
 
-  title.append("text")
-      .attr("class", "subtitle")
-      .attr("dy", "1em")
-      .text(function(d) { return d.subtitle; });
+  // title.append("text")
+  //     .attr("class", "subtitle")
+  //     .attr("dy", "1em")
+  //     .text(function(d) { return d.subtitle; });
 }

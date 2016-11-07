@@ -100,7 +100,7 @@
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label">Name of the Applicant :</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control input-sm" validationMessage="Any Other required" required data-bind="value:customerprofile().ApplicantDetail().CustomerName"/>
+              <input type="text" id="CustomerName" class="form-control input-sm" validationMessage="Any Other required" required data-bind="value:customerprofile().ApplicantDetail().CustomerName"/>
             </div>
           </div>
 
@@ -108,7 +108,7 @@
             <label for="inputPassword3" class="col-sm-4 form-control-label">Constitution of the Entity :</label>
             <div class="col-sm-8">
               <!-- <select name="page" id="a" data-bind="kendoDropDownList: {data:customerprofile().ddl().ConstitutionEntity(), value:customerprofile().ApplicantDetail().CustomerConstitution , optionLabel: 'Select One'}" ></select> -->
-               <input type="text" class="form-control input-sm" validationMessage="required" required data-bind="value:customerprofile().ApplicantDetail().CustomerConstitution"/>
+               <input type="text" id="CustomerConstitution" class="form-control input-sm" validationMessage="required" required data-bind="value:customerprofile().ApplicantDetail().CustomerConstitution"/>
             </div>
           </div>
 
@@ -130,7 +130,7 @@
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">Tax Identification Number </span>(TIN) :</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control input-sm" validationMessage="Tax Identification Number required" required data-bind="value:customerprofile().ApplicantDetail().TIN"/>
+              <input type="text" id="TIN" class="form-control input-sm" validationMessage="Tax Identification Number required" required data-bind="value:customerprofile().ApplicantDetail().TIN"/>
             </div>
           </div>
 
@@ -143,14 +143,14 @@
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">Tax Account Number </span>(TAN) :</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control input-sm" validationMessage="Tax Account Number required" required data-bind="value:customerprofile().ApplicantDetail().TAN"/>
+              <input type="text" id="TAN" class="form-control input-sm" validationMessage="Tax Account Number required" required data-bind="value:customerprofile().ApplicantDetail().TAN"/>
             </div>
           </div>
 
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label">Registration Number :</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control input-sm" validationMessage="Registration Number required" required data-bind="value:customerprofile().ApplicantDetail().CustomerRegistrationNumber"/>
+              <input type="text" id="CustomerRegistrationNumber" class="form-control input-sm" validationMessage="Registration Number required" required data-bind="value:customerprofile().ApplicantDetail().CustomerRegistrationNumber"/>
             </div>
           </div>
 
@@ -158,7 +158,7 @@
             <label for="inputEmail3" class="col-sm-4 form-control-label">PAN Number :</label>
             <div class="col-sm-8">
               <!-- <input type="number" class="form-control input-sm" validationMessage="PAN required" required data-bind="value:customerprofile().ApplicantDetail().PAN"/> -->
-              <input type="text" class="form-control input-sm" validationMessage="PAN required" required data-bind="value:customerprofile().ApplicantDetail().CustomerPan"/>
+              <input type="text" id="CustomerPan" class="form-control input-sm" validationMessage="PAN required" required data-bind="value:customerprofile().ApplicantDetail().CustomerPan"/>
             </div>
           </div>
 
@@ -166,7 +166,7 @@
             <label for="inputEmail3" class="col-sm-4 form-control-label">CIN Number :</label>
             <div class="col-sm-8">
               <!-- <input type="number" class="form-control input-sm" validationMessage="PAN required" required data-bind="value:customerprofile().ApplicantDetail().PAN"/> -->
-              <input type="text" class="form-control input-sm" validationMessage="CIN required" required data-bind="value:customerprofile().ApplicantDetail().CIN"/>
+              <input type="text" id="CIN" class="form-control input-sm" validationMessage="CIN required" required data-bind="value:customerprofile().ApplicantDetail().CIN"/>
             </div>
           </div>
         </div>
@@ -183,28 +183,28 @@
             <label for="inputPassword3" class="col-sm-4 form-control-label">Nature of Business :</label>
             <div class="col-sm-8">
               <!-- <select name="page" id="b" data-bind="kendoDropDownList: {data:customerprofile().ddl().NatureBusiness(), value:customerprofile().ApplicantDetail().NatureOfBussiness , optionLabel: 'Select One'}" ></select> -->
-                <input class="form-control input-sm" validationMessage="required" required data-bind="value:customerprofile().ApplicantDetail().NatureOfBussiness"/>
+                <input id="NatureOfBussiness" class="form-control input-sm" validationMessage="required" required data-bind="value:customerprofile().ApplicantDetail().NatureOfBussiness"/>
             </div>
           </div>
 
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label">No. of Years in Business :</label>
             <div class="col-sm-8">
-              <input type="number" class="form-control input-sm" validationMessage="No. of Years in Business required" required data-bind="value:customerprofile().ApplicantDetail().YearsInBusiness"/>
+              <input type="number" id="YearsInBusiness" class="form-control input-sm" validationMessage="No. of Years in Business required" required data-bind="value:customerprofile().ApplicantDetail().YearsInBusiness"/>
             </div>
           </div>
 
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label">No. of Employees :</label>
             <div class="col-sm-8">
-              <input type="number" class="form-control input-sm" validationMessage="No. of Employees required" required data-bind="value:customerprofile().ApplicantDetail().NoOfEmployees" placeholder="info not available" />
+              <input type="number" id="NoOfEmployees" class="form-control input-sm" validationMessage="No. of Employees required" required data-bind="value:customerprofile().ApplicantDetail().NoOfEmployees" placeholder="info not available" />
             </div>
           </div>
 
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label">Annual Turnover :</label>
             <div class="col-sm-8">
-              <input type="number" class="form-control input-sm" validationMessage="Annual Turnover required" required data-bind="value:customerprofile().ApplicantDetail().AnnualTurnOver"/>
+              <input type="number" id="AnnualTurnOver" class="form-control input-sm" validationMessage="Annual Turnover required" required data-bind="value:customerprofile().ApplicantDetail().AnnualTurnOver"/>
             </div>
           </div>
 
@@ -215,7 +215,7 @@
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label">User Group Companies :</label>
             <div class="col-sm-8">
-              <input class="form-control input-sm" validationMessage="User Group Companies required" required data-bind="value:customerprofile().ApplicantDetail().UserGroupCompanies"/>
+              <input class="form-control input-sm" id="UserGroupCompanies" validationMessage="User Group Companies required" required data-bind="value:customerprofile().ApplicantDetail().UserGroupCompanies"/>
             </div>
           </div>
 <!--
@@ -231,14 +231,14 @@
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label">Group Turnover :</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().GroupTurnOver"  placeholder="Group Turnover not available"/>
+              <input type="text" id="GroupTurnOver" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().GroupTurnOver"  placeholder="Group Turnover not available"/>
             </div>
           </div>
 
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label">Requested Loan Amount (Rs.) :</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().AmountLoan"/>
+              <input type="text" id="AmountLoan" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().AmountLoan"/>
             </div>
           </div>
 
@@ -300,7 +300,7 @@
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Address :</label>
               <div class="col-sm-8">
-                <textarea class="form-control input-sm" data-bind="value:AddressRegistered"></textarea>
+                <textarea class="form-control input-sm" id="AddressRegistered" data-bind="value:AddressRegistered"></textarea>
               </div>
             </div>
 
@@ -314,7 +314,7 @@
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">City :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control input-sm" data-bind="value:CityRegistered" />
+                <input type="text" id="CityRegistered" class="form-control input-sm" data-bind="value:CityRegistered" />
               </div>
             </div>
 
@@ -335,28 +335,28 @@
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Tel1 :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control input-sm" data-bind="value:PhoneRegistered" />
+                <input type="text" id="PhoneRegistered" class="form-control input-sm" data-bind="value:PhoneRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Mobile No. :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control input-sm" data-bind="value:MobileRegistered" />
+                <input type="text" id="MobileRegistered" class="form-control input-sm" data-bind="value:MobileRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Contact Person :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control input-sm" data-bind="value:ContactPersonRegistered" />
+                <input type="text" id="ContactPersonRegistered" class="form-control input-sm" data-bind="value:ContactPersonRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Email :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control input-sm" data-bind="value:EmailRegistered" />
+                <input type="text" id="EmailRegistered" class="form-control input-sm" data-bind="value:EmailRegistered" />
               </div>
             </div>
 
@@ -371,7 +371,7 @@
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">No. of years at above address :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control input-sm" data-bind="value:NoOfYearsAtAboveAddressRegistered" />
+                <input type="text" id="NoOfYearsAtAboveAddressRegistered" class="form-control input-sm" data-bind="value:NoOfYearsAtAboveAddressRegistered" />
               </div>
             </div>
 

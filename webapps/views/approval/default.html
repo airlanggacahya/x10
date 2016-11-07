@@ -21,6 +21,14 @@
 <script type="text/javascript" src="/static/core/loanapprovalcustom.js"></script>
 
 <style>
+  .panel-default.col-sm-12.col-full > .panel-heading {
+    padding: 0;
+    margin-bottom: 1px;
+  }
+  h3 {
+    margin-top: 0;
+  }
+
   .section-title h5 {
     text-align: left;
     /*font-size: 18px;*/
@@ -129,11 +137,6 @@
   div.panel-default.col-sm-12.col-full {
     position: relative;
   }
-  div.panel-default.col-sm-12.col-full > div.footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-  }
 
   .panel-default.content {
     margin-bottom: 15px;
@@ -142,7 +145,6 @@
   .col-full > .panel-heading {
       margin-bottom: -15px;
   }
-
 
   .panel-default.content > .panel-heading {
     background-color: #313d50;
@@ -153,10 +155,21 @@
   .panel-default.content > .panel-body,
   .panel-default.content > .panel-default,
   .panel-default.content .panel-row > .panel-default,
-  .panel-default.content .panel-row > .panel-body {
+  .panel-default.content .panel-row > .panel-body,
+  .panel-default.content .panel-column > .panel-default,
+  .panel-default.content .panel-column > .panel-body {
     margin-top: 5px;
     background-color: #ededed;
     border-radius: 7px;
+  }
+  #left-col > .panel-default > .most-bottom{
+    margin-bottom: 30px;
+  }
+  #left-col > .panel-default > div.footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
   }
 
   .btn-footer {
@@ -167,9 +180,9 @@
 
   .left-scroller {
     position: absolute;
-    top: 33px;
-    left: 2px;
-    bottom: 10px;
+    top: 12px;
+    left: -4px;
+    bottom: 60px;
     width: 20px;
     z-index: 1;
   }
@@ -224,164 +237,234 @@
   .tooltipster-left-scroller .tooltipster-content .tooltipster-arrow {
     top: -1px;
   }
+
+  .left-scroller .tooltipstered.active {
+    box-shadow:
+      0 0 0 3px #fafafa,
+      0 0 0 5px #202935;
+  }
+
+  .shown.panel-default.col-full {
+    visibility: visible;
+  }
+  .hidden.panel-default.col-full {
+    visibility: hidden;
+  }
+
+  #top-link-block.affix-top {
+    position: absolute; /* allows it to "slide" up into view */
+    bottom: -82px; /* negative of the offset - height of link element */
+    right: 10px; /* padding from the left side of the window */
+}
+#top-link-block.affix {
+    position: fixed; /* keeps it on the bottom once in view */
+    bottom: 18px; /* height of link element */
+    right: 10px; /* padding from the left side of the window */
+}
+.panel-default .col-sm-12 .col-full > .panel-header {
+  padding: 0;
+} 
+
 </style>
 
 {{template "filter.html"}}
+<div style="display: none;" data-bind="visible: (r.formVisibility() == true)">
+  <div>
+    <div class="col-sm-12 ez panel-content">
+      <div class="panel ez no-padding hardcore">
+        <div class="panel-body">
+          <div class="col-md-6 no-padding">
+            <div class="left-scroller">
+              
+              <div class="wrapper">
+                <a href="#" class="ad" data-bind="click: r.scrollTo('ad')" title="Account Details"></a>
+                <a href="#" class="o active" data-bind="click: r.scrollTo('o')" title="Overview"></a>
+                <a href="#" class="bs" data-bind="click: r.scrollTo('bs')" title="Banking & O/S Snapshot"></a>
+                <a href="#" class="kpp" data-bind="click: r.scrollTo('kpp')" title="Key Policy Parameters"></a>
+                <a href="#" class="kfr" data-bind="click: r.scrollTo('kfr')" title="Key Financial Ratios"></a>
+                <a href="#" class="kfp" data-bind="click: r.scrollTo('kfp')" title="Key Financial Parameters"></a>
+                <a href="#" class="pmd" data-bind="click: r.scrollTo('pmd')" title="Promoter & Management Details"></a>
+              </div>
+              
+            </div>
 
-<div>
-  <div class="col-sm-12 col-sm-12 ez panel-content">
-    <div class="panel ez no-padding hardcore">
-      <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+            <div id="left-col" class="col-sm-12 no-padding chartscroll divided-col col-full" style="padding-left: 11px">
 
-      <div class="panel-body">
+              <!-- Account Details -->
+              <div class="panel-default col-sm-12 col-full hidden" id="ad">
+                {{ template "accountdetails.html" }}
+              </div>
 
-        <div class="col-md-6 no-padding">
-          <div class="left-scroller">
-            <div class="wrapper">
-              <a href="#" data-bind="click: r.scrollTo('ad')" title="Account Details"></a>
-              <a href="#" data-bind="click: r.scrollTo('o')" title="Overview"></a>
-              <a href="#" data-bind="click: r.scrollTo('bs')" title="Banking Snapshot"></a>
-              <a href="#" data-bind="click: r.scrollTo('kpp')" title="Key Policy Parameters"></a>
-              <a href="#" data-bind="click: r.scrollTo('kfr')" title="Key Financial Ratios"></a>
-              <a href="#" data-bind="click: r.scrollTo('kfp')" title="Key Financial Parameters"></a>
-              <a href="#" data-bind="click: r.scrollTo('pmd')" title="Promoter & Management Details"></a>
+              <!-- Overview -->
+              <div class="panel-default col-sm-12 col-full shown" id="o">
+                {{ template "overview.html" }}
+              </div>
+
+              <!-- Banking O/S Snapshot -->
+              <div class="panel-default col-sm-12 col-full hidden" id="bs">
+                {{ template "bankingsnapshot.html" }}
+              </div>
+
+              <!-- Key Policy Parameters -->
+              <div class="panel-default col-sm-12 col-full hidden" id="kpp">
+                {{template "keypolicyparameters.html"}}
+              </div>
+
+              <!-- Key Financial Ratios -->
+              <div class="panel-default col-sm-12 col-full hidden" id="kfr">
+                  {{template "keyfinancialratios.html"}}
+              </div>
+
+              <!-- Key Financial Parameters -->
+              <div class="panel-default col-sm-12 col-full hidden" id="kfp">
+                  {{template "keyfinancialparameters.html"}}
+              </div>
+
+              <!-- Promoter & Management Details -->
+              <div class="panel-default col-sm-12 col-full hidden" id="pmd">
+                  <div class="panel-heading pmd"><h3 class="text-center">Promoter & Management Details</h3></div>
+                  {{template "cibildetails.html"}}
+                  {{template "redflags.html"}}
+                  {{template "realestateposition.html"}}
+
+                  <div class="footer clearfix">
+                    <button onClick="r.showDetails('pmdb')" class="btn btn-sm btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
+                    <button data-bind="click: r.openFull" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Form</button>
+                  </div>
+              </div>
+
             </div>
           </div>
-          <div class="col-sm-12 no-padding chartscroll divided-col col-full" style="padding-left: 11px">
 
-            <!-- Account Details -->
-            <div class="panel-default col-sm-12 col-full" id="ad">
-              {{ template "accountdetails.html" }}
+          <div class="col-md-6 no-padding divided-col col-full" style="background-color: #202935">
+            <style>
+              .k-tabstrip-items .k-state-default {
+                border: none;
+                width: 49.5%;
+              }
+              .k-tabstrip-items .k-state-active {
+                background-color: #202935;
+                color: white;
+                width: 50.7%;
+              }
+              .k-tabstrip-items .k-state-active .k-link {
+                color: white;
+              }
+              .k-tabstrip .k-content.k-state-active {
+                background-color: #202935;
+                color: white;
+              }
+            </style>
+            <div id="tabstrip">
+                <ul>
+                    <li class="k-state-active">
+                        Decision Committee Final Sanction
+                    </li>
+                    <li>
+                        Credit Analyst Comments
+                    </li>
+                </ul>
+                {{template "comments.html"}}
             </div>
-
-            <!-- Overview -->
-            <div class="panel-default col-sm-12 col-full" id="o">
-              {{ template "overview.html" }}
-            </div>
-
-            <!-- Banking O/S Snapshot -->
-            <div class="panel-default col-sm-12 col-full" id="bs">
-              {{ template "bankingsnapshot.html" }}
-            </div>
-
-            <!-- Key Policy Parameters -->
-            <div class="panel-default col-sm-12 col-full" id="kpp">
-              {{template "keypolicyparameters.html"}}
-            </div>
-
-            <!-- Key Financial Ratios -->
-            <div class="panel-default col-sm-12 col-full" id="kfr">
-                {{template "keyfinancialratios.html"}}
-            </div>
-
-            <!-- Key Financial Parameters -->
-            <div class="panel-default col-sm-12 col-full" id="kfp">
-                {{template "keyfinancialparameters.html"}}
-            </div>
-
-            <!-- Promoter & Management Details -->
-            <div class="panel-default col-sm-12 col-full" id="pmd">
-                <div class="panel-heading pmd"><h3 class="text-center">Promoter & Management Details</h3></div>
-                {{template "cibildetails.html"}}
-                {{template "redflags.html"}}
-                {{template "realestateposition.html"}}
-
-                <div class="footer col-sm-12">
-                  <button onclick="r.showDetails('pmdb')" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
-                  <button data-bind="" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Full Form</button>
-                </div>
-            </div>
-
+            <script type="text/javascript">
+              $(document).ready(function() {
+                  $("#tabstrip").kendoTabStrip({
+                    animation: false
+                  });
+              });
+            </script>
           </div>
-        </div>
 
-        <div class="col-md-6 no-padding divided-col col-full" style="background-color: #202935">
-          <style>
-            .k-tabstrip-items .k-state-default {
-              border: none;
-              width: 49.5%;
+          <style type="text/css">
+            #scroll-button {
+              position: absolute; 
+              left: 48.5%;
+              top: 574px;
+              width: 37px;
             }
-            .k-tabstrip-items .k-state-active {
-              background-color: #202935;
-              color: white;
-              width: 50.7%;
+            #scroll-button a {
+              margin-bottom: 13px; 
             }
-            .k-tabstrip-items .k-state-active .k-link {
-              color: white;
+            #scroll-button .icon-a {
+              color: #fafafa;
+              font-size: 36px;
             }
-            .k-tabstrip .k-content.k-state-active {
-              background-color: #202935;
-              color: white;
+            #scroll-button .icon-b {
+              color: #00aef1;
+              font-size: 37px;
             }
+
           </style>
-          <div id="tabstrip">
-              <ul>
-                  <li class="k-state-active">
-                      Decision Committee Final Sanction
-                  </li>
-                  <li>
-                      Credit Analyst Comments
-                  </li>
-              </ul>
-              {{template "comments.html"}}
+
+          <div id="scroll-button" class="clearfix" style="">
+            <a href="#" class="col-sm-12 no-padding" data-bind="click: r.scrollTo('before')">
+              <span class="fa-stack">
+                  <i class="fa fa-circle fa-stack-1x icon-a"></i>
+                  <i class="fa fa-chevron-circle-up fa-stack-1x icon-b"></i>
+              </span>
+            </a>
+            <a href="#" class="col-sm-12 no-padding" data-bind="click: r.scrollTo('next')">
+              <span class="fa-stack">
+                  <i class="fa fa-circle fa-stack-1x icon-a"></i>
+                  <i class="fa fa-chevron-circle-down fa-stack-1x icon-b"></i>
+              </span>
+            </a>
           </div>
-          <script type="text/javascript">
-            $(document).ready(function() {
-                $("#tabstrip").kendoTabStrip({
-                  animation: false
-                });
-            });
-          </script>
-        </div>
-        <div class="col-md-12">
-          <!-- ========================================================== -->
-            <div>
-              <!--loanapproval page-->
-              <div class="col-sm-12 col-sm-12 ez panel-content" style="display: none">
-                <div class="panel ez no-padding hardcore">
-                  <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
-                  <div class="panel-heading"></div>
 
-                  <!-- loan approval start -->
-                  <div class="panel-body">
-                    <div class="tab-content cotainer-tab">
-                      <div class="tab-pane active" id="tab0">
-                        <table class="table table-bordered KI" id="headerpdf">
-                          <thead >
-                              <tr class="header-table hiddenrow">
-                                  <td class="text-center header-bgcolor">X 10 FINANCIAL SERVICES LTD.</td>
-                              </tr>
-                              <tr class="hiddenrow">
-                                  <td data-bind="text:loanapproval.companyname" class="sub-bgcolor center"></td>
-                              </tr>
-                          </thead>
-                        </table>
-                        <div class="clearfix"></div>
-                        <div id="setComments">
-                          <!-- <div id="accordion" class="header-bgcolor2" style="height: 73px;text-align: center;padding-top: 30px;">
-                          Credit Analyst : <span data-bind="text:loanapproval.creditanalyst"></span>
-                          </div> -->
+          <div class="col-md-12">
+            <!-- ========================================================== -->
+              <div>
+                <!--loanapproval page-->
+                <div class="col-sm-12 col-sm-12 ez panel-content" style="display: none">
+                  <div class="panel ez no-padding hardcore">
+                    <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
+                    <div class="panel-heading"></div>
+
+                    <!-- loan approval start -->
+                    <div class="panel-body">
+                      <div class="tab-content cotainer-tab">
+                        <div class="tab-pane active" id="tab0">
+                          <table class="table table-bordered KI" id="headerpdf">
+                            <thead >
+                                <tr class="header-table hiddenrow">
+                                    <td class="text-center header-bgcolor">X 10 FINANCIAL SERVICES LTD.</td>
+                                </tr>
+                                <tr class="hiddenrow">
+                                    <td data-bind="text:loanapproval.companyname" class="sub-bgcolor center"></td>
+                                </tr>
+                            </thead>
+                          </table>
+                          <div class="clearfix"></div>
+                          <div id="setComments">
+                            <!-- <div id="accordion" class="header-bgcolor2" style="height: 73px;text-align: center;padding-top: 30px;">
+                            Credit Analyst : <span data-bind="text:loanapproval.creditanalyst"></span>
+                            </div> -->
+                          </div>
+
+                          <div class="panel-heading pmd"><h3 class="text-center">Loan Approval Form</h3></div>
+                          {{template "allfield.html"}}
+
                         </div>
-
-                        {{template "allfield.html"}}
-
                       </div>
                     </div>
                   </div>
-                </div>
-              </div> <!--end of loanapproval-->
-            </div>
+                </div> <!--end of loanapproval-->
+              </div>
+          </div>
+          <!-- <div class="col-md-12">
+            <img class="img-responsives no-margin tooltipster" title="Comments" id="imgComm" data-bind="click:apcom.showComments" src="/static/img/user_comment.png">
+          </div> -->
+
         </div>
-        <!-- <div class="col-md-12">
-          <img class="img-responsives no-margin tooltipster" title="Comments" id="imgComm" data-bind="click:apcom.showComments" src="/static/img/user_comment.png">
-        </div> -->
 
       </div>
-
     </div>
   </div>
-</div>
 
-<script type="text/javascript">
-  
-</script>
+  <span id="top-link-block" class="hidden">
+      <a href="#top" class="well well-lg"  onclick="$('html,body').animate({scrollTop:0},'slow');return false;">
+          <i class="glyphicon glyphicon-chevron-up"></i>
+          &nbsp; Back to Snapshot
+      </a>
+  </span>
+</div>

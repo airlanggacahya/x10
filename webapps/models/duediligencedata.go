@@ -17,6 +17,8 @@ type DueDiligenceInput struct {
 	Status        int
 	Freeze        bool
 	LastConfirmed time.Time `bson:"LastConfirmed,omitempty"`
+	DateFreeze    time.Time `bson:"DateFreeze,omitempty"`
+	DateSave      time.Time `bson:"DateSave,omitempty"`
 }
 
 type VerificationDetails struct {

@@ -193,7 +193,7 @@ func (m *RatioFormula) GetFormulaValue(fm *FormulaModel, formulaID, period strin
 }
 
 func (m *RatioFormula) GetValue(fm *FormulaModel, namepace, alias, period string) interface{} {
-	switch namepace {
+	switch strings.ToLower(namepace) {
 	case "balancesheet":
 		for _, eachForm := range fm.BalanceSheet.FormData {
 			if eachForm.FieldAlias == alias {
@@ -249,8 +249,8 @@ func (m *RatioFormula) GetValue(fm *FormulaModel, namepace, alias, period string
 			return fm.RTR.SumExtenalYearly
 		case "YearlyRepayment":
 			return fm.RTR.YearlyRepayment
-		case "EMI":
-			return fm.RTR.EMI
+		case "SumBounces":
+			return fm.RTR.SumBounces
 		case "DPDTrack":
 			return fm.RTR.DPDTrack
 		}
@@ -519,7 +519,9 @@ func (m *RatioFormula) Calculate() (string, error) {
 				matched[i] = toolkit.Sprintf("%v", eachVal)
 				if isFloat {
 					if !strings.Contains(matched[i], ".") {
-						matched[i] = toolkit.Sprintf("%v.0", matched[i])
+						if floatValue, err := strconv.ParseFloat(matched[i], 64); err == nil {
+							matched[i] = toolkit.Sprintf("%f", floatValue)
+						}
 					}
 				}
 				break
@@ -543,14 +545,21 @@ func (m *RatioFormula) Calculate() (string, error) {
 	// toolkit.Printfn("          %#s", m.FormulaParsed)
 	// toolkit.Printfn("          %#s", statement)
 
-	executedValue, err := helper.EvalArithmetic(statement)
-	if err != nil {
-		return "0", errors.New(toolkit.Sprintf("Invalid formula on \"%s %s\". Formula: \"%s\"", m.Id, m.Title, m.Formula))
+	executedValue := 0.0
+	executedString := ""
+	if m.Section == "" {
+		executedString = statement
+	} else {
+		executedValue, err = helper.EvalArithmetic(statement)
+		if err != nil {
+			return "0", errors.New(toolkit.Sprintf("Invalid formula on \"%s %s\". Formula: \"%s\"", m.Id, m.Title, m.Formula))
+		}
+		executedString = strings.TrimSpace(toolkit.Sprintf("%v", executedValue))
+
 	}
 
 	// toolkit.Printfn("          %#v", executedValue)
 
-	executedString := strings.TrimSpace(toolkit.Sprintf("%v", executedValue))
 	if executedString == "+Inf" || executedString == "-Inf" || executedString == "NaN" {
 		return "0", nil
 	}

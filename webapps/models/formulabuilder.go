@@ -62,6 +62,8 @@ type FormulaModel struct {
 	CreditScoreCardItem []CreditScoreCardItem
 	CibilData           CibilMap
 
+	MasterAccountDetail []MasterAccountDetail
+
 	AccountDetails            AccountDetailSummary
 	BalanceSheet              FM_FormulaBalanceSheet
 	RTR                       RTRSummary
@@ -119,6 +121,39 @@ func (s AuditStatuses) Less(i, j int) bool {
 	return !left.After(right)
 }
 
+type FM_RatingMasterParameter struct {
+	*ParametersData
+	categories []RatingMaster
+}
+
+func (f FM_RatingMasterParameter) GetMinOrder() int {
+	minOrder := 0
+
+	if len(f.categories) > 0 {
+		minOrder = f.categories[0].Order
+	}
+
+	for _, each := range f.categories {
+		if each.Order < minOrder {
+			minOrder = each.Order
+		}
+	}
+
+	return minOrder
+}
+
+type ArrayFM_RatingMasterParameters []FM_RatingMasterParameter
+
+func (s ArrayFM_RatingMasterParameters) Len() int {
+	return len(s)
+}
+func (s ArrayFM_RatingMasterParameters) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s ArrayFM_RatingMasterParameters) Less(i, j int) bool {
+	return s[i].GetMinOrder() < s[j].GetMinOrder()
+}
+
 // Main func
 
 func NewFormulaModel() *FormulaModel {
@@ -148,15 +183,19 @@ func (fm *FormulaModel) GetData(args ...string) error {
 		return err
 	}
 
+	if err := fm.GetDataMasterAccountDetail(); err != nil {
+		return err
+	}
+
 	if err := fm.GetDataBankingAnalysis(); err != nil {
 		return err
 	}
 
-	if err := fm.GetDataRatingMaster(); err != nil {
+	if err := fm.GetRatingData(); err != nil {
 		return err
 	}
 
-	if err := fm.GetRatingData(); err != nil {
+	if err := fm.GetDataRatingMaster(); err != nil {
 		return err
 	}
 
@@ -190,9 +229,9 @@ func (fm *FormulaModel) GetCibilData() error {
 
 	csr, err := conn.NewQuery().
 		Where(dbox.And(
-			dbox.Eq("Profile.customerid", customerIdInt),
-			dbox.Eq("Profile.dealno", fm.DealNo),
-		)).
+		dbox.Eq("Profile.customerid", customerIdInt),
+		dbox.Eq("Profile.dealno", fm.DealNo),
+	)).
 		From("CibilReport").
 		Cursor(nil)
 	defer csr.Close()
@@ -212,14 +251,13 @@ func (fm *FormulaModel) GetCibilData() error {
 
 	csr, err = conn.NewQuery().
 		Where(dbox.And(
-			dbox.Eq("ConsumerInfo.CustomerId", customerIdInt),
-			dbox.Eq("ConsumerInfo.DealNo", fm.DealNo),
-		)).
+		dbox.Eq("ConsumerInfo.CustomerId", customerIdInt),
+		dbox.Eq("ConsumerInfo.DealNo", fm.DealNo)),
+	).
 		From("CibilReportPromotorFinal").
 		Cursor(nil)
-	defer csr.Close()
-	if err != nil {
-		return err
+	if csr != nil {
+		defer csr.Close()
 	}
 
 	resprom := []toolkit.M{}
@@ -234,6 +272,16 @@ func (fm *FormulaModel) GetCibilData() error {
 		}).Exec().Result.Min.(float64)
 	}
 
+	return nil
+}
+
+func (fm *FormulaModel) GetDataMasterAccountDetail() error {
+	res, err := GetMasterAccountDetail()
+	if err != nil {
+		return err
+	}
+
+	fm.MasterAccountDetail = res
 	return nil
 }
 
@@ -255,11 +303,30 @@ func (fm *FormulaModel) GetDataRatingMaster() error {
 		return err
 	}
 
-	fm.RatingMaster = []RatingMaster{}
-	err = csr.Fetch(&fm.RatingMaster, 0, false)
+	ratingMastahhhhhh := []RatingMaster{}
+	err = csr.Fetch(&ratingMastahhhhhh, 0, false)
 	if err != nil {
 		return err
 	}
+
+	ratingFilterd := []RatingMaster{}
+	for _, eachRM := range ratingMastahhhhhh {
+		isFound := false
+
+	checkFound:
+		for _, eachCat := range fm.RatingData.CategoriesData {
+			if eachRM.Id == eachCat.Id {
+				isFound = true
+				break checkFound
+			}
+		}
+
+		if isFound {
+			ratingFilterd = append(ratingFilterd, eachRM)
+		}
+	}
+
+	fm.RatingMaster = ratingFilterd
 
 	return nil
 }
@@ -279,7 +346,7 @@ func (fm *FormulaModel) GetRatingData() error {
 	}
 
 	csr, err := query.
-		Order("order").
+		// Order("order").
 		Cursor(nil)
 	if csr != nil {
 		defer csr.Close()
@@ -375,7 +442,7 @@ func (fm *FormulaModel) GetDataAccountDetails() error {
 }
 
 func (fm *FormulaModel) GetDataBalanceSheet() error {
-	id := toolkit.Sprintf("%s|%s", fm.CustomerId, fm.DealNo)
+	// id := toolkit.Sprintf("%s|%s", fm.CustomerId, fm.DealNo)
 
 	conn, err := GetConnection()
 	defer conn.Close()
@@ -400,23 +467,29 @@ func (fm *FormulaModel) GetDataBalanceSheet() error {
 		return err
 	}
 
-	csr, err = conn.NewQuery().
-		Where(dbox.Eq("customerid", id)).
-		From(new(RatioInputData).TableName()).
-		Cursor(nil)
-	if csr != nil {
-		defer csr.Close()
-	}
+	// csr, err = conn.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("customerid", id), dbox.Eq("confirmed", true))).
+	// 	From(new(RatioInputData).TableName()).
+	// 	Cursor(nil)
+	// if csr != nil {
+	// 	defer csr.Close()
+	// }
+	// if err != nil {
+	// 	return err
+	// }
+
+	balanceSheetDataAll := []RatioInputData{}
+	balanceSheetData := RatioInputData{}
+	// err = csr.Fetch(&balanceSheetDataAll, 0, false)
+	// if err != nil {
+	// 	return err
+	// }
+
+	err = new(DataConfirmController).GetDataConfirmed(fm.CustomerId, fm.DealNo, new(RatioInputData).TableName(), &balanceSheetDataAll)
 	if err != nil {
 		return err
 	}
 
-	balanceSheetDataAll := []RatioInputData{}
-	balanceSheetData := RatioInputData{}
-	err = csr.Fetch(&balanceSheetDataAll, 0, false)
-	if err != nil {
-		return err
-	}
 	if len(balanceSheetDataAll) > 0 {
 		balanceSheetData = balanceSheetDataAll[0]
 	}
@@ -475,7 +548,7 @@ func (fm *FormulaModel) GetDataBalanceSheet() error {
 
 func (fm *FormulaModel) GetDataRTR() error {
 	_, summary, err := new(RTRBottom).
-		GetData(fm.CustomerId, fm.DealNo)
+		GetDataConfirmed(fm.CustomerId, fm.DealNo)
 	if err != nil {
 		return err
 	}
@@ -487,12 +560,12 @@ func (fm *FormulaModel) GetDataRTR() error {
 
 func (fm *FormulaModel) GetDataBankingAnalysis() error {
 	customerIdInt, _ := strconv.ParseInt(fm.CustomerId, 10, 32)
-	details, summary, err := new(BankAnalysis).GetDataV2(int(customerIdInt), fm.DealNo)
+	details, summary, err := new(BankAnalysis).GetDataV2Confirmed(int(customerIdInt), fm.DealNo)
 	if err != nil {
 		return err
 	}
 
-	allsum, err := new(BankAnalysis).GenerateAllSummary(fm.CustomerId, fm.DealNo)
+	allsum, err := new(BankAnalysis).GenerateAllSummaryConfirmed(fm.CustomerId, fm.DealNo)
 	if err != nil {
 		return err
 	}
@@ -576,6 +649,8 @@ func (fm *FormulaModel) CalculateNorm(ir string) ([]FM_NormFormula, error) {
 			nameSpace = "bank." + each.FieldId
 		case "RTR":
 			nameSpace = "rtr." + each.FieldId
+		case "CIBIL":
+			nameSpace = "cibil." + each.FieldId
 		default:
 			nameSpace = each.FieldId
 		}
@@ -588,6 +663,7 @@ func (fm *FormulaModel) CalculateNorm(ir string) ([]FM_NormFormula, error) {
 			if eachFormula.Id == each.FieldId {
 				form.Formula = eachFormula.Formula
 				form.ValueType = eachFormula.ValueType
+				form.Section = eachFormula.Section
 				break findFormula
 			}
 		}
@@ -887,43 +963,67 @@ func (fm *FormulaModel) CalculateBalanceSheet() (*FM_FormulaBalanceSheet, error)
 }
 
 func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
+	clean := func(s string) string {
+		return strings.TrimSpace(s)
+	}
+
 	res := []*CreditScoreCardItem{}
-	holder := map[string]*CreditScoreCardItem{}
 	counter := 0
 
-	for _, each := range fm.RatingMaster {
-		if _, ok := holder[each.ParametersGroup]; !ok {
-			o := new(CreditScoreCardItem)
-			o.Id = toolkit.Sprintf("z%d", counter)
-			o.IsHeader = true
-			o.Name = each.ParametersGroup
-			o.Order = counter
-			res = append(res, o)
-			counter++
+	parametersData := ArrayFM_RatingMasterParameters(func() []FM_RatingMasterParameter {
+		resInner := []FM_RatingMasterParameter{}
 
-			holder[each.ParametersGroup] = o
+		for _, eachParam := range fm.RatingData.ParametersData {
+			o := FM_RatingMasterParameter{}
+			o.ParametersData = eachParam
+			o.categories = []RatingMaster{}
+
+			for _, eachRMInside := range fm.RatingMaster {
+				if clean(eachRMInside.Parameters) == clean(eachParam.Parameters) && clean(eachRMInside.ParametersGroup) == clean(eachParam.ParametersGroup) {
+					o.categories = append(o.categories, eachRMInside)
+				}
+			}
+
+			resInner = append(resInner, o)
 		}
 
-		p := new(CreditScoreCardItem)
+		return resInner
+	}())
+	sort.Sort(parametersData)
 
-		if prevP, ok := holder[each.ParametersGroup+"|"+each.Parameters]; !ok {
-			p.Id = toolkit.Sprintf("z%d", counter)
-			p.IsHeader = false
-			p.Name = each.Parameters
-			p.Order = counter
+	type FM_RatingMasterParameter struct {
+		*ParametersData
+		categories []RatingMaster
+	}
 
-			p.from = each.From
-			p.fieldId = each.FieldId
+	for _, eachParamGroup := range fm.RatingData.ParametersGroupData {
+		o := new(CreditScoreCardItem)
+		o.Id = toolkit.Sprintf("z%d", counter)
+		o.IsHeader = true
+		o.Name = eachParamGroup.ParametersGroup
+		o.Order = counter
+		o.categories = []RatingMaster{}
+		counter++
+		res = append(res, o)
 
-			res = append(res, p)
-			counter++
+		for _, eachParam := range parametersData {
+			if clean(eachParamGroup.ParametersGroup) == clean(eachParam.ParametersGroup) {
+				p := new(CreditScoreCardItem)
+				p.Id = toolkit.Sprintf("z%d", counter)
+				p.IsHeader = false
+				p.Name = eachParam.Parameters
+				p.categories = []RatingMaster{}
+				counter++
+				res = append(res, p)
 
-			holder[each.ParametersGroup+"|"+each.Parameters] = p
-		} else {
-			p = prevP
+				if len(eachParam.categories) > 0 {
+					p.from = eachParam.categories[0].From
+					p.fieldId = eachParam.categories[0].FieldId
+					p.period = eachParam.categories[0].TimePeriod
+					p.categories = eachParam.categories
+				}
+			}
 		}
-
-		p.categories = append(p.categories, each)
 	}
 
 	resFinal := []*CreditScoreCardItem{}
@@ -947,6 +1047,12 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 		case "RTR":
 			namespace = "rtr"
 			currentAlias = namespace + "." + each.fieldId
+		case "CIBIL":
+			namespace = "cibil"
+			currentAlias = namespace + "." + each.fieldId
+		default:
+			namespace = "balancesheet"
+			currentAlias = namespace + "." + each.fieldId
 		}
 
 		form := new(RatioFormula)
@@ -962,57 +1068,210 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 			}
 
 			period := time.Now().Format("02-01-2006")
+
+			if namespace == "balancesheet" {
+
+				valueByDateStatus, err := (func() ([]toolkit.M, error) {
+					result := []toolkit.M{}
+
+					for i := range fm.BalanceSheet.AuditStatus {
+						eachStatus := fm.BalanceSheet.AuditStatus[len(fm.BalanceSheet.AuditStatus)-1-i]
+						if err := form.PrepareVariables(eachStatus.Date, fm); err != nil {
+							return nil, err
+						}
+						toolkit.Println(eachStatus, "vvvv")
+						if output, err := form.Calculate(); err != nil {
+							return nil, err
+						} else {
+							result = append(result, toolkit.M{
+								"Date":   eachStatus.Date,
+								"Value":  output,
+								"Status": eachStatus.Status,
+							})
+						}
+					}
+
+					return result, nil
+				})()
+				if err != nil {
+					return nil, err
+				}
+
+				switch each.period {
+				case NormMasterTimePeriodEstimatedPreferred:
+					for _, eachValueByDate := range valueByDateStatus {
+						eachStatus := eachValueByDate.GetString("Status")
+						eachValue := eachValueByDate.GetFloat64("Value")
+
+						if eachStatus == "ESTIMATED" || eachStatus == "PROVISION" || eachStatus == "AUDITED" {
+							if eachValue > 0 {
+								period = eachValueByDate.GetString("Date")
+								break
+							}
+						}
+					}
+				case NormMasterTimePeriodProvisionalPreferred:
+					for _, eachValueByDate := range valueByDateStatus {
+						eachStatus := eachValueByDate.GetString("Status")
+						eachValue := eachValueByDate.GetFloat64("Value")
+
+						if eachStatus == "PROVISION" || eachStatus == "AUDITED" {
+							if eachValue > 0 {
+								period = eachValueByDate.GetString("Date")
+								break
+							}
+						}
+					}
+				case NormMasterTimePeriodLastAudited:
+					for _, eachValueByDate := range valueByDateStatus {
+						eachStatus := eachValueByDate.GetString("Status")
+						eachValue := eachValueByDate.GetFloat64("Value")
+
+						if eachStatus == "AUDITED" {
+							if eachValue > 0 {
+								period = eachValueByDate.GetString("Date")
+								break
+							}
+						}
+					}
+				case NormMasterTimePeriodNotApplicable:
+				default:
+					period = time.Now().Format("02-01-2006")
+				}
+
+			}
+
 			if err := form.PrepareVariables(period, fm); err != nil {
 				return nil, err
 			}
 
 			// ====== set category
 			var err error
+
 			if output, err = form.Calculate(); err != nil {
 				output = toolkit.Sprintf("%v", form.GetValue(fm, namespace, each.fieldId, period))
 				if output == "" || output == "0" {
 					return nil, err
 				}
 			}
+			resfl, err := strconv.ParseFloat(toolkit.Sprintf("%v", output), 64)
+			if err == nil {
+				each.Value = resfl
+			}
 		}
 
 	loop1:
-		for _, eachCategory := range each.categories {
+		for _, raw := range each.categories {
+			eachCategory := raw
+
+			if raw.From == "Account Details" {
+				for _, each := range fm.MasterAccountDetail {
+					if each.Key.FormulaField == raw.FieldId {
+						for _, item := range each.Items {
+							if item.Name == raw.Categories {
+								eachCategory.Operator = item.Operator
+								eachCategory.Value1 = item.Value1
+								eachCategory.Value2 = item.Value2
+							}
+						}
+					}
+				}
+			}
+
 			outputFloat, _ := strconv.ParseFloat(toolkit.Sprintf("%v", output), 64)
 			switch eachCategory.Operator {
 			case "equal":
 				if eachCategory.IsValue1String() {
 					if output == eachCategory.GetValue1AsString() {
 						each.Category = eachCategory.Categories
+						each.DataType = "String"
+						break loop1
+					} else if outputFloat == eachCategory.IsValue1Percentage() {
+						each.Category = eachCategory.Categories
+						each.DataType = "Percent"
 						break loop1
 					}
 				} else {
 					if outputFloat == eachCategory.GetValue1AsFloat() {
 						each.Category = eachCategory.Categories
+						each.DataType = "Float"
 						break loop1
 					}
 				}
 			case "between":
-				if outputFloat >= eachCategory.GetValue1AsFloat() && outputFloat <= eachCategory.GetValue2AsFloat() {
+				if eachCategory.IsValue1String() {
+					if outputFloat >= eachCategory.IsValue1Percentage() && outputFloat <= eachCategory.IsValue2Percentage() {
+						each.Category = eachCategory.Categories
+						each.DataType = "Percent"
+
+						break loop1
+					}
+				} else if outputFloat >= eachCategory.GetValue1AsFloat() && outputFloat <= eachCategory.GetValue2AsFloat() {
 					each.Category = eachCategory.Categories
+					each.DataType = "Float"
 					break loop1
 				}
 			case "min":
-				if outputFloat > eachCategory.GetValue1AsFloat() {
+				if eachCategory.IsValue1String() {
+					if outputFloat > eachCategory.IsValue1Percentage() {
+						each.Category = eachCategory.Categories
+						each.DataType = "Percent"
+						break loop1
+					}
+				} else if outputFloat > eachCategory.GetValue1AsFloat() {
+					each.DataType = "Float"
+					each.Category = eachCategory.Categories
+					break loop1
+				}
+			case "lower than or equal":
+				if eachCategory.IsValue1String() {
+					if outputFloat <= eachCategory.IsValue1Percentage() {
+						each.Category = eachCategory.Categories
+						each.DataType = "Percent"
+						break loop1
+					}
+				} else if outputFloat <= eachCategory.GetValue1AsFloat() {
+					each.DataType = "Float"
+					each.Category = eachCategory.Categories
+					break loop1
+				}
+			case "greater than or equal":
+				if eachCategory.IsValue1String() {
+					if outputFloat >= eachCategory.IsValue1Percentage() {
+						each.Category = eachCategory.Categories
+						each.DataType = "Percent"
+						break loop1
+					}
+				} else if outputFloat >= eachCategory.GetValue1AsFloat() {
+					each.DataType = "Float"
 					each.Category = eachCategory.Categories
 					break loop1
 				}
 			case "max":
-				if outputFloat < eachCategory.GetValue1AsFloat() {
+				if eachCategory.IsValue1String() {
+					if outputFloat < eachCategory.IsValue1Percentage() {
+						each.Category = eachCategory.Categories
+						each.DataType = "Percent"
+						break loop1
+					}
+				} else if outputFloat < eachCategory.GetValue1AsFloat() {
+					each.DataType = "Float"
 					each.Category = eachCategory.Categories
 					break loop1
 				}
 			}
+
+			//Set DataType
+			if eachCategory.ValueType == "percentage" {
+				each.DataType = "Percent"
+			}
+
 		}
 		// ======
 
 		// ====== set value
 		each.Score = float64(0)
+
 	loop2:
 		for _, eachCategory := range each.categories {
 			if eachCategory.Categories == each.Category {

@@ -23,85 +23,103 @@
         ajaxPost(url, param, function (res) {
             if (res.Message != "") {
                 swal("Warning",res.Message,"warning");
+                $('.apx-loading').hide()
                 return
             }
 
-            window.fm = res.Data.FormulaModel
-            res.Data.CreditScoreData.Items.forEach(function (d) {
-                switch (d.Name) {
-                    case 'Growth':
-                        csc().calculateGrowth(res.Data.FormulaModel, d); break
-                    case 'Leverage (TOL/TNW)':
-                        csc().calculateLeverage(res.Data.FormulaModel, d); break
-                    case 'DSCR':
-                        csc().calculateDSCR(res.Data.FormulaModel, d); break
-                    case 'Interest Coverage':
-                        csc().calculateInterestCoverage(res.Data.FormulaModel, d); break
-                    case 'Working Capital Cycle':
-                        csc().calculateWorkingCapital(res.Data.FormulaModel, d); break
-                    case 'Banking To Turnover Ratio':
-                        d.Value = kendo.toString(fm.BankingAnalysis.BankingToTurnoverRatio, 'n2') + '%'; break
-                    case 'Inward Bounces': 
-                        d.Value = kendo.toString(fm.BankingAnalysis.InwardBounces, 'p2'); break
-                    case 'EMI track':
-                        csc().calculateEMITrack(res.Data.FormulaModel, d); break
-                    case 'Avg. Payment delay days with Distri.':
-                        d.Value = fm.AccountDetails.VDMaxOfAverageDelayDays; break
-                    case 'OD/CC Utilization (average of last 3 months) ABB vs Proposed EMI':
-                        csc().calculateODCCABBEMI(res.Data.FormulaModel, d); break
-                }
+            if(res.Data.FormulaModel.BalanceSheet.AuditStatus.length > 0) {
+                window.fm = res.Data.FormulaModel
+                res.Data.CreditScoreData.Items.forEach(function (d) {
+                    switch (d.Name) {
+                        case 'Growth':
+                            csc().calculateGrowth(res.Data.FormulaModel, d); break
+                        case 'Leverage (TOL/TNW)':
+                            csc().calculateLeverage(res.Data.FormulaModel, d); break
+                        case 'DSCR':
+                            csc().calculateDSCR(res.Data.FormulaModel, d); break
+                        case 'Interest Coverage':
+                            csc().calculateInterestCoverage(res.Data.FormulaModel, d); break
+                        case 'Working Capital Cycle':
+                            csc().calculateWorkingCapital(res.Data.FormulaModel, d); break
+                        case 'Banking To Turnover Ratio':
+                            d.Value = kendo.toString(fm.BankingAnalysis.BankingToTurnoverRatio, 'p2') + '%'; break
+                        case 'Inward Bounces':
+                            d.Value = kendo.toString(fm.BankingAnalysis.InwardBounces, 'p2'); break
+                        case 'EMI track':
+                            csc().calculateEMITrack(res.Data.FormulaModel, d); break
+                        case 'Avg. Payment delay days with Distri.':
+                            d.Value = fm.AccountDetails.VDMaxOfAverageDelayDays; break
+                        case 'OD/CC Utilization (average of last 3 months) ABB vs Proposed EMI':
+                            csc().calculateODCCABBEMI(res.Data.FormulaModel, d); break
+                        default :
+                         if(d.DataType=="Percent"){
+                                d.Value = kendo.toString(d.Value,"P2")
+                            }else if(d.DataType == "Float"){
+                                // d.Value = kendo.toString(d.Value,"N2")
+                            }
+                            break
+                    }
 
-                d.WeightScore = kendo.toString(d.WeightScore, 'n2')
-            })
+                    d.WeightScore = kendo.toString(d.WeightScore, 'n2')
+                })
 
-            var prevHeader = null
-            var values = []
-            res.Data.CreditScoreData.Items.forEach(function (d) {
-                if (d.IsHeader) {
-                    prevHeader = d
-                    values = []
+                var prevHeader = null
+                var values = []
+                res.Data.CreditScoreData.Items.forEach(function (d) {
+                    if (d.IsHeader) {
+                        prevHeader = d
+                        values = []
 
-                    fm.RatingData.ParametersGroupData.forEach(function (e) {
-                        if (e.ParametersGroup == prevHeader.Name) {
-                            prevHeader.Weight = e.WeightageOfGroupInCreditScore
-                        }
-                    })
+                        fm.RatingData.ParametersGroupData.forEach(function (e) {
+                            if (e.ParametersGroup == prevHeader.Name) {
+                                prevHeader.Weight = e.WeightageOfGroupInCreditScore
+                            }
+                        })
 
-                    return
-                }
+                        return
+                    }
 
-                values.push(parseFloat(d.WeightScore.split(' ')[0]))
-                var weightScore = prevHeader.Score * prevHeader.Weight / 100
+                    values.push(parseFloat(d.WeightScore.split(' ')[0]))
+                    var weightScore = prevHeader.Score * prevHeader.Weight / 100
+                   
+                    prevHeader.Score = kendo.toString(_.sum(values), 'n1')
+                })
 
-                prevHeader.Score = kendo.toString(_.sum(values), 'n1')
-            })
+                res.Data.CreditScoreData.Items.forEach(function (d) {
+                    if (d.IsHeader) {
+                        var weightScore = d.Score * d.Weight / 100
+                        d.WeightScore = kendo.toString(weightScore, 'n2')
+                    }
+                })
 
-            res.Data.CreditScoreData.Items.forEach(function (d) {
-                if (d.IsHeader) {
-                    var weightScore = d.Score * d.Weight / 100
-                    d.WeightScore = kendo.toString(weightScore, 'n2')
-                }
-            })
-
-            csc().datasource(res.Data.CreditScoreData.Items)
-            callback()
+                csc().datasource(res.Data.CreditScoreData.Items)
+                callback()
+            } else {
+                sweetAlert("Oops...", "Data Not Found", "error");
+                frp.isLoading(false)
+                return
+            }
         }, function () {
             callback()
         })
     }
 
     csc().getLastAuditedDate = function () {
-        var res = fm.BalanceSheet.AuditStatus.filter(function (d) {
-            return d.Status == "AUDITED"
-        })
-        return res[res.length - 1].Date
+        try {
+            var res = fm.BalanceSheet.AuditStatus.filter(function (d) {
+                return d.Status == "AUDITED"
+            })
+            return res[res.length - 1].Date
+        } catch (err) {
+            return moment(new Date()).format("31-03-YYYY")
+        }
     }
 
     csc().calculateCategoryAndScore = function (fm, ParametersGroup, Parameters, value, filterCallback) {
         var res = null
-
+        // console.log(ParametersGroup,Parameters);
         fm.RatingMaster.filter(function (d) {
-            return $.trim(d.ParametersGroup) == $.trim(ParametersGroup) 
+            return $.trim(d.ParametersGroup) == $.trim(ParametersGroup)
                 && $.trim(d.Parameters) == $.trim(Parameters)
         }).filter(function (d) {
             if (filterCallback != undefined) {
@@ -113,10 +131,15 @@
             if (res != null) {
                 return
             }
-
+            // console.log(d,"--");
             var score = toolkit.redefine(fm.RatingData.CategoriesData.find(function (e) {
                 return e.Id == d.Id
             }), { Score: 0 }).Score
+
+            if(d.ValueType.indexOf("percent") > -1 ){
+                d.Value1 = d.Value1 / 100;
+                d.Value2 = d.Value2 / 100;
+            }
 
             switch (d.Operator) {
                 case 'equal':
@@ -149,9 +172,24 @@
                     }
 
                     break;
+                 case "greater than or equal":
+                    if (value >= d.Value1) {
+                        res = { category: d.Categories, score: score }
+                    }
+
+                    break;
+                 case "lower than or equal":
+                    if (value <= d.Value1) {
+                        res = { category: d.Categories, score: score }
+                    }
+
+                    break;
             }
         })
-
+        if(res == null){
+            swal("Warning", "Category for "+Parameters + " not match","warning")
+            res = { category:"not found" , score : 0}
+        }
         return res
     }
 
@@ -319,7 +357,7 @@
         var calcloanadv = loanandadv ;
         var calcadjustednet = calctotalincome > 0 ? calcsharecap + reserves + unsecureloanpartner - miscexp  - calcinvestment - calcloanadv - debtormore6 + ( profitbrought - groupco ) : 0;
         var value = calcleverage0 / calcadjustednet;
-        
+
         var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
 
         row.Category = categoryAndScore.category
@@ -529,11 +567,11 @@
 
         var limit = fm.AccountDetails.LDRequestedLimitAmount * 100000;
         var proposedROI = fm.AccountDetails.LDProposedRateInterest / 100;
-        var proposedROI16percent = proposedROI; 
+        var proposedROI16percent = proposedROI;
         var divider = 100000
         var approx = limit + (proposedROI16percent * divider)
 
-        var totalYearRepayment = yearRepayment; 
+        var totalYearRepayment = yearRepayment;
         var value = ebdit / (totalYearRepayment / divider)
 
         var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
@@ -595,17 +633,17 @@
                     }]
                 }]
             }]
-        },{ 
+        },{
             Id: "a02",
             Name: "(Interest to FI and Banks +",
             Value: interestFI,
             Expand: false
-        },{ 
+        },{
             Id: "a03",
             Name: "Approximate X10 Interest (B) in Rs. )/",
             Value: approx,
             Expand: false
-        },{ 
+        },{
             Id: "a04",
             Name: "100000",
             Value: divider,
@@ -761,17 +799,17 @@
                     }]
                 }]
             }]
-        },{ 
+        },{
             Id: "a02",
             Name: "(Interest to FI and Banks +",
             Value: interestFI,
             Expand: false
-        },{ 
+        },{
             Id: "a03",
             Name: "Approximate X10 Interest (B) in Rs. )/",
             Value: approx,
             Expand: false
-        },{ 
+        },{
             Id: "a04",
             Name: "100000",
             Value: divider,
@@ -980,14 +1018,14 @@
     }
 
     csc().calculateEMITrack = function (fm, row) {
-        var sancLimit = fm.BankingAnalysis.SactionLimit
+        var sancLimit = fm.RTR.TotalObligationPOS //fm.BankingAnalysis.ODSactionLimit
         var dpdTrack = fm.RTR.DPDTrack
 
         row.Value = sancLimit
         row.Expand = false
         row.Children = [{
             Id: 'w01',
-            Name: 'Sanction Limit',
+            Name: 'Total Obligation POS',
             Value: sancLimit,
         }, {
             Id: 'w02',
@@ -997,16 +1035,18 @@
     }
 
     csc().calculateODCCABBEMI = function (fm, row) {
-        var isCurrent = (fm.BankingAnalysisRawDetails.filter(function (d) {
-            return d.DataBank[0].BankAccount.FundBased.AccountType == "Current"
-        })) == fm.BankingAnalysisRawDetails.length
+        var isOD = (fm.BankingAnalysisRawDetails.filter(function (d) {
+            return d.DataBank[0].BankAccount.FundBased.AccountType.toLowerCase().indexOf("od") > -1 && d.DataBank[0].BankAccount.FacilityType.indexOf("Fund Based") > -1
+        })).length > 0
+
 
         var ODCCValue = ''
         var ABBOFEMIValue = ''
         var ABBValue = ''
         var EMIValue = ''
+        var category = "abb"
 
-        if (isCurrent) {
+        // if (isCurrent) {
             var op2 = fm.BankingAnalysisRawDetails.map(function (d) {
                 var avgBalon = _.sumBy(d.DataBank[0].BankDetails, 'AvgBalon')
                 var length = d.DataBank[0].BankDetails.length
@@ -1018,55 +1058,63 @@
             var rateInterest = fm.AccountDetails.LDProposedRateInterest
             var limitTenor = fm.AccountDetails.LDLimitTenor
 
-            var abb = toolkit.number(_.sum(op2) / op2.length)
+            var abb = fm.BankingAnalysis.ABB;  //toolkit.number(_.sum(op2) / op2.length)
             var emi = toolkit.number((limitAmount * (1 + rateInterest / 100)) / limitTenor)
 
             var value = toolkit.number(abb / emi)
-            var categoryAndScore = csc().calculateCategoryAndScore(fm, "Banking", row.Name, value, function (d) {
-                return (d.Categories.toLowerCase().indexOf('emi') > -1)
-            })
+            // var categoryAndScore = csc().calculateCategoryAndScore(fm, "Banking", row.Name, value);//, function (d) {
+            //     return (d.Categories.toLowerCase().indexOf('emi') > -1)
+            // })
 
             ABBValue = kendo.toString(abb, 'n2')
             EMIValue = kendo.toString(emi, 'n2')
             ABBOFEMIValue = kendo.toString(value, 'p2')
 
-            row.Category = categoryAndScore.category
-            row.Score = categoryAndScore.score
-            row.WeightScore = row.Score * row.Weight / 100
-            row.Value = value
-        } else {
-            var op1 = fm.BankingAnalysisRawDetails.map(function (d) {
-                var max = _.max(_.map(d.DataBank[0].BankDetails, function (e) {
-                    return toolkit.number(e.AvgBalon / e.OdCcLimit)
-                }))
+            // row.Category = categoryAndScore.category
+            // row.Score = categoryAndScore.score
+            // row.WeightScore = row.Score * row.Weight / 100
+            // row.Value = value
+        // } else {
+            // var op1 = fm.BankingAnalysisRawDetails.map(function (d) {
+            //     var max = _.max(_.map(d.DataBank[0].BankDetails, function (e) {
+            //         return toolkit.number(e.AvgBalon / e.OdCcLimit)
+            //     }))
 
-                return max
-            })
+            //     return max
+            // })
 
-            var value = toolkit.number(_.sum(op1) / op1.length) * 100
-            var categoryAndScore = csc().calculateCategoryAndScore(fm, "Banking", row.Name, value, function (d) {
-                return (d.Categories.toLowerCase().indexOf('emi') == -1)
-            })
+            var valueOD = fm.BankingAnalysis.ODAvgUtilization; //toolkit.number(_.sum(op1) / op1.length)
 
-            ODCCValue = kendo.toString(value, 'p2')
-
-            row.Category = categoryAndScore.category
-            row.Score = categoryAndScore.score
-            row.WeightScore = row.Score * row.Weight / 100
-            row.Value = kendo.toString(value) + '%'
+            if(isOD){
+            value = valueOD //* 100
+            category = "od/cc"
         }
+
+            console.log(isOD,"OD---------------");
+
+            var categoryAndScore = csc().calculateCategoryAndScore(fm, "Banking", row.Name, value, function (d) {
+                return (d.Categories.toLowerCase().indexOf(category) > -1)
+            })
+
+            ODCCValue = kendo.toString(valueOD, 'p2')
+            // console.log(categoryAndScore);
+            row.Category = categoryAndScore.category
+            row.Score = categoryAndScore.score
+            row.WeightScore = row.Score * row.Weight / 100
+            row.Value =  kendo.toString(value, 'p2'); //kendo.toString(value) + '%'
+        // }
 
         row.Expand = false
         row.Children = [{
             Id: 'w07',
             Name: 'If (A/C type is OD/CC)<br />and Max(OD/CC Utilization per month)>0)<br />then Max(OD/CC Utilization per month)<br />else<br />" "',
             Value: ODCCValue,
-            Expand: false,
-            Children: [{
-                Id: 'w08',
-                Name: "OD/CC Utilization per month = ('Avg. Bal on 1+7+14+21+28')/(OD/CC Limit per Months)",
-                Value: ODCCValue
-            }]
+            // Expand: false,
+            // Children: [{
+            //     Id: 'w08',
+            //     Name: "OD/CC Utilization per month = ('Avg. Bal on 1+7+14+21+28')/(OD/CC Limit per Months)",
+            //     Value: ODCCValue
+            // }]
         }, {
             Id: 'w09',
             Name: "If (A/C type is Current)<br />and check if ABB <75% of EMI<br />ABB=>75% to 90% of EMI<br />ABB =>90% to 100% of EMI<br />ABB >100% of EMI",
@@ -1076,19 +1124,19 @@
                 Id: 'w10',
                 Name: "ABB = Average (Current Account<br />Average Balance)",
                 Value: ABBValue,
-                Expand: false,
-                Children: [{
-                    Id: 'w12',
-                    Name: 'Current Account Average Balance =<br />Sum of Current Account Average Balance for all Banks / Count of Current Account Average Balance',
-                    Value: ABBValue,
-                    Expand: false,
-                    Children: [{
-                        Id: 'w13',
-                        Name: 'Current Account Average Balance for each bank = Sum of Avg. Bal on 1+7+14+21+28 / Count of Avg. Bal on 1+7+14+21+28',
-                        Value: ABBValue,
-                        Expand: false,
-                    }]
-                }]
+                // Expand: false,
+                // Children: [{
+                //     Id: 'w12',
+                //     Name: 'Current Account Average Balance =<br />Sum of Current Account Average Balance for all Banks / Count of Current Account Average Balance',
+                //     Value: ABBValue,
+                //     Expand: false,
+                //     Children: [{
+                //         Id: 'w13',
+                //         Name: 'Current Account Average Balance for each bank = Sum of Avg. Bal on 1+7+14+21+28 / Count of Avg. Bal on 1+7+14+21+28',
+                //         Value: ABBValue,
+                //         Expand: false,
+                //     }]
+                // }]
             }, {
                 Id: 'w14',
                 Name: "EMI = [ Proposed amount * (1+Proposed Rate/100) ] / Limit Tenor",

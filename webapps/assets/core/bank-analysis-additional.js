@@ -2,10 +2,25 @@ var url = "/bankanalysis";
 databank = ko.observableArray([]);
 var abbavg = 0;
 var abbavgs = 0;
+var isempty = ko.observable(false);
 var idx = ko.observable();
 var ebitdamargin = {}
 var finalsummary = []
 var odutilmax = 0
+var unfreeze = ko.observable(false);
+var caba = ko.observable(0);
+var formVisibility = ko.observable(false);
+
+var initEvents = function () {
+    filter().CustomerSearchVal.subscribe(function () {
+        formVisibility(false)
+    })
+    filter().DealNumberSearchVal.subscribe(function () {
+        formVisibility(false)
+    })
+
+    //$('#refresh').remove()
+}
 var fundbased = {
     accounttype : ko.observable(""),
     accountno : ko.observable(""),
@@ -50,6 +65,7 @@ var getSearchVal = function(){
 var refreshFilter = function(){
     DrawDataBank(getSearchVal());
     setdatestt()
+    initEvents()
 }
 
 var setdatestt = function(){
@@ -90,7 +106,8 @@ function numChange(){
         var sanc = parseFloat($("#sanclimit").val());
         var roi = parseFloat($("#roiperannum").val());
         var res = sanc*(roi/100)/12;
-        $("#interestpermonth").val( kendo.toString(res,'N1').split(",").join("") );
+        var sanc1 = parseFloat(Math.round(res * 100) / 100).toFixed(2);
+        $("#interestpermonth").val(sanc1);
     }
     catch(e){
         //console.log(e);
@@ -131,43 +148,104 @@ function resetInput(){
 
 ///Create Grid Data Bank///
 var DrawDataBank = function(id){
+    var fre = 0;
+    var un= 0;
+    var sa = 0;
     ajaxPost(url+"/getdatabankv2", id, function(res){
         var c = true;
-        _.each(res.data.Detail, function(p){
-            if(!p.IsConfirmed){
-                c = false;
-                return;
-            }
-        });
+        if(res.message != "" ){
+            swal("Warning",res.message,"warning");
+        }else{
 
-        if(c && res.data.Detail.length != 0){
-            $('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(res.data.Detail[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
-            $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter");
-        } else {
-            $('.form-last-confirmation-info').html('')
-            $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm All");
+            _.each(res.data.Detail, function(p){
+                if(!p.IsConfirmed){
+                    c = false;
+                    return;
+                }
+
+                if(p.Status == 1 && p.IsFreeze == true){
+                    fre++;
+                }else if( p.Status == 1 && p.IsFreeze == false){
+                    un++;
+                }else if(p.Status == 0 && p.IsFreeze == false){
+                    sa++;
+                }
+            });
         }
-        constructOdccModel(res);
-        databank(res.data.Detail);
-        setTimeout(function() {
-            databank().forEach(function(e,i) {
-                RenderGridDataBank(i,e);
-            }, this);
-                generateAML(res.data);
-        }, 200);
-        
-        var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin
-        idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
-        latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
-        ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
-        var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
-        var multiplyer = _.min([latestebidmargin,customermargin])
-        
-        for (var i = 0 ; i < res.data.Summary.length ; i++){
-            res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
+        if(res.data.AccountDetail.length != 0){
+            checkConfirmedOrNot(res.data.AccountDetail[0].status, 1, 2, res.data, [], "Accounts Details");
+        }else{
+            checkConfirmedOrNot(0, 1, 2, res.data, [], "Accounts Details");
+        }
+
+        if(res.data.Detail.length != 0){
+            formVisibility(true)
+            isempty(false)
+            console.log(res.data.AccountDetail[0].Status)
+            if(res.data.Detail.length == fre){
+            // alert("fre")
+                $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.data.Detail[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
+                caba(1)
+                unfreeze(true);
+                setTimeout(function(){
+                    disabledAll(false);
+                },100)
+                
+                $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter"); 
+            } else if(res.data.Detail.length == un){
+                 // alert("un")
+                caba(1)
+                setTimeout(function(){
+                    $(".btn-reenter").prop("disabled", false)
+                },100)
+                $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(res.data.Detail[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
+                $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter");
+            } else if(res.data.Detail.length == sa){
+                 // alert("sa")
+                 caba(0)
+                $('.form-last-confirmation-info').html('')
+                $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm");
+            }
+
+            constructOdccModel(res);
+            databank(res.data.Detail);
+
+            if(res.data.AccountDetail.length==0){
+                swal("Warning", "Please Fill Account Detail Data First","warning");
+                createBankingGrid(res.data.Summary,0);
+            }else{
+
+            if (res.data.Ratio.Data.AuditStatus.length != 0){
+                var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin
+                idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
+                latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
+                ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
+                var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
+                var multiplyer = _.min([latestebidmargin,customermargin])
+                
+                for (var i = 0 ; i < res.data.Summary.length ; i++){
+                    res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
+                }
+                console.log(res)
+                createBankingGrid(res.data.Summary,multiplyer);
+            }else{
+                createBankingGrid(res.data.Summary,0);
+            }
+        }
+
+            setTimeout(function() {
+                databank().forEach(function(e,i) {
+                    RenderGridDataBank(i,e);
+                }, this);
+                    generateAML(res.data);
+            }, 100);
+        }else{
+            // checkConfirmedOrNot(0, 1, 2, res.data, [], "Accounts Details");
+            isempty(true);
+            // swal("Warning","Data Bank not found","warning");
+            $("#bankstt").data("kendoDatePicker").value("")
         }
         
-        createBankingGrid(res.data.Summary,multiplyer);
     });
 }
 
@@ -179,7 +257,7 @@ var RenderGridDataBank = function(id, res){
     var current = [];
     current.push(res.DataBank[0].BankAccount.CurrentBased);
     var factype = res.DataBank[0].BankAccount.FacilityType;
-
+    
     $('#fundgrid'+id).kendoGrid({
         dataSource : fund,
         scrollable:false,
@@ -200,15 +278,22 @@ var RenderGridDataBank = function(id, res){
                 headerAttributes: { "class": "sub-bgcolor" },
             },
             {
-                title : 'ROI',
+                title : 'ROI (%)',
                 field : 'ROI',
                 headerAttributes: { "class": "sub-bgcolor" },
+                template: function(){
+                    var num = fund[0].ROI
+                    // if (fund[id] != undefined ){
+                    //     return fund[0].ROI + "%"
+                    // }  
+                    return num + "%"
+                },
             },
             {
-                title : 'Sanction Limit',
+                title : 'Sanction Limit (Rs. Lacs)',
                 field : 'SancLimit',
                 headerAttributes: { "class": "sub-bgcolor" },
-                template : "#: app.formatnum( SancLimit ) #"
+                template : "#: app.formatnum( SancLimit, 2 ) #"
             },
             {
                 title : 'Sanction Date',
@@ -217,9 +302,17 @@ var RenderGridDataBank = function(id, res){
                 template: "#= kendo.toString(moment.utc(SanctionDate).format('DD-MMM-YYYY'), 'dd-MMM-yyyy') #",
             },
             {
-                title : 'Interest Per Month',
+                title : 'Interest Per Month (Rs. Lacs)',
                 field : 'InterestPerMonth',
                 headerAttributes: { "class": "sub-bgcolor" },
+                template: function(){
+                    var num = app.formatnum(fund[0].InterestPerMonth, 2);
+                    // if (fund[id] != undefined ){
+                    //     return app.formatnum(fund[id].InterestPerMonth, 2)
+                    // }
+
+                    return num
+                }
             },
             // {
             //     title : 'Security For FB',
@@ -232,17 +325,17 @@ var RenderGridDataBank = function(id, res){
         dataSource : nonfund,
         columns :[
             {
-                title : 'Nature Of Facility',
+                title : 'Nature of Facility',
                 headerAttributes: { "class": "sub-bgcolor" },
                 width : 150,
                 field : 'NatureOfFacility',
             },
             {
-                title : 'Sanction Limit',
+                title : 'Sanction Limit (Rs. Lacs)',
                 headerAttributes: { "class": "sub-bgcolor" },
                 width : 150,
                 field : 'SancLimit',
-                template : "#: app.formatnum( SancLimit ) #"
+                template : "#: app.formatnum( SancLimit, 2 ) #"
             },
             {
                 title : 'Sanction Date',
@@ -252,7 +345,7 @@ var RenderGridDataBank = function(id, res){
                 template: "#= kendo.toString(moment.utc(SanctionDate).format('DD-MMM-YYYY'), 'dd-MMM-yyyy') #",
             },
             {
-                title : 'Security for NFB',
+                title : 'Security for Non-Fun Based',
                 field : 'SecurityOfNFB',
                 headerAttributes: { "class": "sub-bgcolor" },
             },
@@ -373,8 +466,14 @@ var RenderGridDataBank = function(id, res){
                 
             }))
 
-            averageReceipt.actualInterestPaid = _.sumBy(data, 'ActualInterestPaid')
-                / (data.length == 0 ? 1 : data.length)
+            var pembagi = 0
+            if(data.length > 0){
+                for(var i=0;i<data.length;i++){
+                    if(data[i].ActualInterestPaid > 0) pembagi++;
+                }
+            }
+            
+            averageReceipt.actualInterestPaid = _.sumBy(data, 'ActualInterestPaid') / (pembagi == 0 ? 1 : pembagi) //(data.length == 0 ? 1 : data.length)
 
             averageReceipt.noOfDebit = _.sumBy(data, 'NoOfDebit')
             averageReceipt.noOfCredit = _.sumBy(data, 'NoOfCredit')
@@ -387,27 +486,27 @@ var RenderGridDataBank = function(id, res){
             $('<td />').appendTo($footer1)
                 .html('Average Receipts').attr('colspan', 3)
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.creditTotal, 1))
+                .html(app.formatnum(averageReceipt.creditTotal, 2))
             $('<td />').appendTo($footer1)
                 .html('&nbsp;').attr('colspan', 2)
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.debitTotal, 1))
+                .html(app.formatnum(averageReceipt.debitTotal, 2))
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.avgBlon, 1))
+                .html(app.formatnum(averageReceipt.avgBlon, 2))
             $('<td />').appendTo($footer1)
-                .html(kendo.toString(averageReceipt.utilPerMonth, 'p1'))
+                .html(kendo.toString(averageReceipt.utilPerMonth, 'p2'))
             $('<td />').appendTo($footer1)
                 .html('&nbsp;')
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.actualInterestPaid, 1))
+                .html(app.formatnum(averageReceipt.actualInterestPaid, 2))
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.noOfDebit, 1))
+                .html(app.formatnum(averageReceipt.noOfDebit))
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.noOfCredit, 1))
+                .html(app.formatnum(averageReceipt.noOfCredit))
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.owCheque, 1))
+                .html(app.formatnum(averageReceipt.owCheque))
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.iwCheque, 1))
+                .html(app.formatnum(averageReceipt.iwCheque))
 
             var averageOpenLimit = {}
 
@@ -426,7 +525,7 @@ var RenderGridDataBank = function(id, res){
             $('<td />').appendTo($footer2)
                 .html('Average Open Limit').attr('colspan', 3)
             $('<td />').appendTo($footer2)
-                .html(app.formatnum(averageOpenLimit.creditTotal, 1))
+                .html(app.formatnum(averageOpenLimit.creditTotal, 2))
             $('<td />').appendTo($footer2)
                 .html('&nbsp;').attr('colspan', 3)
             $('<td />').appendTo($footer2)
@@ -434,7 +533,8 @@ var RenderGridDataBank = function(id, res){
             $('<td />').appendTo($footer2)
                 .html(app.formatnum(averageOpenLimit.annualisedCredit, 2))
             $('<td />').appendTo($footer2)
-                .html('% BTO In This Account').attr('colspan', 5)
+                // .html('% BTO In This Account').attr('colspan', 5)
+                .html('&nbsp').attr('colspan', 5)
         }
     });
 
@@ -465,7 +565,6 @@ var RenderGridDataBank = function(id, res){
         batch: true,
         columns : createCurrentBankDetailGridCols(false),
         dataBound: function () {
-            console.log(res.DataBank[0].CurrentBankDetails)
             var data = res.DataBank[0].CurrentBankDetails
             var account = res.DataBank[0].BankAccount
 
@@ -509,21 +608,21 @@ var RenderGridDataBank = function(id, res){
             $('<td />').appendTo($footer1)
                 .html('Average Receipts').attr('colspan', 3)
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.creditTotal, 1))
+                .html(app.formatnum(averageReceipt.creditTotal, 2))
             $('<td />').appendTo($footer1)
                 .html('&nbsp;').attr('colspan', 2)
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.debitTotal, 1))
+                .html(app.formatnum(averageReceipt.debitTotal, 2))
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.avgBlon, 1))
+                .html(app.formatnum(averageReceipt.avgBlon, 2))
             $('<td />').appendTo($footer1)
                 .html(app.formatnum(averageReceipt.noOfDebit, 1))
             $('<td />').appendTo($footer1)
                 .html(app.formatnum(averageReceipt.noOfCredit, 1))
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.owCheque, 1))
+                .html(app.formatnum(averageReceipt.owCheque))
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.iwCheque, 1))
+                .html(app.formatnum(averageReceipt.iwCheque))
 
             var averageOpenLimit = {}
 
@@ -567,10 +666,11 @@ var createBankDetailGridCols = function(isForm){
         title : "Month",
         field : "Month",
         width : 100,
+        //format:"{0:dd-MMM-yyyy}",
         headerAttributes: { "class": "sub-bgcolor" },
-        template: "#= kendo.toString(kendo.parseDate(Month, 'yyyy-MM-dd'), 'dd-MM-yyyy') #"
+        template: "#= kendo.toString(kendo.parseDate(Month, 'yyyy-MM-dd'), 'MMM-yyyy') #"
     }, {
-        headerTemplate: "Monthly Credits<br />Rs. Lacs",
+        headerTemplate: "Monthly Credits<br />(Rs. Lacs)",
         headerAttributes: { "class": "sub-bgcolor" },
         columns: [{
             title : "Non Cash",
@@ -580,7 +680,7 @@ var createBankDetailGridCols = function(isForm){
                 if (d.CreditNonCash == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.CreditNonCash)
+                    return app.formatnum(d.CreditNonCash,2)
                 }
             },
             editor: disableSpinner
@@ -592,17 +692,17 @@ var createBankDetailGridCols = function(isForm){
                 if (d.CreditCash == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.CreditCash)
+                    return app.formatnum(d.CreditCash,2)
                 }
             },
             editor: disableSpinner
         }, {
             title : "Total",
             headerAttributes: { "class": "sub-bgcolor" },
-            template : "#: app.formatnum(CreditNonCash+CreditCash)#"
+            template : "#: app.formatnum(CreditNonCash+CreditCash,2)#"
         }]
     }, {
-        headerTemplate: "Monthly Debits<br />Rs. Lacs",
+        headerTemplate: "Monthly Debits<br />(Rs. Lacs)",
         headerAttributes: { "class": "sub-bgcolor" },
         columns: [{
             title : "Non Cash",
@@ -624,17 +724,17 @@ var createBankDetailGridCols = function(isForm){
                 if (d.DebitCash == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.DebitCash)
+                    return app.formatnum(d.DebitCash,2)
                 }
             },
             editor: disableSpinner
         }, {
             title : "Total",
             headerAttributes: { "class": "sub-bgcolor" },
-            template : "#:app.formatnum(DebitNonCash+DebitCash)#"
+            template : "#:app.formatnum(DebitNonCash+DebitCash,2)#"
         }]
     }, {
-        title : "AVG BAL ON 1+7+14+21+28",
+        title : "AVG BAL ON<br />1+7+14+21+28<br />(Rs. Lacs)",
         field : "AvgBalon",
         headerAttributes: { "class": "sub-bgcolor" },
         width : 120,
@@ -642,38 +742,38 @@ var createBankDetailGridCols = function(isForm){
             if (d.AvgBalon == 0){
                 return "";
             }else{
-                return app.formatnum(d.AvgBalon)
+                return app.formatnum(d.AvgBalon,2)
             }
         },
         editor: disableSpinner
     }, {
-        title : "OD/CC Utilization Per Months",
+        title : "OD/CC Utilization Per Month",
         headerAttributes: { "class": "sub-bgcolor" },
         template : function (d) {
             var value = toolkit.number(d.AvgBalon / d.OdCcLimit)
-            return kendo.toString(value, 'p1')
+            return kendo.toString(value, 'p2')
         }
     }, {
-        title : "OD/CC Limit Per Months",
+        title : "OD/CC Limit Per Month (Rs. Lacs)",
         field : "OdCcLimit",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
             if (d.OdCcLimit == 0){
                 return "";
             }else{
-                return app.formatnum(d.OdCcLimit)
+                return app.formatnum(d.OdCcLimit,2)
             }
         },
         editor: disableSpinner
     }, {
-        title : "Actual Interest paid Rs.Lacs",
+        title : "Actual Interest paid (Rs. Lacs)",
         field : "ActualInterestPaid",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
             if (d.ActualInterestPaid == 0){
                 return "";
             }else{
-                return app.formatnum(d.ActualInterestPaid)
+                return app.formatnum(d.ActualInterestPaid, 2)
             }
         },
         editor: disableSpinner
@@ -730,174 +830,174 @@ var createBankDetailGridCols = function(isForm){
     //if (isForm) cols.splice(4, 1);
     if (isForm){
         cols = [{
-        title : "Month",
-        field : "Month",
-        width : 100,
-        headerAttributes: { "class": "sub-bgcolor" },
-        template: "#= kendo.toString(kendo.parseDate(Month, 'yyyy-MM-dd'), 'dd-MM-yyyy') #"
-    }, {
-        headerTemplate: "Monthly Credits<br />Rs. Lacs",
-        headerAttributes: { "class": "sub-bgcolor" },
-        columns: [{
-            title : "Non Cash",
-            field : "CreditNonCash",
+            title : "Month",
+            field : "Month",
+            width : 100,
             headerAttributes: { "class": "sub-bgcolor" },
-            template: function(d){
-                if (d.CreditNonCash == 0){
-                    return "";
-                }else{
-                    return app.formatnum(d.CreditNonCash)
-                }
-            },
-            editor: disableSpinner
+            template: "#= kendo.toString(kendo.parseDate(Month, 'yyyy-MM-dd'), 'MMM-yyyy') #"
         }, {
-            title : "Cash",
-            field : "CreditCash",
+            headerTemplate: "Monthly Credits<br />(Rs. Lacs)",
             headerAttributes: { "class": "sub-bgcolor" },
+            columns: [{
+                title : "Non Cash",
+                field : "CreditNonCash",
+                headerAttributes: { "class": "sub-bgcolor" },
+                template: function(d){
+                    if (d.CreditNonCash == 0){
+                        return "";
+                    }else{
+                        return app.formatnum(d.CreditNonCash,2)
+                    }
+                },
+                editor: disableSpinner
+            }, {
+                title : "Cash",
+                field : "CreditCash",
+                headerAttributes: { "class": "sub-bgcolor" },
+                template: function(d){
+                    if (d.CreditCash == 0){
+                        return "";
+                    }else{
+                        return app.formatnum(d.CreditCash,2)
+                    }
+                },
+                editor: disableSpinner
+            }, 
+            // {
+            //     title : "Total",
+            //     headerAttributes: { "class": "sub-bgcolor" },
+            //     template : "#:CreditNonCash+CreditCash#"
+            // }
+            ]
+        }, {
+            headerTemplate: "Monthly Debits<br />(Rs. Lacs)",
+            headerAttributes: { "class": "sub-bgcolor" },
+            columns: [{
+                title : "Non Cash",
+                field : "DebitNonCash",
+                headerAttributes: { "class": "sub-bgcolor" },
+                template: function(d){
+                    if (d.DebitNonCash == 0){
+                        return "";
+                    }else{
+                        return app.formatnum(d.DebitNonCash,2)
+                    }
+                },
+                editor: disableSpinner
+            }, {
+                title : "Cash",
+                field : "DebitCash",
+                headerAttributes: { "class": "sub-bgcolor" },
+                template: function(d){
+                    if (d.DebitCash == 0){
+                        return "";
+                    }else{
+                        return app.formatnum(d.DebitCash,2)
+                    }
+                },
+                editor: disableSpinner
+            }, 
+            // {
+            //     title : "Total",
+            //     headerAttributes: { "class": "sub-bgcolor" },
+            //     template : "#:DebitNonCash+DebitCash#"
+            // }
+            ]
+        }, {
+            title : "AVG BAL ON<br />1+7+14+21+28<br />(Rs. Lacs)",
+            field : "AvgBalon",
+            headerAttributes: { "class": "sub-bgcolor" },
+            width : 120,
             template: function(d){
-                if (d.CreditCash == 0){
+                if (d.AvgBalon == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.CreditCash)
+                    return app.formatnum(d.AvgBalon,2)
                 }
             },
             editor: disableSpinner
         }, 
         // {
-        //     title : "Total",
+        //     title : "OD/CC Utilization Per Months",
         //     headerAttributes: { "class": "sub-bgcolor" },
-        //     template : "#:CreditNonCash+CreditCash#"
-        // }
-        ]
-    }, {
-        headerTemplate: "Monthly Debits<br />Rs. Lacs",
-        headerAttributes: { "class": "sub-bgcolor" },
-        columns: [{
-            title : "Non Cash",
-            field : "DebitNonCash",
+        //     template : function (d) {
+        //         var value = toolkit.number(d.AvgBalon / d.OdCcLimit)
+        //         return kendo.toString(value, 'p1')
+        //     }
+        // }, 
+        {
+            title : "OD/CC Limit Per Month (Rs. Lacs)",
+            field : "OdCcLimit",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.DebitNonCash == 0){
+                if (d.OdCcLimit == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.DebitNonCash,2)
+                    return app.formatnum(d.OdCcLimit,2)
                 }
             },
             editor: disableSpinner
         }, {
-            title : "Cash",
-            field : "DebitCash",
+            title : "Actual Interest paid (Rs. Lacs)",
+            field : "ActualInterestPaid",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.DebitCash == 0){
+                if (d.ActualInterestPaid == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.DebitCash)
+                    return app.formatnum(d.ActualInterestPaid,2)
                 }
             },
             editor: disableSpinner
-        }, 
-        // {
-        //     title : "Total",
-        //     headerAttributes: { "class": "sub-bgcolor" },
-        //     template : "#:DebitNonCash+DebitCash#"
-        // }
-        ]
-    }, {
-        title : "AVG BAL ON 1+7+14+21+28",
-        field : "AvgBalon",
-        headerAttributes: { "class": "sub-bgcolor" },
-        width : 120,
-        template: function(d){
-            if (d.AvgBalon == 0){
-                return "";
-            }else{
-                return app.formatnum(d.AvgBalon)
-            }
-        },
-        editor: disableSpinner
-    }, 
-    // {
-    //     title : "OD/CC Utilization Per Months",
-    //     headerAttributes: { "class": "sub-bgcolor" },
-    //     template : function (d) {
-    //         var value = toolkit.number(d.AvgBalon / d.OdCcLimit)
-    //         return kendo.toString(value, 'p1')
-    //     }
-    // }, 
-    {
-        title : "OD/CC Limit Per Months",
-        field : "OdCcLimit",
-        headerAttributes: { "class": "sub-bgcolor" },
-        template: function(d){
-            if (d.OdCcLimit == 0){
-                return "";
-            }else{
-                return app.formatnum(d.OdCcLimit)
-            }
-        },
-        editor: disableSpinner
-    }, {
-        title : "Actual Interest paid Rs.Lacs",
-        field : "ActualInterestPaid",
-        headerAttributes: { "class": "sub-bgcolor" },
-        template: function(d){
-            if (d.ActualInterestPaid == 0){
-                return "";
-            }else{
-                return app.formatnum(d.ActualInterestPaid,2)
-            }
-        },
-        editor: disableSpinner
-    }, {
-        title : "No. of Debits",
-        field : "NoOfDebit",
-        headerAttributes: { "class": "sub-bgcolor" },
-        template: function(d){
-            if (d.NoOfDebit == 0){
-                return "";
-            }else{
-                return d.NoOfDebit
-            }
-        },
-        editor: disableSpinner
-    }, {
-        title : "No. of Credits",
-        field : "NoOfCredit",
-        headerAttributes: { "class": "sub-bgcolor" },
-        template: function(d){
-            if (d.NoOfCredit == 0){
-                return "";
-            }else{
-                return d.NoOfCredit
-            }
-        },
-        editor: disableSpinner
-    }, {
-        title : "O/W Cheque Returns",
-        field : "OwCheque",
-        headerAttributes: { "class": "sub-bgcolor" },
-        template: function(d){
-            if (d.OwCheque == 0){
-                return "";
-            }else{
-                return d.OwCheque
-            }
-        },
-        editor: disableSpinner
-    }, {
-        title : "I/W Cheque Returns",
-        field : "IwCheque",
-        headerAttributes: { "class": "sub-bgcolor" },
-        template: function(d){
-            if (d.IwCheque == 0){
-                return "";
-            }else{
-                return d.IwCheque
-            }
-        },
-        editor: disableSpinner
-    }];
+        }, {
+            title : "No. of Debits",
+            field : "NoOfDebit",
+            headerAttributes: { "class": "sub-bgcolor" },
+            template: function(d){
+                if (d.NoOfDebit == 0){
+                    return "";
+                }else{
+                    return d.NoOfDebit
+                }
+            },
+            editor: disableSpinner
+        }, {
+            title : "No. of Credits",
+            field : "NoOfCredit",
+            headerAttributes: { "class": "sub-bgcolor" },
+            template: function(d){
+                if (d.NoOfCredit == 0){
+                    return "";
+                }else{
+                    return d.NoOfCredit
+                }
+            },
+            editor: disableSpinner
+        }, {
+            title : "O/W Cheque Returns",
+            field : "OwCheque",
+            headerAttributes: { "class": "sub-bgcolor" },
+            template: function(d){
+                if (d.OwCheque == 0){
+                    return "";
+                }else{
+                    return d.OwCheque
+                }
+            },
+            editor: disableSpinner
+        }, {
+            title : "I/W Cheque Returns",
+            field : "IwCheque",
+            headerAttributes: { "class": "sub-bgcolor" },
+            template: function(d){
+                if (d.IwCheque == 0){
+                    return "";
+                }else{
+                    return d.IwCheque
+                }
+            },
+            editor: disableSpinner
+        }];
     }
 
     return cols;
@@ -910,9 +1010,9 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "Month",
         width : 100,
         headerAttributes: { "class": "sub-bgcolor" },
-        template: "#= kendo.toString(kendo.parseDate(Month, 'yyyy-MM-dd'), 'dd-MM-yyyy') #"
+        template: "#= kendo.toString(kendo.parseDate(Month, 'yyyy-MM-dd'), 'MMM-yyyy') #"
     }, {
-        headerTemplate: "Monthly Credits<br />Rs. Lacs",
+        headerTemplate: "Monthly Credits<br />(Rs. Lacs)",
         headerAttributes: { "class": "sub-bgcolor" },
         columns: [{
             title : "Non Cash",
@@ -922,7 +1022,7 @@ var createCurrentBankDetailGridCols = function(isForm){
                 if (d.CreditNonCash == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.CreditNonCash)
+                    return app.formatnum(d.CreditNonCash,2)
                 }
             },
             editor: disableSpinner
@@ -934,17 +1034,17 @@ var createCurrentBankDetailGridCols = function(isForm){
                 if (d.CreditCash == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.CreditCash)
+                    return app.formatnum(d.CreditCash,2)
                 }
             },
             editor: disableSpinner
         }, {
             title : "Total",
             headerAttributes: { "class": "sub-bgcolor" },
-            template : "#:app.formatnum(CreditNonCash+CreditCash)#"
+            template : "#:app.formatnum(CreditNonCash+CreditCash,2)#"
         }]
     }, {
-        headerTemplate: "Monthly Debits<br />Rs. Lacs",
+        headerTemplate: "Monthly Debits<br />(Rs. Lacs)",
         headerAttributes: { "class": "sub-bgcolor" },
         columns: [{
             title : "Non Cash",
@@ -966,17 +1066,17 @@ var createCurrentBankDetailGridCols = function(isForm){
                 if (d.DebitCash == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.DebitCash)
+                    return app.formatnum(d.DebitCash,2)
                 }
             },
             editor: disableSpinner
         }, {
             title : "Total",
             headerAttributes: { "class": "sub-bgcolor" },
-            template : "#:app.formatnum(DebitNonCash+DebitCash)#"
+            template : "#:app.formatnum(DebitNonCash+DebitCash,2)#"
         }]
     }, {
-        title : "AVG BAL ON 1+7+14+21+28",
+        title : "AVG BAL ON<br />1+7+14+21+28<br />(Rs. Lacs)",
         field : "AvgBalon",
         headerAttributes: { "class": "sub-bgcolor" },
         width : 120,
@@ -984,7 +1084,7 @@ var createCurrentBankDetailGridCols = function(isForm){
             if (d.AvgBalon == 0){
                 return "";
             }else{
-                return app.formatnum(d.AvgBalon)
+                return app.formatnum(d.AvgBalon,2)
             }
         },
         editor: disableSpinner
@@ -1046,9 +1146,9 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "Month",
         width : 100,
         headerAttributes: { "class": "sub-bgcolor" },
-        template: "#= kendo.toString(kendo.parseDate(Month, 'yyyy-MM-dd'), 'dd-MM-yyyy') #"
+        template: "#= kendo.toString(kendo.parseDate(Month, 'yyyy-MM-dd'), 'MMM-yyyy') #"
     }, {
-        headerTemplate: "Monthly Credits<br />Rs. Lacs",
+        headerTemplate: "Monthly Credits<br />(Rs. Lacs)",
         headerAttributes: { "class": "sub-bgcolor" },
         columns: [{
             title : "Non Cash",
@@ -1058,7 +1158,7 @@ var createCurrentBankDetailGridCols = function(isForm){
                 if (d.CreditNonCash == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.CreditNonCash)
+                    return app.formatnum(d.CreditNonCash,2)
                 }
             },
             editor: disableSpinner
@@ -1070,7 +1170,7 @@ var createCurrentBankDetailGridCols = function(isForm){
                 if (d.CreditCash == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.CreditCash)
+                    return app.formatnum(d.CreditCash,2)
                 }
             },
             editor: disableSpinner
@@ -1082,7 +1182,7 @@ var createCurrentBankDetailGridCols = function(isForm){
         // }
         ]
     }, {
-        headerTemplate: "Monthly Debits<br />Rs. Lacs",
+        headerTemplate: "Monthly Debits<br />(Rs. Lacs)",
         headerAttributes: { "class": "sub-bgcolor" },
         columns: [{
             title : "Non Cash",
@@ -1104,7 +1204,7 @@ var createCurrentBankDetailGridCols = function(isForm){
                 if (d.DebitCash == 0){
                     return "";
                 }else{
-                    return app.formatnum(d.DebitCash)
+                    return app.formatnum(d.DebitCash,2)
                 }
             },
             editor: disableSpinner
@@ -1112,7 +1212,7 @@ var createCurrentBankDetailGridCols = function(isForm){
 
         ]
     }, {
-        title : "AVG BAL ON 1+7+14+21+28",
+        title : "AVG BAL ON<br />1+7+14+21+28<br />(Rs. Lacs)",
         field : "AvgBalon",
         headerAttributes: { "class": "sub-bgcolor" },
         width : 120,
@@ -1120,7 +1220,7 @@ var createCurrentBankDetailGridCols = function(isForm){
             if (d.AvgBalon == 0){
                 return "";
             }else{
-                return app.formatnum(d.AvgBalon)
+                return app.formatnum(d.AvgBalon,2)
             }
         },
         editor: disableSpinner
@@ -1157,7 +1257,7 @@ var createCurrentBankDetailGridCols = function(isForm){
             if (d.OwCheque == 0){
                 return "";
             }else{
-                return d.OwCheque
+                return app.formatnum(d.OwCheque)
             }
         },
         editor: disableSpinner
@@ -1169,7 +1269,7 @@ var createCurrentBankDetailGridCols = function(isForm){
             if (d.IwCheque == 0){
                 return "";
             }else{
-                return d.IwCheque
+                return app.formatnum(d.IwCheque)
             }
         },
         editor: disableSpinner
@@ -1358,7 +1458,21 @@ var onfactypechange = function(){
     
 }
 
+scroll = function(){
+    var elementPosition = $('.btnFixed').offset();
+    $(window).scroll(function(){
+        if($(window).scrollTop() > elementPosition.top){
+              $('.btnFixed').removeClass('static');
+              $('.btnFixed').addClass('fixed');
+        } else {
+            $('.btnFixed').removeClass('fixed');
+            $('.btnFixed').addClass('static');
+        }    
+    });
+}
+
 $(document).ready(function(){
+    scroll()
     $('#facilitytype').kendoMultiSelect({
         dataTextField: "text",
         dataValueField: "value",
@@ -1383,14 +1497,19 @@ $(document).ready(function(){
         updateDataBank(idx());
     });
     $("#bankstt").kendoDatePicker({
-        format: "dd-MM-yyyy",
+        format: "MMM-yyyy",
         change: onChange,
+        depth:"year",
+        start:"year"
     });
     $('#savebtn').click(function(){
         saveDataBank();
     });
 
     $("#add").click(function(){
+        // $("#nfbsl").css("margin-left", "0px !important")
+        // $("#ee").css("margin-left", "0px !important")
+        // $("#aa").css("margin-left", "0px !important")
         if (filter().CustomerSearchVal() == ""){
             swal("Warning","Select Customer First","warning");
             return;
@@ -1421,6 +1540,7 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $("#nfbsanctiondate").getKendoDatePicker().value(new Date());
                         $("#fbsanctiondate").getKendoDatePicker().value(new Date());
+                        
                     },2000);
 
                 }else{
@@ -1441,7 +1561,16 @@ $(document).ready(function(){
             resetInput();
             ajaxPost(url+"/setconfirmedv2", getSearchVal(), function(){
                 swal("Success","Data confirmed","success");
-                $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm All");
+                if($('#bconfirm').text() == "Confirm"){
+                    $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re-Enter");
+                    swal("Successfully Confirmed", "", "success");
+                    caba(1)
+                }else{
+                    $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm");
+                    swal("Please Edit / Enter Data", "", "success");
+                    caba(0)
+                }
+                
                 refreshFilter()
             });
         }
@@ -1465,6 +1594,10 @@ $(document).ready(function(){
         ],
         index: 0,
     });
+    $("#nfbsanclimit").kendoNumericTextBox({ format: '#.00', spinners:false });
+    // $('#interestpermonth').kendodoNumericTextBox({format: '#.00', spinners:false });
+    $('#sanclimit').kendoNumericTextBox({format: '#.00', spinners:false });
+    $('#roiperannum').kendoNumericTextBox({format: '#.00', spinners:false });
 
     $("#sanclimit").keyup(function(){
         numChange();
@@ -1486,7 +1619,7 @@ $(document).ready(function(){
         dataTextField: "text",
         dataValueField: "value",
         dataSource: [
-            {text: "Letter Of Credit", value: "Letter Of Credit"},
+            {text: "Letter of Credit", value: "Letter of Credit"},
             {text: "Bank Guarantee", value: "Bank Guarantee"},
             {text: "Other", value: "Other"},
         ],
@@ -1671,9 +1804,10 @@ var editBankData = function(index){
             }
             $('#acno').val(databank()[index].DataBank[0].BankAccount.FundBased.AccountNo)
             $('#acholder').val(databank()[index].DataBank[0].BankAccount.FundBased.AccountHolder)
-            $('#sanclimit').val(databank()[index].DataBank[0].BankAccount.FundBased.SancLimit)
-            $('#roiperannum').val(databank()[index].DataBank[0].BankAccount.FundBased.ROI)
-            $('#interestpermonth').val(databank()[index].DataBank[0].BankAccount.FundBased.InterestPerMonth)
+            $('#sanclimit').data('kendoNumericTextBox').value(databank()[index].DataBank[0].BankAccount.FundBased.SancLimit)
+            $('#roiperannum').data('kendoNumericTextBox').value(databank()[index].DataBank[0].BankAccount.FundBased.ROI)
+            var sanc1 = parseFloat(Math.round(databank()[index].DataBank[0].BankAccount.FundBased.InterestPerMonth * 100) / 100).toFixed(2);
+            $('#interestpermonth').val(sanc1)
             $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
             $('#securityfb').val(databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB)
             //loadGridDataBank(databank()[index].DataBank[0].BankDetails)
@@ -1692,15 +1826,15 @@ var editBankData = function(index){
                 $('#othernaturefacility').val(databank()[index].DataBank[0].BankAccount.NonFundBased.NatureOfFacility)
             }
 
-            $('#nfbsanclimit').val(databank()[index].DataBank[0].BankAccount.NonFundBased.SancLimit)
+            $('#nfbsanclimit').data('kendoNumericTextBox').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SancLimit)
             $('#nfbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate)
             $('#securitynfb').val(databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB)
         }
 
         if (factype.indexOf('Current') > -1){
             $('#current').show()
-            $('#currentacno').val(databank()[1].DataBank[0].BankAccount.CurrentBased.AccountNo)
-            $('#currentacholder').val(databank()[1].DataBank[0].BankAccount.CurrentBased.AccountHolder)
+            $('#currentacno').val(databank()[0].DataBank[0].BankAccount.CurrentBased.AccountNo)
+            $('#currentacholder').val(databank()[0].DataBank[0].BankAccount.CurrentBased.AccountHolder)
             //loadGridCurrentDataBank(databank()[index].DataBank[0].CurrentBankDetails)
         }
 
@@ -1869,7 +2003,7 @@ var saveDataBank = function(){
     nonfundbased.sanclimit(Number($("#nfbsanclimit").val()));
     nonfundbased.securityofnfb($("#securitynfb").val());
     bankaccount.bankname($("#bankname").val());
-    bankaccount.bankstttill($("#bankstt").data("kendoDatePicker").value());
+    bankaccount.bankstttill($("#bankstt").data("kendoDatePicker").value().toISOString());
     var todayDate = new Date().toISOString();
     // if (bankaccount.facilitytype() != "" && bankaccount.facilitytype() == "Fund Based"){
     //     nonfundbased.sanctiondate(todayDate);
@@ -1931,7 +2065,7 @@ var saveDataBank = function(){
         callData.CurrentBankDetails.push(currentbankdet);
     }
 
-    console.log(callData)
+    //console.log(callData)
 
     ajaxPost(url+"/createbankanalysis",callData, function(res){
         //yo.success(res.data);
@@ -2040,9 +2174,9 @@ var updateDataBank = function(index){
     currdet = gridcurrentbankdet.dataSource._data
 
     bankaccount.bankname($("#bankname").val());
-    bankaccount.bankstttill($("#bankstt").data("kendoDatePicker").value());
+    bankaccount.bankstttill($("#bankstt").data("kendoDatePicker").value().toISOString());
     bankaccount.facilitytype($('#facilitytype').getKendoMultiSelect().value())
-    bankaccount.bankstttill($("#bankstt").data("kendoDatePicker").value());
+    //bankaccount.bankstttill($("#bankstt").data("kendoDatePicker").value());
 
     fundbased.accounttype($("#actype").data("kendoDropDownList").value())
     fundbased.accountholder($("#acholder").val())
@@ -2229,23 +2363,23 @@ var createBankingGrid = function(res,minmargin){
                 format:"{0:dd-MMM-yyyy}",
                 footerTemplate: 'Total'
             }, {
-                title:"Monthly Credits",
+                title:"Monthly Credits (Rs. Lacs)",
                 field:"TotalCredit",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'> #= kendo.toString(sum, 'n0') # </div>",
+                footerTemplate: "<div style='text-align: right'> #= kendo.toString(sum, 'n2') # </div>",
                 attributes:{ "style": "text-align:right" },
-                template : "#: app.formatnum(TotalCredit) #"
+                template : "#: app.formatnum(TotalCredit,2) #"
             }, {
-                title:"Monthly Debits",
+                title:"Monthly Debits (Rs. Lacs)",
                 field:"TotalDebit",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n2') #</div>",
                 attributes:{ "style": "text-align:right" },
-                template : "#: app.formatnum(TotalDebit) #"
+                template : "#: app.formatnum(TotalDebit,2) #"
             }, {
-                title:"No. Of Debits",
+                title:"No. of Debits",
                 field:"NoOfDebit",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
@@ -2253,7 +2387,7 @@ var createBankingGrid = function(res,minmargin){
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(NoOfDebit,'N0') #"
             }, {
-                title:"No. Of Credits",
+                title:"No. of Credits",
                 field:"NoOfCredit",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
@@ -2285,11 +2419,11 @@ var createBankingGrid = function(res,minmargin){
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(Utilization,'P1') #"
             }, {
-                title:"Imp Margin <br> (Margin Taken : "+ kendo.toString(minmargin*100,"n1") +"%)",
+                title:"Imp Margin (Rs. Lacs)<br> (Margin Taken : "+ kendo.toString(minmargin*100,"n1") +"%)",
                 field:"ImpMargin",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: app.formatnum(ImpMargin,2) #"
             }, {
@@ -2301,7 +2435,7 @@ var createBankingGrid = function(res,minmargin){
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(OwReturnPercentage,'P1') #"
             }, {
-                title:"I/w return %",
+                title:"I/W Return %",
                 field:"LwReturnPercentage",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
@@ -2328,24 +2462,71 @@ var RebuildSummary = function(id){
     $("#"+id+" .k-grid-content").hide();
     $("#"+id+" .k-header:eq(0)").unbind("click").bind("click", function (e) {
         var content = $("#"+id+" .k-grid-content:visible");
+        var od = $("#oddetailgrid .k-grid-content:visible")
+        var aml = $("#amlgrid .k-grid-content:visible")
+        var abb = $("#currentgrid .k-grid-content:visible")
+        var banking = $('#bankinggrid .k-grid-content:visible')
         if(content.length == 0){
-            // $('#summary-panel').height(360)
-            $('#summary-panel').animate({height: "350px"}, 500)
+            //$('#summary-panel').animate({height: "550px"}, 500)
             $('#amlgrid').getKendoGrid().options.scrollable = false
-            $("#"+id+" .k-grid-content").slideDown("slow");
-            $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-up pull-right')   
+            //$("#"+id+" .k-grid-content").slideDown("slow");
+            //$("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-up pull-right')
+            if (id != 'bankinggrid'){
+                if((od.length == 0 || aml.length == 0 || abb.length == 0) && banking.length != 0){
+                    $('#summary-panel').animate({height: "550px"}, 500)
+                    $("#"+id+" .k-grid-content").slideDown("slow");
+                    $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-up pull-right')
+                }else{
+                    $('#summary-panel').animate({height: "370px"}, 500)
+                    $("#"+id+" .k-grid-content").slideDown("slow");
+                    $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-up pull-right')
+                }
+            }else{
+                if (od.length == 0 && aml.length == 0 && abb.length == 0){
+                    $('#summary-panel').animate({height: "370px"}, 500)
+                    $("#"+id+" .k-grid-content").slideDown("slow");
+                    $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-up pull-right')
+                }else{
+                    $('#summary-panel').animate({height: "550px"}, 500)
+                    $("#"+id+" .k-grid-content").slideDown("slow");
+                    $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-up pull-right')
+                }
+            }   
         }else{
+            if(id != 'bankinggrid'){
+                if(banking.length != 0){
+                    if(od.length != 0 || aml.length != 0 || abb.length != 0){
+                        $("#"+id+" .k-grid-content").slideUp("slow");
+                        $('#summary-panel').animate({height: "550px"}, 500)
+                        $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-down pull-right')
+                    }
+
+                }else{
+                    if(od.length != 0 || aml.length != 0 || abb.length != 0){
+                        $("#"+id+" .k-grid-content").slideUp("slow");
+                        $('#summary-panel').animate({height: "370px"}, 500)
+                        $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-down pull-right')
+                    }     
+                }
+            }else{
+                if (od.length == 0 && aml.length == 0 && abb.length == 0){
+                    $("#"+id+" .k-grid-content").slideUp("slow");
+                    $('#summary-panel').animate({height: "200px"}, 500)
+                    $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-down pull-right')
+                }else{
+                    $("#"+id+" .k-grid-content").slideUp("slow");
+                    $('#summary-panel').animate({height: "370px"}, 500)
+                    $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-down pull-right')
+                }
+            }
             
-            $("#"+id+" .k-grid-content").slideUp("slow");
-            // $('#summary-panel').height(200)
-            $('#summary-panel').animate({height: "200px"}, 500)
-            $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-down pull-right')
         }
     });
     $("#"+id+" .k-header:eq(0)").attr("style","cursor: pointer;");
 }
 
 var createAmlGrid = function(data){
+    //console.log(data)
     $("#amlgrid").html("");
     $("#amlgrid").kendoGrid({
         dataSource : {
@@ -2363,7 +2544,7 @@ var createAmlGrid = function(data){
                         title:"Months",
                         field:"Month",
                         headerAttributes: { class: "sub-bgcolor" },
-                        template: "#= kendo.toString(moment.utc(Month).format('DD-MMM-YYYY'), 'dd-MMM-yyyy') #",
+                        //template: "#= kendo.toString(moment.utc(Month).format('DD-MMM-YYYY'), 'MMM-yyyy') #",
                         footerTemplate: "Total"
                     },
                     {
@@ -2426,8 +2607,30 @@ var constructOdccModel = function(res){
         //     });
         // aml.util =  _.reduce(utilarr, function(memo, num){ return memo + num; }, 0)/ _.filter(utilarr, function(x){ return x > 0; }).length ;
         // aml.util = isFinite(aml.util) ? aml.util : 0;
-        if (eachDataBank.BankAccount.FundBased.AccountType.toLowerCase().indexOf('od') > -1) {
+        // if (eachDataBank.BankAccount.FundBased.AccountType.toLowerCase().indexOf('od') > -1) {
 
+        //     aml.OdCcUtilization = _.max(_.map(eachDataBank.BankDetails, function (bd) {
+        //         return toolkit.number(bd.AvgBalon / bd. OdCcLimit);
+        //     }))
+
+        //     var interestPerMonth    = eachDataBank.BankAccount.FundBased.InterestPerMonth;
+        //     var actualInterestPaids = _.map(eachDataBank.BankDetails, function(bd) {
+        //         return bd.ActualInterestPaid;
+        //     })
+
+        //     var actualInterestPaidValue = toolkit.number(_.sum(actualInterestPaids) / actualInterestPaids.length)
+        //     aml.InterestPerMonth = _.max([interestPerMonth, actualInterestPaidValue])
+        //     var abbv = _.reduce(eachDataBank.BankDetails, function(memo, num){ return memo + num.AvgBalon; }, 0)/_.filter(eachDataBank.BankDetails, function(x){ return x.AvgBalon > 0; }).length
+        //     aml.abb = isNaN(abbv) ? 0 : abbv ;
+        //     amls.push(aml);
+        //}else{
+            // current.abb = _.reduce(eachDataBank.CurrentBankDetails, function(memo, num){ return memo + num.AvgBalon; }, 0)/_.filter(eachDataBank.CurrentBankDetails, function(x){ return x.AvgBalon > 0; }).length
+            // current.abb = isNaN(current.abb) ? 0 : current.abb ;
+            // currents.push(current)
+        //}
+
+        //amls.push(aml);
+        if (eachDataBank.BankAccount.FundBased.AccountType.toLowerCase().indexOf("od")>-1){
             aml.OdCcUtilization = _.max(_.map(eachDataBank.BankDetails, function (bd) {
                 return toolkit.number(bd.AvgBalon / bd. OdCcLimit);
             }))
@@ -2442,13 +2645,13 @@ var constructOdccModel = function(res){
             var abbv = _.reduce(eachDataBank.BankDetails, function(memo, num){ return memo + num.AvgBalon; }, 0)/_.filter(eachDataBank.BankDetails, function(x){ return x.AvgBalon > 0; }).length
             aml.abb = isNaN(abbv) ? 0 : abbv ;
             amls.push(aml);
-        }else{
-            current.abb = _.reduce(eachDataBank.BankDetails, function(memo, num){ return memo + num.AvgBalon; }, 0)/_.filter(eachDataBank.BankDetails, function(x){ return x.AvgBalon > 0; }).length
-            current.abb = isNaN(current.abb) ? 0 : current.abb ;
-            currents.push(current)
         }
 
-        //amls.push(aml);
+        // if (eachDataBank.BankAccount.CurrentBased.AccountNo != ""){
+            current.abb = _.reduce(eachDataBank.CurrentBankDetails, function(memo, num){ return memo + num.AvgBalon; }, 0)/_.filter(eachDataBank.CurrentBankDetails, function(x){ return x.AvgBalon > 0; }).length
+            current.abb = isNaN(current.abb) ? 0 : current.abb ;
+            currents.push(current)
+        // }
     });
 
     abbavg = toolkit.number(_.reduce(amls, function(memo, num){ return memo + num.abb; }, 0) /  _.filter(amls, function(x){ return x.abb > 0; }).length);
@@ -2464,6 +2667,7 @@ var constructOdccModel = function(res){
 }
 
 var createCurrentDetailGrid = function(res){
+    console.log(res)
     $('#currentgrid').html('')
     $('#currentgrid').kendoGrid({
         dataSource : {
@@ -2486,13 +2690,13 @@ var createCurrentDetailGrid = function(res){
                         footerTemplate: "Total",
                     },
                     {
-                        title:"ABB",
+                        title:"ABB (Rs. Lacs)",
                         field:"abb",
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["average"],
-                        footerTemplate: "<div style='text-align: right'>#= kendo.toString(abbavgs, 'n0') #</div>",
+                        footerTemplate: "<div style='text-align: right'>#= kendo.toString(abbavgs, 'n2') #</div>",
                         attributes:{ "style": "text-align:right" },
-                        template : "#: app.formatnum(abb) #"
+                        template : "#: app.formatnum(abb,2) #"
                     }
                 ]
             }
@@ -2517,7 +2721,7 @@ var createOdDetailGrid = function(res){
             
 		},
         scrollable:true,
-        // height:245,
+        height:245,
         columns : [
             {
                 title:"OD Details",
@@ -2530,13 +2734,13 @@ var createOdDetailGrid = function(res){
                         footerTemplate: "Total",
                     },
                     {
-                        title:"Sanction Limit",
+                        title:"Sanction Limit (Rs. Lacs)",
                         field:"SancLimit",
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["sum"],
-                        footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+                        footerTemplate: "<div style='text-align: right'>#= app.formatnum(sum, 2) #</div>",
                         attributes:{ "style": "text-align:right" },
-                        template : "#: app.formatnum(SancLimit) #"
+                        template : "#:app.formatnum(SancLimit) #"
                     },
                     {
                         title:"OD Utilization",
@@ -2549,13 +2753,13 @@ var createOdDetailGrid = function(res){
                         template : "#: kendo.toString(OdCcUtilization,'P1') #"
                     },
                     {
-                        title:"Interest Paid",
+                        title:"Interest Paid (Rs. Lacs)",
                         field:"InterestPerMonth",
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["sum"],
-                        footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+                        footerTemplate: "<div style='text-align: right'>#= app.formatnum(sum, 2) #</div>",
                         attributes:{ "style": "text-align:right" },
-                        template : "#: kendo.toString(InterestPerMonth,'N0') #"
+                        template : "#: kendo.toString(InterestPerMonth,'N1') #"
                     },
                     //  {
                     //     title:"ABB",
@@ -2582,13 +2786,79 @@ var createOdDetailGrid = function(res){
     $('#oddetailgrid').height(0)
 }
 
+function onFreeze(){
+    if(caba() == 0){
+        swal("Confirm Data First","","warning");
+            return;
+    }
+    if(filter().CustomerSearchVal() == "" || filter().DealNumberSearchVal() == ""){
+        swal("Warning","Select Customer First","warning");
+        return;
+    }else{
+        resetInput();
+        ajaxPost(url+"/setfreeze", getSearchVal(), function(){
+            unfreeze(true);
+            disabledAll(false);
+            swal("Successfully Unfreezed","","success");
+            refreshFilter()
+        });
+    }
+    
+}
+
+function setUnFreeze(){
+    if (filter().CustomerSearchVal() == "" || filter().DealNumberSearchVal() == ""){
+            swal("Warning","Select Customer First","warning");
+            return;
+    }else{
+        resetInput();
+        ajaxPost(url+"/unfreeze", getSearchVal(), function(){
+            unfreeze(false);
+            disabledAll(true);
+            swal("Successfully Unfreezed","","success");
+            refreshFilter()
+        });
+    }
+    unfreeze(false);
+    disabledAll(true);
+}
+
+function disabledAll(what){
+    setTimeout(function(){
+        $.each(databank(), function(i, items){
+            $("#bedit"+i).prop("disabled", !what)
+        })
+    }, 100)
+    $("#unf").prop("disabled", false)
+    $(".btn-reenter").prop("disabled", !what)
+    $("#Bank-Container .k-widget").each(function(i,e){
+
+        var $ddl = $(e).find("select").getKendoDropDownList();
+
+        if($ddl == undefined)
+        var $ddl = $(e).find("input").getKendoDropDownList();
+
+        var $dtm = $(e).find("input").getKendoDatePicker();
+        var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+        if($ddl != undefined)
+        {
+            $ddl.enable(what);
+        }else if($dtm != undefined){
+            $dtm.enable(what);
+        }else if ($txt != undefined){
+            $txt.enable(what);
+        }
+    });
+}
+
 function onChange(){
     if (filter().CustomerSearchVal() == ""){
         swal("Warning","Select Customer First","warning");
         return;
     }else{
         var val = $("#bankstt").data("kendoDatePicker");
-        values = val.value();
+        values = val.value().toISOString();
         dateval = new Date(values);
         bankdetails = [];
         for (i = 0 ; i < 6 ; i++){

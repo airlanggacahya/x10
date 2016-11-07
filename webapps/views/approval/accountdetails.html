@@ -1,8 +1,8 @@
 <div class="panel-heading"><h3 class="text-center">Account Details</h3></div>
 
-<div class="panel-default content no-padding">
+<div class="panel-default content no-padding most-bottom">
 	
-	<div class="panel-heading text-center">Information</div>
+	<div class="panel-heading text-center">General Information</div>
 
 	<div class="panel-body">
 		<div class="form-group clearfix">
@@ -10,13 +10,17 @@
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">Company Name</label>
 			    	<div class="col-sm-12">
-			    		<input id="companyname" data-bind="enable:false,value: loanapproval.companyname" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+				    		<input id="companyname" data-bind="enable:false, attr: { value: loanapproval.companyname }" class="input-sm form-control" style="width: 100%;">
+				    	</div>
 			    	</div>
 				</div>
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">Login Date</label>
 			    	<div class="col-sm-12">
-			    		<input id="logindate" data-bind="enable:false,value: loanapproval.logindate" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+				    		<input id="logindate" data-bind="enable:false, attr: { value: loanapproval.logindate }" class="input-sm form-control" style="width: 100%;">
+			    		</div>
 			    	</div>
 				</div>
 			</div>
@@ -27,13 +31,17 @@
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">Business Address</label>
 			    	<div class="col-sm-12">
-			    		<input id="businessaddress" data-bind="enable:false,value: loanapproval.businessaddress" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+				    		<input id="businessaddress" data-bind="enable:false, attr: { value: loanapproval.businessaddress }" class="input-sm form-control" style="width: 100%;">
+				    	</div>
 			    	</div>
 				</div>
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">Location</label>
 			    	<div class="col-sm-12">
-			    		<input id="location" data-bind="enable:false,value: loanapproval.location" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+				    		<input id="location" data-bind="enable:false, attr: { value: loanapproval.location }" class="input-sm form-control" style="width: 100%;">
+			    		</div>
 			    	</div>
 				</div>
 			</div>
@@ -44,13 +52,17 @@
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">Product</label>
 			    	<div class="col-sm-12">
-			    		<input id="product" data-bind="enable:false,value: loanapproval.product" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+				    		<input id="product" data-bind="enable:false, attr: { value: loanapproval.product }" class="input-sm form-control" style="width: 100%;">
+			    		</div>
 			    	</div>
 				</div>
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">Scheme</label>
 			    	<div class="col-sm-12">
-			    		<input id="scheme" data-bind="enable:false,value: schemeAD" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+			    			<input id="scheme" data-bind="enable:false, attr: { value: schemeAD }" class="input-sm form-control" style="width: 100%;">
+			    		</div>
 			    	</div>
 				</div>
 			</div>
@@ -61,13 +73,17 @@
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">Lead Distributor</label>
 			    	<div class="col-sm-12">
-			    		<input id="leaddistributor" data-bind="enable:false,value: loanapproval.leaddistributor" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+			    			<input id="leaddistributor" data-bind="enable:false, attr: { value: loanapproval.leaddistributor }" class="input-sm form-control" style="width: 100%;">
+			    		</div>
 			    	</div>
 				</div>
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">Credit Analyst</label>
 			    	<div class="col-sm-12">
-			    		<input id="creditanalyst" data-bind="enable:false,value: loanapproval.creditanalyst" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+				    		<input id="creditanalyst" data-bind="enable:false, attr: { value: loanapproval.creditanalyst }" class="input-sm form-control" style="width: 100%;">
+				    	</div>
 			    	</div>
 				</div>
 			</div>
@@ -78,13 +94,17 @@
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">RM Head</label>
 			    	<div class="col-sm-12">
-			    		<input id="rmhead" data-bind="enable:false,value:loanapproval.rmname" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+				    		<input id="rmhead" data-bind="enable:false, attr: { value: loanapproval.rmname }" class="input-sm form-control" style="width: 100%;">
+				    	</div>
 			    	</div>
 				</div>
 				<div class="col-sm-6 no-padding">
 			    	<label class="col-sm-12 text-left">BR Head</label>
 			    	<div class="col-sm-12">
-			    		<input id="brhead" data-bind="enable:false,value:loanapproval.brhead" class="input-sm form-control" style="width: 100%;">
+				    	<div class="ad-tooltip">
+				    		<input id="brhead" data-bind="enable:false, attr: { value: loanapproval.brhead }" class="input-sm form-control" style="width: 100%;">
+				    	</div>
 			    	</div>
 				</div>
 			</div>
@@ -92,22 +112,7 @@
 	</div>
 </div>
 
-<div class="footer col-sm-12">	
-	<button onclick="r.showDetails('ldb')" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
-	<button data-bind="" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Full Form</button>
+<div class="footer clearfix">
+	<button onClick="r.showDetails('lsb')" class="btn btn-sm btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
+	<button data-bind="click: r.openFull" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Form</button>
 </div>
-
-<script type="text/javascript">
-	// r.sAD = function(param) {
-	// 	r.AD.companyName(param.),
-	// 	r.AD.loginDate(param.),
-	// 	r.AD.businessAddress(param.),
-	// 	r.AD.location(param.),
-	// 	r.AD.product(param.),
-	// 	r.AD.scheme(param.),
-	// 	r.AD.leadDistributor(param.),
-	// 	r.AD.creditAnalyst(param.),
-	// 	r.AD.rmHead(param.),
-	// 	r.AD.brHead(param.)
-	// }
-</script>

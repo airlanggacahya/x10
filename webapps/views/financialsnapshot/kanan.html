@@ -490,24 +490,26 @@
           color: ecisColors[2]
         }
       ]
-      r.generateoperatingratios(dataoperatingratioscategories,dataoperatingratiosseries);
+      r.generateoperatingratios(dataoperatingratioscategories, dataoperatingratiosseries);
     }
     if ( r.FR()[2].row().length > 2 ){
-      dataleverageratiosseries = [{
-        data: [
-          r.FR()[2].row()[0].rowData[ r.FR()[0].ColumnHeader().length -1 ],
-          r.FR()[2].row()[1].rowData[ r.FR()[0].ColumnHeader().length -1 ],
-          r.FR()[2].row()[2].rowData[ r.FR()[0].ColumnHeader().length -1 ]
-        ],
-        name: r.FR()[0].ColumnHeader()[r.FR()[0].ColumnHeader().length -1].replace("(Audited)", ""),
-        color: ecisColors[1]
-      }]
-      dataleverageratioscategories = [
-        r.FR()[2].row()[0].rowData[ 0 ].substring(0,13) + "...",
-        r.FR()[2].row()[1].rowData[ 0 ].substring(0,13) + "...",
-        r.FR()[2].row()[2].rowData[ 0 ].substring(0,13) + "..."
-      ]
-      r.generateleverageratios(dataleverageratiosseries,dataleverageratioscategories);
+      var diiscolor = ["#ff9300", "#00da9c", "#00aef1", "#ff0045"]
+      
+      dataleverageratiosseries = _.map(
+        _.map(r.FR()[0].ColumnHeader(), function(header, i){
+          return {
+            data: _.map(r.FR()[2].row(), function(row){ return row.rowData[i] }),
+            name: header.replace("(Audited)", "")
+          }
+        }).slice(r.FR()[0].ColumnHeader().length - 3, r.FR()[0].ColumnHeader().length), function(mapped, i){
+          return { data: mapped.data, name: mapped.name, color: diiscolor[i] }
+        })
+
+      dataleverageratioscategories = _.map(r.FR()[2].row(), function(row){
+        return row.rowData[0].substring(0, 13) + "..."
+      })
+
+      r.generateleverageratios(dataleverageratiosseries, dataleverageratioscategories);
     }
   }
 
@@ -520,7 +522,7 @@
             position: "bottom",
             orientation: "horizontal",
             labels: {
-              color: "white"
+              color: "black"
             }
         },
         seriesDefaults: {
@@ -541,17 +543,17 @@
             labels: {
                 rotation: "auto",
                 template: "#= value # %",
-                color: "white",
+                color: "black",
                 step:2
             }
         },
         categoryAxis: {
-            categories: ["ROCE %", "PAT Margin %", "PBT Martin %", "EBITDA Margin %", "Gross Profit Margin %"],
+            categories: ["ROCE %", "PAT Margin %", "PBT Martin %", "EBITDA \n Margin %", "Gross Profit \n Margin %"],
             majorGridLines: {
                 visible: false
             },
             labels: {
-              color: "white"
+              color: "black"
             }
         },
         tooltip: {
@@ -570,7 +572,7 @@
           visible: true
         },
         labels: {
-          color: "white"
+          color: "black"
         },
         majorGridLines: {
             visible: false
@@ -578,7 +580,7 @@
       },
       valueAxis: {
         labels: {
-          color: "white",
+          color: "black",
           step:2
         },
         majorGridLines: {
@@ -586,7 +588,7 @@
         },
       },
       chartArea: {
-        height: 195,
+        height: 245,
         background:"transparent"
       },
       seriesDefaults: {
@@ -600,7 +602,7 @@
         position: "bottom",
         orientation: "horizontal",
         labels: {
-          color: "white"
+          color: "black"
         }
       },
       series:dataseries,
@@ -620,8 +622,8 @@
       categoryAxis: {
         categories: datacategories,
         labels: {
-          rotation: "auto",
-          color: "white"
+          font: "10px Arial,Helvetica,sans-serif",
+          color: "black"
         },
         majorGridLines: {
             visible: false
@@ -629,7 +631,7 @@
       },
       valueAxis: {
         labels: {
-          color: "white",
+          color: "black",
           step:2
         },
         majorGridLines: {
@@ -648,7 +650,7 @@
         position: "bottom",
         orientation: "horizontal",
         labels: {
-          color: "white"
+          color: "black"
         }
       },
       series: dataseries,
@@ -672,32 +674,20 @@
     white-space: normal;
   }
   .KI tbody tr td{
-    color: white !important;
     font-size: 11px !important;
-    padding: 3px;
+    padding: 6px;
+    background-color: white;
   }
 
   .KI thead tr th{
     font-size: 11px !important;
     padding: 3px;
   }
-
-  .panel-body{
-    padding: 1px 7px !important;
-  }
-  #panelright1{
-    background-color: rgb(237,125,49);
-  }
-  #panelright2{
-    background-color: rgb(39,67,52);
-  }
   .panelright3{
     background-color: rgb(52,98,86);
     margin-bottom: 5px !important;
     margin-top: 5px !important;
-  }
-  .col-sm-12{
-    padding: 0;
+    cursor: pointer;
   }
   .k-chart-area{
     background-color: transparent !important;
@@ -720,66 +710,51 @@
   g{
     background-color: transparent;
   }
-  .table{
-    margin-bottom: 4px;
-    margin-top: -7px;
-  }
+
   .app-container .app-content h3 {
     border-bottom: 1px solid #F0F3F4;
     padding-bottom: 1px;
     margin-top: 3px;
   }
+
+  .table-header {
+    background-color: #8195b0;
+  }
 </style>
-<div class="col-sm-12" data-bind="visible: r.rootdates().length > 0">
-  <div class="panel" id="panelright1" style="margin-left: -16px;">
-    <div class="panel-heading">
-      <h3>
-        Key Indicators
-      </h3>
-    </div>
-    <div class="panel-body" style="margin-top: -2px;">
-      <div class="col-sm-12">
-        <div class="panel-body">
-          <table class="table table-bordered KI" data-bind="foreach: r.KI">
-            <thead>
-              <tr data-bind="foreach: ColumnHeader">
-                 <th class="header-table" style="color: #fff;" data-bind="text: $data"></th>
-              </tr>
-            </thead>
-            <tbody data-bind="foreach: row">
-              <tr data-bind="foreach: rowData">
-                 <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
-                 <td data-bind="text: $data, visible: checkSub($parent) == true"></td>
-              </tr>
-              </div>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div data-bind="with: left" style="margin-top: -11px;">
-      <div class="panel" id="panel1" style="margin-left: -16px;">
-        <div class="panel-heading">
-          <h3>
-            Profit & Loss Account
-          </h3>
-        </div>
-        <div class="panel-body" style="margin-top: -5px;">
-          <div class="col-md-6">
-            <div class="panel-body">
-              <div class="col-md-12">
-                <div id="chartline"></div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="panel-body">
-              <div id="chartstick"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-  </div>
+  
+<div class="panel-heading">
+  <h3>
+    <a class="link-section" href="/ratio/pdf?tab=tab1" target="_blank">Key Indicators</a>
+  </h3>
 </div>
 
+<table class="table table-bordered KI" data-bind="foreach: r.KI" style="margin-top: 5px; margin-bottom: 5px">
+  <thead class="table-header">
+    <tr data-bind="foreach: ColumnHeader">
+       <th class="header-table" style="color: #fff;" data-bind="text: $data"></th>
+    </tr>
+  </thead>
+  <tbody data-bind="foreach: row">
+
+    <tr data-bind="foreach: rowData">
+       <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
+       <td data-bind="text: $data, visible: checkSub($parent) == true, css: {tdcustom: $index() == 0}"></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="panel-heading">
+  <h3>
+    <a class="link-section" href="/ratio/pdf?tab=tab3" target="_blank">Profit & Loss Account</a>
+  </h3>
+</div>
+
+<div class="panel-body panel-fit">
+  <div class="col-md-6">
+    <div id="chartline"></div>
+  </div>
+  
+  <div class="col-md-6">
+    <div id="chartstick"></div>
+  </div>
+</div>

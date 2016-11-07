@@ -37,7 +37,7 @@ type Pdf2xml struct {
 
 func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportModel {
 	XmlFolder := strings.TrimRight(Filename, ".xml")
-	XmlFile := PathFrom + "\\" + XmlFolder + "\\" + Filename
+	XmlFile := PathFrom + "/" + XmlFolder + "/" + Filename
 	v := &Pdf2xml{}
 	rawdata, err := ioutil.ReadFile(XmlFile)
 	if err != nil {
@@ -356,7 +356,7 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 
 func ExtractIndividualCibilReport(PathFrom string, Filename string) ReportData {
 	XmlFolder := strings.Split(Filename, ".xml")
-	XmlFile := PathFrom + "\\" + XmlFolder[0] + "\\" + Filename
+	XmlFile := PathFrom + "/" + XmlFolder[0] + "/" + Filename
 	v := &Pdf2xml{}
 	rawdata, err := ioutil.ReadFile(XmlFile)
 	if err != nil {
@@ -771,7 +771,7 @@ func ExtractIndividualCibilReport(PathFrom string, Filename string) ReportData {
 }
 
 func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, ReportType string) {
-	//ConvertPdfToXml(PathFrom, PathTo, FName, ReportType)
+	tk.Println("Extract")
 	Name := strings.TrimRight(FName, ".pdf")
 	XmlFileName := Name + ".xml"
 
@@ -804,7 +804,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 					app := val.Get("applicantdetail").(tk.M)
 					reportobj.Profile.CustomerId = app.GetInt("CustomerID")
 					reportobj.Profile.DealNo = val["applicantdetail"].(tk.M)["DealNo"].(string)
-					reportobj.FilePath = PathFrom + "\\" + ReportType + "\\" + Name + "\\" + FName
+					reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
 					reportobj.FileName = FName
 					reportobj.IsMatch = true
 					query := conn.NewQuery().From("TestCibilReport").Save()
@@ -819,7 +819,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 			}
 		} else {
 			reportobj.Id = bson.NewObjectId()
-			reportobj.FilePath = PathFrom + "\\" + ReportType + "\\" + Name + "\\" + FName
+			reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
 			reportobj.FileName = FName
 			reportobj.IsMatch = false
 			query := conn.NewQuery().From("CibilReport").Save()
@@ -848,10 +848,10 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 				app := val.Get("applicantdetail").(tk.M)
 				reportobj.ConsumersInfos.CustomerId = app.GetInt("CustomerID")
 				reportobj.ConsumersInfos.DealNo = val["applicantdetail"].(tk.M)["DealNo"].(string)
-				reportobj.FilePath = PathFrom + "\\" + ReportType + "\\" + Name + "\\" + FName
+				reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
 				reportobj.FileName = FName
 				reportobj.IsMatch = true
-				query := conn.NewQuery().From("TestCibilReportIndividual").Save()
+				query := conn.NewQuery().From("CibilReportIndividual").Save()
 				err = query.Exec(tk.M{
 					"data": reportobj,
 				})
@@ -863,10 +863,10 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 			}
 		} else {
 			reportobj.Id = bson.NewObjectId()
-			reportobj.FilePath = PathFrom + "\\" + ReportType + "\\" + Name + "\\" + FName
+			reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
 			reportobj.FileName = FName
 			reportobj.IsMatch = false
-			query := conn.NewQuery().From("TestCibilReportIndividual").Save()
+			query := conn.NewQuery().From("CibilReportIndividual").Save()
 			err = query.Exec(tk.M{
 				"data": reportobj,
 			})

@@ -45,7 +45,8 @@ type RatioInputData struct {
 	ConfirmedFormData        []*FormData
 	LastConfirm              time.Time
 
-	Frozen bool
+	Frozen   bool
+	IsFrozen bool
 }
 
 type AuditStatus struct {

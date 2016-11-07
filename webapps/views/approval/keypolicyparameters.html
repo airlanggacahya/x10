@@ -1,29 +1,129 @@
 <style>
-	.bullet .range.color-high { fill: #b71d1d; }
-	.bullet .range.color-normal { fill: #f0a202; }
-	.bullet .range.color-low { fill: #2e933c; }
-	.bullet .measure.s0 { fill: #fafafa; }
-	.bulley-summary{height: 100%,width:100%;}
+	.bullet .range.color-high { fill: #fc5255; }
+	.bullet .range.color-normal { fill: #fd9827; }
+	.bullet .range.color-low { fill: #20cb9a; }
+	.bullet .measure.s0 { fill: #313d50; }
+	.bullet .marker { fill: #fafafa; }
+
+	#kpp h3 {
+		margin-top: 0px;
+	}
+
+	.block {
+        color: white;
+        width: 40px;
+        height: 40px;
+        margin: 6px 3px;
+        padding-top: 3px;
+    }
+    .block .value {
+            text-align: center;
+            font-size: 12px;
+    }
+    .block .label {
+            text-align: center;
+            font-size: 10px;
+        display: block;
+        padding: 0px;
+    }
+    .block.met {
+            background-color: #20cb9a;
+    }
+    .block.not-met {
+            background-color: #fc5255;
+    }
+
+	.bulley-summary-inpoh .block {
+		color: white;
+	    width: 40px;
+	    height: 40px;
+	    margin: 6px auto;
+	    padding-top: 3px;
+	}
+	.bulley-summary-inpoh .block .value {
+		text-align: center;
+		font-size: 14px;
+	}
+	.bulley-summary-inpoh .block .label {
+		text-align: center;
+		font-size: 10px;
+	    display: block;
+	    padding: 0px;
+	}
+	.bulley-summary-inpoh .block.met {
+		background-color: #20cb9a;
+	}
+	.bulley-summary-inpoh .block.not-met {
+		background-color: #fc5255;
+	}
+
+	.bullet-vertical .child-t {
+	    padding-left: 10px;
+	    text-align: center;
+	    display: block;
+	    vertical-align: top;
+	}
+
+	.bullet-vertical .main-title {
+		color: black;
+	    font-weight: bolder !important;
+	    font-size: 11px;
+	}
+	.bullet-vertical .sub-title {
+		font-size: 9px;
+	}
 </style>
 
 <div class="panel-heading clearfix"><h3 class="text-center">Key Policy Parameters</h3></div>
 
-<div class="panel-default content no-padding clearfix">
-	
-	<div class="panel-heading text-center clearfix">Key Policy Parameters</div>
+<div class="panel-default content clearfix content no-padding most-bottom" style="line-height: 2">
+	<div class="panel-heading text-center">Actual vs. Norm</div>
 
-	<div class="panel-body clearfix">
-		<div class="col-sm-12 no-padding">
-			<div class="bullet-vertical"></div>
+	<div class="clearfix">
+		<div class="panel-row" style="margin-top: 5px">
+			<div class="panel-column col-sm-3 no-padding" style="margin-right: 2px;">
+				<div class="panel-row" style="background-color: #8195b0; color: white;">
+					<div class="col-sm-12 text-center" style="line-height: 1.5;">Norms Summary</div>
+				</div>
+
+				<div class="panel-fit panel-default col-sm-12 no-padding" style="min-height: 60px; margin-top: 2px">
+					<div class="middle-centered">
+						<!-- <div class="bulley-summary" style="height: 110px"></div> -->
+						<div class="panel-row">
+	                        <div class="block met">
+	                            <div class="value"></div>
+	                            <div class="label">Met</div>
+	                        </div>
+	                        <div class="block not-met">
+	                            <div class="value"></div>
+	                            <div class="label">Not Met</div>
+	                        </div>
+	                    </div>
+					</div>
+				</div>
+			</div>
+
+			<div class="panel-column col-sm-9 no-padding">
+				<div class="panel-row" style="background-color: #8195b0; color: white">
+					<div class="col-sm-12 text-center" style="line-height: 1.5">Not Met Norms</div>
+				</div>
+
+				<div class="panel-default panel-fit" style="padding: 5px; margin-top: 2px">
+					<div class="panel-row" id="not-met-table"></div>
+				</div>
+			</div>
 		</div>
-		<div class="col-sm-4 col-sm-offset-4 no-padding">
-			<div class="bulley-summary" style="height: 200px; width: 200px"></div>
-		</div>	
+
+		<div class="panel-row">
+			<div class="panel-body col-sm-12 no-padding" style="padding: 5px">
+				<div class="bullet-vertical"></div>
+			</div>
+		</div>
 	</div>
+
 </div>
 
-<div class="clearfix"></div>
-<div class="footer col-sm-12">
-	<button onclick="r.showDetails('kpib')" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
-	<button data-bind="" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Full Form</button>
+<div class="footer clearfix">
+	<button onClick="r.showDetails('kpib')" class="btn btn-sm btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
+	<button data-bind="click: r.openFull" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Form</button>
 </div>

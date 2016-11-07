@@ -40,8 +40,9 @@ func (c *RatingController) Input(k *knot.WebContext) interface{} {
 	return DataAccess
 }
 
-func (c *RatingController) FetchRatingMaster() ([]RatingMaster, error) {
+func (c *RatingController) FetchRatingMaster(id string) ([]RatingMaster, error) {
 	query := toolkit.M{}
+	query = query.Set("where", dbox.Contains("_id", id))
 	csr, err := c.Ctx.Find(new(RatingMaster), query)
 	defer csr.Close()
 	if err != nil {
@@ -63,17 +64,25 @@ func (c *RatingController) NewRatingData(k *knot.WebContext) interface{} {
 	if err != nil {
 		return err.Error()
 	}
+
+	oldId := res.Id
+
 	res.Id = toolkit.RandomString(24)
 	res.CreatedAt = time.Now()
 	res.Name = toolkit.Sprintf("Rating Model New %d", n)
 
-	return res
+	return toolkit.M{"data": res, "lastId": oldId}
 }
 
 func (c *RatingController) GetRatingMaster(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
-
-	res, err := c.FetchRatingMaster()
+	payload := struct {
+		Id string
+	}{}
+	if err := k.GetPayload(&payload); err != nil {
+		return err.Error()
+	}
+	res, err := c.FetchRatingMaster(payload.Id)
 	if err != nil {
 		return err.Error()
 	}
@@ -172,6 +181,18 @@ func (c *RatingController) DeleteRatingData(k *knot.WebContext) interface{} {
 		return res
 	}
 
+	resdt, err := c.FetchRatingMaster(payload.Id)
+	if err != nil {
+		return err.Error()
+	}
+
+	for _, val := range resdt {
+		if err := c.Ctx.Delete(&val); err != nil {
+			res.SetError(err)
+			return res
+		}
+	}
+
 	// toolkit.Println(k.Request.Header.Get("referer"), k.Request.Header.Get("REFERER"))
 
 	return res
@@ -183,17 +204,17 @@ func (c *RatingController) SaveRatingMaster(k *knot.WebContext) interface{} {
 	res := new(toolkit.Result)
 
 	// ====== REMOVE PREV DATA
-	oldData, err := c.FetchRatingMaster()
-	if err != nil {
-		return err.Error()
-	}
+	// oldData, err := c.FetchRatingMaster()
+	// if err != nil {
+	// 	return err.Error()
+	// }
 
-	for _, each := range oldData {
-		if err := c.Ctx.Delete(&each); err != nil {
-			res.SetError(err)
-			return res
-		}
-	}
+	// for _, each := range oldData {
+	// 	if err := c.Ctx.Delete(&each); err != nil {
+	// 		res.SetError(err)
+	// 		return res
+	// 	}
+	// }
 
 	// ====== INSERt PREV DATA
 	payload := struct{ Data []RatingMaster }{}

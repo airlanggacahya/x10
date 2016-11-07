@@ -52,10 +52,11 @@
       r.rootdates(_.orderBy(res.Data.AuditStatus, 'Date', 'asc'))
       left.panelVisible(true)
       left.loadRatioData()
-      $("body").css("overflow", "hidden");
       $("#horizontal-menu").hide()
       r.constructDataRight(r.rootdata())
     })
+
+    $(".panel-scroll").height(""+(screen.height-$(".test1").height()-$(".menubackup").height()-$(".app-menu").height()-230)+"px")
   }
 
   r.getCustomerId = function () {
@@ -83,70 +84,183 @@
 
 </script>
 
+<style type="text/css">
+
+  a {
+    color: #333;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  .link-section {
+    text-decoration: none;
+  }
+
+  .link-section:hover {
+    text-decoration: none;
+  }
+
+  #panel1 {
+    cursor: pointer;
+  }
+
+  #panel2 {
+    cursor: pointer;
+  }
+
+  .panel {
+    margin-bottom: 5px;
+  }
+
+  .panel-default>.panel-heading {
+    background-color: transparent;
+  }
+
+  .panel-default.col-sm-12.col-full > .panel-heading {
+    padding: 0;
+    margin-bottom: 1px;
+  }
+
+  .panel-default.content > .panel-heading {
+    background-color: #313d50;
+    color: white !important;
+    border-radius: 7px !important;
+    padding: 5px !important;
+  }
+
+  .panel-default.content > .panel-heading a {
+    color: white !important;
+  }
+
+  .panel-default.content > .panel-body, 
+  .panel-default.content > .panel-default, 
+  .panel-default.content .panel-row > .panel-default, 
+  .panel-default.content .panel-row > .panel-body {
+    margin-top: 5px;
+    background-color: #ededed;
+    border-radius: 7px;
+  }
+  .panel-default.content {
+    margin-bottom: 5px;
+  }
+
+  .panel-heading {
+    border: 0;
+  }
+  .panel-heading.subheader {
+    background-color: #8195b0 !important;
+  }
+</style>
+
 {{template "filter.html"}}
-<div class="col-md-12 col-sm-12 ez panel-content">
-  <div class="panel ez">
-    <div class="panel-body" style="margin-top: 5px;">
-      <div class="col-sm-12">
-        <div class="col-sm-5">{{template "kiri.html"}}</div>
-        <div class="col-sm-2" data-bind="visible: r.rootdates().length > 0">
-          <div data-bind="with: left">
-            <div class="panel" id="panel2">
-              <div class="panel-heading">
-                <h3>
-                  Balance Sheet
-                </h3>
+
+<div>
+  <div class="col-sm-12 ez panel-content">
+    <div class="panel ez no-padding hardcore">
+
+      <div class="panel-body panel-column">
+
+        <div class="col-sm-12" style="margin-bottom: 5px">
+          <a href="/ratio/pdf" target="_blank">Key Financials Report</a>
+           | 
+          <a href="/ratio/report" target="_blank">Detailed Financials Report</a>
+        </div>
+
+        <div class="panel-row">
+          <div id="panelright2" class="panel-fit panel-default content panel-column col-sm-5 col-full cursor-pointer" 
+          data-bind="with: left, visible: r.rootdates().length > 0 && left.panelVisible() == true, click: clickDiv('panelright2')">
+            {{template "kiri.html"}}
+          </div>
+
+          <div id="panel2" class="panel-fit panel-default content panel-column col-sm-2 no-padding col-full cursor-pointer" data-bind="with: left, visible: r.rootdates().length > 0, click: clickDiv('panel2')">
+            <div class="panel-heading">
+              <h3>
+                <a class="link-section" href="/ratio/pdf?tab=tab3" target="_blank">Balance Sheet</a>
+              </h3>
+            </div>
+
+            <div class="panel-body panel-fit panel-column" style="padding-bottom: 20px">
+              <div class="panel panel-fit col-md-12 sheet">
+                <div class="col-md-12 middle-centered" data-bind="with: WCASSETS">
+                  <center>
+                    <p data-bind="text: value" class="head"></p>
+                    <div ><i id="WCASSETS" class="ttl" ></i> <span class="ttl" id="WCASSETS1" data-bind="text: growth"></span></div>
+                    <div data-bind="text: title"></div>
+                  </center>
+                </div>
               </div>
-              <div class="panel-body  kiriPanel" style="margin-top: -9px;">
-                <div class="col-md-12" style="margin-top: 27px;">
-                  <div>
-                    <!-- <div class="col-md-12"> -->
-                      <div class="panel col-md-12 sheet">
-                        <div class="panel-body col-md-12" data-bind="with: WCASSETS">
-                          <center>
-                            <p data-bind="text: value" class="head"></p>
-                            <div ><i id="WCASSETS" class="ttl" ></i> <span class="ttl" id="WCASSETS1" data-bind="text: growth"></span></div>
-                            <div data-bind="text: title"></div>
-                          </center>
-                        </div>
-                      </div>
-                      <div class="panel col-md-12 sheet">
-                        <div class="panel-body col-md-12" data-bind="with: TNW">
-                          <center>
-                            <p data-bind="text: value" class="head"></p>
-                            <div><i class="ttl" id="TNW"></i> <span class="ttl" id="TNW1" data-bind="text: growth"></span></div>
-                            <div data-bind="text: title"></div>
-                          </center>
-                        </div>
-                      </div>
-                      <div class="panel col-md-12 sheet">
-                        <div class="panel-body col-md-12" data-bind="with: ADNW">
-                          <center>
-                            <p data-bind="text: value" class="head"></p>
-                            <div><i id="ADNW" class="ttl"></i> <span class="ttl" id="ADNW1" data-bind="text: growth"></span></div>
-                            <div data-bind="text: title"></div>
-                          </center>
-                        </div>
-                      </div>
-                      <div class="panel col-md-12 sheet">
-                        <div class="panel-body col-md-12" data-bind="with: TOTOBW">
-                          <center>
-                            <p data-bind="text: value" class="head"></p>
-                            <div><i id="TOTOBW" class="ttl"></i> <span class="ttl" id="TOTOBW1" data-bind="text: growth"></span></div>
-                            <div data-bind="text: title"></div>
-                          </center>
-                        </div>
-                      </div>
-                    <!-- </div> -->
-                  </div>
+
+              <div class="panel panel-fit col-md-12 sheet">
+                <div class="col-md-12 middle-centered" data-bind="with: TNW">
+                  <center>
+                    <p data-bind="text: value" class="head"></p>
+                    <div><i class="ttl" id="TNW"></i> <span class="ttl" id="TNW1" data-bind="text: growth"></span></div>
+                    <div data-bind="text: title"></div>
+                  </center>
+                </div>
+              </div>
+
+              <div class="panel panel-fit col-md-12 sheet">
+                <div class="col-md-12 middle-centered" data-bind="with: ADNW">
+                  <center>
+                    <p data-bind="text: value" class="head"></p>
+                    <div><i id="ADNW" class="ttl"></i> <span class="ttl" id="ADNW1" data-bind="text: growth"></span></div>
+                    <div data-bind="text: title"></div>
+                  </center>
+                </div>
+              </div>
+
+              <div class="panel panel-fit col-md-12 sheet">
+                <div class="col-md-12 middle-centered" data-bind="with: TOTOBW">
+                  <center>
+                    <p data-bind="text: value" class="head"></p>
+                    <div><i id="TOTOBW" class="ttl"></i> <span class="ttl" id="TOTOBW1" data-bind="text: growth"></span></div>
+                    <div data-bind="text: title"></div>
+                  </center>
                 </div>
               </div>
               
+              <div class="col-md-12 no-padding" style="position: absolute; bottom: 0;">
+                <label style="font-size: 10px;">* Numbers for Last Audited FY</label>
+              </div>
             </div>
           </div>
+
+          <div id="panelright1" class="panel-fit panel-default content panel-column col-sm-5 col-full cursor-pointer" data-bind="visible: r.rootdates().length > 0, click: clickDiv('panelright1')">{{template "kanan.html"}}</div>
         </div>
-        <div class="col-sm-5">{{template "kanan.html"}}</div>
+
       </div>
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  // var goto = function(url) {
+  //   return function(){
+  //     var win = window.open('', '_blank');
+
+  //   }
+  // }
+  //
+  //
+  // $(document).ready(function(){
+  //   $("#content").width(screen.width)
+  //   $("#content").height(screen.height - 360)
+  //   //$("#content").css("background", "red")
+
+  //   $(".content-sub").innerHeight($("#content").height())
+  //   $(".content-sub").innerWidth($("#content").width())
+  //   //$("#content").css("background", "aqua")
+
+  //   $(".column").innerHeight($(".content-sub").height())
+  //   //$("#content").css("background", "blue")
+  //   $(".panel-box").height($(".column").innerHeight())
+  //   console.log($(".column").innerHeight())
+  // })
+
+  // $(window).resize(function(){
+  //   $("#content").width(screen.width)
+  //   $("#content").height(screen.height - 360)
+  // })
+</script>

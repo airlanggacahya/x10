@@ -74,7 +74,7 @@ model.User= ko.observable('{{.Username}}');
 <div>
 	<div class="col-md-12 col-sm-12 ez panel-content">
 		<div class="panel ez">
-			<div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div>
+		<!-- 	<div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
 			<div class="panel-body" >
 				<div class="controls" style="text-align: right;">
 					<button class="btn btn-sm btn-primary" data-bind="click: formula.showModalFinancial">Add New</button>
@@ -106,7 +106,7 @@ model.User= ko.observable('{{.Username}}');
 			    		<div class="col-sm-6">
 				            <label class="col-sm-4 form-label align-right">Select source</label>
 				        	<div class="col-sm-8">
-			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionFrom, dataValueField: 'name', dataTextField: 'name', value: From, optionLabel: 'Select one', change: formula.changeFrom }"></select>
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionFrom, dataValueField: 'name', dataTextField: 'name', value: From, optionLabel: 'Select One', change: formula.changeFrom }"></select>
 				        	</div>
 				        	<div class="clearfix"></div>
 				        </div>
@@ -114,7 +114,7 @@ model.User= ko.observable('{{.Username}}');
 			    		<div class="col-sm-6">
 				            <label class="col-sm-4 form-label align-right">Select field</label>
 				        	<div class="col-sm-8">
-			        			<select style="width: 100%;" data-bind="kendoDropDownList: { filter: 'contains', data: formula.optionFields, dataValueField: 'alias', dataTextField: 'name', value: FieldId, optionLabel: 'Select one', change: formula.selectField }"></select>
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { filter: 'contains', data: formula.optionFields, dataValueField: 'alias', dataTextField: 'name', value: FieldId, optionLabel: 'Select One', change: formula.selectField }"></select>
 				        	</div>
 				        	<div class="clearfix"></div>
 				        </div>
@@ -150,7 +150,7 @@ model.User= ko.observable('{{.Username}}');
 			    		<div class="col-sm-6">
 				            <label class="col-sm-4 form-label align-right">Internal Rating</label>
 				        	<div class="col-sm-8">
-			        			<select style="width: 100%;" data-bind="kendoDropDownList: { filter: 'contains', data: formula.dataInternalRating, dataValueField: 'Id', dataTextField: 'Name', value: InternalRating }"></select>
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { filter: 'contains', data: formula.dataInternalRating, dataValueField: 'Id', optionLabel: 'Select One', dataTextField: 'Name', value: InternalRating }"></select>
 				        	</div>
 				        	<div class="clearfix"></div>
 				        </div>
@@ -158,7 +158,7 @@ model.User= ko.observable('{{.Username}}');
 			    		<div class="col-sm-6">
 				            <label class="col-sm-4 form-label align-right">Product Category</label>
 				        	<div class="col-sm-8">
-			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionProducts, value: Product, optionLabel: 'Select one' }"></select>
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionProducts, value: Product, optionLabel: 'Select One' }"></select>
 				        	</div>
 				        	<div class="clearfix"></div>
 				        </div>
@@ -174,7 +174,15 @@ model.User= ko.observable('{{.Username}}');
 			    		<div class="col-sm-6">
 				            <label class="col-sm-4 form-label align-right">Actuals as per Time Period</label>
 				        	<div class="col-sm-8">
-			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionTimePeriod, dataValueField: 'value', dataTextField: 'text', value: TimePeriod, optionLabel: 'Select one' }"></select>
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionTimePeriod, dataValueField: 'value', dataTextField: 'text', value: TimePeriod, optionLabel: 'Select One' }"></select>
+				        	</div>
+				        	<div class="clearfix"></div>
+				        </div>
+
+				        <div class="col-sm-6">
+				            <label class="col-sm-4 form-label align-right">Value Type</label>
+				        	<div class="col-sm-8">
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionValueTypes, dataValueField: 'value', dataTextField: 'text', value: ValueType, optionLabel: 'Select One' }"></select>
 				        	</div>
 				        	<div class="clearfix"></div>
 				        </div>
@@ -190,7 +198,7 @@ model.User= ko.observable('{{.Username}}');
 				    	<div class="col-sm-6">
 				            <label class="col-sm-4 form-label align-right">Select operator</label>
 				        	<div class="col-sm-8">
-			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionNormTypes, dataValueField: 'value', dataTextField: 'text', value: formula.financial.Operator, change: formula.selectNormType, optionLabel: 'Select one' }"></select>
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { data: formula.optionNormTypes, dataValueField: 'value', dataTextField: 'text', value: formula.financial.Operator, change: formula.selectNormType, optionLabel: 'Select One' }"></select>
 				        	</div>
 				        	<div class="clearfix"></div>
 			            </div>
@@ -202,7 +210,7 @@ model.User= ko.observable('{{.Username}}');
 				        	</div>
 				        	<div class="clearfix"></div>
 			            </div>
-			            
+
 			            <div class="clearfix"></div>
 		            </div>
 
@@ -214,7 +222,7 @@ model.User= ko.observable('{{.Username}}');
 				        	</div>
 				        	<div class="clearfix"></div>
 			            </div>
-			            
+
 			            <div class="clearfix"></div>
 		            </div>
 
@@ -226,7 +234,7 @@ model.User= ko.observable('{{.Username}}');
 				        	</div>
 				        	<div class="clearfix"></div>
 			            </div>
-			            
+
 			            <div class="clearfix"></div>
 		            </div>
 
@@ -238,7 +246,7 @@ model.User= ko.observable('{{.Username}}');
 				        	</div>
 				        	<div class="clearfix"></div>
 			            </div>
-			            
+
 			            <div class="clearfix"></div>
 		            </div>
 
@@ -250,7 +258,7 @@ model.User= ko.observable('{{.Username}}');
 				        	</div>
 				        	<div class="clearfix"></div>
 			            </div>
-			            
+
 			            <div class="clearfix"></div>
 		            </div>
 
@@ -262,7 +270,7 @@ model.User= ko.observable('{{.Username}}');
 				        	</div>
 				        	<div class="clearfix"></div>
 			            </div>
-			            
+
 			            <div class="clearfix"></div>
 		            </div>
 
@@ -282,7 +290,7 @@ model.User= ko.observable('{{.Username}}');
 				        	</div>
 				        	<div class="clearfix"></div>
 			            </div>
-			            
+
 			            <div class="clearfix"></div>
 		            </div>
 				</div>

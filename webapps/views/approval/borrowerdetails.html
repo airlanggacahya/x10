@@ -16,9 +16,11 @@
 	distributormaxData = ko.observableArray([])
 
   function borrowerdetails(){
-		Segmen(r.AllData().Data.AD[0].borrowerdetails.customersegmentclasification)
-		Distributor(r.AllData().Data.AD[0].accountsetupdetails.leaddistributor)
-		Vintage(r.AllData().Data.AD[0].borrowerdetails.businessvintage)
+  		if(r.AllData().Data.AD[0] != undefined)
+			Segmen(r.AllData().Data.AD[0].borrowerdetails.customersegmentclasification)
+			Distributor(r.AllData().Data.AD[0].accountsetupdetails.leaddistributor)
+			Vintage(r.AllData().Data.AD[0].borrowerdetails.businessvintage)
+		}
 
 		AvgRDD(0)
 		total = 0

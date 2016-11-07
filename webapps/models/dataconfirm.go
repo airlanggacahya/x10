@@ -70,6 +70,10 @@ func (a *DataConfirmController) SaveDataConfirmed(CustomerID string, DealNo stri
 		que = que.Where(dbox.Eq("Profile.customerid", custInt), dbox.Eq("Profile.dealno", DealNo))
 		data := Data.(*CibilReportModel)
 		insertdata = insertdata.Set("data", data)
+	case "CibilReportPromotorFinal":
+		que = que.Where(dbox.Eq("ConsumerInfo.CustomerId", custInt), dbox.Eq("ConsumerInfo.DealNo", DealNo))
+		data := Data.(*ReportData)
+		insertdata = insertdata.Set("data", data)
 	case "DueDiligenceInput":
 		que = que.Where(dbox.Contains("_id", concate))
 		data := Data.(*DueDiligenceInput)
@@ -141,6 +145,8 @@ func (a *DataConfirmController) GetDataConfirmed(CustomerID string, DealNo strin
 	case "CibilReport":
 		que = que.Where(dbox.Eq("Profile.customerid", custInt), dbox.Eq("Profile.dealno", DealNo))
 		coll = "Cibil Report Not Confirmed"
+	case "CibilReportPromotorFinal":
+		que = que.Where(dbox.Eq("ConsumerInfo.CustomerId", custInt), dbox.Eq("ConsumerInfo.DealNo", DealNo))
 	case "DueDiligenceInput":
 		que = que.Where(dbox.Contains("_id", concate))
 		coll = "DueDiligence Form Not Confirmed"
@@ -163,11 +169,15 @@ func (a *DataConfirmController) GetDataConfirmed(CustomerID string, DealNo strin
 		return err
 	}
 
+	for idx, val := range results {
+		results[idx].Set("Id", val.Get("_id"))
+	}
+
 	// if len(results) == 0 {
 	// 	return errors.New(coll)
 	// }
 	_ = coll
-	// toolkit.Println(results, "apaaaaaaaaaaaaaaaaaaaaaa")
+	toolkit.Println(results, "apaaaaaaaaaaaaaaaaaaaaaa")
 
 	for _, val := range results {
 		iv := reflect.New(v).Interface()

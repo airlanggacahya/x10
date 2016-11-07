@@ -774,6 +774,7 @@ func (c *DataCapturingController) UpdateConfirmGuarantor(k *knot.WebContext) int
 
 	cibilIndividual := []ReportData{}
 	customerProfile := []CustomerProfiles{}
+	customerProfileConf := []CustomerProfiles{}
 
 	cn, _ := GetConnection()
 	defer cn.Close()
@@ -801,14 +802,38 @@ func (c *DataCapturingController) UpdateConfirmGuarantor(k *knot.WebContext) int
 	_ = csr.Fetch(&customerProfile, 0, false)
 	csr.Close()
 
-	for _, promotor := range cibilIndividual {
+	err := new(DataConfirmController).GetDataConfirmed(p["CustomerId"].(string), p["DealNo"].(string), "CustomerProfile", &customerProfileConf)
+	if err != nil {
+		return err
+	}
+
+	for idx, promotor := range cibilIndividual {
 		promotor.StatusCibil = p.GetInt("StatusPromotor")
+		if promotor.StatusCibil == 1 {
+
+			del := false
+			if idx == 0 {
+				del = true
+			}
+			if err := new(DataConfirmController).SaveDataConfirmed(p["CustomerId"].(string), p["DealNo"].(string), "CibilReportPromotorFinal", &promotor, del); err != nil {
+				return err
+			}
+		}
 		c.Ctx.Save(&promotor)
 	}
 
 	for _, customer := range customerProfile {
 		customer.StatusCibil = p.GetInt("StatusPromotor")
 		c.Ctx.Save(&customer)
+	}
+
+	if p.GetInt("StatusPromotor") == 1 {
+		for _, customer := range customerProfileConf {
+			customer.StatusCibil = p.GetInt("StatusPromotor")
+			if err := new(DataConfirmController).SaveDataConfirmed(p["CustomerId"].(string), p["DealNo"].(string), "CustomerProfile", &customer, true); err != nil {
+				return err
+			}
+		}
 	}
 
 	return CreateResult(true, nil, "")
@@ -821,6 +846,7 @@ func (c *DataCapturingController) UpdateConfirmCibil(k *knot.WebContext) interfa
 	k.GetPayload(&p)
 
 	cibilModel := []CibilReportModel{}
+	cibilDraft := []CibilReportModel{}
 
 	cn, _ := GetConnection()
 	defer cn.Close()
@@ -838,9 +864,27 @@ func (c *DataCapturingController) UpdateConfirmCibil(k *knot.WebContext) interfa
 	_ = csr.Fetch(&cibilModel, 0, false)
 	csr.Close()
 
-	for _, cibil := range cibilModel {
+	csr, _ = cn.NewQuery().
+		Where(dbox.And(query...)).
+		From("CibilDraft").
+		Cursor(nil)
+
+	_ = csr.Fetch(&cibilDraft, 0, false)
+	csr.Close()
+
+	for idx, cibil := range cibilModel {
 		cibil.IsConfirm = p.GetInt("IsConfirm")
 		cibil.AcceptRejectTime = time.Now()
+		if cibil.IsConfirm == 1 && idx == 0 && len(cibilDraft) == 0 {
+			if err := new(DataConfirmController).SaveDataConfirmed(p["CustomerId"].(string), p["DealNo"].(string), "CibilReport", &cibil, true); err != nil {
+				return err
+			}
+		} else if cibil.IsConfirm == 1 && idx == 0 {
+			cibilDraft[0].Rating = cibil.Rating
+			if err := new(DataConfirmController).SaveDataConfirmed(p["CustomerId"].(string), p["DealNo"].(string), "CibilReport", &cibilDraft[0], true); err != nil {
+				return err
+			}
+		}
 		c.Ctx.Save(&cibil)
 	}
 

@@ -4,7 +4,7 @@ import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
 	// "errors"
-	"github.com/eaciit/cast"
+	// "github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	knot "github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -171,37 +171,47 @@ func (c *LoanApprovalController) GetAllData(k *knot.WebContext) interface{} {
 	}
 
 	//==================================================CIBILCOMPANY
-	csr, e := conn.NewQuery().
-		Where(dbox.And(dbox.Eq("Profile.customerid", cast.ToInt(customerid, cast.RoundingAuto)), dbox.Eq("Profile.dealno", dealno))).
-		From("CibilReport").
-		Cursor(nil)
-	defer csr.Close()
-	if e != nil {
-		res.SetError(e)
-		return res
-	}
+	// csr, e := conn.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("Profile.customerid", cast.ToInt(customerid, cast.RoundingAuto)), dbox.Eq("Profile.dealno", dealno))).
+	// 	From("CibilReport").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if e != nil {
+	// 	res.SetError(e)
+	// 	return res
+	// }
 
 	CBP := []tk.M{}
-	err = csr.Fetch(&CBP, 0, false)
-	if err != nil && csr.Count() > 0 {
+	// err = csr.Fetch(&CBP, 0, false)
+	// if err != nil && csr.Count() > 0 {
+	// 	res.SetError(err)
+	// 	return res
+	// }
+	err = new(DataConfirmController).GetDataConfirmed(customerid, dealno, "CibilReport", &CBP)
+	if err != nil {
 		res.SetError(err)
 		return res
 	}
 
 	//==================================================CIBILPROM
-	csr, e = conn.NewQuery().
-		Where(dbox.And(dbox.Eq("ConsumerInfo.CustomerId", cast.ToInt(customerid, cast.RoundingAuto)), dbox.Eq("ConsumerInfo.DealNo", dealno))).
-		From("CibilReportPromotorFinal").
-		Cursor(nil)
-	defer csr.Close()
-	if e != nil {
-		res.SetError(e)
-		return res
-	}
+	// csr, e = conn.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("ConsumerInfo.CustomerId", cast.ToInt(customerid, cast.RoundingAuto)), dbox.Eq("ConsumerInfo.DealNo", dealno))).
+	// 	From("CibilReportPromotorFinal").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if e != nil {
+	// 	res.SetError(e)
+	// 	return res
+	// }
 
 	CBPROM := []tk.M{}
-	err = csr.Fetch(&CBPROM, 0, false)
-	if err != nil && csr.Count() > 0 {
+	// err = csr.Fetch(&CBPROM, 0, false)
+	// if err != nil && csr.Count() > 0 {
+	// 	res.SetError(err)
+	// 	return res
+	// }
+	err = new(DataConfirmController).GetDataConfirmed(customerid, dealno, "CibilReportPromotorFinal", &CBPROM)
+	if err != nil {
 		res.SetError(err)
 		return res
 	}
@@ -230,7 +240,7 @@ func (c *LoanApprovalController) GetAllData(k *knot.WebContext) interface{} {
 	}
 
 	//==================================================Norm
-	csr, e = conn.NewQuery().
+	csr, e := conn.NewQuery().
 		Where(dbox.And(dbox.Eq("showinloanapprovalreport", true))).
 		From("NormMaster").
 		Cursor(nil)

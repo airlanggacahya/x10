@@ -1230,7 +1230,7 @@ due.getData = function(){
 		DealNo : dealNo
 	}
 
-	ajaxPost("/duediligence/getduediligenceinputdata", param, function(res){
+	ajaxPost("/duediligence/getduediligenceinputdataconfirmed", param, function(res){
 		var data = res.Data[0];
 		if(res.Data.length > 0){
 			due.form.Background(data.Background)

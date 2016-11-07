@@ -4,42 +4,5 @@
 
 <script type="text/javascript">
 
-	$("#gridriskconcersnmitigants").html("");
-	$("#gridriskconcersnmitigants").kendoGrid({
-		dataSource: {
-			data: function(){
-				return (apcom.dataTempRiskMitigants().length == 0) ? [{ Risks: "", Mitigants: "" }] : apcom.dataTempRiskMitigants()
-			}()
-		},
-		scrollable: false,
-		dataBound: function(){
-			$("#grid1").find(".tooltipster").tooltipster({
-                trigger: 'hover',
-                theme: 'tooltipster-val',
-                animation: 'grow',
-                delay: 0,
-            });
-
-            $('#grid1 .k-grid-content tr:gt(0)').each(function (i, e) {
-            	$(e).find('td:last button:first').css('visibility', 'hidden')
-            })
-		},
-		batch: true,
-		columns:[{
-				field: "Risks",
-				title: "Risk / Concerns",
-				headerAttributes: { "class": "sub-bgcolor" }, 
-				width: 100,
-				editor: apcom.LoadRiskInput,
-				template: function(d){ return d.Risks }
-			}, {
-				field: "Mitigants",
-				title: "Mitigants",
-				headerAttributes: { "class": "sub-bgcolor" }, 
-				width: 100,
-				editor: apcom.LoadMitigantInput,
-				template: function(d){ return d.Mitigants }
-			}
-		]
-	});
+	
 </script>

@@ -61,8 +61,6 @@ apcom.dataTempRiskMitigants = ko.observableArray([])
 apcom.formCreditAnalyst = ko.mapping.fromJS(apcom.templateCreditAnalys)
 
 apcom.loadCommentData = function(){
-	apcom.loadSection();
-	apcom.dataTempRiskMitigants([])
 	apcom.accountCommentFinancials([])
 
 	var param = {
@@ -91,10 +89,16 @@ apcom.loadCommentData = function(){
 	ajaxPost("/approval/getdcandcreditanalys", param, function(res){
 		var data = res;
 	    if(res.success != false){
-	    	apcom.dataTempRiskMitigants(data[0].CreditAnalys.CreditAnalysRisks)
-	    	if(apcom.dataTempRiskMitigants.length == 0){
-	    		apcom.dataTempRiskMitigants({Risks: "", Mitigants: ""})
+	    	console.log(data)
+			apcom.dataTempRiskMitigants([])
+	    	if(data[0].CreditAnalys.CreditAnalysRisks.length == 0){
+	    		console.log(1)
+	    		apcom.dataTempRiskMitigants( {Risks: "", Mitigants: ""} )
+	    	} else {
+	    		console.log(2)
+	    		apcom.dataTempRiskMitigants(data[0].CreditAnalys.CreditAnalysRisks)
 	    	}
+	    	console.log(apcom.dataTempRiskMitigants())
 		    ko.mapping.fromJS(data[0].CreditAnalys, apcom.formCreditAnalyst);
 		    ko.mapping.fromJS(data[1].DCFinalSanction, apcom.sanction);
 
@@ -126,6 +130,7 @@ apcom.loadCommentData = function(){
 			apcom.RecommendedCondition(data[0].CreditAnalys.FinalComment.RecommendedCondition)
 			apcom.Recommendations(data[0].CreditAnalys.FinalComment.Recommendations)
 	    }
+	    apcom.loadSection();
 	});
 }
 
@@ -134,17 +139,17 @@ apcom.sendCreditAnalyst = function(){
 	apcom.formCreditAnalyst.DealNo(r.customerId().split('|')[1])
 	apcom.formCreditAnalyst.CustomerId(parseInt(r.customerId().split('|')[0]))
 	var dataGrid = $("#grid1").data("kendoGrid").dataSource.data();
-	var dataGrid1 = $("#grid3").data("kendoGrid").dataSource.data();
 
-	$.each(dataGrid, function(i, items){
+	_.each(dataGrid, function(items){
+		console.log(items)
 		apcom.formCreditAnalyst.CreditAnalysRisks.push(
-			{Risks: items.Risks, Mitigants: items.Mitigants}
+			{ Risks: items.Risks, Mitigants: items.Mitigants }
 		)
 	});
 
-	apcom.formCreditAnalyst.FinalComment.Amount(dataGrid1[0].value)
-	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(dataGrid1[1].value)
-	apcom.formCreditAnalyst.FinalComment.Recommendations(dataGrid1[2].value)
+	apcom.formCreditAnalyst.FinalComment.Amount(parseFloat(apcom.Amount()))
+	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(apcom.RecommendedCondition)
+	apcom.formCreditAnalyst.FinalComment.Recommendations(apcom.Recommendations)
 	var param = ko.mapping.toJS(apcom.formCreditAnalyst)
 	
 	var url = "/approval/savecreditanalys";
@@ -287,109 +292,105 @@ apcom.loadSection = function(){
 		})
 	}
 
-	$("#grid3").html("");
-	$("#grid3").kendoGrid({
-		dataSource: {
-			data: apcom.tempFinalComment(),
-			schema: {
-				model: {
-					id: "title",
-					fields: {
-						title: { editable: false },
-						value: { editable: true },
-					}
-				}
-			}
-		},
-		resizable: true,
-		editable: true,
-		navigatable: true,
-		batch: true,
-		columns:[{
-			field: "title",
-			title: "",
-			headerAttributes: { "class": "sub-bgcolor" }, 
-			width: 75,
-		}, {
-			field: "value",
-			title: "",
-			headerAttributes: { "class": "sub-bgcolor" }, 
-			width: 100,
-			editor: apcom.editorField,
-			template: function(d){
-				if(d.title == "Date" && d.value != ""){
-					return moment(d.value).format('DD-MMM-YYYY')
-				}else{
-					return d.value
-				}
-				return ""
-			}
-		}],
+	// $("#grid3").html("");
+	// $("#grid3").kendoGrid({
+	// 	dataSource: {
+	// 		data: apcom.tempFinalComment(),
+	// 		schema: {
+	// 			model: {
+	// 				id: "title",
+	// 				fields: {
+	// 					title: { editable: false },
+	// 					value: { editable: true },
+	// 				}
+	// 			}
+	// 		}
+	// 	},
+	// 	resizable: true,
+	// 	editable: true,
+	// 	navigatable: true,
+	// 	batch: true,
+	// 	columns:[{
+	// 		field: "title",
+	// 		title: "",
+	// 		headerAttributes: { "class": "sub-bgcolor" }, 
+	// 		width: 75,
+	// 	}, {
+	// 		field: "value",
+	// 		title: "",
+	// 		headerAttributes: { "class": "sub-bgcolor" }, 
+	// 		width: 100,
+	// 		editor: apcom.editorField,
+	// 		template: function(d){
+	// 			if(d.title == "Date" && d.value != ""){
+	// 				return moment(d.value).format('DD-MMM-YYYY')
+	// 			}else{
+	// 				return d.value
+	// 			}
+	// 			return ""
+	// 		}
+	// 	}],
 
-	});
+	// });
 
 
-	$("#grid2").html("");
-	$("#grid2").kendoGrid({
-		dataSource: {
-			data: apcom.dataBasisRecommendation(),
-			schema:{
-				model:{
-					id: "title",
-					fields: {
-						title:{editable: false,},
-						value:{editable: true},
-					}
-				}
-			}
-		},
+	// $("#grid2").html("");
+	// $("#grid2").kendoGrid({
+	// 	dataSource: {
+	// 		data: apcom.dataBasisRecommendation(),
+	// 		schema:{
+	// 			model:{
+	// 				id: "title",
+	// 				fields: {
+	// 					title:{editable: false,},
+	// 					value:{editable: true},
+	// 				}
+	// 			}
+	// 		}
+	// 	},
 
-		resizable: true,
-		editable: true,
-		navigatable: true,
-		batch: true,
-		columns:[
-			{
-				field: "title",
-				title: "",
-				headerAttributes: { "class": "sub-bgcolor" }, 
-				width: 85,
-			},
-			{
-				field: "value",
-				title: "",
-				headerAttributes: { "class": "sub-bgcolor" }, 
-				width: 100,
-				editor: apcom.editorFieldInput,
-				template: function(d){
-					if(d.title == "Date" && d.value != ""){
-						return moment(d.value).format('DD-MMM-YYYY')
-					}else{
-						return d.value
-					}
-					return ""
-				}
-			}
+	// 	resizable: true,
+	// 	editable: true,
+	// 	navigatable: true,
+	// 	batch: true,
+	// 	columns:[
+	// 		{
+	// 			field: "title",
+	// 			title: "",
+	// 			headerAttributes: { "class": "sub-bgcolor" }, 
+	// 			width: 85,
+	// 		},
+	// 		{
+	// 			field: "value",
+	// 			title: "",
+	// 			headerAttributes: { "class": "sub-bgcolor" }, 
+	// 			width: 100,
+	// 			editor: apcom.editorFieldInput,
+	// 			template: function(d){
+	// 				if(d.title == "Date" && d.value != ""){
+	// 					return moment(d.value).format('DD-MMM-YYYY')
+	// 				}else{
+	// 					return d.value
+	// 				}
+	// 				return ""
+	// 			}
+	// 		}
 
-		],
+	// 	],
 
-	});
+	// });
 
-	var grid1Data = apcom.dataTempRiskMitigants()
-	if (grid1Data.length == 0) {
-		grid1Data = [{ Risks: "", Mitigants: "" }]
-	}
-
+	console.log(apcom.dataTempRiskMitigants())
 	$("#grid1").html("");
 	$("#grid1").kendoGrid({
 		dataSource: {
-			data: grid1Data,
-			schema:{
-				model:{
+			data: apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : { Risks: "", Mitigants: "" },
+			schema: {
+				model: {
 					id: "Risks",
 					fields: {
-						Risks:{editable: true,},
-						Mitigants:{editable: true},
+						Risks: { editable: true },
+						Mitigants: { editable: true },
 					}
 				}
 			}
@@ -411,47 +412,78 @@ apcom.loadSection = function(){
 		},
 		navigatable: true,
 		batch: true,
-		columns:[
-			{
-				field: "Risks",
-				title: "Risk / Concerns",
-				headerAttributes: { "class": "sub-bgcolor" }, 
-				width: 100,
-				editor: apcom.LoadRiskInput,
-				template: function(d){
-
-					return d.Risks
-				}
-			},
-			{
-				field: "Mitigants",
-				title: "Mitigants",
-				headerAttributes: { "class": "sub-bgcolor" }, 
-				width: 100,
-				editor: apcom.LoadMitigantInput,
-				template: function(d){
-
-					return d.Mitigants
-				}
-			},
-			{
-				// title: '<input type="radio" name="gender" value="male">',
-				headerAttributes: { "class": "sub-bgcolor" }, 
-				width: 30,
-				template: function(d){
-					return [
-						'<center>',
-							'<button class="btn btn-xs btn-primary tooltipster inbtn" title="Add" onclick="apcom.addRowRiskMitigants()"><i class="fa fa-plus"></i></button>',
-							'&nbsp;',
-							'<button class="btn btn-xs btn-danger tooltipster inbtn" title="Remove" onclick="apcom.removeRowRiskMitigants(\''+d.uid+'\')"><i class="fa fa-trash"></i></button>',
-						'</center>'
-					].join('')
-				}
+		columns:[{
+			field: "Risks",
+			title: "Risk / Concerns",
+			headerAttributes: { "class": "sub-bgcolor" }, 
+			width: 100,
+			editor: apcom.LoadRiskInput,
+			template: function(d){
+                return d.Risks == "" ? d.Risks : d.Risks()
+            }
+        }, {
+            field: "Mitigants",
+            title: "Mitigants",
+            headerAttributes: { "class": "sub-bgcolor" }, 
+            width: 100,
+            editor: apcom.LoadMitigantInput,
+            template: function(d){
+                return d.Mitigants == "" ? d.Mitigants : d.Mitigants()
+            }
+		}, {
+			headerAttributes: { "class": "sub-bgcolor" }, 
+			width: 30,
+			template: function(d){
+				return [
+					'<center>',
+						'<button class="btn btn-xs btn-primary tooltipster inbtn" title="Add" onclick="apcom.addRowRiskMitigants()"><i class="fa fa-plus"></i></button>',
+						'&nbsp;',
+						'<button class="btn btn-xs btn-danger tooltipster inbtn" title="Remove" onclick="apcom.removeRowRiskMitigants(\''+d.uid+'\')"><i class="fa fa-trash"></i></button>',
+					'</center>'
+				].join('')
 			}
-
-		],
-
+		}]
 	});
+
+	$("#gridriskconcersnmitigants").html("");
+    $("#gridriskconcersnmitigants").kendoGrid({
+        dataSource: {
+            data: apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : { Risks: "", Mitigants: "" }
+        },
+        scrollable: false,
+        dataBound: function(){
+            $("#gridriskconcersnmitigants").find(".tooltipster").tooltipster({
+                trigger: 'hover',
+                theme: 'tooltipster-val',
+                animation: 'grow',
+                delay: 0,
+            });
+
+            $('#gridriskconcersnmitigants .k-grid-content tr:gt(0)').each(function (i, e) {
+                $(e).find('td:last button:first').css('visibility', 'hidden')
+            })
+        },
+        batch: true,
+        columns:[{
+            field: "Risks",
+            title: "Risk / Concerns",
+            headerAttributes: { "class": "sub-bgcolor" }, 
+            width: 100,
+            editor: apcom.LoadRiskInput,
+            template: function(d){
+                return d.Risks == "" ? d.Risks : d.Risks()
+            }
+        }, {
+            field: "Mitigants",
+            title: "Mitigants",
+            headerAttributes: { "class": "sub-bgcolor" }, 
+            width: 100,
+            editor: apcom.LoadMitigantInput,
+            template: function(d){
+                return d.Mitigants == "" ? d.Mitigants : d.Mitigants()
+            }
+        }]
+    });
 }
 
 apcom.addRowRiskMitigants = function(){

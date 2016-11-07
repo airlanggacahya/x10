@@ -860,9 +860,13 @@ loanApproval.getReport = function(param){
                 new propertyOwnership(data.Data.CP[0])
                 );
 
-       loanApproval.outstandingData(new outstanding(data.Data));
+        loanApproval.outstandingData(new outstanding(data.Data));
 
-       getComments();
+        getComments();
+
+        a = apcom.formCreditAnalyst.CreditAnalysRisks()
+        console.log(a)
+        
 
     });
 }

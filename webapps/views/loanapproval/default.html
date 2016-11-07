@@ -13,6 +13,7 @@
 </script>
 
 <script type="text/javascript" src="/static/core/loanapproval.js"></script>
+<script type="text/javascript" src="/static/core/approvalcomments.js"></script>
 
 <style>
     #tab0 {
@@ -247,6 +248,39 @@
                 <div class="collapsible-body row">
                   <div class="col-sm-12">
                     {{template "compliancecheck.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active"><i class="fa fa-list"></i></i>IDK<i class="fa fa-chevron-down pull-right"></i></div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "riskconcernsmitigants.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active"><i class="fa fa-list"></i></i>Final Comment from Credit Analyst<i class="fa fa-chevron-down pull-right"></i></div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "finalcomment.html"}}
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collapsible" data-collapsible="accordion">
+              <li>
+                <div class="collapsible-noreplace header-bgcolor active"><i class="fa fa-list"></i></i>Final Sanction Conditions by Decision Committee<i class="fa fa-chevron-down pull-right"></i></div>
+                <div class="collapsible-body row">
+                  <div class="col-sm-12">
+                    {{template "finalsanction.html"}}
                   </div>
                 </div>
               </li>

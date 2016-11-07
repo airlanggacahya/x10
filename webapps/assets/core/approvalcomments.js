@@ -1,15 +1,16 @@
 var apcom = {
-	Amount: ko.observable(),
-	RecommendedCondition: ko.observable(),
-	Recommendations: ko.observable(),
 	Date: ko.observable(),
-	LeftAmount: ko.observable(),
+	Amount: ko.observable(),
 	ROI: ko.observable(),
 	PF: ko.observable(),
 	PG: ko.observable(),
 	Security: ko.observable(),
 	OtherConditions: ko.observable(),
 	CommitteeRemarks: ko.observable(),
+	RecommendedCondition: ko.observable(),
+	Recommendations: ko.observable(),
+	LeftAmount: ko.observable(),
+	Status: ko.observable()
 }
 
 apcom.dataBasisRecommendation = ko.observableArray([
@@ -56,26 +57,30 @@ apcom.templateCreditAnalys = {
 	CreditAnalysRisks : [],
 	FinalComment: apcom.templateFinalComment,
 }
-apcom.dataTempRiskMitigants = ko.observableArray([
-	
-])
+apcom.dataTempRiskMitigants = ko.observableArray([])
 apcom.formCreditAnalyst = ko.mapping.fromJS(apcom.templateCreditAnalys)
 
 apcom.loadCommentData = function(){
 	apcom.loadSection();
 	apcom.dataTempRiskMitigants([])
 	apcom.accountCommentFinancials([])
-	
-	var customerid = r.customerId().split('|')[0]
-  	var dealno = r.customerId().split('|')[1]
-	
+
 	var param = {
-		DealNo : dealno, 
-		CustomerId: customerid,
+		DealNo : "", 
+		CustomerId: ""
+	}
+	
+	try{
+		param.CustomerId = r.customerId().split('|')[0]
+	  	param.DealNo = r.customerId().split('|')[1]
+	} catch(e){}
+
+	if(param.CustomerId == "" || param.DealNo == ""){
+		param.CustomerId = filter().CustomerSearchVal()
+		param.DealNo = filter().DealNumberSearchVal() 
 	}
 
 	ajaxPost("/accountdetail/getaccountdetailconfirmed", param, function(res){
-		
 		var data = res.Data;
 	    apcom.accountCommentFinancials(data.BorrowerDetails.CommentsonFinancials);
 	})
@@ -104,7 +109,9 @@ apcom.loadCommentData = function(){
 			apcom.Amount("")
 			apcom.RecommendedCondition("")
 			apcom.Recommendations("")
+			apcom.Status("")
 
+			// apcom.plainDate(data[1].DCFinalSanction.Date)
 		    apcom.Date(moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY') == "01-Jan-0001" ? "" : moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY'));
 		    apcom.LeftAmount(data[1].DCFinalSanction.Amount);
 		    apcom.ROI(data[1].DCFinalSanction.ROI);
@@ -113,6 +120,7 @@ apcom.loadCommentData = function(){
 		    apcom.Security(data[1].DCFinalSanction.Security);
 		    apcom.OtherConditions(data[1].DCFinalSanction.OtherConditions);
 		    apcom.CommitteeRemarks(data[1].DCFinalSanction.CommitteeRemarks);
+		    apcom.Status(data[1].DCFinalSanction.Status)
 
 		    apcom.Amount(data[0].CreditAnalys.FinalComment.Amount)
 			apcom.RecommendedCondition(data[0].CreditAnalys.FinalComment.RecommendedCondition)
@@ -156,16 +164,14 @@ apcom.sendCreditAnalyst = function(){
 }
 
 apcom.saveSanction = function(){
-	var dataGrid = $("#grid2").data("kendoGrid").dataSource.data();
-	// console.log(dataGrid);
-	apcom.sanction.Date(dataGrid[0].value)
-	apcom.sanction.Amount(dataGrid[1].value)
-	apcom.sanction.ROI(dataGrid[2].value)
-	apcom.sanction.PF(dataGrid[3].value)
-	apcom.sanction.PG(dataGrid[4].value)
-	apcom.sanction.Security(dataGrid[5].value)
-	apcom.sanction.OtherConditions(dataGrid[6].value)
-	apcom.sanction.CommitteeRemarks(dataGrid[7].value)
+	apcom.sanction.Date(kendo.toString(new Date(apcom.Date()),"yyyy-MM-dd")+"T00:00:00.000Z")
+	apcom.sanction.Amount(parseFloat(apcom.LeftAmount()))
+	apcom.sanction.ROI(parseFloat(apcom.ROI()))
+	apcom.sanction.PF(apcom.PF())
+	apcom.sanction.PG(apcom.PG())
+	apcom.sanction.Security(apcom.Security())
+	apcom.sanction.OtherConditions(apcom.OtherConditions())
+	apcom.sanction.CommitteeRemarks(apcom.CommitteeRemarks())
 	apcom.sanction.Status(true)
 	apcom.sanction.CustomerId(parseInt(r.customerId().split('|')[0]))
 	apcom.sanction.DealNo(r.customerId().split('|')[1])
@@ -185,16 +191,14 @@ apcom.saveSanction = function(){
 }
 
 apcom.saveHold = function(){
-	var dataGrid = $("#grid2").data("kendoGrid").dataSource.data();
-	// console.log(dataGrid);
-	apcom.sanction.Date(dataGrid[0].value)
-	apcom.sanction.Amount(dataGrid[1].value)
-	apcom.sanction.ROI(dataGrid[2].value)
-	apcom.sanction.PF(dataGrid[3].value)
-	apcom.sanction.PG(dataGrid[4].value)
-	apcom.sanction.Security(dataGrid[5].value)
-	apcom.sanction.OtherConditions(dataGrid[6].value)
-	apcom.sanction.CommitteeRemarks(dataGrid[7].value)
+	apcom.sanction.Date(kendo.toString(new Date(apcom.Date()),"yyyy-MM-dd")+"T00:00:00.000Z")
+	apcom.sanction.Amount(parseFloat(apcom.LeftAmount()))
+	apcom.sanction.ROI(parseFloat(apcom.ROI()))
+	apcom.sanction.PF(apcom.PF())
+	apcom.sanction.PG(apcom.PG())
+	apcom.sanction.Security(apcom.Security())
+	apcom.sanction.OtherConditions(apcom.OtherConditions())
+	apcom.sanction.CommitteeRemarks(apcom.CommitteeRemarks())
 	apcom.sanction.Status(false)
 	apcom.sanction.CustomerId(parseInt(r.customerId().split('|')[0]))
 	apcom.sanction.DealNo(r.customerId().split('|')[1])
@@ -261,7 +265,6 @@ apcom.loadSection = function(){
 
 	for (let i = 1; i <= 3; i++) {
 		$(".caret"+i).click(function(){
-			console.log(".caret"+i)
 			if($("#content"+i).is(':visible')){
 				$("#content"+i).hide()
 				if($("#caret"+i).hasClass('fa-caret-down')){
@@ -391,16 +394,9 @@ apcom.loadSection = function(){
 				}
 			}
 		},
-
+    	scrollable: false,
 		resizable: true,
 		editable: true,
-		// edit: function (e) {
-	 //        var fieldName = e.container.find("input").attr("name");
-	 //        if(due.form.Freeze() == true || due.form.Status() == 1){
-	 //        	this.closeCell();
-	 //        }
-
-		// },
 		dataBound: function(){
 			$("#grid1").find(".tooltipster").tooltipster({
                 trigger: 'hover',
@@ -471,10 +467,9 @@ apcom.showComments= function(){
 	$('.chartscroll').animate({ scrollTop: $('.appComment').offset().top - 250 }, 'slow')
 }
 
-apcom. removeRowRiskMitigants = function(d){
+apcom.removeRowRiskMitigants = function(d){
 	swal({
 		title: 'Are you sure want to delete?',
-		// text: 'You will not be able to recover this imaginary file!',
 		type: 'warning',
 		showCancelButton: true,
 		confirmButtonText: 'Yes',
@@ -489,7 +484,6 @@ apcom. removeRowRiskMitigants = function(d){
 			// console.log("dismiss");
 		}
 	});
-
 }
 
 apcom.LoadMitigantInput = function(container, options){
@@ -503,5 +497,5 @@ apcom.LoadRiskInput = function(container, options){
 }
 
 function getComments(){
-    apcom.loadCommentData();
+	setTimeout(apcom.loadCommentData(), 200)
 }

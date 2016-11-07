@@ -687,7 +687,7 @@ r.refresh = function () {
 r.getStockAndDebt = function(){
    var customerId = filter().CustomerSearchVal() + "|" + filter().DealNumberSearchVal();
    var param = {CustomerId: filter().CustomerSearchVal(), Dealno: filter().DealNumberSearchVal()}
-   app.ajaxPost('/datacapturing/getstockanddebtdetail', param, function (res) {
+   app.ajaxPost('/datacapturing/getstockanddebtdetailconfirmed', param, function (res) {
       r.PrepareDataRatioReport(param, res, customerId);
    })
 }
@@ -937,7 +937,6 @@ r.formatAOM = function(data) {
 }
 
 r.checkTabs = function(id) {
-
    if(id != "") {
       r.currentTab(id)
       $(".borderon").removeClass("tab-current")
@@ -1321,7 +1320,7 @@ r.getCustomerId = function () {
 }
 
 r.parse = function(){
-   var result = "Not found",
+   var result = "",
    tmp = location.search
             .substr(1)
             .split("=");

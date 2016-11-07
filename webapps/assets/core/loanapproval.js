@@ -863,11 +863,6 @@ loanApproval.getReport = function(param){
         loanApproval.outstandingData(new outstanding(data.Data));
 
         getComments();
-
-        a = apcom.formCreditAnalyst.CreditAnalysRisks()
-        console.log(a)
-        
-
     });
 }
 

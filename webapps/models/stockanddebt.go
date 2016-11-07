@@ -7,6 +7,7 @@ import (
 	// tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
 	// "log"
+	"strings"
 	"time"
 )
 
@@ -71,6 +72,13 @@ func (m *StockandDebtModel) Confirm(id string, status bool, ctx *orm.DataContext
 	stock.DateFlag = time.Now()
 
 	e = ctx.Save(&stock)
+
+	if stock.IsConfirm {
+		cust := strings.Split(stock.CustomerId, "|")
+		if err := new(DataConfirmController).SaveDataConfirmed(cust[0], cust[1], "StockandDebt", &stock, true); err != nil {
+			return stock, err
+		}
+	}
 
 	return stock, e
 }

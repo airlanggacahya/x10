@@ -179,6 +179,37 @@ func (c *DueDiligenceController) GetDuediligenceInputData(k *knot.WebContext) in
 	return c.SetResultInfo(false, "success", results)
 }
 
+func (c *DueDiligenceController) GetDuediligenceInputDataCOnfirmed(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	payload := struct {
+		CustomerId string
+		DealNo     string
+	}{}
+
+	// if err := k.GetPayload(&payload); err != nil {
+	// 	return c.SetResultInfo(true, err.Error(), nil)
+	// }
+
+	// query := toolkit.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("customerid", payload.CustomerId), dbox.Eq("dealno", payload.DealNo)}...)}
+	// csr, err := c.Ctx.Find(new(DueDiligenceInput), query)
+	// defer csr.Close()
+	// if err != nil {
+	// 	return c.SetResultInfo(true, err.Error(), nil)
+	// }
+
+	results := make([]DueDiligenceInput, 0)
+	// err = csr.Fetch(&results, 0, false)
+	// if err != nil {
+	// 	return c.SetResultInfo(true, err.Error(), nil)
+	// }
+	err := new(DataConfirmController).GetDataConfirmed(payload.CustomerId, payload.DealNo, new(DueDiligenceInput).TableName(), &results)
+	if err != nil {
+		return err
+	}
+
+	return c.SetResultInfo(false, "success", results)
+}
+
 func (c *DueDiligenceController) GetDefaultCheck(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	query := toolkit.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("section", "Default Checks")}...)}

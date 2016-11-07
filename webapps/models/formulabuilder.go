@@ -219,28 +219,33 @@ func (fm *FormulaModel) GetLastAuditedYear() string {
 
 func (fm *FormulaModel) GetCibilData() error {
 	fm.CibilData = CibilMap{}
-	customerIdInt, _ := strconv.ParseInt(fm.CustomerId, 10, 32)
+	// customerIdInt, _ := strconv.ParseInt(fm.CustomerId, 10, 32)
 
-	conn, err := GetConnection()
-	defer conn.Close()
-	if err != nil {
-		return err
-	}
+	// conn, err := GetConnection()
+	// defer conn.Close()
+	// if err != nil {
+	// 	return err
+	// }
 
-	csr, err := conn.NewQuery().
-		Where(dbox.And(
-		dbox.Eq("Profile.customerid", customerIdInt),
-		dbox.Eq("Profile.dealno", fm.DealNo),
-	)).
-		From("CibilReport").
-		Cursor(nil)
-	defer csr.Close()
-	if err != nil {
-		return err
-	}
+	// csr, err := conn.NewQuery().
+	// 	Where(dbox.And(
+	// 	dbox.Eq("Profile.customerid", customerIdInt),
+	// 	dbox.Eq("Profile.dealno", fm.DealNo),
+	// )).
+	// 	From("CibilReport").
+	// 	Cursor(nil)
+	// defer csr.Close()
+	// if err != nil {
+	// 	return err
+	// }
 
 	cibilReport := []CibilReportModel{}
-	err = csr.Fetch(&cibilReport, 0, false)
+	// err = csr.Fetch(&cibilReport, 0, false)
+	// if err != nil {
+	// 	return err
+	// }
+
+	err := new(DataConfirmController).GetDataConfirmed(fm.CustomerId, fm.DealNo, "CibilReport", &cibilReport)
 	if err != nil {
 		return err
 	}
@@ -249,19 +254,23 @@ func (fm *FormulaModel) GetCibilData() error {
 		fm.CibilData.SelectRating = cibilReport[0].Rating
 	}
 
-	csr, err = conn.NewQuery().
-		Where(dbox.And(
-		dbox.Eq("ConsumerInfo.CustomerId", customerIdInt),
-		dbox.Eq("ConsumerInfo.DealNo", fm.DealNo)),
-	).
-		From("CibilReportPromotorFinal").
-		Cursor(nil)
-	if csr != nil {
-		defer csr.Close()
-	}
+	// csr, err = conn.NewQuery().
+	// 	Where(dbox.And(
+	// 	dbox.Eq("ConsumerInfo.CustomerId", customerIdInt),
+	// 	dbox.Eq("ConsumerInfo.DealNo", fm.DealNo)),
+	// ).
+	// 	From("CibilReportPromotorFinal").
+	// 	Cursor(nil)
+	// if csr != nil {
+	// 	defer csr.Close()
+	// }
 
 	resprom := []toolkit.M{}
-	err = csr.Fetch(&resprom, 0, false)
+	// err = csr.Fetch(&resprom, 0, false)
+	// if err != nil {
+	// 	return err
+	// }
+	err = new(DataConfirmController).GetDataConfirmed(fm.CustomerId, fm.DealNo, "CibilReportPromotorFinal", &resprom)
 	if err != nil {
 		return err
 	}

@@ -162,6 +162,12 @@ func (c *DataCapturingController) GetCustomerProfileDetailConfirmed(k *knot.WebC
 		return err
 	}
 
+	if results.StatusCibil == 0 {
+		for idx, _ := range results.DetailOfPromoters.Biodata {
+			results.DetailOfPromoters.Biodata[idx].CIBILScore = 0
+		}
+	}
+
 	return results
 }
 

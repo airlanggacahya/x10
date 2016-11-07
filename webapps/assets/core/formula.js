@@ -771,6 +771,148 @@ formula.reorder = function (source, from, to, subSectionNeedToFollow, callback) 
 	})
 }
 
+formula.exportExcel = function(target, title){
+	$('.apx-loading').show()
+	setTimeout(function(){
+		var body = $('body');
+		var fakeTable = $('<div/>').attr('id', 'fake-table').appendTo(body).css('margin-top', '-19px')
+
+	 	var data = formula.data()
+
+		if ($('#fake-table').hasClass('k-grid')) {
+
+			$('#fake-table').data('kendoGrid').setDataSource(new kendo.data.DataSource({
+				data: data
+			}))
+
+			return
+		}
+
+		var columns = [
+			{ field: 'Name', headerAttributes: {class: 'k-header header-bgcolor', style: 'background-color: #313d50 !important;color: white !important;'}, width: 400, template: function (d) {
+				return '<span data-category="' + d.category + '">' + d.name + '</span>'
+			} },
+			{ field: 'alias', title: 'Field alias', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
+				if (['Field', 'Formula'].indexOf(d.category) == -1) {
+					return ''
+				}
+
+				return d.alias
+			}, width: 100, attributes: { style: 'text-align: center;' } },
+			{ field: 'formula', title: 'Formula', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
+				if (d.category !== 'Formula') {
+					return ''
+				}
+
+				if (formula.devMode()) {
+					return d.formula
+				}
+				var ret = formula.extractFormula(d.formula)
+					.map(function (e) { return e.name })
+					.join('')
+					.replace(/\//g, ' / ')
+					.replace(/\-/g, ' - ')
+					.replace(/\+/g, ' + ')
+					.replace(/\*/g, ' * ')
+					.replace(/\(/g, ' (')
+					.replace(/\)/g, ') ')
+
+				var ar = ret.split(/\s+/);
+				var disc = '';
+				$.each(ar, function(i, items){
+		    		// $.each(formula.data(), function(i, ondis){
+		    		// 	console.log(items.indexOf(ondis.alias))
+		    		// 	if(items.indexOf(ondis.alias) > -1){
+		    		// 		disc += ondis.name 
+		    		// 	}
+		    		// })
+		    		var temp = _.find(formula.data(),function(ondis){ return ondis.alias == items });
+
+		    		if(temp!=undefined){
+		    			disc+=temp.name;
+		    		}
+
+		    		if(items.indexOf("+") > -1){
+		    				disc += " + " 
+					}
+
+					if(items.indexOf("-") > -1){
+						disc += " - " 
+					}
+
+					if(items.indexOf("(") > -1){
+						disc += "(" 
+					}
+
+					if(items.indexOf("*") > -1){
+						disc += " * " 
+					}
+
+					if(items.indexOf(")") > -1){
+						disc += ")" 
+					}
+
+					if(items.indexOf("/") > -1){
+						disc += "/" 
+					}
+				});	
+				return ret +"<br/><span style='color: black; font-weight: normal;'>"+disc+"<span>"
+			} },
+		]
+
+		var config = {
+			dataSource: {
+				data: data
+			},
+			columns: columns,
+			dataBound: function () {
+				app.gridBoundTooltipster('.grid')()
+				$('#fake-table [data-category]').each(function (i, e) {
+					var $row = $(e).closest('tr')
+					var category = $(e).attr('data-category')
+
+					if (category == 'Section') {
+						$row.addClass('row-section')
+						$row.css('font-weight','bold').css('font-size', '20px').css('background-color', '#c6e0b4')
+					} else if (category == 'Sub Section') {
+						// $row.css('row-sub-section header-bgcolor')
+						$row.css('font-weight','bold').css('font-size', '20px').css('background-color', "#f2f2f2")
+					} else if (category == 'Formula') {
+						$row.addClass('row-formula sub-bgcolor')
+						$row.css('font-weight','bold').css('background-color', '#a7adcd !important').css('color', 'white !important')
+					}
+				})
+
+				$('#fake-table tr [data-direction="up"]:first').addClass('disabled');
+				$('#fake-table tr [data-direction="down"]:last').addClass('disabled')
+			}
+		}
+
+		$('#fake-table').kendoGrid(config)
+		var ondate = kendo.toString(new Date(),"dd-MM-yyyy HH mm");
+	    var ind = title.indexOf("-") + 2;
+	    title = title.slice(ind);
+	    var name = title+" "+ ondate.toString();
+	    var downloader = $('<a />').attr('href', '#')
+	        .attr('download', name + '.xls')
+	        .attr('onclick', 'return ExcellentExport.excel(this, \'fake-table\', \'sheet1\')')
+	        .html('export')
+	        .appendTo(body);
+
+	    fakeTable.find('td').css('height', 'inherit');
+	    downloader[0].click();
+
+	    setTimeout(function () {
+	        fakeTable.remove();
+	        downloader.remove();
+	        $('.apx-loading').hide()
+	    }, 400);
+
+	}, 500)
+	
+
+}
+
 $(function () {
 	$('.modal').each(function (i, e) {
 		$(e).appendTo($('body'))

@@ -1,3 +1,4 @@
+
 var url = "/bankanalysis";
 databank = ko.observableArray([]);
 var abbavg = 0;
@@ -181,7 +182,7 @@ var DrawDataBank = function(id){
         if(res.data.Detail.length != 0){
             formVisibility(true)
             isempty(false)
-            console.log(res.data.AccountDetail[0].Status)
+            // console.log(res.data.AccountDetail[0].Status)
             if(res.data.Detail.length == fre){
             // alert("fre")
                 $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.data.Detail[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
@@ -190,8 +191,8 @@ var DrawDataBank = function(id){
                 setTimeout(function(){
                     disabledAll(false);
                 },100)
-                
-                $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter"); 
+
+                $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter");
             } else if(res.data.Detail.length == un){
                  // alert("un")
                 caba(1)
@@ -211,7 +212,7 @@ var DrawDataBank = function(id){
             databank(res.data.Detail);
 
             if(res.data.AccountDetail.length==0){
-                swal("Warning", "Please Fill Account Detail Data First","warning");
+                // swal("Warning", "Please Fill Account Detail Data First","warning");
                 createBankingGrid(res.data.Summary,0);
             }else{
 
@@ -222,7 +223,7 @@ var DrawDataBank = function(id){
                 ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
                 var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
                 var multiplyer = _.min([latestebidmargin,customermargin])
-                
+
                 for (var i = 0 ; i < res.data.Summary.length ; i++){
                     res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
                 }
@@ -245,7 +246,7 @@ var DrawDataBank = function(id){
             // swal("Warning","Data Bank not found","warning");
             $("#bankstt").data("kendoDatePicker").value("")
         }
-        
+
     });
 }
 
@@ -257,7 +258,7 @@ var RenderGridDataBank = function(id, res){
     var current = [];
     current.push(res.DataBank[0].BankAccount.CurrentBased);
     var factype = res.DataBank[0].BankAccount.FacilityType;
-    
+
     $('#fundgrid'+id).kendoGrid({
         dataSource : fund,
         scrollable:false,
@@ -285,7 +286,7 @@ var RenderGridDataBank = function(id, res){
                     var num = fund[0].ROI
                     // if (fund[id] != undefined ){
                     //     return fund[0].ROI + "%"
-                    // }  
+                    // }
                     return num + "%"
                 },
             },
@@ -377,7 +378,7 @@ var RenderGridDataBank = function(id, res){
     // idxfb = _.findIndex(factype,"Fund Based")
     // idxnfb = _.findIndex(factype,"Non-Fund Based")
     // idxcurr = _.findIndex(factype,"Current")
-    
+
     idxfb = factype.indexOf("Fund Based")
     idxnfb = factype.indexOf("Non-Fund Based")
     idxcurr = factype.indexOf("Current")
@@ -397,7 +398,7 @@ var RenderGridDataBank = function(id, res){
         $("#bankdetailgrid"+id).show();
         $('#headersecfbs'+id).show();
         $('#secfbs'+id).show();
-    } 
+    }
     if (idxnfb > -1){
         $('#nonfundgrid'+id).show();
         $('#headernfbs'+id).show();
@@ -463,7 +464,7 @@ var RenderGridDataBank = function(id, res){
                 }else{
                     return result
                 }
-                
+
             }))
 
             var pembagi = 0
@@ -472,7 +473,7 @@ var RenderGridDataBank = function(id, res){
                     if(data[i].ActualInterestPaid > 0) pembagi++;
                 }
             }
-            
+
             averageReceipt.actualInterestPaid = _.sumBy(data, 'ActualInterestPaid') / (pembagi == 0 ? 1 : pembagi) //(data.length == 0 ? 1 : data.length)
 
             averageReceipt.noOfDebit = _.sumBy(data, 'NoOfDebit')
@@ -512,11 +513,11 @@ var RenderGridDataBank = function(id, res){
 
             //averageOpenLimit.creditTotal = account.SancLimit * averageReceipt.utilPerMonth
             if (averageReceipt.utilPerMonth == 0 || account.FundBased.SancLimit == 0){
-                averageOpenLimit.creditTotal = 0 
+                averageOpenLimit.creditTotal = 0
             }else{
                 averageOpenLimit.creditTotal = account.FundBased.SancLimit * (1-averageReceipt.utilPerMonth)
             }
-            
+
             averageOpenLimit.annualisedCredit = averageReceipt.creditTotal * 12
 
             var $footer2 = $('<tr />').addClass('k-footer-template')
@@ -591,7 +592,7 @@ var RenderGridDataBank = function(id, res){
                 }else{
                     return result
                 }
-                
+
             }))
 
             averageReceipt.actualInterestPaid = _.sumBy(data, 'ActualInterestPaid')
@@ -628,11 +629,11 @@ var RenderGridDataBank = function(id, res){
 
             //averageOpenLimit.creditTotal = account.SancLimit * averageReceipt.utilPerMonth
             if (averageReceipt.utilPerMonth == 0 || account.FundBased.SancLimit == 0){
-                averageOpenLimit.creditTotal = 0 
+                averageOpenLimit.creditTotal = 0
             }else{
                 averageOpenLimit.creditTotal = account.FundBased.SancLimit * (1-averageReceipt.utilPerMonth)
             }
-            
+
             averageOpenLimit.annualisedCredit = averageReceipt.creditTotal * 12
 
             var $footer2 = $('<tr />').addClass('k-footer-template')
@@ -862,7 +863,7 @@ var createBankDetailGridCols = function(isForm){
                     }
                 },
                 editor: disableSpinner
-            }, 
+            },
             // {
             //     title : "Total",
             //     headerAttributes: { "class": "sub-bgcolor" },
@@ -896,7 +897,7 @@ var createBankDetailGridCols = function(isForm){
                     }
                 },
                 editor: disableSpinner
-            }, 
+            },
             // {
             //     title : "Total",
             //     headerAttributes: { "class": "sub-bgcolor" },
@@ -916,7 +917,7 @@ var createBankDetailGridCols = function(isForm){
                 }
             },
             editor: disableSpinner
-        }, 
+        },
         // {
         //     title : "OD/CC Utilization Per Months",
         //     headerAttributes: { "class": "sub-bgcolor" },
@@ -924,7 +925,7 @@ var createBankDetailGridCols = function(isForm){
         //         var value = toolkit.number(d.AvgBalon / d.OdCcLimit)
         //         return kendo.toString(value, 'p1')
         //     }
-        // }, 
+        // },
         {
             title : "OD/CC Limit Per Month (Rs. Lacs)",
             field : "OdCcLimit",
@@ -1174,7 +1175,7 @@ var createCurrentBankDetailGridCols = function(isForm){
                 }
             },
             editor: disableSpinner
-        }, 
+        },
         // {
         //     title : "Total",
         //     headerAttributes: { "class": "sub-bgcolor" },
@@ -1208,7 +1209,7 @@ var createCurrentBankDetailGridCols = function(isForm){
                 }
             },
             editor: disableSpinner
-        }, 
+        },
 
         ]
     }, {
@@ -1224,7 +1225,7 @@ var createCurrentBankDetailGridCols = function(isForm){
             }
         },
         editor: disableSpinner
-    },  
+    },
       {
         title : "No. of Debits",
         field : "NoOfDebit",
@@ -1455,7 +1456,7 @@ var onfactypechange = function(){
     }else{
          $('#savebtn').prop('disabled',false);
     }
-    
+
 }
 
 scroll = function(){
@@ -1467,7 +1468,7 @@ scroll = function(){
         } else {
             $('.btnFixed').removeClass('fixed');
             $('.btnFixed').addClass('static');
-        }    
+        }
     });
 }
 
@@ -1540,7 +1541,7 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $("#nfbsanctiondate").getKendoDatePicker().value(new Date());
                         $("#fbsanctiondate").getKendoDatePicker().value(new Date());
-                        
+
                     },2000);
 
                 }else{
@@ -1570,7 +1571,7 @@ $(document).ready(function(){
                     swal("Please Edit / Enter Data", "", "success");
                     caba(0)
                 }
-                
+
                 refreshFilter()
             });
         }
@@ -1685,7 +1686,7 @@ $(document).ready(function(){
 //         resetInput();
 //         $('#bankname').val(databank()[index].DataBank[0].BankAccount.BankName);
 //         if (databank()[index].DataBank[0].BankAccount.FacilityType == "Fund Based"){
-            
+
 //             $('#fbradio').prop('checked', true);
 //             $('#fb').show();
 //             if(databank()[index].DataBank[0].BankAccount.FundBased.AccountType == "Current"){
@@ -1701,7 +1702,7 @@ $(document).ready(function(){
 //             $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate);
 //             $('#securityfb').val(databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB);
 //         }else if (databank()[index].DataBank[0].BankAccount.FacilityType == "Non Fund Based"){
-            
+
 //             $('#nfbradio').prop('checked', true);
 //             $('#nfb').show();
 //             if(databank()[index].DataBank[0].BankAccount.NonFundBased.NatureOfFacility == "Letter Of Credit"){
@@ -1718,7 +1719,7 @@ $(document).ready(function(){
 //             $('#nfbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate);
 //             $('#securitynfb').val(databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB);
 //         }else{
-            
+
 //             $('#bothradio').prop('checked', true);
 //             $('#fb').show();
 //             $('#same').show();
@@ -1852,8 +1853,8 @@ var editBankData = function(index){
                 loadGridDataBank(databank()[index].DataBank[0].BankDetails)
             }else{
                 loadGridDataBank(res.data[0].BankDetails)
-            }     
-            
+            }
+
             if (datacurrentdetail != null){
                 loadGridCurrentDataBank(databank()[index].DataBank[0].CurrentBankDetails)
             }else{
@@ -1978,7 +1979,7 @@ var saveDataBank = function(){
     var gridbankdetdirty = $("#bankdetailgridform").data("kendoGrid").dataSource.hasChanges();
     det = gridbankdet.dataSource._data;
     currdet = gridcurrentbankdet.dataSource._data;
-    
+
 
     var callData = {
         CustomerId : "",
@@ -1994,7 +1995,7 @@ var saveDataBank = function(){
     fundbased.sanclimit(Number($("#sanclimit").val()));
     fundbased.interestpermonth(Number($("#interestpermonth").val()));
     fundbased.securityoffb($("#securityfb").val());
-    
+
     if ($("#naturefacility").data("kendoDropDownList").value() != "Other"){
         nonfundbased.natureoffacility($("#naturefacility").data("kendoDropDownList").value());
     }else{
@@ -2491,7 +2492,7 @@ var RebuildSummary = function(id){
                     $("#"+id+" .k-grid-content").slideDown("slow");
                     $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-up pull-right')
                 }
-            }   
+            }
         }else{
             if(id != 'bankinggrid'){
                 if(banking.length != 0){
@@ -2506,7 +2507,7 @@ var RebuildSummary = function(id){
                         $("#"+id+" .k-grid-content").slideUp("slow");
                         $('#summary-panel').animate({height: "370px"}, 500)
                         $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-down pull-right')
-                    }     
+                    }
                 }
             }else{
                 if (od.length == 0 && aml.length == 0 && abb.length == 0){
@@ -2519,7 +2520,7 @@ var RebuildSummary = function(id){
                     $("#"+id+" .k-header:eq(0)").find("span").attr("class",'glyphicon glyphicon-chevron-down pull-right')
                 }
             }
-            
+
         }
     });
     $("#"+id+" .k-header:eq(0)").attr("style","cursor: pointer;");
@@ -2534,7 +2535,7 @@ var createAmlGrid = function(data){
        aggregate: [ { field: "CreditCash", aggregate: "average" },
                   { field: "DebitCash", aggregate: "average" }]
 		},
-        
+
         columns : [
             {
                 title:"AML",
@@ -2718,7 +2719,7 @@ var createOdDetailGrid = function(res){
                 { field: "abb", aggregate: "average" },
                 // { field: "util", aggregate: "average" },
             ],
-            
+
 		},
         scrollable:true,
         height:245,
@@ -2803,7 +2804,7 @@ function onFreeze(){
             refreshFilter()
         });
     }
-    
+
 }
 
 function setUnFreeze(){

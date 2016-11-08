@@ -578,7 +578,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 				}).Exec().Result.Avg
 			}).Exec().Result.Avg
 
-			multiplier := (float64(1) + fm.AccountDetails.LDProposedRateInterest/float64(100))
+			multiplier := (float64(1) + toolkit.Div(fm.AccountDetails.LDProposedRateInterest, float64(100)))
 			left := fm.AccountDetails.LDRequestedLimitAmount * multiplier
 			emi := toolkit.Div(left, fm.AccountDetails.LDLimitTenor)
 			abbOfEmi := toolkit.Div(abb, emi)
@@ -799,25 +799,25 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 	})()
 
 	bank := new(BankAllSummary)
-	bank.BSMonthlyCredits = BSMonthlyCredits
-	bank.BSMonthlyDebits = BSMonthlyDebits
-	bank.BSNoOfCredits = BSNoOfCredits
-	bank.BSNoOfDebits = BSNoOfDebits
-	bank.BSOWChequeReturns = BSOWChequeReturns
-	bank.BSIWChequeReturns = BSIWChequeReturns
-	bank.BSImpMargin = BSImpMargin
-	bank.BSOWReturnPercent = BSOWReturnPercent
-	bank.BSIWReturnPercent = BSIWReturnPercent
-	bank.BSDRCRRatio = BSDRCRRatio
-	bank.ODSactionLimit = ODSactionLimit
-	bank.ODUtilizationPercent = ODUtilizationPercent
-	bank.ODAvgUtilization = ODAvgUtilization
-	bank.ODInterestPaid = ODInterestPaid
-	bank.AMLAvgCredits = AMLAvgCredits
-	bank.AMLAvgDebits = AMLAvgDebits
-	bank.ABB = ABB
+	bank.BSMonthlyCredits = CheckNan(BSMonthlyCredits)
+	bank.BSMonthlyDebits = CheckNan(BSMonthlyDebits)
+	bank.BSNoOfCredits = CheckNan(BSNoOfCredits)
+	bank.BSNoOfDebits = CheckNan(BSNoOfDebits)
+	bank.BSOWChequeReturns = CheckNan(BSOWChequeReturns)
+	bank.BSIWChequeReturns = CheckNan(BSIWChequeReturns)
+	bank.BSImpMargin = CheckNan(BSImpMargin)
+	bank.BSOWReturnPercent = CheckNan(BSOWReturnPercent)
+	bank.BSIWReturnPercent = CheckNan(BSIWReturnPercent)
+	bank.BSDRCRRatio = CheckNan(BSDRCRRatio)
+	bank.ODSactionLimit = CheckNan(ODSactionLimit)
+	bank.ODUtilizationPercent = CheckNan(ODUtilizationPercent)
+	bank.ODAvgUtilization = CheckNan(ODAvgUtilization)
+	bank.ODInterestPaid = CheckNan(ODInterestPaid)
+	bank.AMLAvgCredits = CheckNan(AMLAvgCredits)
+	bank.AMLAvgDebits = CheckNan(AMLAvgDebits)
+	bank.ABB = CheckNan(ABB)
 
-	bank.BankingToTurnoverRatio = (func() float64 {
+	bank.BankingToTurnoverRatio = CheckNan((func() float64 {
 		totalCredit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 			return x.(Summary).TotalCredit
 		}).Exec().Result.Sum
@@ -845,9 +845,9 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		})()
 
 		return toolkit.Div(sumCreditByTotalCredit, sales+otherIncome) //* 100
-	})()
+	})())
 
-	bank.InwardBounces = (func() float64 {
+	bank.InwardBounces = CheckNan((func() float64 {
 		totalOwCheque := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 			return x.(Summary).OwCheque
 		}).Exec().Result.Sum
@@ -866,12 +866,12 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		}
 
 		return res
-	})()
+	})())
 
-	bank.SactionLimit = crowd.From(&res).Sum(func(x interface{}) interface{} {
+	bank.SactionLimit = CheckNan(crowd.From(&res).Sum(func(x interface{}) interface{} {
 		account := x.(BankAnalysisV2).DataBank[0].BankAccount
 		return account.FundBased.SancLimit
-	}).Exec().Result.Sum
+	}).Exec().Result.Sum)
 
 	bank.ODCCUtilizationABBvsProposedEMIIsCurrent = (func() bool {
 		totalCurrent := 0
@@ -884,7 +884,7 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		return (totalCurrent == len(res))
 	})()
 
-	bank.ODCCUtilizationABBvsProposedEMI = (func() float64 {
+	bank.ODCCUtilizationABBvsProposedEMI = CheckNan((func() float64 {
 
 		if bank.ODCCUtilizationABBvsProposedEMIIsCurrent {
 			fm := new(FormulaModel)
@@ -900,7 +900,7 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 				}).Exec().Result.Avg
 			}).Exec().Result.Avg
 
-			multiplier := (float64(1) + fm.AccountDetails.LDProposedRateInterest/float64(100))
+			multiplier := (float64(1) + toolkit.Div(fm.AccountDetails.LDProposedRateInterest, float64(100)))
 			left := fm.AccountDetails.LDRequestedLimitAmount * multiplier
 			emi := toolkit.Div(left, fm.AccountDetails.LDLimitTenor)
 			abbOfEmi := toolkit.Div(abb, emi)
@@ -917,7 +917,7 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 
 			return odValue * 100
 		}
-	})()
+	})())
 
 	return bank, nil
 }

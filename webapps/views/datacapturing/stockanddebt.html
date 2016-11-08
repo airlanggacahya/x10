@@ -747,6 +747,26 @@
       margin-bottom: 5px;
   }
 
+  .table-bordered>thead>tr>th,
+  .table-bordered>tbody>tr>th,
+  .table-bordered>tfoot>tr>th,
+  .table-bordered>thead>tr>td,
+  .table-bordered>tbody>tr>td,
+  .table-bordered>tfoot>tr>td {
+    border: 0px
+  }
+
+  .table-bordered>thead>tr,
+  .table-bordered>tbody>tr,
+  .table-bordered>tfoot>tr {
+    border: 1px;
+  }
+
+  .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+    padding: 4px;
+    vertical-align: middle;
+  }
+
 </style>
 
 {{template "filter.html"}}
@@ -762,14 +782,6 @@
                 <button class="btn btn-save button-font btn-dis" style="width: 70px" data-bind="click: save(),enable: (!stockanddebtCloning.IsConfirm())">Save</button>
                 <button class="btn btn-confirm button-font btn-dis" style="width: 70px" data-bind="text: stockanddebtCloning.ConfirmText, click: setConfirm(), enable: (!stockanddebtCloning.IsFreeze())">Confirm</button>
                 <button class="btn btn-freeze button-font" style="width: 70px" data-bind="text: stockanddebtCloning.FreezeText, click: setFreeze(), css: checkBtnFreeze">Freeze</button>
-
-                <!-- <button id="btnverify" btn-sm class="btn btn-sm btn-confirm" onclick="verify()"> <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp; Verify</button> -->
-                <!-- <button id="btnnewentry" btn-sm class="btn btn-sm btn-primary" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Make New Entry</button>
-                <button id="btnedit" btn-sm class="btn btn-sm btn-warning" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-pencil"></span>&nbsp; Edit Draft</button>
-                <button id="btnupdate" btn-sm class="btn btn-sm btn-save" onclick="makenewentryoredit()"> <span class="glyphicon glyphicon-pencil"></span>&nbsp; Update Draft</button>
-                <button id="btnconfirm" btn-sm class="btn btn-sm btn-confirm" onclick="confirm()"> <span class="glyphicon glyphicon-ok"></span>&nbsp; Confirm</button>
-                <button id="btndraft" btn-sm class="btn btn-sm btn-save" onclick="save()"> <span class="glyphicon glyphicon-share-alt"></span>&nbsp; Save Draft</button>
-                <button id="btnceedit" btn-sm class="btn btn-sm btn-reset" onclick="resetmen()"> <span class="glyphicon glyphicon-refresh"></span>&nbsp; Reset</button> -->
               </div>
             </div>
             <div class="col-md-6">
@@ -794,8 +806,10 @@
                       <div class="panel-heading">
                         <div class="filtermen" style="float:right; margin-right: 7px !important; margin-bottom: 10px !important; "><button class="btn btn-sm btn-add pull-right" onclick="addAOM()" data-bind="enable: (!stockanddebtCloning.IsConfirm())"> <span class="glyphicon glyphicon-plus"></span>&nbsp; Add Month</button></div>
                       </div>
-                      <div class="panel-body">
-                        <div class="col-sm-12">
+
+                      <div class="panel-default clearfix">
+                        <div style="float: left;">* All amounts are in Rs. Lacs</div>
+                        <div class="col-sm-12 no-padding">
                           <div class="col-sm-2">
                             <div class="col-sm-12 heighfix-all sub-bgcolor" style="text-align: center; "> <b><p>Operating Ratio</p></b> </div>
                             <div class="col-sm-12 heighfix-all sub-bgcolor"> <p>Receivables Days</p> </div>
@@ -808,44 +822,39 @@
                             <div class="col-sm-12 heighfix-all sub-bgcolor" style="text-align: center; "> <b><p>WC Requirement</p></b> </div>
                           </div>
                           <div class="col-sm-10" style="overflow-x: scroll;overflow-y: hidden;border: 1px solid #e4e4e4;">
-                            <!-- <div class="container-inner" style="width: 50000px;" data-bind="foreach: AOM, visible: (stockanddebt().Flag == 0) || (stockanddebt().Flag > 1) || (Mode() == 1)"> -->
-                            <div class="container-inner" 
+                            <div class="container-inner"
                               data-bind="style: { width: function(){ return (AOM().length * 190) + 'px' }() }">
                               <div data-bind="foreach: AOM">
 
                                 <div class="" style="text-align: center;float:left;width:190px;">
-                                  <div class="col-sm-12 heighfix"> 
+                                  <div class="col-sm-12 heighfix">
                                     <div class="heighfix no-padding" style="width: 80%; float: left;">
-                                      <input id="datemen" class="form-control input-sm" data-bind="kendoDatePicker: {value: OperatingRatioString, start:'year',depth: 'year',format: 'MMMM yyyy', change:function(){ changeDate(this.value(), $index(), 'AOM') }}" /> 
+                                      <input id="datemen" class="form-control input-sm" data-bind="kendoDatePicker: {value: OperatingRatioString, start:'year',depth: 'year',format: 'MMMM yyyy', change:function(){ changeDate(this.value(), $index(), 'AOM') }}" />
                                     </div>
                                     <div class="heighfix no-padding" style="width: 20%; float: right;">
                                       <button class="btn btn-flat btn-sm btn-danger noable" style="float: right" data-bind="click: removeAOM"><i class="fa fa-trash"></i></button>
                                     </div>
                                   </div>
-                                  
+
                                   <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm ReceivablesDays" disabled data-bind="value: (ReceivablesDays == 'NA') ? ReceivablesDays : parseFloat(ReceivablesDays).toFixed(2)" /> </div>
-                                  
+
                                   <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm InventoryDays" disabled data-bind="value: (InventoryDays == 'NA') ? InventoryDays : parseFloat(InventoryDays).toFixed(2)" /> </div>
-                                  
+
                                   <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm LessPayablesDays" disabled data-bind="value: (LessPayablesDays == 'NA') ? LessPayablesDays : parseFloat(LessPayablesDays).toFixed(2)" /> </div>
-                                  
+
                                   <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm WCDays" disabled data-bind="value: (WCDays == 'NA') ? WCDays : parseFloat(WCDays).toFixed(2)" /> </div>
-                                  
+
                                   <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero ReceivablesAmount" data-bind="value: (ReceivablesAmount == 'NA') ? ReceivablesAmount : parseFloat(ReceivablesAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'ReceivablesAmount'), click: wcrfocus($index(), $data.ReceivablesAmount, 'ReceivablesAmount')}" /> </div>
-                                  
+
                                   <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero InventoryAmount" data-bind="value: (InventoryAmount == 'NA') ? InventoryAmount : parseFloat(InventoryAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'InventoryAmount' ), click: wcrfocus($index(), $data.InventoryAmount, 'InventoryAmount')}" /> </div>
-                                  
+
                                   <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero LessPayablesAmount" data-bind="value: (LessPayablesAmount == 'NA') ? LessPayablesAmount : parseFloat(LessPayablesAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'LessPayablesAmount' ), click: wcrfocus($index(), $data.LessPayablesAmount, 'LessPayablesAmount')}" /> </div>
-                                  
+
                                   <div class="col-sm-12 heighfix"> <input class="form-control input-sm WCRequirement" disabled data-bind="value: (WCRequirement == 'NA') ? WCRequirement : parseFloat(WCRequirement).toFixed(2)" /> </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="col-md-12">
-                          <br>
-                          * All amounts are in Rs. Lacs
                         </div>
                       </div>
                     </div>
@@ -857,13 +866,13 @@
                   <div class="collapsible-header header-bgcolor active" style="text-align: center; ">
                     <i class="fa fa-list"></i>Ageing Analysis<i class="fa fa-chevron-down pull-right"></i>
                   </div>
-                  
+
                   <div class="collapsible-body">
                     <div class="panel">
-                      <div class="panel-body">
-                        <div class="col-sm-12">
+                      <div class="panel-default">
+                        <div class="col-sm-12 no-padding">
                           <div style="max-height: 500px; overflow-y: scroll; overflow-x: hidden;">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered" style="border: 0">
                               <thead>
                                 <tr>
                                   <th class="sub-bgcolor text-center">Month</th>
@@ -883,9 +892,9 @@
                                       <button class="btn btn-flat btn-sm btn-danger noable" style="float: right" data-bind="click: removeAA"><i class="fa fa-trash"></i></button>
                                     </div>
                                   </td>
-                                  <td>Receivable</td>
+                                  <td class="text-center">Receivable</td>
                                   <td>
-                                    <input class="form-control input-sm modezero" 
+                                    <input class="form-control input-sm modezero"
                                     data-bind="value: parseFloat(ReceivableMin90).toFixed(2)" /></td>
                                   <td>
                                     <input class="form-control input-sm modezero" data-bind="value: parseFloat(ReceivableMore90).toFixed(2)" />
@@ -893,7 +902,7 @@
                                   <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(ReceivableMore180).toFixed(2)" /></td>
                                 </tr>
                                 <tr>
-                                  <td>Inventory</td>
+                                  <td class="text-center">Inventory</td>
                                   <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(InventoryMin90).toFixed(2)" /></td>
                                   <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(InventoryMore90).toFixed(2)" /></td>
                                   <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(InventoryMore180).toFixed(2)" /></td>

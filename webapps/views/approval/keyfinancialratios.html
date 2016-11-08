@@ -1,7 +1,42 @@
+<div class="panel-heading"><h3 class="text-center">Key Financial Ratios</h3></div>
+
+<div class="panel-default col-sm-6 content no-padding" style="border-right: 2px solid #fafafa">
+  <div class="panel-heading">Leverage Ratios</div>
+  <div class="panel-body" style="padding-bottom: 0px;margin-bottom: -8px;">
+        <div id="leverageratios"></div>
+    </div>
+</div>
+
+<div class="panel-default col-sm-6 content no-padding" style="border-left: 2px solid #fafafa">
+    <div class="panel-heading">Operating Ratios</div>
+    <div class="panel-body" style="padding-bottom: 0px;margin-bottom: -8px;">
+      <div id="operatingratios"></div>
+    </div>
+</div>
+
+<div class="panel-default col-sm-6 content no-padding" style="border-right: 2px solid #fafafa">
+    <div class="panel-heading">Coverage Ratios</div>
+    <div class="panel-body" style="padding-bottom: 0px">
+      <div id="coverageratios"></div>
+    </div>
+</div>
+
+<div class="panel-default col-sm-6 content no-padding most-bottom" style="border-left: 2px solid #fafafa">
+    <div class="panel-heading">Liquidity Ratios</div>
+    <div class="panel-body" style="padding-bottom: 0px">
+      <div id="liquidityratios"></div>
+    </div>
+</div>
+
+<div class="footer clearfix">
+  <button onClick="r.showDetails('kfrb')" class="btn btn-sm btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
+  <button data-bind="click: r.openFull" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Form</button>
+</div>
+
 <script type="text/javascript">
   var diiscolor = ["#ff9300", "#00da9c", "#00aef1", "#ff0045"]
 
-    r.constructDataKeyFinancialRatios = function (res,ress) {
+  r.constructDataKeyFinancialRatios = function (res,ress) {
     var diiscolor = ["#ff9300", "#00da9c", "#00aef1", "#ff0045"]
 
     // Leverage Ratios
@@ -65,7 +100,7 @@
         // End Operating Ratios
 
         // Coverage Ratios
-        if ( r.FR()[3].row().length > 1 ){
+    if ( r.FR()[3].row().length > 1 ){
       data1 = []
       data2 = []
       dataleverageratioscategories = []
@@ -457,38 +492,3 @@
     })
   }
 </script>
-
-<div class="panel-heading"><h3 class="text-center">Key Financial Ratios</h3></div>
-
-<div class="panel-default col-sm-6 content no-padding" style="border-right: 2px solid #fafafa">
-  <div class="panel-heading">Leverage Ratios</div>
-  <div class="panel-body" style="padding-bottom: 0px;margin-bottom: -8px;">
-        <div id="leverageratios"></div>
-    </div>
-</div>
-
-<div class="panel-default col-sm-6 content no-padding" style="border-left: 2px solid #fafafa">
-    <div class="panel-heading">Operating Ratios</div>
-  <div class="panel-body" style="padding-bottom: 0px;margin-bottom: -8px;">
-            <div id="operatingratios"></div>
-  </div>
-</div>
-
-<div class="panel-default col-sm-6 content no-padding" style="border-right: 2px solid #fafafa">
-    <div class="panel-heading">Coverage Ratios</div>
-  <div class="panel-body" style="padding-bottom: 0px">
-            <div id="coverageratios"></div>
-  </div>
-</div>
-
-<div class="panel-default col-sm-6 content no-padding most-bottom" style="border-left: 2px solid #fafafa">
-    <div class="panel-heading">Liquidity Ratios</div>
-  <div class="panel-body" style="padding-bottom: 0px">
-      <div id="liquidityratios"></div>
-  </div>
-</div>
-
-<div class="footer clearfix">
-  <button onClick="r.showDetails('kfrb')" class="btn btn-sm btn-space btn-footer col-sm-3 col-sm-offset-3">Show More Details</button>
-  <button data-bind="click: r.openFull" class="btn btn-sm btn-flat btn-space btn-footer col-sm-3">Open Form</button>
-</div>

@@ -5,6 +5,7 @@ import (
 	"github.com/eaciit/crowd"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/toolkit"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -581,6 +582,7 @@ func (fm *FormulaModel) GetDataBankingAnalysis() error {
 
 	fm.BankingAnalysisRawDetails = details
 	fm.BankingAnalysisRawSummary = summary
+
 	fm.BankingAnalysis = *allsum
 
 	return nil
@@ -1088,7 +1090,6 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 						if err := form.PrepareVariables(eachStatus.Date, fm); err != nil {
 							return nil, err
 						}
-						toolkit.Println(eachStatus, "vvvv")
 						if output, err := form.Calculate(); err != nil {
 							return nil, err
 						} else {
@@ -1415,4 +1416,11 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 	}
 
 	return rd, nil
+}
+
+func CheckNan(param float64) float64 {
+	if math.IsNaN(param) {
+		return 0.0
+	}
+	return param
 }

@@ -181,7 +181,7 @@ var DrawDataBank = function(id){
         if(res.data.Detail.length != 0){
             formVisibility(true)
             isempty(false)
-            console.log(res.data.AccountDetail[0].Status)
+            // console.log(res.data.AccountDetail[0].Status)
             if(res.data.Detail.length == fre){
             // alert("fre")
                 $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.data.Detail[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
@@ -211,7 +211,7 @@ var DrawDataBank = function(id){
             databank(res.data.Detail);
 
             if(res.data.AccountDetail.length==0){
-                swal("Warning", "Please Fill Account Detail Data First","warning");
+                // swal("Warning", "Please Fill Account Detail Data First","warning");
                 createBankingGrid(res.data.Summary,0);
             }else{
 

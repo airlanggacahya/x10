@@ -489,7 +489,7 @@ formula.extractFormula = function (f) {
 			var id = d.replace(/DOTTTTTTT/g, '.')
 			var label = formula.parseTextPeriod(id)
 			if (id == '*') {
-				label = 'X'
+				label = ' x '
 			}
 
 			var token = { id: id, name: label }
@@ -772,6 +772,7 @@ formula.reorder = function (source, from, to, subSectionNeedToFollow, callback) 
 }
 
 formula.exportExcel = function(target, title){
+	alert(title)
 	$('.apx-loading').show()
 	setTimeout(function(){
 		var body = $('body');
@@ -799,7 +800,7 @@ formula.exportExcel = function(target, title){
 
 				return d.alias
 			}, width: 100, attributes: { style: 'text-align: center;' } },
-			{ field: 'formula', title: 'Formula', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
+			{ field: 'formula', title: 'Formula (Alias)', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
 				if (d.category !== 'Formula') {
 					return ''
 				}
@@ -807,16 +808,72 @@ formula.exportExcel = function(target, title){
 				if (formula.devMode()) {
 					return d.formula
 				}
-				var ret = formula.extractFormula(d.formula)
-					.map(function (e) { return e.name })
-					.join('')
+				var ret = d.formula
 					.replace(/\//g, ' / ')
 					.replace(/\-/g, ' - ')
 					.replace(/\+/g, ' + ')
 					.replace(/\*/g, ' * ')
-					.replace(/\(/g, ' (')
-					.replace(/\)/g, ') ')
+					.replace(/\(/g, ' ( ')
+					.replace(/\)/g, ' ) ')
 
+				// if(ret.indexOf("(") > -1 && ret.indexOf(")") > -1){
+				// 	ret.replace(/\(/g, " ( ").replace(/\)/g, " ) ");
+				// 	console.log(ret)
+				// }
+				// console.log("------->>>", d.formula)
+				// var ar = ret.split(/\s+/);
+				// var disc = '';
+				// $.each(ar, function(i, items){
+		    		// $.each(formula.data(), function(i, ondis){
+		    		// 	console.log(items.indexOf(ondis.alias))
+		    		// 	if(items.indexOf(ondis.alias) > -1){
+		    		// 		disc += ondis.name 
+		    		// 	}
+		    		// })
+		    		// var temp = _.find(formula.data(),function(ondis){ return ondis.alias == items });
+		    		// var temp = formula.data()	.find(function(ondis){ return ondis.alias == items})
+		   //  		if(temp!=undefined){
+		   //  			disc+=temp.name;
+		   //  		}else if(items.indexOf("+") > -1){
+		   //  				disc += " + " 
+					// }else if(items.indexOf("-") > -1){
+					// 	disc += " - " 
+					// }else if(items.indexOf(" ( ") > -1){
+					// 	disc += " ( " 
+					// 	// alert(disc)
+					// }else if(items.indexOf(" ) ") > -1){
+					// 	disc += " ) " 
+					// 	// alert(disc)
+					// }else if(items.indexOf("*") > -1){
+					// 	disc += " * " 
+					// }else if(items.indexOf("/") > -1){
+					// 	disc += " / " 
+					// }
+				// });	
+				return ret
+			}},
+			{
+				 field: 'formula', title: 'Formula', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
+				if (d.category !== 'Formula') {
+					return ''
+				}
+
+				if (formula.devMode()) {
+					return d.formula
+				}
+				var ret = d.formula
+					.replace(/\//g, ' / ')
+					.replace(/\-/g, ' - ')
+					.replace(/\+/g, ' + ')
+					.replace(/\*/g, ' * ')
+					.replace(/\(/g, ' ( ')
+					.replace(/\)/g, ' ) ')
+
+				// if(ret.indexOf("(") > -1 && ret.indexOf(")") > -1){
+				// 	ret.replace(/\(/g, " ( ").replace(/\)/g, " ) ");
+				// 	console.log(ret)
+				// }
+				console.log("------->>>", d.formula)
 				var ar = ret.split(/\s+/);
 				var disc = '';
 				$.each(ar, function(i, items){
@@ -827,36 +884,29 @@ formula.exportExcel = function(target, title){
 		    		// 	}
 		    		// })
 		    		var temp = _.find(formula.data(),function(ondis){ return ondis.alias == items });
-
+		    		// var temp = formula.data()	.find(function(ondis){ return ondis.alias == items})
+		    		console.log(temp)
 		    		if(temp!=undefined){
 		    			disc+=temp.name;
-		    		}
-
-		    		if(items.indexOf("+") > -1){
+		    		}else if(items.indexOf("+") > -1){
 		    				disc += " + " 
-					}
-
-					if(items.indexOf("-") > -1){
+					}else if(items.indexOf("-") > -1){
 						disc += " - " 
-					}
-
-					if(items.indexOf("(") > -1){
-						disc += "(" 
-					}
-
-					if(items.indexOf("*") > -1){
+					}else if(items.indexOf(" ( ") > -1){
+						disc += " ( " 
+						// alert(disc)
+					}else if(items.indexOf(" ) ") > -1){
+						disc += " ) " 
+						// alert(disc)
+					}else if(items.indexOf("*") > -1){
 						disc += " * " 
-					}
-
-					if(items.indexOf(")") > -1){
-						disc += ")" 
-					}
-
-					if(items.indexOf("/") > -1){
-						disc += "/" 
+					}else if(items.indexOf("/") > -1){
+						disc += " / " 
+					}else{
+						disc += items
 					}
 				});	
-				return ret +"<br/><span style='color: black; font-weight: normal;'>"+disc+"<span>"
+				return "<span style='color: black; font-weight: normal;'>"+disc+"<span>"
 			} },
 		]
 
@@ -889,12 +939,13 @@ formula.exportExcel = function(target, title){
 		}
 
 		$('#fake-table').kendoGrid(config)
+		$('#fake-table.k-grid tr td').css('border','0.5px solid black')
 		var ondate = kendo.toString(new Date(),"dd-MM-yyyy HH mm");
-	    var ind = title.indexOf("-") + 2;
-	    title = title.slice(ind);
-	    var name = title+" "+ ondate.toString();
+	    // var ind = title.indexOf("-") + 2;
+	    // title = title.slice(ind);
+	    // var name = title+" "+ ondate.toString();
 	    var downloader = $('<a />').attr('href', '#')
-	        .attr('download', name + '.xls')
+	        .attr('download', title+"_"+ondate + '.xls')
 	        .attr('onclick', 'return ExcellentExport.excel(this, \'fake-table\', \'sheet1\')')
 	        .html('export')
 	        .appendTo(body);

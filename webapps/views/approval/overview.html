@@ -340,7 +340,6 @@
 	function startme(){
 		borrowerdetails()
 		ratingsandreferences()
-
 	}
 
 	internalscore = ko.observable(0)
@@ -394,15 +393,16 @@
 			}
 	  	});
 		if(r.AllData().Data.AD.length > 0){
-		externalrating( 
-			(r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('moderate') > -1 || 
-			r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('adequate') > -1
-				? 'zero' : 
-			(r.AllData().Data.AD[0].borrowerdetails.externalrating.indexOf("Safety") == -1) ? false : true ))
-		commercialcibil(r.AllData().Data.AD[0].loandetails.commercialcibilreport)
-		pdremarks( (r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks == "Satisfactory") ? true : false )
-		referencecheck( (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Positive") ? true : (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Negative") ? false : 'zero' )
-}
+			externalrating( 
+				(r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('moderate') > -1 || 
+				r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('adequate') > -1
+					? 'zero' : 
+				(r.AllData().Data.AD[0].borrowerdetails.externalrating.indexOf("Safety") == -1) ? false : true ))
+			commercialcibil(r.AllData().Data.AD[0].loandetails.commercialcibilreport)
+			pdremarks( (r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks == "Satisfactory") ? true : false )
+			referencecheck( (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Positive") ? true : (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Negative") ? false : 'zero' )
+		}
+
 		try {
 			$(".ratingbox").each(function (i, e) {
 		    	$(e).tooltipster('destroy');
@@ -474,12 +474,12 @@
 
 					return op2
 				})())
-
+				
 			  	defaulterstatusCreate()
 				verificationcheckCreate()
-				customerMixCreate()
-				distributormaxCreate()
 			}
+			customerMixCreate()
+			distributormaxCreate()
 	  	});
 	}
 

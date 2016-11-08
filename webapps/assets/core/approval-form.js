@@ -176,7 +176,6 @@ refreshFilter = function(){
   app.ajaxPost('/loanapproval/getalldata', param, function (res) {
     if (res.Message != '') {
       sweetAlert("Warning", res.Message, "warning");
-      alert("---->masuk1")
       r.isLoading(false)
       return
     }
@@ -289,26 +288,25 @@ r.getNormData = function (param) {
     r.isLoading(false)
 
     res.Data.forEach(function(data){
-        if(data.CalculatedValue != undefined) {
-                    var getFixedCalculatedValue = parseFloat((function () {
-                        return (function(val){
-                            if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
-                                return val * 100;
-                            return val;
-                        })(data.CalculatedValue.Value)
-                    })()).toFixed(2);
-
-                    data.CalculatedValue.Value = getFixedCalculatedValue;
-
-
-                        if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
-                            data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
-                        else
-                            data.calculatedvaluetodisplay = getFixedCalculatedValue;
-                  }
+      if(data.CalculatedValue != undefined) {
+        var getFixedCalculatedValue = parseFloat((function () {
+          return (function(val){
+            if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
+              return val * 100;
+            return val;
+          })(data.CalculatedValue.Value)
+        })()).toFixed(2);
+        data.CalculatedValue.Value = getFixedCalculatedValue;
+        if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
+          data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
+        else
+          data.calculatedvaluetodisplay = getFixedCalculatedValue;
+      }
     })
 
-    var persentageAsik = 20
+    console.log(res.Data)
+    var persentageAsik = 10
+
     res.Data = res.Data.filter(function (d) {  return d.ShowInLoanApprovalScreen   });
     var data = res.Data.filter(function (d) { 
       return (['min', 'max'].indexOf(d.Operator) > -1) &&  d.ShowInLoanApprovalScreen
@@ -317,16 +315,17 @@ r.getNormData = function (param) {
         o.operator = d.Operator
         o.title = d.Criteria
         o.subtitle = d.NormLabel
+
         o.measures = [d.CalculatedValue.Value] // actual
         o.markers = [d.Value1] // norm
 
         thirdRange = d.Value1 + (d.Value1 * persentageAsik / 100)
+        highestRange = (d.CalculatedValue.Value > thirdRange) ? d.CalculatedValue.Value : ((d.Value1 > thirdRange) ? d.Value1 : thirdRange)
+
         o.ranges = [
-            (d.Value1 - (d.Value1 * persentageAsik / 100)) / 2,
-            d.Value1 - (d.Value1 * persentageAsik / 100),
-            (d.CalculatedValue.Value > thirdRange) ? d.CalculatedValue.Value : 
-              ((d.Value1 > thirdRange) ? d.Value1 : thirdRange)
-            // (d.Value1 > d.CalculatedValue.Value) ? d.Value1 : d.CalculatedValue.Value
+        d.Value1 - (highestRange * persentageAsik / 100),
+        d.Value1 + (highestRange * persentageAsik / 100),
+        highestRange
         ]
 
         return o
@@ -380,13 +379,6 @@ r.getNormData = function (param) {
       }
     })
 
-    bulletTooltipOption = function(isMet, norm, actualValue){
-      var opt = r.getTooltipOption('top');
-      opt.contentAsHTML = true,
-      opt.content = "Status: "+isMet+"<br /> Norm: "+norm+"<br /> Actual Value: "+actualValue
-      return opt;
-    }
-
     getIsMet = function(d) {
       switch (d.Operator) {
         case 'min': { return d.CalculatedValue.Value > d.Value1 } break;
@@ -404,13 +396,15 @@ r.getNormData = function (param) {
         bullet.tooltipster('destroy');
       } catch(e){}
 
-      $(bullet).tooltipster(bulletTooltipOption(
-        (getIsMet(d) == true) ? 'Met' : 'Not Met', 
-        d.NormLabel, 
-        d.CalculatedValue.Value)
-      )
+      $(bullet).tooltipster(function(){
+          var opt = r.getTooltipOption('top');
+          opt.contentAsHTML = true,
+          opt.content = "Status: "+ ((getIsMet(d) == true) ? 'Met' : 'Not Met') +"<br /> Norm: "+ d.NormLabel +"<br /> Actual Value: "+ d.CalculatedValue.Value
+          return opt;
+        }())
 
       $(bullet).find('.measure').attr("height", 3).attr("y", 6)
+      $(bullet).find('.marker').css("stroke-width", "3px")
     })
 
     var criteriaStatus = res.Data.map(function (d) {
@@ -752,7 +746,8 @@ var getreportdata = function(){
         if (res.Data.AuditStatus.length != 0){
             r.rootdata(res.Data.FormData)
             r.rootdates(_.orderBy(res.Data.AuditStatus, 'Date', 'asc'))
-            r.ConstructDataRatioPDF( r.rootdata(), r.rootdates() )
+            r.ConstructDataRatioPDF(r.rootdata(), r.rootdates())
+            r.constructDataKeyFinancialRatios(r.rootdata(), r.rootdates())
             left.loadRatioData()
             left.panelVisible(true)
         }else{
@@ -1422,7 +1417,9 @@ r.ConstructDataRatioPDF = function(res,ress){
        //end create row
     })
   })
-r.KRHEADER([]);
+
+  r.KRHEADER([]);
+  
   _.map(r.FR(), function(v, i){
     r.FR()[i].ColumnHeader([])
     r.FR()[i].row([])
@@ -1551,8 +1548,6 @@ r.KRHEADER([]);
        //end create row
     })
   })
-
-  r.constructDataKeyFinancialRatios( res,ress )
   createKeyFinancialRatios()
   createKeyFinancialParameters()
 }

@@ -1,3 +1,4 @@
+
 var url = "/bankanalysis";
 databank = ko.observableArray([]);
 var abbavg = 0;

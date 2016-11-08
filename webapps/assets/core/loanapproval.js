@@ -860,8 +860,9 @@ loanApproval.getReport = function(param){
                 new propertyOwnership(data.Data.CP[0])
                 );
 
-       loanApproval.outstandingData(new outstanding(data.Data));
+        loanApproval.outstandingData(new outstanding(data.Data));
 
+        getComments();
     });
 }
 
@@ -1230,7 +1231,7 @@ due.getData = function(){
 		DealNo : dealNo
 	}
 
-	ajaxPost("/duediligence/getduediligenceinputdataconfirmed", param, function(res){
+	ajaxPost("/duediligence/getduediligenceinputdata", param, function(res){
 		var data = res.Data[0];
 		if(res.Data.length > 0){
 			due.form.Background(data.Background)

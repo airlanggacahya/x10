@@ -36,13 +36,14 @@ type RTRBottom struct {
 	LoanStart       time.Time     `bson:"LoanStart"`
 	LoanEnd         time.Time     `bson:"LoanEnd"`
 	YearlyRepayment float64
-	EMIDue          int64      `bson:"EMIDue"`
-	EMIBalance      int64      `bson:"EMIBalance"`
-	Months          []MonthRtr `bson:"Month"`
-	IsBankAnalys    bool       `bson:"IsBankAnalys"`
-	Confirmed       bool       `bson:"Confirmed,omitempty"`
-	DateConfirmed   time.Time  `bson:"DateConfirmed,omitempty"`
-	Bounces         int64      `bson:"Bounce,omitempty"`
+	EMIDue          int64         `bson:"EMIDue"`
+	EMIBalance      int64         `bson:"EMIBalance"`
+	Months          []MonthRtr    `bson:"Month"`
+	IsBankAnalys    bool          `bson:"IsBankAnalys"`
+	BankAnalysId    bson.ObjectId `bson:"BankAnalysId,omitempty"`
+	Confirmed       bool          `bson:"Confirmed,omitempty"`
+	DateConfirmed   time.Time     `bson:"DateConfirmed,omitempty"`
+	Bounces         int64         `bson:"Bounce,omitempty"`
 	DateFreeze      time.Time
 	DateSave        time.Time
 	Status          int
@@ -108,26 +109,11 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 
 	// customerId, _ := strconv.Atoi(strings.TrimSpace(custid))
 
+	bankAnalys := []BankAnalysisV2{}
+
 	if len(arr) == 0 && custid != "" {
 
 		arr = []RTRBottom{}
-
-		bankAnalys := []BankAnalysisV2{}
-
-		// query = append(query[0:0], db.And(db.Eq("CustomerId", customerId), db.Eq("DealNo", dealno)))
-		// csr, err := cMongo.NewQuery().
-		// 	From("BankAnalysisV2").
-		// 	Where(query...).
-		// 	Cursor(nil)
-
-		// if err != nil {
-		// 	return nil, nil, err
-		// }
-
-		// err = csr.Fetch(&bankAnalys, 0, false)
-		// if err != nil {
-		// 	return nil, nil, err
-		// }
 
 		err = new(DataConfirmController).GetDataConfirmed(custid, dealno, "BankAnalysisV2", &bankAnalys)
 		if err != nil {
@@ -160,6 +146,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 					//ar.EMIDue = 0.0
 					ar.Id = bson.NewObjectId()
 					ar.IsBankAnalys = true
+					ar.BankAnalysId = bank.Id
 
 					month := MonthRtr{val.BankDetails[0].Month, ""}
 					ar.Months = append(ar.Months, month)
@@ -191,31 +178,12 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 		}
 	}
 
-	// conn, err := GetConnection()
-	// defer conn.Close()
-	// if err != nil {
-	// 	return nil, nil, err
-	// }
-
-	// query = append(query[0:0], db.And(db.Eq("customerid", custid), db.Eq("dealno", dealno)))
-	// csr, err = conn.NewQuery().From(new(AccountDetail).TableName()).Where(query...).Cursor(nil)
-	// if err != nil {
-	// 	return nil, nil, err
-	// }
 	accoutDetails := AccountDetail{}
-	// err = csr.Fetch(&accoutDetails, 1, true)
-	// if err != nil {
-	// 	tk.Println("fetch error on account details part", err.Error())
-	// 	// return nil, nil, err
-	// }
 
 	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(AccountDetail).TableName(), &accoutDetails)
 	if err != nil {
 		return nil, nil, err
 	}
-
-	// query = append(query[0:0], db.And(db.Eq("applicantdetail.CustomerID", customerId), db.Eq("applicantdetail.DealNo", dealno)))
-	// csr, err = conn.NewQuery().From(new(CustomerProfiles).TableName()).Where(query...).Cursor(nil)
 
 	// ------------------- customer profile confirmed ----------------------------
 
@@ -226,13 +194,6 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 	}
 
 	// ------------------- customer profile confirmed ----------------------------
-
-	// customerProfiles := CustomerProfiles{}
-	// err = csr.Fetch(&customerProfiles, 1, true)
-	// if err != nil {
-	// 	tk.Println("fetch error on customer profile", err.Error())
-	// 	// return nil, nil, err
-	// }
 
 	smry := new(RTRSummary)
 
@@ -302,9 +263,12 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 			} else {
 				arr[k].POS = 0
 			}
-
 		}
 
+		tempRtr, err := r.CheckSancLimitBankAnalys(arr, custid, dealno)
+		if err == nil {
+			arr = tempRtr
+		}
 		summary := r.CalculateSummary(arr)
 		divider := 100000.0
 		x10IntObligation := (accoutDetails.LoanDetails.InterestOutgo * divider)
@@ -937,4 +901,64 @@ func diff(a, b time.Time) (year, month, day, hour, min, sec int) {
 	}
 
 	return
+}
+
+//checking bank analys
+func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno string) ([]RTRBottom, error) {
+
+	bankAnalys := []BankAnalysisV2{}
+
+	err := new(DataConfirmController).GetDataConfirmed(custid, dealno, "BankAnalysisV2", &bankAnalys)
+	if err != nil {
+		return rtr, err
+	}
+
+	if len(bankAnalys) > 0 {
+		tempBankAnalys := crowd.From(&bankAnalys).Where(func(x interface{}) interface{} {
+			return strings.TrimSpace(strings.ToLower(x.(BankAnalysisV2).DataBank[0].BankAccount.FundBased.AccountType)) == "od/cc"
+		}).Exec().Result.Data().([]BankAnalysisV2)
+
+		if len(tempBankAnalys) > 0 {
+			for _, v := range tempBankAnalys {
+				for idx, v1 := range rtr {
+					if v1.BankAnalysId == v.Id {
+						rtrResult, err := r.updateRtrPosFromBank(v1, v)
+						if err != nil {
+							break
+						} else {
+							rtr[idx] = rtrResult
+						}
+						break
+					}
+				}
+			}
+		}
+	}
+
+	return rtr, err
+}
+
+//update POS Amount
+func (r *RTRBottom) updateRtrPosFromBank(rtr RTRBottom, bank BankAnalysisV2) (RTRBottom, error) {
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return em, rtr
+	}
+
+	qinsert := cMongo.NewQuery().
+		From("RepaymentRecords").
+		SetConfig("multiexec", true).
+		Save()
+
+	rtr.EMI = bank.DataBank[0].BankAccount.FundBased.InterestPerMonth * 100000
+
+	insdata := map[string]interface{}{"data": rtr}
+	em = qinsert.Exec(insdata)
+	if em != nil {
+		tk.Println(em)
+		return rtr, em
+	}
+
+	return rtr, em
 }

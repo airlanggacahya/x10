@@ -891,13 +891,6 @@
     });
   }
 
-  getScrollBarWidth = function() {
-    var $outer = $('<div>').css({visibility: 'hidden', width: 100, overflow: 'scroll'}).appendTo('body');
-    var widthWithScroll = $('<div>').css({width: '100%'}).appendTo($outer).outerWidth();
-    $outer.remove();
-    return 100 - widthWithScroll;
-  };
-
   var setSubmenuWidth = function(e) {
       e.width($(window).width());
   }
@@ -909,9 +902,6 @@
         open: function(e) {
           var item = $(e.item);
           setSubmenuWidth(item.find(".horizontal-menu"))
-          $(window).resize(function(){
-            setSubmenuWidth(item.find(".horizontal-menu"))
-          });
           $('#submenu-top').offset({ left: 0 })
         },
         closeOnClick : true,
@@ -1238,13 +1228,21 @@
       model.getDataMenu();
   });
 
-  $(window).on('resize ajaxComplete', function(){
-    $(".horizontal-menu").width($(window).width());
-    $('#submenu-top').offset({ left: 0 })
+  
+
+  $(window).on('load resize ajaxComplete', function(){
+    setTimeout(function(){
+      $('#menubackup').width($(window).width())
+      $(".horizontal-menu").width($(window).width());
+      $('#submenu-top').offset({ left: 0 })
+    }, 200);
   })
 
   $('#myTopnav').hover(function(){
-    $('#submenu-top').offset({ left: 0 })
+    setTimeout(function(){
+      $('#menubackup').width($(window).width())
+      $('#submenu-top').offset({ left: 0 })
+    }, 200);
   })
 </script>
 

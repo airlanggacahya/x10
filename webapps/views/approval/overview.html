@@ -414,7 +414,7 @@
 		$(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks))
 		$(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip(referencecheck()))
 
-		ajaxPost("/duediligence/getduediligenceinputdata", { 
+		ajaxPost("/duediligence/getduediligenceinputdataconfirmed", { 
 		    CustomerId: filter().CustomerSearchVal(), 
 		    DealNo: filter().DealNumberSearchVal(), 
 	  	}, function(res){

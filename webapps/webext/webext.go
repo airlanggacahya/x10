@@ -50,7 +50,7 @@ func init() {
 	baseCtrl.DbPassword = cfg["password"]
 	baseCtrl.BasePath = cfg["basePath"]
 
-	app := knot.NewApp("x10")
+	app := knot.NewApp("X10-dev")
 	app.ViewsPath = wd + "views/"
 	app.Register(&LoginController{baseCtrl})
 	app.Register(&LogoutController{baseCtrl})

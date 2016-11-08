@@ -702,7 +702,7 @@ var getredflag = function(){
 		DealNo : dealNo
 	}
 
-	ajaxPost("/duediligence/getduediligenceinputdata", param, function(res){
+	ajaxPost("/duediligence/getduediligenceinputdataconfirmed", param, function(res){
         if (res.Data.length != 0){
             r.formVisibility(true)
             var data = res.Data[0];

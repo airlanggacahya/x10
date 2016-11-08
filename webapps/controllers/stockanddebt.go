@@ -75,6 +75,46 @@ func (c *DataCapturingController) GetStockAndDebtDetail(k *knot.WebContext) inte
 	return results
 }
 
+func (c *DataCapturingController) GetStockAndDebtDetailConfirmed(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	p := struct {
+		CustomerId string
+		Dealno     string
+	}{}
+
+	k.GetPayload(&p)
+
+	// cn, err := GetConnection()
+	// defer cn.Close()
+	// csr, e := cn.NewQuery().
+	// 	Where(dbox.And(dbox.Eq("customerid", p.CustomerId+"|"+p.Dealno))).
+	// 	From("StockandDebt").
+	// 	Cursor(nil)
+
+	// if e != nil {
+	// 	return CreateResult(false, nil, e.Error())
+	// } else if csr == nil {
+	// 	return CreateResult(true, nil, "")
+	// }
+
+	// defer csr.Close()
+
+	results := []StockandDebtModel{}
+	// err = csr.Fetch(&results, 0, false)
+	// if err != nil {
+	// 	return CreateResult(false, nil, e.Error())
+	// } else if csr == nil {
+	// 	return CreateResult(false, nil, "No data found !")
+	// }
+	err := new(DataConfirmController).GetDataConfirmed(p.CustomerId, p.Dealno, "StockandDebt", &results)
+	if err != nil {
+		return err
+	}
+
+	return results
+}
+
 func (c *DataCapturingController) SaveStockAndDebtDetail(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	// Username := ""

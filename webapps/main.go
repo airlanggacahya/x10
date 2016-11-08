@@ -20,7 +20,7 @@ var IncludeList = []string{
 
 func main() {
 
-	app := knot.GetApp("x10")
+	app := knot.GetApp("X10-dev")
 	if app == nil {
 		log.Println("App not found....")
 		return
@@ -57,7 +57,7 @@ func main() {
 			return nil
 		},
 	}
-	knot.StartAppWithFn(app, "localhost:8005", routes)
+	knot.StartAppWithFn(app, "localhost:9013", routes)
 }
 
 func checkInList(surl string) bool {

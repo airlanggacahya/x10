@@ -79,6 +79,8 @@ type RTRSummary struct {
 func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []MonthRtr, error) {
 	arr := []RTRBottom{}
 
+	_ = r.checkBankAnalysIdInRtr(custid, dealno)
+
 	cMongo, em := GetConnection()
 	defer cMongo.Close()
 	if em != nil {
@@ -374,6 +376,48 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 	// }))
 
 	return arr, smry, monthsRTR, nil
+}
+
+func (r *RTRBottom) checkBankAnalysIdInRtr(custid, dealno string) error {
+	rtr := []RTRBottom{}
+
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return em
+	}
+
+	query := []*db.Filter{}
+	query = append(query, db.And(
+		db.Eq("CustomerId", custid),
+		db.Eq("DealNo", dealno),
+		db.Eq("IsBankAnalys", true)))
+	csr, err := cMongo.NewQuery().
+		From("RepaymentRecords").
+		Where(query...).
+		Cursor(nil)
+	if err != nil {
+		return err
+	}
+	defer csr.Close()
+	if csr != nil {
+		err = csr.Fetch(&rtr, 0, false)
+
+		if err != nil {
+			return err
+		}
+
+		for _, v := range rtr {
+			if v.BankAnalysId == "" {
+				err = r.deleteODCCRTR(v)
+			}
+		}
+
+	} else if err != nil {
+		return err
+	}
+
+	return err
 }
 
 func (r *RTRBottom) GetDataConfirmed(custid, dealno string) ([]RTRBottom, *RTRSummary, error) {

@@ -891,8 +891,8 @@
     });
   }
 
-  var setSubmenuWidth = function(e) {
-      e.width($(window).width());
+  var submenuWidth = function(e) {
+      return $(window).width() - $("#sidebar-wrapper").width();
   }
 
   function rendermenu(){
@@ -901,7 +901,7 @@
         animation: false,
         open: function(e) {
           var item = $(e.item);
-          setSubmenuWidth(item.find(".horizontal-menu"))
+          item.find(".horizontal-menu").width(submenuWidth())
           $('#submenu-top').offset({ left: 0 })
         },
         closeOnClick : true,
@@ -1227,8 +1227,6 @@
       getServerDateTime();
       model.getDataMenu();
   });
-
-  
 
   $(window).on('load resize ajaxComplete', function(){
     setTimeout(function(){

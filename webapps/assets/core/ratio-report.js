@@ -528,7 +528,10 @@ r.exportExcel = function(title){
     tr1.find("tr").eq(i).find("td").appendTo(tbody1.find("tr").eq(i))
   })
   var ondate = kendo.toString(new Date(),"dd-MMM-yyyy_HHmm");
-  var name = title+"_"+r.fileType()+"_"+ ondate.toString();
+  var ind = title.indexOf("-") + 2;
+  title = title.slice(ind);
+  var name = title+"_"+r.fileType()+"_"+ondate.toString();
+  // var name = title+"_"+r.fileType()+"_"+ ondate.toString();
   var target = toolkit.$("#temp-table");
   var downloader = $('<a />').attr('href', '#')
     .attr('download', name + '.xls')

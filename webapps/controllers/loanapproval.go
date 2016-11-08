@@ -53,6 +53,9 @@ func (c *LoanApprovalController) Default(k *knot.WebContext) interface{} {
 		"loanapproval/distributormix.html",
 		"loanapproval/compliancecheck.html",
 		"loanapproval/commercialcibil.html",
+		"loanapproval/riskconcernsmitigants.html",
+		"loanapproval/finalcomment.html",
+		"loanapproval/finalsanction.html",
 	}
 
 	return DataAccess

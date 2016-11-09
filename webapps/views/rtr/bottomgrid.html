@@ -328,7 +328,7 @@ function getData(){
         if(res.data[0].data[0]) {
             cacah = 0
             $.each(res.data[2].months, function(k, v){
-                titleString = moment(v.Title.split("T")[0]).format("MMM-YYYY");
+                titleString = moment(v.Title.split("T")[0]).format("MMM-YYYY")+"<br>(DPD Track)";
 
                 col.push({title : titleString, headerAttributes: { "class": "header-bgcolor wrap" }, field : "Month"+k, width : 100, editor: bouncesDropDownEditor})
             })

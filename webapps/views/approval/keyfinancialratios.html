@@ -36,126 +36,7 @@
 <script type="text/javascript">
   var diiscolor = ["#ff9300", "#00da9c", "#00aef1", "#ff0045"]
 
-  r.constructDataKeyFinancialRatios = function (res,ress) {
-    var diiscolor = ["#ff9300", "#00da9c", "#00aef1", "#ff0045"]
-
-    // Leverage Ratios
-    if ( r.FR()[2].row().length > 2 ){
-      var dataleverageratiosseries = []
-      _.each(r.FR()[0].ColumnHeader(), function(v,i){
-        if(i != 0){
-          dataleverageratiosseries.push({
-            data: [
-              r.FR()[2].row()[0].rowData[ i ],
-              r.FR()[2].row()[1].rowData[ i ],
-              r.FR()[2].row()[2].rowData[ i ]
-            ],
-            name: r.FR()[0].ColumnHeader()[ i ].replace("(Audited)", ""),
-            color: diiscolor[i-1]
-          })
-        }
-      })
-
-      dataleverageratioscategories = [
-        r.FR()[2].row()[0].rowData[ 0 ].substring(0, 7) + "...",
-        "\n" + r.FR()[2].row()[1].rowData[ 0 ].substring(0, 7) + "...",
-        r.FR()[2].row()[2].rowData[ 0 ].substring(0, 7) + "..."
-      ]
-      r.generateleverageratios(dataleverageratiosseries, dataleverageratioscategories);
-    }
-    // End Leverage Ratios
-
-        // Operating Ratios
-    if ( r.FR()[5].row().length > 5 ){
-      data1 = []
-      data2 = []
-      dataleverageratioscategories = []
-      _.each(r.FR()[0].ColumnHeader(), function(v,i){
-        if(i != 0){
-          data1.push(r.FR()[5].row()[4].rowData[ i ])
-          data2.push(r.FR()[5].row()[5].rowData[ i ])
-          dataleverageratioscategories.push(r.FR()[0].ColumnHeader()[i].replace("(Audited)", ""))
-        }
-      })
-
-      dataleverageratiosseries = [
-        {
-          data: data1,
-          name: [
-            "WC Requirement",
-          ],
-          color: diiscolor[1]
-        },
-        {
-          data: data2,
-          name: [
-            "WC Gap",
-          ],
-          color: diiscolor[2]
-        }
-      ]
-
-      r.generateoperatingratios(dataleverageratiosseries,dataleverageratioscategories);
-    }
-        // End Operating Ratios
-
-        // Coverage Ratios
-    if ( r.FR()[3].row().length > 1 ){
-      data1 = []
-      data2 = []
-      dataleverageratioscategories = []
-      _.each(r.FR()[0].ColumnHeader(), function(v,i){
-        if(i != 0){
-          data1.push(r.FR()[3].row()[1].rowData[ i ])
-          data2.push(r.FR()[3].row()[0].rowData[ i ])
-          dataleverageratioscategories.push(r.FR()[0].ColumnHeader()[i].replace("(Audited)", ""))
-        }
-      })
-
-      dataleverageratiosseries = [
-        {
-          data: data1,
-          name: [
-            "DSCR",
-          ],
-          color: diiscolor[1]
-        },
-        {
-          data: data2,
-          name: [
-            "ISCR",
-          ],
-          color: diiscolor[2]
-        }
-      ]
-
-      r.generatecoverageratios(dataleverageratiosseries,dataleverageratioscategories);
-    }
-        // End Coverage Ratios
-
-    // Liquidity Ratios
-    if ( r.FR()[4].row().length > 0 ){
-      var dataleverageratiosseries = []
-      _.each(r.FR()[0].ColumnHeader(), function(v,i){
-        if(i != 0){
-          dataleverageratiosseries.push({
-            data: [
-              r.FR()[4].row()[0].rowData[ i ]
-            ],
-            name: r.FR()[0].ColumnHeader()[ i ].replace("(Audited)", ""),
-            color: diiscolor[i - 1]
-          })
-        }
-      })
-      dataleverageratioscategories = [
-        // r.FR()[4].row()[0].rowData[ 0 ].substring(0,13) + "...",
-      ]
-      r.generateliquidityratios(dataleverageratiosseries,dataleverageratioscategories);
-    }
-        // End Liquidity Ratios
-  }
-
-  r.generateleverageratios = function (leverageRatioData){
+  r.generateleverageratios = function (leverageRatio){
     var series = [
       { field: 'FY13', name: 'FY13' },
       { field: 'FY14', name: 'FY14' },
@@ -163,91 +44,84 @@
     ]
 
     $("#leverageratios").kendoChart({
-      dataSource: {
-        data: leverageRatioData
-      },
-      chartArea: {
-        height: 150,
-        background:"transparent"
-      },
-      categoryAxis: {
-        field: 'name',
-        labels: {
-          font:"9px Arial,Helvetica,sans-serif",
-          color: "black",
-          // rotation: 10
+        dataSource: {
+          data: leverageRatio
         },
-        majorGridLines: {
-            visible: false
+        chartArea: {
+          height: 150,
+          background:"transparent"
         },
-      },
-      valueAxis: {
-        labels: {
-          font:"9px Arial,Helvetica,sans-serif",
-          color: "black",
-          step:2
+        categoryAxis: {
+          field: 'name',
+          labels: {
+            font:"9px Arial,Helvetica,sans-serif",
+            color: "black",
+            // rotation: 10
+          },
+          majorGridLines: {
+              visible: false
+          },
         },
-        majorGridLines: {
-            visible: false
+        valueAxis: {
+          labels: {
+            font:"9px Arial,Helvetica,sans-serif",
+            color: "black",
+            step:2
+          },
+          majorGridLines: {
+              visible: false
+          },
         },
-      },
-      seriesDefaults: {
-          type: "area",
-          area: {
-              line: {
-                  style: "smooth"
-              }
+        seriesDefaults: {
+            type: "area",
+            area: {
+                line: {
+                    style: "smooth"
+                }
+            }
+        },
+        legend: {
+          position: "bottom",
+          orientation: "horizontal",
+          labels: {
+            color: "black"
           }
-      },
-      legend: {
-        position: "bottom",
-        orientation: "horizontal",
-        labels: {
-          color: "black"
+        },
+        seriesColors: diiscolor,
+        series: series,
+        tooltip: {
+          visible: true,
+          template: function (d) {
+            return d.category + '<br />' + d.series.name + ' : ' + d.value
+          }
         }
-      },
-      seriesColors: diiscolor,
-      series: series,
-      tooltip: {
-        visible: true,
-        template: function (d) {
-          return d.category + '<br />' + d.series.name + ' : ' + d.value
-        }
-      }
-    });
+      });
   }
 
   r.generateoperatingratios = function (operatingRatio){
-    var data = [
-      { name: 'FY13' },
-      { name: 'FY14' },
-      { name: 'FY15' }
-    ]
-    var series = []
-
-    operatingRatio.forEach(function (d) {
+    categories = []
+    var series = _.map(operatingRatio, function(d) {
+      data = []
       for (var p in d) {
         if (d.hasOwnProperty(p) && p.indexOf('FY') > -1) {
-          data.find(function (k) { return k.name == p })[d.code] = (d[p])
+          categories.push(p)
+          data.push(d[p].replace (/,/g, ""))
         }
       }
 
-      series.push({
-        field: d.code,
-        name: d.name[0].split(' (')[0]
-      })
+      return {
+        data: data,
+        name: d.name.split(' (')[0]
+      }
     })
 
     $("#operatingratios").kendoChart({
-      dataSource: {
-        data: data
-      },
       chartArea: {
         height: 150,
         background:"transparent"
       },
       categoryAxis: {
-        field: 'name',
+        categories: _.uniq(categories),
         labels: {
           // rotation: "auto",
           font:"9px Arial,Helvetica,sans-serif",
@@ -292,24 +166,20 @@
   }
 
   r.generatecoverageratios = function (coverageRatios){
-    var data = [
-      { name: 'FY13' },
-      { name: 'FY14' },
-      { name: 'FY15' }
-    ]
-    var series = []
-
-    coverageRatios.forEach(function (d) {
+    categories = []
+    var series = _.map(coverageRatios, function(d) {
+      data = []
       for (var p in d) {
         if (d.hasOwnProperty(p) && p.indexOf('FY') > -1) {
-          data.find(function (k) { return k.name == p })[d.code] = Math.abs(d[p])
+          categories.push(p)
+          data.push(d[p].replace (/,/g, ""))
         }
       }
 
-      series.push({
-        field: d.code,
-        name: d.name[0].split(' (')[0]
-      })
+      return {
+        data: data,
+        name: d.name.split(' (')[0]
+      }
     })
 
     $("#coverageratios").kendoChart({
@@ -321,7 +191,7 @@
         background:"transparent"
       },
       categoryAxis: {
-        field: 'name',
+        categories: _.uniq(categories),
         labels: {
           // rotation: "auto",
           font:"9px Arial,Helvetica,sans-serif",
@@ -448,7 +318,7 @@
     ]
 
     // confuse?, good luck understanding this code
-
+    
     var arr = [
       { data: leverageRatio, generator: r.generateleverageratios },
       { data: operatingRatio, generator: r.generateoperatingratios },

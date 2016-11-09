@@ -84,41 +84,34 @@ r.sAD = function(ad, asd, bd){
 }
 
 r.scrollTo = function(param){
-  var curElem = $("#left-col > .shown");
-
-  var showElem = function(elem) {
-    elem.removeClass("hidden");
-    elem.addClass("shown");
-    return elem;
-  }
-
-  var moveTo = function(destination){
-    $("#left-col > .shown").addClass("hidden");
-    $("#left-col > .shown").removeClass("shown");
-
-    return showElem(destination)
-  }
-
   return function () {
-    var elem = "";
+    var curElem = $("#left-col > .shown");
+
+    var moveTo = function(destination){
+      $("#left-col > .shown").addClass("hidden");
+      $("#left-col > .shown").removeClass("shown");
+
+      destination.removeClass("hidden");
+      destination.addClass("shown");
+      return destination
+    }
+
     if(param == 'before') {
       if(curElem.prev().length > 0){
-        elem = moveTo(curElem.prev())
+        curElem = moveTo(curElem.prev())
       }
     } else if (param == 'next'){
       if(curElem.next().length > 0){
-        elem = moveTo(curElem.next())
+        curElem = moveTo(curElem.next())
       }
     } else {
-      elem = moveTo($("#left-col > #" + param))
+      curElem = moveTo($("#left-col > #" + param))
     }
 
-    if(elem != ""){
+    if(curElem != ""){
       $(".left-scroller .tooltipstered.active").removeClass("active")
-      $(".left-scroller ." + elem.attr("id")).addClass("active")
-      elem.find('.k-chart').each(function (i, e) {
-        $(e).data('kendoChart').redraw()
-      })
+      $(".left-scroller ." + curElem.attr("id")).addClass("active")
+      r.redrawChart()
     }
   }
 };
@@ -193,7 +186,10 @@ refreshFilter = function(){
       createMainPromotorDetails(res.Data.AD[0].promotordetails)
       schemeAD(r.AllData().Data.AD[0].accountsetupdetails.scheme);
     }
-    createCibilDetails(r.AllData().Data.CP[0].detailofpromoters.biodata)
+
+    if(r.AllData().Data.CP.length > 0)
+      createCibilDetails(r.AllData().Data.CP[0].detailofpromoters.biodata)
+
     r.AccountDetail( r.AllData().Data.AD[0] )
     r.isLoading(false)
     r.getCreditScoreCard(param)
@@ -204,16 +200,20 @@ refreshFilter = function(){
     above700 = []
     below600 = []
     beetween600700 = []
-    var promoter = res.Data.CP[0].detailofpromoters.biodata
-    mincibilscore ( _.minBy(promoter, 'CIBILScore').CIBILScore)
-    for (var i=0 ; i < promoter.length; i++){
-        if (promoter[i].CIBILScore > 700){
-            above700.push(promoter[i].CIBILScore)
-        }else if(promoter[i].CIBILScore < 600){
-            below600.push(promoter[i].CIBILScore)
-        }else{
-            beetween600700.push(promoter[i].CIBILScore)
-        }
+
+    if(r.AllData().Data.CP.length > 0){
+      var promoter = res.Data.CP[0].detailofpromoters.biodata
+
+      mincibilscore ( _.minBy(promoter, 'CIBILScore').CIBILScore)
+      for (var i=0 ; i < promoter.length; i++){
+          if (promoter[i].CIBILScore > 700){
+              above700.push(promoter[i].CIBILScore)
+          }else if(promoter[i].CIBILScore < 600){
+              below600.push(promoter[i].CIBILScore)
+          }else{
+              beetween600700.push(promoter[i].CIBILScore)
+          }
+      }
     }
     createcibildonut();
     //Real Estate
@@ -235,29 +235,26 @@ refreshFilter = function(){
 
     getComments();
 
-    loanapproval.marketref(res.Data.AD[0].borrowerdetails.marketreference);
-    createreferencecheckgrid(res.Data.AD[0].borrowerdetails.refrencecheck);
-
-    loanapproval.expansionplan(res.Data.AD[0].borrowerdetails.expansionplans);
-    loanapproval.commentfinance(res.Data.AD[0].borrowerdetails.commentsonfinancials);
-    if(res.Data.AD[0] != undefined)
+    if(res.Data.AD.length > 0) {
+      loanapproval.marketref(res.Data.AD[0].borrowerdetails.marketreference);
+      createreferencecheckgrid(res.Data.AD[0].borrowerdetails.refrencecheck);
+      loanapproval.expansionplan(res.Data.AD[0].borrowerdetails.expansionplans);
+      loanapproval.commentfinance(res.Data.AD[0].borrowerdetails.commentsonfinancials);
       loanApproval.companyBackgroundData(
         new companyBackground(res.Data.AD[0])
       );
+    }
   })
-    getredflag()
-    getreportdata()
-    r.formVisibility(true)
-    loanApproval.loading(true)
-    loanApproval.loading(false)
-    promoters = [];
-    //resetpromoters();
-    //loanApproval.refresh();
-    // createreferencecheckgrid(loanapproval.referencecheck());
+
+  getredflag()
+  getreportdata()
+  r.formVisibility(true)
+  loanApproval.loading(true)
+  loanApproval.loading(false)
+  promoters = [];
   loanApproval.ourstandings([]);
-        //loanApproval.getReport(getSearchVal());
-        due.getCostumerData();
-        due.getData();
+  due.getCostumerData();
+  due.getData();
 }
 
 r.getCustomerId = function () {
@@ -304,9 +301,7 @@ r.getNormData = function (param) {
       }
     })
 
-    console.log(res.Data)
     var persentageAsik = 10
-
     res.Data = res.Data.filter(function (d) {  return d.ShowInLoanApprovalScreen   });
     var data = res.Data.filter(function (d) { 
       return (['min', 'max'].indexOf(d.Operator) > -1) &&  d.ShowInLoanApprovalScreen
@@ -689,7 +684,7 @@ r.generateAML = function(data){
 }
 
 var getredflag = function(){
-    var customerId = filter().CustomerSearchVal();
+  var customerId = filter().CustomerSearchVal();
 	var dealNo = filter().DealNumberSearchVal();
 	var param = {
 		CustomerId : customerId,
@@ -740,40 +735,42 @@ var getreportdata = function(){
 
   ajaxPost("/ratio/getreportdata", param, function(res){
     NOPAL_SENG_NGGAWE_BUILD_KEY_FINANCIAL_RATIOS_IKI_PENTING_SENG_LAWAS_RAUSAH_DIGAWE_RA_BENEEERRRR(res)
+    r.rootdata([])
+    r.rootdates([])
+    if (res.Data.AuditStatus.length != 0){
+        r.rootdata(res.Data.FormData)
+        r.rootdates(_.orderBy(res.Data.AuditStatus, 'Date', 'asc'))
+        r.ConstructDataRatioPDF(r.rootdata(), r.rootdates())
+        left.loadRatioData()
+        left.panelVisible(true)
+    }else{
+         swal("Warning", "Report Data Not Found", "warning");
+        return
+    }
+  });
 
-        r.rootdata([])
-        r.rootdates([])
-        if (res.Data.AuditStatus.length != 0){
-            r.rootdata(res.Data.FormData)
-            r.rootdates(_.orderBy(res.Data.AuditStatus, 'Date', 'asc'))
-            r.ConstructDataRatioPDF(r.rootdata(), r.rootdates())
-            r.constructDataKeyFinancialRatios(r.rootdata(), r.rootdates())
-            left.loadRatioData()
-            left.panelVisible(true)
-        }else{
-             swal("Warning", "Report Data Not Found", "warning");
-            return
-        }
-    });
+}
 
+r.redrawChart = function() {
+  $("#left-col > .shown").find('.k-chart').each(function (i, e) {
+    $(e).data('kendoChart').redraw()
+  })
 }
 
 $(document).ready(function(){
   r.initEvents()
   setTimeout(function(){
     setHeight()
+    // refreshFilter()
   }, 2000);
 }).ajaxComplete(function(){
   setHeight()
 })
+
 $(window).resize(function() {
   setHeight()
-  $("#left-col > .shown").find('.k-chart').each(function (i, e) {
-    $(e).data('kendoChart').redraw()
-  })
+  r.redrawChart()
 });
-
-
 
 r.KFI = ko.observableArray([
    {
@@ -1569,4 +1566,3 @@ $(function () {
         offset: {top:100}
     });
 })
-

@@ -409,9 +409,12 @@
 		  	})
 		} catch (e) {
 		}
-		$(".ratingbox.er").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].borrowerdetails.externalrating))
+
+		if (r.AllData().Data.AD.length > 0) {
+			$(".ratingbox.er").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].borrowerdetails.externalrating))
+			$(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks))
+		}
 		$(".ratingbox.cc").tooltipster(r.ratingReferenceTooltip(commercialcibil()))
-		$(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks))
 		$(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip(referencecheck()))
 
 		ajaxPost("/duediligence/getduediligenceinputdataconfirmed", { 

@@ -1,3 +1,4 @@
+
 loanapproval = {
     companyname : ko.observable(""),
     logindate : ko.observable(""),
@@ -344,84 +345,88 @@ loanApproval.reset = function(){
 
 loanApproval.setData = function(data){
     // Loan Detail
-    loanApproval.loanDetail.proposedLimitAmount(numberWithCommas( data.AD[0].loandetails.requestedlimitamount));
-    loanApproval.loanDetail.ifExistingCustomer((data.AD[0].loandetails.ifexistingcustomer) ? "Yes" : "No");
-    loanApproval.loanDetail.proposedROI(data.AD[0].loandetails.proposedrateinterest + "%");
-    loanApproval.loanDetail.ifYesExistingLimitAmount(numberWithCommas(data.AD[0].loandetails.ifyeseistinglimitamount));
-    loanApproval.loanDetail.proposedProFee(data.AD[0].loandetails.proposedpfee + "%");
-    loanApproval.loanDetail.existingROI(data.AD[0].loandetails.existingroi + "%");
-    loanApproval.loanDetail.limitTenor(data.AD[0].loandetails.limittenor);
-    loanApproval.loanDetail.existingProcessingFee(data.AD[0].loandetails.existingpf + "%");
-    loanApproval.loanDetail.firstAgreementDate(moment(new Date(data.AD[0].loandetails.firstagreementdate)).format("DD/MM/YYYY"));
-    loanApproval.loanDetail.vintageWithX10(data.AD[0].loandetails.vintagewithx10);
-    loanApproval.loanDetail.recentAgreementDate(moment(new Date(data.AD[0].loandetails.recenetagreementdate)).format("DD/MM/YYYY"));
-    loanApproval.loanDetail.poBacked((data.AD[0].loandetails.ifbackedbypo) ? "Yes" : "No"),
-    loanApproval.loanDetail.projectPOValue(data.AD[0].loandetails.povalueforbacktoback),
-    loanApproval.loanDetail.expectedPayment(data.AD[0].loandetails.expectedpayment)
-    loanApproval.loanDetail.x10Obligo(data.AD[0].loandetails.interestoutgo)
+    if(data.AD.length > 0) {
+        loanApproval.loanDetail.proposedLimitAmount(numberWithCommas( data.AD[0].loandetails.requestedlimitamount));
+        loanApproval.loanDetail.ifExistingCustomer((data.AD[0].loandetails.ifexistingcustomer) ? "Yes" : "No");
+        loanApproval.loanDetail.proposedROI(data.AD[0].loandetails.proposedrateinterest + "%");
+        loanApproval.loanDetail.ifYesExistingLimitAmount(numberWithCommas(data.AD[0].loandetails.ifyeseistinglimitamount));
+        loanApproval.loanDetail.proposedProFee(data.AD[0].loandetails.proposedpfee + "%");
+        loanApproval.loanDetail.existingROI(data.AD[0].loandetails.existingroi + "%");
+        loanApproval.loanDetail.limitTenor(data.AD[0].loandetails.limittenor);
+        loanApproval.loanDetail.existingProcessingFee(data.AD[0].loandetails.existingpf + "%");
+        loanApproval.loanDetail.firstAgreementDate(moment(new Date(data.AD[0].loandetails.firstagreementdate)).format("DD/MM/YYYY"));
+        loanApproval.loanDetail.vintageWithX10(data.AD[0].loandetails.vintagewithx10);
+        loanApproval.loanDetail.recentAgreementDate(moment(new Date(data.AD[0].loandetails.recenetagreementdate)).format("DD/MM/YYYY"));
+        loanApproval.loanDetail.poBacked((data.AD[0].loandetails.ifbackedbypo) ? "Yes" : "No"),
+        loanApproval.loanDetail.projectPOValue(data.AD[0].loandetails.povalueforbacktoback),
+        loanApproval.loanDetail.expectedPayment(data.AD[0].loandetails.expectedpayment)
+        loanApproval.loanDetail.x10Obligo(data.AD[0].loandetails.interestoutgo)
 
-    //repayment
-    if (data.AD[0].vendordetails.length > 0 ){
-        loanApproval.paymentTrack.maxdelaydays (data.AD[0].vendordetails[0].maxdelaydays);
-        loanApproval.paymentTrack.maxpaymentdays (data.AD[0].vendordetails[0].maxpaymentdays)
-        loanApproval.paymentTrack.averagedelaydays (data.AD[0].vendordetails[0].averagedelaydays);
-        loanApproval.paymentTrack.standarddeviation (data.AD[0].vendordetails[0].delaydaysstandarddeviation)
-        loanApproval.paymentTrack.averagepaymentdays (data.AD[0].vendordetails[0].averagepaymentdays)
-        loanApproval.paymentTrack.averagetransactionpaymentdelay (data.AD[0].vendordetails[0].avgtransactionweightedpaymentdelaydays);
-        loanApproval.paymentTrack.delaystandarddeviation (data.AD[0].vendordetails[0].delaydaysstandarddeviation);
-        loanApproval.paymentTrack.averagetransactionpayment (data.AD[0].vendordetails[0].avgtransactionweightedpaymentdays);
-        loanApproval.paymentTrack.daystandarddeviation (data.AD[0].vendordetails[0].standarddeviation);
-    }else{
-        loanApproval.paymentTrack.maxdelaydays("-");
-        loanApproval.paymentTrack.maxpaymentdays ("-");
-        loanApproval.paymentTrack.averagedelaydays ("-");
-        loanApproval.paymentTrack.standarddeviation ("-");
-        loanApproval.paymentTrack.averagepaymentdays ("-");
-        loanApproval.paymentTrack.averagetransactionpaymentdelay ("-");
-        loanApproval.paymentTrack.delaystandarddeviation ("-");
-        loanApproval.paymentTrack.averagetransactionpayment ("-");
-        loanApproval.paymentTrack.daystandarddeviation ("-");
-    }
+        //repayment
+        if (data.AD[0].vendordetails.length > 0 ){
+            loanApproval.paymentTrack.maxdelaydays (data.AD[0].vendordetails[0].maxdelaydays);
+            loanApproval.paymentTrack.maxpaymentdays (data.AD[0].vendordetails[0].maxpaymentdays)
+            loanApproval.paymentTrack.averagedelaydays (data.AD[0].vendordetails[0].averagedelaydays);
+            loanApproval.paymentTrack.standarddeviation (data.AD[0].vendordetails[0].delaydaysstandarddeviation)
+            loanApproval.paymentTrack.averagepaymentdays (data.AD[0].vendordetails[0].averagepaymentdays)
+            loanApproval.paymentTrack.averagetransactionpaymentdelay (data.AD[0].vendordetails[0].avgtransactionweightedpaymentdelaydays);
+            loanApproval.paymentTrack.delaystandarddeviation (data.AD[0].vendordetails[0].delaydaysstandarddeviation);
+            loanApproval.paymentTrack.averagetransactionpayment (data.AD[0].vendordetails[0].avgtransactionweightedpaymentdays);
+            loanApproval.paymentTrack.daystandarddeviation (data.AD[0].vendordetails[0].standarddeviation);
+        }else{
+            loanApproval.paymentTrack.maxdelaydays("-");
+            loanApproval.paymentTrack.maxpaymentdays ("-");
+            loanApproval.paymentTrack.averagedelaydays ("-");
+            loanApproval.paymentTrack.standarddeviation ("-");
+            loanApproval.paymentTrack.averagepaymentdays ("-");
+            loanApproval.paymentTrack.averagetransactionpaymentdelay ("-");
+            loanApproval.paymentTrack.delaystandarddeviation ("-");
+            loanApproval.paymentTrack.averagetransactionpayment ("-");
+            loanApproval.paymentTrack.daystandarddeviation ("-");
+        }
 
-    //borrower details
-    loanApproval.borrowerDetails.customersegmentclasification(data.AD[0].borrowerdetails.customersegmentclasification);
-    loanApproval.borrowerDetails.diversificationcustomers(data.AD[0].borrowerdetails.diversificationcustomers);
-    loanApproval.borrowerDetails.externalrating(data.AD[0].borrowerdetails.externalrating);
-    loanApproval.borrowerDetails.dependeceonsuppliers(data.AD[0].borrowerdetails.dependenceonsuppliers);
-    loanApproval.borrowerDetails.datebusinessstarted(data.AD[0].borrowerdetails.datebusinessstarted);
-    loanApproval.borrowerDetails.management(data.AD[0].borrowerdetails.management);
+        //borrower details
+        loanApproval.borrowerDetails.customersegmentclasification(data.AD[0].borrowerdetails.customersegmentclasification);
+        loanApproval.borrowerDetails.diversificationcustomers(data.AD[0].borrowerdetails.diversificationcustomers);
+        loanApproval.borrowerDetails.externalrating(data.AD[0].borrowerdetails.externalrating);
+        loanApproval.borrowerDetails.dependeceonsuppliers(data.AD[0].borrowerdetails.dependenceonsuppliers);
+        loanApproval.borrowerDetails.datebusinessstarted(data.AD[0].borrowerdetails.datebusinessstarted);
+        loanApproval.borrowerDetails.management(data.AD[0].borrowerdetails.management);
 
-    //borrower details - businessMix
-    loanApproval.borrowerDetails.businessMix.stocksell(data.AD[0].customerbussinesmix.stocksellin + "%");
-    loanApproval.borrowerDetails.businessMix.govt(data.AD[0].customerbussinesmix.b2bgovtin + "%");
-    loanApproval.borrowerDetails.businessMix.corporate(data.AD[0].customerbussinesmix.b2bcorporatein + "%");
-    loanApproval.borrowerDetails.businessMix.iriscomp(data.AD[0].distributormix.iriscomputerslimitedin + "%");
-    loanApproval.borrowerDetails.businessMix.savex(data.AD[0].distributormix.savexin + "%");
-    loanApproval.borrowerDetails.businessMix.rashi(data.AD[0].distributormix.rashiin + "%");
-    loanApproval.borrowerDetails.businessMix.supertron(data.AD[0].distributormix.supertronin + "%");
-    loanApproval.borrowerDetails.businessMix.compuage(data.AD[0].distributormix.compuagein + "%");
-    loanApproval.borrowerDetails.businessMix.avnet(data.AD[0].distributormix.avnetin + "%");
+        //borrower details - businessMix
+        loanApproval.borrowerDetails.businessMix.stocksell(data.AD[0].customerbussinesmix.stocksellin + "%");
+        loanApproval.borrowerDetails.businessMix.govt(data.AD[0].customerbussinesmix.b2bgovtin + "%");
+        loanApproval.borrowerDetails.businessMix.corporate(data.AD[0].customerbussinesmix.b2bcorporatein + "%");
+        loanApproval.borrowerDetails.businessMix.iriscomp(data.AD[0].distributormix.iriscomputerslimitedin + "%");
+        loanApproval.borrowerDetails.businessMix.savex(data.AD[0].distributormix.savexin + "%");
+        loanApproval.borrowerDetails.businessMix.rashi(data.AD[0].distributormix.rashiin + "%");
+        loanApproval.borrowerDetails.businessMix.supertron(data.AD[0].distributormix.supertronin + "%");
+        loanApproval.borrowerDetails.businessMix.compuage(data.AD[0].distributormix.compuagein + "%");
+        loanApproval.borrowerDetails.businessMix.avnet(data.AD[0].distributormix.avnetin + "%");
 
-    if(data.AD[0].distributormix.Data) {
-      if(data.AD[0].distributormix.Data[0].Label != undefined){
-        loanApproval.borrowerDetails.businessMix.distributorMix.data(data.AD[0].distributormix.Data)
-      } else {
-        loanApproval.borrowerDetails.businessMix.distributorMix.data([{Label : "", Result: ""}])
-      }
+        if(data.AD[0].distributormix.Data) {
+          if(data.AD[0].distributormix.Data[0].Label != undefined){
+            loanApproval.borrowerDetails.businessMix.distributorMix.data(data.AD[0].distributormix.Data)
+          } else {
+            loanApproval.borrowerDetails.businessMix.distributorMix.data([{Label : "", Result: ""}])
+          }
+        }
     }
 
     setDataCreditScoreCard(loanApproval.creditScoreData())
 
-    loanApproval.ratingRef.AD.ExternalRating(data.AD[0].borrowerdetails.externalrating)
+    if(data.AD.length > 0)
+        loanApproval.ratingRef.AD.ExternalRating(data.AD[0].borrowerdetails.externalrating)
 
     if(data.CIBIL.length > 0) {
       loanApproval.ratingRef.Cibil.Rating(data.CIBIL[0].Rating)
     }
-
-    _.each(data.AD[0].vendordetails, function(vd){
-      var highestAD = loanApproval.paymentTrack.highestAverageDelay;
-      highestAD(vd.averagedelaydays > highestAD() ? vd.averagedelaydays : highestAD());
-    });
+    
+    if(data.AD.length > 0)
+        _.each(data.AD[0].vendordetails, function(vd){
+          var highestAD = loanApproval.paymentTrack.highestAverageDelay;
+          highestAD(vd.averagedelaydays > highestAD() ? vd.averagedelaydays : highestAD());
+        });
 }
 
 var setDataCreditScoreCard = function(data) {
@@ -449,3 +454,4 @@ var setDataCreditScoreCard = function(data) {
     }
   }
 }
+

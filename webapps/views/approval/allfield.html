@@ -43,6 +43,9 @@
 	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
 	      	<span>#:SumBounces#</span>
 	      </td>
+	      <td role="grid-cell" style="text-align: right; background: rgb(238, 238, 238); white-space: normal; white-space: normal; word-break: break-all !important; word-wrap: break-word !important;">
+	      	<span>#:DpdMaxTrack#</span>
+	      </td>
 	  </tr>
 	</script>
 <!-- end -->
@@ -794,7 +797,10 @@
 
 	var createBankingDetails = function(res){
 		var multiplyer = 0;
-		var customermargin =r.AllData().Data.AD[0].accountsetupdetails.pdinfo.customermargin
+
+    	if(r.AllData().Data.AD.length > 0)		
+			var customermargin = r.AllData().Data.AD[0].accountsetupdetails.pdinfo.customermargin
+		
         if (r.rootdates().length != 0){
             idxlatestaudited = _.findLastIndex(r.rootdates(),['Status','AUDITED'])
             latestauditeddate = r.rootdates()[idxlatestaudited].Date
@@ -948,10 +954,22 @@
 	          swal("Warning","Data Outstanding Debt Not Found","warning");
 	          return
 	      }
-
+	      console.log("asdfasdfasfd", function(){
+						src = {}
+						doit = function(_do, _it) { src[_it] = _do }
+						_.each(res.data[0].data[0], doit)
+						_.each(res.data[1].summary, doit);
+						return src
+					}());
 	      $("#gridOutstandingDebt").kendoGrid({
 				dataSource : {
-					data : [res.data[1].summary]
+					data : [function(){
+						src = {}
+						doit = function(_do, _it) { src[_it] = _do }
+						_.each(res.data[0].data[0], doit)
+						_.each(res.data[1].summary, doit);
+						return src
+					}()]
 				},
         		scrollable: true,
 				columns : [{
@@ -1007,8 +1025,9 @@
 						 },
 						{ field : "X10IntObligation", title : "X10 Int. Obligation (Rs)", headerAttributes: { "class": "sub-bgcolor" } , width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
 						{ field : "SumExtenalYearly", title : "External Yearly Repayment (Rs. Lacs) incl. X10 Int", headerAttributes: { "class": "sub-bgcolor" } , width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
-						{ field : "YearlyRepayment", title : "xternal Yearly Repayment (Rs. Lacs)", headerAttributes: { "class": "sub-bgcolor" }, width: 130, attributes: { style: 'background: rgb(238, 238, 238)', class: "wrap" } },
+						{ field : "YearlyRepayment", title : "External Yearly Repayment (Rs. Lacs)", headerAttributes: { "class": "sub-bgcolor" }, width: 130, attributes: { style: 'background: rgb(238, 238, 238)', class: "wrap" } },
 						{ field : "SumBounces", title : "EMI Bounces Last 6 Months", headerAttributes: { "class": "sub-bgcolor" }, width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
+						{ field : "DpdMaxTrack", title : "Max. of DPD Track", headerAttributes: { "class": "sub-bgcolor" }, width: 130, attributes: { style: 'background: rgb(238, 238, 238)' } },
 					],
 				}],
 				rowTemplate: kendo.template($("#rowTemplateTop").html())

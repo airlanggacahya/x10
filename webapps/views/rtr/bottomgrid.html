@@ -271,8 +271,8 @@ function getData(){
             $('#buttonsection').hide()
             swal("Warning",res.message,"warning");
             return
-        } else if(res.data[0].data.length == 0) {
-            swal("Warning","Please fill Banking Analysis form first","warning");
+        } else if(res.data[2].months.length == 0) {
+            swal("Warning","Please fill Or Confirm Banking Analysis form first","warning");
             $('#btnconfirm').hide()
             return
         }else{

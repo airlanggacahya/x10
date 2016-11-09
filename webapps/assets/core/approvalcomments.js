@@ -89,16 +89,12 @@ apcom.loadCommentData = function(){
 	ajaxPost("/approval/getdcandcreditanalys", param, function(res){
 		var data = res;
 	    if(res.success != false){
-	    	console.log(data)
 			apcom.dataTempRiskMitigants([])
 	    	if(data[0].CreditAnalys.CreditAnalysRisks.length == 0){
-	    		console.log(1)
 	    		apcom.dataTempRiskMitigants( {Risks: "", Mitigants: ""} )
 	    	} else {
-	    		console.log(2)
 	    		apcom.dataTempRiskMitigants(data[0].CreditAnalys.CreditAnalysRisks)
 	    	}
-	    	console.log(apcom.dataTempRiskMitigants())
 		    ko.mapping.fromJS(data[0].CreditAnalys, apcom.formCreditAnalyst);
 		    ko.mapping.fromJS(data[1].DCFinalSanction, apcom.sanction);
 
@@ -141,7 +137,6 @@ apcom.sendCreditAnalyst = function(){
 	var dataGrid = $("#grid1").data("kendoGrid").dataSource.data();
 
 	_.each(dataGrid, function(items){
-		console.log(items)
 		apcom.formCreditAnalyst.CreditAnalysRisks.push(
 			{ Risks: items.Risks, Mitigants: items.Mitigants }
 		)
@@ -155,7 +150,6 @@ apcom.sendCreditAnalyst = function(){
 	var url = "/approval/savecreditanalys";
 	if(r.customerId().split('|')[0] != "" && r.customerId().split('|')[1] != ""){
 		ajaxPost(url, param , function(res){
-			// console.log(res);
 			if(res.success != true){
 				swal("Error", res.message, "error")
 			}else{
@@ -248,7 +242,6 @@ apcom.editorFieldInput = function(container, options){
 
 apcom.editorField = function(container, options){
 	var index = container.parent().index();
-	// console.log(index)
 	if(index == 0){
 		$('<input data-bind="value:' + options.field + '"/>')
 	        .appendTo(container)
@@ -380,7 +373,6 @@ apcom.loadSection = function(){
 
 	// });
 
-	console.log(apcom.dataTempRiskMitigants())
 	$("#grid1").html("");
 	$("#grid1").kendoGrid({
 		dataSource: {
@@ -513,7 +505,6 @@ apcom.removeRowRiskMitigants = function(d){
 	}, function(dismiss) {
 
 		if (dismiss === 'cancel') {
-			// console.log("dismiss");
 		}
 	});
 }

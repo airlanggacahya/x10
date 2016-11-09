@@ -723,6 +723,7 @@ adf.getConfirm = function(){
 				$("#cibil"+i).prop("disabled", "disabled")
 				$("#real"+i).prop("disabled", "disabled")
 			}
+			$("#req").prop("disabled", "disabled")
 		}, 500)
 		$("#onreset").prop( "disabled", true );
 		$("#LoanAmount").prop( "disabled", true );
@@ -928,6 +929,7 @@ adf.getConfirm = function(){
 					$("#cibil"+i).prop("disabled", "disabled")
 					$("#real"+i).prop("disabled", "disabled")
 				}
+				$("#req").prop("disabled", "disabled")
 
 				var data = ko.mapping.toJS(adf.form)
 				ko.mapping.fromJS(data, adf.Tempform)
@@ -1758,6 +1760,7 @@ adf.reloadStatus = function(status){
 				$("#real"+i).prop("disabled", "disabled")
 				
 			}
+			$("#req").prop("disabled", "disabled")
 		},500);
 		$("#LoanAmount").prop("disabled", true );
 		$("#onreset1").prop("disabled", true);
@@ -1797,6 +1800,7 @@ adf.reloadStatus = function(status){
 				$("#cibil"+i).prop("disabled", "disabled");
 				$("#real"+i).prop("disabled", "disabled");
 			}
+			$("#req").prop("disabled", "disabled")
 		},700);
 		adf.sectionDisable("#c-3", true);
 		adf.sectionDisable("#c-4", true);
@@ -2308,10 +2312,12 @@ $("#AD-Container textarea").prop( "disabled", !what );
 
 });
 
-  for(var i = 0; i< adf.form.PromotorDetails().length; i++){
+  	for(var i = 0; i< adf.form.PromotorDetails().length; i++){
 		$("#cibil"+i).prop("disabled", "disabled")
 		$("#real"+i).prop("disabled", "disabled")
 	}
+	$("#req").prop("disabled", "disabled")
+
 
 }
 

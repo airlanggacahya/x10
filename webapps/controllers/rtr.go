@@ -157,7 +157,12 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 			ar.IsBankAnalys = val.Get("IsBankAnalys").(bool)
 		}
 
-		ar.BankAnalysId = bson.ObjectIdHex(val.GetString("BankAnalysId"))
+		if val.GetString("BankAnalysId") != "" {
+			ar.BankAnalysId = bson.ObjectIdHex(val.GetString("BankAnalysId"))
+		} else {
+			ar.BankAnalysId = ""
+		}
+
 		if val.Get("Confirmed") != nil {
 			ar.Confirmed = val.Get("Confirmed").(bool)
 		}

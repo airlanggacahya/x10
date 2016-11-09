@@ -774,7 +774,7 @@ loanApproval.getReport = function(param){
             loanApproval.loanDetail.projectPOValue(data.Data.AD[0].loandetails.povalueforbacktoback),
             loanApproval.loanDetail.expectedPayment(data.Data.AD[0].loandetails.expectedpayment)
 
-            loanApproval.commercialCibil.assessment((data.Data.AD[0].loandetails.commercialcibilreport) ? "Positive" : "Negative");
+            loanApproval.commercialCibil.assessment(data.Data.CIBIL[0].Rating);
             ajaxPost( "/datacapturing/commentlist", {
                 CustomerId : filter().CustomerSearchVal(),
                 DealNo : filter().DealNumberSearchVal()

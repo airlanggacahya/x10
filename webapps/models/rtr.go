@@ -36,13 +36,14 @@ type RTRBottom struct {
 	LoanStart       time.Time     `bson:"LoanStart"`
 	LoanEnd         time.Time     `bson:"LoanEnd"`
 	YearlyRepayment float64
-	EMIDue          int64      `bson:"EMIDue"`
-	EMIBalance      int64      `bson:"EMIBalance"`
-	Months          []MonthRtr `bson:"Month"`
-	IsBankAnalys    bool       `bson:"IsBankAnalys"`
-	Confirmed       bool       `bson:"Confirmed,omitempty"`
-	DateConfirmed   time.Time  `bson:"DateConfirmed,omitempty"`
-	Bounces         int64      `bson:"Bounce,omitempty"`
+	EMIDue          int64         `bson:"EMIDue"`
+	EMIBalance      int64         `bson:"EMIBalance"`
+	Months          []MonthRtr    `bson:"Month"`
+	IsBankAnalys    bool          `bson:"IsBankAnalys"`
+	BankAnalysId    bson.ObjectId `bson:"BankAnalysId,omitempty"`
+	Confirmed       bool          `bson:"Confirmed,omitempty"`
+	DateConfirmed   time.Time     `bson:"DateConfirmed,omitempty"`
+	Bounces         int64         `bson:"Bounce,omitempty"`
 	DateFreeze      time.Time
 	DateSave        time.Time
 	Status          int
@@ -75,13 +76,15 @@ type RTRSummary struct {
 	SumExtenalYearly     float64
 }
 
-func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, error) {
+func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []MonthRtr, error) {
 	arr := []RTRBottom{}
+
+	_ = r.checkBankAnalysIdInRtr(custid, dealno)
 
 	cMongo, em := GetConnection()
 	defer cMongo.Close()
 	if em != nil {
-		return nil, nil, em
+		return nil, nil, nil, em
 	}
 
 	query := []*db.Filter{}
@@ -93,54 +96,55 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 		Where(query...).
 		Cursor(nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	defer csr.Close()
 	if csr != nil {
 		err = csr.Fetch(&arr, 0, false)
 
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, err
 		}
 	} else if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// customerId, _ := strconv.Atoi(strings.TrimSpace(custid))
+
+	bankAnalys := []BankAnalysisV2{}
+
+	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, "BankAnalysisV2", &bankAnalys)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	monthsRTR := []MonthRtr{}
+
+	if len(bankAnalys) > 0 {
+		monthsRTR = append(monthsRTR, MonthRtr{bankAnalys[0].DataBank[0].BankDetails[0].Month, ""})
+		monthsRTR = append(monthsRTR, MonthRtr{bankAnalys[0].DataBank[0].BankDetails[1].Month, ""})
+		monthsRTR = append(monthsRTR, MonthRtr{bankAnalys[0].DataBank[0].BankDetails[2].Month, ""})
+		monthsRTR = append(monthsRTR, MonthRtr{bankAnalys[0].DataBank[0].BankDetails[3].Month, ""})
+		monthsRTR = append(monthsRTR, MonthRtr{bankAnalys[0].DataBank[0].BankDetails[4].Month, ""})
+		monthsRTR = append(monthsRTR, MonthRtr{bankAnalys[0].DataBank[0].BankDetails[5].Month, ""})
+	}
 
 	if len(arr) == 0 && custid != "" {
 
 		arr = []RTRBottom{}
 
-		bankAnalys := []BankAnalysisV2{}
-
-		// query = append(query[0:0], db.And(db.Eq("CustomerId", customerId), db.Eq("DealNo", dealno)))
-		// csr, err := cMongo.NewQuery().
-		// 	From("BankAnalysisV2").
-		// 	Where(query...).
-		// 	Cursor(nil)
-
-		// if err != nil {
-		// 	return nil, nil, err
-		// }
-
-		// err = csr.Fetch(&bankAnalys, 0, false)
-		// if err != nil {
-		// 	return nil, nil, err
-		// }
-
-		err = new(DataConfirmController).GetDataConfirmed(custid, dealno, "BankAnalysisV2", &bankAnalys)
-		if err != nil {
-			return nil, nil, err
-		}
-
 		if len(bankAnalys) > 0 {
+
+			tempBankAnalys := crowd.From(&bankAnalys).Where(func(x interface{}) interface{} {
+				return strings.TrimSpace(strings.ToLower(x.(BankAnalysisV2).DataBank[0].BankAccount.FundBased.AccountType)) == "od/cc"
+			}).Exec().Result.Data().([]BankAnalysisV2)
+
 			qinsert := cMongo.NewQuery().
 				From("RepaymentRecords").
 				SetConfig("multiexec", true).
 				Save()
 
-			for _, bank := range bankAnalys {
+			for _, bank := range tempBankAnalys {
 				for _, val := range bank.DataBank {
 					ar := RTRBottom{}
 					ar.SNo = ""
@@ -160,6 +164,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 					//ar.EMIDue = 0.0
 					ar.Id = bson.NewObjectId()
 					ar.IsBankAnalys = true
+					ar.BankAnalysId = bank.Id
 
 					month := MonthRtr{val.BankDetails[0].Month, ""}
 					ar.Months = append(ar.Months, month)
@@ -184,55 +189,29 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 					insdata := map[string]interface{}{"data": ar}
 					em = qinsert.Exec(insdata)
 					if em != nil {
-						return nil, nil, em
+						return nil, nil, nil, em
 					}
 				}
 			}
 		}
 	}
 
-	// conn, err := GetConnection()
-	// defer conn.Close()
-	// if err != nil {
-	// 	return nil, nil, err
-	// }
-
-	// query = append(query[0:0], db.And(db.Eq("customerid", custid), db.Eq("dealno", dealno)))
-	// csr, err = conn.NewQuery().From(new(AccountDetail).TableName()).Where(query...).Cursor(nil)
-	// if err != nil {
-	// 	return nil, nil, err
-	// }
 	accoutDetails := AccountDetail{}
-	// err = csr.Fetch(&accoutDetails, 1, true)
-	// if err != nil {
-	// 	tk.Println("fetch error on account details part", err.Error())
-	// 	// return nil, nil, err
-	// }
 
 	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(AccountDetail).TableName(), &accoutDetails)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
-
-	// query = append(query[0:0], db.And(db.Eq("applicantdetail.CustomerID", customerId), db.Eq("applicantdetail.DealNo", dealno)))
-	// csr, err = conn.NewQuery().From(new(CustomerProfiles).TableName()).Where(query...).Cursor(nil)
 
 	// ------------------- customer profile confirmed ----------------------------
 
 	var customerProfiles = CustomerProfiles{}
 	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(CustomerProfiles).TableName(), &customerProfiles)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// ------------------- customer profile confirmed ----------------------------
-
-	// customerProfiles := CustomerProfiles{}
-	// err = csr.Fetch(&customerProfiles, 1, true)
-	// if err != nil {
-	// 	tk.Println("fetch error on customer profile", err.Error())
-	// 	// return nil, nil, err
-	// }
 
 	smry := new(RTRSummary)
 
@@ -289,9 +268,8 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 				if v.Amount > 0 && arr[k].EMIBalance > 0 && v.LoanTenor > 0 && strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) != "od/cc" {
 					err, rate := r.FindRate(v.Amount, v.EMI, v.LoanTenor)
 					if err != nil {
-						return nil, nil, err
+						return nil, nil, nil, err
 					}
-					tk.Println(rate, "=====rate")
 					POS := tk.Div(v.EMI*(1-math.Pow((1+rate), -float64(arr[k].EMIBalance))), rate)
 					arr[k].POS = POS / 100000
 				} else if strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "od/cc" {
@@ -302,9 +280,12 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 			} else {
 				arr[k].POS = 0
 			}
-
 		}
 
+		tempRtr, err := r.CheckSancLimitBankAnalys(arr, custid, dealno)
+		if err == nil {
+			arr = tempRtr
+		}
 		summary := r.CalculateSummary(arr)
 		divider := 100000.0
 		x10IntObligation := (accoutDetails.LoanDetails.InterestOutgo * divider)
@@ -394,7 +375,49 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, er
 	// 	return mav
 	// }))
 
-	return arr, smry, nil
+	return arr, smry, monthsRTR, nil
+}
+
+func (r *RTRBottom) checkBankAnalysIdInRtr(custid, dealno string) error {
+	rtr := []RTRBottom{}
+
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return em
+	}
+
+	query := []*db.Filter{}
+	query = append(query, db.And(
+		db.Eq("CustomerId", custid),
+		db.Eq("DealNo", dealno),
+		db.Eq("IsBankAnalys", true)))
+	csr, err := cMongo.NewQuery().
+		From("RepaymentRecords").
+		Where(query...).
+		Cursor(nil)
+	if err != nil {
+		return err
+	}
+	defer csr.Close()
+	if csr != nil {
+		err = csr.Fetch(&rtr, 0, false)
+
+		if err != nil {
+			return err
+		}
+
+		for _, v := range rtr {
+			if v.BankAnalysId == "" {
+				err = r.deleteODCCRTR(v)
+			}
+		}
+
+	} else if err != nil {
+		return err
+	}
+
+	return err
 }
 
 func (r *RTRBottom) GetDataConfirmed(custid, dealno string) ([]RTRBottom, *RTRSummary, error) {
@@ -479,7 +502,6 @@ func (r *RTRBottom) GetDataConfirmed(custid, dealno string) ([]RTRBottom, *RTRSu
 					if err != nil {
 						return nil, nil, err
 					}
-					tk.Println(rate, "=====rate")
 					POS := tk.Div(v.EMI*(1-math.Pow((1+rate), -float64(arr[k].EMIBalance))), rate)
 					arr[k].POS = POS / 100000
 				} else if strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "od/cc" {
@@ -695,7 +717,6 @@ func (r *RTRBottom) GetDataForAccountDetails(custid, dealno string) ([]RTRBottom
 					if err != nil {
 						return nil, nil, err
 					}
-					tk.Println(rate, "=====rate")
 					POS := tk.Div(v.EMI*(1-math.Pow((1+rate), -float64(arr[k].EMIBalance))), rate)
 					arr[k].POS = POS / 100000
 				} else if strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) == "od/cc" {
@@ -839,10 +860,8 @@ func (r *RTRBottom) CalculateSummary(datas []RTRBottom) tk.M {
 }
 
 func (r *RTRBottom) FindRate(amt float64, pmt float64, nper int64) (error, float64) {
-	tk.Println(amt, "amount", pmt, "payment", nper, "nper")
 	rate := math.Pow((pmt*float64(nper))/(amt*100000), 1/float64(nper)) - 1
 	ratemin := math.Pow((pmt*float64(nper))/(amt*100000), 1/float64(nper)) - 1
-	tk.Println(rate, "awal rate")
 	iterate := 0.0001
 	iteratemin := -0.0001
 	idx := 0
@@ -874,9 +893,6 @@ func (r *RTRBottom) FindRate(amt float64, pmt float64, nper int64) (error, float
 				}
 			}
 		}
-
-		tk.Println(lastdiff, "lastdiff")
-		tk.Println(minval, "minval")
 
 		if idx > 1 {
 			if lastdiff.GetFloat64("diff") == minval.GetFloat64("diff") {
@@ -937,4 +953,209 @@ func diff(a, b time.Time) (year, month, day, hour, min, sec int) {
 	}
 
 	return
+}
+
+//checking bank analys
+func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno string) ([]RTRBottom, error) {
+
+	bankAnalys := []BankAnalysisV2{}
+
+	err := new(DataConfirmController).GetDataConfirmed(custid, dealno, "BankAnalysisV2", &bankAnalys)
+	if err != nil {
+		return rtr, err
+	}
+
+	if len(bankAnalys) > 0 {
+		tempBankAnalys := crowd.From(&bankAnalys).Where(func(x interface{}) interface{} {
+			return strings.TrimSpace(strings.ToLower(x.(BankAnalysisV2).DataBank[0].BankAccount.FundBased.AccountType)) == "od/cc"
+		}).Exec().Result.Data().([]BankAnalysisV2)
+
+		rtrODCC := []RTRBottom{}
+
+		if len(tempBankAnalys) > 0 {
+			for _, v := range tempBankAnalys {
+				found := false
+				for idx, v1 := range rtr {
+					if v1.BankAnalysId == v.Id {
+						rtrResult, err := r.updateRtrPosFromBank(v1, v)
+						if err != nil {
+							break
+						} else {
+							rtr[idx] = rtrResult
+						}
+
+						rtrODCC = append(rtrODCC, v1)
+						found = true
+						break
+					}
+				}
+
+				if !found {
+					tempRTR, err := r.insertRtrIndividualFromBank(custid, dealno, rtr, v)
+					if err == nil {
+						rtr = tempRTR
+					}
+				}
+			}
+		}
+
+		tempRTR, err := r.cleanODCCRTR(rtr, rtrODCC)
+		if err == nil {
+			rtr = tempRTR
+		}
+	}
+
+	return rtr, err
+}
+
+//update POS Amount
+func (r *RTRBottom) updateRtrPosFromBank(rtr RTRBottom, bank BankAnalysisV2) (RTRBottom, error) {
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return rtr, em
+	}
+
+	qinsert := cMongo.NewQuery().
+		From("RepaymentRecords").
+		SetConfig("multiexec", true).
+		Save()
+
+	rtr.EMI = bank.DataBank[0].BankAccount.FundBased.InterestPerMonth * 100000
+
+	insdata := map[string]interface{}{"data": rtr}
+	em = qinsert.Exec(insdata)
+	if em != nil {
+		return rtr, em
+	}
+
+	return rtr, em
+}
+
+//insert indiviudal rtr from bankanalys
+func (r *RTRBottom) insertRtrIndividualFromBank(custid, dealno string, rtr []RTRBottom, bank BankAnalysisV2) ([]RTRBottom, error) {
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return rtr, em
+	}
+
+	qinsert := cMongo.NewQuery().
+		From("RepaymentRecords").
+		SetConfig("multiexec", true).
+		Save()
+
+	ar := RTRBottom{}
+	ar.SNo = ""
+	ar.CustomerId = custid
+	ar.DealNo = dealno
+	ar.Bank = bank.DataBank[0].BankAccount.BankName
+	ar.TypeOfLoan = bank.DataBank[0].BankAccount.FundBased.AccountType
+	ar.BSLStatus = ""
+	ar.LoanStatus = "Live"
+	ar.Amount = bank.DataBank[0].BankAccount.FundBased.SancLimit
+	ar.POS = bank.DataBank[0].BankAccount.FundBased.SancLimit
+	ar.EMI = bank.DataBank[0].BankAccount.FundBased.InterestPerMonth * 100000
+	//ar.EMIBalance = 0.0
+	ar.LoanTenor = 0
+	ar.LoanStart = cast.String2Date("0000-00-00", "yyyy-MM-dd")
+	ar.LoanEnd = cast.String2Date("0000-00-00", "yyyy-MM-dd")
+	//ar.EMIDue = 0.0
+	ar.Id = bson.NewObjectId()
+	ar.IsBankAnalys = true
+	ar.BankAnalysId = bank.Id
+
+	month := MonthRtr{bank.DataBank[0].BankDetails[0].Month, ""}
+	ar.Months = append(ar.Months, month)
+
+	month = MonthRtr{bank.DataBank[0].BankDetails[1].Month, ""}
+	ar.Months = append(ar.Months, month)
+
+	month = MonthRtr{bank.DataBank[0].BankDetails[2].Month, ""}
+	ar.Months = append(ar.Months, month)
+
+	month = MonthRtr{bank.DataBank[0].BankDetails[3].Month, ""}
+	ar.Months = append(ar.Months, month)
+
+	month = MonthRtr{bank.DataBank[0].BankDetails[4].Month, ""}
+	ar.Months = append(ar.Months, month)
+
+	month = MonthRtr{bank.DataBank[0].BankDetails[5].Month, ""}
+	ar.Months = append(ar.Months, month)
+
+	rtr = append(rtr, ar)
+
+	insdata := map[string]interface{}{"data": ar}
+	em = qinsert.Exec(insdata)
+	if em != nil {
+		return rtr, em
+	}
+
+	return rtr, em
+}
+
+//clean all odcc on rtr if not found on bankanalys
+func (r *RTRBottom) cleanODCCRTR(rtrList []RTRBottom, rtrFound []RTRBottom) ([]RTRBottom, error) {
+	tempRTR := crowd.From(&rtrList).Where(func(x interface{}) interface{} {
+		return strings.TrimSpace(strings.ToLower(x.(RTRBottom).TypeOfLoan)) == "od/cc" && x.(RTRBottom).IsBankAnalys
+	}).Exec().Result.Data().([]RTRBottom)
+
+	var err error
+
+	for _, v := range tempRTR {
+		found := false
+		for _, v1 := range rtrFound {
+			if v.Id == v1.Id {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			err := r.deleteODCCRTR(v)
+			if err != nil {
+				idx := r.NggolekSliceGatelan(len(rtrList), func(i int) bool {
+					return rtrList[i].Id == v.Id
+				})
+
+				if idx != -1 {
+					rtrList = append(rtrList[:idx], rtrList[idx+1:]...)
+				}
+			}
+		}
+	}
+
+	return rtrList, err
+}
+
+//delete rtr odcc
+func (r *RTRBottom) deleteODCCRTR(rtr RTRBottom) error {
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return em
+	}
+
+	em = cMongo.NewQuery().
+		Where(db.Eq("_id", rtr.Id)).
+		Delete().
+		From("RepaymentRecords").
+		Exec(nil)
+
+	if em != nil {
+		return em
+	}
+
+	return em
+}
+
+//search index slice
+func (r *RTRBottom) NggolekSliceGatelan(sliceLength int, searching func(idx int) bool) int {
+	for i := 0; i < sliceLength; i++ {
+		if searching(i) {
+			return i
+		}
+	}
+
+	return -1
 }

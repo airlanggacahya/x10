@@ -152,6 +152,21 @@ function numbereditor(container,options){
     $(".k-select").remove();
 }
 
+
+function emiNumbereditor(container,options){
+    if(options.model.IsBankAnalys) {
+        $('<label class="grey" data-bind="text:' + options.field + '" >')
+        .appendTo(container);
+    } else {
+        $('<input type="number" class="numericTextBox" data-bind="value:' + options.field + '">')
+            .appendTo(container);
+
+        $(".numericTextBox").kendoNumericTextBox();
+
+        $(".k-select").remove();
+    }
+}
+
 function dateeditor(container,options){
     $('<input class="dtp" data-bind="value:' + options.field + '">')
         .appendTo(container);
@@ -217,7 +232,7 @@ function getData(){
     var col = [
         { title : "Id", headerAttributes: { "class": "header-bgcolor wrap" }, field : "Id" , hidden : true },
         { title : "S. No", headerAttributes: { "class": "header-bgcolor wrap" }, field : "SNo", hidden: true  },
-        { title : "Bank", headerAttributes: { "class": "header-bgcolor wrap" }, field : "Bank", width: 150  },
+        { title : "Bank", headerAttributes: { "class": "header-bgcolor wrap" }, editor: bankEditor, field : "Bank", width: 150  },
         { title : "Type Of Loan", headerAttributes: { "class": "header-bgcolor wrap" }, field : "TypeOfLoan", width: 130, editor: typeOfLoanDropDownEditor  },
         { title : "BSL / PBSL", headerAttributes: { "class": "header-bgcolor wrap" }, field : "BSLStatus", width: 80, editor: bslsDropDownEditor  },
         { title : "Loan Closed / Live", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanStatus", width: 130, editor: loanStatusDropDownEditor },
@@ -237,7 +252,7 @@ function getData(){
             //     return "<label style=\"width:100%; text-align: right; \">" + o.POS + "</label>"
             // }
         } },
-        { title : "EMI (Rs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "EMI", width: 120, editor: numbereditor, template : "<label style=\"width:100%; text-align: right;\">#:app.formatnum(EMI)#</label>"  },
+        { title : "EMI (Rs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "EMI", width: 120, editor: emiNumbereditor, template : "<label style=\"width:100%; text-align: right;\">#:app.formatnum(EMI)#</label>"  },
         { title : "Loan Tenor (month)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanTenor", width: 130, editor: numbereditor, template : "<label style=\"width:100%; text-align: right;\">#:LoanTenor#</label>"  },
         { title : "Loan Start Date", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanStart", format : "{0:dd/MM/yyyy}", editor: dateeditor,width: 100 , template : "#= moment(LoanStart).format('YY') == '01' || moment(LoanStart).format('YY') == 'Invalid date'? 'dd/mm/yyyy' : moment(LoanStart).format('DD/MM/YYYY') #" },
         { title : "Loan End Date", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanEnd" , format : "{0:dd/MM/yyyy}", editor:dateeditor ,width: 100, template : "#= moment(LoanEnd).format('YY') == '01' || moment(LoanEnd).format('YY') == 'Invalid date' ? 'dd/mm/yyyy' : moment(LoanEnd).format('DD/MM/YYYY') #" },
@@ -256,8 +271,8 @@ function getData(){
             $('#buttonsection').hide()
             swal("Warning",res.message,"warning");
             return
-        } else if(res.data[0].data.length == 0) {
-            swal("Warning","Please fill Banking Analysis form first","warning");
+        } else if(res.data[2].months.length == 0) {
+            swal("Warning","Please fill Or Confirm Banking Analysis form first","warning");
             $('#btnconfirm').hide()
             return
         }else{
@@ -312,8 +327,8 @@ function getData(){
         var maxGlobal = 0
         if(res.data[0].data[0]) {
             cacah = 0
-            $.each(res.data[0].data[0].Months, function(k, v){
-                titleString = moment(v.Title.split("T")[0]).format("MMM-YYYY");
+            $.each(res.data[2].months, function(k, v){
+                titleString = moment(v.Title.split("T")[0]).format("MMM-YYYY")+"<br>(DPD Track)";
 
                 col.push({title : titleString, headerAttributes: { "class": "header-bgcolor wrap" }, field : "Month"+k, width : 100, editor: bouncesDropDownEditor})
             })
@@ -789,6 +804,20 @@ function bslsDropDownEditor(container, options) {
             });
 }
 
+function bankEditor(container, options) {
+    if(options.model.IsBankAnalys){
+        $('<label class="grey" data-bind="text:' + options.field + '" >')
+        .appendTo(container);
+    } else {
+        var data=options.field
+        if(options.field == "Bank") {
+            data = ""
+        }
+        $('<input type="text" class="k-input k-textbox wrap" name="Bank" data-bind="value:Bank">')
+        .appendTo(container);
+    }
+}
+
 function bouncesDropDownEditor(container, options) {
     $('<input data-text-field="Text" data-value-field="Text" data-bind="value:' + options.field + '"/>')
             .appendTo(container)
@@ -821,7 +850,11 @@ function loanStatusDropDownEditor(container, options) {
 }
 
 function typeOfLoanDropDownEditor(container, options) {
-    $('<input data-text-field="Text" data-value-field="Text" data-bind="value:' + options.field + '"/>')
+    if(options.model.IsBankAnalys){
+        $('<label class="grey" data-bind="text:' + options.field + '" >')
+        .appendTo(container);
+    } else {
+        $('<input data-text-field="Text" data-value-field="Text" data-bind="value:' + options.field + '"/>')
             .appendTo(container)
             .kendoDropDownList({
                 filter: "contains",
@@ -830,6 +863,8 @@ function typeOfLoanDropDownEditor(container, options) {
                 dataSource: [{"Value":"Type of Loans","Text":"Type of Loans"},{"Value":"Auto Loan","Text":"Auto Loan"},{"Value":"Bill Discounting","Text":"Bill Discounting"},{"Value":"Business Loan","Text":"Business Loan"},{"Value":"Commercial Vehicle","Text":"Commercial Vehicle"},{"Value":"Currency Loans","Text":"Currency Loans"},{"Value":"Equipment Loan","Text":"Equipment Loan"},{"Value":"Home Loan","Text":"Home Loan"},{"Value":"Letter of Credit","Text":"Letter of Credit"},{"Value":"Loan Against Receivables","Text":"Loan Against Receivables"},{"Value":"Loan Against Securities","Text":"Loan Against Securities"},{"Value":"Mortgage Loan (LAP)","Text":"Mortgage Loan (LAP)"},{"Value":"OD/CC","Text":"OD/CC"},{"Value":"Packing Credit","Text":"Packing Credit"},{"Value":"Personal Loan","Text":"Personal Loan"},{"Value":"Term Loan (EMI)","Text":"Term Loan (EMI)"}],
                 optionLabel: "Select One.."
             });
+    }
+
 }
 
 function confirm(){

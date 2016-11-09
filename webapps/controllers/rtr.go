@@ -51,12 +51,12 @@ func (c *RtrController) GetDataBottomGrid(k *knot.WebContext) interface{} {
 		tk.Println(err.Error())
 	}
 
-	arr, summary, err := new(RTRBottom).GetData(t.GetString("customerid"), t.GetString("dealno"))
+	arr, summary, months, err := new(RTRBottom).GetData(t.GetString("customerid"), t.GetString("dealno"))
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}
 
-	result := []tk.M{{"data": arr}, {"summary": summary}}
+	result := []tk.M{{"data": arr}, {"summary": summary}, {"months": months}}
 
 	return CreateResult(true, result, "")
 }
@@ -157,6 +157,7 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 			ar.IsBankAnalys = val.Get("IsBankAnalys").(bool)
 		}
 
+		ar.BankAnalysId = bson.ObjectIdHex(val.GetString("BankAnalysId"))
 		if val.Get("Confirmed") != nil {
 			ar.Confirmed = val.Get("Confirmed").(bool)
 		}

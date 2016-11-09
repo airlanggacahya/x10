@@ -177,7 +177,6 @@ func (a *DataConfirmController) GetDataConfirmed(CustomerID string, DealNo strin
 	// 	return errors.New(coll)
 	// }
 	_ = coll
-	toolkit.Println(results, "apaaaaaaaaaaaaaaaaaaaaaa")
 
 	for _, val := range results {
 		iv := reflect.New(v).Interface()

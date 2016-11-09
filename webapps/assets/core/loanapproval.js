@@ -1231,7 +1231,7 @@ due.getData = function(){
 		DealNo : dealNo
 	}
 
-	ajaxPost("/duediligence/getduediligenceinputdata", param, function(res){
+	ajaxPost("/duediligence/getduediligenceinputdataconfirmed", param, function(res){
 		var data = res.Data[0];
 		if(res.Data.length > 0){
 			due.form.Background(data.Background)
@@ -1287,7 +1287,7 @@ due.getCostumerData = function(){
 	var customerId = filter().CustomerSearchVal();
 	var dealNo = filter().DealNumberSearchVal();
 
-	var url = "/datacapturing/getcustomerprofiledetail"
+	var url = "/datacapturing/getcustomerprofiledetailconfirmed"
 	var param = {
 		CustomerId: customerId,
 		DealNo: dealNo

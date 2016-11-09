@@ -35,30 +35,30 @@ func ProcessInbox(PathFrom string, PathTo string) {
 
 }
 
-func ProcessFile(From string, SuccessPath string, FailedPath string, ReportType string) {
-	file, _ := ioutil.ReadDir(From)
+// func ProcessFile(From string, SuccessPath string, FailedPath string, ReportType string) {
+// 	file, _ := ioutil.ReadDir(From)
 
-	for _, f := range file {
-		formattedName := strings.Replace(f.Name(), " ", "\\ ", -1)
-		filename := strings.TrimRight(f.Name(), ".pdf")
+// 	for _, f := range file {
+// 		formattedName := strings.Replace(f.Name(), " ", "\\ ", -1)
+// 		filename := strings.TrimRight(f.Name(), ".pdf")
 
-		if filename == f.Name() {
-			if f.IsDir() == false {
-				MoveFile(From+"/"+formattedName, FailedPath)
-			}
-		} else {
-			ConvertPdfToXml(From, From, f.Name())
+// 		if filename == f.Name() {
+// 			if f.IsDir() == false {
+// 				MoveFile(From+"/"+formattedName, FailedPath)
+// 			}
+// 		} else {
+// 			ConvertPdfToXml(From, From, f.Name())
 
-			//ExtractPdfDataCibilReport(From, From, formattedName, ReportType)
-			// err := os.RemoveAll(From + "/" + filename)
-			// if err != nil {
-			// 	tk.Println(err.Error)
-			// }
-			//MoveFile(From+"/"+formattedName, SuccessPath)
-		}
+// 			ExtractPdfDataCibilReport(From, From, formattedName, ReportType)
+// 			err := os.RemoveAll(From + "/" + filename)
+// 			if err != nil {
+// 				tk.Println(err.Error)
+// 			}
+// 			MoveFile(From+"/"+formattedName, SuccessPath)
+// 		}
 
-	}
-}
+// 	}
+// }
 
 func RemoveContents(dir string) error {
 	d, err := os.Open(dir)

@@ -760,7 +760,7 @@ loanApproval.getReport = function(param){
 
             // Loan Detail
             loanApproval.loanDetail.proposedLimitAmount(numberWithCommas( data.Data.AD[0].loandetails.requestedlimitamount));
-            loanApproval.loanDetail.ifExistingCustomer((data.Data.AD[0].loandetails.ifExistingCustomer) ? "Yes" : "No");
+            loanApproval.loanDetail.ifExistingCustomer((data.Data.AD[0].loandetails.ifexistingcustomer) ? "Yes" : "No");
             loanApproval.loanDetail.proposedROI(data.Data.AD[0].loandetails.proposedrateinterest + "%");
             loanApproval.loanDetail.ifYesExistingLimitAmount(numberWithCommas(data.Data.AD[0].loandetails.ifyeseistinglimitamount));
             loanApproval.loanDetail.proposedProFee(data.Data.AD[0].loandetails.proposedpfee + "%");

@@ -805,7 +805,6 @@ function bslsDropDownEditor(container, options) {
 }
 
 function bankEditor(container, options) {
-    console.log(options)
     if(options.model.IsBankAnalys){
         $('<label class="grey" data-bind="text:' + options.field + '" >')
         .appendTo(container);
@@ -814,7 +813,7 @@ function bankEditor(container, options) {
         if(options.field == "Bank") {
             data = ""
         }
-        $('<input type="text" class="numericTextBox wrap" value="'+data+'">')
+        $('<input type="text" class="k-input k-textbox wrap" name="Bank" data-bind="value:Bank">')
         .appendTo(container);
     }
 }

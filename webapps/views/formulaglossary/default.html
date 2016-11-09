@@ -1,0 +1,163 @@
+<script type="text/javascript">
+model.PageTopMenu("{{.TopMenu}}");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}');
+model.User= ko.observable('{{.Username}}');
+</script>
+
+<script src="/static/jquery.tokeninput/jquery.tokeninput.js"></script>
+<link rel="stylesheet" href="/static/jquery.tokeninput/token-input.css">
+<link rel="stylesheet" href="/static/jquery.tokeninput/token-input-facebook.css">
+
+<script src="/static/core/formula.js"></script>
+<style>
+	.grid-glossary {
+		font-family: 'Source Sans Pro', 'Lato', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+	}
+	.grid-glossary td {
+	    white-space: inherit;
+	    color: black !important;
+	}
+	.grid-glossary .row-section {
+		font-weight: bold;
+		font-size: 20px;
+		color: black !important;
+	}
+	.grid-glossary .row-sub-section {
+		font-weight: bold;
+		font-size: 16px;
+		color: black !important;
+	}
+	.grid-glossary .row-section td:not(:first-child),
+	.grid-glossary .row-sub-section td:not(:first-child) {
+		border-left-color: transparent;
+	}
+	.token-input.tt-input {
+	    padding: 0px;
+		padding-left: 1px;
+	    height: auto;
+	}
+	.tokenfield {
+	    min-height: 100px;
+	}
+	.tokenfield .token {
+		padding-right: 5px;
+	}
+	.tokenfield .token .close {
+		display: none;
+	}
+	.token.operand {
+	    background-color: rgba(92, 184, 92, 0.83);
+		color: white;
+		border-color: rgba(92, 184, 92, 0.83);
+		padding: 0px 7px 0px 3px;
+	}
+	.token.operand.paranthesess {
+		background-color: #428bca;
+		border-color: #428bca;
+	}
+	.token .token-label {
+		max-width: inherit !important;
+	}
+	.k-dropdown .k-input {
+		text-align: left;
+	}
+	/*.token:not(.operand) {
+	    background-color: transparent;
+	    color: #428bca;
+		border-color: #428bca;
+	}
+	.tokenfield .token:hover {
+		padding-right: inherit;
+	}
+	.tokenfield .token:hover .close {
+		display: inherit;
+	}*/
+	.modal-financial .modal-dialog {
+		width: 1000px;
+		/*margin-left: -500px;*/
+	}
+	input.token-input-formula-text {
+		width: 10px;
+	}
+	ul.token-input-list-facebook {
+		width: 100%;
+    	min-height: 100px;
+	    border-color: #e5e5e5;
+	    padding: 5px;
+	}
+	li.token-input-token-facebook {
+	    border-radius: 0px;
+	    border-color: #e5e5e5;
+	    padding: 4px 6px;
+	}
+	li.token-input-selected-token-facebook {
+		background-color: #428bca;
+	}
+	.mini-loading {
+		pointer-events: none;
+		opacity: 0.7;
+	}
+
+	.grid-glossary .k-grid-content{
+		overflow-y: hidden;
+	}
+
+	.k-grid-header{
+		padding-right: 0px !important;
+	}
+
+</style>
+<div>
+	<div class="col-md-12 col-sm-12 ez panel-content">
+		<div class="panel ez">
+			<div class="panel-body" >
+					<!-- <div class="controls-left">
+				    	<div class="col-sm-6">
+							<div class="form-group">
+					            <label class="col-sm-4 form-label align-right">Select Section</label>
+					        	<div class="col-sm-8">
+				        			<select data-bind="kendoDropDownList: { data: formula.optionSection, value: formula.selectedSection, dataValueField: 'value', dataTextField: 'text' }"></select>
+					        	</div>
+					        	<div class="clearfix"></div>
+				        	</div>
+			        	</div>
+					</div> -->
+				<div class="controls" style="text-align: left;margin-bottom: 12px;">
+					<button class="btn btn-sm btn-warning" onclick="formula.exportPDF()">Export to PDF</button>
+					<!-- <button id="onreset" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-primary separator" style="margin-right: inherit;" onclick="adf.getReset()">
+						<i class="fa fa-trash-o" aria-hidden="true"></i> Reset
+					</button>
+					<button id="onconfirm" data-bind="visible: (adf.formVisibility() == true)" class="btn btn-sm btn-primary separator" style="margin-right: inherit;" onclick="adf.getConfirm()">
+						<i class="fa fa-check" aria-hidden="true"></i><span data-bind="text: adf.optionChangeConfirm"></span>
+					</button> -->
+					<!-- <button data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-primary separator" style="margin-right: inherit;" onclick="adf.getVerify()">
+						<i class="fa fa-check-circle-o" aria-hidden="true"></i> Freeze
+					</button> -->
+					<!-- <button data-bind="visible: (adf.formVisibility() == true && adf.form.Status() > 0)" class="btn btn-sm btn-primary separator" style="margin-right: inherit;" onclick="adf.getUnfreeze()">
+						<i class="fa fa-check-circle-o" aria-hidden="true"></i> Unfreeze
+					</button> -->
+				</div>
+				<div id="content" class="k-grid k-widget">
+					<table class="table table-bordered KI" id="headerpdf">
+		              <thead>
+		                  <tr class="header-table hiddenrow">
+		                      <th class="text-center header-bgcolor k-header">X 10 FINANCIAL SERVICES LTD.</th>
+		                  </tr>
+		              </thead>
+		            </table>
+					<div class="form-container" style="margin-top: -3px;">
+						<div class="grid-glossary"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

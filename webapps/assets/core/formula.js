@@ -219,6 +219,8 @@ formula.refresh = function (noLoader) {
 		formula.isLoading(false)
 		$('.form-container').removeClass('mini-loading')
 	})
+
+	formula.renderGlosaary()
 }
 
 formula.constructData = function (res) {
@@ -303,7 +305,7 @@ formula.render = function () {
 	}
 
 	var columns = [
-		{ field: 'Name', headerAttributes: {class: 'k-header header-bgcolor'}, width: 400, template: function (d) {
+		{ field: 'Name', headerAttributes: {class: 'k-header header-bgcolor'}, width: 300, template: function (d) {
 			return '<span data-category="' + d.category + '">' + d.name + '</span>'
 		} },
 		{ field: 'alias', title: 'Field alias', headerAttributes: {class: 'k-header header-bgcolor'}, template: function (d) {
@@ -312,7 +314,7 @@ formula.render = function () {
 			}
 
 			return d.alias
-		}, width: 100, attributes: { style: 'text-align: center;' } },
+		}, width: 200, attributes: { style: 'text-align: center;' } },
 		{ field: 'formula', title: 'Formula', headerAttributes: {class: 'k-header header-bgcolor'}, template: function (d) {
 			if (d.category !== 'Formula') {
 				return ''
@@ -772,7 +774,7 @@ formula.reorder = function (source, from, to, subSectionNeedToFollow, callback) 
 }
 
 formula.exportExcel = function(target, title){
-	alert(title)
+	// alert(title)
 	$('.apx-loading').show()
 	setTimeout(function(){
 		var body = $('body');
@@ -790,7 +792,7 @@ formula.exportExcel = function(target, title){
 		}
 
 		var columns = [
-			{ field: 'Name', headerAttributes: {class: 'k-header header-bgcolor', style: 'background-color: #313d50 !important;color: white !important;'}, width: 400, template: function (d) {
+			{ field: 'Name', headerAttributes: {class: 'k-header header-bgcolor', style: 'background-color: #313d50 !important;color: white !important;'}, width: 300, template: function (d) {
 				return '<span data-category="' + d.category + '">' + d.name + '</span>'
 			} },
 			{ field: 'alias', title: 'Field alias', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
@@ -799,7 +801,7 @@ formula.exportExcel = function(target, title){
 				}
 
 				return d.alias
-			}, width: 100, attributes: { style: 'text-align: center;' } },
+			}, width: 200, attributes: { style: 'text-align: center;' } },
 			{ field: 'formula', title: 'Formula (Alias)', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
 				if (d.category !== 'Formula') {
 					return ''
@@ -808,7 +810,9 @@ formula.exportExcel = function(target, title){
 				if (formula.devMode()) {
 					return d.formula
 				}
-				var ret = d.formula
+				var ret = formula.extractFormula(d.formula)
+					.map(function (e) { return e.name })
+					.join('')
 					.replace(/\//g, ' / ')
 					.replace(/\-/g, ' - ')
 					.replace(/\+/g, ' + ')
@@ -861,19 +865,20 @@ formula.exportExcel = function(target, title){
 				if (formula.devMode()) {
 					return d.formula
 				}
-				var ret = d.formula
+				var ret = formula.extractFormula(d.formula)
+					.map(function (e) { return e.name })
+					.join('')
 					.replace(/\//g, ' / ')
 					.replace(/\-/g, ' - ')
 					.replace(/\+/g, ' + ')
 					.replace(/\*/g, ' * ')
 					.replace(/\(/g, ' ( ')
 					.replace(/\)/g, ' ) ')
-
 				// if(ret.indexOf("(") > -1 && ret.indexOf(")") > -1){
 				// 	ret.replace(/\(/g, " ( ").replace(/\)/g, " ) ");
 				// 	console.log(ret)
 				// }
-				console.log("------->>>", d.formula)
+				// console.log("------->>>", d.formula)
 				var ar = ret.split(/\s+/);
 				var disc = '';
 				$.each(ar, function(i, items){
@@ -898,12 +903,12 @@ formula.exportExcel = function(target, title){
 					}else if(items.indexOf(" ) ") > -1){
 						disc += " ) " 
 						// alert(disc)
-					}else if(items.indexOf("*") > -1){
+					}else if(items.indexOf(" x ") > -1){
 						disc += " * " 
 					}else if(items.indexOf("/") > -1){
 						disc += " / " 
 					}else{
-						disc += items
+						disc += " "+items+" "
 					}
 				});	
 				return "<span style='color: black; font-weight: normal;'>"+disc+"<span>"
@@ -964,11 +969,161 @@ formula.exportExcel = function(target, title){
 
 }
 
+formula.renderGlosaary = function(){
+	var data = formula.data()
+
+	if ($('.grid-glossary').hasClass('k-grid')) {
+
+		$('.grid-glossary').data('kendoGrid').setDataSource(new kendo.data.DataSource({
+			data: data
+		}))
+
+		return
+	}
+
+	var columns = [
+		{ field: 'Name', headerAttributes: {class: 'k-header header-bgcolor', style: 'background-color: #313d50 !important;color: white !important;'}, width: 300, template: function (d) {
+			return '<span data-category="' + d.category + '">' + d.name + '</span>'
+		} },
+		{ field: 'alias', title: 'Field alias', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
+			if (['Field', 'Formula'].indexOf(d.category) == -1) {
+				return ''
+			}
+
+			return d.alias
+		}, width: 200, attributes: { style: 'text-align: center;' } },
+		{ field: 'formula', title: 'Formula (Alias)', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
+			if (d.category !== 'Formula') {
+				return ''
+			}
+
+			if (formula.devMode()) {
+				return d.formula
+			}
+			var ret = formula.extractFormula(d.formula)
+					.map(function (e) { return e.name })
+					.join('')
+					.replace(/\//g, ' / ')
+					.replace(/\-/g, ' - ')
+					.replace(/\+/g, ' + ')
+					.replace(/\*/g, ' * ')
+					.replace(/\(/g, ' ( ')
+					.replace(/\)/g, ' ) ')
+
+			
+			return ret
+		}},
+		{
+			 field: 'formula', title: 'Formula', headerAttributes: {class: 'k-header', style: 'background-color: #313d50 !important;color: white !important;'}, template: function (d) {
+			if (d.category !== 'Formula') {
+				return ''
+			}
+
+			if (formula.devMode()) {
+				return d.formula
+			}
+			var ret = formula.extractFormula(d.formula)
+					.map(function (e) { return e.name })
+					.join('')
+					.replace(/\//g, ' / ')
+					.replace(/\-/g, ' - ')
+					.replace(/\+/g, ' + ')
+					.replace(/\*/g, ' * ')
+					.replace(/\(/g, ' ( ')
+					.replace(/\)/g, ' ) ')
+
+			
+			var ar = ret.split(/\s+/);
+			var disc = '';
+			$.each(ar, function(i, items){
+	    		var temp = _.find(formula.data(),function(ondis){ return ondis.alias == items });
+	    		// var temp = formula.data()	.find(function(ondis){ return ondis.alias == items})
+	    		console.log(temp)
+	    		if(temp!=undefined){
+	    			disc+=temp.name;
+	    		}else if(items.indexOf("+") > -1){
+	    				disc += " + " 
+				}else if(items.indexOf("-") > -1){
+					disc += " - " 
+				}else if(items.indexOf(" ( ") > -1){
+					disc += " ( " 
+					// alert(disc)
+				}else if(items.indexOf(" ) ") > -1){
+					disc += " ) " 
+					// alert(disc)
+				}else if(items.indexOf("*") > -1){
+					disc += " * " 
+				}else if(items.indexOf("/") > -1){
+					disc += " / " 
+				}else{
+					disc += " "+items+" "
+				}
+			});	
+			return "<span style='color: black; font-weight: normal;'>"+disc+"<span>"
+		} },
+	]
+
+	var config = {
+		dataSource: {
+			data: data
+		},
+		columns: columns,
+		dataBound: function () {
+			app.gridBoundTooltipster('.grid')()
+			$('.grid-glossary [data-category]').each(function (i, e) {
+				var $row = $(e).closest('tr')
+				var category = $(e).attr('data-category')
+
+				if (category == 'Section') {
+					$row.addClass('row-section')
+					$row.css('font-weight','bold').css('font-size', '14px').css('background-color', '#c6e0b4')
+				} else if (category == 'Sub Section') {
+					// $row.css('row-sub-section header-bgcolor')
+					$row.css('font-weight','bold').css('font-size', '14px').css('background-color', "#f2f2f2")
+				} else if (category == 'Formula') {
+					$row.addClass('row-formula sub-bgcolor')
+					$row.css('font-weight','bold').css('background-color', '#a7adcd !important').css('color', 'white !important')
+				}
+			})
+
+			$('.grid-glossary tr [data-direction="up"]:first').addClass('disabled');
+			$('.grid-glossary tr [data-direction="down"]:last').addClass('disabled')
+		}
+	}
+
+	$('.grid-glossary').kendoGrid(config)
+	$('.grid-glossary.k-grid tr td').css('border','0.5px solid black')
+
+}
+
+formula.exportPDF = function(){
+	// return function(){
+		var ondate = kendo.toString(new Date(),"dd-MM-yyyy HH mm");
+		var draw = kendo.drawing;
+        draw.drawDOM($("#content"), {
+            avoidLinks: true,
+            //paperSize: "A4"
+        })
+        .then(function(root) {
+            return draw.exportPDF(root);
+        })
+        .done(function(data) {
+            kendo.saveAs({
+                dataURI: data,
+                fileName: "Formula_"+ ondate+".pdf"
+            });
+        })
+	// }
+}
+
 $(function () {
 	$('.modal').each(function (i, e) {
 		$(e).appendTo($('body'))
 	})
 
 	formula.initTokenField()
+	setTimeout(function(){
+		formula.renderGlosaary()
+	},500)
 	window.refreshFilter()
 })

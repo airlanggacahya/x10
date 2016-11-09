@@ -74,6 +74,7 @@ func init() {
 	app.Register(&RatingController{baseCtrl})
 	app.Register(&AccountDetailController{baseCtrl})
 	app.Register(&LoanApprovalController{baseCtrl})
+	app.Register(&FormulaGlossaryController{baseCtrl})
 
 	app.Register(&FormulaController{baseCtrl})
 	app.Register(&NormMasterController{baseCtrl})

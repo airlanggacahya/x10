@@ -720,7 +720,8 @@ adf.getConfirm = function(){
 		adf.EnableAllfieldsOnconfirm(false)
 		setTimeout(function(){
 			for(var i = 0; i< adf.form.PromotorDetails().length; i++){
-				$("#cibil"+i).data("kendoNumericTextBox").enable(false)
+				$("#cibil"+i).prop("disabled", "disabled")
+				$("#real"+i).prop("disabled", "disabled")
 			}
 		}, 500)
 		$("#onreset").prop( "disabled", true );
@@ -921,6 +922,11 @@ adf.getConfirm = function(){
 				}else{
 					var date3 =  kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"dd-MMM-yyyy");
 					adf.form.BorrowerDetails.DateBusinessStarted(date3)
+				}
+
+				for(var i = 0; i< adf.form.PromotorDetails().length; i++){
+					$("#cibil"+i).prop("disabled", "disabled")
+					$("#real"+i).prop("disabled", "disabled")
 				}
 
 				var data = ko.mapping.toJS(adf.form)
@@ -1747,7 +1753,11 @@ adf.reloadStatus = function(status){
 			$("#addpromotor").prop("disabled", true);
 			$("#addvendor").prop("disabled", true);
 			$("#addvendor1").prop("disabled", true);
-			
+			for(var i = 0; i< adf.form.PromotorDetails().length; i++){
+				$("#cibil"+i).prop("disabled", "disabled")
+				$("#real"+i).prop("disabled", "disabled")
+				
+			}
 		},500);
 		$("#LoanAmount").prop("disabled", true );
 		$("#onreset1").prop("disabled", true);
@@ -1783,15 +1793,16 @@ adf.reloadStatus = function(status){
 			$("#addpromotor").prop("disabled", false);
 			$("#addvendor").prop("disabled", false);
 			$("#addvendor1").prop("disabled", false);
+			for(var i = 0; i< adf.form.PromotorDetails().length; i++){
+				$("#cibil"+i).prop("disabled", "disabled");
+				$("#real"+i).prop("disabled", "disabled");
+			}
 		},700);
 		adf.sectionDisable("#c-3", true);
 		adf.sectionDisable("#c-4", true);
 		adf.sectionDisable("#c-5", true);
 		adf.sectionDisable("#c-7", true);
 		adf.sectionDisable("#c-8", true);
-		for(var i = 0; i< adf.form.PromotorDetails().length; i++){
-			$("#cibil"+i).data("kendoNumericTextBox").enable(false)
-		}
 		$("#onreset").prop("disabled", false);
 		$("#onsave").prop("disabled", false);
 		$(".onfreeze").prop("disabled", false);
@@ -2298,7 +2309,8 @@ $("#AD-Container textarea").prop( "disabled", !what );
 });
 
   for(var i = 0; i< adf.form.PromotorDetails().length; i++){
-		$("#cibil"+i).data("kendoNumericTextBox").enable(false)
+		$("#cibil"+i).prop("disabled", "disabled")
+		$("#real"+i).prop("disabled", "disabled")
 	}
 
 }

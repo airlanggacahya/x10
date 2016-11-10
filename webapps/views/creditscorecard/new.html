@@ -39,22 +39,22 @@
 
             if(res.Data.FormulaModel.BankingAnalysisRawSummary.length == 0 || res.Data.FormulaModel.BankingAnalysisRawDetails.length == 0){
                 Materialize.toast("Banking Analysis Data Not Confirmed", 5000);
-                $('.toast').css("background-color","#F26419").css("color","white")
+               
             }
 
             if(csc().checkAccountDetail(res.Data.FormulaModel.AccountDetails)){
                 Materialize.toast("Account Details Data Not Confirmed", 5000);
-                $('.toast').css("background-color","#F26419").css("color","white")
+               
             }
 
             if(res.Data.FormulaModel.CibilData.SelectRating == ""|| res.Data.FormulaModel.CibilData.MinScore== 0 ){
                 Materialize.toast("CIBIL Data Not Confirmed", 5000);
-                $('.toast').css("background-color","#F26419").css("color","white")
+               
             }
 
             if(csc().checkAccountDetail(res.Data.FormulaModel.RTR)){
                 Materialize.toast("RTR Data Not Confirmed", 5000);
-                $('.toast').css("background-color","#F26419").css("color","white")
+               
             }
 
             $("#toast-container").css("top","30%");
@@ -128,7 +128,7 @@
                 callback()
             } else {
                  Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
-                $('.toast').css("background-color","#F26419").css("color","white")
+               
                 // sweetAlert("Oops...", "Data Balance Sheet Not Found", "error");
                 frp.isLoading(false)
                 return

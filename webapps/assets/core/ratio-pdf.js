@@ -657,8 +657,6 @@ r.refresh = function () {
                return (o.Status == "PROVISION" || o.Status == "AUDITED" || o.Status == "ESTIMATED")
             })
 
-            console.log(columns)
-
             r.dates(_.orderBy(columns, ['Status','Date'], ['desc','desc']))
 
             findEstimated = _.find(r.dates(), function(o) {

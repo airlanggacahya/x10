@@ -451,7 +451,38 @@ function checkConfirmedOrNot(statusnow, confirmedval, verifyval, res, emptydata,
 
 app.formatnum =  function(number, decimalPlace) {
    decimalPlace = (typeof decimalPlace === "undefined" ? 0 : decimalPlace);
-   return kendo.toString(number, 'n' + decimalPlace)
+
+   var suffix = ((String(number).indexOf(".") > -1) ? String(number).split(".")[1].substring(0, decimalPlace) : "");
+   var prefix = ((String(number).indexOf(".") > -1) ? String(number).split(".")[0] : String(number)).split("").reverse().join("");
+
+   var result = "";
+    for (var i = 0; i < prefix.length; i++) {
+      result += prefix[i];
+      if (i == 2)
+          result += ",";
+      else if (i > 2 && ((i - 2) % 2 == 0))
+          result += ",";
+    }
+
+    result = result.split("").reverse().join("")
+
+    if (suffix.length > 0) if (parseInt(suffix, 10) != 0) result = result + "." + suffix;
+    result = result.replace(/- /g, "-");
+
+    if(String(number).length % 2 != 0) {
+      var res = result.split('')
+      // var remove = res.splice(0,1,'')
+      result = res.join('')
+    }
+
+    result = result.replace(/\s+/g, '');
+    result = result.replace(/^\,+|\,+$/g, '');
+    if(decimalPlace != 0){
+        if(result.indexOf(".") == -1){
+            result = result+".00"
+        }
+    }
+    return result;
 }
 
 app.masterRTR = [

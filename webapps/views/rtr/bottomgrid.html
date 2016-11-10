@@ -294,15 +294,15 @@ function getData(){
             });
             if(sts == data.length){
                 condSave()
-                $('.form-last-confirmation-info').html('Last Save on: '+kendo.toString( data[0].DateSave,"dd-MM-yyyy h:mm:ss tt") )
+                $('.form-last-confirmation-info').html('Last Save on: '+moment( data[0].DateSave).format("DD-MMM-YYYY hh:mm:ss a") )
                 rtr.Freeze(false)
             }else if( re == data.length){
                 condConfirm()
-                $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString( data[0].DateFreeze,"dd-MM-yyyy h:mm:ss tt") )
+                $('.form-last-confirmation-info').html('Last Confirmed on: '+moment( data[0].DateConfirmed).format("DD-MMM-YYYY hh:mm:ss a") )
                 rtr.Freeze(true)
             }else if(con == data.length){
                 condFreeze();
-                $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString( data[0].DateConfirmed,"dd-MM-yyyy h:mm:ss tt") )
+                $('.form-last-confirmation-info').html('Last Freezed on: '+moment( data[0].DateFreeze).format("DD-MMM-YYYY hh:mm:ss a") )
                 rtr.Freeze(true)
             }
         }
@@ -691,6 +691,7 @@ condConfirm = function(){
     $(".btn-freeze").show();
     $(".btn-unfreeze").hide();
     $(".btn-save").show();
+    $(".btn-reenter").prop("disabled", false);
     $(".btn-save").prop("disabled", true)
     setTimeout(function(){
         $(".k-grid-add").hide()
@@ -706,6 +707,7 @@ condFreeze = function(){
     $(".btn-freeze").hide();
     $(".btn-save").show();
     $(".btn-save").prop("disabled", true);
+    $(".btn-reenter").prop("disabled", true);
     setTimeout(function(){
         $(".k-grid-add").hide()
         $(".k-grid-cancel-changes").hide()
@@ -718,7 +720,7 @@ condReenter = function(){
     $(".btn-unfreeze").show()
     $(".btn-freeze").hide();
     $(".btn-save").show()
-    $(".btn-save").prop("disabled", true);
+    $(".btn-save").prop("disabled", false);
 }
 
 onsave = function(){
@@ -733,12 +735,14 @@ onsave = function(){
         if (item.DealNo == undefined) {
             item.DealNo = filter().DealNumberSearchVal()
         }
+        item.DateSave = new Date();
     })
+
     ajaxPost("/rtr/update",data, function(res){
         // yo.success(res.data);
         condSave()
         swal("Success","Data saved","success");
-        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
         getData()
     })
 }
@@ -747,20 +751,20 @@ onreenter = function(){
     var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
     $.each(data, function(i, item){
         item.Status = 0;
-        item.DateSave = new Date();
+        
     })
     ajaxPost("/rtr/update",data, function(res){
         // yo.success(res.data);
         condReenter()
         swal("Please Edit / Enter Data", "", "success");
-        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
         getData()
     })
 }
 
 onFreeze = function(){
     if(rtr.Freeze() == false){
-        swal("Please Confirm Data First");
+        swal("Warning","Please Confirm Data First","warning");
         return;
     }
     var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
@@ -771,8 +775,8 @@ onFreeze = function(){
     ajaxPost("/rtr/update",data, function(res){
         // yo.success(res.data);
         condFreeze();
-        swal("Successfully Freezed", "", "success");
-        $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        swal("Success","Successfully Freezed", "success");
+        $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
         getData()
     })
 }
@@ -785,7 +789,7 @@ onUnfreeze = function(){
     ajaxPost("/rtr/update",data, function(res){
         // yo.success(res.data);
         swal("Successfully Unfreezed", "", "success");
-        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
         getData()
     })
 }
@@ -874,15 +878,15 @@ function confirm(){
             data[v].Confirmed = false;
         }else{
             data[v].Confirmed = true;
-            data[v].DateConfirmed = new Date()
         }
+        data[v].DateConfirmed = new Date();
         data[v].Status = 1;
     })
     ajaxPost("/rtr/update",data, function(res){
         // yo.success(res.data);
         condConfirm()
         swal("Successfully Confirmed", "", "success");
-        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
         getData()
     });
 }

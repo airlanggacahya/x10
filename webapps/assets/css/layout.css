@@ -1386,3 +1386,8 @@ button:focus {
 .divided-col .k-item.k-state-default.k-last.k-state-hover span{
   color:white!important;
 }
+
+ .toast{
+  background-color:#F26419!important;
+  color:white!important;
+}

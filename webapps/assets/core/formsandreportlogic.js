@@ -43,12 +43,19 @@ frl.getData = function(){
 frl.renderGrid = function(){
 	$(".grid").html("");
     $(".grid").kendoGrid({
-            dataSource: frl.filter(),
+            // dataSource: frl.filter(),
+            dataSource: {
+		        data: frl.filter(),
+		        pageSize: 5
+		    },
+		    pageable: true,
             columnMenu: false,
 	        dataBound: function () {
 				app.gridBoundTooltipster('.grid')()
 				
 			},
+			// pageable: true,
+			// pageSize: 10,
             columns: [
                 {
                     field:"NameFile",

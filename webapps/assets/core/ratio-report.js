@@ -186,6 +186,10 @@ r.render = function (a) {
 			    var $rowHeader = $(e).closest('tr').addClass('is-formula')
 			    $grid.find('tr:eq(' + $rowHeader.index() + ')').addClass('is-formula')
 			})
+      $('[data-is-formula="false"]').each(function (i, e) {
+          var $rowHeader = $(e).closest('tr').addClass('not-formula')
+          $grid.find('tr:eq(' + $rowHeader.index() + ')').addClass('not-formula')
+      })
 
 			var $container = $('.grid .k-grid-header-wrap thead')
 			// var $tr2 = $('<tr />').appendTo($container)
@@ -259,10 +263,30 @@ r.render = function (a) {
 			$('thead tr').css('min-height', '30px').css('height', '30px')
 			$('.grid .k-grid-header-locked tr th').css('vertical-align', 'middle')
 
+      r.dates().forEach(function (d, i) {
+        if(d.Na.toLowerCase() == "na") {
+          var rowFormula = $('.k-grid-content tr.is-formula')
+          var rowNotFormula = $('.k-grid-content tr.not-formula')
+          if(i == 0) {
+            rowFormula.find('td:eq('+i+')').text("N/A")
+            rowNotFormula.find('td:eq('+i+')').text("N/A")
+          } else {
+            rowFormula.find('td:eq('+(i*2)+')').text("N/A")
+            rowFormula.find('td:eq('+((i*2)-1)+')').text("N/A")
+            rowNotFormula.find('td:eq('+(i*2)+')').text("N/A")
+            rowNotFormula.find('td:eq('+((i*2)-1)+')').text("N/A")
+          }
+          //console.log(i)
+
+          // //if(i==)
+          // //
+        }
+      })
+
 			$('[data-type="Section"],[data-type="Sub Section"]').each(function (i, d) {
 			    var uid = $(d).closest('tr').attr('data-uid')
 			    var row = $('.k-grid-content tr[data-uid="' + uid + '"]')
-			    row.find('td:eq(0)').attr('colspan', r.dates().length * 2 - 1)
+			    row.find('td:eq(0)').attr('colspan', r.dates().length * 2 - 1).val("")
 			    row.find('td:gt(0)').remove()
 			})
 		}

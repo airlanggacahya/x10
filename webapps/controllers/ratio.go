@@ -7,6 +7,7 @@ import (
 	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 	"strings"
 	"time"
 )
@@ -473,7 +474,9 @@ func (c *RatioController) SaveRatioInputData(k *knot.WebContext) interface{} {
 		payload.Id = bson.NewObjectId().Hex()
 	}
 
-	rowData, _ := c.FetchRatioInputDataByCustomerID(payload.CustomerID)
+	log.Println(payload.CustomerID)
+
+	rowData, _ := c.FetchRatioInputDataByCustomerIDNotConfirmed(payload.CustomerID)
 	if rowData != nil {
 		payload.Id = rowData.Id
 	}

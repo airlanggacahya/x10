@@ -653,9 +653,8 @@ r.refresh = function () {
          if(res.Data.AuditStatus.length > 0) {
             r.data(res.Data.FormData)
             columns = res.Data.AuditStatus
-
             columns = _.filter(columns, function(o){
-               return (o.Status == "PROVISION" || o.Status == "AUDITED" || o.Status == "ESTIMATED") && o.Na == "A"
+               return (o.Status == "PROVISION" || o.Status == "AUDITED" || o.Status == "ESTIMATED")
             })
 
             r.dates(_.orderBy(columns, ['Status','Date'], ['desc','desc']))
@@ -1092,14 +1091,18 @@ r.constructData = function (res) {
                _.each(r.dates(), function(column) {
                   var rowSelected = row.Values.find(function(g){return g.Date == column.Date})
                   if(rowSelected!=undefined) {
-                     if(typeof rowSelected.Value === "number") {
-                        if(row.ValueType == "percentage"){
-                           rowData.push(kendo.toString(rowSelected.Value, "P2"))
-                        } else {
-                           rowData.push(rowSelected.Value.toFixed(2))
-                        }
+                     if(column.Na.toLowerCase() == "na") {
+                        rowData.push("N/A")
                      } else {
-                        rowData.push(rowSelected.Value)
+                        if(typeof rowSelected.Value === "number") {
+                           if(row.ValueType == "percentage"){
+                              rowData.push(kendo.toString(rowSelected.Value, "P2"))
+                           } else {
+                              rowData.push(rowSelected.Value.toFixed(2))
+                           }
+                        } else {
+                           rowData.push(rowSelected.Value)
+                        }
                      }
                   } else {
                      rowData.push("")
@@ -1167,19 +1170,24 @@ r.constructData = function (res) {
                            rowData.push("n/a")
                   }
                   else{
-                     var rowSelected = row.Values.find(function(g){return g.Date == column.Date})
-                     if(rowSelected!=undefined) {
-                        if(typeof rowSelected.Value === "number") {
-                           if(row.ValueType == "percentage"){
-                              rowData.push(kendo.toString(rowSelected.Value, "P2"))
+                     if(column.Na.toLowerCase() == "na") {
+                        rowData.push("N/A")
+                     } else {
+                        var rowSelected = row.Values.find(function(g){return g.Date == column.Date})
+
+                        if(rowSelected!=undefined) {
+                           if(typeof rowSelected.Value === "number") {
+                              if(row.ValueType == "percentage"){
+                                 rowData.push(kendo.toString(rowSelected.Value, "P2"))
+                              } else {
+                                 rowData.push(rowSelected.Value.toFixed(2))
+                              }
                            } else {
-                              rowData.push(rowSelected.Value.toFixed(2))
+                              rowData.push(rowSelected.Value)
                            }
                         } else {
-                           rowData.push(rowSelected.Value)
+                           rowData.push("")
                         }
-                     } else {
-                        rowData.push("")
                      }
                   }
                })
@@ -1228,19 +1236,24 @@ r.constructData = function (res) {
                v2.alias(row.FieldName)
                rowData.push(v2.alias())
                _.each(r.dates(), function(column) {
-                  var rowSelected = row.Values.find(function(g){return g.Date == column.Date})
-                  if(rowSelected!=undefined) {
-                     if(typeof rowSelected.Value === "number") {
-                        if(row.ValueType == "percentage"){
-                           rowData.push(kendo.toString(rowSelected.Value, "P2"))
+                  if(column.Na.toLowerCase() == "na") {
+                     rowData.push("N/A")
+                  } else {
+                     var rowSelected = row.Values.find(function(g){return g.Date == column.Date})
+
+                     if(rowSelected!=undefined) {
+                        if(typeof rowSelected.Value === "number") {
+                           if(row.ValueType == "percentage"){
+                              rowData.push(kendo.toString(rowSelected.Value, "P2"))
+                           } else {
+                              rowData.push(rowSelected.Value.toFixed(2))
+                           }
                         } else {
-                           rowData.push(rowSelected.Value.toFixed(2))
+                           rowData.push(rowSelected.Value)
                         }
                      } else {
-                        rowData.push(rowSelected.Value)
+                        rowData.push("")
                      }
-                  } else {
-                     rowData.push("")
                   }
                })
 

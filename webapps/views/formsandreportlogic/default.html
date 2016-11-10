@@ -22,7 +22,7 @@ model.User= ko.observable('{{.Username}}');
 	}
 </style>
 <div data-bind="with: frl">
-	<div class="col-md-12 col-sm-12 ez panel-content">
+	<div class="col-md-12 col-sm-12 ez panel-content" data-bind="visible: (frl.visible() == true)">
 		<div class="panel ez">
 			<div class="panel-body" >
 				<div class="controls-left">

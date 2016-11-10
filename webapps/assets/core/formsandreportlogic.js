@@ -1,8 +1,9 @@
 var frl = {}
 frl.AllDataFile = ko.observableArray([]);
-frl.FilterFile = ko.observableArray([]);
+frl.FilterFile = ko.observableArray('');
 frl.dataListFile = ko.observableArray([]);
 frl.filter = ko.observableArray([])
+frl.visible= ko.observable(false);
 
 frl.onfilter = function(){
 	$("#filter").keydown(function(){
@@ -33,6 +34,10 @@ frl.getData = function(){
 		frl.AllDataFile(res)
 		frl.filter(res)
 		frl.renderGrid()
+		setTimeout(function(){
+			$('.apx-loading').hide();
+			frl.visible(true);
+		}, 700)
 		$.each(res, function(i, item){
 			frl.dataListFile.push(item.NameFile)
 		})
@@ -103,5 +108,6 @@ $(document).ready(function(){
 	frl.getData();
 	frl.onfilter();
 	// frl.renderGrid();
+	
 
 });

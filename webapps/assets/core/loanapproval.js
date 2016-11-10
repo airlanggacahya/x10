@@ -627,7 +627,7 @@ var propertyOwnership = function(param) {
         if(dt != undefined)
             attr.biodatas.push(dt);
 
-        console.log(_.last(attr.biodatas()).name.values())
+        // console.log(_.last(attr.biodatas()).name.values())
         var emptySpaces = attr.settings.size - _.last(attr.biodatas()).name.values().length;
         for (var i = emptySpaces - 1; i >= 0; i--) {
             var b = _.last(attr.biodatas());
@@ -719,9 +719,45 @@ var companyBackground = function(param) {
 
 loanApproval.test = ko.observableArray([])
 
+loanApproval.checkValidation = function(data){
+  if(data.Data.CP.length==0){
+        Materialize.toast("Customer Profile Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.BA.length==0){
+        Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.CIBIL.length==0){
+        Materialize.toast("CIBIL Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.CIBILPROM.length==0){
+        Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.AD.length==0){
+        Materialize.toast("Account Details Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.RTR.length==0){
+        Materialize.toast("RTR Data Not Confirmed", 5000);
+       
+  }
+
+  $("#toast-container").css("top","30%");
+}
+
 loanApproval.getReport = function(param){
     ajaxPost("/loanapproval/getalldata", param, function(data){
-        console.log(data.Data)
+        // console.log(data.Data)
+
+        loanApproval.checkValidation(data);
 
         if (data.Data.CP[0] != undefined){
             loanapproval.companyname (data.Data.CP[0].applicantdetail.CustomerName);
@@ -774,7 +810,9 @@ loanApproval.getReport = function(param){
             loanApproval.loanDetail.projectPOValue(data.Data.AD[0].loandetails.povalueforbacktoback),
             loanApproval.loanDetail.expectedPayment(data.Data.AD[0].loandetails.expectedpayment)
 
+            if(data.Data.CIBIL.length > 0)
             loanApproval.commercialCibil.assessment(data.Data.CIBIL[0].Rating);
+            
             ajaxPost( "/datacapturing/commentlist", {
                 CustomerId : filter().CustomerSearchVal(),
                 DealNo : filter().DealNumberSearchVal()
@@ -981,8 +1019,8 @@ $(document).ready(function(){
     loanApproval.reset();
     loanApproval.loading(true);
     loanApproval.isLoading(false)
-    due.LoadGrid();
-    due.getData();
+    // due.LoadGrid();
+    // due.getData();
     $('#headerpdf').hide()
     setTimeout(function(){
         $("#tab0 .collapsible-header").each(function(i,e){
@@ -1215,6 +1253,10 @@ due.LoadGrid = function(){
 }
 
 due.getData = function(){
+    if(model.PageId() == "Approval Form"){
+        return;
+    }
+
 	due.form.Verification([])
 	due.form.Defaulter([])
 	due.form.Background([])
@@ -1249,6 +1291,9 @@ due.getData = function(){
 				//due.enableConfirm(false);
 			}
 		}else{
+             Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+             
+
 			ajaxPost("/duediligence/getverificationcheck", {}, function(res){
 			   	$.each(res.Data, function(w, data){
 			   		due.form.Verification.push(

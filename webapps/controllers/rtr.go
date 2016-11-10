@@ -10,7 +10,7 @@ import (
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
 	"strings"
-	"time"
+	// "time"
 )
 
 type RtrController struct {
@@ -151,7 +151,7 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 			ar.Id = bson.ObjectIdHex(val.GetString("Id"))
 		}
 
-		ar.DateConfirmed = time.Now()
+		// ar.DateConfirmed = time.Now()
 
 		if val.Get("IsBankAnalys") != nil {
 			ar.IsBankAnalys = val.Get("IsBankAnalys").(bool)
@@ -168,8 +168,21 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 		}
 
 		ar.Status = val.GetInt("Status")
-		ar.DateFreeze = cast.String2Date(strings.Split(val.GetString("DateFreeze"), "T")[0], "yyyy-MM-dd")
-		ar.DateSave = cast.String2Date(strings.Split(val.GetString("DateSave"), "T")[0], "yyyy-MM-dd")
+		if strings.Contains(val.GetString("DateFreeze"), ".") {
+			ar.DateFreeze = cast.String2Date(strings.Split(strings.Replace(val.GetString("DateFreeze"), "T", " ", -1), ".")[0], "yyyy-MM-dd hh:mm:ss")
+		} else {
+			ar.DateFreeze = list[0].DateFreeze
+		}
+		if strings.Contains(val.GetString("DateSave"), ".") {
+			ar.DateSave = cast.String2Date(strings.Split(strings.Replace(val.GetString("DateSave"), "T", " ", -1), ".")[0], "yyyy-MM-dd hh:mm:ss")
+		} else {
+			ar.DateSave = list[0].DateSave
+		}
+		if strings.Contains(val.GetString("DateConfirmed"), ".") {
+			ar.DateConfirmed = cast.String2Date(strings.Split(strings.Replace(val.GetString("DateConfirmed"), "T", " ", -1), ".")[0], "yyyy-MM-dd hh:mm:ss")
+		} else {
+			ar.DateConfirmed = list[0].DateConfirmed
+		}
 
 		arr = append(arr, ar)
 

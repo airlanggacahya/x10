@@ -6,20 +6,25 @@ frl.filter = ko.observableArray([])
 
 frl.onfilter = function(){
 	$("#filter").keydown(function(){
+	setTimeout(function(){
+
 		var str = $("#filter").val();
 		str = (str).toLowerCase();
 		if(str != ""){
-			frl.filter([])
 			var res = _.filter(frl.AllDataFile(), function(data){
 				return data.NameFile.toLowerCase().indexOf(str) > -1;
 			});
 			if(res != undefined){
+				frl.filter([]);
+				console.log(res,str);
 				frl.filter(res);
 				frl.renderGrid()
 			}
 		}else{
 			frl.getData()	
 		}
+},500)
+
 	});
 }
 
@@ -87,7 +92,7 @@ frl.renderGrid = function(){
                 
             ]
     });
-	console.log(frl.AllDataFile())
+	// console.log(frl.AllDataFile())
 	
 
 }

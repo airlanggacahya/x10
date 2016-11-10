@@ -1,41 +1,76 @@
 var frl = {}
+frl.AllDataFile = ko.observableArray([]);
+frl.FilterFile = ko.observableArray([]);
+frl.dataListFile = ko.observableArray([]);
+frl.filter = ko.observableArray([])
 
-frl.dataDummy = [
-	{srno: "123455", namefile: "dicoba.pdf", lastupload: "22-august-2016"},
-	{srno: "123455", namefile: "dicoba.pdf", lastupload: "22-august-2016"},
-	{srno: "123455", namefile: "dicoba.pdf", lastupload: "22-august-2016"},
-]
+frl.onfilter = function(){
+	$("#filter").keydown(function(){
+		var str = $("#filter").val();
+		str = (str).toLowerCase();
+		if(str != ""){
+			frl.filter([])
+			var res = _.filter(frl.AllDataFile(), function(data){
+				return data.NameFile.toLowerCase().indexOf(str) > -1;
+			});
+			if(res != undefined){
+				frl.filter(res);
+				frl.renderGrid()
+			}
+		}else{
+			frl.getData()	
+		}
+	});
+}
+
+
+frl.getData = function(){
+	frl.filter([])
+	frl.AllDataFile([])
+	var param = {};
+	var url = "/formsandreportlogic/getallfile"
+	ajaxPost(url, param, function(res){
+		frl.AllDataFile(res)
+		frl.filter(res)
+		frl.renderGrid()
+		$.each(res, function(i, item){
+			frl.dataListFile.push(item.NameFile)
+		})
+		
+	})
+}
 
 frl.renderGrid = function(){
-
 	$(".grid").html("");
     $(".grid").kendoGrid({
-            dataSource: frl.dataDummy,
+            // dataSource: frl.filter(),
+            dataSource: {
+		        data: frl.filter(),
+		        pageSize: 5
+		    },
+		    pageable: true,
             columnMenu: false,
 	        dataBound: function () {
 				app.gridBoundTooltipster('.grid')()
 				
 			},
+			// pageable: true,
+			// pageSize: 10,
             columns: [
                 {
-                    field:"srno",
-                    title:"SR. No",
-                    width:150,
-                    headerAttributes: {class: 'k-header header-bgcolor'},
-                    // template: 
-
-                },
-                {
-                    field:"namefile",
+                    field:"NameFile",
                     title:"Name of File",         
                     width:300,
                     headerAttributes: {class: 'k-header header-bgcolor'},
                 },
                 {
-                    field:"lastupload",
+                    field:"Upload",
                     title:"Last Upload",
                     width:200,
                     headerAttributes: {class: 'k-header header-bgcolor'},
+                    template: function(d){
+                    	return kendo.toString(new Date(d.Upload),"dd-MM-yyyy HH:mm");
+                    }
                 },
                 {
                     // field:"",
@@ -44,18 +79,29 @@ frl.renderGrid = function(){
                     headerAttributes: {class: 'k-header header-bgcolor'},
                     template: function(d){
                     	return [
-                    	"<button class='btn btn-xs btn-primary tooltipster' title='Download File'><i class='fa fa-download'></i></button>",
-                    	"<button class='btn btn-xs btn-success tooltipster' title='Open File''><i class='fa fa-folder-open-o'></i></button>",
+                    	"<button class='btn btn-xs btn-primary tooltipster' title='Download File' onclick='frl.download(\""+d.NameFile+"\")'><i class='fa fa-download'></i></button>",
+                    	"<a type='button' class='btn btn-xs btn-success tooltipster' title='Open File' target='_blank' href='/static/pdf/"+d.NameFile+"'><i class='fa fa-folder-open-o'></i></a>",
                     	].join(' ')
                     }
                 },
                 
             ]
     });
+	console.log(frl.AllDataFile())
+	
 
 }
 
+frl.download = function(d){
+	var link = document.createElement('a');
+	link.href = "/static/pdf/"+d;
+	link.download = d;
+	link.dispatchEvent(new MouseEvent('click'));
+}
+
 $(document).ready(function(){
-	frl.renderGrid();
+	frl.getData();
+	frl.onfilter();
+	// frl.renderGrid();
 
 });

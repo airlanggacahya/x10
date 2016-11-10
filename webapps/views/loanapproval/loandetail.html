@@ -15,7 +15,7 @@
                         <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.proposedROI"></span></td>
                         <td class="table-divider"></td>
                         <td class="col-sm-2 text-bold">If Yes, Existing Limit Amount (Rs.)</td>
-                        <td class="col-sm-4"><span data-bind="text:loanApproval.loanDetail.ifYesExistingLimitAmount"></span></td>
+                        <td class="col-sm-4"><span data-bind="text: app.formatnum(loanApproval.loanDetail.ifYesExistingLimitAmount())"></span></td>
                     </tr>
                     <tr>
                         <td class="col-sm-2 text-bold">Proposed Pro Fee %</td>

@@ -1,110 +1,4 @@
-<script type="text/javascript">
-  model.CommentVal = ko.observable("");
-  model.CommentList = ko.observableArray([]);
-  model.Comment = ko.observable({Id: "", Comment: "", Active: 1, DateInput: new Date() });
-
-  function sendcomment(){
-    if (model.CommentVal().length > 5){
-      model.Comment().Comment = model.CommentVal();
-
-      model.Comment().CustomerId = filter().CustomerSearchVal();
-      model.Comment().DealNo = filter().DealNumberSearchVal();
-
-      var url = "/datacapturing/commentsave";
-      ajaxPost(url, model.Comment(), function(data) {
-        model.CommentList([]);
-        refreshcomment();
-        model.CommentVal("");
-      }, undefined);
-    } else{
-      swal("warning","Message must be more than 5 word", "error");
-    }
-  }
-
-  function refreshcomment(){
-    model.CommentList([]);
-    var arr = [];
-    var url = "/datacapturing/commentlist";
-    ajaxPost(url, { CustomerId : filter().CustomerSearchVal(), DealNo : filter().DealNumberSearchVal() }, function(data) {
-      $.each( data, function( k, v ) {
-        if (v.Active == 1){
-          a = "";
-          b = "pull-left";
-          c = "pull-right";
-          if( model.User() == v.UserName){
-            a = "right";
-            b = "pull-right";
-            c = "pull-left";
-          }
-
-          var com = {Id: v.Id, UserId: v.UserId, Username: v.UserName, Comment: v.Comment, FullName: v.FullName, CustomerId: v.CustomerId, Active: 1, CustomerName: v.CustomerName, DateInput: kendo.toString(kendo.parseDate(new Date(v.DateInput), 'dd-MM-yyyy'), 'HH:mm:ss'), Img: "http://bootdey.com/img/Content/user_1.jpg", a: a, b: b, c: c};
-          model.CommentList.push(com);
-          if((data.length - 4) <= model.CommentList().length){
-            arr.push(com.Username+" : "+com.Comment);
-          }
-        }
-      });
-        if(arr.length>0)
-        cibil.lastcomment("Last 5 Comments <br>" + arr.join("<br>"));
-        else
-        cibil.lastcomment("Comments Not Available");
-
-        $(".comment-body").animate({ scrollTop: $(document).height() }, "slow");
-
-        try{
-        $('.btn-comment').tooltipster('destroy');
-        }catch(e){
-            console.log("--tooltipster");
-        }
-        $(".btn-comment").tooltipster({
-                trigger: 'hover',
-                theme: 'tooltipster-val',
-                animation: 'grow',
-                delay: 0,
-                position:"right",
-                contentAsHTML: true,
-                interactive: true,
-                content : cibil.lastcomment()
-            });
-    }, undefined);
-  }
-
-</script>
-
-<div class="row bootstrap snippets">
-    <div class="col-sm-12">
-        <div class="box-body">
-          <div class="direct-chat-messages" data-bind="foreach: model.CommentList">
-
-            <div class="direct-chat-msg" data-bind="css: a">
-              <div class="direct-chat-info clearfix">
-                <span class="direct-chat-name" data-bind="text: Username, css: b"></span>
-                <span class="direct-chat-timestamp" data-bind="text: DateInput, css: c"></span>
-              </div>
-              <img class="direct-chat-img" src="http://bootdey.com/img/Content/user_1.jpg" alt="Message User Image">
-              <div class="direct-chat-text" data-bind="text: Comment">
-
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-        <div class="box-footer">
-             <div class="input-group" style="width: 100%"> 
-              <textarea rows="3" type="text" placeholder="Type Message ..." class="form-control" data-bind="value: model.CommentVal">
-              </textarea><br>
-              <div style="width: 100%; text-align: center;">
-                <button class="btn btn-freeze btn-flat" onclick="sendcomment()" style="margin-top: 10px;">Submit</button>
-              </div>
-             </div>
-        </div>
-      </div>
-    </div>
-</div>
-</div>
 <style type="text/css">
-
 body{
     margin-top:20px;
     background:#eee;
@@ -379,6 +273,7 @@ body{
     -o-transform: translate(0,  0);
     transform: translate(0,  0);
 }
+
 .direct-chat-messages {
     -webkit-transform: translate(0,  0);
     -ms-transform: translate(0,  0);
@@ -387,36 +282,42 @@ body{
     padding: 10px;
     overflow: auto;
 }
-.direct-chat-msg, .direct-chat-text {
+.direct-chat-messages, 
+.direct-chat-contacts {
+    -webkit-transition: -webkit-transform .5s ease-in-out;
+    -moz-transition: -moz-transform .5s ease-in-out;
+    -o-transition: -o-transform .5s ease-in-out;
+    transition: transform .5s ease-in-out;
+}
+
+.direct-chat-msg, 
+.direct-chat-text {
     display: block;
 }
 .direct-chat-msg {
     margin-bottom: 10px;
 }
-.direct-chat-msg:before, .direct-chat-msg:after {
+.direct-chat-msg:before, 
+.direct-chat-msg:after {
     content: " ";
     display: table;
 }
 .direct-chat-msg:after {
     clear: both;
 }
-.direct-chat-messages, .direct-chat-contacts {
-    -webkit-transition: -webkit-transform .5s ease-in-out;
-    -moz-transition: -moz-transform .5s ease-in-out;
-    -o-transition: -o-transform .5s ease-in-out;
-    transition: transform .5s ease-in-out;
-}
+
 .direct-chat-text {
     border-radius: 5px;
     position: relative;
     padding: 5px 10px;
     background: #d2d6de;
     border: 1px solid #d2d6de;
-    margin: 5px 0 0 50px;
+    margin: 5px 0 0 30px;
     color: #444;
     font-size: 10px;
 }
-.direct-chat-text:after, .direct-chat-text:before {
+.direct-chat-text:after, 
+.direct-chat-text:before {
     position: absolute;
     right: 100%;
     top: 15px;
@@ -437,7 +338,7 @@ body{
 }
 .right .direct-chat-text {
     margin-right: 30px;
-    margin-left: 0;
+    margin-left: 30px;
 }
 .right .direct-chat-text:after, .right .direct-chat-text:before {
     right: auto;
@@ -484,6 +385,12 @@ body{
     background: #222d32;
     color: #fff;
     overflow: auto;
+}
+.direct-chat-delete {
+  float: left;
+  width: 25px;
+  height: 25px;
+  margin-top: 4px;
 }
 .contacts-list>li {
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -566,3 +473,139 @@ body{
     border-left-color: #00a65a;
 }
 </style>
+
+<div class="row bootstrap snippets">
+  <div class="col-sm-12">
+    <div class="box-body">
+      <div class="direct-chat-messages" data-bind="foreach: model.CommentList">
+
+        <div data-bind="css: 'direct-chat-msg' + ((isMine) ? ' right' : ' left')">
+          <div class="direct-chat-info clearfix">
+
+            <span data-bind="text: Username, 
+            css: 'direct-chat-name' + ((isMine) ? ' pull-right' : ' pull-left')"></span>
+
+            <span data-bind="text: DateInput, 
+            css: 'direct-chat-timestamp' + ((isMine) ? ' pull-left' : ' pull-right')"></span>
+
+          </div>
+
+          <img class="direct-chat-img" src="http://bootdey.com/img/Content/user_1.jpg" alt="Message User Image">
+
+          <a class="direct-chat-delete btn btn-xs btn-danger" data-bind="click: $parent.removeCommment, visible: isMine"><i class="fa fa-trash"></i></a>
+
+          <div class="direct-chat-text" data-bind="text: Comment"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="box-footer">
+      <div class="input-group" style="width: 100%"> 
+        <textarea rows="3" type="text" placeholder="Type Message ..." class="form-control" data-bind="value: model.CommentVal">
+        </textarea><br>
+          
+        <div style="width: 100%; text-align: center;">
+          <button class="btn btn-freeze btn-flat" onclick="sendcomment()" style="margin-top: 10px;">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  model.CommentVal = ko.observable("");
+  model.CommentList = ko.observableArray([]);
+  model.Comment = ko.observable({Id: "", Comment: "", Active: 1, DateInput: new Date() });
+
+  model.removeCommment = function(comment) {
+    swal({
+      title: "Are you sure you want to Delete?",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+    }).then(function() {
+      ajaxPost("/datacapturing/commentdelete", { Id : comment.Id }, function(res){ 
+        model.CommentList.remove(comment)
+      })
+    }, function(dismiss) {
+    });
+  }
+
+  function sendcomment(){
+    if (model.CommentVal().length > 5){
+      model.Comment().Comment = model.CommentVal();
+
+      model.Comment().CustomerId = filter().CustomerSearchVal();
+      model.Comment().DealNo = filter().DealNumberSearchVal();
+
+      var url = "/datacapturing/commentsave";
+      ajaxPost(url, model.Comment(), function(data) {
+        model.CommentList([]);
+        refreshcomment();
+        model.CommentVal("");
+      }, undefined);
+    } else{
+      swal("warning","Message must be more than 5 word", "error");
+    }
+  }
+
+  function refreshcomment(){
+    model.CommentList([]);
+    var arr = [];
+    var url = "/datacapturing/commentlist";
+    ajaxPost(url, { CustomerId : filter().CustomerSearchVal(), DealNo : filter().DealNumberSearchVal() }, function(res) {
+
+      _.each(res, function(comment) {
+        if (comment.Active == 1){
+
+          if( model.User() == comment.UserName){
+          }
+
+          var com = {
+            Id: comment.Id, 
+            UserId: comment.UserId, 
+            Username: comment.UserName, 
+            Comment: comment.Comment, 
+            FullName: comment.FullName, 
+            CustomerId: comment.CustomerId, 
+            Active: 1, 
+            CustomerName: comment.CustomerName, 
+            DateInput: kendo.toString(kendo.parseDate(new Date(comment.DateInput), 'dd-MM-yyyy'), 'HH:mm:ss'), 
+            Img: "http://bootdey.com/img/Content/user_1.jpg", 
+            isMine: model.User() == comment.UserName
+          };
+
+          model.CommentList.push(com);
+          if((res.length - 4) <= model.CommentList().length){
+            arr.push(com.Username+" : "+com.Comment);
+          }
+        }
+      });
+
+      if(arr.length > 0)
+        cibil.lastcomment("Last 5 Comments <br>" + arr.join("<br>"));
+      else
+        cibil.lastcomment("Comments Not Available");
+
+      $(".comment-body").animate({ scrollTop: $(document).height() }, "slow");
+
+      try{
+        $('.btn-comment').tooltipster('destroy');
+      }catch(e){
+        console.log("--tooltipster");
+      }
+
+      $(".btn-comment").tooltipster({
+        trigger: 'hover',
+        theme: 'tooltipster-val',
+        animation: 'grow',
+        delay: 0,
+        position:"right",
+        contentAsHTML: true,
+        interactive: true,
+        content : cibil.lastcomment()
+      });
+    }, undefined);
+  }
+</script>

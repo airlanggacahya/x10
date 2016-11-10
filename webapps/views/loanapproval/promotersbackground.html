@@ -23,9 +23,16 @@
 		        style: { width: loanApproval.promoterBackgroundData().settings.getHeaderWidth() }
 		        "></td>
 		        <!-- ko foreach: { data: data[prop].values(), as: 'val' } -->
-		            <td data-bind="style: { width: loanApproval.promoterBackgroundData().settings.getContentWidth() }">
-		              <span data-bind="text: val"></span>
-		            </td>
+		        	<!-- ko if: prop == 'name' -->
+			            <td class="sub-bgcolor text-center" data-bind="style: { width: loanApproval.promoterBackgroundData().settings.getContentWidth() }">
+			              <span data-bind="text: val"></span>
+			            </td>
+			        <!-- /ko -->
+			        <!-- ko ifnot: prop == 'name' -->
+			            <td data-bind="style: { width: loanApproval.promoterBackgroundData().settings.getContentWidth() }">
+			              <span data-bind="text: val"></span>
+			            </td>
+			        <!-- /ko -->
 		        <!-- /ko -->
 		      </tr>
 		    </table>

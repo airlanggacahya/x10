@@ -11,6 +11,42 @@ import (
 	"time"
 )
 
+func (m *DataCapturingController) CommentDelete(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	query := toolkit.M{}
+
+	p := toolkit.M{}
+
+	e := k.GetPayload(&p)
+	if e != nil {
+		m.WriteLog(e)
+	}
+
+	query = toolkit.M{}.Set("where", db.And(db.Eq("_id", bson.ObjectIdHex(p.GetString("Id")))))
+
+	csr, err := m.Ctx.Find(new(CommentModel), query)
+	defer csr.Close()
+	if err != nil {
+		return err.Error()
+	}
+	results := make([]CommentModel, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return err.Error()
+	}
+
+	if len(results) > 0 {
+		err = m.Ctx.Delete(&results[0])
+		if err != nil {
+			return err.Error()
+		}
+
+	}
+
+	return results
+}
+
 func (m *DataCapturingController) CommentList(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 

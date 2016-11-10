@@ -154,6 +154,40 @@ r.ratingReferenceTooltip = function(param){
   return opt;
 }
 
+r.checkValidation = function(data){
+  if(data.Data.CP.length==0){
+        Materialize.toast("Customer Profile Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.BA.length==0){
+        Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.CIBIL.length==0){
+        Materialize.toast("CIBIL Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.CIBILPROM.length==0){
+        Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.AD.length==0){
+        Materialize.toast("Account Details Data Not Confirmed", 5000);
+       
+  }
+
+  if(data.Data.RTR.length==0){
+        Materialize.toast("RTR Data Not Confirmed", 5000);
+       
+  }
+
+  $("#toast-container").css("top","30%");
+}
+
 refreshFilter = function(){
   r.initEvents()
   if (r.getCustomerId() === false) {
@@ -172,6 +206,7 @@ refreshFilter = function(){
       r.isLoading(false)
       return
     }
+    r.checkValidation(res);
     r.AllData(res)
 
     if(res.Data.CP[0] != undefined && res.Data.AD[0] != undefined)
@@ -227,7 +262,7 @@ refreshFilter = function(){
         }
         totalrealestate(totalre)
     }else{
-        swal("Warning", "Red Flags Data Not Found", "warning");
+        // swal("Warning", "Red Flags Data Not Found", "warning");
     }
     getBankAsik();
     getRTRAsoy();
@@ -571,7 +606,7 @@ var getBankAsik = function () {
 
   ajaxPost("/bankanalysis/getdatabankv2", param, function (res) {
     if (res.message != "") {
-     swal("Warning", "Bank Analysis Data Not Found", "warning");
+     // swal("Warning", "Bank Analysis Data Not Found", "warning");
      return
     }
 
@@ -698,7 +733,9 @@ var getredflag = function(){
             redflags(data.Background)
             createRedFlags();
         }else{
-             swal("Warning", "Red Flags Data Not Found", "warning");
+             // swal("Warning", "Red Flags Data Not Found", "warning");
+             Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+             
             return
         }
     });
@@ -744,7 +781,9 @@ var getreportdata = function(){
         left.loadRatioData()
         left.panelVisible(true)
     }else{
-         swal("Warning", "Report Data Not Found", "warning");
+         // swal("Warning", "Report Data Not Found", "warning");
+          Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
+         
         return
     }
   });

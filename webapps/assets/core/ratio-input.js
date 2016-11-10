@@ -1098,6 +1098,10 @@ r.render = function () {
                         .css("text-align","center")
                         .appendTo($cell)
 
+                        if(au.Na.toLowerCase() == "na"){
+                            $input.attr('disabled', 'disabled')
+                        }
+
                     var fieldData = r.data().FormData.find(function (o) {
                         return (o.FieldId == "AUDITED-"+field.Id) && (o.Date == au.Date)
                     })
@@ -1147,6 +1151,10 @@ r.render = function () {
                         .css("width","100%")
                         .css("text-align","center")
                         .appendTo($cell)
+
+                    if(au.Na.toLowerCase() == "na"){
+                        $input.attr('disabled', 'disabled')
+                    }
 
                     var fieldData = r.data().FormData.find(function (o) {
                         return (o.FieldId == au.Status+"-"+field.Id) && (o.Date == au.Date)
@@ -1354,7 +1362,7 @@ r.freeze = function (isFrozen) {
                     }else{
                         swal("Successfully Unfreezed", "", "success");
                     }
-                    
+
                 }
 
                 if (res.Data != null){
@@ -1513,7 +1521,7 @@ r.scroll = function(){
         } else {
             $('.btnFixed').removeClass('fixed');
             $('.btnFixed').addClass('static');
-        }    
+        }
     });
 }
 
@@ -1529,7 +1537,6 @@ $(function () {
 
 r.prepareSelectOption = function(){
     // console.log( r.TypeDate() )
-    console.log("sarif")
     $('<select />').appendTo( $("#selectTypeDate") ).kendoDropDownList({
         dataSource: {
             data: r.picker()
@@ -1537,6 +1544,7 @@ r.prepareSelectOption = function(){
         dataValueField: 'Value',
         dataTextField: 'Text',
         change: function (){
+            console.log("sarif")
             r.TypeDate( this.value() )
             $("#selectDateAudited").html('');
             r.prepareselectDateAudited();
@@ -1577,7 +1585,6 @@ r.prepareselectDateAudited = function(){
 r.prepareselectDateProjected = function(){
     var momonth = ( r.TypeDate() == "Calendar Year" ) ? 11 : 2;
     var momonth2 = ( r.TypeDate() == "Calendar Year" ) ? "Dec" : "Mar";
-
     console.log(r.TypeDate(), new Date(2009, momonth, 31))
     console.log(r.TypeDate(), new Date(2016, momonth, 31))
 

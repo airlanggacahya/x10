@@ -185,7 +185,7 @@ var DrawDataBank = function(id){
             // console.log(res.data.AccountDetail[0].Status)
             if(res.data.Detail.length == fre){
             // alert("fre")
-                $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.data.Detail[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
+                $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.data.Detail[0].DateFreeze),"dd-MM-yyyy h:mm:ss tt") )
                 caba(1)
                 unfreeze(true);
                 setTimeout(function(){

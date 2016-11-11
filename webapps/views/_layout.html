@@ -1058,7 +1058,7 @@
         <div class="navbar-fixed-top app-top" id="nav-dex">
           <div class="app-wrapper">
 
-            <div id="toggle-toogle" class="sidebar-top no-padding pull-left" style="position: absolute;">
+            <div id="toggle-toggle" class="sidebar-top no-padding pull-left" style="position: absolute;">
               <div id="sidebar-title">
                 Additional Filters
               </div>
@@ -1087,7 +1087,7 @@
                   $("#sidebar-wrapper").width('16.66666667%')
                   menumarginleft = $("#sidebar-wrapper").outerWidth(false) + 7
                 } else {
-                  menumarginleft = 45
+                  menumarginleft = $("#toggle-toggle").outerWidth(false)
                 }
               } else {
                 $(".sidebar-top").removeClass("col-sm-2 toggled-title")
@@ -1095,7 +1095,7 @@
                 $("#sidebar-wrapper").hide()
                 $("#sidebar-title").hide()
                 $("#sidebar-wrapper").width(0)
-                menumarginleft = 45
+                menumarginleft = $("#toggle-toggle").outerWidth(false)
               }
               setTimeout(function() {
                 $("#myTopnav").css("margin-left", menumarginleft);

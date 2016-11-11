@@ -299,9 +299,9 @@ r.render = function (a) {
 	$('.grid').replaceWith('<div class="grid"></div>')
 	$('.grid').kendoTreeList(config)
 
-  $('.form-container').css('width','1243px')
-  $('.k-grid-header-wrap').css('width','840px')
-  $('.k-grid-content').css('width','840px').css('overflow-y','hidden');
+  $('.form-container').css('width','1300px')
+  $('.k-grid-header-wrap').css('width','890px')
+  $('.k-grid-content').css('width','890px').css('overflow-y','hidden');
 
   r.addScrollBottom();
 
@@ -517,7 +517,7 @@ r.panel_scrollrelocated = function () {
             $(this).css("width", "100%");
         } else {
             $(this).show();
-            $(this).css("width", $('.k-grid-content').width()+20);
+            $(this).css("width", $('.k-grid-content').width());
             //console.log(this);
             if (!$(this).hasClass('viewscrollfix')) $(this)[0].scrollLeft = $(this).parent().scrollLeft();
             $(this).addClass('viewscrollfix');

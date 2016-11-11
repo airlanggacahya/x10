@@ -84,6 +84,7 @@ func init() {
 	app.Register(&FinancialSnapshotController{baseCtrl})
 	app.Register(&ApprovalController{baseCtrl})
 	app.Register(&StandardController{baseCtrl})
+	app.Register(&CibilTransitoryController{baseCtrl})
 
 	app.Static("static", wd+"assets")
 	app.LayoutTemplate = "_layout.html"

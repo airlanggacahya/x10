@@ -71,7 +71,7 @@ r.render = function (a) {
 	})
 
 	var columns = [
-    { title: 'Particulars (in Rs. Lacs)', headerAttributes: { style: 'color:white; background-color: #313d50;' }, template: function (d) {
+    { headerTemplate: 'Particulars (in Rs. Lacs)<br>&nbsp;', headerAttributes: { style: 'color:white; background-color: #313d50;' }, template: function (d) {
     	var isFormula = d.IsFromFormula
     	if (typeof isFormula === 'undefined') {
     		isFormula = false
@@ -140,7 +140,7 @@ r.render = function (a) {
 
     	if (i < (r.dates().length - 1)) {
 	    	columns.push({
-	    		title: '% Growth in '+columnTitleGrowth,
+	    		headerTemplate : '% Growth in </br>'+columnTitleGrowth,
 	    		width: 120,
 	    		attributes: { style: 'text-align: right;background-color: rgb(195, 220, 236);' },
 	    		headerAttributes: {

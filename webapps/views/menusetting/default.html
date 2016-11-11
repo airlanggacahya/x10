@@ -23,6 +23,13 @@ model.Edit= ko.observable('{{.Edit}}')
     overflow-y: auto;
     height: 262px;
 }
+
+#EntryForm{
+  margin-top: 10px !important;
+}
+#inrole{
+  margin-top: 10px !important;
+}
 </style>
 
 <div data-bind="with: menusett">
@@ -32,7 +39,7 @@ model.Edit= ko.observable('{{.Edit}}')
                 <h3 class="no-margin">
                   Form Entry
                 </h3>
-                <div class="panel-nav-button">
+                <div class="panel-nav-button" style="margin-right: 16px;">
                     <button  data-bind="click:saveAppmenu, visible:saveData" id= "save" class="btn btn-sm btn-primary btn-flat" > <i class="fa fa-floppy-o"> Save</i></button>
                     <span data-bind="visible: select">
                         <button  data-bind="click:updateAppmenu, visible:updateData" id= "update" class="btn btn-sm btn-primary btn-flat" > <i class="fa fa-floppy-o"> Update</i></button>
@@ -102,12 +109,12 @@ model.Edit= ko.observable('{{.Edit}}')
                 <h3 class="no-margin">
                     Menu List
                 </h3>
-                <div class="panel-nav-button" data-bind="visible: select">
+                <div class="panel-nav-button" data-bind="visible: select" style="margin-right: 16px;">
                     <button class="btn btn-sm btn-primary  btn-flat" data-bind="click:editdataMenulist"><i class="fa fa-pencil-square-o" aria-hidden="true"> Edit</i></button>
                     <button class="btn btn-sm btn-danger  btn-flat"  data-bind="click:deleteMunulist"><i class="fa fa-times" aria-hidden="true"> Remove</i></button>
                 </div>
             </div>
-            <div class="panel-body  Role">
+            <div class="panel-body  Role" id="inrole">
                 <script id="menulist-template" type="text/kendo-ui-template">
                     <input type="hidden" value="#:item._id#" />
                     <span class="glyphicon glyphicon-credit-card"></span>&nbsp;#: item.title #

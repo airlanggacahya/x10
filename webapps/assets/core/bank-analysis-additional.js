@@ -1783,6 +1783,32 @@ $(document).ready(function(){
 //     }
 // }
 
+var deleteBankData = function(index) {
+    return function(){
+        swal({
+            title: "Are you sure?",
+            text: "You want to delete",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it"
+        }).then(function() {
+            var id = databank()[index].Id
+            var param = {Id: id}
+            ajaxPost(url+"/deletev2",param,function(res){
+                console.log(res)
+
+
+                if(res.success) {
+                    swal("Success","Data deleted !","success")
+                    refreshFilter()
+                } else {
+                    swal("Error",res.message,"error")
+                }
+            })
+        })
+    }
+}
 var editBankData = function(index){
     return function(){
         $('#savebtn').hide()

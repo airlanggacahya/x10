@@ -1661,3 +1661,24 @@ func (b *BankAnalysis) GenerateBankSummaryV2(res []BankAnalysisV2) []Summary {
 
 	return ressum
 }
+
+func (b *BankAnalysisV2) DeleteById(id string) error {
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	if err != nil {
+		return err
+	}
+
+	err = conn.NewQuery().
+		Where(dbox.Eq("_id", bson.ObjectIdHex(id))).
+		Delete().
+		From("BankAnalysisV2").
+		Exec(nil)
+
+	if err != nil {
+		return err
+	}
+
+	return err
+}

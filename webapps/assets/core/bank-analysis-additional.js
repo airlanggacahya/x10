@@ -222,12 +222,26 @@ var DrawDataBank = function(id){
                 latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
                 ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
                 var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
-                var multiplyer = _.min([latestebidmargin,customermargin])
+
+                var ebitdaFinis = latestebidmargin * 100
+
+                var multiplyer = 0
+                if(customermargin == 0 && ebitdaFinis == 0) {
+                    multiplyer = 0
+                } else if(customermargin == 0) {
+                    multiplyer = ebitdaFinis
+                } else if(ebitdaFinis == 0) {
+                    multiplyer = customermargin
+                } else {
+                    multiplyer = _.min([ebitdaFinis,customermargin])
+                }
 
                 for (var i = 0 ; i < res.data.Summary.length ; i++){
                     res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
                 }
-                console.log(res)
+
+                console.log("jancooook")
+                console.log(res.data.Summary)
                 createBankingGrid(res.data.Summary,multiplyer);
             }else{
                 createBankingGrid(res.data.Summary,0);

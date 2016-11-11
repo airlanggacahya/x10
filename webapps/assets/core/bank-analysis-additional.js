@@ -240,7 +240,6 @@ var DrawDataBank = function(id){
                     res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
                 }
 
-                console.log("jancooook")
                 console.log(res.data.Summary)
                 createBankingGrid(res.data.Summary,multiplyer);
             }else{
@@ -2460,7 +2459,7 @@ var createBankingGrid = function(res,minmargin){
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(Utilization,'P1') #"
             }, {
-                title:"Imp Margin (Rs. Lacs)<br> (Margin Taken : "+ kendo.toString(minmargin*100,"n1") +"%)",
+                title:"Imp Margin (Rs. Lacs)<br> (Margin Taken : "+ kendo.toString(minmargin,"n1") +"%)",
                 field:"ImpMargin",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],

@@ -69,13 +69,13 @@ frl.renderGrid = function(){
             columns: [
                 {
                     field:"NameFile",
-                    title:"Name of File",         
+                    title:"File Name",         
                     width:300,
                     headerAttributes: {class: 'k-header header-bgcolor'},
                 },
                 {
                     field:"Upload",
-                    title:"Last Upload",
+                    title:"Uploaded On",
                     width:200,
                     headerAttributes: {class: 'k-header header-bgcolor'},
                     template: function(d){

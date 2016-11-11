@@ -121,23 +121,23 @@ input[disabled]{
             Unfreeze
           </button>
           <span class="form-last-confirmation-info pull-right"></span>
-        </div>   
+        </div>
       </div>
       <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
 			<div id="summary-panel" class="panel-body" style="margin-top: -32px;" data-bind="visible:(isempty() != true)">
 				<div class="clearfix"></div>
-				
+
         <div id="toptables">
               <div class="col-md-12" style="margin-bottom: 10px;">
                 <div id="bankinggrid" ></div>
               </div>
-              
+
               <div class="clearfix"></div>
 
               <div class="col-md-4">
                 <div style="background-color: transparent;" id="oddetailgrid"></div>
               </div>
-            
+
               <div class="col-md-4">
                 <div id="amlgrid"></div>
               </div>
@@ -145,7 +145,7 @@ input[disabled]{
                 <div style="background-color: transparent;" id="currentgrid"></div>
               </div>
           </div>
-					
+
 			</div>
 		</div>
 	</div>
@@ -153,7 +153,7 @@ input[disabled]{
 
 <div class="col-md-12" data-bind="visible:(isempty())" style="margin-bottom: 30px"></div>
 
-<div >
+<div>
   <div class="col-md-12 col-sm-12 ez panel-content"  style="padding: 20px;margin-top: -28px;">
     <div class="panel ez">
       <div class="panel-heading">
@@ -175,12 +175,14 @@ input[disabled]{
 
       <div class="panel-body">
         <button type="button" style="display: none" data-bind="attr:{id:'bedit0'},click: editBankData(0),visible:(isempty() != true)"  class="btn btn-warning banksdata-action">Edit</button>
+        <button type="button" style="display: none" data-bind="attr:{id:'bdelete0'},click: deleteBankData(0),visible:(isempty() != true)"  class="btn btn-danger">Delete</button>
       </div>
       <div data-bind="visible:(isempty() != true)">
         <div class="panel-body" data-bind="foreach:databank"   style="margin-top: -34px;">
           <div class="clearfix"></div>
             <div >
-              <button type="button" data-bind="visible: ($index() > 0),attr:{id:'bedit'+$index()} ,click: editBankData($index())" class="btn btn-warning mgright pull-left banksdata-action">Edit</button>
+              <button type="button" data-bind="visible: ($index() > 0),attr:{id:'bedit'+$index()} ,click: editBankData($index())" style="margin-right: 3px;" class="btn btn-warning mgright pull-left banksdata-action">Edit</button>
+              <button type="button" data-bind="visible: ($index() > 0),attr:{id:'bdelete'+$index()} ,click: deleteBankData($index())" class="btn btn-danger mgright pull-left">Delete</button>
               <!--<button type="button" data-bind="visible:false,attr:{id:'update'+$index()},click: updateDataBank($index())" class="btn btn-primary mgright pull-right saveupdate banksdata-action">Update</button>-->
             </div>
             <div>

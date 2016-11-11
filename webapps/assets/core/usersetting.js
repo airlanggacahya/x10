@@ -234,30 +234,35 @@ usersett.GetDataUser = function(){
                     field:"Username",
                     title:"User Name",
                     width:150,
-                    template: "#if(model.Edit() != 'false'){#<a class='grid-select' href='javascript:usersett.EditData(\"#: Id #\")'>#: Username #</a>#}else{#<div>#: Username #</div>#}#"
+                    headerAttributes: {class: 'k-header header-bgcolor'},
+                    template: "#if(model.Edit() != 'false'){#<a class='grid-select' id='ls' href='javascript:usersett.EditData(\"#: Id #\")'>#: Username #</a>#}else{#<div>#: Username #</div>#}#"
 
                 },
                 {
                     field:"Fullname",
                     title:"Full Name",
+                    headerAttributes: {class: 'k-header header-bgcolor'},
                     width:100
 
                 },
                 {
                     field:"Enable",
                     title:"Enable",
+                    headerAttributes: {class: 'k-header header-bgcolor'},
                     width:50
 
                 },
                 {
                     field:"Email",
                     title:"Email",
+                    headerAttributes: {class: 'k-header header-bgcolor'},
                     width:100
 
                 },
                 {
                     field:"Roles",
                     title:"Roles",
+                    headerAttributes: {class: 'k-header header-bgcolor'},
                     width:100
 
                 }]

@@ -563,6 +563,24 @@ func (c *BankAnalysisController) UpdateV2(k *knot.WebContext) interface{} {
 	return CreateResult(true, bankanalysis, "")
 }
 
+func (c *BankAnalysisController) DeleteV2(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	tx := tk.M{}
+	err := k.GetPayload(&tx)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	err = new(BankAnalysisV2).DeleteById(tx.GetString("Id"))
+
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	return CreateResult(true, tx.GetString("Id"), "")
+}
+
 func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 

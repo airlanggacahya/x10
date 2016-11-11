@@ -191,7 +191,7 @@
 		                    else
 		                        data.calculatedvaluetodisplay = getFixedCalculatedValue;
 		                } else {
-		                    data.calculatedvaluetodisplay = "n/a"
+		                    data.calculatedvaluetodisplay = "N/A"
 		                }
 
 		                if(data.Operator == "min"){
@@ -312,8 +312,8 @@
 				    tmp.v1 = v.rowData[1]
 				    tmp.v2 = v.rowData[2]
 				  } else{
-				  	tmp.v1 = "n/a"
-				    tmp.v2 = "n/a"
+				  	tmp.v1 = "N/A"
+				    tmp.v2 = "N/A"
 				  }
 				  dataLeverageRatios.push(tmp)
 				})
@@ -350,8 +350,8 @@
 					    tmp.v1 = v.rowData[1]
 					    tmp.v2 = v.rowData[2]
 					  } else{
-					  	tmp.v1 = "n/a"
-					    tmp.v2 = "n/a"
+					  	tmp.v1 = "N/A"
+					    tmp.v2 = "N/A"
 					  }
 					  dataOperatingRatios.push(tmp)
 					}
@@ -388,8 +388,8 @@
 					    tmp.v1 = v.rowData[1]
 					    tmp.v2 = v.rowData[2]
 					  } else{
-					  	tmp.v1 = "n/a"
-					    tmp.v2 = "n/a"
+					  	tmp.v1 = "N/A"
+					    tmp.v2 = "N/A"
 					  }
 					  dataCoverageRatios.push(tmp)
 				})
@@ -425,8 +425,8 @@
 					    tmp.v1 = v.rowData[1]
 					    tmp.v2 = v.rowData[2]
 					  } else{
-					  	tmp.v1 = "n/a"
-					    tmp.v2 = "n/a"
+					  	tmp.v1 = "N/A"
+					    tmp.v2 = "N/A"
 					  }
 					  dataLiquidityRatios.push(tmp)
 				})
@@ -468,30 +468,30 @@
 				  //   tmp.v1 = v.rowData[1]
 				  //   tmp.v2 = v.rowData[2]
 				  // } else{
-				  // 	tmp.v1 = "n/a"
-				  //   tmp.v2 = "n/a"
+				  // 	tmp.v1 = "N/A"
+				  //   tmp.v2 = "N/A"
 				  // }
 						  // if(v.rowData.length > 4){
-						  //   tmp.v1 = "n/a"
-						  //   tmp.v2 = "n/a"
-						  //   tmp.v3 = "n/a"
+						  //   tmp.v1 = "N/A"
+						  //   tmp.v2 = "N/A"
+						  //   tmp.v3 = "N/A"
 						  //   tmp.v4 = v.rowData[4]
 						  // } else if(v.rowData.length > 3){
-						  //   tmp.v1 = "n/a"
-						  //   tmp.v2 = "n/a"
+						  //   tmp.v1 = "N/A"
+						  //   tmp.v2 = "N/A"
 						  //   tmp.v3 = v.rowData[3]
 						  // } else if(v.rowData.length > 2){
-						  //   tmp.v1 = "n/a"
+						  //   tmp.v1 = "N/A"
 						  //   tmp.v2 = v.rowData[2]
 						  // } else{
-						  // 	tmp.v1 = "n/a"
-						  //   tmp.v2 = "n/a"
+						  // 	tmp.v1 = "N/A"
+						  //   tmp.v2 = "N/A"
 						  // }
 						  dataKeyRatios.push(tmp)
 					  // }
 				})
 			}
-			
+
 				var colcount = r.KRHEADER().length;
 				var isvalid = false;
 				var cleanit = false;
@@ -506,13 +506,13 @@
 					}
 					if(cleanit){
 						dataKeyRatios.forEach(function(x){
-									x["v"+(colcount-1)] = "n/a"
+									x["v"+(colcount-1)] = "N/A"
 								});
-					}	
+					}
 
 					if(isvalid){
 						dataKeyRatios.forEach(function(x){
-							x["v"+(colcount-1)] = "n/a"
+							x["v"+(colcount-1)] = "N/A"
 						});
 					}
 					if(!cleanit){
@@ -569,8 +569,8 @@
 					    tmp.v1 = v.rowData[1]
 					    tmp.v2 = v.rowData[2]
 					  } else{
-					  	tmp.v1 = "n/a"
-					    tmp.v2 = "n/a"
+					  	tmp.v1 = "N/A"
+					    tmp.v2 = "N/A"
 					  }
 					  dataPnL.push(tmp)
 				  }
@@ -615,8 +615,8 @@
 					    tmp.v1 = r.KFI()[1].row()[v].rowData[1]
 					    tmp.v2 = r.KFI()[1].row()[v].rowData[2]
 					  } else{
-					  	tmp.v1 = "n/a"
-					    tmp.v2 = "n/a"
+					  	tmp.v1 = "N/A"
+					    tmp.v2 = "N/A"
 					  }
 					}
 					dataBalanceSheet.push(tmp)
@@ -798,16 +798,16 @@
 	var createBankingDetails = function(res){
 		var multiplyer = 0;
 
-    	if(r.AllData().Data.AD.length > 0)		
+    	if(r.AllData().Data.AD.length > 0)
 			var customermargin = r.AllData().Data.AD[0].accountsetupdetails.pdinfo.customermargin
-		
+
         if (r.rootdates().length != 0){
             idxlatestaudited = _.findLastIndex(r.rootdates(),['Status','AUDITED'])
             latestauditeddate = r.rootdates()[idxlatestaudited].Date
             ebitdamargin = _.find(r.rootdata(),{'FieldAlias':"EBITDAMARGIN"})
             var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
             var multiplyer = _.min([latestebidmargin,customermargin])
-            
+
             for (var i = 0 ; i < res.length ; i++){
                 res[i].ImpMargin = multiplyer*res[i].TotalCredit
             }
@@ -975,27 +975,27 @@
 				columns : [{
             		title:"Outstanding Debt",
             		headerAttributes: { class: "header-bgcolor" },
-					columns : [{ 
-						title : "Total Obligations", 
+					columns : [{
+						title : "Total Obligations",
 						headerAttributes: { "class": "sub-bgcolor" },
 						width: 100,
-						columns : [{  
-							title : "POS (Rs lacs)", 
-							field : "TotalObligationPOS", 
+						columns : [{
+							title : "POS (Rs lacs)",
+							field : "TotalObligationPOS",
 							headerAttributes: { "class": "sub-bgcolor" },
-							width: 90, 
-							attributes: { 
-								"class": "text-center", 
-								style: 'background: rgb(238, 238, 238)' 
-							}  
-						}, { 
-							field : "TotalObligationEMI", 
-							headerAttributes: { "class": "sub-bgcolor" }, 
-							title : "EMI (Rs lacs)", 
-							width: 90, 
-							attributes: { style: 'background: rgb(238, 238, 238)' }  
+							width: 90,
+							attributes: {
+								"class": "text-center",
+								style: 'background: rgb(238, 238, 238)'
+							}
+						}, {
+							field : "TotalObligationEMI",
+							headerAttributes: { "class": "sub-bgcolor" },
+							title : "EMI (Rs lacs)",
+							width: 90,
+							attributes: { style: 'background: rgb(238, 238, 238)' }
 						}]
-					}, { 
+					}, {
 						title : "Close Within 3 Month",
 						columns : [
 							{ field : "CloseWithin3MonthPOS", headerAttributes: { "class": "sub-bgcolor" }, title : "POS (Rs lacs)", width: 90, attributes: { style: 'background: rgb(238, 238, 238)' }  },
@@ -1107,7 +1107,7 @@
     .k-grid  .k-grid-header  .k-header  .k-link {
 	    height: auto;
 	}
-	  
+
 	.k-grid  .k-grid-header  .k-header {
 	    white-space: normal;
 	}
@@ -1138,31 +1138,31 @@
 		                <table class="custom-label table-bordered">
 		                    <tr>
 		                        <td class="col-sm-2 text-bold">Company Name</td>
-		                        <td class="col-sm-4"><span data-bind="text:loanapproval.companyname"></span></td> 
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.companyname"></span></td>
 		                        <td class="table-divider"></td>
 		                        <td class="col-sm-2 text-bold">Login Date</td>
-		                        <td class="col-sm-4"><span data-bind="text:loanapproval.logindate"></span></td> 
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.logindate"></span></td>
 		                    </tr>
 		                    <tr>
 		                        <td class="col-sm-2 text-bold">Business Address</td>
-		                        <td class="col-sm-4"><span data-bind="text:loanapproval.businessaddress"></span></td> 
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.businessaddress"></span></td>
 		                        <td class="table-divider"></td>
 		                        <td class="col-sm-2 text-bold">Location</td>
-		                        <td class="col-sm-4"><span data-bind="text:loanapproval.location"></span></td> 
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.location"></span></td>
 		                    </tr>
 		                    <tr>
 		                        <td class="col-sm-2 text-bold">Product</td>
-		                        <td class="col-sm-4"><span data-bind="text:loanapproval.product"></span></td> 
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.product"></span></td>
 		                        <td class="table-divider"></td>
 		                        <td class="col-sm-2 text-bold">Lead Distributor</td>
 		                        <td class="col-sm-4"><span data-bind="text:loanapproval.leaddistributor"></span></td>
 		                    </tr>
 		                 <!--    <tr>
 		                        <td class="col-sm-2 text-bold">Business Segment</td>
-		                        <td class="col-sm-4"><span data-bind="text:loanapproval.businesssegment"></span></td> 
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.businesssegment"></span></td>
 		                        <td class="table-divider"></td>
 		                        <td class="col-sm-2 text-bold">Business Since</td>
-		                        <td class="col-sm-4"><span data-bind="text:loanapproval.businesssince"></span></td> 
+		                        <td class="col-sm-4"><span data-bind="text:loanapproval.businesssince"></span></td>
 		                    </tr> -->
 		                    <tr>
 		                      <!--   <td class="col-sm-2 text-bold">Internal Rating</td>
@@ -1281,22 +1281,22 @@
 				            <div class="k-grid k-widget">
 			                <table class="custom-label table-bordered">
 			                    <thead class="k-grid-header">
-			                        
+
 			                    </thead>
 			                    <tr>
-			                        
+
 			                    </tr>
 			                    <tr>
-			                        
+
 			                    </tr>
 			                    <tr>
-			                        
+
 			                    </tr>
 			                    <tr>
-			                        
+
 			                    </tr>
 			                    <tr>
-			                        
+
 			                    </tr>
 			                    <tr>
 			                        <td class="col-sm-2 text-bold">Average Delay Days (Highest)</td>
@@ -1337,7 +1337,7 @@
 		                        <td class="col-sm-1 text-center"><span data-bind="text:loanApproval.paymentTrack.averagetransactionpaymentdelay"></span></td>
 		                        <td class="table-divider" rowspan="5"></td>
 		                        <td class="col-sm-3 text-bold">Average Utilization of Existing Limit</td>
-		                        <td class="col-sm-1 text-center" style="min-width: 100px;"><span>0</span></td>	
+		                        <td class="col-sm-1 text-center" style="min-width: 100px;"><span>0</span></td>
 		                    </tr>
 		                    <tr>
 		                        <td class="col-sm-2 text-bold">Max Payment Days</td>
@@ -1557,7 +1557,7 @@
 		            </div>
 				</div>
 			</div>
-			
+
 			<div class="panel">
 				<div class="panel-heading">
 					<h3 class="no-margin">

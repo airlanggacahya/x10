@@ -222,12 +222,25 @@ var DrawDataBank = function(id){
                 latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
                 ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
                 var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
-                var multiplyer = _.min([latestebidmargin,customermargin])
+
+                var ebitdaFinis = latestebidmargin * 100
+
+                var multiplyer = 0
+                if(customermargin == 0 && ebitdaFinis == 0) {
+                    multiplyer = 0
+                } else if(customermargin == 0) {
+                    multiplyer = ebitdaFinis
+                } else if(ebitdaFinis == 0) {
+                    multiplyer = customermargin
+                } else {
+                    multiplyer = _.min([ebitdaFinis,customermargin])
+                }
 
                 for (var i = 0 ; i < res.data.Summary.length ; i++){
                     res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
                 }
-                console.log(res)
+
+                console.log(res.data.Summary)
                 createBankingGrid(res.data.Summary,multiplyer);
             }else{
                 createBankingGrid(res.data.Summary,0);
@@ -1783,6 +1796,32 @@ $(document).ready(function(){
 //     }
 // }
 
+var deleteBankData = function(index) {
+    return function(){
+        swal({
+            title: "Are you sure?",
+            text: "You want to delete",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it"
+        }).then(function() {
+            var id = databank()[index].Id
+            var param = {Id: id}
+            ajaxPost(url+"/deletev2",param,function(res){
+                console.log(res)
+
+
+                if(res.success) {
+                    swal("Success","Data deleted !","success")
+                    refreshFilter()
+                } else {
+                    swal("Error",res.message,"error")
+                }
+            })
+        })
+    }
+}
 var editBankData = function(index){
     return function(){
         $('#savebtn').hide()
@@ -2420,7 +2459,7 @@ var createBankingGrid = function(res,minmargin){
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(Utilization,'P1') #"
             }, {
-                title:"Imp Margin (Rs. Lacs)<br> (Margin Taken : "+ kendo.toString(minmargin*100,"n1") +"%)",
+                title:"Imp Margin (Rs. Lacs)<br> (Margin Taken : "+ kendo.toString(minmargin,"n1") +"%)",
                 field:"ImpMargin",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],

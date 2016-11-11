@@ -1014,10 +1014,10 @@ a:focus, i:focus {
     /*height: 100%;*/
     /*margin-left: -250px;*/
     overflow-y: auto;
-    -webkit-transition: all 0.5s ease;
+    /*-webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+    transition: all 0.5s ease;*/
     background-color: #202935;
   }
 
@@ -1045,10 +1045,10 @@ a:focus, i:focus {
       width: 0;
       /*height: 100%;*/
       overflow-y: auto;
-      -webkit-transition: all 0.5s ease;
+      /*-webkit-transition: all 0.5s ease;
       -moz-transition: all 0.5s ease;
       -o-transition: all 0.5s ease;
-      transition: all 0.5s ease;
+      transition: all 0.5s ease;*/
       background: rgb(32,63,83);
   }
 

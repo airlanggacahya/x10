@@ -313,7 +313,7 @@
           #sidebar-wrapper {
               width: 16.66666667%;
               overflow-x: hidden;
-              margin-top: 0px;
+              margin-top: -4px;
           }
 
           #wrapper.toggled #sidebar-wrapper {
@@ -776,11 +776,6 @@
   model.PageId = ko.observable("");
   model.PageTopMenu = ko.observable("");
   model.CurrentSubMenu = ko.observableArray([]);
-  // model.PageTopMenu.subscribe(function(val){
-  //     setTimeout(function(){
-  //       model.FindSubMenu();
-  //     },5000)
-  // });
 
   model.MainMenus = ko.observableArray([]);
   model.RoleGroup = ko.observable("");
@@ -844,8 +839,7 @@
               );
     }
     return obj;
-  }
-  ;
+  };
 
   model.getDataMenu = function () {
     var url = "/menusetting/getmenutop";
@@ -891,31 +885,43 @@
     });
   }
 
-  var submenuWidth = function(e) {
-      return $(window).width() - $("#sidebar-wrapper").width();
+  var setSubmenu = function() {
+    setTimeout(function(){
+      var submenuWidth = function() {
+          return $(window).width() - $("#sidebar-wrapper").width();
+      }
+
+      $('#menubackup').width(submenuWidth())
+      $(".horizontal-menu").width(submenuWidth());
+      $('#submenu-top').offset({ 
+        left: $("#sidebar-wrapper").outerWidth(false) 
+      })
+
+      try{
+        $('#menu-backup').offset({ 
+          top: $("#submenu-top").offset().top
+        })
+      } catch(e){}
+    }, 10)
   }
 
   function rendermenu(){
-       var margin = parseInt($("#filtercontainer").css('marginTop'));
-      $("#myTopnav").kendoMenu({
-        animation: false,
-        open: function(e) {
-          var item = $(e.item);
-          item.find(".horizontal-menu").width(submenuWidth())
-          $('#submenu-top').offset({ left: 0 })
-        },
-        closeOnClick : true,
-        deactivate: function(e){
-          if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null){
-            if(typeof showFilter === 'function')
-              showFilter(false);
-          }
+    var margin = parseInt($("#filtercontainer").css('marginTop'));
+    $("#myTopnav").kendoMenu({
+      animation: false,
+      open: function(e) {
+        setSubmenu()
+      },
+      closeOnClick : true,
+      deactivate: function(e){
+        if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null){
+          if(typeof showFilter === 'function')
+            showFilter(false);
         }
-      });
+      }
+    });
 
-      $("#myTopnavhide .tab-current").parent().appendTo("#menubackup nav");
-
-      $(".horizontal-menu").width($(window).width());
+    $("#myTopnavhide .tab-current").parent().appendTo("#menubackup nav");
 
     if(typeof showFilter === 'function'){
       if(filter().CustomerSearchVal() == "" && filter().DealNumberSearchVal() == ""){
@@ -927,22 +933,22 @@
        $(".panel-body").css("margin-top",45);
     }
 
-      window.autoHideLoaderForTheFirstTime()
+    window.autoHideLoaderForTheFirstTime()
 
-      setTimeout(function () {
-        var hoverActiveMenu = function () {
-          $('.color-base.active').trigger('mouseover')
-        }
+    setTimeout(function () {
+      var hoverActiveMenu = function () {
+        $('.color-base.active').trigger('mouseover')
+      }
 
-        var delay = setTimeout(hoverActiveMenu, 50)
+      var delay = setTimeout(hoverActiveMenu, 50)
 
-        $('.color-base').parent().on('mouseleave', function () {
-          delay = setTimeout(hoverActiveMenu, 50)
-        })
-        $('.color-base').parent().on('mouseover', function () {
-          clearTimeout(delay)
-        })
-      }, 100)
+      $('.color-base').parent().on('mouseleave', function () {
+        delay = setTimeout(hoverActiveMenu, 50)
+      })
+      $('.color-base').parent().on('mouseover', function () {
+        clearTimeout(delay)
+      })
+    }, 100)
   }
 
   model.GetPageTitle = function (PageId, MenuList, ParentId) {
@@ -1052,7 +1058,7 @@
         <div class="navbar-fixed-top app-top" id="nav-dex">
           <div class="app-wrapper">
 
-            <div class="sidebar-top no-padding pull-left" style="position: absolute;">
+            <div id="toggle-toggle" class="sidebar-top no-padding pull-left" style="position: absolute;">
               <div id="sidebar-title">
                 Additional Filters
               </div>
@@ -1068,10 +1074,10 @@
 
             <script type="text/javascript">
             var openx = true;
-
-            toggle(true)
+            toggle()
 
             function toggle() {
+              menumarginleft = 0
               if( ! openx ){
                 if(model.currentTitle() === 'Dashboard'){
                   $(".sidebar-top").addClass("col-sm-2 toggled-title")
@@ -1079,7 +1085,9 @@
                   $("#sidebar-wrapper").show()
                   $("#sidebar-title").show()
                   $("#sidebar-wrapper").width('16.66666667%')
-                  $("#myTopnav").css("margin-left", '17.66666667%');
+                  menumarginleft = $("#sidebar-wrapper").outerWidth(false) + 7
+                } else {
+                  menumarginleft = $("#toggle-toggle").outerWidth(false)
                 }
               } else {
                 $(".sidebar-top").removeClass("col-sm-2 toggled-title")
@@ -1087,8 +1095,12 @@
                 $("#sidebar-wrapper").hide()
                 $("#sidebar-title").hide()
                 $("#sidebar-wrapper").width(0)
-                $("#myTopnav").css("margin-left", 50);
+                menumarginleft = $("#toggle-toggle").outerWidth(false)
               }
+              setTimeout(function() {
+                $("#myTopnav").css("margin-left", menumarginleft);
+              }, 10)
+              setSubmenu()
               openx = !openx
             }
             </script>
@@ -1232,18 +1244,15 @@
 
   $(window).on('load resize ajaxComplete', function(){
     setTimeout(function(){
-      $('#menubackup').width($(window).width())
-      $(".horizontal-menu").width($(window).width());
-      $('#submenu-top').offset({ left: 0 })
+      setSubmenu()
     }, 200);
   })
 
-  $('#myTopnav').hover(function(){
-    setTimeout(function(){
-      $('#menubackup').width($(window).width())
-      $('#submenu-top').offset({ left: 0 })
-    }, 200);
-  })
+  // $('#myTopnav').hover(function(){
+  //   setTimeout(function(){
+  //     setSubmenu()
+  //   }, 200);
+  // })
 </script>
 
 </body>

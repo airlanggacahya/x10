@@ -213,7 +213,7 @@ r.render = function (a) {
       $('[data-what="key-ratio"]').parent().parent().each(function (i, e) {
         var isFound = false
         var writeNA = function (d) {
-            $(d).find('span').html('n/a')
+            $(d).find('span').html('NA')
         }
 
         $(e).find('td').get().reverse().forEach(function (f, j) {

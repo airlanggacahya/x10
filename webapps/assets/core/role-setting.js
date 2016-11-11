@@ -307,12 +307,14 @@ rolesett.GetDataRole = function(){
                     field:"Name",
                     title:"Role Name",
                     // width:150,
-                    template: "#if(model.Edit() != 'false'){#<a class='grid-select' href='javascript:rolesett.EditData(\"#: Id #\")'>#: Name #</a>#}else{#<div>#: Name #</div>#}#"
+                    headerAttributes: {class: 'k-header header-bgcolor'},
+                    template: "#if(model.Edit() != 'false'){#<a class='grid-select' id='ls' href='javascript:rolesett.EditData(\"#: Id #\")'>#: Name #</a>#}else{#<div>#: Name #</div>#}#"
 
                 },
                 {
                     field:"Status",
                     title:"Status",
+                    headerAttributes: {class: 'k-header header-bgcolor'},
                     // width:50
 
                 }]

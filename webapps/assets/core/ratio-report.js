@@ -271,16 +271,20 @@ r.render = function (a) {
             rowFormula.find('td:eq('+i+')').text("N/A")
             rowNotFormula.find('td:eq('+i+')').text("N/A")
           } else {
-            rowFormula.find('td:eq('+(i*2)+')').text("N/A")
-            rowFormula.find('td:eq('+((i*2)-1)+')').text("N/A")
-            rowNotFormula.find('td:eq('+(i*2)+')').text("N/A")
-            rowNotFormula.find('td:eq('+((i*2)-1)+')').text("N/A")
+             if( r.fileType() !="RATIO"){
+                rowNotFormula.find('td:eq('+((i*2)-1)+')').text("N/A")
+                rowFormula.find('td:eq('+((i*2)-1)+')').text("N/A")
+             }
+
+              rowFormula.find('td:eq('+(i*2)+')').text("N/A")
+              rowNotFormula.find('td:eq('+(i*2)+')').text("N/A")
+
+            }
           }
           //console.log(i)
 
           // //if(i==)
           // //
-        }
       })
 
 			$('[data-type="Section"],[data-type="Sub Section"]').each(function (i, d) {

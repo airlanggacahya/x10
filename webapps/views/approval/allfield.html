@@ -1,3 +1,17 @@
+<style type="text/css">
+	#gridKeyRatios .k-grid-content{
+	    overflow-y: hidden;
+	}
+
+	#gridKeyRatios .k-grid-header{
+	    padding-right: 0px !important;
+	    /*padding-bottom: 0px !important;*/
+	}
+
+	#gridKeyRatios .k-grid-header-wrap{
+		margin-bottom: -6px;
+	}
+</style>
 <!-- BankingandOsSnapshot -->
 	<script id="rowTemplateTop" type="text/x-kendo-tmpl">
 	  <tr>
@@ -278,7 +292,7 @@
       { title: "Name", field: "name", width: 250, headerAttributes: { "class": "sub-bgcolor col-sm-2" }}
     ]
     var columnkey = [
-      { title: "Name", field: "name", width: 250, headerAttributes: { "class": "sub-bgcolor col-sm-2" }}
+      { title: "Name", field: "name", width: 150, headerAttributes: { "class": "sub-bgcolor col-sm-2" }}
     ]
 
 		if( r.FR()[0].ColumnHeader().length > 2 ){
@@ -290,7 +304,7 @@
 		}
 
 		 _.each(r.KRHEADER(),function(v,i){
-		  				columnkey.push({ title: v.replace("(Audited)", ""), field: "v"+i, headerAttributes: { "class": "sub-bgcolor col-sm-2" }})
+		  				columnkey.push({ title: v.replace("(Audited)", ""), field: "v"+i, width: 30,headerAttributes: { "class": "sub-bgcolor col-sm-2" }})
 		});
 
     // -------------- LeverageRatios -----------------------------
@@ -360,7 +374,7 @@
 			$("#gridOperatingRatios").html("")
 	    $("#gridOperatingRatios").kendoGrid({
 	        dataSource : { data: dataOperatingRatios },
-	        scrollable: false,
+	        scrollable: true,
 	        columns: [{
 		      	title:"Operating Ratios",
 		      	headerAttributes: { class: "header-bgcolor" },
@@ -524,7 +538,7 @@
 			$("#gridKeyRatios").html("")
 	    $("#gridKeyRatios").kendoGrid({
 	        dataSource : { data: dataKeyRatios },
-	        scrollable: false,
+	        scrollable: true,
 	        columns: [{
 		      	title:"Key Ratios",
 		      	headerAttributes: { class: "header-bgcolor" },

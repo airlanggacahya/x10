@@ -258,36 +258,36 @@ r.setData = function() {
     }
 
     if (prom!=undefined){
-      if (prom.EmailAddress.length > 0){
-        if (prom.EmailAddress[0] == ""){
-          var mail ="";
-          $.each(prom.EmailAddress, function(d, email){
-            if(email != ""){
-              mail += email+"\n"
-            }
+      // if (prom.EmailAddress.length > 0){
+      //   if (prom.EmailAddress[0] == ""){
+      //     var mail ="";
+      //     $.each(prom.EmailAddress, function(d, email){
+      //       if(email != ""){
+      //         mail += email+"\n"
+      //       }
 
-          });
-          itemData.Email =mail;
-        }
-      }
+      //     });
+      //     itemData.Email =mail;
+      //   }
+      // }
 
       itemData.Name = prom.ConsumerInfo.ConsumerName;
       itemData.Dob = moment(prom.ConsumerInfo.DateOfBirth).format("DD-MM-YYYY");//prom.ConsumerInfo.DateOfBirth;
-      itemData.Phone = prom.Telephones[0].Number;
-      itemData.Address = prom.AddressData[0].AddressPinCode;
-      itemData.Score = itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
+      // itemData.Phone = prom.Telephones[0].Number;
+      // itemData.Address = prom.AddressData[0].AddressPinCode;
+      itemData.Score = prom.CibilScore;//itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
       itemData.Passport = prom.PassportNumber;
       itemData.Dates = moment(prom.DateOfReport).format("DD-MM-YYYY");
-      itemData.Times = moment(prom.TimeOfReport).add(-7,'h').format("HH:mm:ss");
+      itemData.Times = moment(prom.TimeOfReport).format("HH:mm:ss");
       itemData.AddDateReport = moment(prom.AddressData[0].DateReported).format("DD-MM-YYYY");
-      itemData.Category = prom.AddressData[0].Category;
+      // itemData.Category = prom.AddressData[0].Category;
       itemData.TotalAcc = prom.TotalAccount;
       itemData.TotalOverdue = prom.TotalOverdues;
       itemData.TotalZeroBalanceAcc = prom.TotalZeroBalanceAcc;
       itemData.HighCreditSanctionAmount = cibil.formatnum(prom.HighCreditSanctionAmount)//prom.HighCreditSanctionAmount;
       itemData.CurrentBalance = prom.CurrentBalance;
       itemData.OverdueBalance = prom.OverdueBalance;
-      itemData.TelephoneType = prom.Telephones[0].Type;
+      // itemData.TelephoneType = prom.Telephones[0].Type;
       itemData.Gender = prom.ConsumerInfo.Gender;
       itemData.Addresses = ko.observableArray([]);
       itemData.FileName = prom.FileName;
@@ -302,6 +302,7 @@ r.setData = function() {
         str +=w+1+". "+item+"\n"
       });
       itemData.ScoringFactor = str;
+      itemData.Email = prom.EmailAddress.join("\n")
 
       var strTelephones ="";
       $.each(prom.Telephones, function(w, item){
@@ -708,28 +709,31 @@ var updateConfirmPromotors = function(status){
 }
 
 var updateConfirmCibil = function(){
-    var status = 1
-    if(r.isConfirm() == 1) {
-      status = 0
-    }
-    var param = {CustomerId: filter().CustomerSearchVal()}
-    param["DealNo"] = filter().DealNumberSearchVal()
-    param["IsConfirm"] = status
-    var url = "/datacapturing/updateconfirmcibil"
-
-
-    ajaxPost(url, param, function(data) {
-      if(data.success) {
-        if(status == 0){
-          swal("Please Edit / Enter Data", "", "success");
-        } else {
-          swal("Successfully Confirmed", "", "success");
-        }
-
-        updateConfirmPromotors(status)
+    if(r.reportCibilList().length == 0) {
+      swal("Warning","Data CIBIL not found","warning");
+    } else {
+      var status = 1
+      if(r.isConfirm() == 1) {
+        status = 0
       }
-    })
+      var param = {CustomerId: filter().CustomerSearchVal()}
+      param["DealNo"] = filter().DealNumberSearchVal()
+      param["IsConfirm"] = status
+      var url = "/datacapturing/updateconfirmcibil"
 
+
+      ajaxPost(url, param, function(data) {
+        if(data.success) {
+          if(status == 0){
+            swal("Please Edit / Enter Data", "", "success");
+          } else {
+            swal("Successfully Confirmed", "", "success");
+          }
+
+          updateConfirmPromotors(status)
+        }
+      })
+    }
 }
 
 var setRatingForCibil = function(rating) {

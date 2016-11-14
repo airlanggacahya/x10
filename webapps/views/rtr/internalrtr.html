@@ -102,13 +102,13 @@ model.User= ko.observable('{{.Username}}');
    min-width: 500px;
 }
 div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
-		background-color: rgb(57,125, 129) !important;
+		background-color: #313d50 !important;
 		color: #fff !important;
 	}
 
 	div.k-grid-header > div > table > thead > tr:nth-child(2) > th {
-		background-color: rgb(195, 220, 236) !important;
-		color: rgb(32,63,83) !important;
+		background-color: rgba(128, 149, 176, 1) !important;
+		color: white !important;
 		/*overflow-y: hidden !important;*/
 	}
 .satu{
@@ -135,7 +135,13 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
       		<div class="panel-heading"><h4 style="margin-top: 4px">&nbsp;</h4></div>
       		<div class="form-last-confirmation-info"></div>
 			<div class="panel-body" style="margin-top: -63px">
-				<div class="clearfix"></div>
+				<div class="col-md-12" style="margin-bottom: 2%;">
+          <div style="padding-left: 30px;">
+            <button class="btn btn-sm btn-confirm separator" style="margin-right: inherit;">Confirm All</button>
+            <button class="btn btn-sm btn-freeze separator" style="margin-right: inherit;">Freeze</button>
+          </div>
+        </div>
+        <div class="clearfix"></div>
 				<div class="col-md-7">
 					<!-- <div id="toptables1">
 						<div id="accountdetail"></div>
@@ -156,16 +162,9 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 								<div class="col-md-6">
 									<input class="input-sm form-control noable" data-bind="value: Scheme" readonly/>
 								</div>
-								
+
 							</div>
 						</div>
-					</div>
-				</div>
-				<!-- </div> -->
-				<div class="col-md-5">
-					<div class="pull-right">
-						<button class="btn btn-sm btn-confirm separator" style="margin-right: inherit;">Confirm All</button>
-						<button class="btn btn-sm btn-freeze separator" style="margin-right: inherit;">Freeze</button>
 					</div>
 				</div>
 			</div>

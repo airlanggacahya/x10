@@ -31,6 +31,7 @@ type AccountDetailSummary struct {
 	ACSProduct   string
 	ACSScheme    string
 	ACSPDRemarks string
+	CMISNULL     bool
 
 	BDCustomerSegmentClasification string
 	BDDiversificationCustomers     float64
@@ -118,6 +119,7 @@ type AccountDetail struct {
 	DistributorMix      DistributorMix
 	Status              int
 	Freeze              bool      `bson:"Freeze,omitempty"`
+	CMISNULL            bool      `bson:"CMISNULL,omitempty"`
 	DateConfirmed       time.Time `bson:"DateConfirmed,omitempty"`
 	DateFreeze          time.Time `bson:"DateFreeze,omitempty"`
 	DateSave            string    `bson:"DateSave,omitempty"`
@@ -294,6 +296,7 @@ func (a *AccountDetail) GetDataForFormulaBuilder(customerId, dealNo string) (Acc
 	final.ACSProduct = acc.AccountSetupDetails.Product
 	final.ACSScheme = acc.AccountSetupDetails.Scheme
 	final.ACSPDRemarks = acc.AccountSetupDetails.PdInfo.PdRemarks
+	final.CMISNULL = acc.CMISNULL
 
 	final.BDCustomerSegmentClasification = acc.BorrowerDetails.CustomerSegmentClasification
 	final.BDDiversificationCustomers = acc.BorrowerDetails.DiversificationCustomers

@@ -409,8 +409,11 @@ adf.getForm = function () {
 	data.VendorDetails = data.VendorDetails.filter(function (d) {
 		return d.DistributorName != ''
 	})
-
-	console.log("----- 345",data)
+	data.CMISNULL = adf.CMISNULL();
+	if(data.CMISNULL){
+		data.AccountSetupDetails.PdInfo.CustomerMargin = 0;
+	}
+	// console.log("----- 345",data)
 
 	return data
 }
@@ -1948,6 +1951,7 @@ adf.getData = function () {
 			if (res.Message == "data not found") {
 				adf.setForm(res.Data)
 				adf.PdDate("")
+				adf.CMISNULL(true);
 				adf.form.LoanDetails.FirstAgreementDate("");
 				adf.form.LoanDetails.RecenetAgreementDate("");
 				adf.form.BorrowerDetails.DateBusinessStarted("");
@@ -1988,6 +1992,7 @@ adf.getData = function () {
 					console.log(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
 					adf.reloadStatus(res.Data.Status)
 					console.log("------>>1856",res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
+					adf.CMISNULL(res.Data.CMISNULL);
 
 					if(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970") >-1)
 						adf.PdDate("")
@@ -2000,6 +2005,25 @@ adf.getData = function () {
 
 						if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1)
 						adf.form.BorrowerDetails.DateBusinessStarted("");
+
+
+						if(adf.PdDate().indexOf("1970") > -1 || adf.PdDate() == ''){
+								adf.PdDate("")
+								$('#PD').tooltipster('destroy')
+								$('#PD').tooltipster({
+									contentAsHTML: true,
+							    	interactive: true,
+							    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+								})
+							}else{
+								// console.log(adf.PdDate())
+								$('#PD').tooltipster('destroy')
+								$('#PD').tooltipster({
+									contentAsHTML: true,
+							    	interactive: true,
+							    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+								})
+						}
 
 
 					if(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970") >-1 || res.Data.LoanDetails.FirstAgreementDate.indexOf("1970") >-1 || res.Data.LoanDetails.RecenetAgreementDate.indexOf("1970") >-1){
@@ -2111,27 +2135,27 @@ window.refreshFilter = function () {
 	// 	adf.PdDate((new Date()).toISOString())
 	// }
 	$('.form-last-confirmation-info').html('');
-	setTimeout(function(){
-		console.log("--------->>>>1953",adf.PdDate())
-		if(adf.PdDate().indexOf("1970") > -1 || adf.PdDate() == ''){
-			adf.PdDate("")
-			$('#PD').tooltipster('destroy')
-			$('#PD').tooltipster({
-				contentAsHTML: true,
-		    	interactive: true,
-		    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
-			})
-		}else{
-			// adf.PdDate("")
-			console.log(adf.PdDate())
-			$('#PD').tooltipster('destroy')
-			$('#PD').tooltipster({
-				contentAsHTML: true,
-		    	interactive: true,
-		    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
-			})
-		}
-	}, 1000)
+	// setTimeout(function(){
+	// 	console.log("--------->>>>1953",adf.PdDate())
+	// 	if(adf.PdDate().indexOf("1970") > -1 || adf.PdDate() == ''){
+	// 		adf.PdDate("")
+	// 		$('#PD').tooltipster('destroy')
+	// 		$('#PD').tooltipster({
+	// 			contentAsHTML: true,
+	// 	    	interactive: true,
+	// 	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+	// 		})
+	// 	}else{
+	// 		// adf.PdDate("")
+	// 		console.log(adf.PdDate())
+	// 		$('#PD').tooltipster('destroy')
+	// 		$('#PD').tooltipster({
+	// 			contentAsHTML: true,
+	// 	    	interactive: true,
+	// 	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+	// 		})
+	// 	}
+	// }, 1000)
 	
 	
 }
@@ -2562,8 +2586,18 @@ adf. removeRowReffrence = function(d){
 	allData.splice(index, 1);
 }
 adf.loadPdTooltipster = ko.observable("PD Done By : "+ adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+" PD Date : " + kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy") +", PD Place : " + adf.form.AccountSetupDetails.PdInfo.PdPlace()+", Person Met : "+adf.form.AccountSetupDetails.PdInfo.PersonMet()+", PD Customer Margin(%)"+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% , PD Remarks: "+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+", PD Comments : "+ adf.form.AccountSetupDetails.PdInfo.PdComments()+" ," )
-
+adf.CMISNULL = ko.observable(false);
+adf.CMISNULL.subscribe(function(val){
+	if(val){
+		adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
+	}
+});
 adf.onclickDismissModal = function(){
+	if((adf.form.AccountSetupDetails.PdInfo.CustomerMargin() == null || adf.form.AccountSetupDetails.PdInfo.CustomerMargin() == "") && parseFloat(adf.form.AccountSetupDetails.PdInfo.CustomerMargin()) != 0 ){
+		adf.CMISNULL(true);
+	}else{
+		adf.CMISNULL(false);
+	}
 
 	if(adf.PdDate() == ""){
 		$('#PD').tooltipster('destroy')

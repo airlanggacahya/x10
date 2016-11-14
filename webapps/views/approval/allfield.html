@@ -69,30 +69,39 @@
 		add_url = '?customerid='+r.customerId().split('|')[0]+'&dealno='+r.customerId().split('|')[1]
 
     linkADForm = '<a target="_blank" href="/accountdetail/default'+add_url+'">Account Detail</a>'
+    $('.linkADForm').html('')
     $('.linkADForm').append(linkADForm)
 
     linkInternalRTRForm = '<a target="_blank" href="/rtr/internalrtr'+add_url+'">Internal RTR Form</a>'
+    $('.linkInternalRTRForm').html('')
     $('.linkInternalRTRForm').append(linkInternalRTRForm)
 
     linkCreditScoreCard = '<a target="_blank" href="/creditscorecard/default'+add_url+'">Credit Score Card</a>'
+    $('.linkCreditScoreCard').html('')
     $('.linkCreditScoreCard').append(linkCreditScoreCard)
 
     linkDueDiligence = '<a target="_blank" href="/duediligence/form'+add_url+'">Due Diligence</a>'
+    $('.linkDueDiligence').html('')
     $('.linkDueDiligence').append(linkDueDiligence)
 
     linkCibilForm = '<a target="_blank" href="/datacapturing/cibilnew'+add_url+'">CIBIL Form</a>'
+    $('.linkCibilForm').html('')
     $('.linkCibilForm').append(linkCibilForm)
 
     linkKeyFinancialReport = '<a target="_blank" href="/ratio/pdf'+add_url+'">Key Financial Report</a>'
+    $('.linkKeyFinancialReport').html('')
     $('.linkKeyFinancialReport').append(linkKeyFinancialReport)
 
     linkBankingAnalysis = '<a target="_blank" href="/bankanalysis/default'+add_url+'">Banking Analysis</a>'
+    $('.linkBankingAnalysis').html('')
     $('.linkBankingAnalysis').append(linkBankingAnalysis)
 
     linkExternalRepaymentTrack = '<a target="_blank" href="/rtr/default'+add_url+'">External Repayment Track</a>'
+    $('.linkExternalRepaymentTrack').html('')
     $('.linkExternalRepaymentTrack').append(linkExternalRepaymentTrack)
 
     linkLoanAprovalReport = '<a target="_blank" href="/loanapproval/default'+add_url+'">Loan Aproval Report</a>'
+    $('.linkLoanAprovalReport').html('')
     $('.linkLoanAprovalReport').append(linkLoanAprovalReport)
   };
 

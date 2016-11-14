@@ -17,12 +17,20 @@ trans.GetDataGrid = function(){
 
 	 	})
 	 	trans.AllData(data.Data);
-		trans.RenderGrid(data.Data);
+		trans.RenderGrid();
 	})
 }
 
 
-trans.RenderGrid = function(datas){
+trans.RenderGrid = function(){
+	var fil = $("#filter").val().toLowerCase();
+	var datas = _.filter(trans.AllData(),function(x){ 
+		return x.FileName.toLowerCase().indexOf(fil) > -1 || x.ConsumersInfos.ConsumerName.toLowerCase().indexOf(fil) > -1 || x.CustomerName.toLowerCase().indexOf(fil) > -1
+	});
+	if(fil==""){
+		datas = trans.AllData();
+	}
+
 	$("#transgrid").html("");
 	$("#transgrid").kendoGrid({
 		 dataSource : datas,
@@ -78,7 +86,7 @@ trans.RenderGrid = function(datas){
 		 	     headerAttributes: {class: 'k-header header-bgcolor'},
 		 }
 		 ]
-	})
+	});
 }
 
 trans.showProm = function(Id){
@@ -100,6 +108,15 @@ trans.showProm = function(Id){
 
 		email = _.filter(trans.CurrentData().EmailAddress(),function(x){ return x != "" });
 		email = email.join("\n")
+
+		scorfac = _.filter(trans.CurrentData().ScoringFactor(),function(x){ return x != "" });
+		scorfac = scorfac.join("\n")
+
+		tele = _.map(trans.CurrentData().Telephones(),function(x){ return  x.Type() + " - " + x.Number()});
+		tele = tele.join("\n")
+
+		trans.CurrentData().ScoringFactor(scorfac)
+		trans.CurrentData().Telephones(tele)
 		trans.CurrentData().EmailAddress(email)
 
 		$(".modal-edit-bro").modal("show");
@@ -110,6 +127,10 @@ trans.showProm = function(Id){
 		}
 
 	}
+	$("#timeofreportinp").kendoMaskedTextBox({
+	    mask: "00:00:00",
+	    width:"100%"
+	});
 }
 
 // trans.UpdateGrid = function(datas){
@@ -126,8 +147,36 @@ trans.SaveCibil = function(){
 	var param = {};
 	
 	var info = ko.mapping.toJS(trans.CurrentData)
+
 	param = info;
 	param.EmailAddress = param.EmailAddress.split("\n");
+	param.ScoringFactor = param.ScoringFactor.split("\n");
+	param.Telephones = param.Telephones.split("\n");
+	param.CibilScore = parseFloat(param.CibilScore);
+	param.CurrentBalance = parseFloat(param.CurrentBalance);
+	param.HighCreditSanctionAmount = parseFloat(param.HighCreditSanctionAmount);
+	param.TotalAccount = parseFloat(param.TotalAccount);
+	param.OverdueBalance = parseFloat(param.OverdueBalance);
+	// param.TotalEnquiries30Days = parseFloat(param.TotalEnquiries30Days);
+	param.TotalOverdues = parseFloat(param.TotalOverdues);
+	param.TotalZeroBalanceAcc = parseFloat(param.TotalZeroBalanceAcc);
+
+	var tel = [];
+	param.Telephones.forEach(function(x){
+		var temp = x.split("-");
+		if(temp.length>1){
+			tel.push({
+				Type : temp[0].trim(),
+				Number : temp[1].trim()
+			})
+		}else{
+			tel.push({
+				Type : temp[0],
+				Number : ""
+			})
+		}
+	})
+	param.Telephones = tel;
 	param.ConsumersInfos.DateOfBirth = moment(trans.CurrentData().ConsumersInfos.DateOfBirth()).toDate().toISOString()
 	param.DateOfReport = moment(trans.CurrentData().DateOfReport()).toDate().toISOString()
 	param.TimeOfReport = moment(trans.CurrentData().TimeOfReport(),"hh:mm:ss").toDate().toISOString()
@@ -146,16 +195,18 @@ $(document).ready(function(){
 
 	$("#filter").keydown(function(){
 		setTimeout(function(){
-			var fil = $("#filter").val();
-				var data = _.filter(trans.AllData(),function(x){ 
-					return x.FileName.indexOf(fil) > -1 || x.ConsumersInfos.ConsumerName.indexOf(fil) > -1 || x.CustomerName.indexOf(fil) > -1
-				});
-			if(fil==""){
-				data = trans.AllData();
-			}
-			trans.RenderGrid(data);
+			// var fil = $("#filter").val().toLowerCase();
+			// 	var data = _.filter(trans.AllData(),function(x){ 
+			// 		return x.FileName.toLowerCase().indexOf(fil) > -1 || x.ConsumersInfos.ConsumerName.toLowerCase().indexOf(fil) > -1 || x.CustomerName.toLowerCase().indexOf(fil) > -1
+			// 	});
+			// if(fil==""){
+			// 	data = trans.AllData();
+			// }
+			trans.RenderGrid();
 		},500);  
 	})
+
+	
 })
 
 

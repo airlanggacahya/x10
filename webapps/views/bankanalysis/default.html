@@ -151,7 +151,7 @@ input[disabled]{
 	</div>
 </div>
 
-<div class="col-md-12" data-bind="visible:(isempty())" style="margin-bottom: 30px"></div>
+<div class="col-md-12" data-bind="visible:(isempty() || databank().length == 0 )" style="margin-bottom: 30px"></div>
 
 <div>
   <div class="col-md-12 col-sm-12 ez panel-content"  style="padding: 20px;margin-top: -28px;">
@@ -173,7 +173,7 @@ input[disabled]{
         </div>
       </div>
 
-      <div class="panel-body">
+      <div class="panel-body" data-bind="visible:(databank().length > 0 )">
         <button type="button" style="display: none" data-bind="attr:{id:'bedit0'},click: editBankData(0),visible:(isempty() != true)"  class="btn btn-warning banksdata-action">Edit</button>
         <button type="button" style="display: none" data-bind="attr:{id:'bdelete0'},click: deleteBankData(0),visible:(isempty() != true)"  class="btn btn-danger">Delete</button>
       </div>

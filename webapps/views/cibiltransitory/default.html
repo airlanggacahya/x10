@@ -1,3 +1,16 @@
+<script type="text/javascript">
+  model.PageTopMenu('{{.TopMenu}}');
+  model.PageId('{{.Menuname}}');
+  model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
+  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+  model.Access = ko.observable('{{.Menuid}}');
+  model.View = ko.observable('{{.View}}');
+  model.Create= ko.observable('{{.Create}}');
+  model.Delete= ko.observable('{{.Delete}}');
+  model.Process= ko.observable('{{.Process}}');
+  model.Edit= ko.observable('{{.Edit}}')
+  model.User= ko.observable('{{.Username}}');
+  </script>
 <script src="/static/core/cibiltransitory.js"></script>
 <div class="col-md-12 col-sm-12 ez panel-content">
 	<div class="panel-body">
@@ -59,7 +72,11 @@
                     <label for="Acc" class="control-label">Gender :</label>
                   </div>
                   <div class="col-md-8 widthfield">
-                    <input type="text" class="form-control input-sm" id="gender" data-bind="value:ConsumersInfos.Gender" validationMessage="Please Fill Gender" >
+                    <!-- <input type="text" class="form-control input-sm" id="gender" data-bind="value:ConsumersInfos.Gender" validationMessage="Please Fill Gender" > -->
+                    <select id="gender" data-bind="kendoDropDownList : { value:ConsumersInfos.Gender }" >
+                      <option value="MALE">Male</option>
+                      <option value="FEMALE">Female</option>
+                    </select>
                   </div>
                 </div>
                 <div class="col-md-12 form-group">
@@ -109,7 +126,7 @@
                     <label for="Acc" class="control-label">Income Tax ID Number (PAN) :</label>
                   </div>
                   <div class="col-md-8 widthfield">
-                    <input  type="text" class="form-control input-sm" data-bind="value:IncomeTaxIdNumber" validationMessage="Please Fill Income Tax ID Number (PAN) "  />
+                    <input  type="text" class="form-control input-sm" data-bind="value:IncomeTaxIdNumber" validationMessage="Please Fill Income Tax ID Number (PAN)"  readonly/>
                   </div>
                 </div>
                 <div class="col-md-12 form-group">
@@ -117,7 +134,7 @@
                     <label for="Acc" class="control-label">Passport Number :</label>
                   </div>
                   <div class="col-md-8 widthfield">
-                    <input  type="text" class="form-control input-sm" data-bind="value:PassportNumber" validation Message="Please Fill Passport Number "  />
+                    <input  type="text" class="form-control input-sm" data-bind="value:PassportNumber" validation Message="Please Fill Passport Number"  readonly/>
                   </div>
                 </div>
               </div>

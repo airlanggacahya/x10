@@ -1,5 +1,7 @@
 var intrtr ={}
 
+intrtr.formVisibility = ko.observable(false)
+
 window.refreshFilter = function () {
 	intrtr.getData();
 	setTimeout(function(){
@@ -86,6 +88,7 @@ intrtr.getData = function(){
 		}
 		// console.log(res)
 		if(data != null){
+			intrtr.formVisibility(true)
 			intrtr.form.Product(data.AccountSetupDetails.Product);
 			intrtr.form.Scheme(data.AccountSetupDetails.Scheme);
 

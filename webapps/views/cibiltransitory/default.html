@@ -59,7 +59,11 @@
                     <label for="Acc" class="control-label">Gender :</label>
                   </div>
                   <div class="col-md-8 widthfield">
-                    <input type="text" class="form-control input-sm" id="gender" data-bind="value:ConsumersInfos.Gender" validationMessage="Please Fill Gender" >
+                    <!-- <input type="text" class="form-control input-sm" id="gender" data-bind="value:ConsumersInfos.Gender" validationMessage="Please Fill Gender" > -->
+                    <select id="gender" data-bind="kendoDropDownList : { value:ConsumersInfos.Gender }" >
+                      <option value="MALE">Male</option>
+                      <option value="FEMALE">Female</option>
+                    </select>
                   </div>
                 </div>
                 <div class="col-md-12 form-group">
@@ -109,7 +113,7 @@
                     <label for="Acc" class="control-label">Income Tax ID Number (PAN) :</label>
                   </div>
                   <div class="col-md-8 widthfield">
-                    <input  type="text" class="form-control input-sm" data-bind="value:IncomeTaxIdNumber" validationMessage="Please Fill Income Tax ID Number (PAN) "  />
+                    <input  type="text" class="form-control input-sm" data-bind="value:IncomeTaxIdNumber" validationMessage="Please Fill Income Tax ID Number (PAN)"  readonly/>
                   </div>
                 </div>
                 <div class="col-md-12 form-group">
@@ -117,7 +121,7 @@
                     <label for="Acc" class="control-label">Passport Number :</label>
                   </div>
                   <div class="col-md-8 widthfield">
-                    <input  type="text" class="form-control input-sm" data-bind="value:PassportNumber" validation Message="Please Fill Passport Number "  />
+                    <input  type="text" class="form-control input-sm" data-bind="value:PassportNumber" validation Message="Please Fill Passport Number"  readonly/>
                   </div>
                 </div>
               </div>

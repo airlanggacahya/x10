@@ -32,8 +32,8 @@
       Id: '',
       CustomerId : '',
       Flag : 0,
-      AOM : [],
-      AA : []
+      AOM : ([]),
+      AA : ([])
     })
 
     stockanddebtCloning = {
@@ -93,6 +93,16 @@
     }
 
     function refreshFilter(){
+      stockanddebt({
+        Id: '',
+        CustomerId : '',
+        Flag : 0,
+        AOM : ko.observableArray([]),
+        AA : ko.observableArray([])
+      })
+
+      AOM([])
+      AA([])
       var param = {CustomerId: filter().CustomerSearchVal(), Dealno: filter().DealNumberSearchVal()}
       var customerId = filter().CustomerSearchVal() + "|" + filter().DealNumberSearchVal();
       var url = "{{BaseUrl}}datacapturing/getstockanddebtdetail";
@@ -204,30 +214,30 @@
       var date = kendo.toString(v, 'MMMM yyyy');
 
       if (mode == "AOM"){
-        stockanddebt().AOM[i].OperatingRatio = v;
-        stockanddebt().AOM[i].OperatingRatioString = date;
+        stockanddebt().AOM()[i].OperatingRatio = v;
+        stockanddebt().AOM()[i].OperatingRatioString = date;
         if(i == 0){
           tmp = moment(v).subtract(1, 'month')._d;
           date = kendo.toString(tmp, 'MMMM yyyy');
-          stockanddebt().AOM[i+1].OperatingRatio = tmp;
-          stockanddebt().AOM[i+1].OperatingRatioString = date;
+          stockanddebt().AOM()[i+1].OperatingRatio = tmp;
+          stockanddebt().AOM()[i+1].OperatingRatioString = date;
           tmp = moment(v).subtract(2, 'month')._d;
           date = kendo.toString(tmp, 'MMMM yyyy');
-          stockanddebt().AOM[i+2].OperatingRatio = tmp;
-          stockanddebt().AOM[i+2].OperatingRatioString = date;
+          stockanddebt().AOM()[i+2].OperatingRatio = tmp;
+          stockanddebt().AOM()[i+2].OperatingRatioString = date;
         }
       } else if(mode == "AA"){
-        stockanddebt().AA[i].Bulan = v;
-        stockanddebt().AA[i].BulanString = date;
+        stockanddebt().AA()[i].Bulan = v;
+        stockanddebt().AA()[i].BulanString = date;
         if(i == 0){
           tmp = moment(v).subtract(1, 'month')._d;
           date = kendo.toString(tmp, 'MMMM yyyy');
-          stockanddebt().AA[i+1].Bulan = tmp;
-          stockanddebt().AA[i+1].BulanString = date;
+          stockanddebt().AA()[i+1].Bulan = tmp;
+          stockanddebt().AA()[i+1].BulanString = date;
           tmp = moment(v).subtract(2, 'month')._d;
           date = kendo.toString(tmp, 'MMMM yyyy');
-          stockanddebt().AA[i+2].Bulan = tmp;
-          stockanddebt().AA[i+2].BulanString = date;
+          stockanddebt().AA()[i+2].Bulan = tmp;
+          stockanddebt().AA()[i+2].BulanString = date;
         }
       }
     }
@@ -253,8 +263,8 @@
 
       AA.push({Id: "", BulanString: date,Bulan: tmp,ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
 
-      stockanddebt().AOM = AOM();
-      stockanddebt().AA = AA();
+      stockanddebt().AOM(AOM());
+      stockanddebt().AA(AA());
     }
 
     function awal(){
@@ -515,13 +525,13 @@
           Id: data.Id,
           CustomerId : data.CustomerId,
           Flag : data.Flag,
-          AOM : data.AOM,
-          AA : data.AA
+          AOM : ko.observableArray(data.AOM),
+          AA : ko.observableArray(data.AA)
         });
         AOM(data.AOM);
         AA(data.AA);
       }else{
-        stockanddebt({Id: '', CustomerId : customerId,Flag : 0,AOM : [],AA : []})
+        stockanddebt({Id: '', CustomerId : customerId,Flag : 0,AOM : ko.observableArray([]),AA : ko.observableArray([])})
         checkConfirm()
       }
       checkConfirm()

@@ -66,7 +66,7 @@ rolesett.AddNew = function(){
     rolesett.titleModel("New Roles");
     rolesett.disableRolename(true);
     rolesett.ClearField();
-    rolesett.edit(false);
+    rolesett.edit(true);
     rolesett.getTopMenu();
 }
 
@@ -328,27 +328,45 @@ rolesett.getTopMenu = function(){
     ajaxPost(url, param, function(res){
         if(res.IsError != true){
             var dataMenu = res.Data.Records;
+            console.log(dataMenu)
             var newRecords = [];
             for (var d in dataMenu){
                 newRecords.push({
-                    "Id": dataMenu[d].Id,
-                    "Enable": dataMenu[d].Enable,
-                    "Haschild": dataMenu[d].Haschild,
-                    "IndexMenu": dataMenu[d].IndexMenu,
-                    "PageId": dataMenu[d].PageId,
-                    "Parent": dataMenu[d].Parent,
-                    "Title": dataMenu[d].Title,
-                    "Url": dataMenu[d].Url,
-                    "Checkall": false,
+                    // "Id": dataMenu[d].Id,
+                    // "Enable": dataMenu[d].Enable,
+                    // "Haschild": dataMenu[d].Haschild,
+                    // "IndexMenu": dataMenu[d].IndexMenu,
+                    // // "PageId": dataMenu[d].PageId,
+                    // "Parent": dataMenu[d].Parent,
+                    // "Title": dataMenu[d].Title,
+                    // "Url": dataMenu[d].Url,
+                    // "Checkall": false,
+                    // "Access": false,
+                    // "Create": false,
+                    // "Edit": false,
+                    // "Delete": false,
+                    // "View": false,
+                    // "Approve": false,
+                    // "Process": false
+
                     "Access": false,
+                    "Approve":false,
+                    "Checkall": false,
                     "Create": false,
-                    "Edit": false,
                     "Delete": false,
+                    "Edit": false,
+                    "Enable": true,
+                    "Haschild": false,
+                    "Id": dataMenu[d].Id,
+                    "Title": dataMenu[d].Title,
+                    "Parent": dataMenu[d].Parent,
+                    "Process": false,
+                    "Url": dataMenu[d].Url,
                     "View": false,
-                    "Approve": false,
-                    "Process": false
+                    
                 });
             }
+
             rolesett.GetDataMenu(newRecords);
         }else{
             return swal("Error!", res.Message, "error");

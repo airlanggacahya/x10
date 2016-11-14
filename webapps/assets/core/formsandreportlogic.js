@@ -2,7 +2,9 @@ var frl = {}
 frl.AllDataFile = ko.observableArray([]);
 frl.FilterFile = ko.observableArray('');
 frl.dataListFile = ko.observableArray([]);
-frl.filter = ko.observableArray([])
+frl.filter = ko.observableArray([]);
+frl.linkdata = ko.observableArray([]);
+frl.path = ko.observable("");
 frl.visible= ko.observable(false);
 
 frl.onfilter = function(){
@@ -36,8 +38,10 @@ frl.getData = function(){
 	var param = {};
 	var url = "/formsandreportlogic/getallfile"
 	ajaxPost(url, param, function(res){
-		frl.AllDataFile(res)
-		frl.filter(res)
+		frl.AllDataFile(res.data.data)
+		frl.filter(res.data.data)
+		frl.linkdata(res.data.linkdata)
+		frl.path(res.data.path)
 		frl.renderGrid()
 		setTimeout(function(){
 			$('.apx-loading').hide();
@@ -90,7 +94,7 @@ frl.renderGrid = function(){
                     template: function(d){
                     	return [
                     	"<button class='btn btn-xs btn-primary tooltipster' title='Download File' onclick='frl.download(\""+d.NameFile+"\")'><i class='fa fa-download'></i></button>",
-                    	"<a type='button' class='btn btn-xs btn-success tooltipster' title='Open File' target='_blank' href='/static/pdf/"+d.NameFile+"'><i class='fa fa-folder-open-o'></i></a>",
+                    	"<button class='btn btn-xs btn-success tooltipster' title='Open File' onclick='frl.openLink(\""+d.NameFile+"\")'><i class='fa fa-folder-open-o'></i></button>",
                     	].join(' ')
                     }
                 },
@@ -102,9 +106,18 @@ frl.renderGrid = function(){
 
 }
 
+frl.openLink = function(name){
+	var dlink = _.find(frl.linkdata(),function(x){ return x.filename == name });
+	if(dlink == undefined){
+		swal("Warning","Link not found","warning");
+		return;
+	} 	
+	window.open(dlink.link);
+}
+
 frl.download = function(d){
 	var link = document.createElement('a');
-	link.href = "/static/pdf/"+d;
+	link.href = "/static/"+frl.path()+d;
 	link.download = d;
 	link.dispatchEvent(new MouseEvent('click'));
 }
@@ -116,3 +129,5 @@ $(document).ready(function(){
 	
 
 });
+
+

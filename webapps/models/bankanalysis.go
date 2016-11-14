@@ -323,6 +323,10 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 			multiplier = ebitdaMargin
 		}
 
+		if fm.AccountDetails.CMISNULL {
+			multiplier = ebitdaMargin
+		}
+
 		totalCreditMultiplied := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 			return x.(Summary).TotalCredit * multiplier
 		}).Exec().Result.Sum

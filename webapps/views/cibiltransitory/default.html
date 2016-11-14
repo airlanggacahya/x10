@@ -18,7 +18,7 @@
 </div>
 
 <div class="modal fade modal-edit-bro">
-	<div class="modal-dialog" style="width: 1000px">
+	<div class="modal-dialog" style="width: 1100px;max-height: 600px">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -76,7 +76,7 @@
                     <label for="Acc" class="control-label">Time of report :</label>
                   </div>
                   <div class="col-md-8 widthfield">
-                    <input  type="text" class="form-control input-sm" data-bind="value:TimeOfReport" validationMessage="Please Fill Time Of Report" >
+                    <input  id="timeofreportinp" style="width: 100%;" type="text" class="form-control input-sm" data-bind="value:TimeOfReport" validationMessage="Please Fill Time Of Report" >
                           <!-- <span class="k-invalid-msg" data-for="timereport"></span> -->
                   </div>
                 </div>
@@ -96,14 +96,14 @@
                     <input  type="text" class="form-control input-sm" data-bind="value:Score" validationMessage="Cibil Transunion Score readonly" readonly />
                   </div>
                 </div> -->
-               <!--  <div class="col-md-12 form-group">
+                <div class="col-md-12 form-group">
                   <div class="col-md-4 widthlable">
                     <label for="Acc" class="control-label">Scoring Factors :</label>
                   </div>
                   <div class="col-md-8 widthfield">
-                    <textarea rows="5" cols="50"  type="text" class="form-control input-sm" data-bind="value:ScoringFactor" validationMessage="Scoring Factors readonly" readonly ></textarea>
+                    <textarea rows="5" cols="50"  type="text" class="form-control input-sm" data-bind="value:ScoringFactor" validationMessage="Scoring Factors"></textarea>
                   </div>
-                </div> -->
+                </div>
                 <div class="col-md-12 form-group">
                   <div class="col-md-4 widthlable">
                     <label for="Acc" class="control-label">Income Tax ID Number (PAN) :</label>
@@ -178,14 +178,14 @@
                     <input  type="number" class="form-control input-sm" id="overdueamount" name="overdueamount" data-bind="value:OverdueBalance" validationMessage="Please Fill Overdue Amount " >
                   </div>
                 </div>
-              <!--   <div class="col-md-12 form-group">
+                <div class="col-md-12 form-group">
                   <div class="col-md-4 widthlable">
                     <label for="Acc" class="control-label">Telephone Type / Number :</label>
                   </div>
                   <div class="col-md-8 widthfield">
-                    <textarea rows="4" cols="50"  type="text" class="form-control input-sm" data-bind="value:Telephone, attr:{'id': 'Telephone'+$index()}" validationMessage="Telephone readonly" readonly ></textarea>
+                    <textarea rows="4" cols="50"  type="text" class="form-control input-sm" data-bind="value:Telephones" validationMessage="Telephone"></textarea>
                   </div>
-                </div> -->
+                </div>
               </div>
               <!-- <div class="col-md-12">
                 <div class="row">

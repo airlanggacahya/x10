@@ -814,7 +814,7 @@
       }
       map[parent].submenu.push(obj);
     }
-    return map['-'].submenu;
+    return map['-'] ? map['-'].submenu : undefined;
   }
 
   function MenuItem(Id, href, title, icon, submenu, baseURL) {

@@ -211,39 +211,66 @@ var DrawDataBank = function(id){
             constructOdccModel(res);
             databank(res.data.Detail);
 
-            if(res.data.AccountDetail.length==0){
+            if(res.data.AccountDetail.length==0 && res.data.Ratio.Data.AuditStatus.length == 0){
                 // swal("Warning", "Please Fill Account Detail Data First","warning");
                 createBankingGrid(res.data.Summary,0);
             }else{
 
-            if (res.data.Ratio.Data.AuditStatus.length != 0){
-                var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin
+            if (res.data.Ratio.Data.AuditStatus.length != 0 && res.data.AccountDetail.length!=0){
+                var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100
+                var CMISNULL = res.data.AccountDetail[0].CMISNULL
                 idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
                 latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
+                var ISNA = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Na
                 ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
                 var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
 
-                var ebitdaFinis = latestebidmargin * 100
+                var ebitdaFinis = latestebidmargin
 
                 var multiplyer = 0
-                if(customermargin == 0 && ebitdaFinis == 0) {
-                    multiplyer = 0
-                } else if(customermargin == 0) {
+                if(CMISNULL && ISNA == "A") {
                     multiplyer = ebitdaFinis
-                } else if(ebitdaFinis == 0) {
+                } else if(ISNA != "A" && !CMISNULL) {
                     multiplyer = customermargin
-                } else {
+                } else if( ISNA == "A" && !CMISNULL ){
                     multiplyer = _.min([ebitdaFinis,customermargin])
+                }else{
+                    multiplyer = 0;
                 }
 
                 for (var i = 0 ; i < res.data.Summary.length ; i++){
                     res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
                 }
 
-                console.log(res.data.Summary)
-                createBankingGrid(res.data.Summary,multiplyer);
+                // console.log(res.data.Summary)
+                createBankingGrid(res.data.Summary,multiplyer*100);
+            }else if(res.data.AccountDetail.length!=0){
+                var multiplyer = 0
+                var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100
+                var CMISNULL = res.data.AccountDetail[0].CMISNULL
+                    if(!CMISNULL) {
+                        multiplyer = ebitdaFinis
+                        for (var i = 0 ; i < res.data.Summary.length ; i++){
+                            res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
+                        }
+                    } 
+                 
+                createBankingGrid(res.data.Summary,multiplyer*100);
             }else{
-                createBankingGrid(res.data.Summary,0);
+                   idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
+                latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
+                var ISNA = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Na
+                ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
+                var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
+
+                if(ISNA=="A"){
+                     for (var i = 0 ; i < res.data.Summary.length ; i++){
+                        res.data.Summary[i].ImpMargin = latestebidmargin*res.data.Summary[i].TotalCredit
+                    }
+                }else{
+                    latestebidmargin = 0;
+                }
+                    createBankingGrid(res.data.Summary,latestebidmargin*100);
             }
         }
 

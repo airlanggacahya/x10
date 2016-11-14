@@ -157,32 +157,32 @@ r.ratingReferenceTooltip = function(param){
 r.checkValidation = function(data){
   if(data.Data.CP.length==0){
         Materialize.toast("Customer Profile Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.BA.length==0){
         Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.CIBIL.length==0){
         Materialize.toast("CIBIL Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.CIBILPROM.length==0){
         Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.AD.length==0){
         Materialize.toast("Account Details Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.RTR.length==0){
         Materialize.toast("RTR Data Not Confirmed", 5000);
-       
+
   }
 
   $("#toast-container").css("top","30%");
@@ -338,7 +338,7 @@ r.getNormData = function (param) {
 
     var persentageAsik = 10
     res.Data = res.Data.filter(function (d) {  return d.ShowInLoanApprovalScreen   });
-    var data = res.Data.filter(function (d) { 
+    var data = res.Data.filter(function (d) {
       return (['min', 'max'].indexOf(d.Operator) > -1) &&  d.ShowInLoanApprovalScreen
     }).map(function (d) {
         var o = {}
@@ -366,7 +366,7 @@ r.getNormData = function (param) {
     /////// Vertical Bullet Chart
     var eachChartWidth = 100;
     renderVerticalBulletChart('.bullet-vertical', data, eachChartWidth)
-    
+
     var titleContainer = $("<div>").attr("class", "title-container")
       .css("width", $(".bullet-vertical .bullet-vertical-wrapper").width())
     $(".bullet-vertical").append(titleContainer)
@@ -451,8 +451,8 @@ r.getNormData = function (param) {
       })
 
     var nmCrits = _.compact(
-        _.map(criteriaStatus, function(data){ 
-          return data.isMet == false ? data.criteria : "" 
+        _.map(criteriaStatus, function(data){
+          return data.isMet == false ? data.criteria : ""
         })
       )
 
@@ -461,7 +461,7 @@ r.getNormData = function (param) {
     for (var i = 0; i < nmCrits.length; i += chunk) {
         r.notMetsCriteria().push(nmCrits.slice(i, i + chunk))
     }
-    
+
     var j = 1;
     $("#not-met-table").html("")
     _.each(r.notMetsCriteria(), function(cols, i) {
@@ -735,7 +735,7 @@ var getredflag = function(){
         }else{
              // swal("Warning", "Red Flags Data Not Found", "warning");
              Materialize.toast("Due Diligence Data Not Confirmed", 5000);
-             
+
             return
         }
     });
@@ -783,7 +783,7 @@ var getreportdata = function(){
     }else{
          // swal("Warning", "Report Data Not Found", "warning");
           Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
-         
+
         return
     }
   });
@@ -1455,7 +1455,7 @@ r.ConstructDataRatioPDF = function(res,ress){
   })
 
   r.KRHEADER([]);
-  
+
   _.map(r.FR(), function(v, i){
     r.FR()[i].ColumnHeader([])
     r.FR()[i].row([])

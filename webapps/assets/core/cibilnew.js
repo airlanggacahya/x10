@@ -709,28 +709,31 @@ var updateConfirmPromotors = function(status){
 }
 
 var updateConfirmCibil = function(){
-    var status = 1
-    if(r.isConfirm() == 1) {
-      status = 0
-    }
-    var param = {CustomerId: filter().CustomerSearchVal()}
-    param["DealNo"] = filter().DealNumberSearchVal()
-    param["IsConfirm"] = status
-    var url = "/datacapturing/updateconfirmcibil"
-
-
-    ajaxPost(url, param, function(data) {
-      if(data.success) {
-        if(status == 0){
-          swal("Please Edit / Enter Data", "", "success");
-        } else {
-          swal("Successfully Confirmed", "", "success");
-        }
-
-        updateConfirmPromotors(status)
+    if(r.reportCibilList().length == 0) {
+      swal("Warning","Data CIBIL not found","warning");
+    } else {
+      var status = 1
+      if(r.isConfirm() == 1) {
+        status = 0
       }
-    })
+      var param = {CustomerId: filter().CustomerSearchVal()}
+      param["DealNo"] = filter().DealNumberSearchVal()
+      param["IsConfirm"] = status
+      var url = "/datacapturing/updateconfirmcibil"
 
+
+      ajaxPost(url, param, function(data) {
+        if(data.success) {
+          if(status == 0){
+            swal("Please Edit / Enter Data", "", "success");
+          } else {
+            swal("Successfully Confirmed", "", "success");
+          }
+
+          updateConfirmPromotors(status)
+        }
+      })
+    }
 }
 
 var setRatingForCibil = function(rating) {

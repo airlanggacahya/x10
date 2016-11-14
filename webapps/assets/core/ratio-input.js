@@ -214,6 +214,7 @@ r.refresh = function () {
                     })
                 }
                 if (res.Data.FormData.length > 0){
+                    r.formVisibility(true)
                     $.each(res.Data.FormData, function(i,v){
                         var xxx = v.Date.split("-")
                         var ccc = "Mar"
@@ -225,6 +226,7 @@ r.refresh = function () {
                     })
                 }
                 if (res.Data.ProvisionStatus.length > 0){
+                    r.formVisibility(true)
                     $.each(res.Data.ProvisionStatus, function(i,v){
                         var xxx = v.Date.split("-")
                         var ccc = "Mar"
@@ -238,6 +240,7 @@ r.refresh = function () {
             }
 
             if (res.Message != '') {
+                r.formVisibility(true)
                 r.TypeDate('FY Ending');
                 if(res.Data!=undefined)
                 r.TypeDate( toTitleCase(res.Data.AuditStatus[0].Status) );
@@ -1098,9 +1101,14 @@ r.render = function () {
                         .css("text-align","center")
                         .appendTo($cell)
 
-                        if(au.Na.toLowerCase() == "na"){
-                            $input.attr('disabled', 'disabled')
+                        try{
+                            if(au.Na.toLowerCase() == "na"){
+                                $input.attr('disabled', 'disabled')
+                            }
+                        }catch(e){
+                            console.log(e)
                         }
+                        
 
                     var fieldData = r.data().FormData.find(function (o) {
                         return (o.FieldId == "AUDITED-"+field.Id) && (o.Date == au.Date)
@@ -1152,8 +1160,16 @@ r.render = function () {
                         .css("text-align","center")
                         .appendTo($cell)
 
-                    if(au.Na.toLowerCase() == "na"){
-                        $input.attr('disabled', 'disabled')
+                    // if(au.Na.toLowerCase() == "na"){
+                    //     $input.attr('disabled', 'disabled')
+                    // }
+
+                    try{
+                        if(au.Na.toLowerCase() == "na"){
+                            $input.attr('disabled', 'disabled')
+                        }
+                    }catch(e){
+                        console.log(e)
                     }
 
                     var fieldData = r.data().FormData.find(function (o) {

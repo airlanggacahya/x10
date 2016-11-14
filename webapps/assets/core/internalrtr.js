@@ -7,7 +7,7 @@ window.refreshFilter = function () {
 	setTimeout(function(){
 		intrtr.loadGrid();
 	}, 500)
-	
+
 }
 
 intrtr.templatetopData = {
@@ -23,7 +23,7 @@ intrtr.templatetopData = {
 	Min: 0,
 	Loan: 0,
 	Amount: 0,
-	AverageDPD: 0, 
+	AverageDPD: 0,
 }
 
 intrtr.templatebottomData = {
@@ -39,7 +39,7 @@ intrtr.templatebottomData = {
 	Min: 0,
 	Loan: 0,
 	Amount: 0,
-	AverageDPD: 0, 
+	AverageDPD: 0,
 }
 
 intrtr.templateForm = {
@@ -52,10 +52,10 @@ intrtr.templateForm = {
 	DataBottom: [intrtr.templatebottomData],
 	DataFilter: [],
 	Status: 0,
-	Freeze: false, 
+	Freeze: false,
 }
 
-intrtr.form = ko.mapping.fromJS(intrtr.templateForm); 
+intrtr.form = ko.mapping.fromJS(intrtr.templateForm);
 
 intrtr.optionDataAccountDetail = ko.observableArray([]);
 intrtr.optionDataSnapshot = ko.observableArray([
@@ -93,11 +93,11 @@ intrtr.getData = function(){
 			intrtr.form.Scheme(data.AccountSetupDetails.Scheme);
 
 		}
-		
+
 	});
 	intrtr.form.DataFilter([])
 	$.each(filter().DealNumberSearchList(), function(i, items){
-		
+
 		if(items != filter().DealNumberSearchVal()){
 			console.log(items)
 			var par = {
@@ -127,7 +127,7 @@ intrtr.getData = function(){
 						amount: "",
 					})
 				}
-				
+
 			})
 		}
 	});
@@ -158,7 +158,7 @@ intrtr.loadGrid = function(){
 			{
 				title: "Internal RTR Snapshot",
 				columns:[
-					{	
+					{
                 		field:"ActiveLoans",
                 		title: "No. of Active Loans",
                 		width: 100,
@@ -175,7 +175,7 @@ intrtr.loadGrid = function(){
 			        	title: "Amt Ounstanding (Deliquent)",
 			        	width: 100,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },	
+			        },
 			        {
 			        	field:"Outstand",
 			        	title: "Total Amt Outstanding (Accrued and Deliquent)",
@@ -205,7 +205,7 @@ intrtr.loadGrid = function(){
 			{
 				title: "Utilization",
 				columns:[
-					{	
+					{
                 		field:"Average",
                 		title: "Average",
                 		width: 65,
@@ -222,13 +222,13 @@ intrtr.loadGrid = function(){
 			        	title: "Minimum",
 			        	width: 65,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },	
+			        },
 				]
 			},
 			{
 				title: "DPD Track",
 				columns:[
-					{	
+					{
                 		field:"Loan",
                 		title: "Max. DPD in Closed Loan in Days",
                 		width: 125,
@@ -272,7 +272,7 @@ intrtr.loadGrid = function(){
 			        		return a
 			        	}
 			        },
-                	{	
+                	{
                 		field:"dealno",
                 		title: "Deal No",
                 		attributes: { style: 'background: rgb(238, 238, 238)' },
@@ -302,10 +302,10 @@ intrtr.loadGrid = function(){
 			        	title: "Loan Amount",
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
-			        	
+
                 ]
 	        }
-	        	
+
         ]
     });
 
@@ -318,7 +318,7 @@ intrtr.loadGrid = function(){
 			{
 				title: "Details",
 				columns:[
-					{	
+					{
                 		field:"ActiveLoans",
                 		title: "No. of Active Loans",
                 		width: 100,
@@ -335,7 +335,7 @@ intrtr.loadGrid = function(){
 			        	title: "Amt Ounstanding (Deliquent)",
 			        	width: 100,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },	
+			        },
 			        {
 			        	field:"Outstand",
 			        	title: "Total Amt Outstanding (Accrued and Deliquent)",
@@ -365,7 +365,7 @@ intrtr.loadGrid = function(){
 			{
 				title: "Utilization",
 				columns:[
-					{	
+					{
                 		field:"Average",
                 		title: "Average",
                 		width: 65,
@@ -382,13 +382,13 @@ intrtr.loadGrid = function(){
 			        	title: "Minimum",
 			        	width: 65,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },	
+			        },
 				]
 			},
 			{
 				title: "DPD Track",
 				columns:[
-					{	
+					{
                 		field:"Loan",
                 		title: "Max. DPD in Closed Loan in Days",
                 		width: 125,
@@ -421,5 +421,5 @@ $(function(){
 	$('.collapsibleDue').collapsible({
       accordion : true
     });
-	
+
 });

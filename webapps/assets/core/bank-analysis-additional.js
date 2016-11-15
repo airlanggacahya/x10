@@ -291,6 +291,18 @@ var DrawDataBank = function(id){
 }
 
 var RenderGridDataBank = function(id, res){
+    if (res.Status == 1){
+        $('#bedit'+id).prop('disabled',true)
+        $('#bdelete'+id).prop('disabled',true)
+        $('#add').prop('disabled',true)
+        $('#bankstt').data('kendoDatePicker').enable(false)
+    }else{
+        $('#bedit'+id).prop('disabled',false)
+        $('#bdelete'+id).prop('disabled',false)
+        $('#add').prop('disabled',false)
+        $('#bankstt').data('kendoDatePicker').enable(true)
+    }
+
     var fund = [];
     fund.push(res.DataBank[0].BankAccount.FundBased);
     var nonfund = [];
@@ -1611,7 +1623,12 @@ $(document).ready(function(){
                     swal("Please Edit / Enter Data", "", "success");
                     caba(0)
                 }
-
+                //setTimeout(function() {
+                    databank().forEach(function(e,i) {
+                        RenderGridDataBank(i,e);
+                    }, this);
+                        
+                //}, 50);
                 refreshFilter()
             });
         }

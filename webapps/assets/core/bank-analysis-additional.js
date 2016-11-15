@@ -2697,7 +2697,7 @@ var constructOdccModel = function(res){
         //}
 
         //amls.push(aml);
-        if (eachDataBank.BankAccount.FundBased.AccountType.toLowerCase().indexOf("od")>-1){
+        if (eachDataBank.BankAccount.FundBased.AccountType.toLowerCase().indexOf("od")>-1 && eachDataBank.BankAccount.FacilityType.indexOf("Fund Based") > -1 ){
             aml.OdCcUtilization = _.max(_.map(eachDataBank.BankDetails, function (bd) {
                 return toolkit.number(bd.AvgBalon / bd. OdCcLimit);
             }))
@@ -2714,11 +2714,11 @@ var constructOdccModel = function(res){
             amls.push(aml);
         }
 
-        // if (eachDataBank.BankAccount.CurrentBased.AccountNo != ""){
+        if (eachDataBank.BankAccount.FacilityType.indexOf("Current") > -1 ){
             current.abb = _.reduce(eachDataBank.CurrentBankDetails, function(memo, num){ return memo + num.AvgBalon; }, 0)/_.filter(eachDataBank.CurrentBankDetails, function(x){ return x.AvgBalon > 0; }).length
             current.abb = isNaN(current.abb) ? 0 : current.abb ;
             currents.push(current)
-        // }
+        }
     });
 
     abbavg = toolkit.number(_.reduce(amls, function(memo, num){ return memo + num.abb; }, 0) /  _.filter(amls, function(x){ return x.abb > 0; }).length);

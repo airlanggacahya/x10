@@ -58,6 +58,7 @@ type Previlege struct {
 	Username string
 	TopMenu  string
 	Rolename interface{}
+	Fullname interface{}
 }
 
 func (b *BaseController) LoadBase(k *knot.WebContext) []tk.M {
@@ -85,7 +86,6 @@ func (b *BaseController) AccessMenu(k *knot.WebContext) []tk.M {
 		//		tk.Println("URL_PARSED,", url)
 	}
 	sessionRoles := k.Session("roles")
-	// fmt.Println("----------->>>", sessionRoles)
 	access := []tk.M{}
 	if sessionRoles != nil {
 		accesMenu := sessionRoles.([]SysRolesModel)
@@ -103,7 +103,7 @@ func (b *BaseController) AccessMenu(k *knot.WebContext) []tk.M {
 					obj.Set("Menuname", o.Menuname)
 					obj.Set("Username", k.Session("username").(string))
 					obj.Set("Rolename", accesMenu[0].Name)
-					// fmt.Println("----------->>>")
+					obj.Set("Fullname", k.Session("fullname").(string))
 					access = append(access, obj)
 					return access
 				}

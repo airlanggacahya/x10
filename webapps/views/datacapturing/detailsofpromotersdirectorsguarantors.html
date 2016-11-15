@@ -351,7 +351,7 @@
                           <tr>
                             <td style="padding: 2px;"><input class="form-control input-sm" data-bind="value: PropertyType"></td>
                             <td style="padding: 2px;"><input class="form-control input-sm" data-bind="value: Address"></td>
-                            <td style="padding: 2px;"><input type="number" class="form-control input-sm" data-bind="value: MarketValue"></td>
+                            <td style="padding: 2px;"><input type="number" onkeydown="return FilterInputNumber(event)" class="form-control input-sm" data-bind="value: MarketValue"></td>
                             <td style="width: 30px;padding: 2px;">
                              <!--ko if: $index() > 0 -->
                             <button class="btn btn-xs btn-danger btnop" style="padding:  5px 10px !important" data-bind="visible: editmode(),click: function(){deleteOPD( $parentContext.$index(), $index() )}"><span class="fa fa-trash-o fa-lg"></span></button>
@@ -408,7 +408,7 @@
                               <label for="Acc" class="control-label">Contact no :</label>
                             </div>
                             <div class="col-sm-8 widthfield">
-                              <input type="text" id="contactdetail" name="ContactNo" class="form-control input-sm" data-bind="value: detail.detailReference()[$index()].ContactNo" validationMessage="Contact no required" required/>
+                              <input type="number" id="contactdetail" onkeydown="return FilterInputNumber(event)" name="ContactNo" class="form-control input-sm" data-bind="value: detail.detailReference()[$index()].ContactNo" validationMessage="Contact no required" required/>
                             </div>
                           </div>
                           <div class="col-sm-12 form-group">

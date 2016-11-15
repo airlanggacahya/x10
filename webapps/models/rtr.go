@@ -967,7 +967,12 @@ func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno str
 
 	if len(bankAnalys) > 0 {
 		tempBankAnalys := crowd.From(&bankAnalys).Where(func(x interface{}) interface{} {
-			return strings.TrimSpace(strings.ToLower(x.(BankAnalysisV2).DataBank[0].BankAccount.FundBased.AccountType)) == "od/cc"
+			facilityType := x.(BankAnalysisV2).DataBank[0].BankAccount.FacilityType
+			nggolekFundBased := crowd.From(&facilityType).Where(func(y interface{}) interface{} {
+				return strings.TrimSpace(strings.ToLower(y.(string))) == "fund based"
+			}).Exec().Result.Data().([]string)
+
+			return strings.TrimSpace(strings.ToLower(x.(BankAnalysisV2).DataBank[0].BankAccount.FundBased.AccountType)) == "od/cc" && len(nggolekFundBased) > 0
 		}).Exec().Result.Data().([]BankAnalysisV2)
 
 		rtrODCC := []RTRBottom{}

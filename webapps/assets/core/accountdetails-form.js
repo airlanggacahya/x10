@@ -1675,7 +1675,8 @@ adf.getReset = function(){
 		cancelButtonColor: '#d33',
 		confirmButtonText: "Reset",
 	}).then(function() {
-		ko.mapping.fromJS(adf.optionTemporaryData(), adf.form)
+		refreshFilter();
+		// ko.mapping.fromJS(adf.optionTemporaryData(), adf.form)
 		// adf.getRatingMaster(adf.getData);
 	}, function(dismiss) {
 		if (dismiss === 'cancel') {

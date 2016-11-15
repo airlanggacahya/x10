@@ -2797,7 +2797,7 @@ adf.loanDetailEnable = function(){
 		$("#FirstAgreementDate").data("kendoDatePicker").enable(false);
 		$("#RecenetAgreementDate").data("kendoDatePicker").enable(false);
 		$("#VintageWithX10").data("kendoNumericTextBox").enable(false);
-		$("#CommercialCibilReport").data("kendoDropDownList").enable(false);
+		// $("#CommercialCibilReport").data("kendoDropDownList").enable(false);
 	}
 
 }

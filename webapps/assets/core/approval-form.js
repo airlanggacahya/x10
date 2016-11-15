@@ -208,6 +208,7 @@ refreshFilter = function(){
     }
     r.checkValidation(res);
     r.AllData(res)
+    loanApproval.refresh()
 
     if(res.Data.CP[0] != undefined && res.Data.AD[0] != undefined)
       r.sAD(

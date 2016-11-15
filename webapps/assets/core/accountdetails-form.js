@@ -536,11 +536,9 @@ adf.save = function () {
 		res2 += items.Result()
 	})
 	if(res1 > 100){
-		swal("Warning", "Distributor mix exceeding 100%", "warning");
-
-	}else if(res2 > 100){
 		swal("Warning", "Customer Business Mix exceeding 100%", "warning");
-
+	}else if(res2 > 100){
+		swal("Warning", "Distributor mix exceeding 100%", "warning");
 	}else{
 
 			var ondate5= adf.form.AccountSetupDetails.LoginDate()
@@ -815,10 +813,9 @@ adf.getConfirm = function(){
 			res2 += items.Result()
 		})
 		if(res1 > 100){
-		swal("Warning", "Distributor mix exceeding 100%", "warning");
-
+		swal("Warning", "Customer Business Mix exceeding 100%", "warning");
 		}else if(res2 > 100){
-			swal("Warning", "Customer Business Mix exceeding 100%", "warning");
+			swal("Warning", "Distributor mix exceeding 100%", "warning");
 
 		}else{
 

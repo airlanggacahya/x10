@@ -30,6 +30,7 @@ func (c *ApprovalController) Default(k *knot.WebContext) interface{} {
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Rolename = o["Rolename"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)

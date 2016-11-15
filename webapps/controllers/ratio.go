@@ -34,6 +34,7 @@ func (c *RatioController) Input(k *knot.WebContext) interface{} {
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Rolename = o["Rolename"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
 	k.Config.OutputType = knot.OutputTemplate
@@ -59,6 +60,7 @@ func (c *RatioController) Pdf(k *knot.WebContext) interface{} {
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
 	}
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 
@@ -85,6 +87,7 @@ func (c *RatioController) Master(k *knot.WebContext) interface{} {
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
 	k.Config.OutputType = knot.OutputTemplate
@@ -135,6 +138,7 @@ func (c *RatioController) Report(k *knot.WebContext) interface{} {
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
 	k.Config.OutputType = knot.OutputTemplate

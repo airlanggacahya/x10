@@ -31,6 +31,7 @@ func (c *RtrController) InternalRtr(k *knot.WebContext) interface{} {
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Rolename = o["Rolename"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
 	k.Config.OutputType = knot.OutputTemplate

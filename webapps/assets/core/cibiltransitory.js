@@ -2,78 +2,40 @@ var trans = {};
 trans.AllData = ko.observableArray([]);
 trans.CurrentData = ko.observable(null);
 trans.GetDataGrid = function(){
-	// var url = "/cibiltransitory/getdatacibilpromotor"
-	// var param = {};
-	// trans.AllData([]);
-	//  ajaxPost(url, param, function(data) {
-	//  	data.Data.forEach(function(x){
-	//  		var fi = _.find(filter().CustomerSearchAll(),function(xi){
-	//  			return xi.customer_id == x.ConsumersInfos.CustomerId
-	//  		})
-	//  		x.CustomerName = "";
-	//  		if(fi !=undefined){
-	//  			x.CustomerName = fi.customer_name;
-	//  		}
+	var url = "/cibiltransitory/getdatacibilpromotor"
+	var param = {};
+	trans.AllData([]);
+	 ajaxPost(url, param, function(data) {
+	 	data.Data.forEach(function(x){
+	 		var fi = _.find(filter().CustomerSearchAll(),function(xi){
+	 			return xi.customer_id == x.ConsumersInfos.CustomerId
+	 		})
+	 		x.CustomerName = "";
+	 		if(fi !=undefined){
+	 			x.CustomerName = fi.customer_name;
+	 		}
 
-	//  	})
-	//  	trans.AllData(data.Data);
+	 	})
+	 	trans.AllData(data.Data);
 		trans.RenderGrid();
-	// })
+	})
 }
 
 
 trans.RenderGrid = function(){
 	var fil = $("#filter").val().toLowerCase();
-	// var datas = _.filter(trans.AllData(),function(x){ 
-	// 	return x.FileName.toLowerCase().indexOf(fil) > -1 || x.ConsumersInfos.ConsumerName.toLowerCase().indexOf(fil) > -1 || x.CustomerName.toLowerCase().indexOf(fil) > -1
-	// });
-	// if(fil==""){
-	// 	datas = trans.AllData();
-	// }
-	var parm = {};
-	var url = "/cibiltransitory/getdatacibilpromotor"
-
-	parm.filter = fil;
+	var datas = _.filter(trans.AllData(),function(x){ 
+		return x.FileName.toLowerCase().indexOf(fil) > -1 || x.ConsumersInfos.ConsumerName.toLowerCase().indexOf(fil) > -1 || x.CustomerName.toLowerCase().indexOf(fil) > -1
+	});
+	if(fil==""){
+		datas = trans.AllData();
+	}
 
 	$("#transgrid").html("");
 	$("#transgrid").kendoGrid({
-		 // dataSource : datas,
-		 // scrollable:true,
-		 // pageable : false,
-		 dataSource: {
-                transport: {
-                    read: {
-                        url: url,
-                        dataType: "json",
-                        data: parm,
-                        type: "POST",
-                         complete: function(datas) {
-
-                         }
-
-                     }
-
-                 },
-                   schema: {
-                    data: function(data) {
-	                        if (data.Data) {
-	                            return data.Data.data;
-	                        }
-	                        else{
-	                     	   	return [];   
-	                        }
-	                 },
-                    
-                    total: "data.Data.Total",
-                },
-         },
-        pageable: {
-         	    numeric: false,
-                previousNext: false,
-        },
-          scrollable: {
-                    virtual: true
-                },
+		 dataSource : datas,
+		 scrollable:true,
+		 pageable : false,
 		 height : 400,
 		 columns :[
 		 {

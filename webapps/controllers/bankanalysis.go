@@ -619,7 +619,7 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 
 	for idx, val := range res {
 		// fmt.Println("-----------", val.IsConfirmed, val.DateConfirmed, "\n")
-		if val.IsConfirmed {
+		if val.Status == 1 {
 			val.IsConfirmed = false
 			val.Status = 0
 		} else {

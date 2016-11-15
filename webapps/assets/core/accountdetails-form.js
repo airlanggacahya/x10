@@ -546,7 +546,10 @@ adf.save = function () {
 			var ondate5= adf.form.AccountSetupDetails.LoginDate()
 			if(!adf.blankdate(adf.form.AccountSetupDetails.LoginDate()) ){
 				var date5 = kendo.toString(new Date(),"yyyy-MM-dd")+"T00:00:00.000Z";
-				adf.form.AccountSetupDetails.LoginDate(date5)
+				if(adf.form.AccountSetupDetails.LoginDate() == date5){
+					adf.form.AccountSetupDetails.LoginDate(date5)
+				}
+				
 			}
 		
 			if(!adf.blankdate(adf.PdDate())){

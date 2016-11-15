@@ -787,7 +787,7 @@ adf.getConfirm = function(){
 			adf.optionChangeConfirm(" Confirm");
 			adf.sectionDisable("#city", false)
 			adf.sectionDisable("#DealNo", false)
-			adf.sectionDisable("#loginDate", false)
+			// adf.sectionDisable("#loginDate", false)
 		}, 100)
 
 		adf.optionChangeConfirm(" Confirm")

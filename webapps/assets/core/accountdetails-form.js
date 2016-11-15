@@ -536,10 +536,10 @@ adf.save = function () {
 		res2 += items.Result()
 	})
 	if(res1 > 100){
-		swal("Warning", "Distributor mix Exceed 100", "warning");
+		swal("Warning", "Distributor mix exceeding 100%", "warning");
 
 	}else if(res2 > 100){
-		swal("Warning", "Customer Business mix Exceed 100", "warning");
+		swal("Warning", "Customer Business Mix exceeding 100%", "warning");
 
 	}else{
 
@@ -615,7 +615,7 @@ adf.save = function () {
 			if(adf.form.BorrowerDetails.DateBusinessStarted().toString().indexOf("1970") >-1){
 				adf.form.BorrowerDetails.DateBusinessStarted("");
 			}else{
-				var date3 =  kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"dd-MMM-yyyy");
+				var date3 =  kendo.toString(new Date(adf.form.BorrowerDetails.DateBusinessStarted()),"dd-MMM-yyyy");
 				adf.form.BorrowerDetails.DateBusinessStarted(date3)
 			}
 			
@@ -628,7 +628,7 @@ adf.save = function () {
 	}
 
 }
-
+s
 adf.getSaveAccount = function(){
 	adf.optionTemporaryData().AccountSetupDetails.PdInfo.PdDate =moment(adf.PdDate()).toISOString();
 	adf.optionTemporaryData().AccountSetupDetails.BrHead = adf.form.AccountSetupDetails.BrHead()
@@ -787,7 +787,7 @@ adf.getConfirm = function(){
 			adf.optionChangeConfirm(" Confirm");
 			adf.sectionDisable("#city", false)
 			adf.sectionDisable("#DealNo", false)
-			adf.sectionDisable("#loginDate", false)
+			// adf.sectionDisable("#loginDate", false)
 		}, 100)
 
 		adf.optionChangeConfirm(" Confirm")
@@ -815,10 +815,10 @@ adf.getConfirm = function(){
 			res2 += items.Result()
 		})
 		if(res1 > 100){
-			swal("Warning", "Distributor mix Exceed 100", "warning");
+		swal("Warning", "Distributor mix exceeding 100%", "warning");
 
 		}else if(res2 > 100){
-			swal("Warning", "Customer Business mix Exceed 100", "warning");
+			swal("Warning", "Customer Business Mix exceeding 100%", "warning");
 
 		}else{
 
@@ -912,6 +912,19 @@ adf.getConfirm = function(){
 
 				// 		if(adf.form.BorrowerDetails.DateBusinessStarted().toString().indexOf("1970") >-1)
 				// 		adf.form.BorrowerDetails.DateBusinessStarted("");
+				if(adf.form.LoanDetails.IfBackedByPO() == false ){
+					$("#BackToBack").getKendoNumericTextBox().enable(false)
+					$("#Expected").getKendoNumericTextBox().enable(false)
+				}
+
+				if(adf.form.LoanDetails.IfExistingCustomer() == false ){
+					$("#IfYesEistingLimitAmount").getKendoNumericTextBox().enable(false)
+					$("#ExistingRoi").getKendoNumericTextBox().enable(false)
+					$("#ExistingPf").getKendoNumericTextBox().enable(false)
+					$("#FirstAgreementDate").getKendoDatePicker().enable(false)
+					$("#RecenetAgreementDate").getKendoDatePicker().enable(false)
+					$("#VintageWithX10").getKendoNumericTextBox().enable(false)
+				}
 
 				if(adf.PdDate().toString().indexOf("1970") >-1){
 				adf.PdDate("")
@@ -931,7 +944,7 @@ adf.getConfirm = function(){
 				if(adf.form.BorrowerDetails.DateBusinessStarted().toString().indexOf("1970") >-1){
 					adf.form.BorrowerDetails.DateBusinessStarted("");
 				}else{
-					var date3 =  kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"dd-MMM-yyyy");
+					var date3 =  kendo.toString(new Date(adf.form.BorrowerDetails.DateBusinessStarted()),"dd-MMM-yyyy");
 					adf.form.BorrowerDetails.DateBusinessStarted(date3)
 				}
 
@@ -1805,7 +1818,7 @@ adf.reloadStatus = function(status){
 			adf.sectionDisable("#LoanAmount", false)
 			adf.sectionDisable("#city", false)
 			adf.sectionDisable("#DealNo", false)
-			adf.sectionDisable("#loginDate", false)
+			// adf.sectionDisable("#loginDate", false)
 			$("#addpromotor").prop("disabled", false);
 			$("#addvendor").prop("disabled", false);
 			$("#addvendor1").prop("disabled", false);
@@ -2037,7 +2050,7 @@ adf.getData = function () {
 						
 						
 
-						adf.form.AccountSetupDetails.LoginDate((new Date).toISOString())
+						// adf.form.AccountSetupDetails.LoginDate((new Date).toISOString())
 						if(adf.form.Freeze() == true || adf.form.Status() == 1){
 
 							adf.EnableAllfields(false)
@@ -2274,6 +2287,7 @@ adf.addMorePromotor = function (o) {
 	adf.form.PromotorDetails.push(each)
 	adf.addMoreRealEstatePosition(each)()
 	adf.fixMultiSectionCSS()
+	$(".real").prop("disabled", "disabled")
 	$(o).closest('[id]').find('.vendor-col-content .wrapper .clear').remove()
 	$('<div />').addClass('clear').css('clear', 'both').appendTo($(o).closest('[id]').find('.vendor-col-content .wrapper'))
 }

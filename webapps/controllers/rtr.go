@@ -34,6 +34,8 @@ func (c *RtrController) Default(k *knot.WebContext) interface{} {
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
+		DataAccess.Rolename = o["Rolename"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
 	k.Config.OutputType = knot.OutputTemplate

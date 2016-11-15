@@ -125,6 +125,8 @@
     <!-- core -->
     <script src="/static/core/app.js"></script>
     <script src="/static/core/layout.js"></script>
+    <script src="/static/core/privilege.js"></script>
+
     <link rel="stylesheet" href="/static/css/bootstrap-ext.css" />
     <link rel="stylesheet" href="/static/css/layout.css" />
     <link rel="stylesheet" href="/static/css/materialize.custom.css" />
@@ -814,7 +816,7 @@
       }
       map[parent].submenu.push(obj);
     }
-    return map['-'].submenu;
+    return map['-'] ? map['-'].submenu : undefined;
   }
 
   function MenuItem(Id, href, title, icon, submenu, baseURL) {
@@ -1175,7 +1177,7 @@
                     <img src="/static/img/no-image.png" />
                   </span>
                   <div class="pull-right name">
-                    <span class="thumb-sm title-user" data-bind="text: model.User"></span>
+                    <span class="thumb-sm title-user" data-bind="text: model.Fullname"></span>
                     <b class="caret color-base"></b>
                   </div>
                 </a>

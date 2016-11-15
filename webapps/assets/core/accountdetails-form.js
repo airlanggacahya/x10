@@ -944,7 +944,7 @@ adf.getConfirm = function(){
 				if(adf.form.BorrowerDetails.DateBusinessStarted().toString().indexOf("1970") >-1){
 					adf.form.BorrowerDetails.DateBusinessStarted("");
 				}else{
-					var date3 =  kendo.toString(new Date(adf.form.LoanDetails.RecenetAgreementDate()),"dd-MMM-yyyy");
+					var date3 =  kendo.toString(new Date(adf.form.BorrowerDetails.DateBusinessStarted()),"dd-MMM-yyyy");
 					adf.form.BorrowerDetails.DateBusinessStarted(date3)
 				}
 
@@ -1818,7 +1818,7 @@ adf.reloadStatus = function(status){
 			adf.sectionDisable("#LoanAmount", false)
 			adf.sectionDisable("#city", false)
 			adf.sectionDisable("#DealNo", false)
-			adf.sectionDisable("#loginDate", false)
+			// adf.sectionDisable("#loginDate", false)
 			$("#addpromotor").prop("disabled", false);
 			$("#addvendor").prop("disabled", false);
 			$("#addvendor1").prop("disabled", false);
@@ -2050,7 +2050,7 @@ adf.getData = function () {
 						
 						
 
-						adf.form.AccountSetupDetails.LoginDate((new Date).toISOString())
+						// adf.form.AccountSetupDetails.LoginDate((new Date).toISOString())
 						if(adf.form.Freeze() == true || adf.form.Status() == 1){
 
 							adf.EnableAllfields(false)

@@ -136,7 +136,12 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 		if len(bankAnalys) > 0 {
 
 			tempBankAnalys := crowd.From(&bankAnalys).Where(func(x interface{}) interface{} {
-				return strings.TrimSpace(strings.ToLower(x.(BankAnalysisV2).DataBank[0].BankAccount.FundBased.AccountType)) == "od/cc"
+				facilityType := x.(BankAnalysisV2).DataBank[0].BankAccount.FacilityType
+				nggolekFundBased := crowd.From(&facilityType).Where(func(y interface{}) interface{} {
+					return strings.TrimSpace(strings.ToLower(y.(string))) == "fund based"
+				}).Exec().Result.Data().([]string)
+
+				return strings.TrimSpace(strings.ToLower(x.(BankAnalysisV2).DataBank[0].BankAccount.FundBased.AccountType)) == "od/cc" && len(nggolekFundBased) > 0
 			}).Exec().Result.Data().([]BankAnalysisV2)
 
 			qinsert := cMongo.NewQuery().
@@ -1118,13 +1123,17 @@ func (r *RTRBottom) cleanODCCRTR(rtrList []RTRBottom, rtrFound []RTRBottom) ([]R
 
 		if !found {
 			err := r.deleteODCCRTR(v)
-			if err != nil {
+			if err == nil {
 				idx := r.NggolekSliceGatelan(len(rtrList), func(i int) bool {
 					return rtrList[i].Id == v.Id
 				})
 
 				if idx != -1 {
-					rtrList = append(rtrList[:idx], rtrList[idx+1:]...)
+					if len(rtrList) > 1 {
+						rtrList = append(rtrList[:idx], rtrList[idx+1:]...)
+					} else {
+						rtrList = []RTRBottom{}
+					}
 				}
 			}
 		}

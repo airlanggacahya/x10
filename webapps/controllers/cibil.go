@@ -62,6 +62,7 @@ func (c *DataCapturingController) CibilNew(k *knot.WebContext) interface{} {
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
+		DataAccess.Rolename = o["Rolename"].(string)
 	}
 
 	k.Config.OutputType = knot.OutputTemplate

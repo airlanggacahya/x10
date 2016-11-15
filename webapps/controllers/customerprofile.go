@@ -32,6 +32,7 @@ func (c *DataCapturingController) CustomerProfileInfo(k *knot.WebContext) interf
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
+		DataAccess.Rolename = o["Rolename"].(string)
 	}
 
 	k.Config.OutputType = knot.OutputTemplate

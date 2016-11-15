@@ -125,7 +125,7 @@ function refreshdata(){
           $('.form-last-confirmation-info').html('');
           info.ButtonLogic(0)
         }
-        
+
       } else if(data[0].Status == 2){
         $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(data[0].DateFreeze),"dd-MM-yyyy h:mm:ss tt") )
         info.ButtonLogic(2)
@@ -530,7 +530,7 @@ function confirmorverify(status){
     customerprofile().Status(0);
     info.getReEnter();
   }
-  
+
 
   save();
   // buttonlogicstatus(status);
@@ -579,7 +579,7 @@ function save1(){
       // } else if(customerprofile().Status() == 2){
       //   $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
       //   info.ButtonLogic(2)
-      // } 
+      // }
     }
   }, undefined);
 }
@@ -624,10 +624,28 @@ function save(){
       } else if(customerprofile().Status() == 2){
         $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
         info.ButtonLogic(2)
-      } 
+      }
     }
   }, undefined);
 }
+
+function FilterInputNumber(event) {
+  var keyCode = ('which' in event) ? event.which : event.keyCode;
+
+  isNotWanted = (keyCode == 69 || keyCode == 101);
+  return !isNotWanted;
+};
+
+function FilterInputAlphabet(event) {
+  var keyCode = ('which' in event) ? event.which : event.keyCode;
+
+  isNotWanted = true;
+  if(keyCode >= 48 && keyCode <= 57) {
+    isNotWanted = false;
+  }
+
+  return isNotWanted;
+};
 
 $(document).ready(function(){
   info.initEvents();
@@ -635,7 +653,7 @@ $(document).ready(function(){
   // setTimeout(function(){
   //   $("input").css("z-index", "-1")
   // }, 500)
-  
+
 });
 
 </script>
@@ -687,7 +705,7 @@ input[disabled]{
         <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
         <div class="panel-body">
           <!-- <div class="form-last-confirmation-info"></div> -->
-          
+
           <div class="panel-body btnFixed static">
             <div class="panel-nav-button " >
               <!-- <button  type="button" id="ceedit" btn-sm class="btn btn-sm btn-success" onclick="disableedit()">Cancel Edit</button> -->
@@ -703,7 +721,7 @@ input[disabled]{
               <span class="form-last-confirmation-info pull-right"></span>
             </div>
           </div>
-          
+
           <!-- <ul id= "ontabs" class="nav nav-tabs" style=" margin-bottom: 1%;">
             <li id="li1" class="active"><a href="#tab0" data-toggle="tab">All Details</a></li>
             <li id="li1"><a href="#tab1" data-toggle="tab">Applicant Details</a></li>

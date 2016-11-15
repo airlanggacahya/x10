@@ -57,6 +57,8 @@ type Previlege struct {
 	Menuname string
 	Username string
 	TopMenu  string
+	Rolename interface{}
+	Fullname interface{}
 }
 
 func (b *BaseController) LoadBase(k *knot.WebContext) []tk.M {
@@ -100,6 +102,8 @@ func (b *BaseController) AccessMenu(k *knot.WebContext) []tk.M {
 					obj.Set("Menuid", o.Menuid)
 					obj.Set("Menuname", o.Menuname)
 					obj.Set("Username", k.Session("username").(string))
+					obj.Set("Rolename", accesMenu[0].Name)
+					obj.Set("Fullname", k.Session("fullname").(string))
 					access = append(access, obj)
 					return access
 				}

@@ -291,6 +291,18 @@ var DrawDataBank = function(id){
 }
 
 var RenderGridDataBank = function(id, res){
+    if (res.Status == 1){
+        $('#bedit'+id).prop('disabled',true)
+        $('#bdelete'+id).prop('disabled',true)
+        $('#add').prop('disabled',true)
+        $('#bankstt').data('kendoDatePicker').enable(false)
+    }else{
+        $('#bedit'+id).prop('disabled',false)
+        $('#bdelete'+id).prop('disabled',false)
+        $('#add').prop('disabled',false)
+        $('#bankstt').data('kendoDatePicker').enable(true)
+    }
+
     var fund = [];
     fund.push(res.DataBank[0].BankAccount.FundBased);
     var nonfund = [];
@@ -317,6 +329,7 @@ var RenderGridDataBank = function(id, res){
                 title : 'Account No',
                 field : 'AccountNo',
                 headerAttributes: { "class": "sub-bgcolor" },
+                attributes:{ "style": "text-align:right" },
             },
             {
                 title : 'ROI (%)',
@@ -329,12 +342,14 @@ var RenderGridDataBank = function(id, res){
                     // }
                     return num + "%"
                 },
+                attributes:{ "style": "text-align:right" },
             },
             {
                 title : 'Sanction Limit (Rs. Lacs)',
                 field : 'SancLimit',
                 headerAttributes: { "class": "sub-bgcolor" },
-                template : "#: app.formatnum( SancLimit, 2 ) #"
+                template : "#: app.formatnum( SancLimit, 2 ) #",
+                attributes:{ "style": "text-align:right" },
             },
             {
                 title : 'Sanction Date',
@@ -353,7 +368,8 @@ var RenderGridDataBank = function(id, res){
                     // }
 
                     return num
-                }
+                },
+                attributes:{ "style": "text-align:right" },
             },
             // {
             //     title : 'Security For FB',
@@ -376,7 +392,8 @@ var RenderGridDataBank = function(id, res){
                 headerAttributes: { "class": "sub-bgcolor" },
                 width : 150,
                 field : 'SancLimit',
-                template : "#: app.formatnum( SancLimit, 2 ) #"
+                template : "#: app.formatnum( SancLimit, 2 ) #",
+                attributes:{ "style": "text-align:right" },
             },
             {
                 title : 'Sanction Date',
@@ -527,27 +544,27 @@ var RenderGridDataBank = function(id, res){
             $('<td />').appendTo($footer1)
                 .html('Average Receipts').attr('colspan', 3)
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.creditTotal, 2))
+                .html(app.formatnum(averageReceipt.creditTotal, 2)).attr("style","text-align:right")
             $('<td />').appendTo($footer1)
                 .html('&nbsp;').attr('colspan', 2)
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.debitTotal, 2))
+                .html(app.formatnum(averageReceipt.debitTotal, 2)).attr("style","text-align:right")
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.avgBlon, 2))
+                .html(app.formatnum(averageReceipt.avgBlon, 2)).attr("style","text-align:right")
             $('<td />').appendTo($footer1)
-                .html(kendo.toString(averageReceipt.utilPerMonth, 'p2'))
+                .html(kendo.toString(averageReceipt.utilPerMonth, 'p2')).attr("style","text-align:right")
             $('<td />').appendTo($footer1)
                 .html('&nbsp;')
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.actualInterestPaid, 2))
+                .html(app.formatnum(averageReceipt.actualInterestPaid, 2)).attr("style","text-align:right")
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.noOfDebit))
+                .html(app.formatnum(averageReceipt.noOfDebit)).attr("style","text-align:right")
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.noOfCredit))
+                .html(app.formatnum(averageReceipt.noOfCredit)).attr("style","text-align:right")
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.owCheque))
+                .html(app.formatnum(averageReceipt.owCheque)).attr("style","text-align:right")
             $('<td />').appendTo($footer1)
-                .html(app.formatnum(averageReceipt.iwCheque))
+                .html(app.formatnum(averageReceipt.iwCheque)).attr("style","text-align:right")
 
             var averageOpenLimit = {}
 
@@ -566,13 +583,13 @@ var RenderGridDataBank = function(id, res){
             $('<td />').appendTo($footer2)
                 .html('Average Open Limit').attr('colspan', 3)
             $('<td />').appendTo($footer2)
-                .html(app.formatnum(averageOpenLimit.creditTotal, 2))
+                .html(app.formatnum(averageOpenLimit.creditTotal, 2)).attr("style","text-align:right")
             $('<td />').appendTo($footer2)
                 .html('&nbsp;').attr('colspan', 3)
             $('<td />').appendTo($footer2)
                 .html("Annualised Credits").attr('colspan', 2)
             $('<td />').appendTo($footer2)
-                .html(app.formatnum(averageOpenLimit.annualisedCredit, 2))
+                .html(app.formatnum(averageOpenLimit.annualisedCredit, 2)).attr("style","text-align:right")
             $('<td />').appendTo($footer2)
                 // .html('% BTO In This Account').attr('colspan', 5)
                 .html('&nbsp').attr('colspan', 5)
@@ -724,7 +741,8 @@ var createBankDetailGridCols = function(isForm){
                     return app.formatnum(d.CreditNonCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Cash",
             field : "CreditCash",
@@ -736,11 +754,13 @@ var createBankDetailGridCols = function(isForm){
                     return app.formatnum(d.CreditCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Total",
             headerAttributes: { "class": "sub-bgcolor" },
-            template : "#: app.formatnum(CreditNonCash+CreditCash,2)#"
+            template : "#: app.formatnum(CreditNonCash+CreditCash,2)#",
+            attributes:{ "style": "text-align:right" },
         }]
     }, {
         headerTemplate: "Monthly Debits<br />(Rs. Lacs)",
@@ -756,7 +776,8 @@ var createBankDetailGridCols = function(isForm){
                     return app.formatnum( d.DebitNonCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Cash",
             field : "DebitCash",
@@ -768,11 +789,13 @@ var createBankDetailGridCols = function(isForm){
                     return app.formatnum(d.DebitCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Total",
             headerAttributes: { "class": "sub-bgcolor" },
-            template : "#:app.formatnum(DebitNonCash+DebitCash,2)#"
+            template : "#:app.formatnum(DebitNonCash+DebitCash,2)#",
+            attributes:{ "style": "text-align:right" },
         }]
     }, {
         title : "AVG BAL ON<br />1+7+14+21+28<br />(Rs. Lacs)",
@@ -786,14 +809,16 @@ var createBankDetailGridCols = function(isForm){
                 return app.formatnum(d.AvgBalon,2)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "OD/CC Utilization Per Month",
         headerAttributes: { "class": "sub-bgcolor" },
         template : function (d) {
             var value = toolkit.number(d.AvgBalon / d.OdCcLimit)
             return kendo.toString(value, 'p2')
-        }
+        },
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "OD/CC Limit Per Month (Rs. Lacs)",
         field : "OdCcLimit",
@@ -805,7 +830,8 @@ var createBankDetailGridCols = function(isForm){
                 return app.formatnum(d.OdCcLimit,2)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "Actual Interest paid (Rs. Lacs)",
         field : "ActualInterestPaid",
@@ -817,7 +843,8 @@ var createBankDetailGridCols = function(isForm){
                 return app.formatnum(d.ActualInterestPaid, 2)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "No. of Debits",
         field : "NoOfDebit",
@@ -829,7 +856,8 @@ var createBankDetailGridCols = function(isForm){
                 return d.NoOfDebit
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "No. of Credits",
         field : "NoOfCredit",
@@ -841,7 +869,8 @@ var createBankDetailGridCols = function(isForm){
                 return d.NoOfCredit
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "O/W Cheque Returns",
         field : "OwCheque",
@@ -853,7 +882,8 @@ var createBankDetailGridCols = function(isForm){
                 return app.formatnum(d.OwCheque)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "I/W Cheque Returns",
         field : "IwCheque",
@@ -865,7 +895,8 @@ var createBankDetailGridCols = function(isForm){
                 return app.formatnum(d.IwCheque)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }];
 
     //if (isForm) cols.splice(4, 1);
@@ -890,7 +921,8 @@ var createBankDetailGridCols = function(isForm){
                         return app.formatnum(d.CreditNonCash,2)
                     }
                 },
-                editor: disableSpinner
+                editor: disableSpinner,
+                attributes:{ "style": "text-align:right" },
             }, {
                 title : "Cash",
                 field : "CreditCash",
@@ -902,7 +934,8 @@ var createBankDetailGridCols = function(isForm){
                         return app.formatnum(d.CreditCash,2)
                     }
                 },
-                editor: disableSpinner
+                editor: disableSpinner,
+                attributes:{ "style": "text-align:right" },
             },
             // {
             //     title : "Total",
@@ -924,7 +957,8 @@ var createBankDetailGridCols = function(isForm){
                         return app.formatnum(d.DebitNonCash,2)
                     }
                 },
-                editor: disableSpinner
+                editor: disableSpinner,
+                attributes:{ "style": "text-align:right" },
             }, {
                 title : "Cash",
                 field : "DebitCash",
@@ -936,7 +970,8 @@ var createBankDetailGridCols = function(isForm){
                         return app.formatnum(d.DebitCash,2)
                     }
                 },
-                editor: disableSpinner
+                editor: disableSpinner,
+                attributes:{ "style": "text-align:right" },
             },
             // {
             //     title : "Total",
@@ -956,7 +991,8 @@ var createBankDetailGridCols = function(isForm){
                     return app.formatnum(d.AvgBalon,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         },
         // {
         //     title : "OD/CC Utilization Per Months",
@@ -977,7 +1013,8 @@ var createBankDetailGridCols = function(isForm){
                     return app.formatnum(d.OdCcLimit,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Actual Interest paid (Rs. Lacs)",
             field : "ActualInterestPaid",
@@ -989,7 +1026,8 @@ var createBankDetailGridCols = function(isForm){
                     return app.formatnum(d.ActualInterestPaid,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "No. of Debits",
             field : "NoOfDebit",
@@ -1001,7 +1039,8 @@ var createBankDetailGridCols = function(isForm){
                     return d.NoOfDebit
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "No. of Credits",
             field : "NoOfCredit",
@@ -1013,7 +1052,8 @@ var createBankDetailGridCols = function(isForm){
                     return d.NoOfCredit
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "O/W Cheque Returns",
             field : "OwCheque",
@@ -1025,7 +1065,8 @@ var createBankDetailGridCols = function(isForm){
                     return d.OwCheque
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "I/W Cheque Returns",
             field : "IwCheque",
@@ -1037,7 +1078,8 @@ var createBankDetailGridCols = function(isForm){
                     return d.IwCheque
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }];
     }
 
@@ -1066,7 +1108,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.CreditNonCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Cash",
             field : "CreditCash",
@@ -1078,11 +1121,13 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.CreditCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Total",
             headerAttributes: { "class": "sub-bgcolor" },
-            template : "#:app.formatnum(CreditNonCash+CreditCash,2)#"
+            template : "#:app.formatnum(CreditNonCash+CreditCash,2)#",
+            attributes:{ "style": "text-align:right" },
         }]
     }, {
         headerTemplate: "Monthly Debits<br />(Rs. Lacs)",
@@ -1098,7 +1143,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.DebitNonCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Cash",
             field : "DebitCash",
@@ -1110,11 +1156,13 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.DebitCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Total",
             headerAttributes: { "class": "sub-bgcolor" },
-            template : "#:app.formatnum(DebitNonCash+DebitCash,2)#"
+            template : "#:app.formatnum(DebitNonCash+DebitCash,2)#",
+            attributes:{ "style": "text-align:right" },
         }]
     }, {
         title : "AVG BAL ON<br />1+7+14+21+28<br />(Rs. Lacs)",
@@ -1128,7 +1176,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return app.formatnum(d.AvgBalon,2)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     },
        {
         title : "No. of Debits",
@@ -1141,7 +1190,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return d.NoOfDebit
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "No. of Credits",
         field : "NoOfCredit",
@@ -1153,7 +1203,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return d.NoOfCredit
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "O/W Cheque Returns",
         field : "OwCheque",
@@ -1165,7 +1216,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return app.formatnum(d.OwCheque)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "I/W Cheque Returns",
         field : "IwCheque",
@@ -1177,7 +1229,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return app.formatnum(d.IwCheque)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }];
 
     //if (isForm) cols.splice(4, 1);
@@ -1202,7 +1255,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.CreditNonCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Cash",
             field : "CreditCash",
@@ -1214,7 +1268,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.CreditCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         },
         // {
         //     title : "Total",
@@ -1236,7 +1291,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.DebitNonCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         }, {
             title : "Cash",
             field : "DebitCash",
@@ -1248,7 +1304,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.DebitCash,2)
                 }
             },
-            editor: disableSpinner
+            editor: disableSpinner,
+            attributes:{ "style": "text-align:right" },
         },
 
         ]
@@ -1264,7 +1321,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return app.formatnum(d.AvgBalon,2)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     },
       {
         title : "No. of Debits",
@@ -1277,7 +1335,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return d.NoOfDebit
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "No. of Credits",
         field : "NoOfCredit",
@@ -1289,7 +1348,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return d.NoOfCredit
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "O/W Cheque Returns",
         field : "OwCheque",
@@ -1301,7 +1361,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return app.formatnum(d.OwCheque)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }, {
         title : "I/W Cheque Returns",
         field : "IwCheque",
@@ -1313,7 +1374,8 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return app.formatnum(d.IwCheque)
             }
         },
-        editor: disableSpinner
+        editor: disableSpinner,
+        attributes:{ "style": "text-align:right" },
     }];
     }
 
@@ -1611,7 +1673,12 @@ $(document).ready(function(){
                     swal("Please Edit / Enter Data", "", "success");
                     caba(0)
                 }
-
+                //setTimeout(function() {
+                    databank().forEach(function(e,i) {
+                        RenderGridDataBank(i,e);
+                    }, this);
+                        
+                //}, 50);
                 refreshFilter()
             });
         }
@@ -2484,7 +2551,7 @@ var createBankingGrid = function(res,minmargin){
                 aggregates: ["average"],
                 footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
                 attributes:{ "style": "text-align:right" },
-                template : "#: kendo.toString(Utilization,'P1') #"
+                template : "#: kendo.toString(Utilization,'P2') #"
             }, {
                 title:"Imp Margin (Rs. Lacs)<br> (Margin Taken : "+ kendo.toString(minmargin,"n1") +"%)",
                 field:"ImpMargin",
@@ -2500,7 +2567,7 @@ var createBankingGrid = function(res,minmargin){
                 aggregates: ["sum"],
                 footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
                 attributes:{ "style": "text-align:right" },
-                template : "#: kendo.toString(OwReturnPercentage,'P1') #"
+                template : "#: kendo.toString(OwReturnPercentage,'P2') #"
             }, {
                 title:"I/W Return %",
                 field:"LwReturnPercentage",
@@ -2508,7 +2575,7 @@ var createBankingGrid = function(res,minmargin){
                 aggregates: ["sum"],
                 footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
                 attributes:{ "style": "text-align:right" },
-                template : "#: kendo.toString(LwReturnPercentage,'P1') #"
+                template : "#: kendo.toString(LwReturnPercentage,'P2') #"
             }, {
                 title:"Dr./Cr. Ratio",
                 field:"DrCrReturnPercentage",
@@ -2620,7 +2687,7 @@ var createAmlGrid = function(data){
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["average"],
                         footerTemplate: "<div style='text-align: right'>#=kendo.toString(average,'N1')#%</div>",
-                        template : "#=kendo.toString(CreditCash,'N1') #%",
+                        template : "#=kendo.toString(CreditCash,'N2') #%",
                         attributes:{ "style": "text-align:right" },
                     },
                     {
@@ -2629,7 +2696,7 @@ var createAmlGrid = function(data){
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["average"],
                         footerTemplate: "<div style='text-align: right'>#=kendo.toString(average,'N1')#%</div>",
-                        template : "#=kendo.toString(DebitCash,'N1') #%",
+                        template : "#=kendo.toString(DebitCash,'N2') #%",
                         attributes:{ "style": "text-align:right" },
                     },
                 ]
@@ -2817,7 +2884,7 @@ var createOdDetailGrid = function(res){
                         aggregates: ["average"],
                         footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'p1') #</div>",
                         attributes:{ "style": "text-align:right" },
-                        template : "#: kendo.toString(OdCcUtilization,'P1') #"
+                        template : "#: kendo.toString(OdCcUtilization,'P2') #"
                     },
                     {
                         title:"Interest Paid (Rs. Lacs)",
@@ -2826,7 +2893,7 @@ var createOdDetailGrid = function(res){
                         aggregates: ["sum"],
                         footerTemplate: "<div style='text-align: right'>#= app.formatnum(sum, 2) #</div>",
                         attributes:{ "style": "text-align:right" },
-                        template : "#: kendo.toString(InterestPerMonth,'N1') #"
+                        template : "#: kendo.toString(InterestPerMonth,'N2') #"
                     },
                     //  {
                     //     title:"ABB",

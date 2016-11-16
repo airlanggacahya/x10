@@ -685,7 +685,7 @@ r.generateAML = function(data){
     name: 'Credits (Cash)',
     field: 'credit'
   }, {
-    name: 'Debit (Cash)',
+    name: 'Debits (Cash)',
     field: 'debit'
   }]
 

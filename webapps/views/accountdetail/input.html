@@ -859,6 +859,16 @@ mincibil = ko.observable(0);
 
 				            <div class="col-sm-6">
 				            	<div class="form-group">
+					            	<label class="form-label col-sm-7">Loan Tenor (Days)</label>
+					            	<div class="col-sm-5">
+					            		<input class="loan" data-bind="kendoNumericTextBox: { value: LoanTenorDays, format: 'n0', spinners:false }" type="text" style="width: 100%;">
+					            	</div>
+					            	<div class="clearfix"></div>
+				            	</div>
+				            </div>
+
+				            <div class="col-sm-6">
+				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Proposed Rate of Interest (ROI) %</label>
 					            	<div class="col-sm-5">
 					            		<input class="loan" data-bind="kendoNumericTextBox: { value: ProposedRateInterest, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">

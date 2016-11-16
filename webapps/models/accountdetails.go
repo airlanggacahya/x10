@@ -209,6 +209,7 @@ type LoanDetails struct {
 	RequestedLimitAmount    float64
 	ProposedLoanAmount      float64
 	LimitTenor              float64
+	LoanTenorDays           float64
 	ProposedRateInterest    float64
 	ProposedPFee            float64
 	IfExistingCustomer      bool

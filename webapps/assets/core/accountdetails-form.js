@@ -256,6 +256,7 @@ adf.templateLoanDetails = {
 	ProposedLoanAmount: 0.0,
 	RequestedLimitAmount: 0.0,
 	LimitTenor: 0.0,
+	LoanTenorDays: 0.0,
 	ProposedRateInterest: 0.0,
 	ProposedPFee: 0.0,
 	IfExistingCustomer: ko.observable(),
@@ -278,6 +279,7 @@ adf.templateLoanDetails1 = {
 	ProposedLoanAmount: 0.0,
 	RequestedLimitAmount: 0.0,
 	LimitTenor: 0.0,
+	LoanTenorDays:0.0,
 	ProposedRateInterest: 0.0,
 	ProposedPFee: 0.0,
 	IfExistingCustomer: ko.observable(),
@@ -2701,6 +2703,7 @@ adf.setBorrowerReset = function(){
 adf.setLoanReset = function(){
 	adf.form.LoanDetails.ProposedLoanAmount(adf.Tempform.LoanDetails.ProposedLoanAmount());
 	adf.form.LoanDetails.LimitTenor(adf.Tempform.LoanDetails.LimitTenor());
+	adf.form.LoanDetails.LoanTenorDays(adf.Tempform.LoanDetails.LoanTenorDays());
 	adf.form.LoanDetails.ProposedPFee(adf.Tempform.LoanDetails.ProposedPFee());
 	adf.form.LoanDetails.RequestedLimitAmount(adf.Tempform.LoanDetails.RequestedLimitAmount());
 	adf.form.LoanDetails.ProposedRateInterest(adf.Tempform.LoanDetails.ProposedRateInterest());

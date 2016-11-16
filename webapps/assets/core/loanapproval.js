@@ -348,7 +348,7 @@ var keyPolicyParam = function(norm) {
     var columns = [
         { title: "Criteria", field: "Criteria", headerAttributes: { "class": "sub-bgcolor col-sm-2" }, attributes: { "class": "text-bold"} },
         { title: "Norm", field: "NormLabel", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center"} },
-        { title: "Actual", field: "calculatedvaluetodisplay", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center"} },
+        { title: "Actual", field: "calculatedvaluetodisplay", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center", style: "text-align: right;"} },
         { title: "Met / Not Met", field: "ismet", headerAttributes: { "class": "sub-bgcolor" }, attributes: { "class": "center"} }
 
     ];
@@ -481,20 +481,20 @@ var promoterBackground = function(param) {
     var setData = function(biodatas) {
         var template = function() {
             return {
-                name: { values: ko.observableArray(), title: "Name" },
-                designation: { values: ko.observableArray(), title: "Designation" },
-                dateOfBirth: { values: ko.observableArray(), title: "Age (DOB)" },
-                shareHoldingPercentage: { values: ko.observableArray(), title: "% of Share Holding" },
-                cIBILScore: { values: ko.observableArray(), title: "CIBIL Score" },
-                education: { values: ko.observableArray(), title: "Education Qualification" },
-                address: { values: ko.observableArray(), title: "Residence Address" },
-                mobile: { values: ko.observableArray(), title: "Mobile No." },
-                phone: { values: ko.observableArray(), title: "Landline No." },
-                email: { values: ko.observableArray(), title: "Email ID" },
-                netWorth: { values: ko.observableArray(), title: "Approximate Net Worth" },
-                experience: { values: ko.observableArray(), title: "Experience and any other Business (Specify)" },
-                guarantor: { values: ko.observableArray(), title: "Personal Guarantee" },
-                redflag: { values: ko.observableArray(), title: "RedFlags" },
+                name: { values: ko.observableArray(), title: "Name", style: "center" },
+                designation: { values: ko.observableArray(), title: "Designation", style: "left" },
+                dateOfBirth: { values: ko.observableArray(), title: "Age (DOB)", style: "left" },
+                shareHoldingPercentage: { values: ko.observableArray(), title: "% of Share Holding", style: "right" },
+                cIBILScore: { values: ko.observableArray(), title: "CIBIL Score", style: "right" },
+                education: { values: ko.observableArray(), title: "Education Qualification", style: "left" },
+                address: { values: ko.observableArray(), title: "Residence Address", style: "left" },
+                mobile: { values: ko.observableArray(), title: "Mobile No.", style: "left" },
+                phone: { values: ko.observableArray(), title: "Landline No.", style: "left" },
+                email: { values: ko.observableArray(), title: "Email ID", style: "left"},
+                netWorth: { values: ko.observableArray(), title: "Approximate Net Worth", style: "right" },
+                experience: { values: ko.observableArray(), title: "Experience and any other Business (Specify)", style: "left" },
+                guarantor: { values: ko.observableArray(), title: "Personal Guarantee", style: "left" },
+                redflag: { values: ko.observableArray(), title: "RedFlags", style: "left" },
             }
         }
 
@@ -1110,7 +1110,7 @@ due.LoadGrid = function(){
                         field: "Amount",
                         title: "Amount (in CR)",
                         headerAttributes: { "class": "col-sm-2" },
-                        attributes: { "class": "text-center"},
+                        attributes: { "class": "text-center", "style": "text-align : right;"},
                         editor: due.amountInput,
                     },
                     {
@@ -1253,10 +1253,6 @@ due.LoadGrid = function(){
 }
 
 due.getData = function(){
-    if(model.PageId() == "Approval Form"){
-        return;
-    }
-
 	due.form.Verification([])
 	due.form.Defaulter([])
 	due.form.Background([])
@@ -1291,7 +1287,10 @@ due.getData = function(){
 				//due.enableConfirm(false);
 			}
 		}else{
-             Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+             if(model.PageId() != "Approval Form"){
+                Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+                return;
+            }
              
 
 			ajaxPost("/duediligence/getverificationcheck", {}, function(res){

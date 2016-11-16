@@ -29,7 +29,8 @@
 			            </td>
 			        <!-- /ko -->
 			        <!-- ko ifnot: prop == 'name' -->
-			            <td data-bind="style: { width: loanApproval.promoterBackgroundData().settings.getContentWidth() }">
+			            <!-- <td data-bind="style: { width: loanApproval.promoterBackgroundData().settings.getContentWidth() }"> -->
+			            <td data-bind="style: { textAlign: data[prop].style }">
 			              <span data-bind="text: val"></span>
 			            </td>
 			        <!-- /ko -->

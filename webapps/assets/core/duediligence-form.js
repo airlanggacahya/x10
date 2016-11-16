@@ -283,56 +283,56 @@ due.amountInput = function(container, options){
 }
 
 due.loadCircleChart = function(){
-	var myCircle = Circles.create({
-		id:                  'circlesPositif',
-		radius:              75,
-		value:               59,
-		maxValue:            100,
-		width:               15,
-		text:                function(value){return value + '% positive';},
-		colors:              ['#c5ceca', '#1fbf76'],
-		duration:            300,
-		wrpClass:            'circles-wrp',
-		textClass:           'circles-text',
-		valueStrokeClass:    'circles-valueStroke',
-		maxValueStrokeClass: 'circles-maxValueStroke',
-		styleWrapper:        true,
-		styleText:           true
-	});
+	// var myCircle = Circles.create({
+	// 	id:                  'circlesPositif',
+	// 	radius:              75,
+	// 	value:               59,
+	// 	maxValue:            100,
+	// 	width:               15,
+	// 	text:                function(value){return value + '% positive';},
+	// 	colors:              ['#c5ceca', '#1fbf76'],
+	// 	duration:            300,
+	// 	wrpClass:            'circles-wrp',
+	// 	textClass:           'circles-text',
+	// 	valueStrokeClass:    'circles-valueStroke',
+	// 	maxValueStrokeClass: 'circles-maxValueStroke',
+	// 	styleWrapper:        true,
+	// 	styleText:           true
+	// });
 
-	var myCircle = Circles.create({
-		id:                  'circlesNetral',
-		radius:              75,
-		value:               27,
-		maxValue:            100,
-		width:               15,
-		text:                function(value){return value + '% neutral';},
-		colors:              ['#c5ceca', '#238ac5'],
-		duration:            300,
-		wrpClass:            'circles-wrp',
-		textClass:           'circles-text',
-		valueStrokeClass:    'circles-valueStroke',
-		maxValueStrokeClass: 'circles-maxValueStroke',
-		styleWrapper:        true,
-		styleText:           true
-	});
+	// var myCircle = Circles.create({
+	// 	id:                  'circlesNetral',
+	// 	radius:              75,
+	// 	value:               27,
+	// 	maxValue:            100,
+	// 	width:               15,
+	// 	text:                function(value){return value + '% neutral';},
+	// 	colors:              ['#c5ceca', '#238ac5'],
+	// 	duration:            300,
+	// 	wrpClass:            'circles-wrp',
+	// 	textClass:           'circles-text',
+	// 	valueStrokeClass:    'circles-valueStroke',
+	// 	maxValueStrokeClass: 'circles-maxValueStroke',
+	// 	styleWrapper:        true,
+	// 	styleText:           true
+	// });
 
-	var myCircle = Circles.create({
-		id:                  'circlesNegatif',
-		radius:              75,
-		value:               14,
-		maxValue:            100,
-		width:               15,
-		text:                function(value){return value + '% negative';},
-		colors:              ['#c5ceca', '#d62422'],
-		duration:            300,
-		wrpClass:            'circles-wrp',
-		textClass:           'circles-text',
-		valueStrokeClass:    'circles-valueStroke',
-		maxValueStrokeClass: 'circles-maxValueStroke',
-		styleWrapper:        true,
-		styleText:           true
-	});
+	// var myCircle = Circles.create({
+	// 	id:                  'circlesNegatif',
+	// 	radius:              75,
+	// 	value:               14,
+	// 	maxValue:            100,
+	// 	width:               15,
+	// 	text:                function(value){return value + '% negative';},
+	// 	colors:              ['#c5ceca', '#d62422'],
+	// 	duration:            300,
+	// 	wrpClass:            'circles-wrp',
+	// 	textClass:           'circles-text',
+	// 	valueStrokeClass:    'circles-valueStroke',
+	// 	maxValueStrokeClass: 'circles-maxValueStroke',
+	// 	styleWrapper:        true,
+	// 	styleText:           true
+	// });
 }
 
 due.LoadMitigantInput = function(container, options){

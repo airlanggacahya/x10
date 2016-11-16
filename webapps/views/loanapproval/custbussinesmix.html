@@ -11,15 +11,15 @@
                         </thead>
                         <tr>
                             <td class="col-sm-2 text-bold">Stock & Sell - in %</td>
-                            <td class="col-sm-2 right"><span data-bind="text:loanapproval.stocksell"></span></td>
+                            <td class="col-sm-2 right" style="text-align: right;"><span data-bind="text:loanapproval.stocksell"></span></td>
                         </tr>
                         <tr>
                             <td class="col-sm-2 text-bold">B2B - Govt.- in %</td>
-                            <td class="col-sm-2 right"><span data-bind="text:loanapproval.govt"></span></td>
+                            <td class="col-sm-2 right" style="text-align: right;"><span data-bind="text:loanapproval.govt"></span></td>
                         </tr>
                         <tr>
                             <td class="col-sm-2 text-bold">B2B - Corporate  - in %</td>
-                            <td class="col-sm-2 right"><span data-bind="text:loanapproval.corporate"></span></td>
+                            <td class="col-sm-2 right" style="text-align: right;"><span data-bind="text:loanapproval.corporate"></span></td>
                         </tr>
                     </table>
                 </div>
@@ -35,7 +35,7 @@
                         <tbody data-bind="foreach: loanapproval.distributorList">
                             <tr>
                                 <td class="col-sm-2 text-bold" data-bind="text: Label"></td>
-                                <td class="col-sm-2 right" data-bind="text: Result + '%'"></td>
+                                <td class="col-sm-2 right" style="text-align: right;" data-bind="text: Result + '%'"></td>
                             </tr>
                         </tbody>
                     </table>

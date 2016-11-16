@@ -362,10 +362,10 @@ model.Fullname = ko.observable('{{.Fullname}}');
           k3 = ( COG() != 0 ) ? ( (c / COG())*365 ) : 0;
           tk = k1 + k2 - k3;
 
-          AOM()[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : parseFloat(k1).toFixed(2);
-          AOM()[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : parseFloat(k2).toFixed(2);
-          AOM()[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : parseFloat(k3).toFixed(2);
-          AOM()[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : parseFloat(tk).toFixed(2);
+          AOM()[i].ReceivablesDays = parseFloat(k1).toFixed(2);
+          AOM()[i].InventoryDays = parseFloat(k2).toFixed(2);
+          AOM()[i].LessPayablesDays = parseFloat(k3).toFixed(2);
+          AOM()[i].WCDays = parseFloat(tk).toFixed(2);
 
           $($('.ReceivablesDays')[i]).val(AOM()[i].ReceivablesDays)
           $($('.InventoryDays')[i]).val(AOM()[i].InventoryDays)
@@ -495,10 +495,10 @@ model.Fullname = ko.observable('{{.Fullname}}');
 
           WCDays = ReceivablesDays + InventoryDays - LessPayablesDays;
 
-          data[0].AOM[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : parseFloat(ReceivablesDays).toFixed(2);
-          data[0].AOM[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : parseFloat(InventoryDays).toFixed(2);
-          data[0].AOM[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : parseFloat(LessPayablesDays).toFixed(2);
-          data[0].AOM[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : parseFloat(WCDays).toFixed(2);
+          data[0].AOM[i].ReceivablesDays = parseFloat(ReceivablesDays).toFixed(2);
+          data[0].AOM[i].InventoryDays = parseFloat(InventoryDays).toFixed(2);
+          data[0].AOM[i].LessPayablesDays = parseFloat(LessPayablesDays).toFixed(2);
+          data[0].AOM[i].WCDays = parseFloat(WCDays).toFixed(2);
         })
       }
 
@@ -624,6 +624,10 @@ model.Fullname = ko.observable('{{.Fullname}}');
             $('.btnFixed').addClass('static');
         }
     });
+  }
+
+  function displayCalcVal(value) {
+    return (value == 0) ? 'NA' : value
   }
 
   $(document).ready(function () {
@@ -846,13 +850,13 @@ model.Fullname = ko.observable('{{.Fullname}}');
                                     </div>
                                   </div>
 
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm ReceivablesDays" disabled data-bind="value: (ReceivablesDays == 'NA') ? ReceivablesDays : parseFloat(ReceivablesDays).toFixed(2)" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm ReceivablesDays" disabled data-bind="value: displayCalcVal(ReceivablesDays)" /> </div>
 
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm InventoryDays" disabled data-bind="value: (InventoryDays == 'NA') ? InventoryDays : parseFloat(InventoryDays).toFixed(2)" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm InventoryDays" disabled data-bind="value: displayCalcVal(InventoryDays)" /> </div>
 
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm LessPayablesDays" disabled data-bind="value: (LessPayablesDays == 'NA') ? LessPayablesDays : parseFloat(LessPayablesDays).toFixed(2)" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm LessPayablesDays" disabled data-bind="value: displayCalcVal(LessPayablesDays)" /> </div>
 
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm WCDays" disabled data-bind="value: (WCDays == 'NA') ? WCDays : parseFloat(WCDays).toFixed(2)" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm WCDays" disabled data-bind="value: displayCalcVal(WCDays)" /> </div>
 
                                   <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero ReceivablesAmount" data-bind="value: (ReceivablesAmount == 'NA') ? ReceivablesAmount : parseFloat(ReceivablesAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'ReceivablesAmount'), click: wcrfocus($index(), $data.ReceivablesAmount, 'ReceivablesAmount')}" /> </div>
 

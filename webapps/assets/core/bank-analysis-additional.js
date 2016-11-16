@@ -2549,11 +2549,11 @@ var createBankingGrid = function(res,minmargin){
                 field:"Utilization",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["average"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(Utilization,'P2') #"
             }, {
-                title:"Imp Margin (Rs. Lacs)<br> (Margin Taken : "+ kendo.toString(minmargin,"n1") +"%)",
+                title:"Imp Margin (Rs. Lacs)<br> (Margin Taken : "+ kendo.toString(minmargin,"n2") +"%)",
                 field:"ImpMargin",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
@@ -2565,7 +2565,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"OwReturnPercentage",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(OwReturnPercentage,'P2') #"
             }, {
@@ -2573,7 +2573,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"LwReturnPercentage",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(LwReturnPercentage,'P2') #"
             }, {
@@ -2686,7 +2686,7 @@ var createAmlGrid = function(data){
                         field:"CreditCash",
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["average"],
-                        footerTemplate: "<div style='text-align: right'>#=kendo.toString(average,'N1')#%</div>",
+                        footerTemplate: "<div style='text-align: right'>#=kendo.toString(average,'N2')#%</div>",
                         template : "#=kendo.toString(CreditCash,'N2') #%",
                         attributes:{ "style": "text-align:right" },
                     },
@@ -2695,7 +2695,7 @@ var createAmlGrid = function(data){
                         field:"DebitCash",
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["average"],
-                        footerTemplate: "<div style='text-align: right'>#=kendo.toString(average,'N1')#%</div>",
+                        footerTemplate: "<div style='text-align: right'>#=kendo.toString(average,'N2')#%</div>",
                         template : "#=kendo.toString(DebitCash,'N2') #%",
                         attributes:{ "style": "text-align:right" },
                     },
@@ -2882,7 +2882,7 @@ var createOdDetailGrid = function(res){
                         headerAttributes: { class: "sub-bgcolor" },
                         format:"{0:p1}",
                         aggregates: ["average"],
-                        footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'p1') #</div>",
+                        footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'p2') #</div>",
                         attributes:{ "style": "text-align:right" },
                         template : "#: kendo.toString(OdCcUtilization,'P2') #"
                     },

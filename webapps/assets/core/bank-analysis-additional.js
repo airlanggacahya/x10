@@ -2874,7 +2874,7 @@ var createOdDetailGrid = function(res){
                         aggregates: ["sum"],
                         footerTemplate: "<div style='text-align: right'>#= app.formatnum(sum, 2) #</div>",
                         attributes:{ "style": "text-align:right" },
-                        template : "#:app.formatnum(SancLimit) #"
+                        template : "#:app.formatnum(SancLimit,2) #"
                     },
                     {
                         title:"OD Utilization",

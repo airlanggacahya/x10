@@ -28,9 +28,9 @@
                <tbody data-bind="foreach:loanApproval.outstandingData().topTable">
                   <tr>
                      <td data-bind="text: bankName"></td>
-                     <td class="center" data-bind="text: amount.fb"></td>
-                     <td class="center" data-bind="text: amount.nfb"></td>
-                     <td class="center" data-bind="text: roi"></td>
+                     <td class="center" data-bind="text: amount.fb" style="text-align: right;"></td>
+                     <td class="center" data-bind="text: amount.nfb" style="text-align: right;"></td>
+                     <td class="center" data-bind="text: roi" style="text-align: right;"></td>
                      <td class="center" data-bind="text: natureOfFacility"></td>
                      <td data-bind="text: security.fb"></td>
                      <td data-bind="text: security.nfb"></td>

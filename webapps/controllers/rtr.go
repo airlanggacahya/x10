@@ -10,7 +10,7 @@ import (
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
 	"strings"
-	// "time"
+	"time"
 )
 
 type RtrController struct {
@@ -110,23 +110,44 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 	for idx, val := range t {
 		ar := RTRBottom{}
 
-		list[0].Months[0].Value = val.GetString("Month0")
-		ar.Months = append(ar.Months, list[0].Months[0])
+		if len(list) == 0 {
+			list = append(list, RTRBottom{})
+			list[0].Months = append(list[0].Months, MonthRtr{time.Now(), val.GetString("Month0")})
+			ar.Months = append(ar.Months, list[0].Months[0])
 
-		list[0].Months[1].Value = val.GetString("Month1")
-		ar.Months = append(ar.Months, list[0].Months[1])
+			list[0].Months = append(list[0].Months, MonthRtr{time.Now(), val.GetString("Month1")})
+			ar.Months = append(ar.Months, list[0].Months[1])
 
-		list[0].Months[2].Value = val.GetString("Month2")
-		ar.Months = append(ar.Months, list[0].Months[2])
+			list[0].Months = append(list[0].Months, MonthRtr{time.Now(), val.GetString("Month2")})
+			ar.Months = append(ar.Months, list[0].Months[2])
 
-		list[0].Months[3].Value = val.GetString("Month3")
-		ar.Months = append(ar.Months, list[0].Months[3])
+			list[0].Months = append(list[0].Months, MonthRtr{time.Now(), val.GetString("Month3")})
+			ar.Months = append(ar.Months, list[0].Months[3])
 
-		list[0].Months[4].Value = val.GetString("Month4")
-		ar.Months = append(ar.Months, list[0].Months[4])
+			list[0].Months = append(list[0].Months, MonthRtr{time.Now(), val.GetString("Month4")})
+			ar.Months = append(ar.Months, list[0].Months[4])
 
-		list[0].Months[5].Value = val.GetString("Month5")
-		ar.Months = append(ar.Months, list[0].Months[5])
+			list[0].Months = append(list[0].Months, MonthRtr{time.Now(), val.GetString("Month5")})
+			ar.Months = append(ar.Months, list[0].Months[5])
+		} else {
+			list[0].Months[0].Value = val.GetString("Month0")
+			ar.Months = append(ar.Months, list[0].Months[0])
+
+			list[0].Months[1].Value = val.GetString("Month1")
+			ar.Months = append(ar.Months, list[0].Months[1])
+
+			list[0].Months[2].Value = val.GetString("Month2")
+			ar.Months = append(ar.Months, list[0].Months[2])
+
+			list[0].Months[3].Value = val.GetString("Month3")
+			ar.Months = append(ar.Months, list[0].Months[3])
+
+			list[0].Months[4].Value = val.GetString("Month4")
+			ar.Months = append(ar.Months, list[0].Months[4])
+
+			list[0].Months[5].Value = val.GetString("Month5")
+			ar.Months = append(ar.Months, list[0].Months[5])
+		}
 
 		ar.SNo = val.GetString("SNo")
 		ar.CustomerId = val.GetString("CustomerId")

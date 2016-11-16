@@ -292,18 +292,21 @@ function getData(){
                     con++;
                 }
             });
-            if(sts == data.length){
-                condSave()
-                $('.form-last-confirmation-info').html('Last Save on: '+moment( data[0].DateSave).format("DD-MMM-YYYY hh:mm:ss a") )
-                rtr.Freeze(false)
-            }else if( re == data.length){
-                condConfirm()
-                $('.form-last-confirmation-info').html('Last Confirmed on: '+moment( data[0].DateConfirmed).format("DD-MMM-YYYY hh:mm:ss a") )
-                rtr.Freeze(true)
-            }else if(con == data.length){
-                condFreeze();
-                $('.form-last-confirmation-info').html('Last Freezed on: '+moment( data[0].DateFreeze).format("DD-MMM-YYYY hh:mm:ss a") )
-                rtr.Freeze(true)
+
+            if(data[0] != undefined) {
+                if(sts == data.length){
+                    condSave()
+                    $('.form-last-confirmation-info').html('Last Save on: '+moment( data[0].DateSave).format("DD-MMM-YYYY hh:mm:ss a") )
+                    rtr.Freeze(false)
+                }else if( re == data.length){
+                    condConfirm()
+                    $('.form-last-confirmation-info').html('Last Confirmed on: '+moment( data[0].DateConfirmed).format("DD-MMM-YYYY hh:mm:ss a") )
+                    rtr.Freeze(true)
+                }else if(con == data.length){
+                    condFreeze();
+                    $('.form-last-confirmation-info').html('Last Freezed on: '+moment( data[0].DateFreeze).format("DD-MMM-YYYY hh:mm:ss a") )
+                    rtr.Freeze(true)
+                }
             }
         }
 
@@ -324,14 +327,15 @@ function getData(){
 
         datagrid = res.data[0].data
 
+        $.each(res.data[2].months, function(k, v){
+            titleString = moment(v.Title.split("T")[0]).format("MMM-YYYY")+"<br>(DPD Track)";
+
+            col.push({title : titleString, headerAttributes: { "class": "header-bgcolor wrap" }, field : "Month"+k, width : 100, editor: bouncesDropDownEditor})
+        })
+
         var maxGlobal = 0
         if(res.data[0].data[0]) {
             cacah = 0
-            $.each(res.data[2].months, function(k, v){
-                titleString = moment(v.Title.split("T")[0]).format("MMM-YYYY")+"<br>(DPD Track)";
-
-                col.push({title : titleString, headerAttributes: { "class": "header-bgcolor wrap" }, field : "Month"+k, width : 100, editor: bouncesDropDownEditor})
-            })
             ArrDPD([])
             $.each(res.data[0].data, function(k,v){
                 sumBounces = 0
@@ -751,7 +755,7 @@ onreenter = function(){
     var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
     $.each(data, function(i, item){
         item.Status = 0;
-        
+
     })
     ajaxPost("/rtr/update",data, function(res){
         // yo.success(res.data);

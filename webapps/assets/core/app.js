@@ -481,7 +481,16 @@ app.formatnum =  function(number, decimalPlace) {
         if(result.indexOf(".") == -1){
             result = result+".00"
         }
+
+        if(result.split(".")[1].length < decimalPlace){
+            for(;(decimalPlace-1)>0;decimalPlace--){
+                result+="0";
+            }
+        }
     }
+
+
+
     return result;
 }
 

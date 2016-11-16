@@ -347,7 +347,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	ODSactionLimit := crowd.From(&res).Sum(func(x interface{}) interface{} {
 		account := x.(BankAnalysisV2).DataBank[0].BankAccount
 
-		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") && containsArr(account.FacilityType, "Fund Based") {
 			return account.FundBased.SancLimit
 		}
 
@@ -363,7 +363,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 			account := each.DataBank[0].BankAccount
 			details := each.DataBank[0].BankDetails
 
-			if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+			if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") && containsArr(account.FacilityType, "Fund Based") {
 				res := crowd.From(&details).Max(func(x interface{}) interface{} {
 					avgBalon := x.(BankDetails).AvgBalon
 					limit := x.(BankDetails).OdCcLimit
@@ -383,7 +383,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 		account := x.(BankAnalysisV2).DataBank[0].BankAccount
 		details := x.(BankAnalysisV2).DataBank[0].BankDetails
 
-		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") && containsArr(account.FacilityType, "Fund Based") {
 			interestPerMonth := account.FundBased.InterestPerMonth
 			actualInterestPaidValue := crowd.From(&details).Avg(func(x interface{}) interface{} {
 				return x.(BankDetails).ActualInterestPaid
@@ -558,7 +558,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	bank.ODCCUtilizationABBvsProposedEMIIsCurrent = (func() bool {
 		totalCurrent := 0
 		for _, each := range res {
-			if each.DataBank[0].BankAccount.FundBased.AccountType == "Current" {
+			if each.DataBank[0].BankAccount.FundBased.AccountType == "Current" && containsArr(each.DataBank[0].BankAccount.FacilityType, "Current") {
 				totalCurrent++
 			}
 		}
@@ -1685,4 +1685,13 @@ func (b *BankAnalysisV2) DeleteById(id string) error {
 	}
 
 	return err
+}
+
+func containsArr(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

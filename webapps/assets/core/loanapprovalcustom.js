@@ -435,7 +435,7 @@ var setDataCreditScoreCard = function(data) {
     loanApproval.ratingRef.OverallScore(data.FinalScore)
     loanApproval.ratingRef.InternalRating(data.FinalRating)
 
-    if(data.Data.length > 0) {
+    if(data.Data != undefined &&  data.Data.length > 0) {
       var header = _.filter(data.Data, function(o){
         return o.IsHeader
       })

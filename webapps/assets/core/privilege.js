@@ -1,5 +1,4 @@
 var dataEntryPrivilege = function(){
-	
 	var buttonPrivilege = [
 		{ name: 'save', klas: 'btn-save'},
 		{ name: 'confirm', klas: 'btn-confirm'},
@@ -9,78 +8,46 @@ var dataEntryPrivilege = function(){
 	]
 
 	allowedButtons = _.flatten(_.map(function(){
-		allButtons = ["save", "confirm", "reenter", "freeze", "unfreeze"];
-		///////////////// sementara
-		if(model.PageId() == "Account Details")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
-		else if(model.PageId() == "Approval Form")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
-		else if(model.PageId() == "Balance Sheet Inputs")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
-		else if(model.PageId() == "Banking Analysis")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
-		else if(model.PageId() == "CIBIL Details")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
-		else if(model.PageId() == "Customer Application")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
-		else if(model.PageId() == "Due Diligence Form")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
-		else if(model.PageId() == "External Repayment Details")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
-		else if(model.PageId() == "Internal Repayment Details")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
-		else if(model.PageId() == "Stock & Book Debt")
-			switch(model.Rolename()){
-				case 'Credit Analyst': return ["save", "confirm", "reenter"]; break;
-				case 'Business User': return allButtons; break;
-				case 'IT User': return allButtons; break;
-				default: return allButtons;
-			}
+		allActions = ["save", "confirm", "reenter", "freeze", "unfreeze"];
+		allowedActions = getAllowedActions({
+			"Credit Analyst": {
+				"Account Details": ["save", "confirm", "reenter"],
+				"Approval Form": ["save", "confirm", "reenter"],
+				"Balance Sheet Inputs": ["save", "confirm", "reenter"],
+				"Banking Analysis": ["save", "confirm", "reenter"],
+				"CIBIL Details": ["save", "confirm", "reenter"],
+				"Customer Application": ["save", "confirm", "reenter"],
+				"Due Diligence Form": ["save", "confirm", "reenter"],
+				"External Repayment Details": ["save", "confirm", "reenter"],
+				"Internal Repayment Details": ["save", "confirm", "reenter"],
+				"Stock & Book Debt": ["save", "confirm", "reenter"]
+			},
+			"Business User": {
+				"Account Details": allActions,
+				"Approval Form": allActions,
+				"Balance Sheet Inputs": allActions,
+				"Banking Analysis": allActions,
+				"CIBIL Details": allActions,
+				"Customer Application": allActions,
+				"Due Diligence Form": allActions,
+				"External Repayment Details": allActions,
+				"Internal Repayment Details": allActions,
+				"Stock & Book Debt": allActions,
+			},
+			"IT User": {
+				"Account Details": allActions,
+				"Approval Form": allActions,
+				"Balance Sheet Inputs": allActions,
+				"Banking Analysis": allActions,
+				"CIBIL Details": allActions,
+				"Customer Application": allActions,
+				"Due Diligence Form": allActions,
+				"External Repayment Details": allActions,
+				"Internal Repayment Details": allActions,
+				"Stock & Book Debt": allActions,
+			},
+		})
+		return allowedActions != undefined ? allowedActions : allActions
 	}(), function(p){
 		return buttonPrivilege.filter(function( obj ) {
 		  	return obj.name == p;
@@ -88,6 +55,15 @@ var dataEntryPrivilege = function(){
 	}))
 
 	forbidButtons(buttonPrivilege, allowedButtons);
+}
+
+var getAllowedActions = function(data){
+	return _.find(
+		_.find(data, function(d, role){
+			return role == model.Rolename()	
+		}), function(actions, page){
+			return page == model.PageId()
+		})
 }
 
 var forbidButtons = function(buttons, allowedButtons){

@@ -1110,7 +1110,7 @@ due.LoadGrid = function(){
                         field: "Amount",
                         title: "Amount (in CR)",
                         headerAttributes: { "class": "col-sm-2" },
-                        attributes: { "class": "text-center"},
+                        attributes: { "class": "text-center", "style": "text-align : right;"},
                         editor: due.amountInput,
                     },
                     {

@@ -977,13 +977,13 @@
 	          swal("Warning","Data Outstanding Debt Not Found","warning");
 	          return
 	      }
-	      console.log("asdfasdfasfd", function(){
-						src = {}
-						doit = function(_do, _it) { src[_it] = _do }
-						_.each(res.data[0].data[0], doit)
-						_.each(res.data[1].summary, doit);
-						return src
-					}());
+	    //   console.log("asdfasdfasfd", function(){
+					// 	src = {}
+					// 	doit = function(_do, _it) { src[_it] = _do }
+					// 	_.each(res.data[0].data[0], doit)
+					// 	_.each(res.data[1].summary, doit);
+					// 	return src
+					// }());
 	      $("#gridOutstandingDebt").kendoGrid({
 				dataSource : {
 					data : [function(){

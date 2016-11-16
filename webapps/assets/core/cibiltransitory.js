@@ -90,12 +90,18 @@ trans.RenderGrid = function(){
 }
 
 trans.showProm = function(Id){
+
 	var cur = _.find(trans.AllData(),function(x){
 		return x.Id == Id;
 	})
 
 	if(cur !=undefined){
 		trans.CurrentData(ko.mapping.fromJS(cur));
+
+		if(trans.CurrentData().StatusCibil() != 0){
+			swal("Warning","Selected Data Already Confirmed, Please Re Enter First","warning");
+			return;
+		}
 
 		dateOfBirth = moment(trans.CurrentData().ConsumersInfos.DateOfBirth()).format("DD-MMM-YYYY");
 		trans.CurrentData().ConsumersInfos.DateOfBirth(dateOfBirth)

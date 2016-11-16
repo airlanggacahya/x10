@@ -90,7 +90,7 @@ apcom.loadCommentData = function(){
 		var data = res;
 	    if(res.success != false){
 			apcom.dataTempRiskMitigants([])
-	    	if(data[0].CreditAnalys.CreditAnalysRisks != null){
+	    	if(data[0].CreditAnalys.CreditAnalysRisks == null){
 	    		apcom.dataTempRiskMitigants( {Risks: "", Mitigants: ""} )
 	    	} else {
 	    		apcom.dataTempRiskMitigants(data[0].CreditAnalys.CreditAnalysRisks)

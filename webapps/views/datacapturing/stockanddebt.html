@@ -53,8 +53,22 @@
 
   // end initial
 
+
     function addAOM(){
-      AOM.push({ Id: "", OperatingRatio: selectdateval(), OperatingRatioString: '', ReceivablesDays: '', InventoryDays: '', LessPayablesDays: '', WCDays: '', ReceivablesAmount: "0", InventoryAmount: "0", LessPayablesAmount: "0", WCRequirement: "0" });
+      let index = AOM.push({ 
+        Id: "", 
+        OperatingRatio: selectdateval(), 
+        OperatingRatioString: ko.observable('0'),
+        ReceivablesDays: ko.observable('0'),
+        InventoryDays: ko.observable('0'),
+        LessPayablesDays: ko.observable('0'),
+        WCDays: ko.observable('0'),
+        ReceivablesAmount: ko.observable('0'),
+        InventoryAmount: ko.observable('0'),
+        LessPayablesAmount: ko.observable('0'),
+        WCRequirement: ko.observable('0'),
+      });
+      countAOM(AOM()[index - 1])
       // swal("Success","Adjusted Operating Metrics Has Been Addded", "success");
     }
 
@@ -71,7 +85,17 @@
     }
 
     function addAA(){
-      AA.push({ Id: "", BulanString: '', Bulan: selectdateval(), ReceivableMin90: '0', ReceivableMore90: '0', ReceivableMore180: '0', InventoryMin90: '0', InventoryMore90: '0', InventoryMore180: '0' });
+      AA.push({ 
+        Id: "", 
+        BulanString: '', 
+        Bulan: selectdateval(), 
+        ReceivableMin90: ko.observable(''), 
+        ReceivableMore90: ko.observable(''), 
+        ReceivableMore180: ko.observable(''), 
+        InventoryMin90: ko.observable(''), 
+        InventoryMore90: ko.observable(''), 
+        InventoryMore180: ko.observable('') 
+      });
     }
 
     removeAA = function(aa) {

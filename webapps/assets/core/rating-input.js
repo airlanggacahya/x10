@@ -276,8 +276,10 @@ r.render = function () {
 
 			var value = d.columnData[i].WeightageOfGroupInCreditScore
 			return [
-				'<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 50%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
-				'<span>%</span>'
+				'<div class="onright">',
+				'<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
+				'<span>%</span>',
+				'</div>'
 			].join('')
 		}
 
@@ -293,8 +295,10 @@ r.render = function () {
 
 			var value = d.columnData[i].WeightageWithinGroup
 			return [
-				'<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.ParentName + '" data-sub-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 50%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
-				'<span>%</span>'
+				'<div class="onright">',
+				'<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.ParentName + '" data-sub-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
+				'<span>%</span>',
+				'</div>'
 			].join('')
 		}
 
@@ -309,7 +313,7 @@ r.render = function () {
 			}
 
 			var value = d.columnData[i].Score
-			return '<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-field-id="' + d.id + '" data-field="' + d.Name + '" data-sub-section="' + d.SubSection + '" data-section="' + d.Section + '" value="' + value + '" style="border: none; background-color: transparent; width: 60%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />'
+			return '<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-field-id="' + d.id + '" data-field="' + d.Name + '" data-sub-section="' + d.SubSection + '" data-section="' + d.Section + '" value="' + value + '" style="border: none; background-color: transparent; width: 60%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right onright" />'
 		}
 
 		columns.push(columnField)

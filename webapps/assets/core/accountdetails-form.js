@@ -546,6 +546,11 @@ adf.save = function () {
 				var date5 = kendo.toString(new Date(),"yyyy-MM-dd")+"T00:00:00.000Z";
 				if(adf.form.AccountSetupDetails.LoginDate() == date5){
 					adf.form.AccountSetupDetails.LoginDate(date5)
+				}else{
+					alert("masuk")
+					var da = kendo.toString(adf.form.AccountSetupDetails.LoginDate(),"yyyy-MM-dd")+"T00:00:00.000Z";
+					adf.form.AccountSetupDetails.LoginDate(date5)
+					// console.log("-------->>> login date", da)
 				}
 				
 			}
@@ -813,7 +818,7 @@ adf.getConfirm = function(){
 			res2 += items.Result()
 		})
 		if(res1 > 100){
-		swal("Warning", "Customer Business Mix exceeding 100%", "warning");
+			swal("Warning", "Customer Business Mix exceeding 100%", "warning");
 		}else if(res2 > 100){
 			swal("Warning", "Distributor mix exceeding 100%", "warning");
 

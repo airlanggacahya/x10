@@ -55,8 +55,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
 
   //function
     function addAOM(){
-      var date = kendo.toString(selectdateval(), 'MMMM yyyy');
-      AOM.push({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
+      AOM.push({ Id: "", OperatingRatio: selectdateval(), OperatingRatioString: '', ReceivablesDays: '', InventoryDays: '', LessPayablesDays: '', WCDays: '', ReceivablesAmount: "0", InventoryAmount: "0", LessPayablesAmount: "0", WCRequirement: "0" });
       // swal("Success","Adjusted Operating Metrics Has Been Addded", "success");
     }
 
@@ -73,8 +72,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
     }
 
     function addAA(){
-      var date = kendo.toString(selectdateval(), 'MMMM yyyy');
-      AA.push({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+      AA.push({ Id: "", BulanString: '', Bulan: selectdateval(), ReceivableMin90: '', ReceivableMore90: '', ReceivableMore180: '', InventoryMin90: '', InventoryMore90: '', InventoryMore180: '' });
     }
 
     removeAA = function(aa) {

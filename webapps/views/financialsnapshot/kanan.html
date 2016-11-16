@@ -725,6 +725,9 @@
   .table-header {
     background-color: #8195b0;
   }
+  .eon1,.eon2,.eon3 {
+    text-align:right !important;
+  }
 </style>
 
 <div class="panel-heading">
@@ -739,11 +742,11 @@
        <th class="header-table" style="color: #fff;" data-bind="text: $data"></th>
     </tr>
   </thead>
-  <tbody data-bind="foreach: row">
+  <tbody class="eon" data-bind="foreach: row">
 
     <tr data-bind="foreach: rowData">
        <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
-       <td data-bind="text: $data, visible: checkSub($parent) == true, css: {tdcustom: $index() == 0}"></td>
+       <td data-bind="text: $data, visible: checkSub($parent) == true, css: {tdcustom: $index() == 0}, attr:{'class':'eon'+$index()}" ></td>
     </tr>
   </tbody>
 </table>

@@ -409,10 +409,7 @@ adf.getForm = function () {
 	data.VendorDetails = data.VendorDetails.filter(function (d) {
 		return d.DistributorName != ''
 	})
-	data.CMISNULL = adf.CMISNULL();
-	if(data.CMISNULL){
-		data.AccountSetupDetails.PdInfo.CustomerMargin = 0;
-	}
+	
 	// console.log("----- 345",data)
 
 	return data
@@ -594,6 +591,12 @@ adf.save = function () {
 		
 		var url = "/accountdetail/saveaccountdetail"
 		var param = adf.getForm()
+		if(adf.CMISNULL()){
+			param.AccountSetupDetails.PdInfo.CustomerMargin = 0;
+		}
+
+		param.CMISNULL = adf.CMISNULL();
+
 		// param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
 		adf.isLoading(true)
 		app.ajaxPost(url, param, function (res) {
@@ -602,6 +605,11 @@ adf.save = function () {
 			if(adf.PdDate().toString().indexOf("1970") >-1){
 				adf.PdDate("")
 			}
+
+			if(adf.CMISNULL()){
+				adf.form.AccountSetupDetails.PdInfo.CustomerMargin("")
+			}
+
 			if(adf.form.LoanDetails.FirstAgreementDate().toString().indexOf("1970") >-1){
 				adf.form.LoanDetails.FirstAgreementDate("");
 			}else{
@@ -1973,6 +1981,7 @@ adf.getData = function () {
 				adf.setForm(res.Data)
 				adf.PdDate("")
 				adf.CMISNULL(true);
+				adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
 				adf.form.LoanDetails.FirstAgreementDate("");
 				adf.form.LoanDetails.RecenetAgreementDate("");
 				adf.form.BorrowerDetails.DateBusinessStarted("");
@@ -2014,6 +2023,10 @@ adf.getData = function () {
 					adf.reloadStatus(res.Data.Status)
 					console.log("------>>1856",res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
 					adf.CMISNULL(res.Data.CMISNULL);
+
+					if(adf.CMISNULL()){
+						adf.form.AccountSetupDetails.PdInfo.CustomerMargin("")
+					}
 
 					if(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970") >-1)
 						adf.PdDate("")
@@ -2411,6 +2424,11 @@ adf.modalPdInfo = function(){
 	if(adf.PdDate() == ""){
 		adf.PdDate("")
 	}
+
+	if(adf.CMISNULL()){
+		adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
+	}
+
 	$("#PDdate").kendoDatePicker({
 		format: 'dd-MMM-yyyy',
 	});
@@ -2609,14 +2627,10 @@ adf. removeRowReffrence = function(d){
 }
 adf.loadPdTooltipster = ko.observable("PD Done By : "+ adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+" PD Date : " + kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy") +", PD Place : " + adf.form.AccountSetupDetails.PdInfo.PdPlace()+", Person Met : "+adf.form.AccountSetupDetails.PdInfo.PersonMet()+", PD Customer Margin(%)"+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% , PD Remarks: "+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+", PD Comments : "+ adf.form.AccountSetupDetails.PdInfo.PdComments()+" ," )
 adf.CMISNULL = ko.observable(false);
-adf.CMISNULL.subscribe(function(val){
-	if(val){
-		adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
-	}
-});
 adf.onclickDismissModal = function(){
 	if((adf.form.AccountSetupDetails.PdInfo.CustomerMargin() == null || adf.form.AccountSetupDetails.PdInfo.CustomerMargin() == "") && parseFloat(adf.form.AccountSetupDetails.PdInfo.CustomerMargin()) != 0 ){
 		adf.CMISNULL(true);
+		adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
 	}else{
 		adf.CMISNULL(false);
 	}

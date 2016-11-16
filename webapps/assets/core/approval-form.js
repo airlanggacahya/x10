@@ -255,13 +255,14 @@ refreshFilter = function(){
     //Real Estate
     if (res.Data.AD.length != 0){
         var promoterAD = res.Data.AD[0].promotordetails
-        var totalre = 0
-        for (var i = 0 ; i < promoterAD.length ; i++){
-            for (var j = 0 ; j < promoterAD[i].realestateposition.length ; j++){
-                totalre = totalre + promoterAD[i].realestateposition[j]
-            }
-        }
-        totalrealestate(totalre)
+        // var totalre = 0
+        var group = _.maxBy(promoterAD,function(x){ return _.sum(x.realestateposition) }).countrealestateposition
+        // for (var i = 0 ; i < promoterAD.length ; i++){
+        //     for (var j = 0 ; j < promoterAD[i].realestateposition.length ; j++){
+        //         totalre = totalre + promoterAD[i].realestateposition[j]
+        //     }
+        // }
+        totalrealestate(group)
     }else{
         // swal("Warning", "Red Flags Data Not Found", "warning");
     }

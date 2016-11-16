@@ -316,7 +316,6 @@
     }
 
     function countAOM(aom){
-      console.log("aom", aom);
       var isTurnoverExist = function(){ return Turnover() > 0 }
       var fixValue = function(val){ return parseFloat(val).toFixed(2) }
 
@@ -367,17 +366,18 @@
     model.indexFocus =  ko.observable(-1)
     model.dataFocus =  ko.observable("")
 
-    function wcrfocus(i, data, label){
-      return function(){
-        // if(model.labelFocus() != "" && model.indexFocus() != -1 && model.dataFocus() != "") {
-        //   var temp = model.dataFocus().split(",").join("")
-        //   $($('.'+model.labelFocus())[model.indexFocus()]).val(parseFloat(temp,2).toFixed(2))
-        // }
+    function inputFocus(){
+      return function(item, event){
+        let val = $(event.target).val()
+        if((+(parseFloat(val.split(",").join(""))) || 0) == 0)
+          $(event.target).val("")
+      }
+    }
 
-        // // $($('.'+label)[i]).val(data.split(",").join(""))
-        // model.labelFocus(label)
-        // model.indexFocus(i)
-        // model.dataFocus(data)
+    function inputBlur(realValue){
+      return function(item, event){
+        if ((+(parseFloat($(event.target).val().split(",").join(""))) || 0) == 0)
+          $(event.target).val(realValue)
       }
     }
 
@@ -598,7 +598,6 @@
   }
 
   function displayInputVal(val){
-    console.log(val)
     return parseFloat(+val || 0).toFixed(2)
   }
 
@@ -835,7 +834,7 @@
                                     value: displayInputVal(ReceivablesAmount()), 
                                     event: { 
                                       blur: wcrupdate($index(), 'ReceivablesAmount'), 
-                                      click: wcrfocus($index(), $data.ReceivablesAmount(), 'ReceivablesAmount')
+                                      focus: inputFocus()
                                     }
                                     " /> 
                                   </div>
@@ -845,7 +844,7 @@
                                     value: displayInputVal(InventoryAmount()), 
                                     event: {
                                       blur: wcrupdate($index(), 'InventoryAmount'), 
-                                      click: wcrfocus($index(), $data.InventoryAmount(), 'InventoryAmount')
+                                      focus: inputFocus()
                                     }
                                     " /> 
                                   </div>
@@ -855,7 +854,7 @@
                                     value: displayInputVal(LessPayablesAmount()), 
                                     event: { 
                                       blur: wcrupdate($index(), 'LessPayablesAmount'), 
-                                      click: wcrfocus($index(), $data.LessPayablesAmount(), 'LessPayablesAmount')
+                                      focus: inputFocus()
                                     }
                                     " /> 
                                   </div>
@@ -905,17 +904,41 @@
                                   <td class="text-center">Receivable</td>
                                   <td>
                                     <input class="form-control input-sm modezero"
-                                    data-bind="value: parseFloat(+ReceivableMin90 || 0).toFixed(2)" /></td>
+                                    data-bind="value: displayInputVal(ReceivableMin90()), 
+                                    event: {
+                                      blur: inputBlur(displayInputVal(ReceivableMin90())), 
+                                      focus: inputFocus()
+                                    }" /></td>
                                   <td>
-                                    <input class="form-control input-sm modezero" data-bind="value: parseFloat(+ReceivableMore90 || 0).toFixed(2)" />
+                                    <input class="form-control input-sm modezero" data-bind="value: displayInputVal(ReceivableMore90()), 
+                                    event: {
+                                      blur: inputBlur(displayInputVal(ReceivableMore90())),
+                                      focus: inputFocus()
+                                    }" />
                                   </td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(+ReceivableMore180 || 0).toFixed(2)" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(ReceivableMore180()), 
+                                    event: {
+                                      blur: inputBlur(displayInputVal(ReceivableMore180())),
+                                      focus: inputFocus()
+                                    }" /></td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">Inventory</td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(+InventoryMin90 || 0).toFixed(2)" /></td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(+InventoryMore90 || 0).toFixed(2)" /></td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(+InventoryMore180 || 0).toFixed(2)" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(InventoryMin90()), 
+                                    event: {
+                                      blur: inputBlur(displayInputVal(InventoryMin90())),
+                                      focus: inputFocus()
+                                    }" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(InventoryMore90()), 
+                                    event: {
+                                      blur: inputBlur(displayInputVal(InventoryMore90())),
+                                      focus: inputFocus()
+                                    }" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(InventoryMore180()), 
+                                    event: {
+                                      blur: inputBlur(displayInputVal(InventoryMore180())),
+                                      focus: inputFocus()
+                                    }" /></td>
                                 </tr>
                               </tbody>
                             </table>

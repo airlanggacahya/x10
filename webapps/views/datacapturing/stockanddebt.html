@@ -89,12 +89,12 @@
         Id: "", 
         BulanString: '', 
         Bulan: selectdateval(), 
-        ReceivableMin90: ko.observable(''), 
-        ReceivableMore90: ko.observable(''), 
-        ReceivableMore180: ko.observable(''), 
-        InventoryMin90: ko.observable(''), 
-        InventoryMore90: ko.observable(''), 
-        InventoryMore180: ko.observable('') 
+        ReceivableMin90: ko.observable('0'), 
+        ReceivableMore90: ko.observable('0'), 
+        ReceivableMore180: ko.observable('0'), 
+        InventoryMin90: ko.observable('0'), 
+        InventoryMore90: ko.observable('0'), 
+        InventoryMore180: ko.observable('0') 
       });
     }
 
@@ -371,7 +371,6 @@
       return function(item, event){
 
         let temp = $(event.target).val()
-        model.dataFocus =  ko.observable(temp)
         aom = AOM()[i]
 
         aom[label](+(parseFloat(temp.split(",").join(""))) || 0)
@@ -397,18 +396,16 @@
     function aaUpdate(i, label){
       return function(item, event){
         let temp = $(event.target).val()
-        model.dataFocus =  ko.observable(temp)
         aa = AA()[i]
 
-        aa[label](+(parseFloat(temp.split(",").join(""))) || 0)
+        aa[label]((+(parseFloat(temp.split(",").join(""))) || 0).toFixed(2))
         $(event.target).val(displayInputVal(aa[label]()));
       }
     }
 
     function savedata(){
       trigger(false)
-      // stockanddebt().AOM = AOM();
-      // stockanddebt().AA = AA();
+
       param = stockanddebt();
       param.DateFlag = new Date();
       var url = "{{BaseUrl}}datacapturing/savestockanddebtdetail";
@@ -515,7 +512,6 @@
           AA: datazz()[0].AA
         });
 
-        //insert but why meme here
         AOM(datazz()[0].AOM());
         AA(datazz()[0].AA());
       } else {

@@ -1001,9 +1001,10 @@ func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno str
 				}
 
 				if !found {
-					tempRTR, err := r.insertRtrIndividualFromBank(custid, dealno, rtr, v)
+					tempRTR, tempRTR1, err := r.insertRtrIndividualFromBank(custid, dealno, rtr, v)
 					if err == nil {
 						rtr = tempRTR
+						rtrODCC = append(rtrODCC, tempRTR1)
 					}
 				}
 			}
@@ -1043,11 +1044,13 @@ func (r *RTRBottom) updateRtrPosFromBank(rtr RTRBottom, bank BankAnalysisV2) (RT
 }
 
 //insert indiviudal rtr from bankanalys
-func (r *RTRBottom) insertRtrIndividualFromBank(custid, dealno string, rtr []RTRBottom, bank BankAnalysisV2) ([]RTRBottom, error) {
+func (r *RTRBottom) insertRtrIndividualFromBank(custid, dealno string, rtr []RTRBottom, bank BankAnalysisV2) ([]RTRBottom, RTRBottom, error) {
+	ar := RTRBottom{}
+
 	cMongo, em := GetConnection()
 	defer cMongo.Close()
 	if em != nil {
-		return rtr, em
+		return rtr, ar, em
 	}
 
 	qinsert := cMongo.NewQuery().
@@ -1055,7 +1058,6 @@ func (r *RTRBottom) insertRtrIndividualFromBank(custid, dealno string, rtr []RTR
 		SetConfig("multiexec", true).
 		Save()
 
-	ar := RTRBottom{}
 	ar.SNo = ""
 	ar.CustomerId = custid
 	ar.DealNo = dealno
@@ -1098,10 +1100,10 @@ func (r *RTRBottom) insertRtrIndividualFromBank(custid, dealno string, rtr []RTR
 	insdata := map[string]interface{}{"data": ar}
 	em = qinsert.Exec(insdata)
 	if em != nil {
-		return rtr, em
+		return rtr, ar, em
 	}
 
-	return rtr, em
+	return rtr, ar, em
 }
 
 //clean all odcc on rtr if not found on bankanalys

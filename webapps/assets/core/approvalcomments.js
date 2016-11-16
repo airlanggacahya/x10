@@ -90,7 +90,7 @@ apcom.loadCommentData = function(){
 		var data = res;
 	    if(res.success != false){
 			apcom.dataTempRiskMitigants([])
-	    	if(data[0].CreditAnalys.CreditAnalysRisks.length == 0){
+	    	if(data[0].CreditAnalys.CreditAnalysRisks != null){
 	    		apcom.dataTempRiskMitigants( {Risks: "", Mitigants: ""} )
 	    	} else {
 	    		apcom.dataTempRiskMitigants(data[0].CreditAnalys.CreditAnalysRisks)
@@ -376,7 +376,7 @@ apcom.loadSection = function(){
 	$("#grid1").html("");
 	$("#grid1").kendoGrid({
 		dataSource: {
-			data: apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : { Risks: "", Mitigants: "" },
+			data: apcom.formCreditAnalyst.CreditAnalysRisks() != null && apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : { Risks: "", Mitigants: "" },
 			schema: {
 				model: {
 					id: "Risks",
@@ -440,7 +440,7 @@ apcom.loadSection = function(){
 	$("#gridriskconcersnmitigants").html("");
     $("#gridriskconcersnmitigants").kendoGrid({
         dataSource: {
-            data: apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : { Risks: "", Mitigants: "" }
+            data: apcom.formCreditAnalyst.CreditAnalysRisks() != null && apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : { Risks: "", Mitigants: "" }
         },
         scrollable: false,
         dataBound: function(){

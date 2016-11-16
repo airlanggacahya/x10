@@ -525,12 +525,21 @@ r.getNormData = function (param) {
 r.getCreditScoreCard = function(param, callback) {
   app.ajaxPost('/creditscorecard/getcscdatav1', param, function (res) {
     if(status == "") {
+      if(res.Data != null){
       r.AllData3(res.Data[0])
        var param = {}
         param.Customerid = r.customerId().split('|')[0]
         param.Dealno = r.customerId().split('|')[1]
         param.Internalrating = res.Data[0].FinalRating.replace("-","")
         r.getNormData(param)
+      }else{
+            var param = {}
+          param.Customerid = r.customerId().split('|')[0]
+          param.Dealno = r.customerId().split('|')[1]
+          param.Internalrating = "";
+          r.getNormData(param)
+          Materialize.toast("Data Credit Score Card Not Found", 5000);
+      }
     }
 
     loanApproval.refresh()

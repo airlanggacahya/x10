@@ -76,7 +76,7 @@
     $('.linkInternalRTRForm').html('')
     $('.linkInternalRTRForm').append(linkInternalRTRForm)
 
-    linkCreditScoreCard = '<a target="_blank" href="/creditscorecard/default'+add_url+'">Credit Score Card</a>'
+    linkCreditScoreCard = '<a target="_blank" href="/creditscorecard/new'+add_url+'">Credit Score Card</a>'
     $('.linkCreditScoreCard').html('')
     $('.linkCreditScoreCard').append(linkCreditScoreCard)
 
@@ -1552,34 +1552,34 @@
 					</h3>
 				</div>
 				<div class="panel-body">
-					<table class="custom-label table-bordered">
-		                <tr>
-		                    <td class="col-sm-2 text-bold">Industry & Business Risk</td>
-		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.IndustryAndBusiness"></span></td>
-		                    <td class="table-divider"></td>
-		                    <td class="col-sm-2 text-bold">Management / Promoters Risk</td>
-		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.ManagementPromotorsRisk"></span></td>
-		                </tr>
-		                <tr>
-		                    <td class="col-sm-2 text-bold">Financial Risk</td>
-		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.FinancialRisk"></span></td>
-		                    <td class="table-divider"></td>
-		                    <td class="col-sm-2 text-bold">Banking Risk</td>
-		                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.BankingRisk"></span></td>
-		                </tr>
-		                <tr>
-		                    
-	                		<td class="table-divider"></td>
-	                		
-		                </tr>
-		       <!--          <tr>
-		                		<td class="col-sm-2 text-bold">External Rating</td>
-		                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.AD.ExternalRating"></span></td>
-		                </tr> -->
-		            </table>
-		            <br>
-		            <div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span> , <span class="linkCreditScoreCard"></span></div>
+					<div class="col-sm-6 no-padding">
+						<table class="custom-label table-bordered">
+			                <tr>
+			                    <td class="col-sm-2 text-bold">Industry & Business Risk</td>
+			                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.IndustryAndBusiness"></span></td>
+			                </tr>
+			                <tr>
+			                    <td class="col-sm-2 text-bold">Management / Promoters Risk</td>
+			                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.ManagementPromotorsRisk"></span></td>
+			                </tr>
+			                <tr>
+			                    <td class="col-sm-2 text-bold">Financial Risk</td>
+			                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.FinancialRisk"></span></td>
+			                </tr>
+			                <tr>
+			                    <td class="col-sm-2 text-bold">Banking Risk</td>
+			                    <td class="col-sm-4 text-center"><span data-bind="text:loanApproval.ratingRef.BankingRisk"></span></td>
+			                </tr>
+			       <!--          <tr>
+			                		<td class="col-sm-2 text-bold">External Rating</td>
+			                    <td class="col-sm-4"><span data-bind="text:loanApproval.ratingRef.AD.ExternalRating"></span></td>
+			                </tr> -->
+			            </table>
+			        </div>
 		        </div>
+		        <div style="margin-left: 15px;">
+					<div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span> , <span class="linkCreditScoreCard"></span></div>
+				</div>
 		    </div>
 
 		    <div class="panel clearfix">
@@ -1598,9 +1598,10 @@
 		                	</td>
 		                </tr>
 		              </table>
-		              <br />
-		              <div>More...&nbsp;&nbsp;&nbsp;<span class="linkCibilForm"></span></div>
 		            </div>
+				</div>
+				<div style="margin-left: 15px;">
+						<div>More...&nbsp;&nbsp;&nbsp;<span class="linkCibilForm"></span></div>
 				</div>
 			</div>
 

@@ -363,7 +363,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 			account := each.DataBank[0].BankAccount
 			details := each.DataBank[0].BankDetails
 
-			if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+			if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") && containsArr(account.FacilityType, "Fund Based") {
 				res := crowd.From(&details).Max(func(x interface{}) interface{} {
 					avgBalon := x.(BankDetails).AvgBalon
 					limit := x.(BankDetails).OdCcLimit
@@ -1685,4 +1685,13 @@ func (b *BankAnalysisV2) DeleteById(id string) error {
 	}
 
 	return err
+}
+
+func containsArr(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

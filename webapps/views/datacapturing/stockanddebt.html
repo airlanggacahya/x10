@@ -386,10 +386,6 @@
       }
     }
 
-    model.labelFocus =  ko.observable("")
-    model.indexFocus =  ko.observable(-1)
-    model.dataFocus =  ko.observable("")
-
     function inputFocus(){
       return function(item, event){
         let val = $(event.target).val()
@@ -398,10 +394,14 @@
       }
     }
 
-    function inputBlur(realValue){
+    function aaUpdate(i, label){
       return function(item, event){
-        if ((+(parseFloat($(event.target).val().split(",").join(""))) || 0) == 0)
-          $(event.target).val(realValue)
+        let temp = $(event.target).val()
+        model.dataFocus =  ko.observable(temp)
+        aa = AA()[i]
+
+        aa[label](+(parseFloat(temp.split(",").join(""))) || 0)
+        $(event.target).val(displayInputVal(aa[label]()));
       }
     }
 
@@ -930,19 +930,19 @@
                                     <input class="form-control input-sm modezero"
                                     data-bind="value: displayInputVal(ReceivableMin90()), 
                                     event: {
-                                      blur: inputBlur(displayInputVal(ReceivableMin90())), 
+                                      blur: aaUpdate($index(), 'ReceivableMin90', displayInputVal(ReceivableMin90())), 
                                       focus: inputFocus()
                                     }" /></td>
                                   <td>
                                     <input class="form-control input-sm modezero" data-bind="value: displayInputVal(ReceivableMore90()), 
                                     event: {
-                                      blur: inputBlur(displayInputVal(ReceivableMore90())),
+                                      blur: aaUpdate($index(), 'ReceivableMore90', displayInputVal(ReceivableMore90())),
                                       focus: inputFocus()
                                     }" />
                                   </td>
                                   <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(ReceivableMore180()), 
                                     event: {
-                                      blur: inputBlur(displayInputVal(ReceivableMore180())),
+                                      blur: aaUpdate($index(), 'ReceivableMore180', displayInputVal(ReceivableMore180())),
                                       focus: inputFocus()
                                     }" /></td>
                                 </tr>
@@ -950,17 +950,17 @@
                                   <td class="text-center">Inventory</td>
                                   <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(InventoryMin90()), 
                                     event: {
-                                      blur: inputBlur(displayInputVal(InventoryMin90())),
+                                      blur: aaUpdate($index(), 'InventoryMin90', displayInputVal(InventoryMin90())),
                                       focus: inputFocus()
                                     }" /></td>
                                   <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(InventoryMore90()), 
                                     event: {
-                                      blur: inputBlur(displayInputVal(InventoryMore90())),
+                                      blur: aaUpdate($index(), 'InventoryMore90', displayInputVal(InventoryMore90())),
                                       focus: inputFocus()
                                     }" /></td>
                                   <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(InventoryMore180()), 
                                     event: {
-                                      blur: inputBlur(displayInputVal(InventoryMore180())),
+                                      blur: aaUpdate($index(), 'InventoryMore180', displayInputVal(InventoryMore180())),
                                       focus: inputFocus()
                                     }" /></td>
                                 </tr>

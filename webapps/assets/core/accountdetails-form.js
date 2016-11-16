@@ -554,7 +554,6 @@ adf.save = function () {
 				}
 				
 			}
-		
 			if(!adf.blankdate(adf.PdDate())){
 				var ondate4 = adf.PdDate();
 				// var date4 = (new Date(adf.PdDate()).toISOString());

@@ -667,10 +667,10 @@ var getBankAsik = function () {
 
 r.generateAML = function(data){
   var series = [{
-    name: 'Credit Cash',
+    name: 'Credits (Cash)',
     field: 'credit'
   }, {
-    name: 'Debit Cash',
+    name: 'Debit (Cash)',
     field: 'debit'
   }]
 

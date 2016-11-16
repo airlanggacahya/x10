@@ -150,6 +150,10 @@ model.Fullname= ko.observable('{{.Fullname}}');
     font-style: italic;
     color: #27ae60;
   }
+
+  .num{
+    text-align: right;
+  }
 </style>
 
 <script src="/static/core/ratio-pdf.js"></script>
@@ -226,7 +230,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
                             <tbody data-bind="foreach: row">
                               <tr data-bind="foreach: rowData">
                                  <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
-                                 <td data-bind="text: $data, visible: checkSub($parent) == true"></td>
+                                 <td data-bind="text: $data, visible: checkSub($parent) == true, attr:{'class' : ($index() != 0)? 'num' : 'name'}"></td>
                               </tr>
                               </div>
                            </tbody>
@@ -249,7 +253,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
                             <tbody data-bind="foreach: row">
                               <tr data-bind="foreach: rowData">
                                  <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
-                                 <td data-bind="text: $data, visible: checkSub($parent) == true"></td>
+                                 <td data-bind="text: $data, visible: checkSub($parent) == true, attr:{'class' : ($index() != 0)? 'num' : 'name'}"></td>
                               </tr>
                               </div>
                            </tbody>
@@ -271,7 +275,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
                            <tbody data-bind="foreach: row">
                               <tr data-bind="foreach: rowData">
                                  <td class="sub-bgcolor" data-bind="text: $data, attr: {colspan: 10}, css: {subsection: checkSub($parent) == false}, visible: checkSub($parent) == false"></td>
-                                 <td data-bind="text: $data, visible: checkSub($parent) == true"></td>
+                                 <td data-bind="text: $data, visible: checkSub($parent) == true, attr:{'class' : ($index() != 0)? 'num' : 'name'}"></td>
                               </tr>
                               </div>
                            </tbody>

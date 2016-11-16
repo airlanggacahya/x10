@@ -29,13 +29,19 @@ func ProcessFile(inbox string, process string, failed string, success string, re
 			if err != nil {
 				tk.Println(err.Error())
 			}
-
-			DeleteFile(".png", process)
 			filename := strings.TrimRight(f.Name(), ".pdf")
-			xmlfilename := filename + ".xml"
-			ExtractPdfDataCibilReport(process, process, f.Name(), reporttype, xmlfilename)
+			DeleteFile(".png", process)
+			timestamp := time.Now()
+			datestr := timestamp.String()
+			dates := strings.Split(datestr, " ")
+			newfilename := filename + "_" + dates[0] + "_" + dates[1] + ".pdf"
+			os.Rename(inbox+"/"+f.Name(), inbox+"/"+newfilename)
+			formattedName := strings.Replace(newfilename, " ", "\\ ", -1)
+
+			xmlfilename := newfilename + ".xml"
+			ExtractPdfDataCibilReport(process, process, newfilename, reporttype, xmlfilename)
 			time.Sleep(5 * time.Second)
-			formattedName := strings.Replace(f.Name(), " ", "\\ ", -1)
+
 			MoveFile(inbox+"/"+formattedName, success)
 			os.RemoveAll(process + "/" + xmlfilename)
 		}

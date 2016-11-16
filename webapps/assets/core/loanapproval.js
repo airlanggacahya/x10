@@ -1253,10 +1253,6 @@ due.LoadGrid = function(){
 }
 
 due.getData = function(){
-    if(model.PageId() == "Approval Form"){
-        return;
-    }
-
 	due.form.Verification([])
 	due.form.Defaulter([])
 	due.form.Background([])
@@ -1291,7 +1287,10 @@ due.getData = function(){
 				//due.enableConfirm(false);
 			}
 		}else{
-             Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+             if(model.PageId() != "Approval Form"){
+                Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+                return;
+            }
              
 
 			ajaxPost("/duediligence/getverificationcheck", {}, function(res){

@@ -347,7 +347,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	ODSactionLimit := crowd.From(&res).Sum(func(x interface{}) interface{} {
 		account := x.(BankAnalysisV2).DataBank[0].BankAccount
 
-		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") && containsArr(account.FacilityType, "Fund Based") {
 			return account.FundBased.SancLimit
 		}
 
@@ -383,7 +383,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 		account := x.(BankAnalysisV2).DataBank[0].BankAccount
 		details := x.(BankAnalysisV2).DataBank[0].BankDetails
 
-		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") {
+		if strings.Contains(strings.ToLower(account.FundBased.AccountType), "od") && containsArr(account.FacilityType, "Fund Based") {
 			interestPerMonth := account.FundBased.InterestPerMonth
 			actualInterestPaidValue := crowd.From(&details).Avg(func(x interface{}) interface{} {
 				return x.(BankDetails).ActualInterestPaid
@@ -558,7 +558,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	bank.ODCCUtilizationABBvsProposedEMIIsCurrent = (func() bool {
 		totalCurrent := 0
 		for _, each := range res {
-			if each.DataBank[0].BankAccount.FundBased.AccountType == "Current" {
+			if each.DataBank[0].BankAccount.FundBased.AccountType == "Current" && containsArr(each.DataBank[0].BankAccount.FacilityType, "Current") {
 				totalCurrent++
 			}
 		}

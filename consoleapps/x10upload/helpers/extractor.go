@@ -458,7 +458,7 @@ func ExtractIndividualCibilReport(PathFrom string, Filename string) ReportData {
 			if text.Inline == "<b>TIME: </b>" && timereporttop == 0 {
 				timereporttop = text.Top - 1
 			}
-			if text.Top == scoringfactortop && text.Left == scoringfactorleft && text.Content != "" {
+			if (text.Top == scoringfactortop || text.Top == 458) && text.Left == scoringfactorleft && text.Content != "" {
 				ishavescoringfactor = true
 			}
 			if text.Content == "POSSIBLE RANGE FOR CIBIL TRANSUNION SCORE VERSION 1.0" && scoringfactorbot == 0 {
@@ -544,9 +544,10 @@ func ExtractIndividualCibilReport(PathFrom string, Filename string) ReportData {
 
 	for i, page := range v.Pages {
 		for _, text := range page.Texts {
-			if text.Top == nametop && text.Left == nameleft {
-				consumerinfo.ConsumerName = text.Content
-			}
+			// if (text.Top == nametop || text.Top == 235) && text.Left == nameleft {
+			// 	tk.Println(text.Top)
+			// 	consumerinfo.ConsumerName = text.Content
+			// }
 			if text.Top == bodtop && text.Left == bodleft {
 				bodval, _ := time.Parse(layout, text.Content)
 				consumerinfo.DateOfBirth = bodval
@@ -555,7 +556,9 @@ func ExtractIndividualCibilReport(PathFrom string, Filename string) ReportData {
 				consumerinfo.Gender = text.Content
 			}
 			if i == 0 {
-
+				if (text.Top == nametop || text.Top == 235) && text.Left == nameleft {
+					consumerinfo.ConsumerName = text.Content
+				}
 				if text.Top == datereporttop && text.Left == datereportleft {
 					//dateval = dateval + text.Content
 					dates, _ := time.Parse(layout, text.Content)
@@ -565,11 +568,14 @@ func ExtractIndividualCibilReport(PathFrom string, Filename string) ReportData {
 					times, _ := time.Parse(layoutdatetime, text.Content)
 					reportdata.TimeOfReport = times
 				}
+				if text.Top == passportnumbertop && text.Left == passportnumberleft {
+					reportdata.PassportNumber = text.Content
+				}
 			}
 			if text.Top == cibilscoreversiontop && text.Left == cibilscoreversionleft {
 				reportdata.CibilScoreVersion = text.Content
 			}
-			if text.Top == cibilscoretop && text.Left == cibilscoreleft {
+			if (text.Top == cibilscoretop || text.Top == 450) && text.Left == cibilscoreleft {
 				score, _ := strconv.Atoi(text.Content)
 				reportdata.CibilScore = score
 			}
@@ -581,9 +587,10 @@ func ExtractIndividualCibilReport(PathFrom string, Filename string) ReportData {
 			if text.Top == incometaxtop && text.Left == incometaxleft {
 				reportdata.IncomeTaxIdNumber = text.Content
 			}
-			if text.Top == passportnumbertop && text.Left == passportnumberleft {
-				reportdata.PassportNumber = text.Content
-			}
+			// if text.Top == passportnumbertop && text.Left == passportnumberleft {
+			// 	tk.Println(passportnumbertop)
+			// 	reportdata.PassportNumber = text.Content
+			// }
 			if text.Top > telephonetop && text.Top < telephonebot && text.Left == 42 {
 				telephonedata.Type = text.Content
 			}
@@ -830,8 +837,20 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 		}
 	} else {
 		reportobj := ExtractIndividualCibilReport(PathTo, XmlName)
+		customer := strings.Split(reportobj.ConsumersInfos.ConsumerName, " ")
 		res := []tk.M{}
-		cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(dbox.And(dbox.Eq("detailofpromoters.biodata.Name", reportobj.ConsumersInfos.ConsumerName), dbox.Eq("detailofpromoters.biodata.PAN", reportobj.IncomeTaxIdNumber))).Cursor(nil)
+		filter := []*dbox.Filter{}
+		isMatch := false
+		customerid := 0
+		dealno := ""
+
+		for _, splited := range customer {
+			if len(splited) > 2 {
+				filter = append(filter, dbox.Contains("detailofpromoters.biodata.Name", splited))
+			}
+		}
+
+		cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(filter...).Cursor(nil)
 		if err != nil {
 			tk.Println(err.Error())
 		}
@@ -840,14 +859,54 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 
 		if len(res) > 0 {
 			for _, val := range res {
-
-				reportobj.Id = bson.NewObjectId()
+				customername := val.Get("detailofpromoters").(tk.M)["biodata"]
+				bio := customername.([]interface{})
 				app := val.Get("applicantdetail").(tk.M)
-				reportobj.ConsumersInfos.CustomerId = app.GetInt("CustomerID")
-				reportobj.ConsumersInfos.DealNo = val["applicantdetail"].(tk.M)["DealNo"].(string)
+				customerid = app.GetInt("CustomerID")
+				dealno = val["applicantdetail"].(tk.M)["DealNo"].(string)
+
+				for _, vals := range bio {
+					data := vals.(tk.M)
+					setting := NewSimilaritySetting()
+					setting.SplitDelimeters = []rune{' ', '.', '-'}
+					similar := Similarity(reportobj.ConsumersInfos.ConsumerName, data.GetString("Name"), setting)
+					dob, isdate := data.Get("DateOfBirth").(time.Time)
+
+					if isdate {
+						// tk.Println(reportobj.ConsumersInfos.DateOfBirth, dob.UTC())
+						if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == dob.UTC() {
+							isMatch = true
+						}
+					} else {
+						// tk.Println(reportobj.IncomeTaxIdNumber, data.GetString("PAN"))
+						if similar >= 50 && reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
+							isMatch = true
+						}
+					}
+				}
+			}
+		}
+
+		if isMatch {
+			filter := []*dbox.Filter{}
+			filter = append(filter, dbox.Eq("ConsumerInfo.ConsumerName", reportobj.ConsumersInfos.ConsumerName))
+			filter = append(filter, dbox.Eq("ConsumerInfo.CustomerId", customerid))
+			filter = append(filter, dbox.Eq("ConsumerInfo.DealNo", dealno))
+			cursor, err = conn.NewQuery().Select().From("CibilReportIndividual").Where(filter...).Cursor(nil)
+			if err != nil {
+				tk.Println(err.Error())
+			}
+			result := []tk.M{}
+
+			err = cursor.Fetch(&result, 0, false)
+
+			if len(result) == 0 {
+				reportobj.Id = bson.NewObjectId()
+				reportobj.ConsumersInfos.CustomerId = customerid
+				reportobj.ConsumersInfos.DealNo = dealno
 				reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
 				reportobj.FileName = FName
-				reportobj.IsMatch = true
+				reportobj.IsMatch = isMatch
 				query := conn.NewQuery().From("CibilReportIndividual").Save()
 				err = query.Exec(tk.M{
 					"data": reportobj,
@@ -856,21 +915,90 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 					tk.Println(err.Error())
 				}
 				query.Close()
+			} else {
+				for _, existdata := range result {
+					datereport := existdata.Get("DateOfReport").(time.Time)
+					timereport := existdata.Get("TimeOfReport").(time.Time)
+					if datereport.Before(reportobj.DateOfReport) || datereport == reportobj.DateOfReport && timereport.Before(reportobj.TimeOfReport) {
+						wh := []*dbox.Filter{}
+						ids := existdata.Get("_id").(bson.ObjectId)
+						wh = append(wh, dbox.Eq("_id", ids))
+						err = conn.NewQuery().From("CibilReportIndividual").Delete().Where(filter...).Exec(nil)
+						if err != nil {
+							tk.Println(err.Error())
+						}
 
+						reportobj.Id = bson.NewObjectId()
+						reportobj.ConsumersInfos.CustomerId = customerid
+						reportobj.ConsumersInfos.DealNo = dealno
+						reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
+						reportobj.FileName = FName
+						reportobj.IsMatch = isMatch
+						query := conn.NewQuery().From("CibilReportIndividual").Save()
+						err = query.Exec(tk.M{
+							"data": reportobj,
+						})
+						if err != nil {
+							tk.Println(err.Error())
+						}
+						query.Close()
+					}
+				}
 			}
 		} else {
-			reportobj.Id = bson.NewObjectId()
-			reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
-			reportobj.FileName = FName
-			reportobj.IsMatch = false
-			query := conn.NewQuery().From("CibilReportIndividual").Save()
-			err = query.Exec(tk.M{
-				"data": reportobj,
-			})
+			filter := []*dbox.Filter{}
+			filter = append(filter, dbox.Eq("ConsumerInfo.ConsumerName", reportobj.ConsumersInfos.ConsumerName))
+			// filter = append(filter, dbox.Eq("ConsumerInfo.CustomerId", customerid))
+			// filter = append(filter, dbox.Eq("ConsumerInfo.DealNo", dealno))
+			cursor, err = conn.NewQuery().Select().From("CibilReportIndividual").Where(filter...).Cursor(nil)
 			if err != nil {
 				tk.Println(err.Error())
 			}
-			query.Close()
+			result := []tk.M{}
+
+			err = cursor.Fetch(&result, 0, false)
+
+			if len(result) == 0 {
+				reportobj.Id = bson.NewObjectId()
+				reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
+				reportobj.FileName = FName
+				reportobj.IsMatch = isMatch
+				query := conn.NewQuery().From("CibilReportIndividual").Save()
+				err = query.Exec(tk.M{
+					"data": reportobj,
+				})
+				if err != nil {
+					tk.Println(err.Error())
+				}
+				query.Close()
+			} else {
+				for _, existdata := range result {
+					datereport := existdata.Get("DateOfReport").(time.Time).UTC()
+					timereport := existdata.Get("TimeOfReport").(time.Time).UTC()
+					if datereport.Before(reportobj.DateOfReport.UTC()) || datereport == reportobj.DateOfReport.UTC() && timereport.Before(reportobj.TimeOfReport.UTC()) {
+						wh := []*dbox.Filter{}
+						ids := existdata.Get("_id").(bson.ObjectId)
+						wh = append(wh, dbox.Eq("_id", ids))
+						err = conn.NewQuery().From("CibilReportIndividual").Delete().Where(filter...).Exec(nil)
+						if err != nil {
+							tk.Println(err.Error())
+						}
+
+						reportobj.Id = bson.NewObjectId()
+						reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
+						reportobj.FileName = FName
+						reportobj.IsMatch = isMatch
+						query := conn.NewQuery().From("CibilReportIndividual").Save()
+						err = query.Exec(tk.M{
+							"data": reportobj,
+						})
+						if err != nil {
+							tk.Println(err.Error())
+						}
+						query.Close()
+					}
+				}
+			}
 		}
 	}
 	tk.Println("Extracting Finish")

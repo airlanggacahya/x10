@@ -2197,8 +2197,7 @@ var saveDataBank = function(){
     //}
     var latestfacttype = $('#facilitytype').getKendoMultiSelect().value()
 
-        if (latestfacttype.indexOf('Fund Based') > -1){
-        fundbased.sanctiondate(todayDate);
+         if (latestfacttype.indexOf('Fund Based') > -1){
         var dat1 = $("#fbsanctiondate").data("kendoDatePicker").value()
         if(!blankdate(dat1) ){
             var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
@@ -2208,10 +2207,13 @@ var saveDataBank = function(){
             var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
             fundbased.sanctiondate(date1);
         }
+    }else{
+         $("#fbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+            var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
+            fundbased.sanctiondate(date1);
     }
 
     if (latestfacttype.indexOf("Non-Fund Based") > -1){
-        nonfundbased.sanctiondate(todayDate);
         var dat2 = $("#nfbsanctiondate").data("kendoDatePicker").value()
         if( !blankdate(dat2)){
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
@@ -2221,6 +2223,10 @@ var saveDataBank = function(){
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z"
             nonfundbased.sanctiondate(date2);
         }
+    }else{
+         $("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+            var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z"
+            nonfundbased.sanctiondate(date2);
     }
 
 
@@ -2407,7 +2413,6 @@ var updateDataBank = function(index){
     var latestfacttype = $('#facilitytype').getKendoMultiSelect().value()
 
     if (latestfacttype.indexOf('Fund Based') > -1){
-        fundbased.sanctiondate(todayDate);
         var dat1 = $("#fbsanctiondate").data("kendoDatePicker").value()
         if(!blankdate(dat1) ){
             var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
@@ -2417,10 +2422,13 @@ var updateDataBank = function(index){
             var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
             fundbased.sanctiondate(date1);
         }
+    }else{
+         $("#fbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+            var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
+            fundbased.sanctiondate(date1);
     }
 
     if (latestfacttype.indexOf("Non-Fund Based") > -1){
-        nonfundbased.sanctiondate(todayDate);
         var dat2 = $("#nfbsanctiondate").data("kendoDatePicker").value()
         if( !blankdate(dat2)){
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
@@ -2430,6 +2438,10 @@ var updateDataBank = function(index){
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z"
             nonfundbased.sanctiondate(date2);
         }
+    }else{
+         $("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+            var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z"
+            nonfundbased.sanctiondate(date2);
     }
 
     // if (latestfacttype.indexOf("Non-Fund Based") > -1 && latestfacttype.indexOf('Fund Based') > -1){

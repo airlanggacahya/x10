@@ -30,7 +30,7 @@ trans.RenderGrid = function(){
 	if(fil==""){
 		datas = trans.AllData();
 	}
-
+	console.log(datas)
 	$("#transgrid").html("");
 	$("#transgrid").kendoGrid({
 		 dataSource : datas,
@@ -41,50 +41,75 @@ trans.RenderGrid = function(){
 		 {
 		 	field : "FileName", 
 		 	title : "File Name",
-		 	     headerAttributes: {class: 'k-header header-bgcolor'},
+			headerAttributes: {class: 'k-header header-bgcolor'},
+			width:200
 		 },
 		 {
 		 	field : "ConsumersInfos.ConsumerName", 
-		 	title : "Promotor Name",
-		 	     headerAttributes: {class: 'k-header header-bgcolor'},
+		 	title : "Promoter Name",
+		 	headerAttributes: {class: 'k-header header-bgcolor'},
+			 width:200
 		 },
 		  {
 		 	field : "CustomerName", 
 		 	title : "Customer Name",
-		 	     headerAttributes: {class: 'k-header header-bgcolor'},
+			headerAttributes: {class: 'k-header header-bgcolor'},
+			width:200
+		 },
+		 {
+			field : "ConsumersInfos.DealNo", 
+		 	title : "Deal Number",
+			headerAttributes: {class: 'k-header header-bgcolor'},
+			width:150
+		 },
+		 {
+			 field : 'DateOfReport',
+			 title : 'Report Generated Date',
+			 headerAttributes: {class: 'k-header header-bgcolor'},
+			 width : 150,
+			 attributes : { "style" : "text-align:center"  },
+			 template : function(x){
+				var date = moment(x.DateOfReport).format("DD-MMM-YYYY")
+				var time = moment(x.TimeOfReport).format("h:mm:ss")
+		 		return date + " " + time
+		 	},
 		 },
 		 {
 		 	field : "ConsumersInfos.DateOfBirth", 
-		 	title : "Date Of Birth",
+		 	title : "Date of Birth",
 		 	template : function(x){
 		 		return moment(x.ConsumersInfos.DateOfBirth).format("DD-MMM-YYYY")
 		 	},
 		 	attributes : { "style" : "text-align:center"  },
 		 	headerAttributes: {class: 'k-header header-bgcolor'},
+			width : 150
 		 },
 		 {
 		 	field : "CibilScore", 
 		 	title : "Cibil Score",
+			width : 100,
 		 	attributes : { "style" : "text-align:right"  },
-		 	     headerAttributes: {class: 'k-header header-bgcolor'},
+			headerAttributes: {class: 'k-header header-bgcolor'},
 		 },
 		 {
 		 	field : "IncomeTaxIdNumber", 
 		 	title : "Income Tax Id",
-		 	     headerAttributes: {class: 'k-header header-bgcolor'},
+		 	headerAttributes: {class: 'k-header header-bgcolor'},
+			width : 100
 		 },
-		 {
-		 	field : "PassportNumber", 
-		 	title : "Passport Number",
-		 	     headerAttributes: {class: 'k-header header-bgcolor'},
-		 },
+		 
+		//  {
+		//  	field : "PassportNumber", 
+		//  	title : "Passport Number",
+		//  	     headerAttributes: {class: 'k-header header-bgcolor'},
+		//  },
 		 {
 		 	template : function(x){
 		 		return "<button class='btn btn-xs btn-primary tooltipster' onclick='trans.showProm(\""+ x.Id + "\")'><i class='fa fa-edit'></i></button>"
 		 	},
 		 	width : 50,
 		 	     headerAttributes: {class: 'k-header header-bgcolor'},
-		 }
+		 },
 		 ]
 	});
 }

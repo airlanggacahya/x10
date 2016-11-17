@@ -1969,7 +1969,7 @@ adf.getData = function () {
 		DealNo: dealNo
 	}
 	app.ajaxPost(url, param, function (res) {
-		if (typeof res.ApplicantDetail == "undefined") {
+		if (typeof res.ApplicantDetail == "undefined" || res.ApplicantDetail.CustomerID == null) {
 			res = checkConfirmedOrNot(res.Status, 1, 2, res, [], "Customer Application");
 
 		}

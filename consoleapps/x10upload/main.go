@@ -20,6 +20,7 @@ func main() {
 	failedind := config["failedindividual"]
 	successind := config["successindividual"]
 	inboxind := config["inboxindividual"]
+	webapps := config["webapps"]
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -41,7 +42,7 @@ func main() {
 				action := strings.Trim(strEV[len(strEV)-1], " ")
 				if action == "CREATE" {
 					time.Sleep(5 * time.Second)
-					ProcessFile(inboxcom, processcom, failedcom, successcom, "Company")
+					ProcessFile(inboxcom, processcom, failedcom, successcom, "Company", webapps)
 				}
 			case err := <-watcher.Error:
 				tk.Println("error:", err)
@@ -50,7 +51,7 @@ func main() {
 				action2 := strings.Trim(strEV2[len(strEV2)-1], " ")
 				if action2 == "CREATE" {
 					time.Sleep(5 * time.Second)
-					ProcessFile(inboxind, processind, failedind, successind, "Individual")
+					ProcessFile(inboxind, processind, failedind, successind, "Individual", webapps)
 				}
 			case err2 := <-watcher.Error:
 				tk.Println("error:", err2)

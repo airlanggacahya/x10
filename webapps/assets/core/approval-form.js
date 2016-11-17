@@ -365,8 +365,20 @@ r.getNormData = function (param) {
         o.measures = [d.CalculatedValue.Value] // actual
         o.markers = [d.Value1] // norm
 
-        thirdRange = d.Value1 + (d.Value1 * persentageAsik / 100)
+       
+
+        thirdRange = d.Value1 + (d.Value1 * persentageAsik / 100) 
+
         highestRange = (d.CalculatedValue.Value > thirdRange) ? d.CalculatedValue.Value : ((d.Value1 > thirdRange) ? d.Value1 : thirdRange)
+
+        var digit = parseInt(highestRange).toString().length - 2
+        var divider = 10;
+        for(; digit > 0;digit--){
+          divider = divider*10;
+        }
+        var planA = Math.ceil(highestRange/divider)*divider 
+
+        highestRange = planA / highestRange >=2? planA /2 : planA
 
         o.ranges = [
         d.Value1 - (highestRange * persentageAsik / 100),

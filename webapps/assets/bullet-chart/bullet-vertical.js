@@ -104,7 +104,7 @@ d3.bulletVertical = function() {
           .attr("y2", extentY * 5 / 6);
 
       var axis = g.selectAll("g.axis").data([0]);
-      var ticksCount = 7;
+      var ticksCount = 6;
       axis.enter().append("g").attr("class", "axis");
       axis.attr("transform", vertical ? null : "translate(0," + extentY + ")")
           .call(xAxis.scale(x1).tickValues(

@@ -55,6 +55,14 @@
     .center, .text-center {
       text-align: center;
     }
+
+    .tab-content.cotainer-tab ul.collapsible > li:before { 
+      display: block; 
+      content: " "; 
+      margin-top: -120px; 
+      height: 120px; 
+      visibility: hidden; 
+    }
 </style>
 
 {{template "filter.html"}}
@@ -129,7 +137,7 @@
             </ul>
 
             <ul class="collapsible" data-collapsible="accordion">
-              <li>
+              <li id="promback">
                 <div class="collapsible-noreplace header-bgcolor active">
                   <i class="fa fa-list"></i>Promoter Background<i class="fa fa-chevron-down pull-right"></i>
                 </div>
@@ -181,7 +189,7 @@
             </ul>
 
             <ul class="collapsible" data-collapsible="accordion">
-              <li>
+              <li id="propown">
                 <div class="collapsible-noreplace header-bgcolor active">
                   <i class="fa fa-list"></i>Property Ownership Details (Borrower / Promoters / Guarantors)<i class="fa fa-chevron-down pull-right"></i>
                 </div>

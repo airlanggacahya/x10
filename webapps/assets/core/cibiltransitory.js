@@ -86,7 +86,7 @@ trans.RenderGrid = function(){
 		 },
 		 {
 		 	field : "CibilScore", 
-		 	title : "Cibil Score",
+		 	title : "CIBIL Score",
 			width : 100,
 		 	attributes : { "style" : "text-align:right"  },
 			headerAttributes: {class: 'k-header header-bgcolor'},

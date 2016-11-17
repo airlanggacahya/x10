@@ -2219,7 +2219,7 @@ window.refreshFilter = function () {
 	// if(adf.PdDate() == ""){
 	// 	adf.PdDate((new Date()).toISOString())
 	// }
-	// $('.form-last-confirmation-info').html('');
+	$('.form-last-confirmation-info').html('');
 	// setTimeout(function(){
 	// 	console.log("--------->>>>1953",adf.PdDate())
 	// 	if(adf.PdDate().indexOf("1970") > -1 || adf.PdDate() == ''){

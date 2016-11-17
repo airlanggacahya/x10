@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
 
 	tk "github.com/eaciit/toolkit"
 )
@@ -20,7 +19,21 @@ func MoveFile(From string, To string) {
 	}
 }
 
-func ProcessFile(inbox string, process string, failed string, success string, reporttype string) {
+func CopyFile(From string, To string) {
+	args := []string{"cp", From, To}
+	args0 := strings.Join(args, " ")
+
+	if err := exec.Command("/bin/sh", "-c", args0).Run(); err != nil {
+		tk.Printf("Error: %#v\n", err.Error())
+	}
+}
+
+func UrlReplacer(Url string) string {
+	formattedstring := strings.Replace(Url, " ", "\\ ", -1)
+	return formattedstring
+}
+
+func ProcessFile(inbox string, process string, failed string, success string, reporttype string, webapps string) {
 
 	inboxfolder, _ := ioutil.ReadDir(inbox)
 	if len(inboxfolder) > 0 {
@@ -30,20 +43,13 @@ func ProcessFile(inbox string, process string, failed string, success string, re
 				tk.Println(err.Error())
 			}
 			filename := strings.TrimRight(f.Name(), ".pdf")
+			xmlfilename := filename + ".xml"
+
 			DeleteFile(".png", process)
-			timestamp := time.Now()
-			datestr := timestamp.String()
-			dates := strings.Split(datestr, " ")
-			newfilename := filename + "_" + dates[0] + "_" + dates[1] + ".pdf"
-			os.Rename(inbox+"/"+f.Name(), inbox+"/"+newfilename)
-			formattedName := strings.Replace(newfilename, " ", "\\ ", -1)
+			DeleteFile(".jpg", process)
 
-			xmlfilename := newfilename + ".xml"
-			ExtractPdfDataCibilReport(process, process, newfilename, reporttype, xmlfilename)
-			time.Sleep(5 * time.Second)
+			ExtractPdfDataCibilReport(process, process, f.Name(), reporttype, xmlfilename, inbox, success, failed, webapps)
 
-			MoveFile(inbox+"/"+formattedName, success)
-			os.RemoveAll(process + "/" + xmlfilename)
 		}
 	}
 

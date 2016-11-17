@@ -3042,12 +3042,12 @@ adf.isoAllDate = function(){
 adf.checkVendor = function(){
 	var numloop = 0;
 	$.each(adf.form.VendorDetails(), function(i, items){
-		if(items.DistributorName() == ""){
+		if(items.DistributorName() != ""){
 			numloop ++;
 		}
 	})
 
-	if(numloop == adf.form.VendorDetails().length){
+	if(numloop != adf.form.VendorDetails().length){
 		Materialize.toast(" Please Fill Distributtor Name", 2000);
         $('.toast').css("background-color","#F26419").css("color","white")
 	}

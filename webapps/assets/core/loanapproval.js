@@ -1052,6 +1052,9 @@ $(document).ready(function(){
 $(document).ajaxStop(function() {
     if( ! loanApproval.isFirstLoad() && loanApproval.isLoading()) {
         loanApproval.loading(false)
+        setTimeout(function(){
+            $("body").scrollTop($(window.location.hash).offset().top)
+        }, 200);
     }
 })
 

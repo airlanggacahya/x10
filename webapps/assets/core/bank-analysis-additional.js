@@ -2363,19 +2363,40 @@ var updateDataBank = function(index){
 
     if (latestfacttype.indexOf('Fund Based') > -1){
         nonfundbased.sanctiondate(todayDate);
-        var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        if(!blankdate($("#fbsanctiondate").getKendoDatePicker().value())){
+           var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }else{
+            $("#fbsanctiondate").getKendoDatePicker().value("01/01/1970")
+            var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }
         fundbased.sanctiondate(sd);
     }
 
     if (latestfacttype.indexOf("Non-Fund Based") > -1){
         fundbased.sanctiondate(todayDate);
-        var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        if(!blankdate($("#nfbsanctiondate").getKendoDatePicker().value())){
+            var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }else{
+            $("#nfbsanctiondate").getKendoDatePicker().value("01/01/1970")
+            var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }
+        
         nonfundbased.sanctiondate(nfbsd);
     }
 
     if (latestfacttype.indexOf("Non-Fund Based") > -1 && latestfacttype.indexOf('Fund Based') > -1){
         var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
         var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        if(!blankdate($("#nfbsanctiondate").getKendoDatePicker().value()) && !blankdate($("#fbsanctiondate").getKendoDatePicker().value())){
+            var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+            var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }else{
+            $("#fbsanctiondate").getKendoDatePicker().value("01/01/1970");
+            $("#nfbsanctiondate").getKendoDatePicker().value("01/01/1970");
+            var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+            var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+
+        }
         fundbased.sanctiondate(sd);
         nonfundbased.sanctiondate(nfbsd);
     }

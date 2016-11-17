@@ -776,7 +776,7 @@ func ExtractIndividualCibilReport(PathFrom string, Filename string) ReportData {
 	return reportdata
 }
 
-func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, ReportType string, XmlName string, webapps string) {
+func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, ReportType string, XmlName string, inbox string, success string, failed string, webapps string) {
 	tk.Println("Extracting", FName)
 	Name := strings.TrimRight(FName, ".pdf")
 

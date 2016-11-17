@@ -20,7 +20,7 @@ type ReportData struct {
 	FilePath                 string            `bson:"FilePath"`
 	FileName                 string            `bson:"FileName"`
 	ReportType               string            `bson:"ReportType"`
-	Status                   int               `bson:"Status"`
+	StatusCibil              int               `bson:"StatusCibil"`
 	IsMatch                  bool              `bson:"IsMatch"`
 	ConsumersInfos           ConsumerInfo      `bson:"ConsumerInfo"`
 	DateOfReport             time.Time         `bson:"DateOfReport"`

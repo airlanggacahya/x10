@@ -249,7 +249,7 @@ var DrawDataBank = function(id){
                 var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100
                 var CMISNULL = res.data.AccountDetail[0].CMISNULL
                     if(!CMISNULL) {
-                        multiplyer = ebitdaFinis
+                        multiplyer = customermargin
                         for (var i = 0 ; i < res.data.Summary.length ; i++){
                             res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
                         }

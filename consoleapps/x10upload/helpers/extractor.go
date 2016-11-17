@@ -918,8 +918,8 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 					reportobj.Id = bson.NewObjectId()
 					reportobj.ConsumersInfos.CustomerId = customerid
 					reportobj.ConsumersInfos.DealNo = dealno
-					reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
-					reportobj.FileName = FName
+					reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
+					reportobj.FileName = newfilename
 					reportobj.Status = 0
 					reportobj.IsMatch = isMatch
 					query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
@@ -930,8 +930,10 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						tk.Println(err.Error())
 					}
 					query.Close()
+
+					CopyFile(inbox+"/"+formattedName, webapps)
 					MoveFile(inbox+"/"+formattedName, success)
-					//CopyFile(inbox+"/"+formattedName, webapps)
+
 				} else {
 					for _, existdata := range result {
 						if existdata.GetInt("Status") != 1 {
@@ -949,8 +951,8 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 								reportobj.Id = bson.NewObjectId()
 								reportobj.ConsumersInfos.CustomerId = customerid
 								reportobj.ConsumersInfos.DealNo = dealno
-								reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
-								reportobj.FileName = FName
+								reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
+								reportobj.FileName = newfilename
 								reportobj.Status = 0
 								reportobj.IsMatch = isMatch
 								query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
@@ -962,8 +964,9 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 								}
 								query.Close()
 
-								CopyFile(inbox+"/"+formattedName, success)
 								CopyFile(inbox+"/"+formattedName, webapps)
+								MoveFile(inbox+"/"+formattedName, success)
+
 							}
 						}
 					}
@@ -981,8 +984,8 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 
 				if len(result) == 0 {
 					reportobj.Id = bson.NewObjectId()
-					reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
-					reportobj.FileName = FName
+					reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
+					reportobj.FileName = newfilename
 					reportobj.Status = 0
 					reportobj.IsMatch = isMatch
 					query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
@@ -994,8 +997,9 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 					}
 					query.Close()
 
+					CopyFile(inbox+"/"+formattedName, webapps)
 					MoveFile(inbox+"/"+formattedName, success)
-					//CopyFile(inbox+"/"+formattedName, webapps)
+
 				} else {
 					for _, existdata := range result {
 						if existdata.GetInt("Status") != 1 {
@@ -1011,8 +1015,8 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 								}
 
 								reportobj.Id = bson.NewObjectId()
-								reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + FName
-								reportobj.FileName = FName
+								reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
+								reportobj.FileName = newfilename
 								reportobj.Status = 0
 								reportobj.IsMatch = isMatch
 								query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
@@ -1024,8 +1028,9 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 								}
 								query.Close()
 
+								CopyFile(inbox+"/"+formattedName, webapps)
 								MoveFile(inbox+"/"+formattedName, success)
-								//CopyFile(inbox+"/"+formattedName, webapps)
+
 							}
 						}
 					}

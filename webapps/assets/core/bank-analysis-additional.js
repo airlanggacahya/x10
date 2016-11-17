@@ -72,7 +72,7 @@ var refreshFilter = function(){
 
 var setdatestt = function(){
     ajaxPost(url+"/getdatetemplate",getSearchVal(),function(res){
-        //console.log(res.data.length)
+        //console.log(res.data.length)  
         if (res.data.length > 0){
             //console.log(res.data[0].BankDetails[0].Month)
             $('#bankstt').data('kendoDatePicker').value(res.data[0].BankDetails[0].Month)
@@ -250,7 +250,7 @@ var DrawDataBank = function(id){
                 var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100
                 var CMISNULL = res.data.AccountDetail[0].CMISNULL
                     if(!CMISNULL) {
-                        multiplyer = ebitdaFinis
+                        multiplyer = customermargin
                         for (var i = 0 ; i < res.data.Summary.length ; i++){
                             res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
                         }
@@ -1642,8 +1642,8 @@ $(document).ready(function(){
                     $('#modalAdd').modal('show');
 
                     setTimeout(function(){
-                        $("#nfbsanctiondate").getKendoDatePicker().value(new Date());
-                        $("#fbsanctiondate").getKendoDatePicker().value(new Date());
+                        $("#nfbsanctiondate").getKendoDatePicker().value("");
+                        $("#fbsanctiondate").getKendoDatePicker().value("");
 
                     },2000);
 
@@ -1946,7 +1946,11 @@ var editBankData = function(index){
             $('#roiperannum').data('kendoNumericTextBox').value(databank()[index].DataBank[0].BankAccount.FundBased.ROI)
             var sanc1 = parseFloat(Math.round(databank()[index].DataBank[0].BankAccount.FundBased.InterestPerMonth * 100) / 100).toFixed(2);
             $('#interestpermonth').val(sanc1)
-            $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
+            if(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate.indexOf("1970") > -1){
+                $('#fbsanctiondate').val("")
+            }else{
+                $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
+            }
             $('#securityfb').val(databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB)
             //loadGridDataBank(databank()[index].DataBank[0].BankDetails)
         }
@@ -1965,7 +1969,11 @@ var editBankData = function(index){
             }
 
             $('#nfbsanclimit').data('kendoNumericTextBox').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SancLimit)
-            $('#nfbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate)
+            if(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate.indexOf("1970") > -1){
+                $('#nfbsanctiondate').val("")
+            }else{
+                $('#nfbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate)
+            }
             $('#securitynfb').val(databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB)
         }
 
@@ -2110,6 +2118,18 @@ var loadGridCurrentDataBank = function(res){
     $(".k-grid-update").attr("class","btn btn-sm btn-success k-grid-update mgright pull-right");
 }
 
+var blankdate = function(val){
+    if(val == undefined)
+        return true
+
+    if(val == "")
+        return true
+
+    if(val == null){
+        return true
+    }
+}
+
 var saveDataBank = function(){
     var gridbankdet = $("#bankdetailgridform").data("kendoGrid");
     var gridcurrentbankdet = $('#currentbankdetailgridform').data("kendoGrid");
@@ -2150,8 +2170,18 @@ var saveDataBank = function(){
     //     fundbased.sanctiondate(todayDate);
     //     nonfundbased.sanctiondate($("#nfbsanctiondate").data("kendoDatePicker").value().toISOString());
     // }else{
-        fundbased.sanctiondate($("#fbsanctiondate").data("kendoDatePicker").value().toISOString());
-        nonfundbased.sanctiondate($("#nfbsanctiondate").data("kendoDatePicker").value().toISOString());
+        var dat1 = $("#fbsanctiondate").data("kendoDatePicker").value()
+        var dat2 = $("#nfbsanctiondate").data("kendoDatePicker").value()
+        if(!blankdate(dat1) && !blankdate(dat2)){
+            fundbased.sanctiondate($("#fbsanctiondate").data("kendoDatePicker").value().toISOString());
+            nonfundbased.sanctiondate($("#nfbsanctiondate").data("kendoDatePicker").value().toISOString());
+        }else{
+            $("#fbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+            $("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+            fundbased.sanctiondate($("#fbsanctiondate").data("kendoDatePicker").value().toISOString());
+            nonfundbased.sanctiondate($("#nfbsanctiondate").data("kendoDatePicker").value().toISOString());
+        }
+        
     //}
     bankaccount.facilitytype($('#facilitytype').getKendoMultiSelect().value())
     currentbased.accountholder($('#currentacholder').val())
@@ -2337,19 +2367,40 @@ var updateDataBank = function(index){
 
     if (latestfacttype.indexOf('Fund Based') > -1){
         nonfundbased.sanctiondate(todayDate);
-        var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        if(!blankdate($("#fbsanctiondate").getKendoDatePicker().value())){
+           var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }else{
+            $("#fbsanctiondate").getKendoDatePicker().value("01/01/1970")
+            var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }
         fundbased.sanctiondate(sd);
     }
 
     if (latestfacttype.indexOf("Non-Fund Based") > -1){
         fundbased.sanctiondate(todayDate);
-        var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        if(!blankdate($("#nfbsanctiondate").getKendoDatePicker().value())){
+            var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }else{
+            $("#nfbsanctiondate").getKendoDatePicker().value("01/01/1970")
+            var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }
+        
         nonfundbased.sanctiondate(nfbsd);
     }
 
     if (latestfacttype.indexOf("Non-Fund Based") > -1 && latestfacttype.indexOf('Fund Based') > -1){
         var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
         var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        if(!blankdate($("#nfbsanctiondate").getKendoDatePicker().value()) && !blankdate($("#fbsanctiondate").getKendoDatePicker().value())){
+            var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+            var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+        }else{
+            $("#fbsanctiondate").getKendoDatePicker().value("01/01/1970");
+            $("#nfbsanctiondate").getKendoDatePicker().value("01/01/1970");
+            var sd = moment($("#fbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+            var nfbsd = moment($("#nfbsanctiondate").getKendoDatePicker().value()).add(7,'h').toDate().toISOString()
+
+        }
         fundbased.sanctiondate(sd);
         nonfundbased.sanctiondate(nfbsd);
     }

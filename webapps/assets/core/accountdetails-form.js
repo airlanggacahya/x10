@@ -130,7 +130,7 @@ adf.templatePDInfo1 = {
 	PdDate: '',
 	PdPlace: '',
 	PersonMet: '',
-	CustomerMargin: 0,
+	CustomerMargin: '',
 	PdRemarks: '',
 	PdComments: '',
 }
@@ -546,10 +546,18 @@ adf.save = function () {
 				if(adf.form.AccountSetupDetails.LoginDate() == date5){
 					adf.form.AccountSetupDetails.LoginDate(date5)
 				}else{
-					// alert("masuk")
-					var da = kendo.toString(adf.form.AccountSetupDetails.LoginDate(),"yyyy-MM-dd")+"T00:00:00.000Z";
-					adf.form.AccountSetupDetails.LoginDate(da)
-					// console.log("-------->>> login date", da)
+					var str = ondate5.toString()
+					str = kendo.toString(new Date(str),"yyyy-MM-dd");
+					// alert(str)
+					if(str.indexOf("T00:00:00.000Z") > -1){
+						adf.form.AccountSetupDetails.LoginDate("");
+						adf.form.AccountSetupDetails.LoginDate(ondate5)
+					}else{
+						// alert("masuk sisni")
+						var da = kendo.toString(str,"yyyy-MM-dd")+"T00:00:00.000Z";;
+						adf.form.AccountSetupDetails.LoginDate(da)
+
+					}
 				}
 				
 			}
@@ -590,7 +598,9 @@ adf.save = function () {
 
 			}
 		
-		
+		if(adf.form.AccountSetupDetails.PdInfo.CustomerMargin() == ""){
+			adf.form.AccountSetupDetails.PdInfo.CustomerMargin(0)
+		}
 		var url = "/accountdetail/saveaccountdetail"
 		var param = adf.getForm()
 		if(adf.CMISNULL()){
@@ -857,6 +867,19 @@ adf.getConfirm = function(){
 				var date5 = kendo.toString(new Date(),"yyyy-MM-dd")+"T00:00:00.000Z";
 				if(adf.form.AccountSetupDetails.LoginDate() == date5){
 					adf.form.AccountSetupDetails.LoginDate(date5)
+				}else{
+					var str = ondate5.toString()
+					str = kendo.toString(new Date(str),"yyyy-MM-dd");
+					// alert(str)
+					if(str.indexOf("T00:00:00.000Z") > -1){
+						adf.form.AccountSetupDetails.LoginDate("");
+						adf.form.AccountSetupDetails.LoginDate(ondate5)
+					}else{
+						// alert("masuk sisni")
+						var da = kendo.toString(str,"yyyy-MM-dd")+"T00:00:00.000Z";;
+						adf.form.AccountSetupDetails.LoginDate(da)
+
+					}
 				}
 				
 			}
@@ -898,13 +921,22 @@ adf.getConfirm = function(){
 
 			}
 
-
+			if(adf.form.AccountSetupDetails.PdInfo.CustomerMargin() == ""){
+				adf.form.AccountSetupDetails.PdInfo.CustomerMargin(0)
+			}
 			var url = "/accountdetail/saveaccountdetail"
-			var param = adf.getForm()
+			var param = adf.getForm();
+			param.CMISNULL = adf.CMISNULL()
 			// param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
 			adf.isLoading(true)
 			app.ajaxPost(url, param, function (res) {
 				adf.isLoading(false)
+
+				if(adf.CMISNULL())
+				{
+					adf.form.AccountSetupDetails.PdInfo.CustomerMargin("")
+				}
+
 				// if(ondate5 != ""){
 				// 	adf.form.AccountSetupDetails.PdInfo.PdDate(ondate4)
 				// }
@@ -1937,7 +1969,7 @@ adf.getData = function () {
 		DealNo: dealNo
 	}
 	app.ajaxPost(url, param, function (res) {
-		if (typeof res.ApplicantDetail == "undefined") {
+		if (typeof res.ApplicantDetail == "undefined" || res.ApplicantDetail.CustomerID == null) {
 			res = checkConfirmedOrNot(res.Status, 1, 2, res, [], "Customer Application");
 
 		}
@@ -1992,6 +2024,7 @@ adf.getData = function () {
 				adf.addRowReffrence();
 				adf.initFreshForm(customerId, dealNo)
 				adf.reloadStatus(0)
+				adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
 				if(adf.form.Freeze() == true){
 					adf.EnableAllfields(false)
 
@@ -2016,6 +2049,22 @@ adf.getData = function () {
 						$('#tipster').tooltipster('destroy')
 					}catch(e){
 
+					}
+
+					if(adf.PdDate() ==""){
+						// $('#tipster').tooltipster('destroy')
+						$('#tipster').tooltipster({
+							contentAsHTML: true,
+					    	interactive: true,
+					    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+						})
+					}else{
+						// $('#tipster').tooltipster('destroy')
+						$('#tipster').tooltipster({
+							contentAsHTML: true,
+					    	interactive: true,
+					    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy") +"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+						})
 					}
 					
 				}
@@ -2045,16 +2094,16 @@ adf.getData = function () {
 
 						if(adf.PdDate().indexOf("1970") > -1 || adf.PdDate() == ''){
 								adf.PdDate("")
-								$('#PD').tooltipster('destroy')
-								$('#PD').tooltipster({
+								$('#tipster').tooltipster('destroy')
+								$('#tipster').tooltipster({
 									contentAsHTML: true,
 							    	interactive: true,
 							    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
 								})
 							}else{
 								// console.log(adf.PdDate())
-								$('#PD').tooltipster('destroy')
-								$('#PD').tooltipster({
+								$('#tipster').tooltipster('destroy')
+								$('#tipster').tooltipster({
 									contentAsHTML: true,
 							    	interactive: true,
 							    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
@@ -2638,15 +2687,24 @@ adf.onclickDismissModal = function(){
 	}
 
 	if(adf.PdDate() == ""){
-		$('#PD').tooltipster('destroy')
-		$('#PD').tooltipster({
+		try{
+			$('#tipster').tooltipster('destroy')
+		}catch(e){
+
+		}
+		
+		$('#tipster').tooltipster({
 			contentAsHTML: true,
 	    	interactive: true,
 	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
 		})
 	}else{
-		$('#PD').tooltipster('destroy')
-		$('#PD').tooltipster({
+		try{
+			$('#tipster').tooltipster('destroy')
+		}catch(e){
+			
+		}
+		$('#tipster').tooltipster({
 			contentAsHTML: true,
 	    	interactive: true,
 	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")

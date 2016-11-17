@@ -119,7 +119,7 @@ type AccountDetail struct {
 	DistributorMix      DistributorMix
 	Status              int
 	Freeze              bool      `bson:"Freeze,omitempty"`
-	CMISNULL            bool      `bson:"CMISNULL,omitempty"`
+	CMISNULL            bool      `bson:"CMISNULL"`
 	DateConfirmed       time.Time `bson:"DateConfirmed,omitempty"`
 	DateFreeze          time.Time `bson:"DateFreeze,omitempty"`
 	DateSave            string    `bson:"DateSave,omitempty"`

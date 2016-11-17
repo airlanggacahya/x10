@@ -275,7 +275,7 @@ r.setData = function() {
       itemData.Dob = moment(prom.ConsumerInfo.DateOfBirth).format("DD-MM-YYYY");//prom.ConsumerInfo.DateOfBirth;
       // itemData.Phone = prom.Telephones[0].Number;
       // itemData.Address = prom.AddressData[0].AddressPinCode;
-      itemData.Score = prom.CibilScore;//itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
+      itemData.Score = itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
       itemData.Passport = prom.PassportNumber;
       itemData.Dates = moment(prom.DateOfReport).format("DD-MM-YYYY");
       itemData.Times = moment(prom.TimeOfReport).format("HH:mm:ss");

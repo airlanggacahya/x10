@@ -548,7 +548,7 @@ adf.save = function () {
 				}else{
 					// alert("masuk")
 					var da = kendo.toString(adf.form.AccountSetupDetails.LoginDate(),"yyyy-MM-dd")+"T00:00:00.000Z";
-					adf.form.AccountSetupDetails.LoginDate(date5)
+					adf.form.AccountSetupDetails.LoginDate(da)
 					// console.log("-------->>> login date", da)
 				}
 				

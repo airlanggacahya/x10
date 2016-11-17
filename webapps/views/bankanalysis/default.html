@@ -169,14 +169,14 @@ input[disabled]{
             <div class="col-md-7"><input type="text" id="bankstt" class="form-control input-sm banksdata-action" validationmessage="Bank Stt Till required" data-bind="value: bankaccount.bankstttill"></div>
           </div>
           <div class="col-md-4">
-            <button type="button" id="add" class="btn btn-add btn-sm btn-flat mgright banksdata-action">Add Bank Data</button>
+            <button type="button" id="add" class="btn btn-add btn-sm btn-flat mgright banksdata-action" data-target="#modalAdd" data-toggle="modal" data-backdrop="static" data-keyboard="false">Add Bank Data</button>
           </div>
           </div>
         </div>
       </div>
 
       <div class="panel-body" data-bind="visible:(databank().length > 0 )">
-        <button type="button" style="display: none" data-bind="attr:{id:'bedit0'},click: editBankData(0),visible:(isempty() != true)"  class="btn btn-warning banksdata-action">Edit</button>
+        <button type="button" style="display: none" data-bind="attr:{id:'bedit0'},click: editBankData(0),visible:(isempty() != true)"  class="btn btn-warning banksdata-action"  data-target="#modalAdd" data-toggle="modal" data-backdrop="static" data-keyboard="false">Edit</button>
         <button type="button" style="display: none" data-bind="attr:{id:'bdelete0'},click: deleteBankData(0),visible:(isempty() != true)"  class="btn btn-danger">Delete</button>
       </div>
       <div data-bind="visible:(isempty() != true)">

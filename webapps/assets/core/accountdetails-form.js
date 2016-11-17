@@ -408,9 +408,9 @@ adf.getForm = function () {
 		})
 	})
 
-	data.VendorDetails = data.VendorDetails.filter(function (d) {
-		return d.DistributorName != ''
-	})
+	// data.VendorDetails = data.VendorDetails.filter(function (d) {
+	// 	return d.DistributorName != ''
+	// })
 	
 	// console.log("----- 345",data)
 
@@ -3036,6 +3036,20 @@ adf.isoAllDate = function(){
 	if(adf.form.AccountSetupDetails.LoginDate() == ""){
 		var date4 = (new Date().toISOString());
 		adf.form.AccountSetupDetails.LoginDate(date4)
+	}
+}
+
+adf.checkVendor = function(){
+	var numloop = 0;
+	$.each(adf.form.VendorDetails(), function(i, items){
+		if(items.DistributorName() != ""){
+			numloop ++;
+		}
+	})
+
+	if(numloop != adf.form.VendorDetails().length){
+		Materialize.toast(" Please Fill Distributtor Name", 2000);
+        $('.toast').css("background-color","#F26419").css("color","white")
 	}
 }
 

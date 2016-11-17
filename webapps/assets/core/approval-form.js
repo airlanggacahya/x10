@@ -117,6 +117,20 @@ r.scrollTo = function(param){
 };
 
 r.showDetails = function(param){
+
+  if(param == "overview"){
+       var top = $("#ldb").offset().top
+      $('body').animate({
+        scrollTop: top - 130
+      })
+      $(".collapsible-header.active").trigger("click")
+      $("#ldb .collapsible-header").trigger("click")
+      $("#ptb .collapsible-header").trigger("click")
+      $("#bdb .collapsible-header").trigger("click")
+      $("#rrb .collapsible-header").trigger("click")
+      return;
+  }
+
   var top = $("#"+ param).offset().top
   $('body').animate({
     scrollTop: top - 130
@@ -671,7 +685,7 @@ r.generateAML = function(data){
     name: 'Credits (Cash)',
     field: 'credit'
   }, {
-    name: 'Debit (Cash)',
+    name: 'Debits (Cash)',
     field: 'debit'
   }]
 

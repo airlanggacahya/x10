@@ -12,7 +12,7 @@
     model.Edit= ko.observable('{{.Edit}}')
     model.User= ko.observable('{{.Username}}');
     model.Rolename= ko.observable('{{.Rolename}}')
-model.Fullname = ko.observable('{{.Fullname}}');
+    model.Fullname = ko.observable('{{.Fullname}}');
 
     selectdateval = ko.observable(new Date());
     selectdateseqval = ko.observable("first");
@@ -53,10 +53,22 @@ model.Fullname = ko.observable('{{.Fullname}}');
 
   // end initial
 
-  //function
+
     function addAOM(){
-      var date = kendo.toString(selectdateval(), 'MMMM yyyy');
-      AOM.push({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
+      let index = AOM.push({ 
+        Id: "", 
+        OperatingRatio: selectdateval(), 
+        OperatingRatioString: ko.observable('0'),
+        ReceivablesDays: ko.observable('0'),
+        InventoryDays: ko.observable('0'),
+        LessPayablesDays: ko.observable('0'),
+        WCDays: ko.observable('0'),
+        ReceivablesAmount: ko.observable('0'),
+        InventoryAmount: ko.observable('0'),
+        LessPayablesAmount: ko.observable('0'),
+        WCRequirement: ko.observable('0'),
+      });
+      countAOM(AOM()[index - 1])
       // swal("Success","Adjusted Operating Metrics Has Been Addded", "success");
     }
 
@@ -73,8 +85,17 @@ model.Fullname = ko.observable('{{.Fullname}}');
     }
 
     function addAA(){
-      var date = kendo.toString(selectdateval(), 'MMMM yyyy');
-      AA.push({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
+      AA.push({ 
+        Id: "", 
+        BulanString: '', 
+        Bulan: selectdateval(), 
+        ReceivableMin90: ko.observable('0'), 
+        ReceivableMore90: ko.observable('0'), 
+        ReceivableMore180: ko.observable('0'), 
+        InventoryMin90: ko.observable('0'), 
+        InventoryMore90: ko.observable('0'), 
+        InventoryMore180: ko.observable('0') 
+      });
     }
 
     removeAA = function(aa) {
@@ -171,6 +192,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
     var checkBtnFreeze = ko.pureComputed(function(){
       return (stockanddebtCloning.IsFreeze())? "btn-unfreeze":"btn-freeze"
     })
+
     var setConfirm = function(){
       return function(){
         param = {Id: stockanddebt().Id, IsConfirm: !stockanddebtCloning.IsConfirm()}
@@ -242,31 +264,6 @@ model.Fullname = ko.observable('{{.Fullname}}');
           stockanddebt().AA()[i+2].BulanString = date;
         }
       }
-    }
-
-    function resetmen(){
-      AOM([]);
-      AA([]);
-      var date = kendo.toString(selectdateval(), 'MMMM yyyy');
-
-      AOM.push({Id: "", OperatingRatio: selectdateval(), OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
-
-      AA.push({Id: "", BulanString: date,Bulan: selectdateval(),ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
-
-      tmp = moment().subtract(1, 'month')._d;
-      date = kendo.toString(tmp, 'MMMM yyyy');
-      AOM.push({Id: "", OperatingRatio: tmp, OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
-
-      AA.push({Id: "", BulanString: date,Bulan: tmp,ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
-
-      tmp = moment().subtract(2, 'month')._d;
-      date = kendo.toString(tmp, 'MMMM yyyy');
-      AOM.push({Id: "", OperatingRatio: tmp, OperatingRatioString: date,ReceivablesDays: '',InventoryDays: '',LessPayablesDays: '',WCDays: '',ReceivablesAmount: "0",InventoryAmount: "0",LessPayablesAmount: "0",WCRequirement: "0"});
-
-      AA.push({Id: "", BulanString: date,Bulan: tmp,ReceivableMin90: '',ReceivableMore90: '',ReceivableMore180: '',InventoryMin90: '',InventoryMore90: '',InventoryMore180: ''});
-
-      stockanddebt().AOM(AOM());
-      stockanddebt().AA(AA());
     }
 
     function awal(){
@@ -342,63 +339,73 @@ model.Fullname = ko.observable('{{.Fullname}}');
       }
     }
 
+    function countAOM(aom){
+      var isTurnoverExist = function(){ return Turnover() > 0 }
+      var fixValue = function(val){ return parseFloat(val).toFixed(2) }
+
+      var calculateWC = function(receivables, inventory, lessPayables){
+        return fixValue((+receivables || 0) + (+inventory || 0) - (+lessPayables || 0))
+      }
+
+      aom.ReceivablesDays(
+        fixValue(isTurnoverExist() ? ((aom.ReceivablesAmount() / Turnover()) * 365) : 0)
+        );
+
+      aom.InventoryDays(
+        fixValue(isTurnoverExist() ? ((aom.InventoryAmount() / Turnover()) * 365) : 0)
+        );
+
+      aom.LessPayablesDays(
+        fixValue((COG() > 0) ? ((aom.LessPayablesAmount() / COG()) * 365) : 0)
+        );
+
+      aom.WCDays(calculateWC(aom.ReceivablesDays(), aom.InventoryDays(), aom.LessPayablesDays()));
+
+      aom.ReceivablesAmount(fixValue(aom.ReceivablesAmount()));
+      aom.InventoryAmount(fixValue(aom.InventoryAmount()));
+      aom.LessPayablesAmount(fixValue(aom.LessPayablesAmount()));
+      aom.WCRequirement(calculateWC(aom.ReceivablesAmount(), aom.InventoryAmount(), aom.LessPayablesAmount()));
+    }
+
     function wcrupdate(i, label){
-      return function(){
-        temp = $($('.'+label)[i]).val()
-        model.dataFocus =  ko.observable(temp)
+      return function(item, event){
 
-        $($('.'+label)[i]).val(parseFloat(temp).toFixed(2))
+        let temp = $(event.target).val()
+        aom = AOM()[i]
 
-        a = parseInt(AOM()[i].ReceivablesAmount.split(",").join(""));
-        b = parseInt(AOM()[i].InventoryAmount.split(",").join(""));
-        c = parseInt(AOM()[i].LessPayablesAmount.split(",").join(""));
+        aom[label](+(parseFloat(temp.split(",").join(""))) || 0)
 
-        total = a+b-c;
-        AOM()[i].WCRequirement = parseFloat(total).toFixed(2);
+        countAOM(aom)
 
-        $($('.WCRequirement')[i]).val(AOM()[i].WCRequirement)
-
-        if ( trigger() ){
-          k1 = ( Turnover() != 0 ) ? ( (a / Turnover())*365 ) : 0;
-          k2 = ( Turnover() != 0 ) ? ( (b / Turnover())*365 ) : 0;
-          k3 = ( COG() != 0 ) ? ( (c / COG())*365 ) : 0;
-          tk = k1 + k2 - k3;
-
-          AOM()[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : parseFloat(k1).toFixed(2);
-          AOM()[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : parseFloat(k2).toFixed(2);
-          AOM()[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : parseFloat(k3).toFixed(2);
-          AOM()[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : parseFloat(tk).toFixed(2);
-
-          $($('.ReceivablesDays')[i]).val(AOM()[i].ReceivablesDays)
-          $($('.InventoryDays')[i]).val(AOM()[i].InventoryDays)
-          $($('.LessPayablesDays')[i]).val(AOM()[i].LessPayablesDays)
-          $($('.WCDays')[i]).val(AOM()[i].WCDays)
-        }
+        $($('.WCRequirement')[i]).val(aom.WCRequirement())
+        $($('.ReceivablesDays')[i]).val(displayCalcVal(aom.ReceivablesDays()))
+        $($('.InventoryDays')[i]).val(displayCalcVal(aom.InventoryDays()))
+        $($('.LessPayablesDays')[i]).val(displayCalcVal(aom.LessPayablesDays()))
+        $($('.WCDays')[i]).val(displayCalcVal(aom.WCDays()))
       }
     }
 
-    model.labelFocus =  ko.observable("")
-    model.indexFocus =  ko.observable(-1)
-    model.dataFocus =  ko.observable("")
+    function inputFocus(){
+      return function(item, event){
+        let val = $(event.target).val()
+        if((+(parseFloat(val.split(",").join(""))) || 0) == 0)
+          $(event.target).val("")
+      }
+    }
 
-    function wcrfocus(i, data, label){
-      return function(){
-        if(model.labelFocus() != "" && model.indexFocus() != -1 && model.dataFocus() != "") {
-          var temp = model.dataFocus().split(",").join("")
-          $($('.'+model.labelFocus())[model.indexFocus()]).val(parseFloat(temp,2).toFixed(2))
-        }
+    function aaUpdate(i, label){
+      return function(item, event){
+        let temp = $(event.target).val()
+        aa = AA()[i]
 
-        $($('.'+label)[i]).val(data.split(",").join(""))
-        model.labelFocus(label)
-        model.indexFocus(i)
-        model.dataFocus(data)
+        aa[label]((+(parseFloat(temp.split(",").join(""))) || 0).toFixed(2))
+        $(event.target).val(displayInputVal(aa[label]()));
       }
     }
 
     function savedata(){
       trigger(false)
-      // stockanddebt().AOM = AOM();
-      // stockanddebt().AA = AA();
+
       param = stockanddebt();
       param.DateFlag = new Date();
       var url = "{{BaseUrl}}datacapturing/savestockanddebtdetail";
@@ -478,62 +485,40 @@ model.Fullname = ko.observable('{{.Fullname}}');
     }
 
     function repairtable(data, customerId){
-      if (data != undefined && data.length > 0){
-        $.each(data[0].AOM,function(i,v){
+      datazz = ko.mapping.fromJS(data)
 
-          var ReceivablesDays = 0;
-          var InventoryDays = 0;
-          var LessPayablesDays = 0;
-          var WCDays = 0;
+      if(datazz().length > 0){
+        var getDateFlag = function(){
+          return moment(datazz()[0].DateFlag()).format("DD-MM-YYYY HH:mm A")
+        }
 
-          if(Turnover() > 0){
-            ReceivablesDays = ( v.ReceivablesAmount / Turnover() ) * 365;
-            InventoryDays = ( v.InventoryAmount / Turnover() ) * 365;
-          }
-
-          if(COG() > 0){
-            LessPayablesDays = ( v.LessPayablesAmount / COG() ) * 365;
-          }
-
-          WCDays = ReceivablesDays + InventoryDays - LessPayablesDays;
-
-          data[0].AOM[i].ReceivablesDays = ( Turnover() == 0 ) ? "NA" : parseFloat(ReceivablesDays).toFixed(2);
-          data[0].AOM[i].InventoryDays = ( Turnover() == 0 ) ? "NA" : parseFloat(InventoryDays).toFixed(2);
-          data[0].AOM[i].LessPayablesDays = ( COG() == 0 ) ? "NA" : parseFloat(LessPayablesDays).toFixed(2);
-          data[0].AOM[i].WCDays = ( COG() == 0 || Turnover() == 0 ) ? "NA" : parseFloat(WCDays).toFixed(2);
-        })
-      }
-
-      if(data != undefined && data.length > 0){
-        data = data[0];
-        if(data.Flag == 2){
-          $('.form-last-confirmation-info').html("Last Confirmed at " + moment(data.DateFlag).format("DD-MM-YYYY HH:mm A"))
-          //$('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(data.DateFlag),"dd-MM-yyyy h:mm:ss tt") )
-        } else if(data.Flag == 3){
-          $('.form-last-confirmation-info').html("Last Verified at " + moment(data.DateFlag).format("DD-MM-YYYY HH:mm A"))
-          //$('.form-last-confirmation-info').html('Last verified on: '+kendo.toString(new Date(data.DateFlag),"dd-MM-yyyy h:mm:ss tt") )
+        if(datazz()[0].Flag() == 2){
+          $('.form-last-confirmation-info').html("Last Confirmed at " + getDateFlag())
+        } else if(datazz()[0].Flag() == 3){
+          $('.form-last-confirmation-info').html("Last Verified at " + getDateFlag())
         } else{
           $('.form-last-confirmation-info').html('')
         }
 
-        for (i=0; i<data.AOM.length; i++) {
-          data.AOM[i].ReceivablesAmount = parseFloat(data.AOM[i].ReceivablesAmount).toFixed(2)
-          data.AOM[i].InventoryAmount = parseFloat(data.AOM[i].InventoryAmount).toFixed(2)
-          data.AOM[i].LessPayablesAmount = parseFloat(data.AOM[i].LessPayablesAmount).toFixed(2)
-          data.AOM[i].WCRequirement = parseFloat(data.AOM[i].WCRequirement).toFixed(2)
-        }
+        _.each(datazz()[0].AOM(), function(aom, i){
+          countAOM(aom)
+        })
 
         stockanddebt({
-          Id: data.Id,
-          CustomerId : data.CustomerId,
-          Flag : data.Flag,
-          AOM : ko.observableArray(data.AOM),
-          AA : ko.observableArray(data.AA)
+          Id: datazz()[0].Id(),
+          CustomerId: datazz()[0].CustomerId(),
+          Flag: datazz()[0].Flag(),
+          AOM: datazz()[0].AOM,
+          AA: datazz()[0].AA
         });
-        AOM(data.AOM);
-        AA(data.AA);
-      }else{
-        stockanddebt({Id: '', CustomerId : customerId,Flag : 0,AOM : ko.observableArray([]),AA : ko.observableArray([])})
+
+        AOM(datazz()[0].AOM());
+        AA(datazz()[0].AA());
+      } else {
+        stockanddebt({ 
+          Id: '', CustomerId : customerId, Flag : 0, AOM : ko.observableArray([]), AA : ko.observableArray([]) 
+        })
+
         checkConfirm()
       }
       checkConfirm()
@@ -626,6 +611,14 @@ model.Fullname = ko.observable('{{.Fullname}}');
             $('.btnFixed').addClass('static');
         }
     });
+  }
+
+  function displayCalcVal(val){
+    return (val == 0) ? 'NA' : val
+  }
+
+  function displayInputVal(val){
+    return parseFloat(+val || 0).toFixed(2)
   }
 
   $(document).ready(function () {
@@ -852,21 +845,45 @@ model.Fullname = ko.observable('{{.Fullname}}');
                                     </div>
                                   </div>
 
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm ReceivablesDays" disabled data-bind="value: (ReceivablesDays == 'NA') ? ReceivablesDays : parseFloat(ReceivablesDays).toFixed(2)" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm ReceivablesDays" disabled data-bind="value: displayCalcVal(ReceivablesDays())" /> </div>
 
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm InventoryDays" disabled data-bind="value: (InventoryDays == 'NA') ? InventoryDays : parseFloat(InventoryDays).toFixed(2)" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm InventoryDays" disabled data-bind="value: displayCalcVal(InventoryDays())" /> </div>
 
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm LessPayablesDays" disabled data-bind="value: (LessPayablesDays == 'NA') ? LessPayablesDays : parseFloat(LessPayablesDays).toFixed(2)" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm LessPayablesDays" disabled data-bind="value: displayCalcVal(LessPayablesDays())" /> </div>
 
-                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm WCDays" disabled data-bind="value: (WCDays == 'NA') ? WCDays : parseFloat(WCDays).toFixed(2)" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input placeholder="NA" class="form-control input-sm WCDays" disabled data-bind="value: displayCalcVal(WCDays())" /> </div>
 
-                                  <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero ReceivablesAmount" data-bind="value: (ReceivablesAmount == 'NA') ? ReceivablesAmount : parseFloat(ReceivablesAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'ReceivablesAmount'), click: wcrfocus($index(), $data.ReceivablesAmount, 'ReceivablesAmount')}" /> </div>
+                                  <div class="col-sm-12 heighfix"> 
+                                    <input class="form-control input-sm modezero ReceivablesAmount" data-bind="
+                                    value: displayInputVal(ReceivablesAmount()), 
+                                    event: { 
+                                      blur: wcrupdate($index(), 'ReceivablesAmount'), 
+                                      focus: inputFocus()
+                                    }
+                                    " /> 
+                                  </div>
 
-                                  <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero InventoryAmount" data-bind="value: (InventoryAmount == 'NA') ? InventoryAmount : parseFloat(InventoryAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'InventoryAmount' ), click: wcrfocus($index(), $data.InventoryAmount, 'InventoryAmount')}" /> </div>
+                                  <div class="col-sm-12 heighfix"> 
+                                    <input class="form-control input-sm modezero InventoryAmount" data-bind="
+                                    value: displayInputVal(InventoryAmount()), 
+                                    event: {
+                                      blur: wcrupdate($index(), 'InventoryAmount'), 
+                                      focus: inputFocus()
+                                    }
+                                    " /> 
+                                  </div>
 
-                                  <div class="col-sm-12 heighfix"> <input class="form-control input-sm modezero LessPayablesAmount" data-bind="value: (LessPayablesAmount == 'NA') ? LessPayablesAmount : parseFloat(LessPayablesAmount).toFixed(2), event:{blur: wcrupdate( $index(), 'LessPayablesAmount' ), click: wcrfocus($index(), $data.LessPayablesAmount, 'LessPayablesAmount')}" /> </div>
+                                  <div class="col-sm-12 heighfix"> 
+                                    <input class="form-control input-sm modezero LessPayablesAmount" data-bind="
+                                    value: displayInputVal(LessPayablesAmount()), 
+                                    event: { 
+                                      blur: wcrupdate($index(), 'LessPayablesAmount'), 
+                                      focus: inputFocus()
+                                    }
+                                    " /> 
+                                  </div>
 
-                                  <div class="col-sm-12 heighfix"> <input class="form-control input-sm WCRequirement" disabled data-bind="value: (WCRequirement == 'NA') ? WCRequirement : parseFloat(WCRequirement).toFixed(2)" /> </div>
+                                  <div class="col-sm-12 heighfix"> <input class="form-control input-sm WCRequirement" disabled data-bind="value: displayCalcVal(WCRequirement)" /> </div>
                                 </div>
                               </div>
                             </div>
@@ -911,17 +928,41 @@ model.Fullname = ko.observable('{{.Fullname}}');
                                   <td class="text-center">Receivable</td>
                                   <td>
                                     <input class="form-control input-sm modezero"
-                                    data-bind="value: parseFloat(ReceivableMin90).toFixed(2)" /></td>
+                                    data-bind="value: displayInputVal(ReceivableMin90()), 
+                                    event: {
+                                      blur: aaUpdate($index(), 'ReceivableMin90', displayInputVal(ReceivableMin90())), 
+                                      focus: inputFocus()
+                                    }" /></td>
                                   <td>
-                                    <input class="form-control input-sm modezero" data-bind="value: parseFloat(ReceivableMore90).toFixed(2)" />
+                                    <input class="form-control input-sm modezero" data-bind="value: displayInputVal(ReceivableMore90()), 
+                                    event: {
+                                      blur: aaUpdate($index(), 'ReceivableMore90', displayInputVal(ReceivableMore90())),
+                                      focus: inputFocus()
+                                    }" />
                                   </td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(ReceivableMore180).toFixed(2)" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(ReceivableMore180()), 
+                                    event: {
+                                      blur: aaUpdate($index(), 'ReceivableMore180', displayInputVal(ReceivableMore180())),
+                                      focus: inputFocus()
+                                    }" /></td>
                                 </tr>
                                 <tr>
                                   <td class="text-center">Inventory</td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(InventoryMin90).toFixed(2)" /></td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(InventoryMore90).toFixed(2)" /></td>
-                                  <td><input class="form-control input-sm modezero" data-bind="value: parseFloat(InventoryMore180).toFixed(2)" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(InventoryMin90()), 
+                                    event: {
+                                      blur: aaUpdate($index(), 'InventoryMin90', displayInputVal(InventoryMin90())),
+                                      focus: inputFocus()
+                                    }" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(InventoryMore90()), 
+                                    event: {
+                                      blur: aaUpdate($index(), 'InventoryMore90', displayInputVal(InventoryMore90())),
+                                      focus: inputFocus()
+                                    }" /></td>
+                                  <td><input class="form-control input-sm modezero" data-bind="value: displayInputVal(InventoryMore180()), 
+                                    event: {
+                                      blur: aaUpdate($index(), 'InventoryMore180', displayInputVal(InventoryMore180())),
+                                      focus: inputFocus()
+                                    }" /></td>
                                 </tr>
                               </tbody>
                             </table>

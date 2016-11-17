@@ -926,11 +926,17 @@ adf.getConfirm = function(){
 			}
 			var url = "/accountdetail/saveaccountdetail"
 			var param = adf.getForm();
-
+			param.CMISNULL = adf.CMISNULL()
 			// param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
 			adf.isLoading(true)
 			app.ajaxPost(url, param, function (res) {
 				adf.isLoading(false)
+
+				if(adf.CMISNULL())
+				{
+					adf.form.AccountSetupDetails.PdInfo.CustomerMargin("")
+				}
+
 				// if(ondate5 != ""){
 				// 	adf.form.AccountSetupDetails.PdInfo.PdDate(ondate4)
 				// }

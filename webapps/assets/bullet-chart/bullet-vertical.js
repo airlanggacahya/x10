@@ -35,9 +35,11 @@ d3.bulletVertical = function() {
         wrap.attr("transform", null);
       }
 
+      var maxVal = Math.max(rangez[0], markerz[0], measurez[0]);
+
       // Compute the new x-scale.
       var x1 = d3.scale.linear()
-          .domain([0, Math.max(rangez[0], markerz[0], measurez[0])])
+          .domain([0, maxVal])
           .range(reverse ? [extentX, 0] : [0, extentX]);
 
       // Retrieve the old x-scale, if this is an update.
@@ -102,9 +104,16 @@ d3.bulletVertical = function() {
           .attr("y2", extentY * 5 / 6);
 
       var axis = g.selectAll("g.axis").data([0]);
+      var ticksCount = 7;
       axis.enter().append("g").attr("class", "axis");
       axis.attr("transform", vertical ? null : "translate(0," + extentY + ")")
-          .call(xAxis.scale(x1));
+          .call(xAxis.scale(x1).tickValues(
+            Array.apply(null, Array(ticksCount)).map(
+              function(val, i){
+                return (i / (ticksCount - 1)) * maxVal
+              })
+            )
+          );
     });
     d3.timer.flush();
   }

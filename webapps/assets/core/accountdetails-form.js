@@ -130,7 +130,7 @@ adf.templatePDInfo1 = {
 	PdDate: '',
 	PdPlace: '',
 	PersonMet: '',
-	CustomerMargin: 0,
+	CustomerMargin: '',
 	PdRemarks: '',
 	PdComments: '',
 }
@@ -926,11 +926,17 @@ adf.getConfirm = function(){
 			}
 			var url = "/accountdetail/saveaccountdetail"
 			var param = adf.getForm();
-
+			param.CMISNULL = adf.CMISNULL()
 			// param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
 			adf.isLoading(true)
 			app.ajaxPost(url, param, function (res) {
 				adf.isLoading(false)
+
+				if(adf.CMISNULL())
+				{
+					adf.form.AccountSetupDetails.PdInfo.CustomerMargin("")
+				}
+
 				// if(ondate5 != ""){
 				// 	adf.form.AccountSetupDetails.PdInfo.PdDate(ondate4)
 				// }
@@ -1963,7 +1969,7 @@ adf.getData = function () {
 		DealNo: dealNo
 	}
 	app.ajaxPost(url, param, function (res) {
-		if (typeof res.ApplicantDetail == "undefined") {
+		if (typeof res.ApplicantDetail == "undefined" || res.ApplicantDetail.CustomerID == null) {
 			res = checkConfirmedOrNot(res.Status, 1, 2, res, [], "Customer Application");
 
 		}
@@ -2018,6 +2024,7 @@ adf.getData = function () {
 				adf.addRowReffrence();
 				adf.initFreshForm(customerId, dealNo)
 				adf.reloadStatus(0)
+				adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
 				if(adf.form.Freeze() == true){
 					adf.EnableAllfields(false)
 

@@ -130,7 +130,7 @@ adf.templatePDInfo1 = {
 	PdDate: '',
 	PdPlace: '',
 	PersonMet: '',
-	CustomerMargin: 0,
+	CustomerMargin: '',
 	PdRemarks: '',
 	PdComments: '',
 }
@@ -2024,6 +2024,7 @@ adf.getData = function () {
 				adf.addRowReffrence();
 				adf.initFreshForm(customerId, dealNo)
 				adf.reloadStatus(0)
+				adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
 				if(adf.form.Freeze() == true){
 					adf.EnableAllfields(false)
 

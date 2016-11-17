@@ -276,6 +276,7 @@ function getData(){
             $('#btnconfirm').hide()
             return
         }else{
+            condSave()
             formVisibility(true)
             var data = res.data[0].data;
             var sts = 0;

@@ -11,6 +11,7 @@ var odutilmax = 0
 var unfreeze = ko.observable(false);
 var caba = ko.observable(0);
 var formVisibility = ko.observable(false);
+var textConfirm = ko.observable("confirm");
 
 var initEvents = function () {
     filter().CustomerSearchVal.subscribe(function () {
@@ -253,8 +254,8 @@ var DrawDataBank = function(id){
                         for (var i = 0 ; i < res.data.Summary.length ; i++){
                             res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
                         }
-                    } 
-                 
+                    }
+
                 createBankingGrid(res.data.Summary,multiplyer*100);
             }else{
                    idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
@@ -1664,20 +1665,23 @@ $(document).ready(function(){
             resetInput();
             ajaxPost(url+"/setconfirmedv2", getSearchVal(), function(){
                 swal("Success","Data confirmed","success");
-                if($('#bconfirm').text() == "Confirm"){
+                if(textConfirm() == "confirm"){
+                    console.log('kkkkkkkkkkkkkkkkkkkkk')
                     $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re-Enter");
                     swal("Successfully Confirmed", "", "success");
                     caba(1)
+                    textConfirm("reenter")
                 }else{
                     $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm");
                     swal("Please Edit / Enter Data", "", "success");
                     caba(0)
+                    textConfirm("confirm")
                 }
                 //setTimeout(function() {
                     databank().forEach(function(e,i) {
                         RenderGridDataBank(i,e);
                     }, this);
-                        
+
                 //}, 50);
                 refreshFilter()
             });

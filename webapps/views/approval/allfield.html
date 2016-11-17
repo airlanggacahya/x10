@@ -103,6 +103,14 @@
     linkLoanAprovalReport = '<a target="_blank" href="/loanapproval/default'+add_url+'">Loan Aproval Report</a>'
     $('.linkLoanAprovalReport').html('')
     $('.linkLoanAprovalReport').append(linkLoanAprovalReport)
+
+    linkPromoter = '<a target="_blank" href="/loanapproval/default'+add_url+'#promback">Promoter Background</a>'
+    $('.linkPromoter').html('')
+    $('.linkPromoter').append(linkPromoter)
+
+    linkProperty = '<a target="_blank" href="/loanapproval/default'+add_url+'#propown">Property Ownership Details</a>'
+    $('.linkProperty').html('')
+    $('.linkProperty').append(linkProperty)
   };
 
 	var companyBackground = function(param) {
@@ -1899,7 +1907,7 @@
 				            <div class="k-grid">
 				            		<div id="gridMainPromotorDetails"></div>
                 				<br>
-                				<div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span></div>
+                				<div>More...&nbsp;&nbsp;&nbsp;<span class="linkADForm"></span>, &nbsp;<span class="linkPromoter"></span>, &nbsp;<span class="linkProperty"></span></div>
 				            </div>
 				        </div>
 				    </div>

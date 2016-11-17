@@ -1641,8 +1641,8 @@ $(document).ready(function(){
                     $('#modalAdd').modal('show');
 
                     setTimeout(function(){
-                        $("#nfbsanctiondate").getKendoDatePicker().value(new Date());
-                        $("#fbsanctiondate").getKendoDatePicker().value(new Date());
+                        $("#nfbsanctiondate").getKendoDatePicker().value("");
+                        $("#fbsanctiondate").getKendoDatePicker().value("");
 
                     },2000);
 
@@ -2104,6 +2104,18 @@ var loadGridCurrentDataBank = function(res){
 
     $(".k-grid-cancel-changes").attr("class","btn btn-sm btn-warning k-grid-cancel-changes mgright pull-right");
     $(".k-grid-update").attr("class","btn btn-sm btn-success k-grid-update mgright pull-right");
+}
+
+var blankdate = function(val){
+    if(val == undefined)
+        return true
+
+    if(val == "")
+        return true
+
+    if(val == null){
+        return true
+    }
 }
 
 var saveDataBank = function(){

@@ -270,12 +270,12 @@ r.setData = function() {
       //     itemData.Email =mail;
       //   }
       // }
-
       itemData.Name = prom.ConsumerInfo.ConsumerName;
       itemData.Dob = moment(prom.ConsumerInfo.DateOfBirth).format("DD-MM-YYYY");//prom.ConsumerInfo.DateOfBirth;
       // itemData.Phone = prom.Telephones[0].Number;
       // itemData.Address = prom.AddressData[0].AddressPinCode;
-      itemData.Score = itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
+      itemData.Score = prom.CibilScore; //itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
+      itemData.CIBILScore = prom.CibilScore; //itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
       itemData.Passport = prom.PassportNumber;
       itemData.Dates = moment(prom.DateOfReport).format("DD-MM-YYYY");
       itemData.Times = moment(prom.TimeOfReport).format("HH:mm:ss");
@@ -315,7 +315,7 @@ r.setData = function() {
       itemData.Dob = "";
       itemData.Phone = "";
       itemData.Address = "";
-      itemData.Score = itemData.cibilscore();
+      itemData.Score = 0;//itemData.cibilscore();
       itemData.Passport = "";
       itemData.Dates = "";
       itemData.Times = "";

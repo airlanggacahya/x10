@@ -425,8 +425,6 @@ function getData(){
         topgriddata[0].DpdMaxTrack = (res.data[1].summary.DPDTrack == -1 || res.data[1].summary.DPDTrack == 0)?maxGlobal:res.data[1].summary.DPDTrack
 
         CreateTopGrid();
-
-        $(".isbankanal").parent().css("background", "rgb(238, 238, 238)")
     });
 }
 
@@ -676,6 +674,8 @@ function CreateBottomGrid(cust, deal, data, col){
                 refresh(this);
              },
              dataBound: function (e) {
+                    $(".isbankanal").parent().css("background", "rgb(238, 238, 238)")
+
                     $("#bottomgrid").find(".tooltipster").tooltipster({
                         trigger: 'hover',
                         theme: 'tooltipster-val',

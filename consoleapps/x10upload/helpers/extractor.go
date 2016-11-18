@@ -798,59 +798,70 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 		os.Rename(inbox+"/"+FName, inbox+"/"+newfilename)
 		formattedName := strings.Replace(newfilename, " ", "\\ ", -1)
 
-		customer := strings.Split(reportobj.Profile.CompanyName, " ")
-		res := []tk.M{}
-		cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(dbox.Contains("applicantdetail.CustomerName", customer[0])).Cursor(nil)
-		if err != nil {
-			tk.Println(err.Error())
-		}
-		err = cursor.Fetch(&res, 0, false)
-		defer cursor.Close()
-
-		if len(res) > 0 {
-			for _, val := range res {
-				customername := val["applicantdetail"].(tk.M)["CustomerName"].(string)
-				setting := NewSimilaritySetting()
-				setting.SplitDelimeters = []rune{' ', '.', '-'}
-				similar := Similarity(reportobj.Profile.CompanyName, customername, setting)
-
-				if similar > 80 {
-					reportobj.Id = bson.NewObjectId()
-					app := val.Get("applicantdetail").(tk.M)
-					reportobj.Profile.CustomerId = app.GetInt("CustomerID")
-					reportobj.Profile.DealNo = val["applicantdetail"].(tk.M)["DealNo"].(string)
-					reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
-					reportobj.FileName = newfilename
-					reportobj.IsMatch = true
-					query := conn.NewQuery().From("CibilReport").Save()
-					err = query.Exec(tk.M{
-						"data": reportobj,
-					})
-					if err != nil {
-						tk.Println(err.Error())
-					}
-					query.Close()
-
-					CopyFile(inbox+"/"+formattedName, webapps)
-					MoveFile(inbox+"/"+formattedName, success)
+		if reportobj.Profile.CompanyName == "" {
+			MoveFile(inbox+"/"+formattedName, failed)
+			os.RemoveAll(PathFrom + "/" + XmlName)
+		} else {
+			customer := strings.Split(reportobj.Profile.CompanyName, " ")
+			res := []tk.M{}
+			filter := []*dbox.Filter{}
+			for _, splited := range customer {
+				if len(splited) > 3 {
+					filter = append(filter, dbox.Contains("applicantdetail.CustomerName", splited))
 				}
 			}
-		} else {
-			reportobj.Id = bson.NewObjectId()
-			reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
-			reportobj.FileName = newfilename
-			reportobj.IsMatch = false
-			query := conn.NewQuery().From("CibilReport").Save()
-			err = query.Exec(tk.M{
-				"data": reportobj,
-			})
+			cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(filter...).Cursor(nil)
 			if err != nil {
 				tk.Println(err.Error())
 			}
-			query.Close()
+			err = cursor.Fetch(&res, 0, false)
+			defer cursor.Close()
 
-			CopyFile(inbox+"/"+formattedName, webapps)
-			MoveFile(inbox+"/"+formattedName, success)
+			if len(res) > 0 {
+				for _, val := range res {
+					customername := val["applicantdetail"].(tk.M)["CustomerName"].(string)
+					setting := NewSimilaritySetting()
+					setting.SplitDelimeters = []rune{' ', '.', '-'}
+					similar := Similarity(reportobj.Profile.CompanyName, customername, setting)
+
+					if similar > 70 {
+						reportobj.Id = bson.NewObjectId()
+						app := val.Get("applicantdetail").(tk.M)
+						reportobj.Profile.CustomerId = app.GetInt("CustomerID")
+						reportobj.Profile.DealNo = val["applicantdetail"].(tk.M)["DealNo"].(string)
+						reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
+						reportobj.FileName = newfilename
+						reportobj.IsMatch = true
+						query := conn.NewQuery().From("CibilReport").Save()
+						err = query.Exec(tk.M{
+							"data": reportobj,
+						})
+						if err != nil {
+							tk.Println(err.Error())
+						}
+						query.Close()
+
+						CopyFile(inbox+"/"+formattedName, webapps)
+						MoveFile(inbox+"/"+formattedName, success)
+					}
+				}
+			} else {
+				reportobj.Id = bson.NewObjectId()
+				reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
+				reportobj.FileName = newfilename
+				reportobj.IsMatch = false
+				query := conn.NewQuery().From("CibilReport").Save()
+				err = query.Exec(tk.M{
+					"data": reportobj,
+				})
+				if err != nil {
+					tk.Println(err.Error())
+				}
+				query.Close()
+
+				CopyFile(inbox+"/"+formattedName, webapps)
+				MoveFile(inbox+"/"+formattedName, success)
+			}
 		}
 	}
 

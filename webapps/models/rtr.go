@@ -998,7 +998,8 @@ func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno str
 							} else {
 								rtr[idx] = rtrResult
 							}
-						} else if v1.EMI != v.DataBank[0].BankAccount.FundBased.InterestPerMonth && v1.Status != 0 {
+						} else if v1.EMI != v.DataBank[0].BankAccount.FundBased.InterestPerMonth*100000 && v1.Status != 0 {
+							tk.Println("------- first condition")
 							thereisupdate = true
 						}
 
@@ -1017,6 +1018,7 @@ func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno str
 								rtrODCC = append(rtrODCC, tempRTR1)
 							}
 						} else {
+							tk.Println("------- second condition")
 							thereisupdate = true
 						}
 					} else {
@@ -1032,7 +1034,10 @@ func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno str
 		}
 
 		tempRTR, upp, err := r.cleanODCCRTR(rtr, rtrODCC)
-		thereisupdate = upp
+		if !thereisupdate {
+			tk.Println("------- third condition")
+			thereisupdate = upp
+		}
 		if err == nil {
 			rtr = tempRTR
 		}

@@ -298,6 +298,10 @@ function getData(){
             $('#btnconfirm').hide()
             return
         }else{
+            if(res.data[3].thereisupdate != undefined  &&  res.data[3].thereisupdate){
+                swal("Warning", "There is an update from other Form, please Re Enter to load changes","warning");
+            }
+
             condSave()
             formVisibility(true)
             var data = res.data[0].data;

@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 	// "gopkg.in/mgo.v2/bson"
 )
 
@@ -110,6 +111,63 @@ func (c *DataCapturingController) GetCustomerProfileList(k *knot.WebContext) int
 	}
 
 	return results
+}
+
+func (c *DataCapturingController) GetCustomerProfileListConfirmed(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	mm, err := GetConnection()
+	defer mm.Close()
+	csr, e := mm.NewQuery().
+		From("MasterCustomer").
+		Cursor(nil)
+
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(true, nil, "")
+	}
+
+	defer csr.Close()
+
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
+
+	csr, e = mm.NewQuery().
+		From("CustomerProfile").
+		Where(dbox.Eq("Status", 1)).
+		Cursor(nil)
+
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(true, nil, "")
+	}
+
+	defer csr.Close()
+
+	resultsconf := []tk.M{}
+	err = csr.Fetch(&resultsconf, 0, false)
+
+	if err != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(false, nil, "No data found !")
+	}
+
+	finalres := []tk.M{}
+	for _, val := range results {
+		for _, valv := range resultsconf {
+			// tk.Println(valv)
+			if valv.GetString("_id") == cast.ToString(val.GetInt("customer_id"))+"|"+val.GetString("deal_no") {
+				finalres = append(finalres, val)
+				break
+
+			}
+		}
+	}
+
+	return finalres
 }
 
 func (c *DataCapturingController) GetCustomerProfileDetail(k *knot.WebContext) interface{} {

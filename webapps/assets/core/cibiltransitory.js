@@ -221,8 +221,19 @@ trans.SaveCibil = function(){
 	})
 }
 
+
+function GetCustomer(){
+	var url = "/datacapturing/getcustomerprofilelist";
+	  ajaxPost(url, "", function(data) {
+	     filter().CustomerSearchAll(data);
+		trans.GetDataGrid();
+	});
+}
+
+
 $(document).ready(function(){
-	trans.GetDataGrid();
+
+	GetCustomer();
 
 	$("#filter").keydown(function(){
 		setTimeout(function(){

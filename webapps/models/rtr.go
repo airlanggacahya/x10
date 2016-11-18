@@ -76,15 +76,15 @@ type RTRSummary struct {
 	SumExtenalYearly     float64
 }
 
-func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []MonthRtr, error) {
+func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []MonthRtr, bool, error) {
 	arr := []RTRBottom{}
 
 	_ = r.checkBankAnalysIdInRtr(custid, dealno)
-
+	thereisupdate := false
 	cMongo, em := GetConnection()
 	defer cMongo.Close()
 	if em != nil {
-		return nil, nil, nil, em
+		return nil, nil, nil, false, em
 	}
 
 	query := []*db.Filter{}
@@ -96,17 +96,17 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 		Where(query...).
 		Cursor(nil)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, false, err
 	}
 	defer csr.Close()
 	if csr != nil {
 		err = csr.Fetch(&arr, 0, false)
 
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, nil, false, err
 		}
 	} else if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, false, err
 	}
 
 	// customerId, _ := strconv.Atoi(strings.TrimSpace(custid))
@@ -115,7 +115,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 
 	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, "BankAnalysisV2", &bankAnalys)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, false, err
 	}
 
 	monthsRTR := []MonthRtr{}
@@ -194,7 +194,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 					insdata := map[string]interface{}{"data": ar}
 					em = qinsert.Exec(insdata)
 					if em != nil {
-						return nil, nil, nil, em
+						return nil, nil, nil, false, em
 					}
 				}
 			}
@@ -205,7 +205,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 
 	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(AccountDetail).TableName(), &accoutDetails)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, false, err
 	}
 
 	// ------------------- customer profile confirmed ----------------------------
@@ -213,7 +213,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 	var customerProfiles = CustomerProfiles{}
 	err = new(DataConfirmController).GetDataConfirmed(custid, dealno, new(CustomerProfiles).TableName(), &customerProfiles)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, false, err
 	}
 
 	// ------------------- customer profile confirmed ----------------------------
@@ -273,7 +273,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 				if v.Amount > 0 && arr[k].EMIBalance > 0 && v.LoanTenor > 0 && strings.TrimSpace(strings.ToLower(v.TypeOfLoan)) != "od/cc" {
 					err, rate := r.FindRate(v.Amount, v.EMI, v.LoanTenor)
 					if err != nil {
-						return nil, nil, nil, err
+						return nil, nil, nil, false, err
 					}
 					POS := tk.Div(v.EMI*(1-math.Pow((1+rate), -float64(arr[k].EMIBalance))), rate)
 					arr[k].POS = POS / 100000
@@ -287,7 +287,8 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 			}
 		}
 
-		tempRtr, err := r.CheckSancLimitBankAnalys(arr, custid, dealno)
+		tempRtr, upp, err := r.CheckSancLimitBankAnalys(arr, custid, dealno)
+		thereisupdate = upp
 		if err == nil {
 			arr = tempRtr
 		}
@@ -380,7 +381,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 	// 	return mav
 	// }))
 
-	return arr, smry, monthsRTR, nil
+	return arr, smry, monthsRTR, thereisupdate, nil
 }
 
 func (r *RTRBottom) checkBankAnalysIdInRtr(custid, dealno string) error {
@@ -961,13 +962,13 @@ func diff(a, b time.Time) (year, month, day, hour, min, sec int) {
 }
 
 //checking bank analys
-func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno string) ([]RTRBottom, error) {
+func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno string) ([]RTRBottom, bool, error) {
 
 	bankAnalys := []BankAnalysisV2{}
-
+	thereisupdate := false
 	err := new(DataConfirmController).GetDataConfirmed(custid, dealno, "BankAnalysisV2", &bankAnalys)
 	if err != nil {
-		return rtr, err
+		return rtr, false, err
 	}
 
 	if len(bankAnalys) > 0 {
@@ -987,11 +988,15 @@ func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno str
 				found := false
 				for idx, v1 := range rtr {
 					if v1.BankAnalysId == v.Id {
-						rtrResult, err := r.updateRtrPosFromBank(v1, v)
-						if err != nil {
-							break
-						} else {
-							rtr[idx] = rtrResult
+						if v1.Status == 0 {
+							rtrResult, err := r.updateRtrPosFromBank(v1, v)
+							if err != nil {
+								break
+							} else {
+								rtr[idx] = rtrResult
+							}
+						} else if v1.EMI != v.DataBank[0].BankAccount.FundBased.InterestPerMonth && v1.Status != 0 {
+							thereisupdate = true
 						}
 
 						rtrODCC = append(rtrODCC, v1)
@@ -1001,22 +1006,36 @@ func (r *RTRBottom) CheckSancLimitBankAnalys(rtr []RTRBottom, custid, dealno str
 				}
 
 				if !found {
-					tempRTR, tempRTR1, err := r.insertRtrIndividualFromBank(custid, dealno, rtr, v)
-					if err == nil {
-						rtr = tempRTR
-						rtrODCC = append(rtrODCC, tempRTR1)
+					if len(rtr) > 0 {
+						if rtr[0].Status == 0 {
+							tempRTR, tempRTR1, err := r.insertRtrIndividualFromBank(custid, dealno, rtr, v)
+							if err == nil {
+								rtr = tempRTR
+								rtrODCC = append(rtrODCC, tempRTR1)
+							}
+						} else {
+							thereisupdate = true
+						}
+					} else {
+						tempRTR, tempRTR1, err := r.insertRtrIndividualFromBank(custid, dealno, rtr, v)
+						if err == nil {
+							rtr = tempRTR
+							rtrODCC = append(rtrODCC, tempRTR1)
+						}
 					}
+
 				}
 			}
 		}
 
-		tempRTR, err := r.cleanODCCRTR(rtr, rtrODCC)
+		tempRTR, upp, err := r.cleanODCCRTR(rtr, rtrODCC)
+		thereisupdate = upp
 		if err == nil {
 			rtr = tempRTR
 		}
 	}
 
-	return rtr, err
+	return rtr, thereisupdate, err
 }
 
 //update POS Amount
@@ -1107,13 +1126,13 @@ func (r *RTRBottom) insertRtrIndividualFromBank(custid, dealno string, rtr []RTR
 }
 
 //clean all odcc on rtr if not found on bankanalys
-func (r *RTRBottom) cleanODCCRTR(rtrList []RTRBottom, rtrFound []RTRBottom) ([]RTRBottom, error) {
+func (r *RTRBottom) cleanODCCRTR(rtrList []RTRBottom, rtrFound []RTRBottom) ([]RTRBottom, bool, error) {
 	tempRTR := crowd.From(&rtrList).Where(func(x interface{}) interface{} {
 		return strings.TrimSpace(strings.ToLower(x.(RTRBottom).TypeOfLoan)) == "od/cc" && x.(RTRBottom).IsBankAnalys
 	}).Exec().Result.Data().([]RTRBottom)
 
 	var err error
-
+	thereisupdate := false
 	for _, v := range tempRTR {
 		found := false
 		for _, v1 := range rtrFound {
@@ -1123,7 +1142,7 @@ func (r *RTRBottom) cleanODCCRTR(rtrList []RTRBottom, rtrFound []RTRBottom) ([]R
 			}
 		}
 
-		if !found {
+		if !found && v.Status == 0 {
 			err := r.deleteODCCRTR(v)
 			if err == nil {
 				idx := r.NggolekSliceGatelan(len(rtrList), func(i int) bool {
@@ -1138,10 +1157,12 @@ func (r *RTRBottom) cleanODCCRTR(rtrList []RTRBottom, rtrFound []RTRBottom) ([]R
 					}
 				}
 			}
+		} else if !found {
+			thereisupdate = true
 		}
 	}
 
-	return rtrList, err
+	return rtrList, thereisupdate, err
 }
 
 //delete rtr odcc

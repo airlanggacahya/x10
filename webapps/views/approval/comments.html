@@ -91,9 +91,10 @@
 <div class="col-md-12 content-container" data-bind="with:apcom">
 
 	<div class="col-md-12 form-group">
-    	<button class="btn btn-sm btn-flat btn-save btn-space pull-left">Save</button>
-    	<button class="btn btn-sm btn-flat btn-reset btn-space pull-left">Reset</button>
-    	<button class="btn btn-sm btn-flat btn-reenter btn-space pull-left">Re-Enter</button>
+    	<button class="btn btn-sm btn-flat btn-save save btn-space pull-left" data-bind="click: apcom.sendCreditAnalyst">Save</button>
+    	<button class="btn btn-sm btn-flat btn-reset btn-space pull-left" data-bind="click: apcom.resetCreditAnalyst">Reset</button>
+    	<!-- <button class="btn btn-sm btn-flat btn-confirm btn-space pull-left">Confirm</button> -->
+    	<!-- <button class="btn btn-sm btn-flat btn-reenter btn-space pull-left">Re-Enter</button> -->
 	</div>
 	<p class="head caret1"><span id="caret1" class="fa fa-caret-down"></span> Comments on Financials</p>
 	<div class="panel-body" id="content1">

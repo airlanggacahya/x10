@@ -165,7 +165,11 @@ apcom.sendCreditAnalyst = function(a, event){
 			if(res.success != true){
 				swal("Error", res.message, "error")
 			}else{
-				swal("Success", "Data Successfully Send", "success");
+				if (param.Status == apcom.CaStatus.SAVE) {
+					swal("Success", "Data Successfully Saved", "success");
+				} else if (param.Status == apcom.CaStatus.SEND) {
+					swal("Success", "Data Successfully Sent", "success");
+				}
 			}
 		})
 	}else{

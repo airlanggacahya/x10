@@ -128,9 +128,10 @@
                 callback()
             } else {
                  Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
-                 csc().datasource([]);
-                callback()
-                // sweetAlert("Oops...", "Data Balance Sheet Not Found", "error");
+                 // csc().datasource([]);
+                // callback()
+                $(".form-container").html("");
+                swal("Oops...", "Data Not Found", "error");
                 frp.isLoading(false)
                 return
             }

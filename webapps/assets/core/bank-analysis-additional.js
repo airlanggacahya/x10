@@ -21,6 +21,19 @@ var statusPage = {
     freezeText : ko.observable('Freeze')
 };
 
+var totalGrid = {
+    totalImp : ko.observable(0),
+    totalOWReturn : ko.observable(0),
+    totalIWReturn : ko.observable(0),
+    totalDRRatio : ko.observable(0),
+    totalCredit : ko.observable(0),
+    totalDebit : ko.observable(0),
+    totalNoCredit : ko.observable(0),
+    totalNoDebit : ko.observable(0),
+    totalOWCheque : ko.observable(0),
+    totalIWCheque : ko.observable(0)
+}
+
 var initEvents = function () {
     filter().CustomerSearchVal.subscribe(function () {
         formVisibility(false)
@@ -261,9 +274,24 @@ var DrawDataBank = function(id){
 
                 for (var i = 0 ; i < res.data.Summary.length ; i++){
                     res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
+
+                    totalGrid.totalCredit(totalGrid.totalCredit()+res.data.Summary[i].TotalCredit)
+                    totalGrid.totalDebit(totalGrid.totalDebit()+res.data.Summary[i].TotalDebit)
+                    totalGrid.totalNoCredit(totalGrid.totalNoCredit()+res.data.Summary[i].NoOfCredit)
+                    totalGrid.totalNoDebit(totalGrid.totalNoDebit()+res.data.Summary[i].NoOfDebit)
+                    totalGrid.totalOWCheque(totalGrid.totalOWCheque()+res.data.Summary[i].OwCheque)
+                    totalGrid.totalIWCheque(totalGrid.totalIWCheque()+res.data.Summary[i].IwCheque)
+
+                    // totalGrid.totalImp(totalGrid.totalImp()+res.data.Summary[i].ImpMargin)
+                    // totalGrid.totalOWReturn(totalGrid.totalOWReturn()+res.data.Summary[i].OwReturnPercentage)
+                    // totalGrid.totalIWReturn(totalGrid.totalIWReturn()+res.data.Summary[i].LwReturnPercentage)
+
                 }
 
-                // console.log(res.data.Summary)
+                totalGrid.totalOWReturn(totalGrid.totalOWCheque()/totalGrid.totalNoCredit())
+                totalGrid.totalIWReturn(totalGrid.totalIWCheque()/totalGrid.totalNoDebit())
+                totalGrid.totalDRRatio(totalGrid.totalDebit()/totalGrid.totalCredit())
+
                 createBankingGrid(res.data.Summary,multiplyer*100);
             }else if(res.data.AccountDetail.length!=0){
                 var multiplyer = 0
@@ -332,6 +360,11 @@ var checkStatusPage = function() {
 var checkBtnFreeze = ko.pureComputed(function(){
     return (statusPage.isFreeze())? "btn-unfreeze":"btn-freeze"
 })
+
+var showModal = function(){
+    console.log("sarif")
+}
+
 var RenderGridDataBank = function(id, res){
     if (res.Status == 1){
         $('#bedit'+id).prop('disabled',true)
@@ -1692,6 +1725,11 @@ $(document).ready(function(){
 
                     createBankDetailGrid(res.data[0].BankDetails);
                     $('#bankstt').data('kendoDatePicker').value(res.data[0].BankDetails[0].Month);
+
+                    $("#nfbsanclimit").data('kendoNumericTextBox').value("")
+                    $("#sanclimit").data('kendoNumericTextBox').value("")
+                    $("#roiperannum").data('kendoNumericTextBox').value("")
+
                     $('#modalAdd').modal('show');
 
                     setTimeout(function(){
@@ -2194,6 +2232,9 @@ var blankdate = function(val){
 }
 
 var saveDataBank = function(){
+    nfbsanctiondate
+    fbsanctiondate
+
     var gridbankdet = $("#bankdetailgridform").data("kendoGrid");
     var gridcurrentbankdet = $('#currentbankdetailgridform').data("kendoGrid");
     var gridbankdetdirty = $("#bankdetailgridform").data("kendoGrid").dataSource.hasChanges();
@@ -2258,12 +2299,12 @@ var saveDataBank = function(){
             var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
             fundbased.sanctiondate(date1);
         }else{
-            $("#fbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+            //$("#fbsanctiondate").data("kendoDatePicker").value("01/01/1970")
             var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
             fundbased.sanctiondate(date1);
         }
     }else{
-         $("#fbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+         //$("#fbsanctiondate").data("kendoDatePicker").value("01/01/1970")
             var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
             fundbased.sanctiondate(date1);
     }
@@ -2274,12 +2315,12 @@ var saveDataBank = function(){
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
             nonfundbased.sanctiondate(date2);
         }else{
-            $("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+            //$("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z"
             nonfundbased.sanctiondate(date2);
         }
     }else{
-         $("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+         //$("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z"
             nonfundbased.sanctiondate(date2);
     }
@@ -2489,12 +2530,12 @@ var updateDataBank = function(index){
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
             nonfundbased.sanctiondate(date2);
         }else{
-            $("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+            //$("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z"
             nonfundbased.sanctiondate(date2);
         }
     }else{
-         $("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
+         //$("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
             var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z"
             nonfundbased.sanctiondate(date2);
     }
@@ -2633,6 +2674,7 @@ var generateAML = function(data){
 }
 
 var createBankingGrid = function(res,minmargin){
+    console.log(res)
     for(var i in res){
         res[i]["Month"] = moment(res[i]["Month"].split("T")[0]).format("MMM-YYYY")
     }
@@ -2732,7 +2774,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"OwReturnPercentage",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P2') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.totalOWReturn(), 'P2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(OwReturnPercentage,'P2') #"
             }, {
@@ -2740,7 +2782,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"LwReturnPercentage",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P2') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.totalIWReturn(), 'P2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(LwReturnPercentage,'P2') #"
             }, {
@@ -2748,7 +2790,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"DrCrReturnPercentage",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'N2') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.totalDRRatio(), 'N2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(DrCrReturnPercentage,'N2') #"
             }]
@@ -3145,6 +3187,7 @@ function disabledAll(what){
             $("#bdelete"+i).prop("disabled", !what)
         })
     }, 100)
+    $("#add").prop("disabled", !what)
     $("#unf").prop("disabled", false)
     $(".btn-reenter").prop("disabled", !what)
     $("#Bank-Container .k-widget").each(function(i,e){

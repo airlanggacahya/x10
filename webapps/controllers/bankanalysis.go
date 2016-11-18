@@ -589,6 +589,7 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 	param := struct {
 		CustomerId int
 		DealNo     string
+		IsConfirm  bool
 	}{}
 
 	err := k.GetPayload(&param)
@@ -619,13 +620,10 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 
 	for idx, val := range res {
 		// fmt.Println("-----------", val.IsConfirmed, val.DateConfirmed, "\n")
-		if val.Status == 1 {
-			val.IsConfirmed = false
-			val.Status = 0
-		} else {
-			val.IsConfirmed = true
-			val.DateConfirmed = time.Now()
+		if param.IsConfirm {
 			val.Status = 1
+			val.IsConfirmed = param.IsConfirm
+			val.DateConfirmed = time.Now()
 
 			del := false
 			if idx == 0 {
@@ -635,7 +633,11 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 			if err := new(DataConfirmController).SaveDataConfirmed(cast.ToString(val.CustomerId), val.DealNo, "BankAnalysisV2", &val, del); err != nil {
 				return err
 			}
+		} else {
+			val.IsConfirmed = false
+			val.Status = 0
 		}
+
 		// fmt.Println("-----------", val.IsConfirmed, val.DateConfirmed, "\n")
 
 		ba := map[string]interface{}{"data": val}
@@ -659,6 +661,7 @@ func (c *BankAnalysisController) SetFreeze(k *knot.WebContext) interface{} {
 	param := struct {
 		CustomerId int
 		DealNo     string
+		IsFreeze   bool
 	}{}
 
 	err := k.GetPayload(&param)
@@ -687,13 +690,11 @@ func (c *BankAnalysisController) SetFreeze(k *knot.WebContext) interface{} {
 	defer query.Close()
 
 	for _, val := range res {
-		if val.IsFreeze {
-			val.IsFreeze = false
-			val.Status = 0
-		} else {
-			val.IsFreeze = true
+		if param.IsFreeze {
 			val.DateFreeze = time.Now()
-			val.Status = 1
+			val.IsFreeze = param.IsFreeze
+		} else {
+			val.IsFreeze = param.IsFreeze
 		}
 
 		has := map[string]interface{}{"data": val}

@@ -113,10 +113,10 @@ input[disabled]{
             <div class="col-md-8" style="margin-left: -25px;"><input type="text" id="bankstt" class="form-control input-sm banksdata-action" validationmessage="Bank Stt Till required" data-bind="value: bankaccount.bankstttill"></div>
           </div>
           <button type="button" id="add" style="margin-left: -39px;" class="btn btn-add btn-sm btn-flat mgright banksdata-action">Add Bank Data</button> -->
-          <button id="bconfirm" class="btn btn-sm btn-confirm separator ontop" style="margin-right: inherit;" data-bind="text: statusPage.confirmText">
+          <button id="bconfirm" class="btn btn-sm btn-confirm separator ontop" style="margin-right: inherit;" data-bind="text: statusPage.confirmText, enable: (!statusPage.isFreeze())">
             <span></span>
           </button>
-          <button class="btn btn-sm btn-freeze separator" data-bind="text: statusPage.freezeText,visible: (unfreeze() == false)" style="margin-right: inherit;" onclick="onFreeze()">
+          <button class="btn btn-sm btn-freeze separator" data-bind="text: statusPage.freezeText,visible: (unfreeze() == false), css: checkBtnFreeze" style="margin-right: inherit;" onclick="onFreeze()">
           </button>
           <!-- <button class="btn btn-sm btn-unfreeze separator" id="unf" data-bind="visible: (unfreeze() == true)" style="margin-right: inherit;" onclick="setUnFreeze()">
             Unfreeze

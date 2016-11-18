@@ -41,7 +41,7 @@ func (m *CreditAnalysModel) TableName() string {
 	return "CreditAnalys"
 }
 
-func (m *CreditAnalysModel) Get(customerId int, dealNo string) (CreditAnalysModel, error) {
+func (m *CreditAnalysModel) Get(customerId int, dealNo string, additionalTableName string) (CreditAnalysModel, error) {
 
 	datas := CreditAnalysModel{}
 
@@ -57,7 +57,7 @@ func (m *CreditAnalysModel) Get(customerId int, dealNo string) (CreditAnalysMode
 
 	csr, err := cMongo.NewQuery().
 		Where(query...).
-		From(m.TableName()).
+		From(m.TableName() + additionalTableName).
 		Cursor(nil)
 
 	if err != nil {
@@ -79,7 +79,7 @@ func (m *CreditAnalysModel) Get(customerId int, dealNo string) (CreditAnalysMode
 	return datas, nil
 }
 
-func (m *CreditAnalysModel) Save(datas CreditAnalysModel) (CreditAnalysModel, error) {
+func (m *CreditAnalysModel) Save(datas CreditAnalysModel, status int) (CreditAnalysModel, error) {
 
 	if datas.Id == "" {
 		datas.Id = bson.NewObjectId()
@@ -91,7 +91,41 @@ func (m *CreditAnalysModel) Save(datas CreditAnalysModel) (CreditAnalysModel, er
 		return datas, em
 	}
 
-	q := cMongo.NewQuery().SetConfig("multiexec", true).From(m.TableName()).Save()
+	goSave := func(tableName string) error {
+		q := cMongo.NewQuery().SetConfig("multiexec", true).From(tableName).Save()
+		defer q.Close()
+		err := q.Exec(tk.M{"data": datas})
+		return err
+	}
+
+	err := goSave("CreditAnalysDraft")
+	if err != nil {
+		return datas, err
+	}
+
+	if status == 1 {
+		err := goSave(m.TableName())
+		if err != nil {
+			return datas, err
+		}
+	}
+
+	return datas, err
+}
+
+func (m *CreditAnalysModel) SaveDraft(datas CreditAnalysModel) (CreditAnalysModel, error) {
+
+	if datas.Id == "" {
+		datas.Id = bson.NewObjectId()
+	}
+
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return datas, em
+	}
+
+	q := cMongo.NewQuery().SetConfig("multiexec", true).From("CreditAnalysDraft").Save()
 
 	defer q.Close()
 

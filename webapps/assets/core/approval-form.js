@@ -284,7 +284,7 @@ refreshFilter = function(){
     getRTRAsoy();
     startme();
 
-    getComments();
+    getComments("draft");
 
     if(res.Data.AD.length > 0) {
       loanapproval.marketref(res.Data.AD[0].borrowerdetails.marketreference);

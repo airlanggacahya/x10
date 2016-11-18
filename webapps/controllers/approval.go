@@ -95,7 +95,7 @@ func (c *ApprovalController) GetCreditAnalys(k *knot.WebContext) interface{} {
 	dealNo := datas.GetString("DealNo")
 
 	model := NewCreditAnalysModel()
-	result, err := model.Get(customerId, dealNo)
+	result, err := model.Get(customerId, dealNo, "")
 
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
@@ -150,7 +150,37 @@ func (c *ApprovalController) GetDCAndCreditAnalys(k *knot.WebContext) interface{
 	}
 
 	modelCredit := NewCreditAnalysModel()
-	resultCredit, err := modelCredit.Get(customerId, dealNo)
+	resultCredit, err := modelCredit.Get(customerId, dealNo, "")
+	if err != nil {
+		//return CreateResult(false, nil, err.Error())
+	}
+
+	return []tk.M{{"CreditAnalys": resultCredit}, {"DCFinalSanction": resultDC}}
+}
+
+func (c *ApprovalController) GetDCAndCreditAnalysDraft(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	datas := tk.M{}
+	err := k.GetPayload(&datas)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	customerId, e := strconv.Atoi(datas.GetString("CustomerId"))
+	if e != nil {
+		panic(e)
+	}
+	dealNo := datas.GetString("DealNo")
+
+	modelDC := NewDCFinalSanctionModel()
+	resultDC, err := modelDC.Get(customerId, dealNo)
+	if err != nil {
+		//return CreateResult(false, nil, err.Error())
+	}
+
+	modelCredit := NewCreditAnalysModel()
+	resultCredit, err := modelCredit.Get(customerId, dealNo, "Draft")
 	if err != nil {
 		//return CreateResult(false, nil, err.Error())
 	}
@@ -161,14 +191,19 @@ func (c *ApprovalController) GetDCAndCreditAnalys(k *knot.WebContext) interface{
 func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	datas := CreditAnalysModel{}
+	datas := struct {
+		Ca     CreditAnalysModel
+		Status int
+	}{}
+
 	err := k.GetPayload(&datas)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}
 
 	model := NewCreditAnalysModel()
-	result, err := model.Save(datas)
+
+	result, err := model.Save(datas.Ca, datas.Status)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}

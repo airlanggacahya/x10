@@ -201,6 +201,17 @@ r.refresh = function () {
 
         ajaxPost("/ratio/getratioinputdataall", param, function (res) {
             if (res.Data != null){
+
+                if(res.Data.Confirmed){
+                    var currentdata = _.map(res.Data.FormData,function(x) {  return x.FieldId.split("-")[1] });
+                    var balancedata = _.filter(r.masterBalanceSheetInput(),function(x){ return currentdata.indexOf(x.Id) > -1 });
+                    if(r.masterBalanceSheetInput().length !=  balancedata.length){
+                        swal("Warning", "There is an update from other Form, please Re Enter to load changes","warning");
+                        console.log("------different", r.masterBalanceSheetInput().length -  balancedata.length )
+                        r.masterBalanceSheetInput(balancedata);
+                    }
+                }
+
                 r.formVisibility(true)
                 if (res.Data.AuditStatus.length > 0){
                     $.each(res.Data.AuditStatus, function(i,v){
@@ -347,7 +358,7 @@ r.getData = function () {
     // })
 
     var formData = $('.inputmasterform').filter(function (i, e) {
-        return (parseFloat($(e).val()) > 0)
+        return true//(parseFloat($(e).val()) > 0)
     }).get().map(function (d) {
         var $cellYear = $('.cell-year:eq(' + ($(d).parent().index() - 1) + ')')
         var c = {}

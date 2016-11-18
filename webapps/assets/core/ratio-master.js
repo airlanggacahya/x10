@@ -5,6 +5,7 @@ r.templateNewData = {
 	Id: "",
 	Section: "",
 	SubSection: "",
+	Alias: "",
 	Field: "",
 	Use: true,
 };
@@ -29,13 +30,16 @@ r.optionSection = ko.computed(function () {
 		return d != '';
 	})
 }, r.data);
-r.optionSubSection = ko.computed(function () {
-	return _.map(_.groupBy(r.data(), 'SubSection'), function (v, k) {
-		return k
-	}).filter(function (d) {
-		return d != '';
-	})
-}, r.data);
+
+r.optionSubSection = ko.observableArray([]);
+
+// r.optionSubSection = ko.computed(function () {
+// 	return  _.map(_.groupBy(_.filter(r.data(),function(x){ return x.Section == r.newData.Section() })  , 'SubSection'), function (v, k) {
+// 		return k
+// 	}).filter(function (d) {
+// 		return d != '';
+// 	})
+// }, r.data);
 r.constructData = function (res) {
 	var flat = []
 
@@ -345,6 +349,13 @@ r.showFormAdd = function () {
 	})
 	ko.mapping.fromJS(r.templateNewData, r.newData)
 	$('.modal-add-new').modal('show')
+
+	setTimeout(function(){
+		$("#aliasinp").keyup(function(e){
+			var node = $(this);
+    		node.val(node.val().replace(/[^a-z]/g,'') );
+		});
+	},500)
 }
 
 r.emptyDropDown = function (o) {
@@ -376,6 +387,8 @@ r.saveNewData = function (e) {
 			info.Order = _.maxBy(r.data(), 'Order').Order + 1
 		}
 	}
+
+	info.Alias = info.Alias.toUpperCase();
 
     app.ajaxPost("/ratio/addmasterbalancesheetinput", info, function (res) {
         if (res.Message != '') {
@@ -513,6 +526,21 @@ r.getMasterCustomer = function () {
 	ajaxPost("/datacapturing/getcustomerprofilelist", {}, function (data) {
 		r.masterCustomer(data)
 	});
+}
+
+r.clearSub = function(){
+	setTimeout(function(){
+		var sec = r.newData.Section();
+		if(sec.toLowerCase().indexOf("profit") > -1){
+			r.optionSubSection([]);
+		}else{
+				r.optionSubSection(_.map(_.groupBy(_.filter(r.data(),function(x){ return x.Section == r.newData.Section() })  , 'SubSection'), function (v, k) {
+					return k
+				}).filter(function (d) {
+					return d != '';
+				}))
+		}
+	},300);
 }
 
 $(function () {

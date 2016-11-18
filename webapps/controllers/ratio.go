@@ -220,9 +220,27 @@ func (c *RatioController) AddMasterBalanceSheetInput(k *knot.WebContext) interfa
 		return res
 	}
 
+	query := toolkit.M{"where": dbox.Eq("alias", payload.Alias)}
+	csr, err := c.Ctx.Find(payload, query)
+	defer csr.Close()
+	if err != nil {
+		res.SetError(err)
+		return res
+	} else if csr.Count() > 0 && payload.Id == "" {
+		res.SetError(errors.New("This alias already exists"))
+		return res
+	}
+
 	if payload.Id == "" {
 		payload.Id = bson.NewObjectId().Hex()
 	}
+
+	// results := make([]RatioInputData, 0)
+	// err = csr.Fetch(&results, 0, false)
+	// if err != nil {
+	// 	res.SetError(err)
+	// 	return res
+	// }
 
 	if err := c.Ctx.Save(payload); err != nil {
 		res.SetError(err)
@@ -236,8 +254,8 @@ func (c *RatioController) FetchFilledBalanceSheetInputByFieldId(fieldId string) 
 	pipe := []toolkit.M{}
 	pipe = append(pipe, toolkit.M{"$unwind": "$formdata"})
 	pipe = append(pipe, toolkit.M{"$match": toolkit.M{
-		"formdata.fieldid": fieldId,
-		"formdata.value":   toolkit.M{"$gt": 0},
+		"formdata.fieldid": bson.RegEx{fieldId, "i"},
+		// "formdata.value":   toolkit.M{"$gt": 0},
 	}})
 
 	csr, err := c.Ctx.Connection.

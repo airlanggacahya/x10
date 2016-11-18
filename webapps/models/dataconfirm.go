@@ -131,16 +131,16 @@ func (a *DataConfirmController) GetDataConfirmed(CustomerID string, DealNo strin
 		que = que.Where(dbox.Eq("CustomerId", custInt), dbox.Eq("DealNo", DealNo))
 		coll = "Bank Analysis Not Confirmed"
 	case "CustomerProfile":
-		que = que.Where(dbox.Contains("_id", concate))
+		que = que.Where(dbox.Eq("_id", concate))
 		coll = "Customer Profile Not Confirmed"
 	case "RatioInputData":
-		que = que.Where(dbox.Contains("customerid", concate))
+		que = que.Where(dbox.Eq("customerid", concate))
 		coll = "Balance Sheet Input Not Confirmed"
 	case "RepaymentRecords":
 		que = que.Where(dbox.Eq("CustomerId", CustomerID), dbox.Eq("DealNo", DealNo))
 		coll = "External Repayment Record Not Confirmed"
 	case "StockandDebt":
-		que = que.Where(dbox.Contains("customerid", concate))
+		que = que.Where(dbox.Eq("customerid", concate))
 		coll = "Stock and Debt Not Confirmed"
 	case "CibilReport":
 		que = que.Where(dbox.Eq("Profile.customerid", custInt), dbox.Eq("Profile.dealno", DealNo))
@@ -148,7 +148,7 @@ func (a *DataConfirmController) GetDataConfirmed(CustomerID string, DealNo strin
 	case "CibilReportPromotorFinal":
 		que = que.Where(dbox.Eq("ConsumerInfo.CustomerId", custInt), dbox.Eq("ConsumerInfo.DealNo", DealNo))
 	case "DueDiligenceInput":
-		que = que.Where(dbox.Contains("_id", concate))
+		que = que.Where(dbox.Eq("_id", concate))
 		coll = "DueDiligence Form Not Confirmed"
 	default:
 		return errors.New("Table Name Not Registered")

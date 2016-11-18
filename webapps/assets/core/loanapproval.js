@@ -627,7 +627,6 @@ var propertyOwnership = function(param) {
         if(dt != undefined)
             attr.biodatas.push(dt);
 
-        // console.log(_.last(attr.biodatas()).name.values())
         var emptySpaces = attr.settings.size - _.last(attr.biodatas()).name.values().length;
         for (var i = emptySpaces - 1; i >= 0; i--) {
             var b = _.last(attr.biodatas());
@@ -755,7 +754,6 @@ loanApproval.checkValidation = function(data){
 
 loanApproval.getReport = function(param){
     ajaxPost("/loanapproval/getalldata", param, function(data){
-        // console.log(data.Data)
 
         loanApproval.checkValidation(data);
 

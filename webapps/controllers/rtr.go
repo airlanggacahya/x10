@@ -53,12 +53,12 @@ func (c *RtrController) GetDataBottomGrid(k *knot.WebContext) interface{} {
 		tk.Println(err.Error())
 	}
 
-	arr, summary, months, err := new(RTRBottom).GetData(t.GetString("customerid"), t.GetString("dealno"))
+	arr, summary, months, thereisupdate, err := new(RTRBottom).GetData(t.GetString("customerid"), t.GetString("dealno"))
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}
 
-	result := []tk.M{{"data": arr}, {"summary": summary}, {"months": months}}
+	result := []tk.M{{"data": arr}, {"summary": summary}, {"months": months}, {"thereisupdate": thereisupdate}}
 
 	return CreateResult(true, result, "")
 }

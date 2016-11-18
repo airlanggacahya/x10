@@ -790,10 +790,11 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 		reportobj := ExtractCompanyCibilReport(PathTo, XmlName)
 
 		filename := strings.TrimRight(FName, ".pdf")
-		timestamp := time.Now()
+		timestamp := time.Now().UTC()
 		datestr := timestamp.String()
 		dates := strings.Split(datestr, " ")
-		newfilename := filename + "_" + dates[0] + "_" + dates[1] + ".pdf"
+		times := strings.Split(dates[1], ".")
+		newfilename := filename + "_" + dates[0] + "_" + times[0] + ".pdf"
 		os.Rename(inbox+"/"+FName, inbox+"/"+newfilename)
 		formattedName := strings.Replace(newfilename, " ", "\\ ", -1)
 

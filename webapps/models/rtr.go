@@ -292,6 +292,9 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 		if err == nil {
 			arr = tempRtr
 		}
+
+		arr = r.SortODCC(arr)
+
 		summary := r.CalculateSummary(arr)
 		divider := 100000.0
 		x10IntObligation := (accoutDetails.LoanDetails.InterestOutgo * divider)
@@ -1196,3 +1199,65 @@ func (r *RTRBottom) NggolekSliceGatelan(sliceLength int, searching func(idx int)
 
 	return -1
 }
+
+//sorting OD/CC
+func (r *RTRBottom) SortODCC(rtr []RTRBottom) []RTRBottom {
+
+	rtrList := []RTRBottom{}
+	rtrBank := []RTRBottom{}
+
+	for _, v := range rtr {
+		if v.IsBankAnalys {
+			rtrBank = append(rtrBank, v)
+		} else {
+			rtrList = append(rtrList, v)
+		}
+	}
+
+	rtrBank = append(rtrBank, rtrList...)
+
+	return rtrBank
+}
+
+/*
+	get by customer id & dealno
+
+	return RTRBottom
+*/
+
+// func (r *RTRBottom) GetByCustomerDeal(custid, dealno string) ([]RTRBottom, error) {
+// 	result := []RTRBottom{}
+
+// 	cMongo, em := GetConnection()
+// 	defer cMongo.Close()
+// 	if em != nil {
+// 		return result, em
+// 	}
+
+// 	query := []*db.Filter{}
+// 	query = append(query, db.And(
+// 		db.Eq("CustomerId", custid),
+// 		db.Eq("DealNo", dealno)))
+
+// 	csr, em := cMongo.NewQuery().
+// 		From("RepaymentRecords").
+// 		Where(query...).
+// 		Cursor(nil)
+// 	if em != nil {
+// 		return result, em
+// 	}
+
+// 	defer csr.Close()
+
+// 	if csr != nil {
+// 		em = csr.Fetch(&result, 0, false)
+
+// 		if em != nil {
+// 			return result, em
+// 		}
+// 	} else if em != nil {
+// 		return result, em
+// 	}
+
+// 	return result, em
+//}

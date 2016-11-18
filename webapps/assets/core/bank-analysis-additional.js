@@ -11,6 +11,15 @@ var odutilmax = 0
 var unfreeze = ko.observable(false);
 var caba = ko.observable(0);
 var formVisibility = ko.observable(false);
+var textConfirm = ko.observable("confirm");
+
+var statusPage = {
+    isConfirmed : ko.observable(false),
+    isFreeze : ko.observable(false),
+    rtrConfirm : ko.observable(false),
+    confirmText : ko.observable('Confirm'),
+    freezeText : ko.observable('Freeze')
+};
 
 var initEvents = function () {
     filter().CustomerSearchVal.subscribe(function () {
@@ -71,7 +80,7 @@ var refreshFilter = function(){
 
 var setdatestt = function(){
     ajaxPost(url+"/getdatetemplate",getSearchVal(),function(res){
-        //console.log(res.data.length)  
+        //console.log(res.data.length)
         if (res.data.length > 0){
             //console.log(res.data[0].BankDetails[0].Month)
             $('#bankstt').data('kendoDatePicker').value(res.data[0].BankDetails[0].Month)
@@ -172,7 +181,19 @@ var DrawDataBank = function(id){
                     sa++;
                 }
             });
+
+            if(res.data.Detail != undefined && res.data.Detail.length > 0) {
+                var bankDetail = res.data.Detail[0]
+                statusPage.isConfirmed(bankDetail.IsConfirmed)
+                statusPage.isFreeze(bankDetail.isFreeze)
+                checkStatusPage()
+            }
         }
+
+        // if(res.data.RTR != undefined && res.data.RTR.length > 0) {
+        //     statusPage.rtrConfirm(res.data.RTR[0].Confirmed)
+        // }
+
         if(res.data.AccountDetail.length != 0){
             checkConfirmedOrNot(res.data.AccountDetail[0].status, 1, 2, res.data, [], "Accounts Details");
         }else{
@@ -183,30 +204,30 @@ var DrawDataBank = function(id){
             formVisibility(true)
             isempty(false)
             // console.log(res.data.AccountDetail[0].Status)
-            if(res.data.Detail.length == fre){
-            // alert("fre")
-                $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.data.Detail[0].DateFreeze),"dd-MM-yyyy h:mm:ss tt") )
-                caba(1)
-                unfreeze(true);
-                setTimeout(function(){
-                    disabledAll(false);
-                },100)
+            // if(res.data.Detail.length == fre){
+            //     //alert("fre")
+            //     $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.data.Detail[0].DateFreeze),"dd-MM-yyyy h:mm:ss tt") )
+            //     caba(1)
+            //     unfreeze(true);
+            //     setTimeout(function(){
+            //         disabledAll(false);
+            //     },100)
 
-                $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter");
-            } else if(res.data.Detail.length == un){
-                 // alert("un")
-                caba(1)
-                setTimeout(function(){
-                    $(".btn-reenter").prop("disabled", false)
-                },100)
-                $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(res.data.Detail[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
-                $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter");
-            } else if(res.data.Detail.length == sa){
-                 // alert("sa")
-                 caba(0)
-                $('.form-last-confirmation-info').html('')
-                $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm");
-            }
+            //     $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter");
+            // } else if(res.data.Detail.length == un){
+            //      // alert("un")
+            //     caba(1)
+            //     setTimeout(function(){
+            //         $(".btn-reenter").prop("disabled", false)
+            //     },100)
+            //     $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(res.data.Detail[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
+            //     $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter");
+            // } else if(res.data.Detail.length == sa){
+            //      // alert("sa")
+            //      caba(0)
+            //     $('.form-last-confirmation-info').html('')
+            //     $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm");
+            // }
 
             constructOdccModel(res);
             databank(res.data.Detail);
@@ -253,8 +274,8 @@ var DrawDataBank = function(id){
                         for (var i = 0 ; i < res.data.Summary.length ; i++){
                             res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
                         }
-                    } 
-                 
+                    }
+
                 createBankingGrid(res.data.Summary,multiplyer*100);
             }else{
                    idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
@@ -290,6 +311,27 @@ var DrawDataBank = function(id){
     });
 }
 
+var checkStatusPage = function() {
+    if(statusPage.isConfirmed()) {
+        statusPage.confirmText("Re-Enter")
+        disabledAll(false)
+    } else {
+        statusPage.confirmText("Confirm")
+        statusPage.freezeText("Freeze")
+        statusPage.isFreeze(false)
+        disabledAll(true)
+    }
+
+    if(statusPage.isFreeze()) {
+        statusPage.freezeText("Unfreeze")
+    } else {
+        statusPage.freezeText("Freeze")
+    }
+}
+
+var checkBtnFreeze = ko.pureComputed(function(){
+    return (statusPage.isFreeze())? "btn-unfreeze":"btn-freeze"
+})
 var RenderGridDataBank = function(id, res){
     if (res.Status == 1){
         $('#bedit'+id).prop('disabled',true)
@@ -1674,24 +1716,37 @@ $(document).ready(function(){
             return;
         }else{
             resetInput();
-            ajaxPost(url+"/setconfirmedv2", getSearchVal(), function(){
-                swal("Success","Data confirmed","success");
-                if($('#bconfirm').text() == "Confirm"){
-                    $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re-Enter");
+            var param = getSearchVal()
+            param.IsConfirm = !statusPage.isConfirmed()
+
+            ajaxPost(url+"/setconfirmedv2", param, function(){
+                if(!statusPage.isConfirmed()) {
                     swal("Successfully Confirmed", "", "success");
-                    caba(1)
-                }else{
-                    $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm");
+                } else {
                     swal("Please Edit / Enter Data", "", "success");
-                    caba(0)
                 }
-                //setTimeout(function() {
-                    databank().forEach(function(e,i) {
-                        RenderGridDataBank(i,e);
-                    }, this);
-                        
-                //}, 50);
-                refreshFilter()
+                statusPage.isConfirmed(!statusPage.isConfirmed())
+                checkStatusPage()
+
+                // swal("Success","Data confirmed","success");
+                // if($('#bconfirm').text() == "confirm"){
+                //     $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re-Enter");
+                //     swal("Successfully Confirmed", "", "success");
+                //     caba(1)
+                //     textConfirm("reenter")
+                // }else{
+                //     $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm");
+                //     swal("Please Edit / Enter Data", "", "success");
+                //     caba(0)
+                //     textConfirm("confirm")
+                // }
+                // //setTimeout(function() {
+                //     databank().forEach(function(e,i) {
+                //         RenderGridDataBank(i,e);
+                //     }, this);
+
+                // //}, 50);
+                // refreshFilter()
             });
         }
     });
@@ -2193,7 +2248,7 @@ var saveDataBank = function(){
         //     nonfundbased.sanctiondate(date2);
         //     fundbased.sanctiondate(date1);
         // }
-        
+
     //}
     var latestfacttype = $('#facilitytype').getKendoMultiSelect().value()
 
@@ -3033,20 +3088,34 @@ var createOdDetailGrid = function(res){
 }
 
 function onFreeze(){
-    if(caba() == 0){
+    if(!statusPage.isConfirmed()){
         swal("Confirm Data First","","warning");
             return;
     }
+
     if(filter().CustomerSearchVal() == "" || filter().DealNumberSearchVal() == ""){
         swal("Warning","Select Customer First","warning");
         return;
     }else{
         resetInput();
-        ajaxPost(url+"/setfreeze", getSearchVal(), function(){
-            unfreeze(true);
-            disabledAll(false);
-            swal("Successfully Unfreezed","","success");
-            refreshFilter()
+
+        var param = getSearchVal()
+        param.IsFreeze = !statusPage.isFreeze()
+
+        ajaxPost(url+"/setfreeze", param, function(){
+            statusPage.isFreeze(!statusPage.isFreeze())
+            if(statusPage.isFreeze()) {
+                swal("Successfully Freezed","","success");
+            } else {
+                swal("Successfully Unfreezed","","success");
+            }
+
+            checkStatusPage();
+
+            // unfreeze(true);
+            // disabledAll(false);
+            //
+            // refreshFilter()
         });
     }
 
@@ -3061,7 +3130,7 @@ function setUnFreeze(){
         ajaxPost(url+"/unfreeze", getSearchVal(), function(){
             unfreeze(false);
             disabledAll(true);
-            swal("Successfully Unfreezed","","success");
+
             refreshFilter()
         });
     }
@@ -3073,6 +3142,7 @@ function disabledAll(what){
     setTimeout(function(){
         $.each(databank(), function(i, items){
             $("#bedit"+i).prop("disabled", !what)
+            $("#bdelete"+i).prop("disabled", !what)
         })
     }, 100)
     $("#unf").prop("disabled", false)

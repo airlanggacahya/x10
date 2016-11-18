@@ -13,6 +13,13 @@ var caba = ko.observable(0);
 var formVisibility = ko.observable(false);
 var textConfirm = ko.observable("confirm");
 
+var statusPage = {
+    isConfirmed : ko.observable(false),
+    isFreeze : ko.observable(false),
+    confirmText : ko.observable('Confirm'),
+    freezeText : ko.observable('Freeze')
+};
+
 var initEvents = function () {
     filter().CustomerSearchVal.subscribe(function () {
         formVisibility(false)
@@ -173,6 +180,13 @@ var DrawDataBank = function(id){
                     sa++;
                 }
             });
+
+            // if(res.data.Detail != undefined && res.data.Detail.length > 0) {
+            //     var bankDetail = res.data.Detail[0]
+            //     statusPage.isConfirmed(bankDetail.IsConfirmed)
+            //     statusPage.isFreeze(bankDetail.isFreeze)
+            //     checkStatusPage()
+            // }
         }
         if(res.data.AccountDetail.length != 0){
             checkConfirmedOrNot(res.data.AccountDetail[0].status, 1, 2, res.data, [], "Accounts Details");
@@ -185,7 +199,7 @@ var DrawDataBank = function(id){
             isempty(false)
             // console.log(res.data.AccountDetail[0].Status)
             if(res.data.Detail.length == fre){
-            // alert("fre")
+                //alert("fre")
                 $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.data.Detail[0].DateFreeze),"dd-MM-yyyy h:mm:ss tt") )
                 caba(1)
                 unfreeze(true);
@@ -289,6 +303,24 @@ var DrawDataBank = function(id){
         }
 
     });
+}
+
+var checkStatusPage = function() {
+    if(statusPage.isConfirmed()) {
+        statusPage.confirmText("Re-Enter")
+        disabledAll(true)
+    } else {
+        statusPage.confirmText("Confirm")
+        statusPage.freezeText("Freeze")
+        statusPage.isFreeze(false)
+        disabledAll(false)
+    }
+
+    if(statusPage.isFreeze()) {
+        statusPage.freezeText("Unfreeze")
+    } else {
+        statusPage.freezeText("Freeze")
+    }
 }
 
 var RenderGridDataBank = function(id, res){
@@ -1677,7 +1709,7 @@ $(document).ready(function(){
             resetInput();
             ajaxPost(url+"/setconfirmedv2", getSearchVal(), function(){
                 swal("Success","Data confirmed","success");
-                if(textConfirm() == "confirm"){
+                if($('#bconfirm').text() == "confirm"){
                     $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re-Enter");
                     swal("Successfully Confirmed", "", "success");
                     caba(1)

@@ -20,6 +20,10 @@
         word-wrap: break-word !important;
     }
 
+    .td-nopadding {
+        padding : 0px !important;
+        margin: 0px;
+    }
 </style>
 <div class="col-md-12 margin20"><div id="bottomgrid"></div></div>
 
@@ -232,14 +236,26 @@ function getData(){
     var col = [
         { title : "Id", headerAttributes: { "class": "header-bgcolor wrap" }, field : "Id" , hidden : true },
         { title : "S. No", headerAttributes: { "class": "header-bgcolor wrap" }, field : "SNo", hidden: true  },
-        { title : "Bank", headerAttributes: { "class": "header-bgcolor wrap" }, editor: bankEditor, field : "Bank", width: 150  },
-        { title : "Type Of Loan", headerAttributes: { "class": "header-bgcolor wrap" }, field : "TypeOfLoan", width: 130, editor: typeOfLoanDropDownEditor  },
+        { title : "Bank", headerAttributes: { "class": "header-bgcolor wrap" }, editor: bankEditor, field : "Bank", width: 150,  template : function(o) {
+            if(o.IsBankAnalys) {
+                return "<label class='isbankanal' style=\"width:100%; height: 100%; background:  rgb(238, 238, 238); margin: 0px;\";><span>" + o.Bank + "</span></label>"
+            } else {
+                return "<label>" + o.Bank + "</label>"
+            }
+        }},
+        { title : "Type Of Loan", headerAttributes: { "class": "header-bgcolor wrap" }, field : "TypeOfLoan", width: 130, editor: typeOfLoanDropDownEditor,  template:function(o){
+                if(o.IsBankAnalys) {
+                    return "<span class='isbankanal'>"+ o.TypeOfLoan+"</span>"
+                } else {
+                    return "<span>"+ o.TypeOfLoan+"</span>"
+                }
+        }},
         { title : "BSL / PBSL", headerAttributes: { "class": "header-bgcolor wrap" }, field : "BSLStatus", width: 80, editor: bslsDropDownEditor  },
         { title : "Loan Closed / Live", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanStatus", width: 130, editor: loanStatusDropDownEditor },
         { title : "Amount (Rs Lacs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "Amount", width: 120, editor : checkeditor, template : function(o) {
 
             if(o.IsBankAnalys) {
-                return "<label style=\"width:100%; height: 100%; text-align: right; \">" + app.formatnum(o.Amount,2) + "</label>"
+                return "<label class='isbankanal' style=\"width:100%; height: 100%; text-align: right; \">" + app.formatnum(o.Amount,2) + "</label>"
             } else {
                 return "<label style=\"width:100%; text-align: right; \">" + app.formatnum(o.Amount,2) + "</label>"
             }
@@ -252,7 +268,13 @@ function getData(){
             //     return "<label style=\"width:100%; text-align: right; \">" + o.POS + "</label>"
             // }
         } },
-        { title : "EMI (Rs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "EMI", width: 120, editor: emiNumbereditor, template : "<label style=\"width:100%; text-align: right;\">#:app.formatnum(EMI)#</label>"  },
+        { title : "EMI (Rs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "EMI", width: 120, editor: emiNumbereditor, template : function(o) {
+            if(o.IsBankAnalys) {
+                return "<label class='isbankanal' style=\"width:100%; text-align: right;\">"+app.formatnum(o.EMI)+"</label>"
+            } else {
+                return "<label style=\"width:100%; text-align: right;\">"+app.formatnum(o.EMI)+"</label>"
+            }
+        } },
         { title : "Loan Tenor (month)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanTenor", width: 130, editor: numbereditor, template : "<label style=\"width:100%; text-align: right;\">#:LoanTenor#</label>"  },
         { title : "Loan Start Date", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanStart", format : "{0:dd/MM/yyyy}", editor: dateeditor,width: 100 , template : "#= moment(LoanStart).format('YY') == '01' || moment(LoanStart).format('YY') == 'Invalid date'? 'dd/mm/yyyy' : moment(LoanStart).format('DD/MM/YYYY') #" },
         { title : "Loan End Date", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanEnd" , format : "{0:dd/MM/yyyy}", editor:dateeditor ,width: 100, template : "#= moment(LoanEnd).format('YY') == '01' || moment(LoanEnd).format('YY') == 'Invalid date' ? 'dd/mm/yyyy' : moment(LoanEnd).format('DD/MM/YYYY') #" },
@@ -403,6 +425,8 @@ function getData(){
         topgriddata[0].DpdMaxTrack = (res.data[1].summary.DPDTrack == -1 || res.data[1].summary.DPDTrack == 0)?maxGlobal:res.data[1].summary.DPDTrack
 
         CreateTopGrid();
+
+        $(".isbankanal").parent().css("background", "rgb(238, 238, 238)")
     });
 }
 
@@ -819,7 +843,7 @@ function bslsDropDownEditor(container, options) {
 
 function bankEditor(container, options) {
     if(options.model.IsBankAnalys){
-        $('<label class="grey" data-bind="text:' + options.field + '" >')
+        $('<label class="grey" style="background: rgb(238, 238, 238)" data-bind="text:' + options.field + '" >')
         .appendTo(container);
     } else {
         var data=options.field

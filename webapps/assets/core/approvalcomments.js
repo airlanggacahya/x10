@@ -357,7 +357,11 @@ apcom.loadSection = function(){
 			width: 100,
 			editor: apcom.LoadRiskInput,
 			template: function(d){
-                return d.Risks == "" ? d.Risks : d.Risks()
+				try {
+					return d.Risks()
+				} catch(e){
+					return d.Risks
+				}
             }
         }, {
             field: "Mitigants",
@@ -366,7 +370,11 @@ apcom.loadSection = function(){
             width: 100,
             editor: apcom.LoadMitigantInput,
             template: function(d){
-                return d.Mitigants == "" ? d.Mitigants : d.Mitigants()
+				try {
+					return d.Mitigants()
+				} catch(e){
+					return d.Mitigants
+				}
             }
 		}, {
 			headerAttributes: { "class": "sub-bgcolor" }, 

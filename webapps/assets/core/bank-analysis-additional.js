@@ -16,6 +16,7 @@ var textConfirm = ko.observable("confirm");
 var statusPage = {
     isConfirmed : ko.observable(false),
     isFreeze : ko.observable(false),
+    rtrConfirm : ko.observable(false),
     confirmText : ko.observable('Confirm'),
     freezeText : ko.observable('Freeze')
 };
@@ -188,6 +189,10 @@ var DrawDataBank = function(id){
                 checkStatusPage()
             }
         }
+
+        // if(res.data.RTR != undefined && res.data.RTR.length > 0) {
+        //     statusPage.rtrConfirm(res.data.RTR[0].Confirmed)
+        // }
 
         if(res.data.AccountDetail.length != 0){
             checkConfirmedOrNot(res.data.AccountDetail[0].status, 1, 2, res.data, [], "Accounts Details");

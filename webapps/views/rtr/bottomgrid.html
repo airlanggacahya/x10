@@ -730,26 +730,30 @@ condReenter = function(){
 
 onsave = function(){
     var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
-    $.each(data, function(i, item){
-        item.Status = 0;
-        item.DateSave = new Date();
-        if (item.CustomerId == undefined) {
-            item.CustomerId = filter().CustomerSearchVal()
-        }
+    if(data.length == 0) {
+        swal("Warning","Data Grid is empty","warning");
+    } else {
+        $.each(data, function(i, item){
+            item.Status = 0;
+            item.DateSave = new Date();
+            if (item.CustomerId == undefined) {
+                item.CustomerId = filter().CustomerSearchVal()
+            }
 
-        if (item.DealNo == undefined) {
-            item.DealNo = filter().DealNumberSearchVal()
-        }
-        item.DateSave = new Date();
-    })
+            if (item.DealNo == undefined) {
+                item.DealNo = filter().DealNumberSearchVal()
+            }
+            item.DateSave = new Date();
+        })
 
-    ajaxPost("/rtr/update",data, function(res){
-        // yo.success(res.data);
-        condSave()
-        swal("Success","Data saved","success");
-        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
-        getData()
-    })
+        ajaxPost("/rtr/update",data, function(res){
+            // yo.success(res.data);
+            condSave()
+            swal("Success","Data saved","success");
+            $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
+            getData()
+        })
+    }
 }
 
 onreenter = function(){
@@ -878,22 +882,26 @@ function typeOfLoanDropDownEditor(container, options) {
 
 function confirm(){
     var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
-    _.each(data, function(k, v){
-        if(data[v].Confirmed){
-            data[v].Confirmed = false;
-        }else{
-            data[v].Confirmed = true;
-        }
-        data[v].DateConfirmed = new Date();
-        data[v].Status = 1;
-    })
-    ajaxPost("/rtr/update",data, function(res){
-        // yo.success(res.data);
-        condConfirm()
-        swal("Successfully Confirmed", "", "success");
-        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
-        getData()
-    });
+    if(data.length == 0) {
+        swal("Warning","Data Grid is empty","warning");
+    } else {
+        _.each(data, function(k, v){
+            if(data[v].Confirmed){
+                data[v].Confirmed = false;
+            }else{
+                data[v].Confirmed = true;
+            }
+            data[v].DateConfirmed = new Date();
+            data[v].Status = 1;
+        })
+        ajaxPost("/rtr/update",data, function(res){
+            // yo.success(res.data);
+            condConfirm()
+            swal("Successfully Confirmed", "", "success");
+            $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
+            getData()
+        });
+    }
 }
 
 function monthValue(e){

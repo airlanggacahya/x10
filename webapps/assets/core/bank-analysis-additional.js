@@ -72,7 +72,7 @@ var refreshFilter = function(){
 
 var setdatestt = function(){
     ajaxPost(url+"/getdatetemplate",getSearchVal(),function(res){
-        //console.log(res.data.length)  
+        //console.log(res.data.length)
         if (res.data.length > 0){
             //console.log(res.data[0].BankDetails[0].Month)
             $('#bankstt').data('kendoDatePicker').value(res.data[0].BankDetails[0].Month)
@@ -1678,7 +1678,6 @@ $(document).ready(function(){
             ajaxPost(url+"/setconfirmedv2", getSearchVal(), function(){
                 swal("Success","Data confirmed","success");
                 if(textConfirm() == "confirm"){
-                    console.log('kkkkkkkkkkkkkkkkkkkkk')
                     $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re-Enter");
                     swal("Successfully Confirmed", "", "success");
                     caba(1)
@@ -2197,7 +2196,7 @@ var saveDataBank = function(){
         //     nonfundbased.sanctiondate(date2);
         //     fundbased.sanctiondate(date1);
         // }
-        
+
     //}
     var latestfacttype = $('#facilitytype').getKendoMultiSelect().value()
 

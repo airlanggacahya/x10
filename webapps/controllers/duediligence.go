@@ -189,9 +189,9 @@ func (c *DueDiligenceController) GetDuediligenceInputDataCOnfirmed(k *knot.WebCo
 		DealNo     string
 	}{}
 
-	// if err := k.GetPayload(&payload); err != nil {
-	// 	return c.SetResultInfo(true, err.Error(), nil)
-	// }
+	if err := k.GetPayload(&payload); err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
 
 	// query := toolkit.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("customerid", payload.CustomerId), dbox.Eq("dealno", payload.DealNo)}...)}
 	// csr, err := c.Ctx.Find(new(DueDiligenceInput), query)

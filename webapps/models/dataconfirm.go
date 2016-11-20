@@ -51,11 +51,11 @@ func (a *DataConfirmController) SaveDataConfirmed(CustomerID string, DealNo stri
 		data := Data.(*BankAnalysisV2)
 		insertdata = insertdata.Set("data", data)
 	case "CustomerProfile":
-		que = que.Where(dbox.Contains("_id", concate))
+		que = que.Where(dbox.Eq("_id", concate))
 		data := Data.(*CustomerProfiles)
 		insertdata = insertdata.Set("data", data)
 	case "RatioInputData":
-		que = que.Where(dbox.Contains("customerid", concate))
+		que = que.Where(dbox.Eq("customerid", concate))
 		data := Data.(*RatioInputData)
 		insertdata = insertdata.Set("data", data)
 	case "RepaymentRecords":
@@ -63,7 +63,7 @@ func (a *DataConfirmController) SaveDataConfirmed(CustomerID string, DealNo stri
 		data := Data.(*RTRBottom)
 		insertdata = insertdata.Set("data", data)
 	case "StockandDebt":
-		que = que.Where(dbox.Contains("customerid", concate))
+		que = que.Where(dbox.Eq("customerid", concate))
 		data := Data.(*StockandDebtModel)
 		insertdata = insertdata.Set("data", data)
 	case "CibilReport":
@@ -75,7 +75,7 @@ func (a *DataConfirmController) SaveDataConfirmed(CustomerID string, DealNo stri
 		data := Data.(*ReportData)
 		insertdata = insertdata.Set("data", data)
 	case "DueDiligenceInput":
-		que = que.Where(dbox.Contains("_id", concate))
+		que = que.Where(dbox.Eq("_id", concate))
 		data := Data.(*DueDiligenceInput)
 		insertdata = insertdata.Set("data", data)
 	default:

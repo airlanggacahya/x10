@@ -322,7 +322,7 @@ apcom.loadSection = function(){
 	$("#grid1").html("");
 	$("#grid1").kendoGrid({
 		dataSource: {
-			data: apcom.formCreditAnalyst.CreditAnalysRisks() != null && apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : { Risks: "", Mitigants: "" },
+			data: apcom.formCreditAnalyst.CreditAnalysRisks() != null && apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : [{ Risks: "", Mitigants: "" }],
 			schema: {
 				model: {
 					id: "Risks",
@@ -394,7 +394,7 @@ apcom.loadSection = function(){
 	$("#gridriskconcersnmitigants").html("");
     $("#gridriskconcersnmitigants").kendoGrid({
         dataSource: {
-            data: apcom.formCreditAnalyst.CreditAnalysRisks() != null && apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : { Risks: "", Mitigants: "" }
+            data: apcom.formCreditAnalyst.CreditAnalysRisks() != null && apcom.formCreditAnalyst.CreditAnalysRisks().length > 0 ? apcom.formCreditAnalyst.CreditAnalysRisks() : [{ Risks: "", Mitigants: "" }]
         },
         scrollable: false,
         dataBound: function(){

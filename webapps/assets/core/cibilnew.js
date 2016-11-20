@@ -251,6 +251,14 @@ r.setData = function() {
 
     var prom = _.find(r.promotorsscore(),function(x){ return x.IncomeTaxIdNumber.toLowerCase() == itemData.PAN.toLowerCase() } );
 
+     if(prom == undefined){
+        prom  = _.find(r.promotorsscore(),function(x){ return x.ConsumerInfo.ConsumerName == itemData.Name } );
+    }
+
+    if(prom == undefined){
+        prom  = _.find(r.promotorsscore(),function(x){ return moment(x.DateOfBirth).format("DD-MM-YYYY") == moment(itemData.DateOfBirth).format("DD-MM-YYYY") } );
+    }
+
     if(itemData.cibilscore()==0 && prom!=undefined){
       itemData.cibilscore(prom.CibilScore);
       r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.cibilscore()})

@@ -193,8 +193,6 @@ r.getData = function() {
   })
 }
 
-
-
 r.setData = function() {
   r.promotorsList([])
   r.promotorsOnList([])
@@ -261,14 +259,10 @@ r.setData = function() {
         prom  = _.find(r.promotorsscore(),function(x){ return moment(x.DateOfBirth).format("DD-MM-YYYY") == moment(itemData.DateOfBirth).format("DD-MM-YYYY") } );
     }
 
-
-    if(prom!=undefined){
-    itemData.cibilscore(prom.CibilScore);
-      
-      // if(itemData.cibilscore() !=  prom.CibilScore){
-        r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.cibilscore()})
-        // savePromotors();
-      // }
+    if(itemData.cibilscore()==0 && prom!=undefined){
+      itemData.cibilscore(prom.CibilScore);
+      r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.cibilscore()})
+      savePromotors();
     }
 
     if (prom!=undefined){
@@ -330,7 +324,6 @@ r.setData = function() {
       itemData.Phone = "";
       itemData.Address = "";
       itemData.Score = 0;//itemData.cibilscore();
-      itemData.CIBILScore = 0; //itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
       itemData.Passport = "";
       itemData.Dates = "";
       itemData.Times = "";
@@ -350,7 +343,7 @@ r.setData = function() {
       itemData.Addresses = ko.observableArray([]);
     }
 
-    if( r.minScore() > itemData.Score || index == 0) {
+    if(r.minScore() == 0 || r.minScore() > itemData.Score) {
       r.minScore(itemData.Score)
     }
 
@@ -621,12 +614,15 @@ r.addDataReport = function(data) {
 
 var savePromotors = function() {
   if(r.promotorParam().length > 0) {
-        var param = r.promotorParam();
-        ajaxPost("/datacapturing/updatepromotor", param, function (res){
-        var data = res;
-          return false
-        });
+    param = r.promotorParam()
   }
+
+  ajaxPost("/datacapturing/updatepromotor", param, function (res){
+    var data = res;
+      return false
+    });
+
+  return false
 }
 
 var saveCibilReport = function(status){
@@ -712,10 +708,6 @@ var updateConfirmPromotors = function(status){
   param["DealNo"] = filter().DealNumberSearchVal()
   param["StatusPromotor"] = status
   var url = "/datacapturing/updateconfirmguarantor"
-
-  if(status == 1){
-    savePromotors();
-  }
 
   ajaxPost(url, param, function(data) {
     if(data.success) {

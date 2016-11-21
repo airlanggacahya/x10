@@ -11,8 +11,17 @@
   model.Edit= ko.observable('{{.Edit}}')
   model.User= ko.observable('{{.Username}}');
   model.Fullname= ko.observable('{{.Fullname}}');
-  </script>
+</script>
 <script src="/static/core/cibiltransitory.js"></script>
+<style type="text/css">
+  #cibilAddress .k-grid-content{
+    overflow-y: hidden;
+  }
+
+  #cibilAddress .k-grid-header{
+    padding-right: 0px !important;
+  }
+</style>
 <div class="col-md-12 col-sm-12 ez panel-content">
 	<div class="panel-body">
 	<div class="col-sm-6">
@@ -39,218 +48,221 @@
 					<h4 class="modal-title">Edit CIBIL Individual</h4>
 				</div>
 				<div class="modal-body">
-<div class="row">
-  <div class="col-md-12">
-    <div data-bind="with:trans.CurrentData">
-      <div class="guarantorhide">
-       <!--  <div class="panel-heading">
-          <h4 class="no-margin">
-            <span data-bind="text: toTitleCase(Name)"></span> / <span data-bind="text: toTitleCase(promotorText)"></span>
-          </h4>
-        </div> -->
-        <div class="panel">
-          <div class="panel-body">
-              <div class="col-md-6">
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Consumer Name :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input type="text" class="form-control input-sm" id="consname" name="consname" data-bind="value:ConsumersInfos.ConsumerName" validationMessage="Please Fill Consumer Name"/>
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Date of Birth :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="text" id="dateofbirth" class="form-control input-sm" data-bind="value:ConsumersInfos.DateOfBirth" validationMessage="Please Fill Date Of Birth">
-                           <!-- <span class="k-invalid-msg" data-for="birth"></span> -->
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Gender :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <!-- <input type="text" class="form-control input-sm" id="gender" data-bind="value:ConsumersInfos.Gender" validationMessage="Please Fill Gender" > -->
-                    <select id="gender" data-bind="kendoDropDownList : { value:ConsumersInfos.Gender }" >
-                      <option value="MALE">Male</option>
-                      <option value="FEMALE">Female</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Date of Report :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="text" id="dateofreport" class="form-control input-sm" data-bind="value:DateOfReport" >
-                    <!-- <span class="k-invalid-msg" data-for="datereport"></span> -->
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Time of report :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  id="timeofreportinp" style="width: 100%;" type="text" class="form-control input-sm" data-bind="value:TimeOfReport" validationMessage="Please Fill Time Of Report" >
-                          <!-- <span class="k-invalid-msg" data-for="timereport"></span> -->
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">CIBIL Score :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="number" class="form-control input-sm" data-bind="value:CibilScore" validationMessage="Please Fill CIBIL Score"  />
-                  </div>
-                </div>
-                <!-- <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">CIBIL Transunion Score :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="text" class="form-control input-sm" data-bind="value:Score" validationMessage="Cibil Transunion Score readonly" readonly />
-                  </div>
-                </div> -->
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Scoring Factors :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <textarea rows="5" cols="50"  type="text" class="form-control input-sm" data-bind="value:ScoringFactor" validationMessage="Scoring Factors"></textarea>
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Income Tax ID Number (PAN) :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="text" class="form-control input-sm" data-bind="value:IncomeTaxIdNumber" validationMessage="Please Fill Income Tax ID Number (PAN)"  readonly/>
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Passport Number :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="text" class="form-control input-sm" data-bind="value:PassportNumber" validation Message="Please Fill Passport Number"  readonly/>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Email Address :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <textarea rows="5" cols="50"  type="text" class="form-control input-sm" id="totalenquiries" name="email" data-bind="value:EmailAddress" validationMessage="Please Fill Email Address" ></textarea>
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Total no of Accounts :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="number" class="form-control input-sm" id="totalnoaccount" name="totalnoaccount" data-bind="value:TotalAccount" validationMessage="Please Fill Total no of Accounts" >
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Total No of Overdue Accounts :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="number" class="form-control input-sm" id="totaloverdue" name="totaloverdue" data-bind="value:TotalOverdues" validationMessage="Please Fill Total No of Overdue Accounts " >
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">No of Zero Balance Account :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="number" class="form-control input-sm" id="nozeroaccount" name="nozeroaccount" data-bind="value:TotalZeroBalanceAcc" validationMessage="Please Fill No of Zero Balance Account " >
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">High Credit / Sanction Amount :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="number" class="form-control input-sm" id="highcredit" name="highcredit" data-bind="value:HighCreditSanctionAmount" validationMessage="Please Fill High Credit / Sanction Amount " >
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Current Balances :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="number" class="form-control input-sm" id="currentbalances" name="currentbalances" data-bind="value:CurrentBalance" validationMessage="Please Fill Current Balances " >
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Overdue Amount :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <input  type="number" class="form-control input-sm" id="overdueamount" name="overdueamount" data-bind="value:OverdueBalance" validationMessage="Please Fill Overdue Amount " >
-                  </div>
-                </div>
-                <div class="col-md-12 form-group">
-                  <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label">Telephone Type / Number :</label>
-                  </div>
-                  <div class="col-md-8 widthfield">
-                    <textarea rows="4" cols="50"  type="text" class="form-control input-sm" data-bind="value:Telephones" validationMessage="Telephone"></textarea>
-                  </div>
-                </div>
-              </div>
-              <!-- <div class="col-md-12">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="col-md-4 widthlable">
-                    <label for="Acc" class="control-label"> :</label>
+          <div class="row">
+            <div class="col-md-12">
+              <div data-bind="with:trans.CurrentData">
+                <div class="guarantorhide">
+                 <!--  <div class="panel-heading">
+                    <h4 class="no-margin">
+                      <span data-bind="text: toTitleCase(Name)"></span> / <span data-bind="text: toTitleCase(promotorText)"></span>
+                    </h4>
+                  </div> -->
+                  <div class="panel">
+                    <div class="panel-body">
+                        <div class="col-md-6">
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Consumer Name :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input type="text" class="form-control input-sm" id="consname" name="consname" data-bind="value:ConsumersInfos.ConsumerName" validationMessage="Please Fill Consumer Name"/>
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Date of Birth :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="text" id="dateofbirth" class="form-control input-sm" data-bind="value:ConsumersInfos.DateOfBirth" validationMessage="Please Fill Date Of Birth">
+                                     <!-- <span class="k-invalid-msg" data-for="birth"></span> -->
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Gender :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <!-- <input type="text" class="form-control input-sm" id="gender" data-bind="value:ConsumersInfos.Gender" validationMessage="Please Fill Gender" > -->
+                              <select id="gender" data-bind="kendoDropDownList : { value:ConsumersInfos.Gender }" >
+                                <option value="MALE">Male</option>
+                                <option value="FEMALE">Female</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Date of Report :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="text" id="dateofreport" class="form-control input-sm" data-bind="value:DateOfReport" >
+                              <!-- <span class="k-invalid-msg" data-for="datereport"></span> -->
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Time of report :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  id="timeofreportinp" style="width: 100%;" type="text" class="form-control input-sm" data-bind="value:TimeOfReport" validationMessage="Please Fill Time Of Report" >
+                                    <!-- <span class="k-invalid-msg" data-for="timereport"></span> -->
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">CIBIL Score :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="number" class="form-control input-sm" data-bind="value:CibilScore" validationMessage="Please Fill CIBIL Score"  />
+                            </div>
+                          </div>
+                          <!-- <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">CIBIL Transunion Score :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="text" class="form-control input-sm" data-bind="value:Score" validationMessage="Cibil Transunion Score readonly" readonly />
+                            </div>
+                          </div> -->
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Scoring Factors :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <textarea rows="5" cols="50"  type="text" class="form-control input-sm" data-bind="value:ScoringFactor" validationMessage="Scoring Factors"></textarea>
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Income Tax ID Number (PAN) :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="text" class="form-control input-sm" data-bind="value:IncomeTaxIdNumber" validationMessage="Please Fill Income Tax ID Number (PAN)"  readonly/>
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Passport Number :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="text" class="form-control input-sm" data-bind="value:PassportNumber" validation Message="Please Fill Passport Number"  readonly/>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Email Address :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <textarea rows="5" cols="50"  type="text" class="form-control input-sm" id="totalenquiries" name="email" data-bind="value:EmailAddress" validationMessage="Please Fill Email Address" ></textarea>
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Total no of Accounts :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="number" class="form-control input-sm" id="totalnoaccount" name="totalnoaccount" data-bind="value:TotalAccount" validationMessage="Please Fill Total no of Accounts" >
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Total No of Overdue Accounts :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="number" class="form-control input-sm" id="totaloverdue" name="totaloverdue" data-bind="value:TotalOverdues" validationMessage="Please Fill Total No of Overdue Accounts " >
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">No of Zero Balance Account :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="number" class="form-control input-sm" id="nozeroaccount" name="nozeroaccount" data-bind="value:TotalZeroBalanceAcc" validationMessage="Please Fill No of Zero Balance Account " >
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">High Credit / Sanction Amount :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="number" class="form-control input-sm" id="highcredit" name="highcredit" data-bind="value:HighCreditSanctionAmount" validationMessage="Please Fill High Credit / Sanction Amount " >
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Current Balances :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="number" class="form-control input-sm" id="currentbalances" name="currentbalances" data-bind="value:CurrentBalance" validationMessage="Please Fill Current Balances " >
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Overdue Amount :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <input  type="number" class="form-control input-sm" id="overdueamount" name="overdueamount" data-bind="value:OverdueBalance" validationMessage="Please Fill Overdue Amount " >
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Telephone Type / Number :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <textarea rows="4" cols="50"  type="text" class="form-control input-sm" data-bind="value:Telephones" validationMessage="Telephone"></textarea>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- <div class="col-md-12">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label"> :</label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <table class="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th class="header-bgcolor text-center" colspan="3">Address(ES)</th>
+                                  </tr>
+                                </thead>
+                                <thead>
+                                  <tr>
+                                    <th class="sub-bgcolor text-center">Address (With Pincode)</th>
+                                    <th class="sub-bgcolor text-center">Address Category</th>
+                                    <th class="sub-bgcolor text-center">Address Date Reported</th>
+                                  </tr>
+                                </thead>
+                                <tbody data-bind="foreach: Addresses">
+                                  <tr>
+                                    <td data-bind="text: AddressPinCode"></td>
+                                    <td data-bind="text: Category"></td>
+                                    <td data-bind="text: DateReportedText"></td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div> -->
+                    </div>
+                    <div class="panel-body">
+                      <div id="cibilAddress"></div>
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-12">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th class="header-bgcolor text-center" colspan="3">Address(ES)</th>
-                        </tr>
-                      </thead>
-                      <thead>
-                        <tr>
-                          <th class="sub-bgcolor text-center">Address (With Pincode)</th>
-                          <th class="sub-bgcolor text-center">Address Category</th>
-                          <th class="sub-bgcolor text-center">Address Date Reported</th>
-                        </tr>
-                      </thead>
-                      <tbody data-bind="foreach: Addresses">
-                        <tr>
-                          <td data-bind="text: AddressPinCode"></td>
-                          <td data-bind="text: Category"></td>
-                          <td data-bind="text: DateReportedText"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div> -->
+              </div>
+            </div>
+            <div class="modal-footer">
+          					<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
+          					<button id="saveme" onclick="trans.SaveCibil();" class="btn btn-sm btn-save">Save</button>
+          				</div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-					<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
-					<button id="saveme" onclick="trans.SaveCibil();" class="btn btn-sm btn-save">Save</button>
-				</div>
-</div>
-</div>
 				
 			</div>
 	</div>
-</div>s
+</div>

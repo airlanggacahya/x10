@@ -70,7 +70,7 @@ trans.RenderGrid = function(){
 			 attributes : { "style" : "text-align:center"  },
 			 template : function(x){
 				var date = moment(x.DateOfReport).format("DD-MMM-YYYY")
-				var time = moment(x.TimeOfReport).format("HH:MM:SS")
+				var time = moment(new Date(x.TimeOfReport)).utc().format("HH:mm:ss")
 		 		return date + " " + time
 		 	},
 		 },

@@ -653,14 +653,14 @@ var outstanding = function(param){
     _.each(param.BA, function(ba){
         var account = ba.DataBank[0].BankAccount;
         console.log(account)
-        if (account.FacilityType.indexOf("Fund Based") > -1 &&  account.FacilityType.indexOf("Non-Fund Based") == -1){
+        if ( account.FacilityType.indexOf("Non-Fund Based") == -1){
             account.NonFundBased.NatureOfFacility = "";
             account.NonFundBased.SanctionDate =  "";
             account.NonFundBased.SancLimit = "";
             account.NonFundBased.SecurityOfFB = "";
         }
 
-         if (account.FacilityType.indexOf("Fund Based") == -1 &&  account.FacilityType.indexOf("Non-Fund Based") > -1){
+         if (account.FacilityType.indexOf("Fund Based") == -1){
             account.FundBased.SancLimit = "";
             account.FundBased.SecurityOfFB = "";
             account.FundBased.SanctionDate =  null;

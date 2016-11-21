@@ -34,6 +34,7 @@ type FM_BalanceSheetFormDataValue struct {
 type FM_BalanceSheetFormData struct {
 	FieldAlias     string
 	FieldName      string
+	RealId         string
 	FieldOrder     int
 	Type           string
 	ValueType      string
@@ -78,6 +79,7 @@ type FormulaModel struct {
 
 type FieldTemporaryHolder struct {
 	FieldId     string
+	RealId      string
 	Type        string
 	FieldData   FM_BalanceSheetFormData
 	FormulaData RatioFormula
@@ -526,6 +528,7 @@ func (fm *FormulaModel) GetDataBalanceSheet() error {
 		row.FieldOrder = eachField.Order
 		row.SubSectionName = eachField.SubSection
 		row.SectionName = eachField.Section
+		row.RealId = eachField.Id
 		row.Values = make([]FM_BalanceSheetFormDataValue, 0)
 
 		for _, eachDate := range fm.BalanceSheet.AuditStatus {
@@ -597,6 +600,7 @@ func (fm *FormulaModel) GetFieldsInOrder() []FieldTemporaryHolder {
 
 	for _, eachData := range arr {
 		fieldIds = append(fieldIds, FieldTemporaryHolder{
+			RealId:    eachData.RealId,
 			FieldId:   eachData.FieldAlias,
 			Type:      "field",
 			FieldData: eachData,
@@ -932,6 +936,7 @@ func (fm *FormulaModel) CalculateBalanceSheet() (*FM_FormulaBalanceSheet, error)
 		for _, each := range fm.GetFieldsInOrder() {
 			newData := FM_BalanceSheetFormData{}
 			newData.FieldAlias = each.FieldId
+			newData.RealId = each.RealId
 			newData.FieldOrder = counter
 			counter++
 

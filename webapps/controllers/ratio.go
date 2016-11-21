@@ -350,6 +350,34 @@ func (c *RatioController) FetchRatioInputDataByCustomerIDNotConfirmed(customerID
 	return &results[0], nil
 }
 
+func (c *RatioController) FetchRatioInputDataByCustomerIDConfirmed(customerID string) (*RatioInputData, error) {
+	// query := toolkit.M{"where": dbox.And(dbox.Eq("customerid", customerID),dbox.Eq("confirmed", customerID))}
+	// csr, err := c.Ctx.Find(new(RatioInputData), query)
+	// defer csr.Close()
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	results := make([]RatioInputData, 0)
+	// err = csr.Fetch(&results, 0, false)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	param := strings.Split(customerID, "|")
+
+	err := new(DataConfirmController).GetDataConfirmed(param[0], param[1], new(RatioInputData).TableName(), &results)
+	if err != nil {
+		return nil, err
+
+	}
+
+	if (len(results)) == 0 {
+		return nil, errors.New("data not found")
+	}
+
+	return &results[0], nil
+}
+
 func (c *RatioController) FetchRatioInputDataByCustomerID(customerID string) (*RatioInputData, error) {
 	query := toolkit.M{"where": dbox.And(dbox.Eq("customerid", customerID), dbox.Eq("confirmed", true))}
 	csr, err := c.Ctx.Find(new(RatioInputData), query)
@@ -453,6 +481,27 @@ func (c *RatioController) GetRatioInputDataALL(k *knot.WebContext) interface{} {
 	}
 
 	rowData, err := c.FetchRatioInputDataByCustomerIDNotConfirmed(payload.CustomerID)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	res.SetData(rowData)
+	return res
+}
+
+func (c *RatioController) GetRatioInputDataALLConfirmed(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	res := new(toolkit.Result)
+
+	payload := NewRatioInputData()
+	if err := k.GetPayload(&payload); err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	rowData, err := c.FetchRatioInputDataByCustomerIDConfirmed(payload.CustomerID)
 	if err != nil {
 		res.SetError(err)
 		return res

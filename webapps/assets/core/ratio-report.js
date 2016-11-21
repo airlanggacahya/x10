@@ -4,6 +4,7 @@ var ratioReport = {}; var r = ratioReport;
 r.data = ko.observableArray([])
 r.dates = ko.observableArray([])
 r.fileType = ko.observable('')
+r.DataInput = ko.observableArray([]);
 r.isLoading = function (what) {
     $('.apx-loading')[what ? 'show' : 'hide']()
     $('.app-content')[what ? 'hide' : 'show']()
@@ -13,10 +14,26 @@ r.isLoading = function (what) {
         },1000);
     }
 }
+
+r.getDataMaster = function(callback){
+     var param = {}
+    param.customerId = r.customerId()
+      ajaxPost("/ratio/getratioinputdataallconfirmed", param, function (res) {
+            if (res.Data != null){
+              r.DataInput(res.Data)
+              if (typeof callback === 'function') {
+                  callback()
+              }
+            }
+          });
+}
+
 refreshFilter = function () {
     if (r.getCustomerId() === false) {
         return
     }
+
+  r.getDataMaster(function(){
 
 	r.data([])
 	r.dates([])
@@ -35,6 +52,9 @@ refreshFilter = function () {
 		}
 
     if(res.Data.AuditStatus.length > 0) {
+      var currentdata = _.map(r.DataInput().FormData,function(x) {  return x.FieldId.split("-")[1] });
+      res.Data.FormData = _.filter(res.Data.FormData,function(x){ return currentdata.indexOf(x.RealId) > -1 || x.RealId == "" });
+
       r.data(res.Data.FormData)
       r.dates(_.orderBy(res.Data.AuditStatus, 'Date', 'asc'))
       r.isLoading(false)
@@ -46,6 +66,9 @@ refreshFilter = function () {
       return
     }
 	})
+  });
+
+
 }
 r.render = function (a) {
   r.fileType(a)

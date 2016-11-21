@@ -351,9 +351,12 @@ r.showFormAdd = function () {
 	$('.modal-add-new').modal('show')
 
 	setTimeout(function(){
-		$("#aliasinp").keyup(function(e){
-			var node = $(this);
-    		node.val(node.val().replace(/[^a-z]/g,'') );
+		$("#aliasinp").keydown(function(e){
+			var charCode = (e.which) ? e.which : e.keyCode;
+		    if (!(charCode > 31 && (charCode < 48 || charCode > 57 ))  && charCode  != 8 || [189,187,219,220,221,222,186,188,191,190].indexOf(charCode) > -1) {
+		        return false;
+		    }
+		    return true;
 		});
 	},500)
 }
@@ -529,6 +532,7 @@ r.getMasterCustomer = function () {
 }
 
 r.clearSub = function(){
+	r.clearSelectOne();
 	setTimeout(function(){
 		var sec = r.newData.Section();
 		if(sec.toLowerCase().indexOf("profit") > -1){
@@ -551,3 +555,16 @@ $(function () {
 	$('.modal').appendTo($('body'))
 	$('.form-add').on('submit', r.saveNewData)
 });
+
+
+r.clearSelectOne = function(){
+	setTimeout(function(){
+		if(r.newData.Section() == "Select One"){
+		r.newData.Section("")
+		}
+
+		if(r.newData.SubSection() == "Select One"){
+			r.newData.SubSection("")
+		}
+	},100)
+}

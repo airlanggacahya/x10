@@ -179,7 +179,23 @@ apcom.sendCreditAnalyst = function(a, event){
 }
 
 apcom.saveSanction = function(){
-	apcom.sanction.Date(kendo.toString(new Date(apcom.Date()),"yyyy-MM-dd")+"T00:00:00.000Z")
+	apcom.sanction.Date(function(d){
+		var ret = function(param){
+			pelengkap = "T00:00:00.000Z"
+			return param == undefined ? ("1970-01-01" + pelengkap) : (kendo.toString(param, "yyyy-MM-dd") + pelengkap)
+		}
+
+		if ( Object.prototype.toString.call(d) === "[object Date]" ){
+		  	if ( isNaN( d.getTime() ) ){
+		  		return ret()
+		  	} else {
+		  		return ret(d)
+		  	}
+		} else{
+			return ret()
+		}
+	}(new Date(apcom.Date())))
+
 	apcom.sanction.Amount(parseFloat(apcom.LeftAmount()))
 	apcom.sanction.ROI(parseFloat(apcom.ROI()))
 	apcom.sanction.PF(apcom.PF())
@@ -202,7 +218,9 @@ apcom.saveSanction = function(){
 	}else{
 		swal("Warning", "Select Customer Id and Deal Number First", "warning");
 	}
-	
+	if(apcom.Date().toString().indexOf("1970") >-1){
+		apcom.Date("")
+	}
 }
 
 apcom.saveHold = function(){
@@ -476,3 +494,9 @@ apcom.LoadRiskInput = function(container, options){
 function getComments(tayp){
 	setTimeout(apcom.loadCommentData(tayp), 200)
 }
+
+$(document).ajaxComplete(function(){
+	if(apcom.Date() != undefined && apcom.Date().toString().indexOf("1970") >-1){
+		apcom.Date("")
+	}
+})

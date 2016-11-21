@@ -167,6 +167,7 @@ trans.showProm = function(Id){
 	    mask: "00:00:00",
 	    width:"100%"
 	});
+	
 }
 
 trans.loadAddress = function(data){

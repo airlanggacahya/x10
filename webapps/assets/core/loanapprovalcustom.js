@@ -37,7 +37,7 @@ loanapproval = {
     officemarketvalue : ko.observable(""),
     promotersarr : ko.observableArray([]),
     proposedlimitamount : ko.observable(""),
-    firstagreementdate : ko.observable(""),
+    firstagreementdate : ko.observable("-"),
     limittenor : ko.observable(""),
     existinglimitamount : ko.observable(""),
     recentagreementdate : ko.observable(""),
@@ -243,7 +243,7 @@ loanApproval.reset = function(){
     loanapproval.creditanalyst("")
     loanapproval.proposedlimitamount("")
     loanapproval.existingcustomer("")
-    loanapproval.firstagreementdate("")
+    loanapproval.firstagreementdate("-")
     loanapproval.limittenor("")
     loanapproval.existinglimitamount("")
     loanapproval.recentagreementdate("")
@@ -327,7 +327,7 @@ loanApproval.reset = function(){
     loanApproval.loanDetail.ifYesExistingLimitAmount(),
     loanApproval.loanDetail.existingROI(),
     loanApproval.loanDetail.existingProcessingFee(),
-    loanApproval.loanDetail.firstAgreementDate(),
+    loanApproval.loanDetail.firstAgreementDate("-"),
     loanApproval.loanDetail.vintageWithX10(),
     loanApproval.loanDetail.recentAgreementDate(),
     loanApproval.loanDetail.poBacked(),
@@ -354,9 +354,21 @@ loanApproval.setData = function(data){
         loanApproval.loanDetail.existingROI(data.AD[0].loandetails.existingroi + "%");
         loanApproval.loanDetail.limitTenor(data.AD[0].loandetails.limittenor);
         loanApproval.loanDetail.existingProcessingFee(data.AD[0].loandetails.existingpf + "%");
-        loanApproval.loanDetail.firstAgreementDate(moment(new Date(data.AD[0].loandetails.firstagreementdate)).format("DD/MM/YYYY"));
+
+        if(moment(new Date(data.AD[0].loandetails.firstagreementdate)).format("DD/MM/YYYY") == "01/01/1970") {
+            loanApproval.loanDetail.firstAgreementDate("-")
+        } else {
+            loanApproval.loanDetail.firstAgreementDate(moment(new Date(data.AD[0].loandetails.firstagreementdate)).format("DD/MM/YYYY"))
+        }
+
         loanApproval.loanDetail.vintageWithX10(data.AD[0].loandetails.vintagewithx10);
-        loanApproval.loanDetail.recentAgreementDate(moment(new Date(data.AD[0].loandetails.recenetagreementdate)).format("DD/MM/YYYY"));
+
+        if(moment(new Date(data.AD[0].loandetails.recenetagreementdate)).format("DD/MM/YYYY") == "01/01/1970") {
+            loanApproval.loanDetail.recentAgreementDate("-")
+        } else {
+            loanApproval.loanDetail.recentAgreementDate(moment(new Date(data.AD[0].loandetails.recenetagreementdate)).format("DD/MM/YYYY"))
+        }
+
         loanApproval.loanDetail.poBacked((data.AD[0].loandetails.ifbackedbypo) ? "Yes" : "No"),
         loanApproval.loanDetail.projectPOValue(data.AD[0].loandetails.povalueforbacktoback),
         loanApproval.loanDetail.expectedPayment(data.AD[0].loandetails.expectedpayment)
@@ -421,7 +433,7 @@ loanApproval.setData = function(data){
     if(data.CIBIL.length > 0) {
       loanApproval.ratingRef.Cibil.Rating(data.CIBIL[0].Rating)
     }
-    
+
     if(data.AD.length > 0)
         _.each(data.AD[0].vendordetails, function(vd){
           var highestAD = loanApproval.paymentTrack.highestAverageDelay;

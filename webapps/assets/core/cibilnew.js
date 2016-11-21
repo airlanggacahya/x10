@@ -371,6 +371,8 @@ r.setData = function() {
       // r.addDataReport(cibil.reportCibilList()[0]);
     }
 
+    //$(".swa").show()
+
     if(cibil.reportDraft().Status == 0) {
       swal({
         title: "Multiple reports available",
@@ -389,7 +391,7 @@ r.setData = function() {
       }).then(function() {
         $(".swal-custom").prev().attr("style","");
         checkEntryCibilReport()
-        //openreports();
+        openreports();
       }, function(dismiss) {
         if (dismiss === 'cancel') {
           openreports();
@@ -984,9 +986,11 @@ function backToMain(){
 }
 
 function refreshFilter(){
-   backToMain();
-   r.getData();
-   refreshcomment();
+  $(".swal-custom").hide()
+  $(".swal2-overlay").hide()
+  backToMain();
+  r.getData();
+  refreshcomment();
 }
 
 r.checkConfirm = function(){

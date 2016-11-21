@@ -116,52 +116,53 @@ trans.RenderGrid = function(){
 
 trans.showProm = function(Id){
 
-	var cur = _.find(trans.AllData(),function(x){
-		return x.Id == Id;
+	ajaxPost( "/cibiltransitory/getdatacibilpromotorcurrent" ,{"Id" : Id},function(res){
+			if(res.Data[0] !=undefined){
+			trans.CurrentData(ko.mapping.fromJS(res.Data[0]));
+
+			if(trans.CurrentData().StatusCibil() != 0){
+				swal("Warning","Selected Data Already Confirmed, Please Re Enter First","warning");
+				return;
+			}
+
+			dateOfBirth = moment(trans.CurrentData().ConsumersInfos.DateOfBirth()).format("DD-MMM-YYYY");
+			trans.CurrentData().ConsumersInfos.DateOfBirth(dateOfBirth)
+
+			DateOfReport = moment(trans.CurrentData().DateOfReport()).format("DD-MMM-YYYY");
+			trans.CurrentData().DateOfReport(DateOfReport)
+
+			TimeOfReport = moment(trans.CurrentData().TimeOfReport()).format("hh:mm:ss");
+			trans.CurrentData().TimeOfReport(TimeOfReport)
+
+			email = _.filter(trans.CurrentData().EmailAddress(),function(x){ return x != "" });
+			email = email.join("\n")
+
+			scorfac = _.filter(trans.CurrentData().ScoringFactor(),function(x){ return x != "" });
+			scorfac = scorfac.join("\n")
+
+			tele = _.map(trans.CurrentData().Telephones(),function(x){ return  x.Type() + " - " + x.Number()});
+			tele = tele.join("\n")
+
+			trans.CurrentData().ScoringFactor(scorfac)
+			trans.CurrentData().Telephones(tele)
+			trans.CurrentData().EmailAddress(email)
+
+			$(".modal-edit-bro").modal("show");
+
+			if($("#dateofreport").getKendoDatePicker() == undefined){
+				$("#dateofreport").kendoDatePicker({ format : "dd-MMM-yyyy" });
+				$("#dateofbirth").kendoDatePicker({ format : "dd-MMM-yyyy" });
+			}
+
+		}
+		$("#timeofreportinp").kendoMaskedTextBox({
+		    mask: "00:00:00",
+		    width:"100%"
+		});
 	})
-
-	if(cur !=undefined){
-		trans.CurrentData(ko.mapping.fromJS(cur));
-
-		if(trans.CurrentData().StatusCibil() != 0){
-			swal("Warning","Selected Data Already Confirmed, Please Re Enter First","warning");
-			return;
-		}
-
-		dateOfBirth = moment(trans.CurrentData().ConsumersInfos.DateOfBirth()).format("DD-MMM-YYYY");
-		trans.CurrentData().ConsumersInfos.DateOfBirth(dateOfBirth)
-
-		DateOfReport = moment(trans.CurrentData().DateOfReport()).format("DD-MMM-YYYY");
-		trans.CurrentData().DateOfReport(DateOfReport)
-
-		TimeOfReport = moment(trans.CurrentData().TimeOfReport()).format("hh:mm:ss");
-		trans.CurrentData().TimeOfReport(TimeOfReport)
-
-		email = _.filter(trans.CurrentData().EmailAddress(),function(x){ return x != "" });
-		email = email.join("\n")
-
-		scorfac = _.filter(trans.CurrentData().ScoringFactor(),function(x){ return x != "" });
-		scorfac = scorfac.join("\n")
-
-		tele = _.map(trans.CurrentData().Telephones(),function(x){ return  x.Type() + " - " + x.Number()});
-		tele = tele.join("\n")
-
-		trans.CurrentData().ScoringFactor(scorfac)
-		trans.CurrentData().Telephones(tele)
-		trans.CurrentData().EmailAddress(email)
-
-		$(".modal-edit-bro").modal("show");
-
-		if($("#dateofreport").getKendoDatePicker() == undefined){
-			$("#dateofreport").kendoDatePicker({ format : "dd-MMM-yyyy" });
-			$("#dateofbirth").kendoDatePicker({ format : "dd-MMM-yyyy" });
-		}
-
-	}
-	$("#timeofreportinp").kendoMaskedTextBox({
-	    mask: "00:00:00",
-	    width:"100%"
-	});
+	// var cur = _.find(trans.AllData(),function(x){
+	// 	return x.Id == Id;
+	// })
 }
 
 // trans.UpdateGrid = function(datas){

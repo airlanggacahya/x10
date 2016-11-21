@@ -9,7 +9,7 @@ import (
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
-	// "gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2/bson"
 	// "strconv"
 	// "strings"
 	// "time"
@@ -56,6 +56,41 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 	cibilIndividual := []ReportData{}
 	query := []*dbox.Filter{}
 	query = append(query, dbox.Ne("_id", ""))
+	csr, err := cn.NewQuery().
+		Where(dbox.And(query...)).
+		From("CibilReportPromotorFinal").
+		Cursor(nil)
+
+	defer csr.Close()
+
+	if err != nil {
+		res.SetError(err)
+	}
+
+	err = csr.Fetch(&cibilIndividual, 0, false)
+	if err != nil {
+		res.SetError(err)
+	}
+
+	csr.Close()
+	res.SetData(cibilIndividual)
+	return res
+}
+
+func (c *CibilTransitoryController) GetDataCibilPromotorCurrent(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	res := new(tk.Result)
+
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	p := tk.M{}
+	k.GetPayload(&p)
+
+	cibilIndividual := []ReportData{}
+	query := []*dbox.Filter{}
+	query = append(query, dbox.Eq("_id", bson.ObjectIdHex(p.GetString("Id"))))
 	csr, err := cn.NewQuery().
 		Where(dbox.And(query...)).
 		From("CibilReportPromotorFinal").

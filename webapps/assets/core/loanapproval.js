@@ -651,6 +651,11 @@ var outstanding = function(param){
 
     _.each(param.BA, function(ba){
         var account = ba.DataBank[0].BankAccount;
+        if (account.FaicilityType.indexOf("Fund Based") > -1 &&  account.FaicilityType.indexOf("Non-Fund Based") == -1){
+            account.NonFundBased.NatureOfFacility = "";
+            account.NonFundBased.SanctionDate = "";
+        }
+
         attr.topTable().push({
             bankName: ko.observable(account.BankName),
             amount: new base(account.FundBased.SancLimit, account.NonFundBased.SancLimit),

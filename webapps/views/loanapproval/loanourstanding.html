@@ -34,8 +34,8 @@
                      <td class="center" data-bind="text: natureOfFacility"></td>
                      <td data-bind="text: security.fb"></td>
                      <td data-bind="text: security.nfb"></td>
-                     <td class="center" data-bind="text: moment(sanctionDate.fb()).format('DD-MMM-YYYY')"></td>
-                     <td class="center" data-bind="text: moment(sanctionDate.nfb()).format('DD-MMM-YYYY')"></td>
+                     <td class="center" data-bind="text: (sanctionDate.fb() == '' || moment(sanctionDate.fb()).format('DD-MM-YYYY') == '01-01-1970' ? '' : moment(sanctionDate.fb()).format('DD-MMM-YYYY'))    "></td>
+                     <td class="center" data-bind="text:(sanctionDate.nfb() == '' || moment(sanctionDate.nfb()).format('DD-MM-YYYY') == '01-01-1970' ? '' : moment(sanctionDate.nfb()).format('DD-MMM-YYYY'))  "></td>
                   </tr>
                </tbody>
             </table>

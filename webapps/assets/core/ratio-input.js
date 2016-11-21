@@ -188,7 +188,7 @@ r.setData = function (data) {
     $('#selectDateProjected').find('input').data('kendoDatePicker').value( r.ProjectedDate() )
 }
 
-r.refresh = function () {
+r.refresh = function (callback) {
     if (r.getCustomerId() === false) {
         return
     }
@@ -280,6 +280,13 @@ r.refresh = function () {
             r.render()
 
             r.endisKendoDropDown(r.isFrozen())
+
+            setTimeout(function(){
+                if(typeof callback === 'function'){
+                    callback();
+                }
+            },1000);
+
         }, function () {
             r.isLoading(false)
         });
@@ -314,6 +321,37 @@ r.save = function () {
         r.isLoading(false)
     });
 }
+
+r.savereenter = function () {
+    if (r.getCustomerId() === false) {
+        return
+    }
+
+    r.isLoading(true)
+
+    var Id = ''
+    if(r.data().Id != undefined) {
+        Id = r.data().Id
+    }
+
+    var param = $.extend(true, { Id: Id }, r.getData());
+    app.ajaxPost("/ratio/saveratioinputdata", param, function (res) {
+        if (res.Message != '') {
+            r.clear()
+            sweetAlert("Oops...", res.Message, "error");
+            r.isLoading(false)
+            return;
+        } else {
+            // swal("Success", "Changes saved", "success");
+        }
+
+        r.isLoading(false)
+        // r.data().CustomerId = res.Data
+    }, function () {
+        r.isLoading(false)
+    });
+}
+
 r.getData = function () {
     if (r.getCustomerId() === false) {
         return
@@ -1336,15 +1374,16 @@ r.confirm = function () {
             } else {
                 if(r.confirmLabel() == "Re-Enter"){
                     swal("Please Edit / Enter Data", "", "success");
+                    r.refresh(r.savereenter);
                 }else{
                     swal("Successfully Confirmed", "", "success");
+                    r.refresh()
                 }
             }
 
             // r.setData(res.Data)
             // r.isConfirmed(r.data().Confirmed)
 
-            r.refresh()
             r.isLoading(false)
             // r.render()
         }, function () {

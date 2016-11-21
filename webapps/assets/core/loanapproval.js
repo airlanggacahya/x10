@@ -1,3 +1,4 @@
+
 model.Processing = ko.observable(true)
 var due={}
 
@@ -686,7 +687,12 @@ var companyBackground = function(param) {
 
         var pddt = new Date(param.accountsetupdetails.pdinfo.pddate);
         pddat = moment(pddt).format("DD/MM/YYYY");
-        attr.topTable.pdDate = pddat;
+
+        if(pddat == "01/01/1970"){
+            attr.topTable.pdDate = "-";
+        }else {
+            attr.topTable.pdDate = pddat;
+        }
 
         attr.topTable.pdPlace = param.accountsetupdetails.pdinfo.pdplace;
         attr.topTable.personMet = param.accountsetupdetails.pdinfo.personmet;
@@ -696,6 +702,7 @@ var companyBackground = function(param) {
 
         loanapproval.companybackground([]);
         loanapproval.companybackground.push(attr.topTable);
+
         rendercompbacground(loanapproval.companybackground());
 
         attr.mostLength = ko.computed(function() {
@@ -726,32 +733,32 @@ loanApproval.test = ko.observableArray([])
 loanApproval.checkValidation = function(data){
   if(data.Data.CP.length==0){
         Materialize.toast("Customer Profile Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.BA.length==0){
         Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.CIBIL.length==0){
         Materialize.toast("CIBIL Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.CIBILPROM.length==0){
         Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.AD.length==0){
         Materialize.toast("Account Details Data Not Confirmed", 5000);
-       
+
   }
 
   if(data.Data.RTR.length==0){
         Materialize.toast("RTR Data Not Confirmed", 5000);
-       
+
   }
 
   $("#toast-container").css("top","30%");
@@ -806,16 +813,27 @@ loanApproval.getReport = function(param){
             loanApproval.loanDetail.existingROI(data.Data.AD[0].loandetails.existingroi + "%");
             loanApproval.loanDetail.limitTenor(data.Data.AD[0].loandetails.limittenor);
             loanApproval.loanDetail.existingProcessingFee(data.Data.AD[0].loandetails.existingpf + "%");
-            loanApproval.loanDetail.firstAgreementDate(moment(new Date(data.Data.AD[0].loandetails.firstagreementdate)).format("DD/MM/YYYY"));
+
+            if(moment(new Date(data.Data.AD[0].loandetails.firstagreementdate)).format("DD/MM/YYYY") == "01/01/1970") {
+                loanApproval.loanDetail.firstAgreementDate("-")
+            } else {
+                loanApproval.loanDetail.firstAgreementDate(moment(new Date(data.Data.AD[0].loandetails.firstagreementdate)).format("DD/MM/YYYY"))
+            }
+
             loanApproval.loanDetail.vintageWithX10(data.Data.AD[0].loandetails.vintagewithx10);
-            loanApproval.loanDetail.recentAgreementDate(moment(new Date(data.Data.AD[0].loandetails.recenetagreementdate)).format("DD/MM/YYYY"));
+            if(moment(new Date(data.Data.AD[0].loandetails.recenetagreementdate)).format("DD/MM/YYYY") == "01/01/1970") {
+                loanApproval.loanDetail.recentAgreementDate("-")
+            } else {
+                loanApproval.loanDetail.recentAgreementDate(moment(new Date(data.Data.AD[0].loandetails.recenetagreementdate)).format("DD/MM/YYYY"))
+            }
+
             loanApproval.loanDetail.poBacked((data.Data.AD[0].loandetails.ifbackedbypo) ? "Yes" : "No"),
             loanApproval.loanDetail.projectPOValue(data.Data.AD[0].loandetails.povalueforbacktoback),
             loanApproval.loanDetail.expectedPayment(data.Data.AD[0].loandetails.expectedpayment)
 
             if(data.Data.CIBIL.length > 0)
             loanApproval.commercialCibil.assessment(data.Data.CIBIL[0].Rating);
-            
+
             ajaxPost( "/datacapturing/commentlist", {
                 CustomerId : filter().CustomerSearchVal(),
                 DealNo : filter().DealNumberSearchVal()
@@ -895,6 +913,12 @@ loanApproval.getReport = function(param){
             loanApproval.companyBackgroundData(
                 new companyBackground(data.Data.AD[0])
             );
+
+            if(typeof loanApproval.companyBackgroundData().topTable != "undefined" && typeof loanApproval.companyBackgroundData().topTable.pdDate != "undefined") {
+                if(loanApproval.companyBackgroundData().topTable.pdDate == "01/01/1970") {
+                    loanApproval.companyBackgroundData().topTable.pdDate = "-"
+                }
+            }
 
         if(data.Data.CP[0] != undefined)
             loanApproval.propertyOwnershipData(
@@ -1298,7 +1322,7 @@ due.getData = function(){
                 Materialize.toast("Due Diligence Data Not Confirmed", 5000);
                 return;
             }
-             
+
 
 			ajaxPost("/duediligence/getverificationcheck", {}, function(res){
 			   	$.each(res.Data, function(w, data){

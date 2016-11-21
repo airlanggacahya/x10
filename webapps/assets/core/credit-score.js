@@ -8,7 +8,7 @@ frp.showDetail = function (value) {
 	if (typeof value === 'undefined') {
 		return $('input[type=checkbox]').data('bootstrapSwitch').state()
 	}
-	
+
 	$('input[type=checkbox]').data('bootstrapSwitch').state(value)
 }
 frp.showDet = function(e){
@@ -18,7 +18,7 @@ frp.showDet = function(e){
 	setTimeout(function(){
 		var attr = $elem.closest("tr").attr("data-level1-id");
 		$('tr[data-level1-id="'+ attr +'"]').click();
-	},500) 
+	},500)
 }
 frp.render = function () {
 	var data = frp.data()
@@ -60,7 +60,7 @@ frp.render = function () {
 	}).map(function (d) {
 		return kendo.parseFloat(d.WeightScore)
 	}));
-	
+
 	var rating = (function () {
 		if (score <= 4.5) {
 			return "XFL-5"
@@ -76,9 +76,9 @@ frp.render = function () {
 	})()
 
 	var data = csc().datasource()
-	ajaxPost("/creditscorecard/savedata", { 
-		CustomerId: filter().CustomerSearchVal(), 
-		DealNo: filter().DealNumberSearchVal(), 
+	ajaxPost("/creditscorecard/savedata", {
+		CustomerId: filter().CustomerSearchVal(),
+		DealNo: filter().DealNumberSearchVal(),
 		Data: data,
 		FinalScore : kendo.toString(score, 'n2'),
 		FinalRating : rating
@@ -221,6 +221,7 @@ frp.render = function () {
 			.css('float', 'right')
 			.css('font-size','20px')
 			.css('color','#168846')
+			.addClass('button-hidden')
 			.attr("onclick","frp.showDet(this);")
 			.appendTo($keyTrRow1)
 		}
@@ -254,7 +255,7 @@ frp.render = function () {
 						value = kendo.toString(parseFloat(d.Value), 'n2')
 					}
 				}
-				
+
 				console.log('----', d.Name, d.Value, value)
 			}
 
@@ -535,7 +536,7 @@ frp.configureData = function () {
 			return
 		}
 
-		d.Expand = false		
+		d.Expand = false
 		d.Children.forEach(function (e) {
 			if (!e.hasOwnProperty('Children')) {
 				return
@@ -551,9 +552,12 @@ frp.configureData = function () {
 			})
 		})
 	})
-	
+
 	frp.data(data)
 }
+
+frp.customerName = ko.observable("")
+
 window.refreshFilter = function () {
 	frp.isLoading(true)
 	csc().datasource([])
@@ -570,6 +574,7 @@ window.refreshFilter = function () {
 	} else {
 		csc().getalldata(function () {
 			frp.configureData()
+
 			setTimeout(function () {
 				frp.isLoading(false)
 				frp.render()
@@ -578,4 +583,17 @@ window.refreshFilter = function () {
 	}
 
 	frp.showDetail(false);
+}
+
+frp.exportPDF = function() {
+	frp.showDetail(false)
+	frp.render()
+
+	$(".button-hidden").hide()
+
+	 kendo.drawing.drawDOM($(".form-container")).then(function(group){
+      kendo.drawing.pdf.saveAs(group, frp.customerName() + ".pdf");
+   });
+
+   $(".button-hidden").show()
 }

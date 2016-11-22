@@ -57,6 +57,21 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 
 	query := []*dbox.Filter{}
 	query = append(query, dbox.Ne("_id", ""))
+
+	key := param.GetString("searchkey")
+	if key != "" {
+		keys := []*dbox.Filter{}
+		keys = append(keys, dbox.Contains("FileName", key))
+		keys = append(keys, dbox.Contains("ConsumerInfo.ConsumerName", key))
+
+		custId := param.GetInt("additional")
+		if custId != -1 {
+			keys = append(keys, dbox.Eq("ConsumerInfo.CustomerId", custId))
+		}
+
+		query = append(query, dbox.Or(keys...))
+	}
+
 	csr, err := cn.NewQuery().
 		Where(dbox.And(query...)).
 		From("CibilReportPromotorFinal").
@@ -87,13 +102,10 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 
 	res.SetData(cibilIndividual)
 
-	ret := struct {
+	return struct {
 		Res   interface{}
 		Total int
 	}{res, cursor.Count()}
-
-	tk.Println(ret)
-	return ret
 }
 
 func (c *CibilTransitoryController) UpdateCibilPromotor(k *knot.WebContext) interface{} {

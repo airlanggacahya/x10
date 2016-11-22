@@ -3,14 +3,8 @@ trans.AllData = ko.observableArray([]);
 trans.CurrentData = ko.observable(null);
 
 trans.RenderGrid = function(){
-	var fil = $("#filter").val().toLowerCase();
-	var datas = _.filter(trans.AllData(),function(x){ 
-		return x.FileName.toLowerCase().indexOf(fil) > -1 || x.ConsumersInfos.ConsumerName.toLowerCase().indexOf(fil) > -1 || x.CustomerName.toLowerCase().indexOf(fil) > -1
-	});
-	if(fil==""){
-		datas = trans.AllData();
-	}
-
+	var searchKey = $("#filter").val().toLowerCase();
+	
 	$("#transgrid").html("");
 	$("#transgrid").kendoGrid({
 		dataSource: new kendo.data.DataSource({
@@ -18,7 +12,20 @@ trans.RenderGrid = function(){
 	            read: {
 	               	url: "/cibiltransitory/getdatacibilpromotor",
 	               	dataType: "json",
-	               	type: "POST"
+	               	type: "POST",
+	               	data: { 
+	               		searchkey: searchKey,
+	               		additional: function(){
+	               			if(searchKey != ""){
+		               			var foundCust = _.find(filter().CustomerSearchAll(), function(cust){
+									return cust.customer_name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1
+								})
+								return foundCust != undefined ? foundCust.customer_id : -1
+		               		} else {
+		               			return -1
+		               		}
+	               		}()
+	               	}
 	            }
 	        },
 	        schema: {
@@ -345,13 +352,6 @@ $(document).ready(function(){
 
 	$("#filter").keydown(function(){
 		setTimeout(function(){
-			// var fil = $("#filter").val().toLowerCase();
-			// 	var data = _.filter(trans.AllData(),function(x){ 
-			// 		return x.FileName.toLowerCase().indexOf(fil) > -1 || x.ConsumersInfos.ConsumerName.toLowerCase().indexOf(fil) > -1 || x.CustomerName.toLowerCase().indexOf(fil) > -1
-			// 	});
-			// if(fil==""){
-			// 	data = trans.AllData();
-			// }
 			trans.RenderGrid();
 		},500);  
 	})

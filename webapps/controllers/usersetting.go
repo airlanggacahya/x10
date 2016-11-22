@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	. "eaciit/x10/webapps/connection"
 	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
+	// "errors"
 	"strings"
-
+	// "fmt"
 	db "github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -172,4 +174,101 @@ func (c *UserSettingController) SaveData(k *knot.WebContext) interface{} {
 	}
 
 	return c.SetResultInfo(false, "data has been saved", nil)
+}
+
+func (c *UserSettingController) UpdateData(k *knot.WebContext) interface{} {
+	c.LoadBase(k)
+	k.Config.OutputType = knot.OutputJson
+	p := struct {
+		Id       string
+		UserName string
+		FullName string
+		Enable   bool
+		Email    string
+		Role     string
+		Password string
+	}{}
+	e := k.GetPayload(&p)
+
+	if e != nil {
+		return c.SetResultInfo(true, e.Error(), nil)
+	}
+
+	data := new(SysUserModel)
+	if p.Id != "" {
+		data.Id = bson.ObjectIdHex(p.Id)
+	} else {
+		data.Id = bson.NewObjectId()
+	}
+
+	data.Username = p.UserName
+	data.Fullname = p.FullName
+	data.Enable = p.Enable
+	data.Email = p.Email
+	data.Roles = p.Role
+	data.Password = p.Password
+
+	err := c.Ctx.Save(data)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	return c.SetResultInfo(false, "data has been saved", nil)
+}
+
+func (c *UserSettingController) ChangePassword(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	param := struct {
+		OldPassword     string
+		NewPassword     string
+		ConfirmPassword string
+	}{}
+
+	err := k.GetPayload(&param)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	con, err := GetConnection()
+	defer con.Close()
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	res := []SysUserModel{}
+
+	wher := []*db.Filter{}
+	onid := k.Session("userid")
+	wher = append(wher, db.Eq("_id", bson.ObjectIdHex(onid.(string))))
+
+	query, err := con.NewQuery().Select().From("SysUsers").Where(wher...).Cursor(nil)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	err = query.Fetch(&res, 0, false)
+	defer query.Close()
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	for _, val := range res {
+		if val.Password != helper.GetMD5Hash(param.OldPassword) {
+			return c.SetResultInfo(true, "Not Match Old Password", nil)
+		} else if param.NewPassword != param.ConfirmPassword {
+			return c.SetResultInfo(true, "Not Match New Password", nil)
+		} else {
+			val.Password = helper.GetMD5Hash(param.NewPassword)
+		}
+
+		onhas := map[string]interface{}{"data": val}
+		insert := con.NewQuery().From("SysUsers").SetConfig("multiexec", true).Save()
+		err = insert.Exec(onhas)
+
+		if err != nil {
+			return c.SetResultInfo(true, err.Error(), nil)
+		}
+	}
+	return c.SetResultInfo(false, "Data Save Successfully", nil)
 }

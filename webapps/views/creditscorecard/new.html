@@ -38,6 +38,7 @@
 
 
             frp.customerName(filter().CustomerSearchText())
+            frp.dealno(filter().DealNumberSearchVal())
 
             if(res.Data.FormulaModel.BankingAnalysisRawSummary.length == 0 || res.Data.FormulaModel.BankingAnalysisRawDetails.length == 0){
                 Materialize.toast("Banking Analysis Data Not Confirmed", 5000);

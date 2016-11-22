@@ -221,10 +221,11 @@ r.setData = function() {
   $(".confirmdate").text("")
   checkConfirmPromotors(r.customerProfile(), r.promotorsscore())
 
+    r.promotorParam([])
+
   $.each(r.customerProfile().DetailOfPromoters.Biodata, function(index, itemData){
     //define model
     //
-    r.promotorParam([])
 
     var promotorsStatusString =""
     if(itemData.Director) {
@@ -259,11 +260,18 @@ r.setData = function() {
         prom  = _.find(r.promotorsscore(),function(x){ return moment(x.DateOfBirth).format("DD-MM-YYYY") == moment(itemData.DateOfBirth).format("DD-MM-YYYY") } );
     }
 
-    if(itemData.cibilscore()==0 && prom!=undefined){
-      itemData.cibilscore(prom.CibilScore);
-      r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.cibilscore()})
-      savePromotors();
-    }
+    // if(itemData.cibilscore()==0 && prom!=undefined){
+    //   itemData.cibilscore(prom.CibilScore);
+    //   r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.cibilscore()})
+    //   savePromotors();
+    // }
+      if(prom!=undefined){
+        itemData.cibilscore(prom.CibilScore);
+      // if(itemData.cibilscore() !=  prom.CibilScore){
+         r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.cibilscore()})
+         // savePromotors();
+       // }
+      }                 
 
     if (prom!=undefined){
       // if (prom.EmailAddress.length > 0){
@@ -324,6 +332,7 @@ r.setData = function() {
       itemData.Phone = "";
       itemData.Address = "";
       itemData.Score = 0;//itemData.cibilscore();
+      itemData.CIBILScore = 0; //itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
       itemData.Passport = "";
       itemData.Dates = "";
       itemData.Times = "";
@@ -343,7 +352,7 @@ r.setData = function() {
       itemData.Addresses = ko.observableArray([]);
     }
 
-    if(r.minScore() == 0 || r.minScore() > itemData.Score) {
+   if( (r.minScore() > itemData.Score &&  itemData.Score != 0) || r.minScore() == 0 ) {
       r.minScore(itemData.Score)
     }
 
@@ -709,7 +718,11 @@ var updateConfirmPromotors = function(status){
   var param = {CustomerId: filter().CustomerSearchVal()}
   param["DealNo"] = filter().DealNumberSearchVal()
   param["StatusPromotor"] = status
-  var url = "/datacapturing/updateconfirmguarantor"
+  var url = "/datacapturing/updateconfirmguarantor";
+
+    if(status == 1){
+      savePromotors();
+     }
 
   ajaxPost(url, param, function(data) {
     if(data.success) {

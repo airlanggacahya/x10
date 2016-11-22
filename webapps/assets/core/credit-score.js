@@ -27,6 +27,17 @@ frp.render = function () {
 		.addClass('report')
 		.appendTo($container)
 
+	var $trCust = $('<tr />')
+		.appendTo($table)
+		.addClass('header customerrow')
+		.css('display', 'none')
+
+	$('<td />')
+		.html(""+frp.customerName().split("-")[1].trim() + " - " + frp.dealno() )
+		.addClass('header-bgcolor')
+		.appendTo($trCust)
+		.attr('colspan', 5)
+
 	var $trMeta1 = $('<tr />')
 		.appendTo($table)
 		.addClass('header')
@@ -557,6 +568,7 @@ frp.configureData = function () {
 }
 
 frp.customerName = ko.observable("")
+frp.dealno = ko.observable("")
 
 window.refreshFilter = function () {
 	frp.isLoading(true)
@@ -589,11 +601,15 @@ frp.exportPDF = function() {
 	frp.showDetail(false)
 	frp.render()
 
+	$(".fa-arrow-right").hide()
 	$(".button-hidden").hide()
+	$(".customerrow").show()
 
 	 kendo.drawing.drawDOM($(".form-container")).then(function(group){
       kendo.drawing.pdf.saveAs(group, frp.customerName() + ".pdf");
    });
 
+	$(".customerrow").hide()
    $(".button-hidden").show()
+   $(".fa-arrow-right").show()
 }

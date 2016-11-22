@@ -189,6 +189,10 @@ r.getData = function() {
           r.FreezeText("Freeze")
         }
       }
+
+      if(r.reportCibilList().length == 0){
+         r.ConfirmText("Confirm")
+      }
     }
   })
 }
@@ -736,7 +740,7 @@ var updateConfirmPromotors = function(status){
 
 var updateConfirmCibil = function(){
     if(r.reportCibilList().length == 0) {
-      swal("Warning","Data CIBIL not found","warning");
+      swal("Warning","CIBIL Data not found","warning");
     } else {
       var status = 1
       if(r.isConfirm() == 1) {
@@ -1143,6 +1147,10 @@ cibil.SendFreeze = function(what){
 }
 
 cibil.eventfreeze = function (){
+   if(r.reportCibilList().length == 0) {
+      swal("Warning","CIBIL Data not found","warning");
+      return;
+    }
   cibil.SendFreeze(!r.isFreeze());
 }
 

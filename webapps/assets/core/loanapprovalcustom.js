@@ -376,15 +376,23 @@ loanApproval.setData = function(data){
 
         //repayment
         if (data.AD[0].vendordetails.length > 0 ){
-            loanApproval.paymentTrack.maxdelaydays (data.AD[0].vendordetails[0].maxdelaydays);
-            loanApproval.paymentTrack.maxpaymentdays (data.AD[0].vendordetails[0].maxpaymentdays)
-            loanApproval.paymentTrack.averagedelaydays (data.AD[0].vendordetails[0].averagedelaydays);
-            loanApproval.paymentTrack.standarddeviation (data.AD[0].vendordetails[0].delaydaysstandarddeviation)
-            loanApproval.paymentTrack.averagepaymentdays (data.AD[0].vendordetails[0].averagepaymentdays)
-            loanApproval.paymentTrack.averagetransactionpaymentdelay (data.AD[0].vendordetails[0].avgtransactionweightedpaymentdelaydays);
-            loanApproval.paymentTrack.delaystandarddeviation (data.AD[0].vendordetails[0].delaydaysstandarddeviation);
-            loanApproval.paymentTrack.averagetransactionpayment (data.AD[0].vendordetails[0].avgtransactionweightedpaymentdays);
-            loanApproval.paymentTrack.daystandarddeviation (data.AD[0].vendordetails[0].standarddeviation);
+              var lead =  _.find(data.AD[0].vendordetails, function(xx){ return  xx.distributorname ==  data.AD[0].accountsetupdetails.leaddistributor});
+                console.log(lead,"----lead")
+            if(lead == undefined){
+                lead = data.AD[0].vendordetails[0];
+            }
+
+            loanApproval.paymentTrack.maxdelaydays (lead.maxdelaydays);
+            loanApproval.paymentTrack.maxpaymentdays (lead.maxpaymentdays)
+            loanApproval.paymentTrack.averagedelaydays (lead.averagedelaydays);
+            loanApproval.paymentTrack.standarddeviation (lead.standarddeviation)
+            loanApproval.paymentTrack.averagepaymentdays (lead.averagepaymentdays)
+            loanApproval.paymentTrack.averagetransactionpaymentdelay (lead.avgtransactionweightedpaymentdelaydays);
+            loanApproval.paymentTrack.delaystandarddeviation (lead.delaydaysstandarddeviation);
+            loanApproval.paymentTrack.averagetransactionpayment (lead.avgtransactionweightedpaymentdays);
+            loanApproval.paymentTrack.daystandarddeviation (lead.daysstandarddeviation);
+            loanApproval.paymentTrack.amountofbusiness(lead.amountofbusinessdone);
+
         }else{
             loanApproval.paymentTrack.maxdelaydays("-");
             loanApproval.paymentTrack.maxpaymentdays ("-");
@@ -395,6 +403,7 @@ loanApproval.setData = function(data){
             loanApproval.paymentTrack.delaystandarddeviation ("-");
             loanApproval.paymentTrack.averagetransactionpayment ("-");
             loanApproval.paymentTrack.daystandarddeviation ("-");
+            loanApproval.paymentTrack.amountofbusiness("-");
         }
 
         //borrower details

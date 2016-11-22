@@ -154,13 +154,13 @@ model.Fullname= ko.observable('{{.Fullname}}');
                           <input type="text" class="form-control input-sm" data-type="email" name="email" id="email" validationMessage="Email required" required="" data-bind="value:email"/>
                         </div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group" data-bind="visible: (!usersett.edit())">
                         <label for="inputPassword3" class="col-sm-3 form-control-label">Password<span class="mandatory">*</span></label>
                         <div class="col-sm-8">
                           <input type="password" style="height: 30px;" class="form-control input-sm" data-type="password" name="password" id="password" validationMessage="Password required" required="" data-bind="value:password"/>
                         </div>
                       </div>
-                      <div  class="form-group" id ="confirmPass">
+                      <div  class="form-group" id ="confirmPass" data-bind="visible: (!usersett.edit())">
                             <label for="inputPassword3" class="col-sm-3 form-control-label">Confirm Password<span class="mandatory">*</span></label>
                             <div class="col-sm-8">
                               <input type="password" style="height: 30px;" class="form-control" data-type="confirmPassword" name="confirmPassword" id="confirmPassword" validationMessage="Password required" required="" data-bind="value:confirmPassword"/>

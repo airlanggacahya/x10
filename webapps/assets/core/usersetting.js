@@ -2,7 +2,7 @@ var usersett = {
     //
     titleModel : ko.observable("New User"),
     loading : ko.observable(false),
-    edit : ko.observable(true),
+    edit : ko.observable(false),
     TitelFilter: ko.observable(" Hide Filter"),
     //var field
     Id : ko.observable(""),
@@ -20,6 +20,7 @@ var usersett = {
     //var List
     listUserName : ko.observableArray([]),
     listRole : ko.observableArray([]),
+
 };
 
 usersett.ClearField = function(){
@@ -99,7 +100,7 @@ usersett.UpdateData = function(){
         "Password": usersett.password(),
         "Role": dropRole.text(),
     }
-    var url = "/usersetting/savedata";
+    var url = "/usersetting/updatedata";
     var validator = $("#AddUserSetting").data("kendoValidator");
     if(validator==undefined){
        validator= $("#AddUserSetting").kendoValidator().data("kendoValidator");
@@ -107,6 +108,7 @@ usersett.UpdateData = function(){
     if (validator.validate()) {
         ajaxPost(url, param, function(res){
             if(res.IsError != true){
+                usersett.edit(false)
                 $("#userModal").modal("hide");
                 $("#nav-dex").css('z-index', 'none');
                 usersett.ClearField();
@@ -151,6 +153,7 @@ usersett.EditData = function(idUser){
 }
 
 usersett.Cancel = function(){
+    usersett.edit(false)
     $("#userModal").modal("hide");
     $("#nav-dex").css('z-index', 'none');
     usersett.ClearField();
@@ -353,6 +356,10 @@ usersett.panel_relocated = function(){
     $('.panel-fix').removeClass('contentfilter');
     $('.panel-yo').height(0);
   }
+}
+
+usersett.ChangePassword = function(){
+
 }
 $(document).ready(function () {
     // usersett.FilterStatus();

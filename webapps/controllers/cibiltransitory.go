@@ -9,7 +9,7 @@ import (
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
-	// "gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2/bson"
 	// "strconv"
 	// "strings"
 	// "time"
@@ -116,9 +116,13 @@ func (c *CibilTransitoryController) UpdateCibilPromotor(k *knot.WebContext) inte
 	p := ReportData{}
 	k.GetPayload(&p)
 
-	tk.Println(p)
+	if p.Id == "" {
+		p.Id = bson.NewObjectId()
+	}
 
-	c.Ctx.Save(&p)
+	if err := c.Ctx.Save(&p); err != nil {
+		res.SetError(err)
+	}
 
 	return res
 }

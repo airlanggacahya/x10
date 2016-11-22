@@ -4,7 +4,7 @@ trans.CurrentData = ko.observable(null);
 
 trans.RenderGrid = function(){
 	var searchKey = $("#filter").val().toLowerCase();
-	
+
 	$("#transgrid").html("");
 	$("#transgrid").kendoGrid({
 		dataSource: new kendo.data.DataSource({
@@ -40,7 +40,6 @@ trans.RenderGrid = function(){
 				 				return xi.customer_id == x.ConsumersInfos.CustomerId
 				 			})));
 				 	})
-
 	        		return {
 	        			Data: data.Res.Data,
 	        			Total: data.Total
@@ -115,54 +114,95 @@ trans.RenderGrid = function(){
 }
 
 trans.showProm = function(Id){
+	if (Id != undefined) {
+		var cur = _.find(trans.AllData(),function(x){
+			return x.Id == Id;
+		})
 
-	var cur = _.find(trans.AllData(),function(x){
-		return x.Id == Id;
-	})
+		if(cur != undefined){
+			trans.CurrentData(ko.mapping.fromJS(cur));
 
-	if(cur !=undefined){
-		trans.CurrentData(ko.mapping.fromJS(cur));
+			if(trans.CurrentData().StatusCibil() != 0){
+				swal("Warning","Selected Data Already Confirmed, Please Re Enter First","warning");
+				return;
+			}
 
-		if(trans.CurrentData().StatusCibil() != 0){
-			swal("Warning","Selected Data Already Confirmed, Please Re Enter First","warning");
-			return;
+			dateOfBirth = moment(trans.CurrentData().ConsumersInfos.DateOfBirth()).format("DD-MMM-YYYY");
+			trans.CurrentData().ConsumersInfos.DateOfBirth(dateOfBirth)
+
+			DateOfReport = moment(trans.CurrentData().DateOfReport()).format("DD-MMM-YYYY");
+			trans.CurrentData().DateOfReport(DateOfReport)
+
+			TimeOfReport = moment(trans.CurrentData().TimeOfReport()).format("hh:mm:ss");
+			trans.CurrentData().TimeOfReport(TimeOfReport)
+
+			email = _.filter(trans.CurrentData().EmailAddress(),function(x){ return x != "" });
+			email = email.join("\n")
+
+			scorfac = _.filter(trans.CurrentData().ScoringFactor(),function(x){ return x != "" });
+			scorfac = scorfac.join("\n")
+
+			tele = _.map(trans.CurrentData().Telephones(),function(x){ return  x.Type() + " - " + x.Number()});
+			tele = tele.join("\n")
+
+			trans.CurrentData().ScoringFactor(scorfac)
+			trans.CurrentData().Telephones(tele)
+			trans.CurrentData().EmailAddress(email)
+			trans.loadAddress(trans.CurrentData().AddressData())
 		}
+	} else {
+		trans.CurrentData({
+			ConsumersInfos: {
+				ConsumerName: ko.observableArray(),
+				CustomerId: ko.observableArray(),
+				DateOfBirth: ko.observableArray(),
+				DealNo: ko.observableArray(),
+				Gender: ko.observableArray(),
+			},
+			DateOfReport: ko.observable(),
+			TimeOfReport: ko.observable(),
+			CibilScore: ko.observable(),
+			ScoringFactor: ko.observable(),
+			IncomeTaxIdNumber: ko.observable(),
+			PassportNumber: ko.observable(),
+			EmailAddress: ko.observable(),
+			TotalAccount: ko.observable(),
+			TotalOverdues: ko.observable(),
+			TotalZeroBalanceAcc: ko.observable(),
+			HighCreditSanctionAmount: ko.observable(),
+			CurrentBalance: ko.observable(),
+			OverdueBalance: ko.observable(),
+			Telephones: ko.observableArray(),
+			AddressData: ko.observableArray([]),
+			Id: ko.observable(),
+			FilePath: ko.observable(),
+			FileName: ko.observable(),
+			ReportType: ko.observable(),
+			IsMatch: ko.observable(),
+			CibilScoreVersion: ko.observable(),
+			DateOpenedRecent: ko.observable(),
+			DateOpenedOldest: ko.observable(),
+			TotalEnquiries: ko.observable(),
+			TotalEnquiries30Days: ko.observable(),
+			RecentEnquiriesDates: ko.observable(),
+			StatusCibil: ko.observable(),
+			CustomerName: ko.observable()
+		})
 
-		dateOfBirth = moment(trans.CurrentData().ConsumersInfos.DateOfBirth()).format("DD-MMM-YYYY");
-		trans.CurrentData().ConsumersInfos.DateOfBirth(dateOfBirth)
-
-		DateOfReport = moment(trans.CurrentData().DateOfReport()).format("DD-MMM-YYYY");
-		trans.CurrentData().DateOfReport(DateOfReport)
-
-		TimeOfReport = moment(trans.CurrentData().TimeOfReport()).format("hh:mm:ss");
-		trans.CurrentData().TimeOfReport(TimeOfReport)
-
-		email = _.filter(trans.CurrentData().EmailAddress(),function(x){ return x != "" });
-		email = email.join("\n")
-
-		scorfac = _.filter(trans.CurrentData().ScoringFactor(),function(x){ return x != "" });
-		scorfac = scorfac.join("\n")
-
-		tele = _.map(trans.CurrentData().Telephones(),function(x){ return  x.Type() + " - " + x.Number()});
-		tele = tele.join("\n")
-
-		trans.CurrentData().ScoringFactor(scorfac)
-		trans.CurrentData().Telephones(tele)
-		trans.CurrentData().EmailAddress(email)
-
-		$(".modal-edit-bro").modal({
-			backdrop: 'static',
-    		keyboard: false,
-    		show: true
-		});
 		trans.loadAddress(trans.CurrentData().AddressData())
-
-		if($("#dateofreport").getKendoDatePicker() == undefined){
-			$("#dateofreport").kendoDatePicker({ format : "dd-MMM-yyyy" });
-			$("#dateofbirth").kendoDatePicker({ format : "dd-MMM-yyyy" });
-		}
-
 	}
+
+	$(".modal-edit-bro").modal({
+		backdrop: 'static',
+		keyboard: false,
+		show: true
+	});
+
+	if($("#dateofreport").getKendoDatePicker() == undefined){
+		$("#dateofreport").kendoDatePicker({ format : "dd-MMM-yyyy" });
+		$("#dateofbirth").kendoDatePicker({ format : "dd-MMM-yyyy" });
+	}
+
 	$("#timeofreportinp").kendoMaskedTextBox({
 	    mask: "00:00:00",
 	    width:"100%"
@@ -284,6 +324,12 @@ trans.SaveCibil = function(){
 	param.TotalOverdues = parseFloat(param.TotalOverdues);
 	param.TotalZeroBalanceAcc = parseFloat(param.TotalZeroBalanceAcc);
 	param.AddressData = [];
+
+	if (param.Id == undefined) {
+		param.ConsumersInfos.CustomerId = parseInt(filter().CustomerSearchVal())
+		param.ConsumersInfos.DealNo = filter().DealNumberSearchVal()
+	}
+
 	$.each(gridData, function(i, items){
 		var date = items.DateReported;
 		if( typeof date == "string"){
@@ -355,7 +401,7 @@ $(document).ready(function(){
 			trans.RenderGrid();
 		},500);  
 	})
-
+	$('body > div.app > div > div.div-container > div.col-md-12.col-sm-12.ez.panel-content > div > div:nth-child(2) > div > button').trigger('click')
 	
 })
 

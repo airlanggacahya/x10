@@ -24,19 +24,25 @@
 </style>
 <div class="col-md-12 col-sm-12 ez panel-content">
 	<div class="panel-body">
-	<div class="col-sm-6">
-		<div class="form-group">
-            <label class="col-sm-2 form-label">Search File</label>
-        	<div class="col-sm-8">
-    			<input type="text" id="filter" class="form-control input-sm" placeholder="Search Files..">
-        	</div>
-        	<div class="clearfix"></div>
+  	<div class="col-sm-6">
+  		<div class="form-group clearfix">
+        <label class="col-sm-2 form-label">Search File</label>
+      	
+        <div class="col-sm-8">
+  	      <input type="text" id="filter" class="form-control input-sm" placeholder="Search Files..">
+      	</div>
     	</div>
-    	<div class="clearfix"></div>
-	</div>
-	<div class="col-md-12">
-		<div id="transgrid"></div>
-	</div>
+  	</div>
+
+    <div class="col-sm-6">
+      <div class="form-group clearfix">
+        <button class="btn btn-sm btn-add pull-right" onclick="trans.showProm()">Add New</button>
+      </div>
+    </div>
+
+  	<div class="col-md-12">
+  		<div id="transgrid"></div>
+  	</div>
 	</div>
 </div>
 
@@ -52,14 +58,25 @@
             <div class="col-md-12">
               <div data-bind="with:trans.CurrentData">
                 <div class="guarantorhide">
-                 <!--  <div class="panel-heading">
-                    <h4 class="no-margin">
-                      <span data-bind="text: toTitleCase(Name)"></span> / <span data-bind="text: toTitleCase(promotorText)"></span>
-                    </h4>
-                  </div> -->
                   <div class="panel">
                     <div class="panel-body">
                         <div class="col-md-6">
+                          <div class="col-md-12 form-group" data-bind="if: Id != ''">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Customer :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <select class="filter-select filter-font pull-left" name="page" id="customer" data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Choose Customer', filter:'contains'}" ></select>
+                            </div>
+                          </div>
+                          <div class="col-md-12 form-group" data-bind="if: Id != ''">
+                            <div class="col-md-4 widthlable">
+                              <label for="Acc" class="control-label">Deal No :</label>
+                            </div>
+                            <div class="col-md-8 widthfield">
+                              <select class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:filter().DealNumberSearchList, value:filter().DealNumberSearchVal , optionLabel: 'Deal No' , filter:'contains'}"></select>
+                            </div>
+                          </div>
                           <div class="col-md-12 form-group">
                             <div class="col-md-4 widthlable">
                               <label for="Acc" class="control-label">Consumer Name :</label>
@@ -82,7 +99,6 @@
                               <label for="Acc" class="control-label">Gender :</label>
                             </div>
                             <div class="col-md-8 widthfield">
-                              <!-- <input type="text" class="form-control input-sm" id="gender" data-bind="value:ConsumersInfos.Gender" validationMessage="Please Fill Gender" > -->
                               <select id="gender" data-bind="kendoDropDownList : { value:ConsumersInfos.Gender }" >
                                 <option value="MALE">Male</option>
                                 <option value="FEMALE">Female</option>

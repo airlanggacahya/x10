@@ -149,7 +149,6 @@ func (c *DataCapturingController) UpdatePromotor(k *knot.WebContext) interface{}
 				}
 			}
 		}
-		tk.Println(results.DetailOfPromoters.Biodata[0].CIBILScore, "----------datax")
 		c.Ctx.Save(&results)
 
 		csr, e = cn.NewQuery().

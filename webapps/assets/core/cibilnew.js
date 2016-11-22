@@ -271,6 +271,8 @@ r.setData = function() {
          r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.cibilscore()})
          // savePromotors();
        // }
+      }else{
+         r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+0})
       }                 
 
     if (prom!=undefined){
@@ -720,12 +722,13 @@ var updateConfirmPromotors = function(status){
   param["StatusPromotor"] = status
   var url = "/datacapturing/updateconfirmguarantor";
 
-    if(status == 1){
-      savePromotors();
-     }
+    
 
   ajaxPost(url, param, function(data) {
     if(data.success) {
+        if(status == 1){
+        savePromotors();
+       }
       refreshFilter();
     }
   })

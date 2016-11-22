@@ -113,8 +113,9 @@
     $('.linkProperty').append(linkProperty)
   };
 
-	var companyBackground = function(param) {
-	    var attr = {
+	var companyBackground = function(param, res) {
+		console.log(param)
+			var attr = {
 	        topTable: {},
 	        topCustomersName: ko.observableArray(),
 	        topProducts: ko.observableArray()
@@ -128,7 +129,12 @@
 
 	    attr.topTable.pdPlace = param.accountsetupdetails.pdinfo.pdplace;
 	    attr.topTable.personMet = param.accountsetupdetails.pdinfo.personmet;
-	    attr.topTable.pdCustomerMargin = param.accountsetupdetails.pdinfo.customermargin + "%";
+	    if(!param.CMISNULL) {
+	    	attr.topTable.pdCustomerMargin = param.accountsetupdetails.pdinfo.customermargin + "%";
+	    } else {
+	    	attr.topTable.pdCustomerMargin = "-"
+	    }
+
 	    attr.topTable.pdRemarks = param.accountsetupdetails.pdinfo.pdremarks;
 	    attr.topTable.pdComments = param.accountsetupdetails.pdinfo.pdcomments;
 
@@ -1554,7 +1560,7 @@
 		            	</table>
 		            </div>
             	</div> -->
-            
+
 
 
 				<div class="panel-heading">
@@ -1580,7 +1586,7 @@
 		            </div>
 		            </div>
 				<div class="row">
-					
+
 					<div class="col-sm-6 no-padding">
 						<table class="custom-label table-bordered">
 			                <tr>

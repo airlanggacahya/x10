@@ -48,33 +48,52 @@ func (c *CibilTransitoryController) Default(k *knot.WebContext) interface{} {
 func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	res := new(tk.Result)
+	param := tk.M{}
+	k.GetForms(&param)
+	tk.Println(param)
 
 	cn, _ := GetConnection()
 	defer cn.Close()
 
-	cibilIndividual := []ReportData{}
 	query := []*dbox.Filter{}
 	query = append(query, dbox.Ne("_id", ""))
 	csr, err := cn.NewQuery().
 		Where(dbox.And(query...)).
 		From("CibilReportPromotorFinal").
+		Skip(param.GetInt("skip")).
+		Take(param.GetInt("take")).
 		Cursor(nil)
-
 	defer csr.Close()
 
+	res := new(tk.Result)
 	if err != nil {
 		res.SetError(err)
 	}
 
+	cibilIndividual := []ReportData{}
 	err = csr.Fetch(&cibilIndividual, 0, false)
 	if err != nil {
 		res.SetError(err)
 	}
 
-	csr.Close()
+	cursor, e := cn.NewQuery().
+		From("CibilReportPromotorFinal").
+		Cursor(nil)
+	defer cursor.Close()
+
+	if e != nil {
+		res.SetError(e)
+	}
+
 	res.SetData(cibilIndividual)
-	return res
+
+	ret := struct {
+		Res   interface{}
+		Total int
+	}{res, cursor.Count()}
+
+	tk.Println(ret)
+	return ret
 }
 
 func (c *CibilTransitoryController) UpdateCibilPromotor(k *knot.WebContext) interface{} {

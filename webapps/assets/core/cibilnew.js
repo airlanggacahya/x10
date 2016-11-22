@@ -352,7 +352,7 @@ r.setData = function() {
       itemData.Addresses = ko.observableArray([]);
     }
 
-   if( r.minScore() > itemData.Score &&  itemData.Score != 0 ) {
+   if( (r.minScore() > itemData.Score &&  itemData.Score != 0) || r.minScore() == 0 ) {
       r.minScore(itemData.Score)
     }
 

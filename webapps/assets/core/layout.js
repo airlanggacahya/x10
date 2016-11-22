@@ -6,6 +6,11 @@ vm.currentMenu = ko.observable('Dashboard');
 vm.currentTitle = ko.observable('Dashboard');
 vm.tabsubmenu = ko.observableArray([]);
 vm.viewtab = ko.observable(false);
+vm.Old = ko.observable("");
+vm.New = ko.observable("");
+vm.Confirm = ko.observable("");
+vm.OldMessage = ko.observable("")
+vm.NewMessage = ko.observable("")
 // vm.menu = ko.observableArray([
 // { title: 'Dashboard', icon: 'fa fa-home', href: "/dashboard/default", submenu: [] }, 
 // { title: 'Data Master', icon: 'fa fa-home', href:"/datamaster/default", submenu: [
@@ -186,6 +191,43 @@ vm.logout = function () {
 		});
 	});
 };
+
+vm.ChangePassword = function(){
+	$("#oldmessage").hide()
+	$("#newmessage").hide()
+	var param = {
+		OldPassword : $("#old").val(),
+		NewPassword : $("#new").val(),
+		ConfirmPassword: $("#conf").val(),
+	}
+	ajaxPost("/usersetting/changepassword", param, function(res){
+		console.log(res.Message)
+		if(res.IsError == false){
+			swal("Password Change Sucessfully", "", "success");
+			$("#modalPass").modal("hide")
+		}else{
+			if(res.Message.indexOf("Old") > -1){
+				$("#oldmessage")
+					.show()
+					.text(res.Message)
+					.css("color", "red")
+			}else{
+				$("#newmessage")
+					.show()
+					.text(res.Message)
+					.css("color", "red")
+			}
+		}
+
+	});
+}
+
+vm.showPas = function(){
+	$("#message").hide()
+	$("#old").val("");
+	$("#new").val("");
+	$("#conf").val("")
+}
 
 $(function () {
 	vm.prepareDropDownMenu();

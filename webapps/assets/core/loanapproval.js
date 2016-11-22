@@ -857,21 +857,29 @@ loanApproval.getReport = function(param){
             });
 
             if (data.Data.AD[0].vendordetails.length > 0 ){
-                loanapproval.maxdelaydays (data.Data.AD[0].vendordetails[0].maxdelaydays);
-                loanapproval.maxpaymentdays (data.Data.AD[0].vendordetails[0].maxpaymentdays)
-                loanapproval.standarddeviation (data.Data.AD[0].vendordetails[0].delaydaysstandarddeviation)
-                loanapproval.averagepaymentdays (data.Data.AD[0].vendordetails[0].averagepaymentdays)
-                loanapproval.averagetransactionpaymentdelay (data.Data.AD[0].vendordetails[0].avgtransactionweightedpaymentdelaydays);
-                loanapproval.delaystandarddeviation (data.Data.AD[0].vendordetails[0].delaydaysstandarddeviation);
-                loanapproval.averagetransactionpayment (data.Data.AD[0].vendordetails[0].avgtransactionweightedpaymentdays);
-                loanapproval.daystandarddeviation (data.Data.AD[0].vendordetails[0].standarddeviation);
-                var avgdelay = 0;
-                _.each(data.Data.AD[0].vendordetails, function(vd){
-                    var highestAD = loanApproval.paymentTrack.highestAverageDelay;
-                    highestAD(vd.averagedelaydays > highestAD() ? vd.averagedelaydays : highestAD());
-                    avgdelay += vd.averagedelaydays;
-                });
-                 loanapproval.averagedelaydays(avgdelay/data.Data.AD[0].vendordetails.length);
+                var lead =  _.find(data.Data.AD[0].vendordetails, function(xx){ return  xx.distributorname ==  data.Data.AD[0].accountsetupdetails.leaddistributor});
+                console.log(lead,"----lead")
+                if(lead == undefined){
+                    lead = data.Data.AD[0].vendordetails[0];
+                }
+
+                loanapproval.maxdelaydays (lead.maxdelaydays);
+                loanapproval.maxpaymentdays (lead.maxpaymentdays)
+                loanapproval.standarddeviation (lead.standarddeviation)
+                loanapproval.averagepaymentdays (lead.averagepaymentdays)
+                loanapproval.averagetransactionpaymentdelay (lead.avgtransactionweightedpaymentdelaydays);
+                loanapproval.delaystandarddeviation (lead.delaydaysstandarddeviation);
+                loanapproval.averagetransactionpayment (lead.avgtransactionweightedpaymentdays);
+                loanapproval.daystandarddeviation (lead.daysstandarddeviation);
+                // var avgdelay = 0;
+                // _.each(data.Data.AD[0].vendordetails, function(vd){
+                //     var highestAD = loanApproval.paymentTrack.highestAverageDelay;
+                //     highestAD(vd.averagedelaydays > highestAD() ? vd.averagedelaydays : highestAD());
+                //     avgdelay += vd.averagedelaydays;
+                // });
+                 loanapproval.averagedelaydays(lead.averagedelaydays);
+                loanapproval.amountofbusiness(lead.amountofbusinessdone);
+
             }else{
                 loanapproval.maxdelaydays("-");
                 loanapproval.maxpaymentdays ("-");
@@ -882,6 +890,8 @@ loanApproval.getReport = function(param){
                 loanapproval.delaystandarddeviation ("-");
                 loanapproval.averagetransactionpayment ("-");
                 loanapproval.daystandarddeviation ("-");
+                loanapproval.amountofbusiness("-");
+
             }
 
             loanapproval.stocksell(data.Data.AD[0].customerbussinesmix.stocksellin + "%");
@@ -898,10 +908,6 @@ loanApproval.getReport = function(param){
               loanapproval.distributorList(data.Data.AD[0].distributormix.Data)
             } else {
               loanapproval.distributorList([{Label : "", Result: ""}])
-            }
-
-            if(data.Data.AD[0].vendordetails[0] != undefined) {
-                loanapproval.amountofbusiness(data.Data.AD[0].vendordetails[0].amountofbusinessdone);
             }
 
             loanapproval.expansionplan (data.Data.AD[0].borrowerdetails.expansionplans);

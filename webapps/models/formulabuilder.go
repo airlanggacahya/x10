@@ -1194,6 +1194,7 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 			}
 
 			outputFloat, _ := strconv.ParseFloat(toolkit.Sprintf("%v", output), 64)
+			toolkit.Println(output, "===output")
 			switch eachCategory.Operator {
 			case "equal":
 				if eachCategory.IsValue1String() {

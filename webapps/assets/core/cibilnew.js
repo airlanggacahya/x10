@@ -189,6 +189,10 @@ r.getData = function() {
           r.FreezeText("Freeze")
         }
       }
+
+      if(r.reportCibilList().length == 0){
+         r.ConfirmText("Confirm")
+      }
     }
   })
 }
@@ -271,6 +275,8 @@ r.setData = function() {
          r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.cibilscore()})
          // savePromotors();
        // }
+      }else{
+         r.promotorParam.push({CustomerId: r.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+0})
       }                 
 
     if (prom!=undefined){
@@ -720,12 +726,13 @@ var updateConfirmPromotors = function(status){
   param["StatusPromotor"] = status
   var url = "/datacapturing/updateconfirmguarantor";
 
-    if(status == 1){
-      savePromotors();
-     }
+    
 
   ajaxPost(url, param, function(data) {
     if(data.success) {
+        if(status == 1){
+        savePromotors();
+       }
       refreshFilter();
     }
   })
@@ -733,7 +740,7 @@ var updateConfirmPromotors = function(status){
 
 var updateConfirmCibil = function(){
     if(r.reportCibilList().length == 0) {
-      swal("Warning","Data CIBIL not found","warning");
+      swal("Warning","CIBIL Data not found","warning");
     } else {
       var status = 1
       if(r.isConfirm() == 1) {
@@ -1140,6 +1147,10 @@ cibil.SendFreeze = function(what){
 }
 
 cibil.eventfreeze = function (){
+   if(r.reportCibilList().length == 0) {
+      swal("Warning","CIBIL Data not found","warning");
+      return;
+    }
   cibil.SendFreeze(!r.isFreeze());
 }
 

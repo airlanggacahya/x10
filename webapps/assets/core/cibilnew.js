@@ -324,6 +324,7 @@ r.setData = function() {
       itemData.Phone = "";
       itemData.Address = "";
       itemData.Score = 0;//itemData.cibilscore();
+      itemData.CIBILScore = 0; //itemData.cibilscore() <= 0 ? prom.CibilScore : itemData.cibilscore();
       itemData.Passport = "";
       itemData.Dates = "";
       itemData.Times = "";

@@ -193,3 +193,28 @@ func (c *NormMasterController) GetNormData(k *knot.WebContext) interface{} {
 	res.SetData(bs)
 	return res
 }
+
+func (c *NormMasterController) SetFreeze(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	res := new(toolkit.Result)
+
+	payload := struct {
+		IsFreeze bool
+	}{}
+	if err := k.GetPayload(&payload); err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	model := new(NormMaster)
+	norm, err := model.GetData()
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	result := model.SetFreeze(norm, payload.IsFreeze)
+	res.SetData(result)
+	return res
+}

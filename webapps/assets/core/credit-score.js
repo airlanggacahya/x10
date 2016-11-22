@@ -27,6 +27,17 @@ frp.render = function () {
 		.addClass('report')
 		.appendTo($container)
 
+	var $trCust = $('<tr />')
+		.appendTo($table)
+		.addClass('header customerrow')
+		.css('display', 'none')
+
+	$('<td />')
+		.html("CUSTOMER: "+frp.customerName())
+		.addClass('header-bgcolor')
+		.appendTo($trCust)
+		.attr('colspan', 5)
+
 	var $trMeta1 = $('<tr />')
 		.appendTo($table)
 		.addClass('header')
@@ -590,10 +601,12 @@ frp.exportPDF = function() {
 	frp.render()
 
 	$(".button-hidden").hide()
+	$(".customerrow").show()
 
 	 kendo.drawing.drawDOM($(".form-container")).then(function(group){
       kendo.drawing.pdf.saveAs(group, frp.customerName() + ".pdf");
    });
 
+	 $(".customerrow").hide()
    $(".button-hidden").show()
 }

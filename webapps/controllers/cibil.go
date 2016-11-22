@@ -149,7 +149,37 @@ func (c *DataCapturingController) UpdatePromotor(k *knot.WebContext) interface{}
 				}
 			}
 		}
+		tk.Println(results.DetailOfPromoters.Biodata[0].CIBILScore, "----------datax")
 		c.Ctx.Save(&results)
+
+		csr, e = cn.NewQuery().
+			Where(query...).
+			From("CustomerProfileConfirmed").
+			Cursor(nil)
+
+		if e != nil {
+			return CreateResult(false, nil, e.Error())
+		} else if csr.Count() > 0 {
+			resultsconf := CustomerProfiles{}
+			err = csr.Fetch(&resultsconf, 1, true)
+			if err != nil {
+				return CreateResult(false, nil, e.Error())
+			} else if csr == nil {
+				return CreateResult(false, nil, "No data found !")
+			}
+
+			for index, _ := range resultsconf.DetailOfPromoters.Biodata {
+				for index1, _ := range param {
+					if param[index1].FatherName == resultsconf.DetailOfPromoters.Biodata[index].FatherName {
+						resultsconf.DetailOfPromoters.Biodata[index].CIBILScore, _ = strconv.ParseFloat(strings.TrimSpace(param[index1].Scors), 64)
+						break
+					}
+				}
+			}
+			if err := new(DataConfirmController).SaveDataConfirmed(strings.Split(param[0].CustomerId, "|")[0], param[0].DealNo, "CustomerProfile", &resultsconf, true); err != nil {
+				return CreateResult(false, nil, err.Error())
+			}
+		}
 
 		return results
 	}

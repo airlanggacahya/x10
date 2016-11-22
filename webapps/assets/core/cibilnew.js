@@ -221,10 +221,11 @@ r.setData = function() {
   $(".confirmdate").text("")
   checkConfirmPromotors(r.customerProfile(), r.promotorsscore())
 
+    r.promotorParam([])
+
   $.each(r.customerProfile().DetailOfPromoters.Biodata, function(index, itemData){
     //define model
     //
-    r.promotorParam([])
 
     var promotorsStatusString =""
     if(itemData.Director) {

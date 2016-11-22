@@ -705,7 +705,12 @@ var companyBackground = function(param) {
 
         attr.topTable.pdPlace = param.accountsetupdetails.pdinfo.pdplace;
         attr.topTable.personMet = param.accountsetupdetails.pdinfo.personmet;
-        attr.topTable.pdCustomerMargin = param.accountsetupdetails.pdinfo.customermargin + "%";
+
+        if(!param.CMISNULL) {
+            attr.topTable.pdCustomerMargin = param.accountsetupdetails.pdinfo.customermargin + "%";
+        } else {
+            attr.topTable.pdCustomerMargin = "-"
+        }
         attr.topTable.pdRemarks = param.accountsetupdetails.pdinfo.pdremarks;
         attr.topTable.pdComments = param.accountsetupdetails.pdinfo.pdcomments;
 
@@ -773,9 +778,10 @@ loanApproval.checkValidation = function(data){
   $("#toast-container").css("top","30%");
 }
 
+allData = ko.observableArray()
+
 loanApproval.getReport = function(param){
     ajaxPost("/loanapproval/getalldata", param, function(data){
-
         loanApproval.checkValidation(data);
 
         if (data.Data.CP[0] != undefined){
@@ -997,7 +1003,12 @@ var createreferencecheckgrid = function(res){
     });
 }
 
+
 var rendercompbacground = function(res){
+    if(res[0].pdDate == "01/01/1970") {
+        res[0].pdDate = "-"
+    }
+
     $("#compbackgrid").html("");
     $("#compbackgrid").kendoGrid({
         dataSource : {

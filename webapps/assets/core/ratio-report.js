@@ -484,7 +484,7 @@ r.addScrollBottom = function (container) {
       var rightmen = ($(window).width() - 1270 ) + "px"
     }
     
-    var arrowRight = toolkit.newEl('div').addClass('scroll-grid-bottom arrow arrow-right viewscrollfix btn-add').html('<i style="padding:5px" class="fa fa-arrow-right"></i>').appendTo(container.find(".k-grid-content")).css("right",rightmen);
+    var arrowRight = toolkit.newEl('div').addClass('scroll-grid-bottom arrow arrow-right viewscrollfix btn-add').html('<i style="padding:5px" class="fa fa-arrow-right"></i>').appendTo(container.find(".k-grid-content")).css("float","right");
 
     toolkit.newEl('div').addClass('content-grid-bottom')
     .html("&nbsp;").appendTo(tableContent);

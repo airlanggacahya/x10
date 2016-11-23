@@ -494,6 +494,14 @@ app.formatnum =  function(number, decimalPlace) {
     return result;
 }
 
+app.checkNanOrInfinity = function(oriValue, changeValue) {
+    if(!isFinite(oriValue) || isNaN(oriValue)) {
+        return changeValue
+    }
+
+    return oriValue
+}
+
 app.masterRTR = [
     { alias: 'TotalObligationPOS', name: 'Total Obligations - POS (Rs lacs)' },
     { alias: 'TotalObligationEMI', name: 'Total Obligations - EMI (Rs)' },

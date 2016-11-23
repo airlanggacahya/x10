@@ -128,8 +128,8 @@ function numChange(){
     try{
         var sanc = parseFloat($("#sanclimit").val());
         var roi = parseFloat($("#roiperannum").val());
-        var res = sanc*(roi/100)/12;
-        var sanc1 = parseFloat(Math.round(res * 100) / 100).toFixed(2);
+        var res = app.checkNanOrInfinity((sanc*(roi/100)/12), 0);
+        var sanc1 = app.checkNanOrInfinity((parseFloat(Math.round(res * 100) / 100).toFixed(2)), 0);
         $("#interestpermonth").val(sanc1);
     }
     catch(e){
@@ -288,14 +288,14 @@ var DrawDataBank = function(id){
 
                 }
 
-                totalGrid.totalOWReturn(totalGrid.totalOWCheque()/totalGrid.totalNoCredit())
-                totalGrid.totalIWReturn(totalGrid.totalIWCheque()/totalGrid.totalNoDebit())
-                totalGrid.totalDRRatio(totalGrid.totalDebit()/totalGrid.totalCredit())
+                totalGrid.totalOWReturn(app.checkNanOrInfinity((totalGrid.totalOWCheque()/totalGrid.totalNoCredit()), 0))
+                totalGrid.totalIWReturn(app.checkNanOrInfinity((totalGrid.totalIWCheque()/totalGrid.totalNoDebit()), 0))
+                totalGrid.totalDRRatio(app.checkNanOrInfinity((totalGrid.totalDebit()/totalGrid.totalCredit()), 0))
 
                 createBankingGrid(res.data.Summary,multiplyer*100);
             }else if(res.data.AccountDetail.length!=0){
                 var multiplyer = 0
-                var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100
+                var customermargin = app.checkNanOrInfinity((res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100), 0)
                 var CMISNULL = res.data.AccountDetail[0].CMISNULL
                     if(!CMISNULL) {
                         multiplyer = customermargin
@@ -587,21 +587,21 @@ var RenderGridDataBank = function(id, res){
 
             var averageReceipt = {}
 
-            averageReceipt.creditTotal = _.sumBy(data, function (d) {
+            averageReceipt.creditTotal = app.checkNanOrInfinity((_.sumBy(data, function (d) {
                 return d.CreditNonCash + d.CreditCash;
-            }) / (data.length == 0 ? 1 : data.length)
+            }) / (data.length == 0 ? 1 : data.length)), 0)
 
-            averageReceipt.debitTotal = _.sumBy(data, function (d) {
+            averageReceipt.debitTotal = app.checkNanOrInfinity((_.sumBy(data, function (d) {
                 return d.DebitNonCash + d.DebitCash;
-            }) / (data.length == 0 ? 1 : data.length)
+            }) / (data.length == 0 ? 1 : data.length)),0)
 
             var BlonLength = _.filter(data,function(x){return x.AvgBalon > 0});
             BlonLength = BlonLength == undefined ? 0 : BlonLength.length;
-            averageReceipt.avgBlon = _.sumBy(data, 'AvgBalon')
-                / (BlonLength == 0 ? 1 : BlonLength)
+            averageReceipt.avgBlon = app.checkNanOrInfinity((_.sumBy(data, 'AvgBalon')
+                / (BlonLength == 0 ? 1 : BlonLength)),0)
 
             averageReceipt.utilPerMonth = _.max(data.map(function (d) {
-                var result = d.AvgBalon / d.OdCcLimit
+                var result = app.checkNanOrInfinity((d.AvgBalon / d.OdCcLimit), 0)
 
                 if(result == Infinity){
                     return 0
@@ -618,7 +618,7 @@ var RenderGridDataBank = function(id, res){
                 }
             }
 
-            averageReceipt.actualInterestPaid = _.sumBy(data, 'ActualInterestPaid') / (pembagi == 0 ? 1 : pembagi) //(data.length == 0 ? 1 : data.length)
+            averageReceipt.actualInterestPaid = app.checkNanOrInfinity((_.sumBy(data, 'ActualInterestPaid') / (pembagi == 0 ? 1 : pembagi)),0) //(data.length == 0 ? 1 : data.length)
 
             averageReceipt.noOfDebit = _.sumBy(data, 'NoOfDebit')
             averageReceipt.noOfCredit = _.sumBy(data, 'NoOfCredit')
@@ -715,21 +715,21 @@ var RenderGridDataBank = function(id, res){
 
             var averageReceipt = {}
 
-            averageReceipt.creditTotal = _.sumBy(data, function (d) {
+            averageReceipt.creditTotal = app.checkNanOrInfinity((_.sumBy(data, function (d) {
                 return d.CreditNonCash + d.CreditCash;
-            }) / (data.length == 0 ? 1 : data.length)
+            }) / (data.length == 0 ? 1 : data.length)),0)
 
-            averageReceipt.debitTotal = _.sumBy(data, function (d) {
+            averageReceipt.debitTotal = app.checkNanOrInfinity((_.sumBy(data, function (d) {
                 return d.DebitNonCash + d.DebitCash;
-            }) / (data.length == 0 ? 1 : data.length)
+            }) / (data.length == 0 ? 1 : data.length)),0)
 
             var BlonLength = _.filter(data,function(x){return x.AvgBalon > 0});
             BlonLength = BlonLength == undefined ? 0 : BlonLength.length;
-            averageReceipt.avgBlon = _.sumBy(data, 'AvgBalon')
-                / (BlonLength == 0 ? 1 : BlonLength)
+            averageReceipt.avgBlon = app.checkNanOrInfinity((_.sumBy(data, 'AvgBalon')
+                / (BlonLength == 0 ? 1 : BlonLength)),0)
 
-            averageReceipt.utilPerMonth = _.max(data.map(function (d) {
-                var result = d.AvgBalon / d.OdCcLimit
+            averageReceipt.utilPerMonth = app.checkNanOrInfinity((_.max(data.map(function (d) {
+                var result = app.checkNanOrInfinity((d.AvgBalon / d.OdCcLimit),0)
 
                 if(result == Infinity){
                     return 0
@@ -737,10 +737,10 @@ var RenderGridDataBank = function(id, res){
                     return result
                 }
 
-            }))
+            }))),0)
 
-            averageReceipt.actualInterestPaid = _.sumBy(data, 'ActualInterestPaid')
-                / (data.length == 0 ? 1 : data.length)
+            averageReceipt.actualInterestPaid = app.checkNanOrInfinity((_.sumBy(data, 'ActualInterestPaid')
+                / (data.length == 0 ? 1 : data.length)),0)
 
             averageReceipt.noOfDebit = _.sumBy(data, 'NoOfDebit')
             averageReceipt.noOfCredit = _.sumBy(data, 'NoOfCredit')
@@ -2045,7 +2045,7 @@ var editBankData = function(index){
             $('#acholder').val(databank()[index].DataBank[0].BankAccount.FundBased.AccountHolder)
             $('#sanclimit').data('kendoNumericTextBox').value(databank()[index].DataBank[0].BankAccount.FundBased.SancLimit)
             $('#roiperannum').data('kendoNumericTextBox').value(databank()[index].DataBank[0].BankAccount.FundBased.ROI)
-            var sanc1 = parseFloat(Math.round(databank()[index].DataBank[0].BankAccount.FundBased.InterestPerMonth * 100) / 100).toFixed(2);
+            var sanc1 = app.checkNanOrInfinity((parseFloat(Math.round(databank()[index].DataBank[0].BankAccount.FundBased.InterestPerMonth * 100) / 100).toFixed(2)),0);
             $('#interestpermonth').val(sanc1)
             if(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate.indexOf("1970") > -1){
                 $('#fbsanctiondate').val("")
@@ -2664,10 +2664,8 @@ var generateAML = function(data){
     _.each(res,function(e,i){
         e.Month = moment(e.Month.split("T")[0]).format("MMM-YYYY");
         var dt = _.find(datasum,function(x){ return x.Month == e.Month ;});
-        e.CreditCash = parseInt(e.CreditCash / dt.TotalCredit*100);
-        e.CreditCash = isFinite(e.CreditCash) ? e.CreditCash : 0;
-        e.DebitCash = parseInt(e.DebitCash / dt.TotalDebit*100);
-        e.DebitCash = isFinite(e.DebitCash) ? e.DebitCash : 0;
+        e.CreditCash = app.checkNanOrInfinity((parseInt(e.CreditCash / dt.TotalCredit*100)),0);
+        e.DebitCash = app.checkNanOrInfinity((parseInt(e.DebitCash / dt.TotalDebit*100)),0);
     });
 
     createAmlGrid(res);

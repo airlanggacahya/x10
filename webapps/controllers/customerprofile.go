@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
 	// "gopkg.in/mgo.v2/bson"
 )
 
@@ -162,7 +161,6 @@ func (c *DataCapturingController) GetCustomerProfileListConfirmed(k *knot.WebCon
 			if valv.GetString("_id") == cast.ToString(val.GetInt("customer_id"))+"|"+val.GetString("deal_no") {
 				finalres = append(finalres, val)
 				break
-
 			}
 		}
 	}
@@ -371,6 +369,11 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 	p.UpdatedBy = Username
 
 	if p.Status == 1 {
+		custstring := cast.ToString(p.ApplicantDetail.CustomerID)
+		dealstring := cast.ToString(p.ApplicantDetail.DealNo)
+		tk.Println("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+		_ = new(CustomerProfiles).SyncCustomerData(custstring, dealstring)
+
 		p.ConfirmedBy = Username
 		p.ConfirmedDate = time.Now()
 		if err := new(DataConfirmController).SaveDataConfirmed(cast.ToString(p.ApplicantDetail.CustomerID), p.ApplicantDetail.DealNo.(string), p.TableName(), &p, true); err != nil {

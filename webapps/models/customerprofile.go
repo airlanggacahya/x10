@@ -3,6 +3,9 @@ package models
 import (
 	"github.com/eaciit/orm"
 	// "gopkg.in/mgo.v2/bson"
+	. "eaciit/x10/webapps/connection"
+	"github.com/eaciit/cast"
+	// tk "github.com/eaciit/toolkit"
 	"time"
 )
 
@@ -329,4 +332,67 @@ func (e *CustomerProfiles) RecordID() interface{} {
 
 func (m *CustomerProfiles) TableName() string {
 	return "CustomerProfile"
+}
+
+func (m *CustomerProfiles) SyncCustomerData(cust, dealno string) error {
+
+	unconfirmid := cust + "_" + dealno
+	custint := cast.ToInt(cust, "RoundAuto")
+
+	cn, err := GetConnection()
+	defer cn.Close()
+	if err != nil {
+		return err
+	}
+
+	modelCibilIndividual := new(ReportData)
+	modelCibilReport := new(CibilReportModel)
+
+	dataCibilIndividual, err := modelCibilIndividual.GetPromotorFinalByUnconfirmID(unconfirmid)
+	dataCibilReport, err := modelCibilReport.GetReportDataByUnconfirmID(unconfirmid)
+
+	if len(dataCibilIndividual) > 0 {
+		qinsert := cn.NewQuery().
+			From(modelCibilIndividual.TableName()).
+			SetConfig("multiexec", true).
+			Save()
+		defer qinsert.Close()
+
+		for _, val := range dataCibilIndividual {
+			val.ConsumersInfos.CustomerId = custint
+			val.ConsumersInfos.DealNo = dealno
+			val.IsMatch = true
+
+			insdata := map[string]interface{}{"data": val}
+			err := qinsert.Exec(insdata)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(dataCibilReport) > 0 {
+		qinsert := cn.NewQuery().
+			From(modelCibilReport.TableName()).
+			SetConfig("multiexec", true).
+			Save()
+		defer qinsert.Close()
+
+		for _, val := range dataCibilReport {
+			val.Profile.CustomerId = custint
+			val.Profile.DealNo = dealno
+			val.IsMatch = true
+
+			insdata := map[string]interface{}{"data": val}
+			err := qinsert.Exec(insdata)
+
+			err = qinsert.Exec(insdata)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return err
 }

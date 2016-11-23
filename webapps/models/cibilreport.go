@@ -1,6 +1,8 @@
 package models
 
 import (
+	. "eaciit/x10/webapps/connection"
+	"github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
 	"gopkg.in/mgo.v2/bson"
 	"time"
@@ -69,6 +71,8 @@ type CibilReportModel struct {
 	FilePath            string                `bson:"FilePath"`
 	FileName            string                `bson:"FileName"`
 	ReportType          string                `bson:"ReportType"`
+	IsMatch             bool                  `bson:"IsMatch"`
+	UnconfirmID         string                `bson:"UnconfirmID"`
 	Profile             Profile               `bson:"Profile"`
 	ReportSummary       ReportSummary         `bson:"ReportSummary"`
 	DetailReportSummary []DetailReportSummary `bson:"DetailReportSummary"`
@@ -125,4 +129,40 @@ func (e *CibilDraftModel) RecordID() interface{} {
 
 func (m *CibilDraftModel) TableName() string {
 	return "CibilDraft"
+}
+
+func (m *CibilReportModel) GetReportDataByUnconfirmID(unconfirmid string) ([]CibilReportModel, error) {
+	data := []CibilReportModel{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return data, err
+	}
+
+	wh := []*dbox.Filter{}
+	wh = append(wh, dbox.Eq("UnconfirmID", unconfirmid))
+	wh = append(wh, dbox.Eq("IsMatch", false))
+
+	query, err := conn.NewQuery().
+		Select().
+		From(m.TableName()).
+		Where(wh...).
+		Cursor(nil)
+	if query == nil {
+		return data, err
+	}
+
+	defer query.Close()
+
+	if err != nil {
+		return data, err
+	}
+
+	err = query.Fetch(&data, 0, false)
+	if err != nil {
+		return data, err
+	}
+
+	return data, err
 }

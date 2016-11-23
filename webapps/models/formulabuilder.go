@@ -728,7 +728,7 @@ func (fm *FormulaModel) CalculateNorm(ir string) ([]FM_NormFormula, error) {
 					eachValue := eachValueByDate.GetFloat64("Value")
 
 					if eachStatus == "ESTIMATED" || eachStatus == "PROVISION" || eachStatus == "AUDITED" {
-						if eachValue != 0 {
+						if eachValue > 0 {
 							eachPeriod = eachValueByDate.GetString("Date")
 							break
 						}
@@ -740,7 +740,7 @@ func (fm *FormulaModel) CalculateNorm(ir string) ([]FM_NormFormula, error) {
 					eachValue := eachValueByDate.GetFloat64("Value")
 
 					if eachStatus == "PROVISION" || eachStatus == "AUDITED" {
-						if eachValue != 0 {
+						if eachValue > 0 {
 							eachPeriod = eachValueByDate.GetString("Date")
 							break
 						}
@@ -750,10 +750,9 @@ func (fm *FormulaModel) CalculateNorm(ir string) ([]FM_NormFormula, error) {
 				for _, eachValueByDate := range valueByDateStatus {
 					eachStatus := eachValueByDate.GetString("Status")
 					eachValue := eachValueByDate.GetFloat64("Value")
-					eachDate := eachValueByDate.GetString("Date")
 
 					if eachStatus == "AUDITED" {
-						if eachValue != 0 {
+						if eachValue > 0 {
 							eachPeriod = eachValueByDate.GetString("Date")
 							break
 						}

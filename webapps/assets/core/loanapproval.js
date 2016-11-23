@@ -894,6 +894,14 @@ loanApproval.getReport = function(param){
             loanapproval.avnet(data.Data.AD[0].distributormix.avnetin + "%");
 
             if(data.Data.AD[0].distributormix.Data != undefined && data.Data.AD[0].distributormix.Data[0].Label != undefined){
+              loanapproval.distributorList([])
+              _.each(data.Data.AD[0].distributormix.Data, function(data){
+                if(typeof data.Result == "undefined") {
+                    data.Result = ""
+                }
+                loanapproval.distributorList.push(data)
+              })
+
               loanapproval.distributorList(data.Data.AD[0].distributormix.Data)
             } else {
               loanapproval.distributorList([{Label : "", Result: ""}])

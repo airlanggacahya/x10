@@ -1,4 +1,5 @@
 var formula = {}
+var url = "/normmaster";
 formula.data = ko.observableArray([])
 formula.dataInternalRating = ko.observableArray([])
 formula.dataFormula = ko.observableArray([])
@@ -19,6 +20,10 @@ formula.templateFinancial = {
     Value2: '',
     NormLabel: ''
 }
+
+formula.freezeText = ko.observable("Freeze")
+formula.isFreeze = ko.observable(true)
+
 formula.optionValueTypes = ko.observableArray([
 	{		text : "Default",
 		value : ""
@@ -183,9 +188,16 @@ formula.refresh = function () {
 		formula.isLoading(false)
 		formula.dataFormula(res.Data)
 		formula.render()
+		formula.checkFreezeDB(res.Data)
 	}, function () {
 		formula.isLoading(false)
 	})
+}
+
+formula.checkFreezeDB = function(data) {
+	if(data.length > 0) {
+		formula.isFreeze(data[0].IsFreeze)
+	}
 }
 
 formula.toggleCheckbox = function (o, field, id) {
@@ -220,7 +232,7 @@ formula.render = function () {
 		});
 		dx = _.orderBy(dx, 'Order');
 
-		var parentx =  {  
+		var parentx =  {
 	         "Id":"",
 	         "From":"",
 	         "Criteria":key,
@@ -251,7 +263,7 @@ formula.render = function () {
 	});
 
 	data = _.orderBy(data, 'Order');
-	
+
 
 	if ($('.grid').hasClass('k-grid')) {
 		$('.grid').data('kendoTreeList').setDataSource(new kendo.data.TreeListDataSource({
@@ -340,6 +352,16 @@ formula.render = function () {
 			app.gridBoundTooltipster('.grid')()
 			$('.k-grid .k-grid-content tr:first .btn-up').addClass('disabled')
 			$('.k-grid .k-grid-content tr:last .btn-down').addClass('disabled')
+
+			if(formula.isFreeze()) {
+				$('.form-container').find('button').prop('disabled', true)
+				$('.form-container').find('input').prop('disabled', true)
+				formula.freezeText("Unfreeze")
+			} else {
+				$('.form-container').find('button').prop('disabled', false)
+				$('.form-container').find('input').prop('disabled', false)
+				formula.freezeText("Freeze")
+			}
 		}
 	}
 
@@ -568,6 +590,32 @@ formula.constructData = function (res) {
 
 	formula.data(res)
 }
+
+
+formula.setFreeze = function() {
+	var param = {}
+  param.IsFreeze = !formula.isFreeze()
+
+  ajaxPost(url+"/setfreeze", param, function(){
+      formula.isFreeze(!formula.isFreeze())
+  });
+}
+
+formula.checkFreeze = ko.computed(function(){
+	if(formula.isFreeze()) {
+		$('.form-container').find('button').prop('disabled', true)
+		$('.form-container').find('input').prop('disabled', true)
+		formula.freezeText("Unfreeze")
+	} else {
+		$('.form-container').find('button').prop('disabled', false)
+		$('.form-container').find('input').prop('disabled', false)
+		formula.freezeText("Freeze")
+	}
+})
+
+var checkBtnFreeze = ko.pureComputed(function(){
+    return (formula.isFreeze())? "btn-unfreeze":"btn-freeze"
+})
 
 window.refreshFilter = function () {
 	formula.refresh()

@@ -322,7 +322,7 @@ r.render = function (a) {
 	$('.grid').replaceWith('<div class="grid"></div>')
 	$('.grid').kendoTreeList(config)
 
-  $('.form-container').css('width','1300px')
+  $('.form-container').css('width',$(window).width() - 55 + "px")
   $('.k-grid-header-wrap').css('width','890px')
   $('.k-grid-content').css('width','890px').css('overflow-y','hidden');
 
@@ -478,8 +478,12 @@ r.addScrollBottom = function (container) {
     var tableContent = toolkit.newEl('div').addClass('scroll-grid-bottom').appendTo(container.find(".k-grid-content"));
 
     var arrowLeft = toolkit.newEl('div').addClass('scroll-grid-bottom arrow arrow-left viewscrollfix btn-add').html('<i style="padding:5px" class="fa fa-arrow-left"></i>').appendTo(container.find(".k-grid-content")).css("margin-left","-15px");
-
-    var rightmen = ($(window).width() - 1270 ) + "px"
+    if($(window).width() < 1349){
+      var rightmen = ($(window).width() - 1099 ) + "px"
+    }else{
+      var rightmen = ($(window).width() - 1270 ) + "px"
+    }
+    
     var arrowRight = toolkit.newEl('div').addClass('scroll-grid-bottom arrow arrow-right viewscrollfix btn-add').html('<i style="padding:5px" class="fa fa-arrow-right"></i>').appendTo(container.find(".k-grid-content")).css("right",rightmen);
 
     toolkit.newEl('div').addClass('content-grid-bottom')
@@ -604,4 +608,11 @@ $(function () {
 
 $(window).scroll(function(){
    r.panel_scrollrelocated();
+});
+
+$( document ).ajaxComplete(function( event,request, settings ) {
+  $('.form-container').css('width',$(window).width() - 55 + "px")
+  $(".k-grid-header-wrap").css("width", $(window).width() - 459 + "px" )
+  $('.k-grid-content').css('width',$(window).width() - 459 + "px" ).css('overflow-y','hidden');
+  $(".scroll-grid-bottom .viewscrollfix").css('width',$(window).width() - 459 + "px" );
 });

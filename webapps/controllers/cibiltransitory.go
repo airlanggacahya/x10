@@ -9,7 +9,7 @@ import (
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
-	// "gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2/bson"
 	// "strconv"
 	// "strings"
 	// "time"
@@ -48,33 +48,64 @@ func (c *CibilTransitoryController) Default(k *knot.WebContext) interface{} {
 func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	res := new(tk.Result)
+	param := tk.M{}
+	k.GetForms(&param)
+	tk.Println(param)
 
 	cn, _ := GetConnection()
 	defer cn.Close()
 
-	cibilIndividual := []ReportData{}
 	query := []*dbox.Filter{}
 	query = append(query, dbox.Ne("_id", ""))
+
+	key := param.GetString("searchkey")
+	if key != "" {
+		keys := []*dbox.Filter{}
+		keys = append(keys, dbox.Contains("FileName", key))
+		keys = append(keys, dbox.Contains("ConsumerInfo.ConsumerName", key))
+
+		custId := param.GetInt("additional")
+		if custId != -1 {
+			keys = append(keys, dbox.Eq("ConsumerInfo.CustomerId", custId))
+		}
+
+		query = append(query, dbox.Or(keys...))
+	}
+
 	csr, err := cn.NewQuery().
 		Where(dbox.And(query...)).
 		From("CibilReportPromotorFinal").
+		Skip(param.GetInt("skip")).
+		Take(param.GetInt("take")).
 		Cursor(nil)
-
 	defer csr.Close()
 
+	res := new(tk.Result)
 	if err != nil {
 		res.SetError(err)
 	}
 
+	cibilIndividual := []ReportData{}
 	err = csr.Fetch(&cibilIndividual, 0, false)
 	if err != nil {
 		res.SetError(err)
 	}
 
-	csr.Close()
+	cursor, e := cn.NewQuery().
+		From("CibilReportPromotorFinal").
+		Cursor(nil)
+	defer cursor.Close()
+
+	if e != nil {
+		res.SetError(e)
+	}
+
 	res.SetData(cibilIndividual)
-	return res
+
+	return struct {
+		Res   interface{}
+		Total int
+	}{res, cursor.Count()}
 }
 
 func (c *CibilTransitoryController) UpdateCibilPromotor(k *knot.WebContext) interface{} {
@@ -85,9 +116,13 @@ func (c *CibilTransitoryController) UpdateCibilPromotor(k *knot.WebContext) inte
 	p := ReportData{}
 	k.GetPayload(&p)
 
-	tk.Println(p)
+	if p.Id == "" {
+		p.Id = bson.NewObjectId()
+	}
 
-	c.Ctx.Save(&p)
+	if err := c.Ctx.Save(&p); err != nil {
+		res.SetError(err)
+	}
 
 	return res
 }

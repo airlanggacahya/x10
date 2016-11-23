@@ -35,7 +35,9 @@ apcom.templateSanction ={
 	DealNo:"",
 	Date: "",
 	Amount: "",
+	IsNullAmount: false,
 	ROI: "",
+	IsNullROI: false,
 	PF: "",
 	PG: "",
 	Security: "",
@@ -52,6 +54,7 @@ apcom.tempFinalComment = ko.observableArray([
 ])
 apcom.templateFinalComment = {
 	Amount: 0,
+	IsNullAmount: false,
 	RecommendedCondition: '',
 	Recommendations: '',
 }
@@ -118,9 +121,20 @@ apcom.loadCommentData = function(tayp){
 			apcom.CaStatus.val("")
 
 			// apcom.plainDate(data[1].DCFinalSanction.Date)
+			apcom.sanction.Id(data[1].DCFinalSanction.Id)
 		    apcom.Date(moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY') == "01-Jan-0001" ? "" : moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY'));
-		    apcom.LeftAmount(data[1].DCFinalSanction.Amount);
-		    apcom.ROI(data[1].DCFinalSanction.ROI);
+		    if(data[1].DCFinalSanction.IsNullAmount != true){
+		    	apcom.LeftAmount("");
+		    }else{
+		    	apcom.LeftAmount(data[1].DCFinalSanction.Amount);
+		    }
+
+		    if(data[1].DCFinalSanction.IsNullROI != true){
+		    	apcom.ROI("");
+		    }else{
+		    	apcom.ROI(data[1].DCFinalSanction.ROI);
+		    }
+		    
 		    apcom.PF(data[1].DCFinalSanction.PF);
 		    apcom.PG(data[1].DCFinalSanction.PG);
 		    apcom.Security(data[1].DCFinalSanction.Security);
@@ -128,7 +142,12 @@ apcom.loadCommentData = function(tayp){
 		    apcom.CommitteeRemarks(data[1].DCFinalSanction.CommitteeRemarks);
 		    apcom.Status(data[1].DCFinalSanction.Status)
 
-		    apcom.Amount(data[0].CreditAnalys.FinalComment.Amount)
+		    if(data[0].CreditAnalys.FinalComment.IsNullAmount != false){
+		    	apcom.Amount(data[0].CreditAnalys.FinalComment.Amount)
+		    }else{
+		    	apcom.Amount("")
+		    }
+		    
 			apcom.RecommendedCondition(data[0].CreditAnalys.FinalComment.RecommendedCondition)
 			apcom.Recommendations(data[0].CreditAnalys.FinalComment.Recommendations)
 		    apcom.CaStatus.val(data[0].CreditAnalys.Status)
@@ -136,6 +155,14 @@ apcom.loadCommentData = function(tayp){
 	    apcom.loadSection();
 	});
 }
+
+$("#commentamount2").keydown(function(){
+	if(parseFloat(apcom.Amount()) != NaN){
+		apcom.formCreditAnalyst.FinalComment.IsNullAmount(true)
+	}else{
+		apcom.formCreditAnalyst.FinalComment.IsNullAmount(false)
+	}
+})
 
 apcom.sendCreditAnalyst = function(a, event){
 	apcom.formCreditAnalyst.CreditAnalysRisks([]);
@@ -195,6 +222,24 @@ var dcFinalSanctionDate = function(d){
 		return ret()
 	}
 }
+
+$("#commentamount").keydown(function(){
+	var data = parseFloat(apcom.LeftAmount());
+	if(data == NaN){
+		apcom.sanction.IsNullAmount(false);
+	}else{
+		apcom.sanction.IsNullAmount(true);
+	}
+});
+
+$("#commentroi").keydown(function(){
+	var data = parseFloat(apcom.ROI());
+	if(data == NaN){
+		apcom.sanction.IsNullROI(false);
+	}else{
+		apcom.sanction.IsNullROI(true);
+	}
+});
 
 apcom.saveSanction = function(){
 	apcom.sanction.Date(dcFinalSanctionDate(new Date(apcom.Date())))

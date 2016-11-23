@@ -807,7 +807,7 @@ loanApproval.getReport = function(param){
 
 
             var datetime = new Date(data.Data.AD[0].accountsetupdetails.logindate);
-            dt = moment(datetime).format("DD/MM/YYYY HH:mm:ss");
+            dt =  moment(datetime ).format("DD/MM/YYYY")
             loanapproval.logindate (dt);
             loanapproval.product (data.Data.AD[0].accountsetupdetails.product);
             loanapproval.location (data.Data.AD[0].accountsetupdetails.cityname);

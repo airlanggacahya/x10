@@ -143,7 +143,7 @@ func (c *DataCapturingController) UpdatePromotor(k *knot.WebContext) interface{}
 
 		for index, _ := range results.DetailOfPromoters.Biodata {
 			for index1, _ := range param {
-				if param[index1].FatherName == results.DetailOfPromoters.Biodata[index].FatherName {
+				if param[index1].FatherName == results.DetailOfPromoters.Biodata[index].FatherName && param[index1].Name == results.DetailOfPromoters.Biodata[index].Name {
 					results.DetailOfPromoters.Biodata[index].CIBILScore, _ = strconv.ParseFloat(strings.TrimSpace(param[index1].Scors), 64)
 					break
 				}
@@ -169,7 +169,7 @@ func (c *DataCapturingController) UpdatePromotor(k *knot.WebContext) interface{}
 
 			for index, _ := range resultsconf.DetailOfPromoters.Biodata {
 				for index1, _ := range param {
-					if param[index1].FatherName == resultsconf.DetailOfPromoters.Biodata[index].FatherName {
+					if param[index1].FatherName == resultsconf.DetailOfPromoters.Biodata[index].FatherName && param[index1].Name == resultsconf.DetailOfPromoters.Biodata[index].Name {
 						resultsconf.DetailOfPromoters.Biodata[index].CIBILScore, _ = strconv.ParseFloat(strings.TrimSpace(param[index1].Scors), 64)
 						break
 					}

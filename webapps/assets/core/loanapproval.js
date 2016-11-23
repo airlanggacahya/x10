@@ -355,6 +355,8 @@ var keyPolicyParam = function(norm) {
     ];
 
     var render = function(datas) {
+                console.log(datas,"---datas");
+
         if(datas != null){
             _.each(datas.filter(function (d) {
                 return d.ShowInLoanApprovalScreen
@@ -416,27 +418,7 @@ var keyPolicyParam = function(norm) {
         ajaxPost("/creditscorecard/getcscdata", getSearchVal(), function(cscData){
 
             if(cscData.Data != undefined){
-                // var score = _.sum(cscData.Data[0].Data.filter(function (d) {
-                //     return d.IsHeader
-                // }).map(function (d) {
-                //     return kendo.parseFloat(d.WeightScore)
-                // }));
-
-                // var rating = (function () {
-                //     if (score <= 4.5) {
-                //         return "XFL5"
-                //     } else if (score < 6) {
-                //         return "XFL4"
-                //     } else if (score < 7) {
-                //         return "XFL3"
-                //     } else if (score <= 8.5) {
-                //         return "XFL2"
-                //     } else {
-                //         return "XFL1"
-                //     }
-                // })();
                 loanapproval.internalrating(cscData.Data[0].FinalRating);
-
                 ajaxPost("/normmaster/getnormdata", {
                     Internalrating: loanapproval.internalrating().replace("-",""),
                     Customerid: filter().CustomerSearchVal(),
@@ -445,7 +427,14 @@ var keyPolicyParam = function(norm) {
                     render(param.Data);
                 })
             } else {
-                render(norm);
+                loanapproval.internalrating("");
+                ajaxPost("/normmaster/getnormdata", {
+                    Internalrating: loanapproval.internalrating().replace("-",""),
+                    Customerid: filter().CustomerSearchVal(),
+                    Dealno: filter().DealNumberSearchVal()
+                }, function(param) {
+                    render(param.Data);
+                })
             }
         })
     })
@@ -807,7 +796,7 @@ loanApproval.getReport = function(param){
 
 
             var datetime = new Date(data.Data.AD[0].accountsetupdetails.logindate);
-            dt = moment(datetime).format("DD/MM/YYYY HH:mm:ss");
+            dt =  moment(datetime ).format("DD/MM/YYYY")
             loanapproval.logindate (dt);
             loanapproval.product (data.Data.AD[0].accountsetupdetails.product);
             loanapproval.location (data.Data.AD[0].accountsetupdetails.cityname);

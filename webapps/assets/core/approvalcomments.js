@@ -142,6 +142,7 @@ apcom.loadCommentData = function(tayp){
 		    apcom.CommitteeRemarks(data[1].DCFinalSanction.CommitteeRemarks);
 		    apcom.Status(data[1].DCFinalSanction.Status)
 
+		    apcom.formCreditAnalyst.Id(data[0].CreditAnalys.Id)
 		    if(data[0].CreditAnalys.FinalComment.IsNullAmount != false){
 		    	apcom.Amount(data[0].CreditAnalys.FinalComment.Amount)
 		    }else{
@@ -156,13 +157,24 @@ apcom.loadCommentData = function(tayp){
 	});
 }
 
-$("#commentamount2").keydown(function(){
-	if(parseFloat(apcom.Amount()) != NaN){
-		apcom.formCreditAnalyst.FinalComment.IsNullAmount(true)
+apcom.Amount.subscribe(function(value){
+	console.log(value)
+	if(typeof value == "string"){
+		var data = value.replace(/^$|\s+/g, "")
+		if(data == ""){
+		apcom.formCreditAnalyst.FinalComment.IsNullAmount(false);
+		}else{
+			if(!isNaN(value)){
+				apcom.formCreditAnalyst.FinalComment.IsNullAmount(true);
+			} else {
+				apcom.formCreditAnalyst.FinalComment.IsNullAmount(false);
+			}
+		}
 	}else{
-		apcom.formCreditAnalyst.FinalComment.IsNullAmount(false)
+		apcom.formCreditAnalyst.FinalComment.IsNullAmount(true);
 	}
-})
+	
+});
 
 apcom.sendCreditAnalyst = function(a, event){
 	apcom.formCreditAnalyst.CreditAnalysRisks([]);
@@ -223,23 +235,44 @@ var dcFinalSanctionDate = function(d){
 	}
 }
 
-$("#commentamount").keydown(function(){
-	var data = parseFloat(apcom.LeftAmount());
-	if(data == NaN){
-		apcom.sanction.IsNullAmount(false);
+apcom.LeftAmount.subscribe(function(value){
+	console.log(value)
+	if(typeof value == "string"){
+		var data = value.replace(/^$|\s+/g, "")
+		if(data == ""){
+		apcom.sanction.IsNullAmount(true);
+		}else{
+			if(!isNaN(value)){
+				apcom.sanction.IsNullAmount(true);
+			} else {
+				apcom.sanction.IsNullAmount(false);
+			}
+		}
 	}else{
 		apcom.sanction.IsNullAmount(true);
 	}
+	
 });
 
-$("#commentroi").keydown(function(){
-	var data = parseFloat(apcom.ROI());
-	if(data == NaN){
+apcom.ROI.subscribe(function(value){
+	console.log(value)
+	if(typeof value == "string"){
+		var data = value.replace(/^$|\s+/g, "")
+		if(data == ""){
 		apcom.sanction.IsNullROI(false);
+		}else{
+			if(!isNaN(value)){
+				apcom.sanction.IsNullROI(true);
+			} else {
+				apcom.sanction.IsNullROI(false);
+			}
+		}
 	}else{
 		apcom.sanction.IsNullROI(true);
 	}
+	
 });
+
 
 apcom.saveSanction = function(){
 	apcom.sanction.Date(dcFinalSanctionDate(new Date(apcom.Date())))

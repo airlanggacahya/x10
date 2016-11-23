@@ -1,10 +1,11 @@
 package models
 
 import (
+	. "eaciit/x10/webapps/connection"
+	"github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
-	"time"
-
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 type ConsumerInfo struct {
@@ -22,6 +23,7 @@ type ReportData struct {
 	FileName                 string            `bson:"FileName"`
 	ReportType               string            `bson:"ReportType"`
 	IsMatch                  bool              `bson:"IsMatch"`
+	UnconfirmID              string            `bson:"UnconfirmID"`
 	ConsumersInfos           ConsumerInfo      `bson:"ConsumerInfo"`
 	DateOfReport             time.Time         `bson:"DateOfReport"`
 	TimeOfReport             time.Time         `bson:"TimeOfReport"`
@@ -64,4 +66,41 @@ type ReportAddress struct {
 	AddressPinCode string    `bson:"AddressPinCode"`
 	Category       string    `bson:"Category"`
 	DateReported   time.Time `bson:"DateReported"`
+}
+
+func (m *ReportData) GetPromotorFinalByUnconfirmID(unconfirmid string) ([]ReportData, error) {
+
+	data := []ReportData{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return data, err
+	}
+
+	wh := []*dbox.Filter{}
+	wh = append(wh, dbox.Eq("UnconfirmID", unconfirmid))
+	wh = append(wh, dbox.Eq("IsMatch", false))
+
+	query, err := conn.NewQuery().
+		Select().
+		From(m.TableName()).
+		Where(wh...).
+		Cursor(nil)
+	if query == nil {
+		return data, err
+	}
+
+	defer query.Close()
+
+	if err != nil {
+		return data, err
+	}
+
+	err = query.Fetch(&data, 0, false)
+	if err != nil {
+		return data, err
+	}
+
+	return data, err
 }

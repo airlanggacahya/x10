@@ -223,7 +223,8 @@ vm.ChangePassword = function(){
 }
 
 vm.showPas = function(){
-	$("#message").hide()
+	$("#oldmessage").hide()
+	$("#newmessage").hide()
 	$("#old").val("");
 	$("#new").val("");
 	$("#conf").val("")

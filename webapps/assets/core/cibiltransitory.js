@@ -1,168 +1,208 @@
 var trans = {};
 trans.AllData = ko.observableArray([]);
 trans.CurrentData = ko.observable(null);
-trans.GetDataGrid = function(){
-	var url = "/cibiltransitory/getdatacibilpromotor"
-	var param = {};
-	trans.AllData([]);
-	 ajaxPost(url, param, function(data) {
-	 	data.Data.forEach(function(x){
-	 		var fi = _.find(filter().CustomerSearchAll(),function(xi){
-	 			return xi.customer_id == x.ConsumersInfos.CustomerId
-	 		})
-	 		x.CustomerName = "";
-	 		if(fi !=undefined){
-	 			x.CustomerName = fi.customer_name;
-	 		}
-
-	 	})
-	 	trans.AllData(data.Data);
-		trans.RenderGrid();
-	})
-}
-
 
 trans.RenderGrid = function(){
-	var fil = $("#filter").val().toLowerCase();
-	var datas = _.filter(trans.AllData(),function(x){ 
-		return x.FileName.toLowerCase().indexOf(fil) > -1 || x.ConsumersInfos.ConsumerName.toLowerCase().indexOf(fil) > -1 || x.CustomerName.toLowerCase().indexOf(fil) > -1
-	});
-	if(fil==""){
-		datas = trans.AllData();
-	}
-	console.log(datas)
+	var searchKey = $("#filter").val().toLowerCase();
+
 	$("#transgrid").html("");
 	$("#transgrid").kendoGrid({
-		 dataSource : datas,
-		 scrollable:true,
-		 pageable : false,
-		 height : 400,
-		 columns :[
-		 {
+		dataSource: new kendo.data.DataSource({
+	        transport: {
+	            read: {
+	               	url: "/cibiltransitory/getdatacibilpromotor",
+	               	dataType: "json",
+	               	type: "POST",
+	               	data: { 
+	               		searchkey: searchKey,
+	               		additional: function(){
+	               			if(searchKey != ""){
+		               			var foundCust = _.find(filter().CustomerSearchAll(), function(cust){
+									return cust.customer_name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1
+								})
+								return foundCust != undefined ? foundCust.customer_id : -1
+		               		} else {
+		               			return -1
+		               		}
+	               		}()
+	               	}
+	            }
+	        },
+	        schema: {
+	        	parse: function(data){
+	        		trans.AllData([])
+	        		trans.AllData(data.Res.Data)
+	        		
+	        		_.each(trans.AllData(), function(x){
+				 		_.extend(x, function(cust){
+				 			return { CustomerName: cust != undefined ? cust.customer_name : "" }
+				 		}(_.find(filter().CustomerSearchAll(), function(xi){
+				 				return xi.customer_id == x.ConsumersInfos.CustomerId
+				 			})));
+				 	})
+	        		return {
+	        			Data: data.Res.Data,
+	        			Total: data.Total
+	        		}
+	        	},
+	            data: "Data",
+	            total: "Total"
+	        },
+	        serverPaging: true,
+	        pageSize: 10,
+	    }),
+		pageable: true,
+		columns :[{
 		 	field : "FileName", 
 		 	title : "File Name",
-			headerAttributes: {class: 'k-header header-bgcolor'},
-			width:200
-		 },
-		 {
+			headerAttributes: { class: 'k-header header-bgcolor' },
+			width: 200
+		}, {
 		 	field : "ConsumersInfos.ConsumerName", 
 		 	title : "Promoter Name",
-		 	headerAttributes: {class: 'k-header header-bgcolor'},
-			 width:200
-		 },
-		  {
+		 	headerAttributes: { class: 'k-header header-bgcolor' },
+		 	width: 200
+		}, {
 		 	field : "CustomerName", 
 		 	title : "Customer Name",
-			headerAttributes: {class: 'k-header header-bgcolor'},
-			width:200
-		 },
-		 {
+			headerAttributes: { class: 'k-header header-bgcolor' },
+			width: 200
+		}, {
 			field : "ConsumersInfos.DealNo", 
 		 	title : "Deal Number",
-			headerAttributes: {class: 'k-header header-bgcolor'},
-			width:150
-		 },
-		 {
-			 field : 'DateOfReport',
-			 title : 'Report Generated Date',
-			 headerAttributes: {class: 'k-header header-bgcolor'},
-			 width : 150,
-			 attributes : { "style" : "text-align:center"  },
-			 template : function(x){
+			headerAttributes: { class: 'k-header header-bgcolor' },
+			width: 150
+		}, {
+			field : 'DateOfReport',
+			title : 'Report Generated Date',
+			headerAttributes: { class: 'k-header header-bgcolor' },
+			width : 150,
+			attributes : { "style" : "text-align:center" },
+			template : function(x){
 				var date = moment(x.DateOfReport).format("DD-MMM-YYYY")
 				var time = moment(new Date(x.TimeOfReport)).utc().format("HH:mm:ss")
 		 		return date + " " + time
 		 	},
-		 },
-		 {
+		}, {
 		 	field : "ConsumersInfos.DateOfBirth", 
 		 	title : "Date of Birth",
 		 	template : function(x){
 		 		return moment(x.ConsumersInfos.DateOfBirth).format("DD-MMM-YYYY")
 		 	},
-		 	attributes : { "style" : "text-align:center"  },
-		 	headerAttributes: {class: 'k-header header-bgcolor'},
+		 	attributes : { "style" : "text-align:center" },
+		 	headerAttributes: { class: 'k-header header-bgcolor' },
 			width : 150
-		 },
-		 {
+		}, {
 		 	field : "CibilScore", 
 		 	title : "CIBIL Score",
 			width : 100,
-		 	attributes : { "style" : "text-align:right"  },
+		 	attributes : { "style" : "text-align:right" },
 			headerAttributes: {class: 'k-header header-bgcolor'},
-		 },
-		 {
+		}, {
 		 	field : "IncomeTaxIdNumber", 
 		 	title : "Income Tax Id",
-		 	headerAttributes: {class: 'k-header header-bgcolor'},
+		 	headerAttributes: { class: 'k-header header-bgcolor' },
 			width : 100
-		 },
-		 
-		//  {
-		//  	field : "PassportNumber", 
-		//  	title : "Passport Number",
-		//  	     headerAttributes: {class: 'k-header header-bgcolor'},
-		//  },
-		 {
+		}, {
 		 	template : function(x){
 		 		return "<button class='btn btn-xs btn-primary tooltipster' onclick='trans.showProm(\""+ x.Id + "\")'><i class='fa fa-edit'></i></button>"
 		 	},
 		 	width : 50,
-		 	     headerAttributes: {class: 'k-header header-bgcolor'},
-		 },
-		 ]
+		 	     headerAttributes: { class: 'k-header header-bgcolor' },
+		}]
 	});
 }
 
 trans.showProm = function(Id){
+	if (Id != undefined) {
+		var cur = _.find(trans.AllData(),function(x){
+			return x.Id == Id;
+		})
 
-	var cur = _.find(trans.AllData(),function(x){
-		return x.Id == Id;
-	})
+		if(cur != undefined){
+			trans.CurrentData(ko.mapping.fromJS(cur));
 
-	if(cur !=undefined){
-		trans.CurrentData(ko.mapping.fromJS(cur));
+			if(trans.CurrentData().StatusCibil() != 0){
+				swal("Warning","Selected Data Already Confirmed, Please Re Enter First","warning");
+				return;
+			}
 
-		if(trans.CurrentData().StatusCibil() != 0){
-			swal("Warning","Selected Data Already Confirmed, Please Re Enter First","warning");
-			return;
+			dateOfBirth = moment(trans.CurrentData().ConsumersInfos.DateOfBirth()).format("DD-MMM-YYYY");
+			trans.CurrentData().ConsumersInfos.DateOfBirth(dateOfBirth)
+
+			DateOfReport = moment(trans.CurrentData().DateOfReport()).format("DD-MMM-YYYY");
+			trans.CurrentData().DateOfReport(DateOfReport)
+
+			TimeOfReport = moment(trans.CurrentData().TimeOfReport()).format("hh:mm:ss");
+			trans.CurrentData().TimeOfReport(TimeOfReport)
+
+			email = _.filter(trans.CurrentData().EmailAddress(),function(x){ return x != "" });
+			email = email.join("\n")
+
+			scorfac = _.filter(trans.CurrentData().ScoringFactor(),function(x){ return x != "" });
+			scorfac = scorfac.join("\n")
+
+			tele = _.map(trans.CurrentData().Telephones(),function(x){ return  x.Type() + " - " + x.Number()});
+			tele = tele.join("\n")
+
+			trans.CurrentData().ScoringFactor(scorfac)
+			trans.CurrentData().Telephones(tele)
+			trans.CurrentData().EmailAddress(email)
+			trans.loadAddress(trans.CurrentData().AddressData())
 		}
+	} else {
+		trans.CurrentData({
+			ConsumersInfos: {
+				ConsumerName: ko.observableArray(),
+				CustomerId: ko.observableArray(),
+				DateOfBirth: ko.observableArray(),
+				DealNo: ko.observableArray(),
+				Gender: ko.observableArray(),
+			},
+			DateOfReport: ko.observable(),
+			TimeOfReport: ko.observable(),
+			CibilScore: ko.observable(),
+			ScoringFactor: ko.observable(),
+			IncomeTaxIdNumber: ko.observable(),
+			PassportNumber: ko.observable(),
+			EmailAddress: ko.observable(),
+			TotalAccount: ko.observable(),
+			TotalOverdues: ko.observable(),
+			TotalZeroBalanceAcc: ko.observable(),
+			HighCreditSanctionAmount: ko.observable(),
+			CurrentBalance: ko.observable(),
+			OverdueBalance: ko.observable(),
+			Telephones: ko.observableArray(),
+			AddressData: ko.observableArray([]),
+			Id: ko.observable(),
+			FilePath: ko.observable(),
+			FileName: ko.observable(),
+			ReportType: ko.observable(),
+			IsMatch: ko.observable(),
+			CibilScoreVersion: ko.observable(),
+			DateOpenedRecent: ko.observable(),
+			DateOpenedOldest: ko.observable(),
+			TotalEnquiries: ko.observable(),
+			TotalEnquiries30Days: ko.observable(),
+			RecentEnquiriesDates: ko.observable(),
+			StatusCibil: ko.observable(),
+			CustomerName: ko.observable()
+		})
 
-		dateOfBirth = moment(trans.CurrentData().ConsumersInfos.DateOfBirth()).format("DD-MMM-YYYY");
-		trans.CurrentData().ConsumersInfos.DateOfBirth(dateOfBirth)
-
-		DateOfReport = moment(trans.CurrentData().DateOfReport()).format("DD-MMM-YYYY");
-		trans.CurrentData().DateOfReport(DateOfReport)
-
-		TimeOfReport = moment(trans.CurrentData().TimeOfReport()).format("hh:mm:ss");
-		trans.CurrentData().TimeOfReport(TimeOfReport)
-
-		email = _.filter(trans.CurrentData().EmailAddress(),function(x){ return x != "" });
-		email = email.join("\n")
-
-		scorfac = _.filter(trans.CurrentData().ScoringFactor(),function(x){ return x != "" });
-		scorfac = scorfac.join("\n")
-
-		tele = _.map(trans.CurrentData().Telephones(),function(x){ return  x.Type() + " - " + x.Number()});
-		tele = tele.join("\n")
-
-		trans.CurrentData().ScoringFactor(scorfac)
-		trans.CurrentData().Telephones(tele)
-		trans.CurrentData().EmailAddress(email)
-
-		$(".modal-edit-bro").modal({
-			backdrop: 'static',
-    		keyboard: false,
-    		show: true
-		});
 		trans.loadAddress(trans.CurrentData().AddressData())
-
-		if($("#dateofreport").getKendoDatePicker() == undefined){
-			$("#dateofreport").kendoDatePicker({ format : "dd-MMM-yyyy" });
-			$("#dateofbirth").kendoDatePicker({ format : "dd-MMM-yyyy" });
-		}
-
 	}
+
+	$(".modal-edit-bro").modal({
+		backdrop: 'static',
+		keyboard: false,
+		show: true
+	});
+
+	if($("#dateofreport").getKendoDatePicker() == undefined){
+		$("#dateofreport").kendoDatePicker({ format : "dd-MMM-yyyy" });
+		$("#dateofbirth").kendoDatePicker({ format : "dd-MMM-yyyy" });
+	}
+
 	$("#timeofreportinp").kendoMaskedTextBox({
 	    mask: "00:00:00",
 	    width:"100%"
@@ -253,7 +293,6 @@ trans.addAddress = function(){
 trans.removeAddress = function(d){
 	var index = $('.cibilAddress tr[data-uid="'+d+'"]').index();
 	var allData = $('#cibilAddress').data('kendoGrid').dataSource.data();
-	// console.log(allData);
 	allData.splice(index, 1);
 }
 
@@ -285,6 +324,12 @@ trans.SaveCibil = function(){
 	param.TotalOverdues = parseFloat(param.TotalOverdues);
 	param.TotalZeroBalanceAcc = parseFloat(param.TotalZeroBalanceAcc);
 	param.AddressData = [];
+
+	if (param.Id == undefined) {
+		param.ConsumersInfos.CustomerId = parseInt(filter().CustomerSearchVal())
+		param.ConsumersInfos.DealNo = filter().DealNumberSearchVal()
+	}
+
 	$.each(gridData, function(i, items){
 		var date = items.DateReported;
 		if( typeof date == "string"){
@@ -325,15 +370,15 @@ trans.SaveCibil = function(){
 	param.ConsumersInfos.DateOfBirth = moment(trans.CurrentData().ConsumersInfos.DateOfBirth()).toDate().toISOString()
 	param.DateOfReport = moment(trans.CurrentData().DateOfReport()).toDate().toISOString()
 	param.TimeOfReport = moment(trans.CurrentData().TimeOfReport(),"hh:mm:ss").toDate().toISOString()
-	// console.log("--------> param", param);
-	 ajaxPost(url, param, function(data) {
+
+	ajaxPost(url, param, function(data) {
 	    if(data.Message!=""){
 	    	swal("Error",data.Message,"error");
 	    	return;
 	    }
 	    swal("Data Update Succefully", "", "success")
 	    $(".modal-edit-bro").modal("hide");
-	    trans.GetDataGrid();
+	    trans.RenderGrid();
 	})
 }
 
@@ -342,7 +387,7 @@ function GetCustomer(){
 	var url = "/datacapturing/getcustomerprofilelist";
 	  ajaxPost(url, "", function(data) {
 	    filter().CustomerSearchAll(data);
-		trans.GetDataGrid();
+		trans.RenderGrid();
 	});
 }
 
@@ -353,17 +398,10 @@ $(document).ready(function(){
 
 	$("#filter").keydown(function(){
 		setTimeout(function(){
-			// var fil = $("#filter").val().toLowerCase();
-			// 	var data = _.filter(trans.AllData(),function(x){ 
-			// 		return x.FileName.toLowerCase().indexOf(fil) > -1 || x.ConsumersInfos.ConsumerName.toLowerCase().indexOf(fil) > -1 || x.CustomerName.toLowerCase().indexOf(fil) > -1
-			// 	});
-			// if(fil==""){
-			// 	data = trans.AllData();
-			// }
 			trans.RenderGrid();
 		},500);  
 	})
-
+	$('body > div.app > div > div.div-container > div.col-md-12.col-sm-12.ez.panel-content > div > div:nth-child(2) > div > button').trigger('click')
 	
 })
 

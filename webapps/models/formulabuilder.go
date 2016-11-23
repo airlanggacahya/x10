@@ -728,7 +728,7 @@ func (fm *FormulaModel) CalculateNorm(ir string) ([]FM_NormFormula, error) {
 					eachValue := eachValueByDate.GetFloat64("Value")
 
 					if eachStatus == "ESTIMATED" || eachStatus == "PROVISION" || eachStatus == "AUDITED" {
-						if eachValue > 0 {
+						if eachValue != 0 {
 							eachPeriod = eachValueByDate.GetString("Date")
 							break
 						}
@@ -740,7 +740,7 @@ func (fm *FormulaModel) CalculateNorm(ir string) ([]FM_NormFormula, error) {
 					eachValue := eachValueByDate.GetFloat64("Value")
 
 					if eachStatus == "PROVISION" || eachStatus == "AUDITED" {
-						if eachValue > 0 {
+						if eachValue != 0 {
 							eachPeriod = eachValueByDate.GetString("Date")
 							break
 						}
@@ -752,7 +752,7 @@ func (fm *FormulaModel) CalculateNorm(ir string) ([]FM_NormFormula, error) {
 					eachValue := eachValueByDate.GetFloat64("Value")
 
 					if eachStatus == "AUDITED" {
-						if eachValue > 0 {
+						if eachValue != 0 {
 							eachPeriod = eachValueByDate.GetString("Date")
 							break
 						}
@@ -1119,7 +1119,7 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 						eachValue := eachValueByDate.GetFloat64("Value")
 
 						if eachStatus == "ESTIMATED" || eachStatus == "PROVISION" || eachStatus == "AUDITED" {
-							if eachValue > 0 {
+							if eachValue != 0 {
 								period = eachValueByDate.GetString("Date")
 								break
 							}
@@ -1131,7 +1131,7 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 						eachValue := eachValueByDate.GetFloat64("Value")
 
 						if eachStatus == "PROVISION" || eachStatus == "AUDITED" {
-							if eachValue > 0 {
+							if eachValue != 0 {
 								period = eachValueByDate.GetString("Date")
 								break
 							}
@@ -1143,7 +1143,7 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 						eachValue := eachValueByDate.GetFloat64("Value")
 
 						if eachStatus == "AUDITED" {
-							if eachValue > 0 {
+							if eachValue != 0 {
 								period = eachValueByDate.GetString("Date")
 								break
 							}

@@ -1953,7 +1953,7 @@ adf.reloadStatus = function(status){
 		adf.loanDetailEnable()
 	}, 500)
 }
-
+adf.DataPromotorCP = ko.observableArray([]);
 adf.getData = function () {
 	// alert("masuk")
 	adf.formVisibility(true)
@@ -1984,13 +1984,12 @@ adf.getData = function () {
 				adf.form.AccountSetupDetails.CityName(res.ApplicantDetail.RegisteredAddress.CityRegistered)
 			}, 500);
 			setTimeout(function(){
-				$.each(res.DetailOfPromoters.Biodata, function(i, item){
-					if(adf.form.PromotorDetails()[i] != undefined){
-						adf.form.PromotorDetails()[i].CibilScore(item.CIBILScore)
-					}
-					// console.log(adf.form.PromotorDetails()[i].CibilScore())
-					//
-				})
+				adf.DataPromotorCP(res.DetailOfPromoters.Biodata);
+				// $.each(res.DetailOfPromoters.Biodata, function(i, item){
+				// 	if(adf.form.PromotorDetails()[i] != undefined){
+				// 		adf.form.PromotorDetails()[i].CibilScore(item.CIBILScore)
+				// 	}
+				// })
 				adf.form.LoanDetails.ProposedLoanAmount(res.ApplicantDetail.AmountLoan/100000)
 				// console.log(res[0].ApplicantDetail.AmountLoan)
 			}, 500);
@@ -2070,6 +2069,16 @@ adf.getData = function () {
 				}
 			} else {
 				setTimeout(function(){
+					//23/11/2016 set score promotor
+					$.each(res.Data.PromotorDetails, function(i, item){
+						if(adf.form.PromotorDetails()[i] != undefined){
+							var sc = _.find(adf.DataPromotorCP(),function(xx){ return  xx.Name ==  item.PromoterName }  );
+							if(sc != undefined){
+								adf.form.PromotorDetails()[i].CibilScore(sc.CIBILScore)
+							}
+						}
+					})
+
 					console.log(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
 					adf.reloadStatus(res.Data.Status)
 					console.log("------>>1856",res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
@@ -2112,7 +2121,7 @@ adf.getData = function () {
 
 
 					if(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970") >-1 || res.Data.LoanDetails.FirstAgreementDate.indexOf("1970") >-1 || res.Data.LoanDetails.RecenetAgreementDate.indexOf("1970") >-1){
-						
+							
 						
 
 						// adf.form.AccountSetupDetails.LoginDate((new Date).toISOString())

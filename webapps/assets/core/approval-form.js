@@ -58,7 +58,7 @@ r.getTooltipOption = function(position){
 
 r.sAD = function(ad, asd, bd){
   loanapproval.companyname(ad.CustomerName);
-  loanapproval.logindate(moment(new Date(asd.logindate)).format("DD/MM/YYYY HH:mm:ss"));
+  loanapproval.logindate(moment(new Date(asd.logindate)).format("DD/MM/YYYY"));
   loanapproval.businessaddress(ad.registeredaddress.AddressRegistered);
   loanapproval.businesssegment(bd.customersegmentclasification);
   loanapproval.businesssince(moment(bd.datebusinessstarted).format("DD/MM/YYYY"));

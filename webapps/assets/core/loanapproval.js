@@ -359,49 +359,48 @@ var keyPolicyParam = function(norm) {
             _.each(datas.filter(function (d) {
                 return d.ShowInLoanApprovalScreen
             }), function(data) {
-                if(data.ShowInLoanApprovalReport == false) {
-                    return;
-                }
-                if(data.CalculatedValue != undefined) {
-                    var getFixedCalculatedValue = parseFloat((function () {
-                        return (function(val){
+                if(data.ShowInLoanApprovalReport == true) {
+                    if(data.CalculatedValue != undefined) {
+                        var getFixedCalculatedValue = parseFloat((function () {
+                            return (function(val){
+                                if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
+                                    return val * 100;
+                                return val;
+                            })(data.CalculatedValue.Value)
+                        })()).toFixed(2);
+
+                        if(data.CalculatedValue.Value != 0) {
                             if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
-                                return val * 100;
-                            return val;
-                        })(data.CalculatedValue.Value)
-                    })()).toFixed(2);
+                                data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
+                            else
+                                data.calculatedvaluetodisplay = getFixedCalculatedValue;
+                        } else {
+                            data.calculatedvaluetodisplay = "NA"
+                        }
 
-                    if(data.CalculatedValue.Value != 0) {
-                        if(data.CalculatedValue.ValueType == "percentage" || data.ValueType == "percentage")
-                            data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
-                        else
-                            data.calculatedvaluetodisplay = getFixedCalculatedValue;
+                        if(data.Operator == "min"){
+                            data.ismet = (getFixedCalculatedValue > data.Value1) ? "Met" : "Not Met";
+                        } else if(data.Operator == "max"){
+                            data.ismet = (getFixedCalculatedValue < data.Value1) ? "Met" : "Not Met";
+                        } else if(data.Operator == "greater than or equal"){
+                            data.ismet = (getFixedCalculatedValue >= data.Value1) ? "Met" : "Not Met";
+                        } else if(data.Operator == "lower than or equal"){
+                            data.ismet = (getFixedCalculatedValue <= data.Value1) ? "Met" : "Not Met";
+                        } else if(data.Operator == "equal"){
+                            data.ismet = (getFixedCalculatedValue == data.Value1) ? "Met" : "Not Met";
+                        } else if(data.Operator == "between"){
+                            data.ismet = (getFixedCalculatedValue > data.Value1 && getFixedCalculatedValue < data.Value2) ? "Met" : "Not Met";
+                        }
                     } else {
-                        data.calculatedvaluetodisplay = "NA"
+                        _.each(columns, function(column){
+                            column.field = column.field.toLowerCase();
+                        })
+                        data.calculatedvaluetodisplay = "No Internal Rating"
+                        data.ismet = "No Internal Rating";
                     }
 
-                    if(data.Operator == "min"){
-                        data.ismet = (getFixedCalculatedValue > data.Value1) ? "Met" : "Not Met";
-                    } else if(data.Operator == "max"){
-                        data.ismet = (getFixedCalculatedValue < data.Value1) ? "Met" : "Not Met";
-                    } else if(data.Operator == "greater than or equal"){
-                        data.ismet = (getFixedCalculatedValue >= data.Value1) ? "Met" : "Not Met";
-                    } else if(data.Operator == "lower than or equal"){
-                        data.ismet = (getFixedCalculatedValue <= data.Value1) ? "Met" : "Not Met";
-                    } else if(data.Operator == "equal"){
-                        data.ismet = (getFixedCalculatedValue == data.Value1) ? "Met" : "Not Met";
-                    } else if(data.Operator == "between"){
-                        data.ismet = (getFixedCalculatedValue > data.Value1 && getFixedCalculatedValue < data.Value2) ? "Met" : "Not Met";
-                    }
-                } else {
-                    _.each(columns, function(column){
-                        column.field = column.field.toLowerCase();
-                    })
-                    data.calculatedvaluetodisplay = "No Internal Rating"
-                    data.ismet = "No Internal Rating";
+                    attr.push(data);
                 }
-
-                attr.push(data);
             })
             $("#gridpolicyparameter").html("")
             $("#gridpolicyparameter").kendoGrid({

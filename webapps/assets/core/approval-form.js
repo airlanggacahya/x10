@@ -292,7 +292,7 @@ refreshFilter = function(){
       loanapproval.expansionplan(res.Data.AD[0].borrowerdetails.expansionplans);
       loanapproval.commentfinance(res.Data.AD[0].borrowerdetails.commentsonfinancials);
       loanApproval.companyBackgroundData(
-        new companyBackground(res.Data.AD[0])
+        new companyBackground(res.Data.AD[0], res)
       );
     }
   })
@@ -365,9 +365,9 @@ r.getNormData = function (param) {
         o.measures = [d.CalculatedValue.Value] // actual
         o.markers = [d.Value1] // norm
 
-       
 
-        thirdRange = d.Value1 + (d.Value1 * persentageAsik / 100) 
+
+        thirdRange = d.Value1 + (d.Value1 * persentageAsik / 100)
 
         highestRange = (d.CalculatedValue.Value > thirdRange) ? d.CalculatedValue.Value : ((d.Value1 > thirdRange) ? d.Value1 : thirdRange)
 
@@ -376,7 +376,7 @@ r.getNormData = function (param) {
         for(; digit > 0;digit--){
           divider = divider*10;
         }
-        var planA = Math.ceil(highestRange/divider)*divider 
+        var planA = Math.ceil(highestRange/divider)*divider
 
         highestRange = planA / highestRange >=2? planA /2 : planA
 

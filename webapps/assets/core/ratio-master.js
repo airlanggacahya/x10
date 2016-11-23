@@ -535,15 +535,13 @@ r.clearSub = function(){
 	r.clearSelectOne();
 	setTimeout(function(){
 		var sec = r.newData.Section();
-		if(sec.toLowerCase().indexOf("profit") > -1){
-			r.optionSubSection([]);
-		}else{
-				r.optionSubSection(_.map(_.groupBy(_.filter(r.data(),function(x){ return x.Section == r.newData.Section() })  , 'SubSection'), function (v, k) {
-					return k
-				}).filter(function (d) {
-					return d != '';
-				}))
-		}
+		
+		r.optionSubSection(_.map(_.groupBy(_.filter(r.data(),function(x){ return x.Section == r.newData.Section() })  , 'SubSection'), function (v, k) {
+			return k
+		}).filter(function (d) {
+			return d != '';
+		}))
+		
 	},300);
 }
 

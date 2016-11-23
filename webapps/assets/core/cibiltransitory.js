@@ -401,7 +401,6 @@ $(document).ready(function(){
 			trans.RenderGrid();
 		},500);  
 	})
-	$('body > div.app > div > div.div-container > div.col-md-12.col-sm-12.ez.panel-content > div > div:nth-child(2) > div > button').trigger('click')
 	
 })
 

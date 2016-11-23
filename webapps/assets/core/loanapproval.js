@@ -377,7 +377,8 @@ var keyPolicyParam = function(norm) {
                             else
                                 data.calculatedvaluetodisplay = getFixedCalculatedValue;
                         } else {
-                            data.calculatedvaluetodisplay = "NA"
+                            // data.calculatedvaluetodisplay = "NA"
+                                data.calculatedvaluetodisplay = data.CalculatedValue.Value
                         }
 
                         if(data.Operator == "min"){

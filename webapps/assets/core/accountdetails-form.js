@@ -1004,6 +1004,7 @@ adf.getConfirm = function(){
 					swal("Successfully "+sts, "", "success");
 				}else{
 					swal("Please Edit / Enter Data", "", "success");
+					refreshFilter();
 				}
 				
 			}, function () {
@@ -2070,18 +2071,36 @@ adf.getData = function () {
 			} else {
 				setTimeout(function(){
 					//23/11/2016 set score promotor
-					$.each(res.Data.PromotorDetails, function(i, item){
-						if(adf.form.PromotorDetails()[i] != undefined){
-							var sc = _.find(adf.DataPromotorCP(),function(xx){ return  xx.Name ==  item.PromoterName }  );
-							if(sc != undefined){
-								adf.form.PromotorDetails()[i].CibilScore(sc.CIBILScore)
+					if(res.Data.Status==0){
+						$.each(res.Data.PromotorDetails, function(i, item){
+							if(adf.form.PromotorDetails()[i] != undefined){
+								var sc = _.find(adf.DataPromotorCP(),function(xx){ return  xx.Name ==  item.PromoterName }  );
+								if(sc != undefined){
+									adf.form.PromotorDetails()[i].CibilScore(sc.CIBILScore)
+								}
 							}
+						})
+					}else{
+						var showAlert = false;
+						$.each(res.Data.PromotorDetails, function(i, item){
+							if(adf.form.PromotorDetails()[i] != undefined){
+								var sc = _.find(adf.DataPromotorCP(),function(xx){ return  xx.Name ==  item.PromoterName }  );
+								if(sc != undefined){
+									if(sc.CIBILScore != item.CibilScore){
+										showAlert = true;
+									}
+								}
+									adf.form.PromotorDetails()[i].CibilScore(item.CibilScore)
+							}
+						})
+						if(showAlert){
+                        	swal("Warning", "There is an update from other Form, please Re Enter to load changes","warning");
 						}
-					})
+					}
 
 					console.log(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
 					adf.reloadStatus(res.Data.Status)
-					console.log("------>>1856",res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
+					// console.log("------>>1856",res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
 					adf.CMISNULL(res.Data.CMISNULL);
 
 					if(adf.CMISNULL()){

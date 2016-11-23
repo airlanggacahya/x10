@@ -16,7 +16,9 @@ type DCFinalSanctionModel struct {
 	DealNo           string        `bson:"DealNo"`
 	Date             time.Time     `bson:"Date"`
 	Amount           float64       `bson:"Amount"`
+	IsNullAmount     bool          `bson: "IsNullAmount,omitempty"`
 	ROI              float64       `bson:"ROI"`
+	IsNullROI        bool          `bson: "IsNullROI,omitempty"`
 	PF               string        `bson:"PF"`
 	PG               string        `bson:"PG"`
 	Security         string        `bson:"Security"`

@@ -240,7 +240,7 @@ apcom.LeftAmount.subscribe(function(value){
 	if(typeof value == "string"){
 		var data = value.replace(/^$|\s+/g, "")
 		if(data == ""){
-		apcom.sanction.IsNullAmount(true);
+		apcom.sanction.IsNullAmount(false);
 		}else{
 			if(!isNaN(value)){
 				apcom.sanction.IsNullAmount(true);

@@ -813,7 +813,11 @@ loanApproval.getReport = function(param){
             loanapproval.location (data.Data.AD[0].accountsetupdetails.cityname);
             var firstdateagree = new Date(data.Data.AD[0].borrowerdetails.datebusinessstarted);
             fda = moment(data.Data.AD[0].borrowerdetails.datebusinessstarted).format("DD/MM/YYYY")
-            loanapproval.businesssince (fda);
+            if(fda.indexOf("1970") > -1){
+                loanapproval.businesssince ("");
+            }else{
+                loanapproval.businesssince (fda);
+            }
             loanapproval.businesssegment (data.Data.AD[0].borrowerdetails.customersegmentclasification);
             loanapproval.leaddistributor(data.Data.AD[0].accountsetupdetails.leaddistributor);
             loanapproval.creditanalyst(data.Data.AD[0].accountsetupdetails.creditanalyst);
@@ -1398,9 +1402,13 @@ due.getCostumerData = function(){
 		if (res.length > 0)
 		res = checkConfirmedOrNot(res[0].Status, 1, 2, res, [], "Customer Application");
 
-		if(due.form.Freeze() == true){
-			due.EnableAllfields(false)
-		}
+        try{
+            if(due.form.Freeze() == true){
+                due.EnableAllfields(false)
+            }
+        }catch(e){
+            console.log(e)
+        }
 
 		due.formVisible(true);
 		due.Name([]);

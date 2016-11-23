@@ -489,7 +489,12 @@ func (m *RatioFormula) PrepareVariables(basePeriod string, fm *FormulaModel) err
 				currentPeriod = toolkit.Sprintf("%s-%s-%d", periodParts[0], periodParts[1], int(year+addition))
 			}
 
-			variables[each] = m.GetValue(fm, currentSource, currentFieldAlias, currentPeriod)
+			variables[each] = (func(i interface{}) interface{} {
+				if tmp := toolkit.Sprintf("%v", i); strings.HasPrefix(tmp, "-") {
+					return "0" + tmp
+				}
+				return i
+			})(m.GetValue(fm, currentSource, currentFieldAlias, currentPeriod))
 		})()
 	}
 

@@ -3,9 +3,9 @@
 		font-size: 30px;
 		width: 30px;
 		color: white;
-		/*-ms-transform: rotate(7deg);
+		-ms-transform: rotate(7deg);
 		-webkit-transform: rotate(7deg);
-		transform: rotate(-90deg);*/
+		transform: rotate(-90deg);
 	}
 	.no{
 		font-size: 30px;
@@ -168,23 +168,27 @@
 				<script type="text/javascript" id="rating-template">
 					function ratingClasses(param) {
 						if(param == false)
-							return "fa no"
+							return "fa fa-thumbs-o-down no"
 						else if(param == 'zero')
 							return "fa fa-thumbs-o-down zero"
+						else if(param == 'blank')
+							return "fa blank"
 						else
 							return "fa fa-thumbs-o-up yes"
 					}
 					function ratingColor(param){
 						if(param == false)
-							return "#e6e6e6"
-						else if(param == 'zero')
 							return "#DF2935"
+						else if(param == 'zero')
+							return "#fce749"
+						else if(param == 'blank')
+							return "#e6e6e6"
 						else
 							return "#00da9c"
 					}
 
 					function ratingForeColor(param) {
-						if(param == false)
+						if(param == 'blank')
 							return "#000"
 						else
 							return "#fff"
@@ -350,10 +354,10 @@
 	internalrating = ko.observable("")
 	internalratingxfl = ko.observable('')
 
-	externalrating = ko.observable('zero')
-	commercialcibil = ko.observable('zero')
-	pdremarks = ko.observable('zero')
-	referencecheck = ko.observable('zero')
+	externalrating = ko.observable('blank')
+	commercialcibil = ko.observable('blank')
+	pdremarks = ko.observable('blank')
+	referencecheck = ko.observable('blank')
 
 	defaulterstatusData = ko.observableArray([])
 
@@ -397,18 +401,35 @@
 			}
 	  	});
 		if(r.AllData().Data.AD.length > 0){
-			externalrating(
+			if(r.AllData().Data.AD[0].borrowerdetails.externalrating === '') {
+				externalrating('blank')
+			} else {
+				externalrating(
 				(r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('moderate') > -1 ||
-				r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('adequate') > -1
-					? 'zero' :
-				(r.AllData().Data.AD[0].borrowerdetails.externalrating.indexOf("Safety") == -1) ? false : true ))
+					r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('adequate') > -1
+						? 'zero' :
+					(r.AllData().Data.AD[0].borrowerdetails.externalrating.indexOf("Safety") == -1) ? false : true ))
+			}
 
-			if(r.AllData().Data.AD[0].loandetails.commercialcibilreport) {
+			if(r.AllData().Data.AD[0].loandetails.commercialcibilreport === '') {
+				console.log(r.AllData().Data.AD[0].loandetails.commercialcibilreport)
+				console.log("sarif")
+				commercialcibil('blank')
+			} else {
 				commercialcibil(r.AllData().Data.AD[0].loandetails.commercialcibilreport)
 			}
 
-			pdremarks( (r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks == "Satisfactory") ? true : false )
-			referencecheck( (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Positive") ? true : (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Negative") ? false : 'zero' )
+			if(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks === '') {
+				pdremarks('blank')
+			} else {
+				pdremarks( (r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks == "Satisfactory") ? true : false )
+			}
+
+			if(r.AllData().Data.AD[0].borrowerdetails.marketreference === '') {
+				referencecheck('blank')
+			} else {
+				referencecheck( (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Positive") ? true : (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Negative") ? false : 'zero' )
+			}
 		}
 
 		try {

@@ -182,11 +182,18 @@
 						else
 							return "#00da9c"
 					}
+
+					function ratingForeColor(param) {
+						if(param == false)
+							return "#000"
+						else
+							return "#fff"
+					}
 				</script>
 				<div class="panel-fit panel-column">
 					<div class="panel-default panel-fit panel-row" style="color: white; margin-top: 0px">
 							<div class="col-sm-6 no-padding ratingbox er">
-								<div class="panel-body panel-row" data-bind="style: { backgroundColor: ratingColor(externalrating()), height: '100%', padding: '10px' }">
+								<div class="panel-body panel-row" data-bind="style: { backgroundColor: ratingColor(externalrating()), color: ratingForeColor(externalrating()), height: '100%', padding: '10px' }">
 										<div class="col-sm-4 no-padding heightfix">
 											<span data-bind="attr: { class: ratingClasses(externalrating()) }"></span>
 										</div>
@@ -196,7 +203,7 @@
 								</div>
 							</div>
 							<div class="col-sm-6 no-padding ratingbox pdr" style="border-left: 2px solid #fafafa">
-								<div class="panel-body panel-row" data-bind="style: { backgroundColor: ratingColor(pdremarks()), height: '100%', padding: '10px' }">
+								<div class="panel-body panel-row" data-bind="style: { backgroundColor: ratingColor(pdremarks()), color: ratingForeColor(pdremarks()), height: '100%', padding: '10px' }">
 									<div class="col-sm-4 no-padding heightfix">
 										<span data-bind="attr: { class: ratingClasses(pdremarks()) }"></span>
 									</div>
@@ -208,7 +215,7 @@
 					</div>
 					<div class="panel-default panel-fit panel-row" style="color: white; margin-top: 2px">
 							<div class="col-sm-6 no-padding ratingbox cc">
-								<div class="panel-body clearfix" data-bind="style: { backgroundColor: ratingColor(commercialcibil()), height: '100%', padding: '10px' }">
+								<div class="panel-body clearfix" data-bind="style: { backgroundColor: ratingColor(commercialcibil()), color: ratingForeColor(commercialcibil()), height: '100%', padding: '10px' }">
 									<div class="panel-row">
 										<div class="col-sm-4 no-padding heightfix">
 											<span class="heightfix" data-bind="attr: { class: ratingClasses(commercialcibil()) }"></span>
@@ -220,7 +227,7 @@
 								</div>
 							</div>
 							<div class="col-sm-6 no-padding ratingbox rc" style="border-left: 2px solid #fafafa">
-								<div class="panel-body" data-bind="style: { backgroundColor: ratingColor(referencecheck()), height: '100%', padding: '10px' }">
+								<div class="panel-body" data-bind="style: { backgroundColor: ratingColor(referencecheck()), color: ratingForeColor(referencecheck()), height: '100%', padding: '10px' }">
 									<div class="panel-row">
 										<div class="col-sm-4 no-padding heightfix">
 											<span data-bind="attr: { class: ratingClasses(referencecheck()) }"></span>

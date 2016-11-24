@@ -639,7 +639,7 @@ var outstanding = function(param){
 
     var base = function(a, b) { return { fb: ko.observable(a), nfb: ko.observable(b) } };
 
-    _.each(param.BA, function(ba){
+    _.each( _.filter(param.BA,function(x){ return !(x.DataBank[0].BankAccount.FacilityType.indexOf("Current") > -1 && x.DataBank[0].BankAccount.FacilityType.length == 1)  })  , function(ba){
         var account = ba.DataBank[0].BankAccount;
         console.log(account)
         if ( account.FacilityType.indexOf("Non-Fund Based") == -1){

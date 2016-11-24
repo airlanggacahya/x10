@@ -238,7 +238,7 @@ refreshFilter = function(){
     }
 
     if(r.AllData().Data.CP.length > 0)
-      createCibilDetails(r.AllData().Data.CP[0].detailofpromoters.biodata)
+      createCibilDetails(r.AllData().Data.AD[0].promotordetails)
 
     r.AccountDetail( r.AllData().Data.AD[0] )
     r.isLoading(false)
@@ -251,17 +251,18 @@ refreshFilter = function(){
     below600 = []
     beetween600700 = []
 
-    if(r.AllData().Data.CP.length > 0){
-      var promoter = res.Data.CP[0].detailofpromoters.biodata
-
-      mincibilscore ( _.minBy(promoter, 'CIBILScore').CIBILScore)
+    if(r.AllData().Data.AD.length > 0){
+      var promoter = res.Data.AD[0].promotordetails
+      var prommin = _.filter(promoter,function(x){ return x.cibilscore != 0  });
+      var minsc = _.minBy(prommin,  function(x){ return x.cibilscore  });
+      mincibilscore ( minsc == undefined ? 0 : minsc.cibilscore)
       for (var i=0 ; i < promoter.length; i++){
-          if (promoter[i].CIBILScore > 700){
-              above700.push(promoter[i].CIBILScore)
-          }else if(promoter[i].CIBILScore < 600){
-              below600.push(promoter[i].CIBILScore)
+          if (promoter[i].cibilscore > 700){
+              above700.push(promoter[i].cibilscore)
+          }else if(promoter[i].cibilscore < 600){
+              below600.push(promoter[i].cibilscore)
           }else{
-              beetween600700.push(promoter[i].CIBILScore)
+              beetween600700.push(promoter[i].cibilscore)
           }
       }
     }
@@ -770,6 +771,8 @@ var getredflag = function(){
             redflags(data.Background)
             createRedFlags();
         }else{
+            redflags([]);
+            createRedFlags();
              // swal("Warning", "Red Flags Data Not Found", "warning");
              Materialize.toast("Due Diligence Data Not Confirmed", 5000);
 

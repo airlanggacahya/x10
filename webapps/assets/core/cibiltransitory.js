@@ -115,12 +115,17 @@ trans.RenderGrid = function(){
 
 trans.showProm = function(Id){
 	if (Id != undefined) {
-		var cur = _.find(trans.AllData(),function(x){
-			return x.Id == Id;
-		})
+		    ajaxPost( "/cibiltransitory/getdatacibilpromotorcurrent" ,{"Id" : Id},function(res){
+            if(res.Data[0] !=undefined){
+            trans.CurrentData(ko.mapping.fromJS(res.Data[0]));
 
-		if(cur != undefined){
-			trans.CurrentData(ko.mapping.fromJS(cur));
+
+		// var cur = _.find(trans.AllData(),function(x){
+		// 	return x.Id == Id;
+		// })
+
+		// if(cur != undefined){
+		// 	trans.CurrentData(ko.mapping.fromJS(cur));
 
 			if(trans.CurrentData().StatusCibil() != 0){
 				swal("Warning","Selected Data Already Confirmed, Please Re Enter First","warning");
@@ -149,7 +154,25 @@ trans.showProm = function(Id){
 			trans.CurrentData().Telephones(tele)
 			trans.CurrentData().EmailAddress(email)
 			trans.loadAddress(trans.CurrentData().AddressData())
+
+			$(".modal-edit-bro").modal({
+		backdrop: 'static',
+		keyboard: false,
+		show: true
+	});
+
+	if($("#dateofreport").getKendoDatePicker() == undefined){
+		$("#dateofreport").kendoDatePicker({ format : "dd-MMM-yyyy" });
+		$("#dateofbirth").kendoDatePicker({ format : "dd-MMM-yyyy" });
+	}
+
+	$("#timeofreportinp").kendoMaskedTextBox({
+	    mask: "00:00:00",
+	    width:"100%"
+	});
 		}
+	})
+
 	} else {
 		trans.CurrentData({
 			ConsumersInfos: {
@@ -190,9 +213,8 @@ trans.showProm = function(Id){
 		})
 
 		trans.loadAddress(trans.CurrentData().AddressData())
-	}
 
-	$(".modal-edit-bro").modal({
+		$(".modal-edit-bro").modal({
 		backdrop: 'static',
 		keyboard: false,
 		show: true
@@ -207,6 +229,9 @@ trans.showProm = function(Id){
 	    mask: "00:00:00",
 	    width:"100%"
 	});
+	}
+
+	
 	
 }
 
@@ -401,7 +426,6 @@ $(document).ready(function(){
 			trans.RenderGrid();
 		},500);  
 	})
-	$('body > div.app > div > div.div-container > div.col-md-12.col-sm-12.ez.panel-content > div > div:nth-child(2) > div > button').trigger('click')
 	
 })
 

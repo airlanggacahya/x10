@@ -371,7 +371,6 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 	if p.Status == 1 {
 		custstring := cast.ToString(p.ApplicantDetail.CustomerID)
 		dealstring := cast.ToString(p.ApplicantDetail.DealNo)
-		tk.Println("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
 		_ = new(CustomerProfiles).SyncCustomerData(custstring, dealstring)
 
 		p.ConfirmedBy = Username

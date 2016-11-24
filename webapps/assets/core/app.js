@@ -489,7 +489,7 @@ app.formatnum =  function(number, decimalPlace) {
         }
     }
 
-
+    result = result.replace("-,","-")
 
     return result;
 }

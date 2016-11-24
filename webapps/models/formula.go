@@ -552,16 +552,14 @@ func (m *RatioFormula) Calculate() (string, error) {
 
 	executedValue := 0.0
 	executedString := ""
-	if m.Section == "" {
-		executedString = statement
-	} else {
-		executedValue, err = helper.EvalArithmetic(statement)
-		if err != nil {
-			return "0", errors.New(toolkit.Sprintf("Invalid formula on \"%s %s\". Formula: \"%s\"", m.Id, m.Title, m.Formula))
-		}
-		executedString = strings.TrimSpace(toolkit.Sprintf("%v", executedValue))
 
+	executedValue, err = helper.EvalArithmetic(statement)
+	if err != nil {
+		errors.New("asolole")
+		return statement, nil
+		// return "0", errors.New(toolkit.Sprintf("Invalid formula on \"%s %s\". Formula: \"%s\"", m.Id, m.Title, m.Formula))
 	}
+	executedString = strings.TrimSpace(toolkit.Sprintf("%v", executedValue))
 
 	// toolkit.Printfn("          %#v", executedValue)
 

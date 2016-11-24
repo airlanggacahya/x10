@@ -543,12 +543,14 @@ func (m *RatioFormula) Calculate() (string, error) {
 		return "0", nil
 	}
 
+	statement = strings.Replace(statement, "-0-", "+", -1)
+
 	// toolkit.Println("---------------------------------------------------")
-	// toolkit.Printfn("--------> %#s", m.Id)
-	// toolkit.Printfn("          %#v", m.Formula)
-	// toolkit.Printfn("          %#v", m.Variables)
-	// toolkit.Printfn("          %#s", m.FormulaParsed)
-	// toolkit.Printfn("          %#s", statement)
+	// toolkit.Printfn("---id------> %#s", m.Id)
+	// toolkit.Printfn("   formula   %#v", m.Formula)
+	// toolkit.Printfn("   variables %#v", m.Variables)
+	// toolkit.Printfn("   parsed    %#s", m.FormulaParsed)
+	// toolkit.Printfn("   stmt      %#s", statement)
 
 	executedValue := 0.0
 	executedString := ""
@@ -561,7 +563,7 @@ func (m *RatioFormula) Calculate() (string, error) {
 	}
 	executedString = strings.TrimSpace(toolkit.Sprintf("%v", executedValue))
 
-	// toolkit.Printfn("          %#v", executedValue)
+	// toolkit.Printfn("   excutdval %#v", executedValue)
 
 	if executedString == "+Inf" || executedString == "-Inf" || executedString == "NaN" {
 		return "0", nil

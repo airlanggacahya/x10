@@ -164,7 +164,8 @@ r.ratingReferenceTooltip = function(param){
   var opt = r.getTooltipOption('top');
   opt.content = (param === false) ? "Negative" :
                 (param === true) ? "Positive" :
-                (param == 'zero') ? "Moderate" : param
+                (param === "zero") ? "Moderate" :
+                (param === 'blank')? " " : param
   return opt;
 }
 

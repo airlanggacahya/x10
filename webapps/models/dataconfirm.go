@@ -171,6 +171,9 @@ func (a *DataConfirmController) GetDataConfirmed(CustomerID string, DealNo strin
 
 	for idx, val := range results {
 		results[idx].Set("Id", val.Get("_id"))
+		if TableName == "RepaymentRecords" {
+			results[idx].Set("Months", val.Get("Month"))
+		}
 	}
 
 	// if len(results) == 0 {

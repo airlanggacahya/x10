@@ -558,48 +558,70 @@ func (r *RTRBottom) GetDataConfirmed(custid, dealno string) ([]RTRBottom, *RTRSu
 			return x.(RTRBottom).EMI
 		}).Exec().Result.Sum
 
-		smry.DPDTrack = (func() int32 {
-			// bank, err := new(BankAnalysis).GenerateAllSummary(tk.Sprintf("%v", customerId), dealno)
-			// if err != nil {
-			// 	bank = new(BankAllSummary)
-			// }
+		maxDPD := int64(0)
 
-			// if bank.SactionLimit == 0 {
-			// 	return (-1)
-			// }
-
-			crowdwtf := crowd.From(&arr).Max(func(x interface{}) interface{} {
-				months := x.(RTRBottom).Months
-				value := crowd.From(&months).Max(func(y interface{}) interface{} {
-					var n int64
-					s := strings.Replace(y.(MonthRtr).Value, "DPD", "", -1)
-					if s == "" {
-						n = 0
-					} else if strings.ToLower(s) == "30+" {
-						n = 32
-					} else {
-						s = strings.Replace(s, "+", "", -1)
-						n, _ = strconv.ParseInt(s, 10, 32)
-					}
-
-					return n
-				}).Exec().Result.Max
-
-				if value == nil {
-					return int32(0)
+		for _, val := range arr {
+			for _, vali := range val.Months {
+				var n int64
+				s := strings.Replace(vali.Value, "DPD", "", -1)
+				if s == "" {
+					n = 0
+				} else if strings.ToLower(s) == "30+" {
+					n = 32
+				} else {
+					s = strings.Replace(s, "+", "", -1)
+					n, _ = strconv.ParseInt(s, 10, 32)
 				}
-
-				return int32(value.(int64))
-			}).Exec().Result.Max
-
-			if crowdwtf == nil {
-				return 0
+				if maxDPD < n {
+					maxDPD = n
+				}
 			}
+		}
 
-			return crowdwtf.(int32)
-
-		})()
+		smry.DPDTrack = int32(maxDPD)
 	}
+	// 	(func() int32 {
+	// 		// bank, err := new(BankAnalysis).GenerateAllSummary(tk.Sprintf("%v", customerId), dealno)
+	// 		// if err != nil {
+	// 		// 	bank = new(BankAllSummary)
+	// 		// }
+
+	// 		// if bank.SactionLimit == 0 {
+	// 		// 	return (-1)
+	// 		// }
+
+	// 		crowdwtf := crowd.From(&arr).Max(func(x interface{}) interface{} {
+	// 			months := x.(RTRBottom).Months
+	// 			value := crowd.From(&months).Max(func(y interface{}) interface{} {
+	// 				var n int64
+	// 				s := strings.Replace(y.(MonthRtr).Value, "DPD", "", -1)
+	// 				if s == "" {
+	// 					n = 0
+	// 				} else if strings.ToLower(s) == "30+" {
+	// 					n = 32
+	// 				} else {
+	// 					s = strings.Replace(s, "+", "", -1)
+	// 					n, _ = strconv.ParseInt(s, 10, 32)
+	// 				}
+
+	// 				return n
+	// 			}).Exec().Result.Max
+
+	// 			if value == nil {
+	// 				return int32(0)
+	// 			}
+
+	// 			return int32(value.(int64))
+	// 		}).Exec().Result.Max
+
+	// 		if crowdwtf == nil {
+	// 			return 0
+	// 		}
+
+	// 		return crowdwtf.(int32)
+
+	// 	})()
+	// }
 
 	// var dpdTrack = _.max(rtr.map(function (d) {
 
@@ -612,7 +634,6 @@ func (r *RTRBottom) GetDataConfirmed(custid, dealno string) ([]RTRBottom, *RTRSu
 
 	// 	return mav
 	// }))
-
 	return arr, smry, nil
 }
 

@@ -469,6 +469,7 @@ adf.changePromotorName = function (promotor) {
 			return d.Name == e.sender.value()
 		})
 		if (typeof row === 'undefined') {
+			promotor.CibilScore(0)
 			return
 		}
 
@@ -477,6 +478,7 @@ adf.changePromotorName = function (promotor) {
 		},500);
 
 		promotor.CibilScore(row.CIBILScore)
+		generatemc()
 	}
 }
 
@@ -518,7 +520,7 @@ adf.save = function () {
 	var date = (new Date()).toISOString();
 	adf.form.DateSave(date);
 	$.each(dataGrid, function(i, item){
-		console.log(item)
+		// console.log(item)
 		adf.form.BorrowerDetails.RefrenceCheck.push(
 			{
 				Source : item.Source,
@@ -2077,6 +2079,8 @@ adf.getData = function () {
 								var sc = _.find(adf.DataPromotorCP(),function(xx){ return  xx.Name ==  item.PromoterName }  );
 								if(sc != undefined){
 									adf.form.PromotorDetails()[i].CibilScore(sc.CIBILScore)
+								}else{
+									adf.form.PromotorDetails()[i].CibilScore(0);
 								}
 							}
 						})
@@ -2094,9 +2098,12 @@ adf.getData = function () {
 							}
 						})
 						if(showAlert){
-                        	swal("Warning", "There is an update from other Form, please Re Enter to load changes","warning");
+                        	swal("Warning", "There is an update from CIBIL Form, please Re Enter to load changes","warning");
 						}
 					}
+
+					generatemc()
+
 
 					console.log(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
 					adf.reloadStatus(res.Data.Status)
@@ -2227,7 +2234,7 @@ adf.getData = function () {
 
 				adf.PdDate(kendo.toString(new Date(adf.form.AccountSetupDetails.PdInfo.PdDate()),"dd-MMM-yyyy"))
 
-				generatemc()
+				// generatemc()
 
 				adf.onclickDismissModal();
 			}
@@ -2240,6 +2247,7 @@ adf.getData = function () {
 	})
 }
 window.refreshFilter = function () {
+	$(".toaster").html("")
 	adf.FirstAgreementDate("");
 	adf.form.BorrowerDetails.RefrenceCheck([])
 	adf.getRatingMaster(adf.getData)
@@ -2390,6 +2398,7 @@ adf.removePromotor = function (data) {
 		if (adf.form.PromotorDetails().length == 0) {
 			adf.addMorePromotor()
 		}
+		generatemc();
 	}
 }
 
@@ -2981,7 +2990,7 @@ function generatemc(){
 	_.each(adf.form.PromotorDetails(), function(v,i){
 		if(mc == 0){
 		  mc = v.CibilScore();
-		} else if(v.CibilScore() < mc){
+		} else if(v.CibilScore() < mc && v.CibilScore() != 0){
 		  mc = v.CibilScore();
 		}
 	})

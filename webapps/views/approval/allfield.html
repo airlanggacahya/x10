@@ -683,10 +683,10 @@
 					model:{
 						id: "Name",
 						fields: {
-							Name:{editable: true,},
+							promotername:{editable: true,},
 							Designation:{editable: true},
 							ShareHolding:{type: "number", editable: true, min: 1, spinner: false},
-							CIBILScore:{type: "number", editable: true, min: 1},
+							cibilscore:{type: "number", editable: true, min: 1},
 							RedFlags:{editable: true},
 						}
 					}
@@ -698,13 +698,13 @@
 				headerAttributes: { class: "header-bgcolor" },
 				columns:[
 					{
-						field: "Name",
+						field: "promotername",
 						title: "Name",
 						headerAttributes: { "class": "sub-bgcolor" },
 						width: 100,
 					},
 					{
-						field: "CIBILScore",
+						field: "cibilscore",
 						title: "CIBIL Score",
 						headerAttributes: { "class": "sub-bgcolor" },
 						attributes: { "class": "text-center" },

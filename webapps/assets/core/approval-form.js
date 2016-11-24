@@ -171,32 +171,38 @@ r.ratingReferenceTooltip = function(param){
 
 r.checkValidation = function(data){
   if(data.Data.CP.length==0){
-        Materialize.toast("Customer Profile Data Not Confirmed", 5000);
+        // Materialize.toast("Customer Profile Data Not Confirmed", 5000);
+        fixToast("Customer Profile Data Not Confirmed");
 
   }
 
   if(data.Data.BA.length==0){
-        Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
+        // Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
+        fixToast("Bank Analysis Data Not Confirmed");
 
   }
 
   if(data.Data.CIBIL.length==0){
-        Materialize.toast("CIBIL Data Not Confirmed", 5000);
+        // Materialize.toast("CIBIL Data Not Confirmed", 5000);
+        fixToast("CIBIL Data Not Confirmed");
 
   }
 
   if(data.Data.CIBILPROM.length==0){
-        Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
+        // Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
+        fixToast("CIBIL Promotor Data Not Confirmed")
 
   }
 
   if(data.Data.AD.length==0){
-        Materialize.toast("Account Details Data Not Confirmed", 5000);
+        // Materialize.toast("Account Details Data Not Confirmed", 5000);
+        fixToast("Account Details Data Not Confirmed");
 
   }
 
   if(data.Data.RTR.length==0){
-        Materialize.toast("RTR Data Not Confirmed", 5000);
+        // Materialize.toast("RTR Data Not Confirmed", 5000);
+        fixToast("RTR Data Not Confirmed");
 
   }
 
@@ -204,6 +210,7 @@ r.checkValidation = function(data){
 }
 
 refreshFilter = function(){
+  $(".toaster").html("")
   r.initEvents()
   if (r.getCustomerId() === false) {
       return
@@ -239,7 +246,7 @@ refreshFilter = function(){
     }
 
     if(r.AllData().Data.CP.length > 0)
-      createCibilDetails(r.AllData().Data.CP[0].detailofpromoters.biodata)
+      createCibilDetails(r.AllData().Data.AD[0].promotordetails)
 
     r.AccountDetail( r.AllData().Data.AD[0] )
     r.isLoading(false)
@@ -252,17 +259,18 @@ refreshFilter = function(){
     below600 = []
     beetween600700 = []
 
-    if(r.AllData().Data.CP.length > 0){
-      var promoter = res.Data.CP[0].detailofpromoters.biodata
-
-      mincibilscore ( _.minBy(promoter, 'CIBILScore').CIBILScore)
+    if(r.AllData().Data.AD.length > 0){
+      var promoter = res.Data.AD[0].promotordetails
+      var prommin = _.filter(promoter,function(x){ return x.cibilscore != 0  });
+      var minsc = _.minBy(prommin,  function(x){ return x.cibilscore  });
+      mincibilscore ( minsc == undefined ? 0 : minsc.cibilscore)
       for (var i=0 ; i < promoter.length; i++){
-          if (promoter[i].CIBILScore > 700){
-              above700.push(promoter[i].CIBILScore)
-          }else if(promoter[i].CIBILScore < 600){
-              below600.push(promoter[i].CIBILScore)
+          if (promoter[i].cibilscore > 700){
+              above700.push(promoter[i].cibilscore)
+          }else if(promoter[i].cibilscore < 600){
+              below600.push(promoter[i].cibilscore)
           }else{
-              beetween600700.push(promoter[i].CIBILScore)
+              beetween600700.push(promoter[i].cibilscore)
           }
       }
     }
@@ -566,7 +574,8 @@ r.getCreditScoreCard = function(param, callback) {
           param.Dealno = r.customerId().split('|')[1]
           param.Internalrating = "";
           r.getNormData(param)
-          Materialize.toast("Data Credit Score Card Not Found", 5000);
+          // Materialize.toast("Data Credit Score Card Not Found", 5000);
+          fixToast("Data Credit Score Card Not Found")
       }
     }
 
@@ -771,8 +780,11 @@ var getredflag = function(){
             redflags(data.Background)
             createRedFlags();
         }else{
+            redflags([]);
+            createRedFlags();
              // swal("Warning", "Red Flags Data Not Found", "warning");
-             Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+             // Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+             fixToast("Due Diligence Data Not Confirmed")
 
             return
         }
@@ -820,8 +832,9 @@ var getreportdata = function(){
         left.panelVisible(true)
     }else{
          // swal("Warning", "Report Data Not Found", "warning");
-          Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
-
+          // Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
+          fixToast("Balance Sheet Data Not Confirmed");
+          
         return
     }
   });

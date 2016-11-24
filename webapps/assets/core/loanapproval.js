@@ -735,32 +735,38 @@ loanApproval.test = ko.observableArray([])
 
 loanApproval.checkValidation = function(data){
   if(data.Data.CP.length==0){
-        Materialize.toast("Customer Profile Data Not Confirmed", 5000);
+        // Materialize.toast("Customer Profile Data Not Confirmed", 5000);
+        fixToast("Customer Profile Data Not Confirmed");
 
   }
 
   if(data.Data.BA.length==0){
-        Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
+        // Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
+        fixToast("Bank Analysis Data Not Confirmed");
+
 
   }
 
   if(data.Data.CIBIL.length==0){
-        Materialize.toast("CIBIL Data Not Confirmed", 5000);
+        // Materialize.toast("CIBIL Data Not Confirmed", 5000);
+        fixToast("CIBIL Data Not Confirmed");
 
   }
 
   if(data.Data.CIBILPROM.length==0){
-        Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
-
+        // Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
+        fixToast("CIBIL Promotor Data Not Confirmed");
   }
 
   if(data.Data.AD.length==0){
-        Materialize.toast("Account Details Data Not Confirmed", 5000);
+        // Materialize.toast("Account Details Data Not Confirmed", 5000);
+        fixToast("Account Details Data Not Confirmed");
 
   }
 
   if(data.Data.RTR.length==0){
-        Materialize.toast("RTR Data Not Confirmed", 5000);
+        // Materialize.toast("RTR Data Not Confirmed", 5000);
+        fixToast("RTR Data Not Confirmed");
 
   }
 
@@ -958,6 +964,7 @@ function numberWithCommas(x) {
 }
 
 var refreshFilter = function(){
+    $(".toaster").html("")
     loanApproval.loading(true)
     promoters = [];
     //resetpromoters();
@@ -1346,7 +1353,8 @@ due.getData = function(){
 			}
 		}else{
              if(model.PageId() != "Approval Form"){
-                Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+                // Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+                fixToast("Due Diligence Data Not Confirmed");
                 return;
             }
 

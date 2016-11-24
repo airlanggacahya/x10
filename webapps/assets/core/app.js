@@ -441,12 +441,19 @@ function checkConfirmedOrNot(statusnow, confirmedval, verifyval, res, emptydata,
         return res
     } else{
         if(message != ""){
-            Materialize.toast(message+" Data Not Confirmed", 5000);
-            $('.toast').css("background-color","#F26419").css("color","white")
+            // Materialize.toast(message+" Data Not Confirmed", 60000);
+            fixToast(message+" Data Not Confirmed");
+            // $('.toast').css("background-color","#F26419").css("color","white")
             // swal("Warning", message+" Data Not Confirmed", "warning");
         }
         return emptydata
     }
+}
+
+function fixToast(message){
+    $.toaster('', message, 'warning');
+    $(".alert-warning").css("background-color", "#F26419").css("border-color", "#F26419").css("color", "#fff");
+    $(".alert").css("margin-bottom","5px")
 }
 
 app.formatnum =  function(number, decimalPlace) {

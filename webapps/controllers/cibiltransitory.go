@@ -19,6 +19,41 @@ type CibilTransitoryController struct {
 	*BaseController
 }
 
+func (c *CibilTransitoryController) GetDataCibilPromotorCurrent(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	res := new(tk.Result)
+
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	p := tk.M{}
+	k.GetPayload(&p)
+
+	cibilIndividual := []ReportData{}
+	query := []*dbox.Filter{}
+	query = append(query, dbox.Eq("_id", bson.ObjectIdHex(p.GetString("Id"))))
+	csr, err := cn.NewQuery().
+		Where(dbox.And(query...)).
+		From("CibilReportPromotorFinal").
+		Cursor(nil)
+
+	defer csr.Close()
+
+	if err != nil {
+		res.SetError(err)
+	}
+
+	err = csr.Fetch(&cibilIndividual, 0, false)
+	if err != nil {
+		res.SetError(err)
+	}
+
+	csr.Close()
+	res.SetData(cibilIndividual)
+	return res
+}
+
 func (c *CibilTransitoryController) Default(k *knot.WebContext) interface{} {
 	access := c.LoadBase(k)
 	k.Config.NoLog = true

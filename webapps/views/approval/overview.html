@@ -400,6 +400,15 @@
                 })())
 			}
 	  	});
+
+		if(r.AllData().Data.CIBIL.length > 0){
+			if(r.AllData().Data.CIBIL[0].Rating === '' || typeof r.AllData().Data.CIBIL[0].Rating === "undefined") {
+				commercialcibil('blank')
+			} else {
+				commercialcibil( (r.AllData().Data.CIBIL[0].Rating == "Positive") ? true : (r.AllData().Data.CIBIL[0].Rating == "Negative") ? false : 'zero' )
+			}
+		}
+
 		if(r.AllData().Data.AD.length > 0){
 			if(r.AllData().Data.AD[0].borrowerdetails.externalrating === '') {
 				externalrating('blank')
@@ -409,14 +418,6 @@
 					r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('adequate') > -1
 						? 'zero' :
 					(r.AllData().Data.AD[0].borrowerdetails.externalrating.indexOf("Safety") == -1) ? false : true ))
-			}
-
-			if(r.AllData().Data.AD[0].loandetails.commercialcibilreport === '') {
-				console.log(r.AllData().Data.AD[0].loandetails.commercialcibilreport)
-				console.log("sarif")
-				commercialcibil('blank')
-			} else {
-				commercialcibil(r.AllData().Data.AD[0].loandetails.commercialcibilreport)
 			}
 
 			if(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks === '') {

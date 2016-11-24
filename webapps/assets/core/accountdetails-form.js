@@ -2240,6 +2240,7 @@ adf.getData = function () {
 	})
 }
 window.refreshFilter = function () {
+	$(".toaster").html("")
 	adf.FirstAgreementDate("");
 	adf.form.BorrowerDetails.RefrenceCheck([])
 	adf.getRatingMaster(adf.getData)

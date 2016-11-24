@@ -117,7 +117,7 @@
                     values.push(parseFloat(d.WeightScore.split(' ')[0]))
                     var weightScore = prevHeader.Score * prevHeader.Weight / 100
 
-                    prevHeader.Score = kendo.toString(_.sum(values), 'n1')
+                    prevHeader.Score = kendo.toString(_.sum(values), 'n2')
                 })
 
                 res.Data.CreditScoreData.Items.forEach(function (d) {

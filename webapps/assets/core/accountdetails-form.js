@@ -2098,7 +2098,7 @@ adf.getData = function () {
 							}
 						})
 						if(showAlert){
-                        	swal("Warning", "There is an update from other Form, please Re Enter to load changes","warning");
+                        	swal("Warning", "There is an update from CIBIL Form, please Re Enter to load changes","warning");
 						}
 					}
 

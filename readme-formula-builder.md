@@ -63,7 +63,7 @@ The calculation will happen inside `.CalculateBalanceSheet()`, returned result.
 
 The formula master of Balance Sheet is saved into collection **RatioFormula**. All rows will be pulled out and sorted (each row got field called `putAfter` which is used to identify the order). Rows contain both data from balance sheets & ratio formula. Method `.GetFieldsInOrder()` will do this part.  After that, we loop the rows, then execute the formula. FYI, because the rows can be formula or just field from balance sheet; only the formula will be executed.
 
-```
+```go
 results = []result{}
 rows := fm.GetFieldsInOrder()
 
@@ -129,7 +129,7 @@ result := fm.CalculateNorm(internalRatingId)
 
 All formulaes used in this method is saved onto collection `NormMaster`, then we will do calculation when the internal rating is `all` or equal to the `internalRatingId`.
 
-```
+```go
 results = []result{}
 auditStatus := arrays of period
 rows := get from collection NormMaster
@@ -178,7 +178,7 @@ Values by period inside each rows will be ordered in descending. Then looped. Th
 Then use the selected period to calculate the final value.
 
 
-```
+```go
 for each in rows {
 	// ... continue from previous code
 

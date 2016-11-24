@@ -17,10 +17,12 @@ trans.RenderGrid = function(){
 	               		searchkey: searchKey,
 	               		additional: function(){
 	               			if(searchKey != ""){
-		               			var foundCust = _.find(filter().CustomerSearchAll(), function(cust){
+		               			var foundCust = _.map(_.filter(filter().CustomerSearchAll(), function(cust){
 									return cust.customer_name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1
+								}), function(cust){
+		               				return cust.customer_id
 								})
-								return foundCust != undefined ? foundCust.customer_id : -1
+								return JSON.stringify(foundCust)
 		               		} else {
 		               			return -1
 		               		}

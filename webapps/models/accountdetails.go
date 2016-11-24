@@ -427,9 +427,18 @@ func (a *AccountDetail) GetDataForFormulaBuilder(customerId, dealNo string) (Acc
 		final.PDMaxCibilScore = asFloat(crowd.From(&acc.PromotorDetails).Max(func(x interface{}) interface{} {
 			return x.(PromotorDetails).CibilScore
 		}).Exec().Result.Max)
-		final.PDMinCibilScore = asFloat(crowd.From(&acc.PromotorDetails).Min(func(x interface{}) interface{} {
-			return x.(PromotorDetails).CibilScore
-		}).Exec().Result.Min)
+
+		minCbl := 1000.0
+		for _, val := range acc.PromotorDetails {
+			if minCbl > val.CibilScore && val.CibilScore != 0 {
+				minCbl = val.CibilScore
+			}
+		}
+
+		final.PDMinCibilScore = minCbl
+		// asFloat(crowd.From(&acc.PromotorDetails).Min(func(x interface{}) interface{} {
+		// 	return x.(PromotorDetails).CibilScore
+		// }).Exec().Result.Min)
 		final.PDAvgRealEstatePosition = crowd.From(&acc.PromotorDetails).Avg(func(x interface{}) interface{} {
 			if len(x.(PromotorDetails).RealEstatePosition) == 0 {
 				return 0

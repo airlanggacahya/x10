@@ -158,7 +158,7 @@ apcom.loadCommentData = function(tayp){
 }
 
 apcom.Amount.subscribe(function(value){
-	console.log(value)
+	// console.log(value)
 	if(typeof value == "string"){
 		var data = value.replace(/^$|\s+/g, "")
 		if(data == ""){
@@ -236,7 +236,7 @@ var dcFinalSanctionDate = function(d){
 }
 
 apcom.LeftAmount.subscribe(function(value){
-	console.log(value)
+	// console.log(value)
 	if(typeof value == "string"){
 		var data = value.replace(/^$|\s+/g, "")
 		if(data == ""){
@@ -255,7 +255,7 @@ apcom.LeftAmount.subscribe(function(value){
 });
 
 apcom.ROI.subscribe(function(value){
-	console.log(value)
+	// console.log(value)
 	if(typeof value == "string"){
 		var data = value.replace(/^$|\s+/g, "")
 		if(data == ""){

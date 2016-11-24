@@ -36,27 +36,32 @@
                 return
             }
 
-
+            $(".toaster").html("")
             frp.customerName(filter().CustomerSearchText())
             frp.dealno(filter().DealNumberSearchVal())
 
             if(res.Data.FormulaModel.BankingAnalysisRawSummary.length == 0 || res.Data.FormulaModel.BankingAnalysisRawDetails.length == 0){
-                Materialize.toast("Banking Analysis Data Not Confirmed", 5000);
+                // Materialize.toast("Banking Analysis Data Not Confirmed", 5000);
+                fixToast("Banking Analysis Data Not Confirmed");
 
             }
 
             if(csc().checkAccountDetail(res.Data.FormulaModel.AccountDetails)){
-                Materialize.toast("Account Details Data Not Confirmed", 5000);
+                // Materialize.toast("Account Details Data Not Confirmed", 5000);
+                fixToast("Account Details Data Not Confirmed");
 
             }
 
             if(res.Data.FormulaModel.CibilData.SelectRating == "" && res.Data.FormulaModel.CibilData.MinScore== 0 ){
-                Materialize.toast("CIBIL Data Not Found or Not Confirmed", 5000);
+                // Materialize.toast("CIBIL Data Not Found or Not Confirmed", 5000);
+                fixToast("CIBIL Data Not Found or Not Confirmed");
+
 
             }
 
             if(csc().checkAccountDetail(res.Data.FormulaModel.RTR)){
-                Materialize.toast("RTR Data Not Confirmed", 5000);
+                // Materialize.toast("RTR Data Not Confirmed", 5000);
+                fixToast("RTR Data Not Confirmed");
 
             }
 
@@ -130,7 +135,9 @@
                 csc().datasource(res.Data.CreditScoreData.Items)
                 callback()
             } else {
-                 Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
+                 // Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
+                 fixToast("Balance Sheet Data Not Confirmed");
+
                  // csc().datasource([]);
                 // callback()
                 $(".form-container").html("");

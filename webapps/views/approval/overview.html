@@ -404,14 +404,21 @@
 		if(r.AllData().Data.CIBIL.length > 0){
 			if(r.AllData().Data.CIBIL[0].Rating === '' || typeof r.AllData().Data.CIBIL[0].Rating === "undefined") {
 				commercialcibil('blank')
+				$(".ratingbox.cc").tooltipster(r.ratingReferenceTooltip("blank"))
 			} else {
 				commercialcibil( (r.AllData().Data.CIBIL[0].Rating == "Positive") ? true : (r.AllData().Data.CIBIL[0].Rating == "Negative") ? false : 'zero' )
 			}
+
+			setTimeout(function(){
+			 $(".ratingbox.cc").tooltipster(r.ratingReferenceTooltip(commercialcibil()))
+			}, 100);
+
 		}
 
 		if(r.AllData().Data.AD.length > 0){
 			if(r.AllData().Data.AD[0].borrowerdetails.externalrating === '') {
 				externalrating('blank')
+				// $(".ratingbox.er").tooltipster(r.ratingReferenceTooltip("blank"))
 			} else {
 				externalrating(
 				(r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('moderate') > -1 ||
@@ -422,15 +429,30 @@
 
 			if(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks === '') {
 				pdremarks('blank')
+				console.log("sarif")
+				// $(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip("blank"))
 			} else {
 				pdremarks( (r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks == "Satisfactory") ? true : false )
 			}
 
 			if(r.AllData().Data.AD[0].borrowerdetails.marketreference === '') {
 				referencecheck('blank')
+				// $(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip("blank"))
 			} else {
 				referencecheck( (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Positive") ? true : (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Negative") ? false : 'zero' )
 			}
+
+			setTimeout(function(){
+			 $(".ratingbox.er").tooltipster(r.ratingReferenceTooltip(externalrating()))
+			}, 100);
+
+			setTimeout(function(){
+			 $(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip(referencecheck()))
+			}, 100);
+
+			setTimeout(function(){
+			 $(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(pdremarks()))
+			}, 100);
 		}
 
 		try {
@@ -439,13 +461,6 @@
 		  	})
 		} catch (e) {
 		}
-
-		if (r.AllData().Data.AD.length > 0) {
-			$(".ratingbox.er").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].borrowerdetails.externalrating))
-			$(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks))
-		}
-		$(".ratingbox.cc").tooltipster(r.ratingReferenceTooltip(commercialcibil()))
-		$(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip(referencecheck()))
 
 		ajaxPost("/duediligence/getduediligenceinputdataconfirmed", {
 		    CustomerId: filter().CustomerSearchVal(),

@@ -10,8 +10,9 @@ import (
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	// "strconv"
-	// "strings"
+	"regexp"
+	"strconv"
+	"strings"
 	// "time"
 )
 
@@ -85,10 +86,10 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 
 	param := tk.M{}
 	k.GetForms(&param)
-	tk.Println(param)
 
 	cn, _ := GetConnection()
 	defer cn.Close()
+	res := new(tk.Result)
 
 	query := []*dbox.Filter{}
 	query = append(query, dbox.Ne("_id", ""))
@@ -99,9 +100,17 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 		keys = append(keys, dbox.Contains("FileName", key))
 		keys = append(keys, dbox.Contains("ConsumerInfo.ConsumerName", key))
 
-		custId := param.GetInt("additional")
-		if custId != -1 {
-			keys = append(keys, dbox.Eq("ConsumerInfo.CustomerId", custId))
+		reg, err := regexp.Compile(`\[|\]`)
+		if err != nil {
+			res.SetError(err)
+		}
+
+		additionals := strings.Split(reg.ReplaceAllString(param.GetString("additional"), ""), ",")
+		for _, additional := range additionals {
+			a, _ := strconv.Atoi(additional)
+			if a != -1 {
+				keys = append(keys, dbox.Eq("ConsumerInfo.CustomerId", a))
+			}
 		}
 
 		query = append(query, dbox.Or(keys...))
@@ -115,7 +124,6 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 		Cursor(nil)
 	defer csr.Close()
 
-	res := new(tk.Result)
 	if err != nil {
 		res.SetError(err)
 	}

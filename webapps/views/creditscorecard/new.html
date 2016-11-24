@@ -86,6 +86,7 @@
                         case 'Inward Bounces':
                             d.Value = kendo.toString(fm.BankingAnalysis.InwardBounces, 'p2'); break
                         case 'EMI track':
+                        console.log(d,"----valval")
                             csc().calculateEMITrack(res.Data.FormulaModel, d); break
                         case 'Avg. Payment delay days with Distri.':
                             d.Value = fm.AccountDetails.VDMaxOfAverageDelayDays; break
@@ -1078,6 +1079,25 @@
             Name: 'Max of DPD track',
             Value: dpdTrack,
         }]
+
+        var value = 0;
+
+        if(sancLimit == 0){
+         var categoryAndScore = csc().calculateCategoryAndScore(fm, "Banking", row.Name, sancLimit, function (d) {
+                return (d.Categories.toLowerCase().indexOf("credit") > -1)
+            })
+         value = sancLimit;
+        }else{
+            var categoryAndScore = csc().calculateCategoryAndScore(fm, "Banking", row.Name, dpdTrack, function (d) {
+                return (d.Categories.toLowerCase().indexOf("tr") > -1)
+            })
+         value = dpdTrack;
+        }
+
+        row.Category = categoryAndScore.category
+        row.Score = categoryAndScore.score
+        row.WeightScore = row.Score * row.Weight / 100
+        row.Value =  kendo.toString(value, 'n2');
     }
 
     csc().calculateODCCABBEMI = function (fm, row) {

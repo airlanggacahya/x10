@@ -319,7 +319,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
 		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
 
-		multiplier := customerMargin
+		multiplier := customerMargin / 100
 		if ebitdaMargin < customerMargin {
 			multiplier = ebitdaMargin
 		}
@@ -348,7 +348,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 		period := fm.GetLastAuditedYear()
 		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
 		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
-		multiplier := customerMargin
+		multiplier := customerMargin / 100
 		if ebitdaMargin < customerMargin {
 			multiplier = ebitdaMargin
 		}
@@ -668,7 +668,7 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		fm.GetDataBalanceSheet()
 		fm.GetRatioFormula()
 
-		customerMargin := fm.AccountDetails.PDCustomerMargin
+		customerMargin := fm.AccountDetails.PDCustomerMargin / 100
 
 		period := fm.GetLastAuditedYear()
 		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
@@ -698,7 +698,7 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		fm.GetDataBalanceSheet()
 		fm.GetRatioFormula()
 
-		customerMargin := fm.AccountDetails.PDCustomerMargin
+		customerMargin := fm.AccountDetails.PDCustomerMargin / 100
 
 		period := fm.GetLastAuditedYear()
 		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)

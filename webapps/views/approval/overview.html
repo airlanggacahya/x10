@@ -372,32 +372,34 @@
 		    DealNo: filter().DealNumberSearchVal(),
 		}, function(res){
 	  		if( res.Data != null && res.Data.length > 0){
-		    	var score = _.sum(res.Data[0].Data.filter(function (d) {
-					return d.IsHeader
-				}).map(function (d) {
-					return kendo.parseFloat(d.WeightScore)
-				}));
+	  			internalscore(res.Data[0].FinalScore)
+	  			internalratingxfl(res.Data[0].FinalRating)
+		  //   	var score = _.sum(res.Data[0].Data.filter(function (d) {
+				// 	return d.IsHeader
+				// }).map(function (d) {
+				// 	return kendo.parseFloat(d.WeightScore)
+				// }));
 
-				internalscore(score)
-				internalrating(
-					score <= 4.5 ? "XFL-5" :
-					score < 6 ? "XFL-4" :
-					score < 7 ? "XFL-3" :
-					score <= 8.5 ? "XFL-2" : "XFL-1"
-					);
-				internalratingxfl((function () {
-                    if (score <= 4.5) {
-                        return "XFL-5"
-                    } else if (score < 6) {
-                        return "XFL-4"
-                    } else if (score < 7) {
-                        return "XFL-3"
-                    } else if (score <= 8.5) {
-                        return "XFL-2"
-                    } else {
-                        return "XFL-1"
-                    }
-                })())
+				// internalscore(score)
+				// internalrating(
+				// 	score <= 4.5 ? "XFL-5" :
+				// 	score < 6 ? "XFL-4" :
+				// 	score < 7 ? "XFL-3" :
+				// 	score <= 8.5 ? "XFL-2" : "XFL-1"
+				// 	);
+				// internalratingxfl((function () {
+    //                 if (score <= 4.5) {
+    //                     return "XFL-5"
+    //                 } else if (score < 6) {
+    //                     return "XFL-4"
+    //                 } else if (score < 7) {
+    //                     return "XFL-3"
+    //                 } else if (score <= 8.5) {
+    //                     return "XFL-2"
+    //                 } else {
+    //                     return "XFL-1"
+    //                 }
+    //             })())
 			}
 	  	});
 

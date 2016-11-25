@@ -273,36 +273,46 @@
 	        ajaxPost("/creditscorecard/getcscdata", getSearchVal(), function(cscData){
 
 	            if(cscData.Data != undefined){
-	                var score = _.sum(cscData.Data[0].Data.filter(function (d) {
-	                    return d.IsHeader
-	                }).map(function (d) {
-	                    return kendo.parseFloat(d.WeightScore)
-	                }));
+	            	var score = cscData.Data[0].FinalScore
+	  				var rating = cscData.Data[0].FinalRating
 
-	                var rating = (function () {
-	                    if (score <= 4.5) {
-	                        return "XFL5"
-	                    } else if (score < 6) {
-	                        return "XFL4"
-	                    } else if (score < 7) {
-	                        return "XFL3"
-	                    } else if (score <= 8.5) {
-	                        return "XFL2"
-	                    } else {
-	                        return "XFL1"
-	                    }
-	                })();
+	                // var score = _.sum(cscData.Data[0].Data.filter(function (d) {
+	                //     return d.IsHeader
+	                // }).map(function (d) {
+	                //     return kendo.parseFloat(d.WeightScore)
+	                // }));
+
+	                // var rating = (function () {
+	                //     if (score <= 4.5) {
+	                //         return "XFL5"
+	                //     } else if (score < 6) {
+	                //         return "XFL4"
+	                //     } else if (score < 7) {
+	                //         return "XFL3"
+	                //     } else if (score <= 8.5) {
+	                //         return "XFL2"
+	                //     } else {
+	                //         return "XFL1"
+	                //     }
+	                // })();
 	                loanapproval.internalrating(rating);
 
 	                ajaxPost("/normmaster/getnormdata", {
-	                    Internalrating: rating,
+	                    Internalrating: rating.replace("-",""),
 	                    Customerid: filter().CustomerSearchVal(),
 	                    Dealno: filter().DealNumberSearchVal()
 	                }, function(param) {
 	                    render(param.Data);
 	                })
 	            } else {
-	                render(norm);
+		                loanapproval.internalrating("");
+	                	ajaxPost("/normmaster/getnormdata", {
+	                    Internalrating: loanapproval.internalrating(),
+	                    Customerid: filter().CustomerSearchVal(),
+	                    Dealno: filter().DealNumberSearchVal()
+	                }, function(param) {
+	                    render(param.Data);
+	                })
 	            }
 	        })
 	    })

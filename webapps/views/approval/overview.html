@@ -416,6 +416,7 @@
 		}
 
 		if(r.AllData().Data.AD.length > 0){
+			
 			if(r.AllData().Data.AD[0].borrowerdetails.externalrating === '') {
 				externalrating('blank')
 				// $(".ratingbox.er").tooltipster(r.ratingReferenceTooltip("blank"))
@@ -425,14 +426,19 @@
 					r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('adequate') > -1
 						? 'zero' :
 					(r.AllData().Data.AD[0].borrowerdetails.externalrating.indexOf("Safety") == -1) ? false : true ))
+				setTimeout(function(){
+				 $(".ratingbox.er").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].borrowerdetails.externalrating))
+				}, 100);
 			}
 
 			if(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks === '') {
 				pdremarks('blank')
-				console.log("sarif")
 				// $(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip("blank"))
 			} else {
 				pdremarks( (r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks == "Satisfactory") ? true : false )
+				setTimeout(function(){
+				 	$(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(pdremarks()))
+				}, 100);
 			}
 
 			if(r.AllData().Data.AD[0].borrowerdetails.marketreference === '') {
@@ -440,19 +446,12 @@
 				// $(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip("blank"))
 			} else {
 				referencecheck( (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Positive") ? true : (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Negative") ? false : 'zero' )
+				setTimeout(function(){
+				 	$(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].borrowerdetails.marketreference))
+				}, 100);
 			}
 
-			setTimeout(function(){
-			 $(".ratingbox.er").tooltipster(r.ratingReferenceTooltip(externalrating()))
-			}, 100);
-
-			setTimeout(function(){
-			 $(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip(referencecheck()))
-			}, 100);
-
-			setTimeout(function(){
-			 $(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(pdremarks()))
-			}, 100);
+			
 		}
 
 		try {

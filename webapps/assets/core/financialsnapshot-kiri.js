@@ -342,7 +342,7 @@ left.createChart = function(){
         },
         tooltip: {
             visible: true,
-            template: "#= series.name # :#= value #	"
+            template: "#= series.name # :#= kendo.toString(value,'N2') #	"
         }
     });
 

@@ -490,10 +490,15 @@ r.getNormData = function (param) {
         bullet.tooltipster('destroy');
       } catch(e){}
 
+      var dval = d.CalculatedValue.Value;
+      if(d.ValueType == "percentage" || d.CalculatedValue.ValueType == "percentage"){
+        dval = dval + "%"
+      }
+
       $(bullet).tooltipster(function(){
           var opt = r.getTooltipOption('top');
           opt.contentAsHTML = true,
-          opt.content = "Status: "+ ((getIsMet(d) == true) ? 'Met' : 'Not Met') +"<br /> Norm: "+ d.NormLabel +"<br /> Actual Value: "+ d.CalculatedValue.Value
+          opt.content = "Status: "+ ((getIsMet(d) == true) ? 'Met' : 'Not Met') +"<br /> Norm: "+ d.NormLabel +"<br /> Actual Value: "+ dval//d.CalculatedValue.Value
           return opt;
         }())
 
@@ -788,7 +793,7 @@ r.generateAML = function(data){
                 },
                 tooltip: {
                     visible: true,
-                    template: "#= series.name #: #= value #"
+                    template: "#= series.name #: #= app.formatnum(value,2) #"
                 }
             });
 }

@@ -612,11 +612,12 @@
         var EMIBalance = fm.RTR.EMIBalance
         var yearRepayment = fm.RTR.YearlyRepayment * 100000;
 
-        var limit = fm.AccountDetails.LDRequestedLimitAmount * 100000;
-        var proposedROI = fm.AccountDetails.LDProposedRateInterest / 100;
-        var proposedROI16percent = proposedROI;
+        // var limit = fm.AccountDetails.LDRequestedLimitAmount * 100000;
+        // var proposedROI = fm.AccountDetails.LDProposedRateInterest / 100;
+        // var proposedROI16percent = proposedROI;
         var divider = 100000
-        var approx = limit + (proposedROI16percent * divider)
+        // var approx = limit + (proposedROI16percent * divider)
+        var approx = fm.AccountDetails.LDInterestOutgo * divider;
 
         var totalYearRepayment = yearRepayment;
         var value = ebdit / (totalYearRepayment / divider)
@@ -783,7 +784,9 @@
         var proposedROI = fm.AccountDetails.LDProposedRateInterest;
         var proposedROI16percent = (proposedROI / 100)
         var divider = 100000
-        var approx = limit * proposedROI16percent
+        // var approx = limit * proposedROI16percent
+        var approx = fm.AccountDetails.LDInterestOutgo * divider;
+        
 
         var totalYearRepayment = (EMIAMount12 + yearRepayment + approx)
         var value = ebdit / ( interestFI + approx / divider )

@@ -434,7 +434,7 @@ loanApproval.setData = function(data){
         }
     }
 
-    setDataCreditScoreCard(loanApproval.creditScoreData())
+    // setDataCreditScoreCard(loanApproval.creditScoreData())
 
     if(data.AD.length > 0)
         loanApproval.ratingRef.AD.ExternalRating(data.AD[0].borrowerdetails.externalrating)
@@ -452,6 +452,9 @@ loanApproval.setData = function(data){
 
 var setDataCreditScoreCard = function(data) {
   if(data != null || data != "") {
+
+    // internalscore(res.Data[0].FinalScore)
+    // internalratingxfl(res.Data[0].FinalRating)
 
     loanApproval.ratingRef.OverallScore(data.FinalScore)
     loanApproval.ratingRef.InternalRating(data.FinalRating)

@@ -232,12 +232,38 @@ refreshFilter = function(){
     r.AllData(res)
     loanApproval.refresh()
 
-    if(res.Data.CP[0] != undefined && res.Data.AD[0] != undefined)
+    if(res.Data.CP[0] != undefined && res.Data.AD[0] != undefined){
+      console.log("------->>>>",  res.Data.AD[0])
       r.sAD(
         res.Data.CP[0].applicantdetail,
         res.Data.AD[0].accountsetupdetails,
         res.Data.AD[0].borrowerdetails
         );
+    }else{
+        loanapproval.companyname("");
+        loanapproval.logindate("");
+        loanapproval.businessaddress("");
+        loanapproval.businesssegment("");
+        loanapproval.businesssince("");
+
+        loanapproval.location("");
+        loanapproval.product("");
+        loanapproval.leaddistributor("");
+        loanapproval.creditanalyst("");
+        loanapproval.brhead("");
+        loanapproval.rmname("");
+        schemeAD("");
+
+        $(".ad-tooltip").each(function () {
+          var opt = r.getTooltipOption('top')
+          opt.content = $(this).children('input').val()
+          try {
+            $(this).tooltipster('destroy');
+          } catch (e) {
+          }
+          // $(this).tooltipster(opt)
+        })
+    }
 
     createKeyParametersandIndicators(res.Data.NORM)
     if(res.Data.AD[0]){

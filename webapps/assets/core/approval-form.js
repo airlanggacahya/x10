@@ -264,15 +264,16 @@ refreshFilter = function(){
       var prommin = _.filter(promoter,function(x){ return x.cibilscore != 0  });
       var minsc = _.minBy(prommin,  function(x){ return x.cibilscore  });
       mincibilscore ( minsc == undefined ? 0 : minsc.cibilscore)
-      for (var i=0 ; i < promoter.length; i++){
-          if (promoter[i].cibilscore > 700){
-              above700.push(promoter[i].cibilscore)
-          }else if(promoter[i].cibilscore < 600){
-              below600.push(promoter[i].cibilscore)
-          }else{
-              beetween600700.push(promoter[i].cibilscore)
-          }
+
+      var filterCibil = function(condition){
+        return _.map(_.filter(prommin, condition), function(value){
+          return value.cibilscore
+        }); 
       }
+
+      above700        = filterCibil(function(prom){ return prom.cibilscore > 700 })
+      beetween600700  = filterCibil(function(prom){ return prom.cibilscore >= 600 && prom.cibilscore <= 700 })
+      below600        = filterCibil(function(prom){ return prom.cibilscore < 600 })
     }
     createcibildonut();
     //Real Estate

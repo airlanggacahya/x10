@@ -334,15 +334,19 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 		return totalCreditMultiplied
 	})()
 
-	BSOWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
-		return x.(Summary).OwReturnPercentage
-	}).Exec().Result.Avg
-	BSIWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
-		return x.(Summary).LwReturnPercentage
-	}).Exec().Result.Avg
-	BSDRCRRatio := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
-		return x.(Summary).DrCrReturnPercentage
-	}).Exec().Result.Avg
+	TotalOw := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).OwCheque
+	}).Exec().Result.Sum
+
+	TotalIw := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).IwCheque
+	}).Exec().Result.Sum
+
+	BSOWReturnPercent := toolkit.Div(TotalOw, BSNoOfCredits)
+
+	BSIWReturnPercent := toolkit.Div(TotalIw, BSNoOfDebits)
+
+	BSDRCRRatio := toolkit.Div(BSMonthlyDebits, BSMonthlyCredits)
 
 	ODSactionLimit := crowd.From(&res).Sum(func(x interface{}) interface{} {
 		account := x.(BankAnalysisV2).DataBank[0].BankAccount
@@ -655,15 +659,31 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		return totalCreditMultiplied
 	})()
 
-	BSOWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
-		return x.(Summary).OwReturnPercentage
-	}).Exec().Result.Avg
-	BSIWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
-		return x.(Summary).LwReturnPercentage
-	}).Exec().Result.Avg
-	BSDRCRRatio := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
-		return x.(Summary).DrCrReturnPercentage
-	}).Exec().Result.Avg
+	// BSOWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
+	// 	return x.(Summary).OwReturnPercentage
+	// }).Exec().Result.Avg
+	// BSIWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
+	// 	return x.(Summary).LwReturnPercentage
+	// }).Exec().Result.Avg
+	// BSDRCRRatio := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
+	// 	return x.(Summary).DrCrReturnPercentage
+	// }).Exec().Result.Avg
+	TotalOw := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).OwCheque
+	}).Exec().Result.Sum
+
+	TotalIw := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
+		return x.(Summary).IwCheque
+	}).Exec().Result.Sum
+
+	BSOWReturnPercent := toolkit.Div(TotalOw, BSNoOfCredits)
+	// tk.Println(TotalOw, BSNoOfCredits, "----------I")
+
+	BSIWReturnPercent := toolkit.Div(TotalIw, BSNoOfDebits)
+	// tk.Println(TotalIw, BSNoOfDebits, "----------II")
+
+	BSDRCRRatio := toolkit.Div(BSMonthlyDebits, BSMonthlyCredits)
+	// tk.Println(BSMonthlyDebits, BSMonthlyCredits, "----------III")
 
 	ODSactionLimit := crowd.From(&res).Sum(func(x interface{}) interface{} {
 		account := x.(BankAnalysisV2).DataBank[0].BankAccount

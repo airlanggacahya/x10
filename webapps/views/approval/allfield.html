@@ -214,14 +214,14 @@
 			            if(data.CalculatedValue != undefined) {
 			                var getFixedCalculatedValue = parseFloat((function () {
 			                    return (function(val){
-			                        if(data.CalculatedValue.ValueType == "percentage")
+			                        if(data.CalculatedValue.ValueType == "percentage"|| data.ValueType  == "percentage")
 			                            return val * 100;
 			                        return val;
 			                    })(data.CalculatedValue.Value)
 			                })()).toFixed(2);
 
 			                if(data.CalculatedValue.Value != 0) {
-			                    if(data.CalculatedValue.ValueType == "percentage")
+			                    if(data.CalculatedValue.ValueType == "percentage" || data.ValueType  == "percentage")
 			                        data.calculatedvaluetodisplay = getFixedCalculatedValue + "%"
 			                    else
 			                        data.calculatedvaluetodisplay = getFixedCalculatedValue;

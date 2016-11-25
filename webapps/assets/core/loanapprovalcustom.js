@@ -122,7 +122,7 @@ loanApproval = {
         loanApproval.data(r.AllData().Data)
         loanApproval.creditScoreData(r.AllData3())
         loanApproval.setData(loanApproval.data())
-      }, 100)
+      }, 50)
     },
     isFirstLoad: ko.observable(true),
     isLoading: ko.observable(true),

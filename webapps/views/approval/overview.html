@@ -318,13 +318,15 @@
 
 		var i = 0
 		customerMixData([])
+		var sum = 0;
+
 		if(r.AllData().Data.AD[0] != undefined)
 			_.each(r.AllData().Data.AD[0].customerbussinesmix, function(value, category, list){
 				if(category != "status"){
 					category = category == "stocksellin" ? "Stock & Sell" :
 							   category == "b2bgovtin" ? "B2B - Govt." :
 							   category == "b2bcorporatein" ? "B2B - Corporate" : ""
-
+					sum += value;
 					customerMixData.push({
 						category: category,
 						value: value,
@@ -334,15 +336,34 @@
 				}
 			})
 
+		if(sum < 100){
+			customerMixData.push({
+					category: "Unavailable",
+					value:  100-sum ,
+					color: "#313d50"
+				})
+		}
+
+		var sumd = 0;
+
 		distributormaxData([])
 		if(r.AllData().Data.AD[0] != undefined)
 			_.each(r.AllData().Data.AD[0].distributormix.Data, function(dm, i){
+				sumd += dm.Result
 				distributormaxData.push({
 					category: dm.Label,
 					value: dm.Result,
 					color: r.colors.pie1[i]
 				})
 			})
+
+		if(sumd < 100){
+			distributormaxData.push({
+					category: "Unavailable",
+					value:  100-sumd ,
+					color: "#313d50"
+				})
+		}
 	}
 
 	function startme(){

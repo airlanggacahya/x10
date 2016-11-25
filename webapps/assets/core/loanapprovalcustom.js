@@ -426,8 +426,20 @@ loanApproval.setData = function(data){
         loanApproval.borrowerDetails.businessMix.avnet(data.AD[0].distributormix.avnetin + "%");
 
         if(data.AD[0].distributormix.Data) {
+          
           if(data.AD[0].distributormix.Data[0].Label != undefined){
-            loanApproval.borrowerDetails.businessMix.distributorMix.data(data.AD[0].distributormix.Data)
+            var busmixdata = []
+            for (var i = 0 ; i<data.AD[0].distributormix.Data.length ; i++){
+              if (data.AD[0].distributormix.Data[i].Result == undefined){
+                databm = {Label:data.AD[0].distributormix.Data[i].Label,Result:"%"}
+                busmixdata.push(databm)
+              }else{
+                databm = {Label:data.AD[0].distributormix.Data[i].Label,Result:data.AD[0].distributormix.Data[i].Result}
+                busmixdata.push(databm)
+              }
+            }
+            // loanApproval.borrowerDetails.businessMix.distributorMix.data(data.AD[0].distributormix.Data)
+            loanApproval.borrowerDetails.businessMix.distributorMix.data(busmixdata)
           } else {
             loanApproval.borrowerDetails.businessMix.distributorMix.data([{Label : "", Result: ""}])
           }

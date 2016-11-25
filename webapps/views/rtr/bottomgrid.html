@@ -319,20 +319,35 @@ function getData(){
                     con++;
                 }
             });
-
+            
             if(data[0] != undefined) {
                 if(sts == data.length){
-                    condSave()
-                    $('.form-last-confirmation-info').html('Last Save on: '+moment( data[0].DateSave).format("DD-MMM-YYYY hh:mm:ss a") )
-                    rtr.Freeze(false)
+                    if(data[0].DateSave.indexOf("0001") > -1){
+                        $('.form-last-confirmation-info').hide()
+                    }else{
+                        condSave()
+                        $('.form-last-confirmation-info').html('Last Save on: '+moment( data[0].DateSave).format("DD-MMM-YYYY hh:mm:ss a") )
+                        rtr.Freeze(false)
+                    }
+                    
                 }else if( re == data.length){
-                    condConfirm()
-                    $('.form-last-confirmation-info').html('Last Confirmed on: '+moment( data[0].DateConfirmed).format("DD-MMM-YYYY hh:mm:ss a") )
-                    rtr.Freeze(true)
+                    if(data[0].DateConfirmed.indexOf("0001") > -1){
+                        $('.form-last-confirmation-info').hide()
+                    }else{
+                        condConfirm()
+                        $('.form-last-confirmation-info').html('Last Confirmed on: '+moment( data[0].DateConfirmed).format("DD-MMM-YYYY hh:mm:ss a") )
+                        rtr.Freeze(true)
+                    }
+                    
                 }else if(con == data.length){
-                    condFreeze();
-                    $('.form-last-confirmation-info').html('Last Freezed on: '+moment( data[0].DateFreeze).format("DD-MMM-YYYY hh:mm:ss a") )
-                    rtr.Freeze(true)
+                    if(data[0].DateFreeze.indexOf("0001") > -1){
+                        $('.form-last-confirmation-info').hide()
+                    }else{
+                        condFreeze();
+                        $('.form-last-confirmation-info').html('Last Freezed on: '+moment( data[0].DateFreeze).format("DD-MMM-YYYY hh:mm:ss a") )
+                        rtr.Freeze(true)
+                    }
+                    
                 }
             }
         }

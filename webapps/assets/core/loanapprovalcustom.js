@@ -434,7 +434,7 @@ loanApproval.setData = function(data){
                 databm = {Label:data.AD[0].distributormix.Data[i].Label,Result:"%"}
                 busmixdata.push(databm)
               }else{
-                databm = {Label:data.AD[0].distributormix.Data[i].Label,Result:data.AD[0].distributormix.Data[i].Result}
+                databm = {Label:data.AD[0].distributormix.Data[i].Label,Result:data.AD[0].distributormix.Data[i].Result+"%"}
                 busmixdata.push(databm)
               }
             }

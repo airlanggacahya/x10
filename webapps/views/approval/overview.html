@@ -409,23 +409,39 @@
 				commercialcibil( (r.AllData().Data.CIBIL[0].Rating == "Positive") ? true : (r.AllData().Data.CIBIL[0].Rating == "Negative") ? false : 'zero' )
 			}
 
+			try{
+				$(".ratingbox.cc").tooltipster('destroy')
+			}catch(e){
+				console.log(e)
+			}
+
 			setTimeout(function(){
-			 $(".ratingbox.cc").tooltipster(r.ratingReferenceTooltip(commercialcibil()))
+			 $(".ratingbox.cc").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.CIBIL[0].Rating))
 			}, 100);
 
 		}
 
 		if(r.AllData().Data.AD.length > 0){
-			
+
 			if(r.AllData().Data.AD[0].borrowerdetails.externalrating === '') {
 				externalrating('blank')
-				// $(".ratingbox.er").tooltipster(r.ratingReferenceTooltip("blank"))
+				$(".ratingbox.er").tooltipster(r.ratingReferenceTooltip("blank"))
+				try{
+					$(".ratingbox.er").tooltipster('destroy')
+				}catch(e){
+					console.log(e)
+				}
 			} else {
 				externalrating(
 				(r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('moderate') > -1 ||
 					r.AllData().Data.AD[0].borrowerdetails.externalrating.toLowerCase().indexOf('adequate') > -1
 						? 'zero' :
 					(r.AllData().Data.AD[0].borrowerdetails.externalrating.indexOf("Safety") == -1) ? false : true ))
+				try{
+					$(".ratingbox.er").tooltipster('destroy')
+				}catch(e){
+					console.log(e)
+				}
 				setTimeout(function(){
 				 $(".ratingbox.er").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].borrowerdetails.externalrating))
 				}, 100);
@@ -434,32 +450,71 @@
 			if(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks === '') {
 				pdremarks('blank')
 				// $(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip("blank"))
+				try{
+					$(".ratingbox.pdr").tooltipster('destroy')
+				}catch(e){
+					console.log(e)
+				}
 			} else {
 				pdremarks( (r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks == "Satisfactory") ? true : false )
+				try{
+					$(".ratingbox.pdr").tooltipster('destroy')
+				}catch(e){
+					console.log(e)
+				}
 				setTimeout(function(){
-				 	$(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(pdremarks()))
+				 	$(".ratingbox.pdr").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].accountsetupdetails.pdinfo.pdremarks))
 				}, 100);
 			}
 
 			if(r.AllData().Data.AD[0].borrowerdetails.marketreference === '') {
 				referencecheck('blank')
 				// $(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip("blank"))
+				try{
+					$(".ratingbox.rc").tooltipster('destroy')
+				}catch(e){
+					console.log(e)
+				}
+				
 			} else {
 				referencecheck( (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Positive") ? true : (r.AllData().Data.AD[0].borrowerdetails.marketreference == "Negative") ? false : 'zero' )
+				try{
+					$(".ratingbox.rc").tooltipster('destroy')
+				}catch(e){
+					console.log(e)
+				}
 				setTimeout(function(){
 				 	$(".ratingbox.rc").tooltipster(r.ratingReferenceTooltip(r.AllData().Data.AD[0].borrowerdetails.marketreference))
 				}, 100);
 			}
 
 			
+		}else{
+			try {
+				$(".ratingbox").each(function (i, e) {
+			    	$(e).tooltipster('destroy');
+			    	$(".ratingbox.rc").tooltipster('destroy')
+			    	$(".ratingbox.cc").tooltipster('destroy')
+			  	})
+			} catch (e) {
+
+			}
+			commercialcibil('blank')
+			externalrating('blank');
+			pdremarks('blank');
+			referencecheck('blank')
 		}
 
 		try {
 			$(".ratingbox").each(function (i, e) {
 		    	$(e).tooltipster('destroy');
 		  	})
+		  	$(".ratingbox.rc").tooltipster('destroy')
 		} catch (e) {
+
 		}
+
+		
 
 		ajaxPost("/duediligence/getduediligenceinputdataconfirmed", {
 		    CustomerId: filter().CustomerSearchVal(),
@@ -524,6 +579,9 @@
 
 			  	defaulterstatusCreate()
 				verificationcheckCreate()
+			}else{
+				$("#defaulterstatus").html('');
+				$("#verificationcheck").html("");
 			}
 			customerMixCreate()
 			distributormaxCreate()

@@ -563,6 +563,7 @@ r.getCreditScoreCard = function(param, callback) {
     if(status == "") {
       if(res.Data != null){
       r.AllData3(res.Data[0])
+      setDataCreditScoreCard(r.AllData3())
        var param = {}
         param.Customerid = r.customerId().split('|')[0]
         param.Dealno = r.customerId().split('|')[1]

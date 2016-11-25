@@ -289,6 +289,10 @@
 			r.LD.Amount(ad.loandetails.requestedlimitamount)
 			r.LD.Tenor(ad.loandetails.limittenor)
 			r.LD.ROI(ad.loandetails.proposedrateinterest + "%")
+		}else{
+			r.LD.Amount(0)
+			r.LD.Tenor(0)
+			r.LD.ROI(0+"%")
 		}
 	}
 

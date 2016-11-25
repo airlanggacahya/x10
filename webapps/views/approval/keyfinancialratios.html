@@ -37,11 +37,18 @@
   var diiscolor = ["#ff9300", "#00da9c", "#00aef1", "#ff0045"]
 
   r.generateleverageratios = function (leverageRatio){
+
     var series = [
-      { field: 'FY13', name: 'FY13' },
-      { field: 'FY14', name: 'FY14' },
-      { field: 'FY15', name: 'FY15' },
+      // { field: 'FY13', name: 'FY13' },
+      // { field: 'FY14', name: 'FY14' },
+      // { field: 'FY15', name: 'FY15' },
     ]
+
+    _.each(leverageRatio[0],function(i,x){
+      if(x.toUpperCase().indexOf("FY") > -1)
+      series.push({ field : x , name : x })
+    });
+
 
     $("#leverageratios").kendoChart({
         dataSource: {
@@ -238,11 +245,16 @@
   }
 
   r.generateliquidityratios = function (liquidityRatios){
-    var series = [
-      { field: 'FY13', name: 'FY13' },
-      { field: 'FY14', name: 'FY14' },
-      { field: 'FY15', name: 'FY15' },
+       var series = [
+      // { field: 'FY13', name: 'FY13' },
+      // { field: 'FY14', name: 'FY14' },
+      // { field: 'FY15', name: 'FY15' },
     ]
+
+    _.each(liquidityRatios[0],function(i,x){
+      if(x.toUpperCase().indexOf("FY") > -1)
+      series.push({ field : x , name : x })
+    });
 
     $("#liquidityratios").kendoChart({
       dataSource: {

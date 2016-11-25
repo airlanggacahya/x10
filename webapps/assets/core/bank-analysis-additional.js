@@ -287,7 +287,9 @@ var DrawDataBank = function(id){
                     // totalGrid.totalIWReturn(totalGrid.totalIWReturn()+res.data.Summary[i].LwReturnPercentage)
 
                 }
-
+                // console.log(totalGrid.totalOWCheque(),totalGrid.totalNoCredit())
+                // console.log(totalGrid.totalIWCheque(),totalGrid.totalNoDebit())
+                // console.log(totalGrid.totalDebit(),totalGrid.totalCredit())
                 totalGrid.totalOWReturn(app.checkNanOrInfinity((totalGrid.totalOWCheque()/totalGrid.totalNoCredit()), 0))
                 totalGrid.totalIWReturn(app.checkNanOrInfinity((totalGrid.totalIWCheque()/totalGrid.totalNoDebit()), 0))
                 totalGrid.totalDRRatio(app.checkNanOrInfinity((totalGrid.totalDebit()/totalGrid.totalCredit()), 0))

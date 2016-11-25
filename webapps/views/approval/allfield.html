@@ -827,12 +827,12 @@
 //= End PromoterandManagementDetails =============================================
 
 // BankingandOsSnapshot ----------------------------------------------------------
-	function createBankingandOsSnapshot(res){
-		createBankingDetails(res)
+	function createBankingandOsSnapshot(res,allsum){
+		createBankingDetails(res,allsum)
 		createOutstandingDebt();
 	}
 
-	var createBankingDetails = function(res){
+	var createBankingDetails = function(res,allsum){
 		var multiplyer = 0;
 
     	if(r.AllData().Data.AD.length > 0)
@@ -843,7 +843,8 @@
             latestauditeddate = r.rootdates()[idxlatestaudited].Date
             ebitdamargin = _.find(r.rootdata(),{'FieldAlias':"EBITDAMARGIN"})
             var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
-            var multiplyer = _.min([latestebidmargin,customermargin])
+            // var multiplyer = _.min([latestebidmargin,customermargin])
+            var multiplyer = allsum.BSIMarginPercent
 
             for (var i = 0 ; i < res.length ; i++){
                 res[i].ImpMargin = multiplyer*res[i].TotalCredit
@@ -891,17 +892,17 @@
 	                field:"TotalCredit",
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
-	                footerTemplate: "<div style='text-align: right'> #= kendo.toString(sum, 'n0') # </div>",
+	                footerTemplate: "<div style='text-align: right'> #= app.formatnum(sum, 2) # </div>",
 	                attributes:{ "style": "text-align:right" },
-	                template : "#: kendo.toString(TotalCredit,'N0') #"
+	                template : "#: app.formatnum(TotalCredit,2) #"
 	            }, {
 	                title:"Monthly Debits",
 	                field:"TotalDebit",
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
-	                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+	                footerTemplate: "<div style='text-align: right'>#= app.formatnum(sum, 2) #</div>",
 	                attributes:{ "style": "text-align:right" },
-	                template : "#: kendo.toString(TotalDebit,'N0') #"
+	                template : "#: app.formatnum(TotalDebit,2) #"
 	            }, {
 	                title:"No. of Debits",
 	                field:"NoOfDebit",
@@ -941,9 +942,9 @@
 	                aggregates: ["average"],
 	                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
 	                attributes:{ "style": "text-align:right" },
-	                template : "#: kendo.toString(Utilization,'P1') #"
+	                template : "#: kendo.toString(Utilization,'P2') #"
 	            }, {
-	                title:"Imp Margin <br> (Margin Taken : "+ kendo.toString(multiplyer*100,"n1") +"%)",
+	                title:"Imp Margin <br> (Margin Taken : "+ kendo.toString(multiplyer*100,"n2") +"%)",
 	                field:"ImpMargin",
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
@@ -956,23 +957,23 @@
 	                field:"OwReturnPercentage",
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
-	                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
+	                footerTemplate: "<div style='text-align: right'>#= kendo.toString("+ allsum.BSOWReturnPercent +", 'P2') #</div>",
 	                attributes:{ "style": "text-align:right" },
-	                template : "#: kendo.toString(OwReturnPercentage,'P1') #"
+	                template : "#: kendo.toString(OwReturnPercentage,'P2') #"
 	            }, {
 	                title:"I/w return %",
 	                field:"LwReturnPercentage",
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
-	                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
+	                footerTemplate: "<div style='text-align: right'>#= kendo.toString("+ allsum.BSIWReturnPercent +", 'P2') #</div>",
 	                attributes:{ "style": "text-align:right" },
-	                template : "#: kendo.toString(LwReturnPercentage,'P1') #"
+	                template : "#: kendo.toString(LwReturnPercentage,'P2') #"
 	            }, {
 	                title:"Dr./Cr. Ratio",
 	                field:"DrCrReturnPercentage",
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
-	                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'N2') #</div>",
+	                footerTemplate: "<div style='text-align: right'>#= kendo.toString("+ allsum.BSDRCRRatio +", 'N2') #</div>",
 	                attributes:{ "style": "text-align:right" },
 	                template : "#: kendo.toString(DrCrReturnPercentage,'N2') #"
 	            }]

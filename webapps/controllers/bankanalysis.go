@@ -512,6 +512,86 @@ func (c *BankAnalysisController) GetDataBankV2(k *knot.WebContext) interface{} {
 	return CreateResult(true, result, "")
 }
 
+func (c *BankAnalysisController) GetDataBankV2Confirmed(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	t := struct {
+		CustomerId int
+		DealNo     string
+		//ForModule  string
+	}{}
+	err := k.GetPayload(&t)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	res, ressum, err := new(BankAnalysis).GetDataV2Confirmed(t.CustomerId, t.DealNo)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	ress := new(tk.Result)
+
+	//Ratio
+	fm := new(FormulaModel)
+	fm.CustomerId = strconv.Itoa(t.CustomerId)
+	fm.DealNo = t.DealNo
+
+	err = fm.GetData()
+	if err != nil {
+		// ress.SetError(err)
+		// return ress
+		return CreateResult(true, nil, err.Error())
+
+	}
+
+	bs, err := fm.CalculateBalanceSheet()
+	if err != nil {
+		// ress.SetError(err)
+		return CreateResult(true, nil, err.Error())
+	}
+
+	ress.SetData(bs)
+
+	//Account Details
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	// csr, err := conn.NewQuery().Select().From("AccountDetails").Where(dbox.And(dbox.Eq("customerid", fm.CustomerId), dbox.Eq("dealno", fm.DealNo))).Cursor(nil)
+	// if err != nil {
+	// 	ress.SetError(err)
+	// 	return ress
+	// }
+
+	accdet := []tk.M{}
+	// err = csr.Fetch(&accdet, 0, false)
+	// defer csr.Close()
+
+	err = new(DataConfirmController).GetDataConfirmed(fm.CustomerId, fm.DealNo, new(AccountDetail).TableName(), &accdet)
+	if err != nil {
+		// ress.SetError(err)
+		// return ress
+		return CreateResult(true, nil, err.Error())
+
+	}
+
+	allsum, err := new(BankAnalysis).GenerateAllSummaryConfirmed(fm.CustomerId, fm.DealNo)
+	if err != nil {
+		return CreateResult(true, nil, err.Error())
+
+	}
+
+	// cust := strconv.Itoa(t.CustomerId)
+	// rtr, _ := new(RTRBottom).GetByCustomerDeal(cust, t.DealNo)
+
+	result := tk.M{}.Set("Detail", res).Set("Summary", ressum).Set("Ratio", ress).Set("AccountDetail", accdet).Set("AllSum", allsum)
+	return CreateResult(true, result, "")
+}
+
 func (c *BankAnalysisController) UpdateV2(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 

@@ -651,7 +651,7 @@ var getBankAsik = function () {
     DealNo : dealNo
   }
 
-  ajaxPost("/bankanalysis/getdatabankv2", param, function (res) {
+  ajaxPost("/bankanalysis/getdatabankv2confirmed", param, function (res) {
     if (res.message != "") {
      // swal("Warning", "Bank Analysis Data Not Found", "warning");
      return
@@ -661,7 +661,7 @@ var getBankAsik = function () {
     var odccs = [];
     var maxodcc = 0.0;
     var details = res.data.Detail;
-    createBankingandOsSnapshot(res.data.Summary);
+    createBankingandOsSnapshot(res.data.Summary,res.data.AllSum);
 
     var abbdata = details.map(function (d) {
       var left = _.reduce(d.DataBank[0].CurrentBankDetails, function(memo, num){

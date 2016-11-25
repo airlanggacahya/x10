@@ -23,6 +23,7 @@ type BankAllSummary struct {
 	BSOWChequeReturns                        float64
 	BSIWChequeReturns                        float64
 	BSImpMargin                              float64
+	BSIMarginPercent                         float64
 	BSOWReturnPercent                        float64
 	BSIWReturnPercent                        float64
 	BSDRCRRatio                              float64
@@ -334,6 +335,31 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 		return totalCreditMultiplied
 	})()
 
+	BSIMarginPercent := (func() float64 {
+		fm := new(FormulaModel)
+		fm.CustomerId = CustomerId
+		fm.DealNo = DealNo
+		fm.GetDataAccountDetails()
+		fm.GetDataBalanceSheet()
+		fm.GetRatioFormula()
+
+		customerMargin := fm.AccountDetails.PDCustomerMargin
+
+		period := fm.GetLastAuditedYear()
+		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
+		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
+		multiplier := customerMargin
+		if ebitdaMargin < customerMargin {
+			multiplier = ebitdaMargin
+		}
+
+		if fm.AccountDetails.CMISNULL {
+			multiplier = ebitdaMargin
+		}
+
+		return multiplier
+	})()
+
 	TotalOw := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 		return x.(Summary).OwCheque
 	}).Exec().Result.Sum
@@ -501,6 +527,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	bank.AMLAvgCredits = AMLAvgCredits
 	bank.AMLAvgDebits = AMLAvgDebits
 	bank.ABB = ABB
+	bank.BSIMarginPercent = BSIMarginPercent
 
 	bank.BankingToTurnoverRatio = (func() float64 {
 		totalCredit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
@@ -652,11 +679,40 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 			multiplier = ebitdaMargin
 		}
 
+		if fm.AccountDetails.CMISNULL {
+			multiplier = ebitdaMargin
+		}
+
 		totalCreditMultiplied := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 			return x.(Summary).TotalCredit * multiplier
 		}).Exec().Result.Sum
 
 		return totalCreditMultiplied
+	})()
+
+	BSIMarginPercent := (func() float64 {
+		fm := new(FormulaModel)
+		fm.CustomerId = CustomerId
+		fm.DealNo = DealNo
+		fm.GetDataAccountDetails()
+		fm.GetDataBalanceSheet()
+		fm.GetRatioFormula()
+
+		customerMargin := fm.AccountDetails.PDCustomerMargin
+
+		period := fm.GetLastAuditedYear()
+		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
+		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
+		multiplier := customerMargin
+		if ebitdaMargin < customerMargin {
+			multiplier = ebitdaMargin
+		}
+
+		if fm.AccountDetails.CMISNULL {
+			multiplier = ebitdaMargin
+		}
+
+		return multiplier
 	})()
 
 	// BSOWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
@@ -839,6 +895,7 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 	bank.AMLAvgCredits = CheckNan(AMLAvgCredits)
 	bank.AMLAvgDebits = CheckNan(AMLAvgDebits)
 	bank.ABB = CheckNan(ABB)
+	bank.BSIMarginPercent = BSIMarginPercent
 
 	bank.BankingToTurnoverRatio = CheckNan((func() float64 {
 		totalCredit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {

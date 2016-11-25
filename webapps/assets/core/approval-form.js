@@ -695,9 +695,9 @@ var getBankAsik = function () {
     odccavg = isNaN(odccavg)? 0 : odccavg;
     abbavg = isNaN(abbavg)? 0 : abbavg;
 
-    r.bankingABB(abbavg)
-    r.bankingODCCSancLimit(odccsancsum);
-    r.bankingODCC(odccavg)
+    r.bankingABB(res.data.AllSum.ABB)
+    r.bankingODCCSancLimit(res.data.AllSum.ODSactionLimit);
+    r.bankingODCC(res.data.AllSum.ODAvgUtilization)
     r.generateAML(res.data.Summary)
   })
 }

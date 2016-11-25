@@ -1002,6 +1002,10 @@
 	          swal("Warning","Data Outstanding Debt Not Found","warning");
 	          return
 	      }
+
+	      if (res.data[0].data.length == 0){
+	      	return
+	      }
 	    //   console.log("asdfasdfasfd", function(){
 					// 	src = {}
 					// 	doit = function(_do, _it) { src[_it] = _do }

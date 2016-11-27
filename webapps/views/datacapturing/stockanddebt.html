@@ -195,6 +195,8 @@
 
     var setConfirm = function(){
       return function(){
+        save(function(){
+          console.log(stockanddebt().Id);
         param = {Id: stockanddebt().Id, IsConfirm: !stockanddebtCloning.IsConfirm()}
 
         var url = "{{BaseUrl}}datacapturing/confirmstockanddebt";
@@ -206,8 +208,9 @@
           } else {
             swal("Successfully Confirmed", "", "success");
           }
-
+          refreshFilter();
         }, undefined);
+        })()
       }
     }
 
@@ -310,11 +313,12 @@
       swal("Successfully Confirmed", "", "success");
     }
 
-    function save(){
+    function save(callback){
       return function(){
         stockanddebt().Flag = 1;
         awal();
-        savedata();
+        savedata(callback);
+        if(callback == undefined)
         swal("Successfully Saved", "", "success");
       }
     }
@@ -383,7 +387,7 @@
       }
     }
 
-    function savedata(){
+    function savedata(callback){
       trigger(false)
 
       param = stockanddebt();
@@ -392,7 +396,11 @@
       ajaxPost(url, param, function(data) {
         if (data){
           // swal("success", "Data already saved...", "success");
-          refreshFilter();
+          if(typeof callback === 'function'){
+            callback();
+          }else{
+            refreshFilter();
+          }
         }
       }, undefined);
     }

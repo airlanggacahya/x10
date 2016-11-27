@@ -292,7 +292,7 @@ r.refresh = function (callback) {
         });
     });
 }
-r.save = function () {
+r.save = function (callback) {
     if (r.getCustomerId() === false) {
         return
     }
@@ -311,8 +311,10 @@ r.save = function () {
             sweetAlert("Oops...", res.Message, "error");
             r.isLoading(false)
             return;
-        } else {
+        } else if(callback == undefined){
             swal("Success", "Changes saved", "success");
+        }else{
+            callback();
         }
 
         r.isLoading(false)
@@ -1342,6 +1344,9 @@ r.render = function () {
     })
 };
 r.confirm = function () {
+
+    r.save(function(){
+
     if (r.getCustomerId() === false) {
         return
     }
@@ -1389,6 +1394,7 @@ r.confirm = function () {
         }, function () {
             r.isLoading(false)
         });
+        })
     // });
 }
 

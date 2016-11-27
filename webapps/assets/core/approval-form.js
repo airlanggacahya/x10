@@ -233,7 +233,6 @@ refreshFilter = function(){
     loanApproval.refresh()
 
     if(res.Data.CP[0] != undefined && res.Data.AD[0] != undefined){
-      console.log("------->>>>",  res.Data.AD[0])
       r.sAD(
         res.Data.CP[0].applicantdetail,
         res.Data.AD[0].accountsetupdetails,
@@ -556,6 +555,9 @@ r.getNormData = function (param) {
         j++
       })
     })
+
+    $('.block.met .value').html(0)
+    $('.block.not-met .value').html(0)
 
     summary.forEach(function (d) {
       $('.block.' + d.category.toLowerCase().replace(/\ /g, '-') + ' .value').html(d.value)

@@ -98,6 +98,8 @@ var disableDecisionCommit = function(){
 		$("#commentsecurity").attr("disabled",true)
 		$("#commentconditions").attr("disabled",true)
 		$("#commentremarks").attr("disabled",true)
+		$(".btn-confirm.sanction").attr("disabled",true)
+		$(".btn-hold.sanction").attr("disabled",true)
 }
 
 $(document).ready(function(){

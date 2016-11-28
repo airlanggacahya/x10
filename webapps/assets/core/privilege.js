@@ -104,6 +104,9 @@ $(document).ready(function(){
 	switch(model.PageTopMenu()){
 		case "Data Entry": dataEntryPrivilege(); break;
 	}
-
-	RestrictWithFunction(model.PageId(),model.Rolename());
+	try{
+		RestrictWithFunction(model.PageId(),model.Rolename());
+	}catch(e){
+		console.log(e)
+	}
 })

@@ -66,7 +66,8 @@ d3.bulletVertical = function() {
       range.enter().append("rect")
           .attr("class", function(d, i) { return "range s" + i; })
           .attr("width", function(d){
-            return extentX - x0(d)
+            ret = extentX - x0(d)
+            return ret < 0 ? 0 : ret
           })
           .attr("height", extentY)
           .attr("x", x0)
@@ -74,7 +75,8 @@ d3.bulletVertical = function() {
       d3.transition(range)
           .attr("x", x1)
           .attr("width", function(d){
-            return extentX - x1(d)
+            ret = extentX - x1(d)
+            return ret < 0 ? 0 : ret
           })
           .attr("height", extentY);
 

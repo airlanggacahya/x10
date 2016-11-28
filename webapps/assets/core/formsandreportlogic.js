@@ -60,7 +60,7 @@ frl.renderGrid = function(){
             // dataSource: frl.filter(),
             dataSource: {
 		        data: frl.filter(),
-		        pageSize: 5
+		        pageSize: 10
 		    },
 		    pageable: true,
             columnMenu: false,

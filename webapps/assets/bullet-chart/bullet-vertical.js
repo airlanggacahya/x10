@@ -35,16 +35,21 @@ d3.bulletVertical = function() {
         wrap.attr("transform", null);
       }
 
+      var normOrActual = Math.min(markerz[0], measurez[0])
+
+      var minVal = (normOrActual > 0)? 0 : normOrActual;
       var maxVal = Math.max(rangez[0], markerz[0], measurez[0]);
+
+      var zeroPos = (maxVal / (maxVal - minVal)) * extentX
 
       // Compute the new x-scale.
       var x1 = d3.scale.linear()
-          .domain([0, maxVal])
+          .domain([minVal, maxVal])
           .range(reverse ? [extentX, 0] : [0, extentX]);
 
       // Retrieve the old x-scale, if this is an update.
       var x0 = this.__chart__ || d3.scale.linear()
-          .domain([0, Infinity])
+          .domain([minVal, Infinity])
           .range(x1.range());
 
       // Stash the new scale.
@@ -60,13 +65,17 @@ d3.bulletVertical = function() {
 
       range.enter().append("rect")
           .attr("class", function(d, i) { return "range s" + i; })
-          .attr("width", w0)
+          .attr("width", function(d){
+            return extentX - x0(d)
+          })
           .attr("height", extentY)
-          .attr("x", reverse ? x0 : 0)
+          .attr("x", x0)
 
       d3.transition(range)
-          .attr("x", reverse ? x1 : 0)
-          .attr("width", w1)
+          .attr("x", x1)
+          .attr("width", function(d){
+            return extentX - x1(d)
+          })
           .attr("height", extentY);
 
       // Update the measure rects.
@@ -76,14 +85,16 @@ d3.bulletVertical = function() {
       measure.enter().append("rect")
           .attr("class", function(d, i) { return "measure s" + i; })
           .attr("width", w0)
+          // .attr("width", measurez[0] / rangez[0] * extentX) ///////////////////////// kene
           .attr("height", extentY / 3)
-          .attr("x", reverse ? x0 : 0)
+          .attr("x", reverse ? ((measurez[0] < 0)? zeroPos : x0) : 0)
           .attr("y", extentY / 3);
 
       d3.transition(measure)
           .attr("width", w1)
+          // .attr("width", measurez[0] / rangez[0] * extentX) ///////////////////////// kene
           .attr("height", extentY / 3)
-          .attr("x", reverse ? x1 : 0)
+          .attr("x", reverse ? ((measurez[0] < 0)? zeroPos : x1) : 0)
           .attr("y", extentY / 3);
 
       // Update the marker lines.
@@ -104,15 +115,19 @@ d3.bulletVertical = function() {
           .attr("y2", extentY * 5 / 6);
 
       var axis = g.selectAll("g.axis").data([0]);
-      var ticksCount = 6;
+      var ticksCount = 7;
+
       axis.enter().append("g").attr("class", "axis");
       axis.attr("transform", vertical ? null : "translate(0," + extentY + ")")
           .call(xAxis.scale(x1).tickValues(
-            Array.apply(null, Array(ticksCount)).map(
-              function(val, i){
-                return (i / (ticksCount - 1)) * maxVal
-              })
-            )
+            (function(){
+              var diff = (maxVal - minVal) / (ticksCount - 1)
+
+              return Array.apply(0, Array(ticksCount)).map(function(value, key){
+                var ret = minVal + (key * diff)
+                return ret == -0 ? 0 : ret
+              });
+            })())
           );
     });
     d3.timer.flush();

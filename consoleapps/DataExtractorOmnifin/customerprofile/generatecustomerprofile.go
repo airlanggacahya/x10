@@ -316,12 +316,12 @@ func GenerateCustomerProfile(cMongo dbox.IConnection, cSQL dbox.IConnection) {
 		errorHandling(e, true, "GenerateCustomerProfile")
 	}
 
-	results := map[string]CustomerProfilesGen{}
+	results := map[string]CustomerProfilesGenNew{}
 	for _, val := range resultscustomer {
 		key := val["customer_id"].(string) + "|" + val["deal_no"].(string)
 
-		CP := CustomerProfilesGen{}
-		customer := ApplicantDetailGen{}
+		CP := CustomerProfilesGenNew{}
+		customer := ApplicantDetailGenNew{}
 		customer.CustomerID = DetectDataType(val.GetString("customer_id"), "yyyy-MM-dd")
 		customer.DealNo = DetectDataType(val.GetString("deal_no"), "yyyy-MM-dd")
 		customer.DealID = DetectDataType(val.GetString("deal_id"), "yyyy-MM-dd")

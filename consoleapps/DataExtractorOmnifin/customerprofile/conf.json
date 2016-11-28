@@ -3,7 +3,7 @@
 	"mysqluser" : "root",
 	"mysqlpassword" : "admin",
 	"mysqlhost":"127.0.0.1:3306",
-	"mongodbname" : "x10",
+	"mongodbname" : "x10_newDB",
 	"mongouser" : "",
 	"mongopassword" : "",
 	"mongohost":"127.0.0.1:27017",

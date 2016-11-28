@@ -90,6 +90,23 @@ type CustomerProfilesGen struct {
 	StatusCibil                        int       `bson:"StatusCibil,omitempty"`
 }
 
+type CustomerProfilesGenNew struct {
+	orm.ModelBase                      `bson:"-",json:"-"`
+	Id                                 string `bson:"_id" , json:"_id" `
+	ApplicantDetail                    ApplicantDetailGenNew
+	FinancialReport                    FinancialReportGen
+	NonRefundableProcessingFeesDetails NonRefundableProcessingFeesDetailsGen
+	DetailOfPromoters                  DetailOfPromotersGen
+	LastUpdate                         time.Time `bson:"LastUpdate,omitempty"`
+	UpdatedBy                          string    `bson:"UpdatedBy,omitempty"`
+	VerifiedBy                         string    `bson:"VerifiedBy,omitempty"`
+	VerifiedDate                       time.Time `bson:"VerifiedDate,omitempty"`
+	ConfirmedBy                        string    `bson:"ConfirmedBy,omitempty"`
+	ConfirmedDate                      time.Time `bson:"ConfirmedDate,omitempty"`
+	Status                             int       `bson:"Status,omitempty"`
+	StatusCibil                        int       `bson:"StatusCibil,omitempty"`
+}
+
 type CustomerProfiles struct {
 	orm.ModelBase                      `bson:"-",json:"-"`
 	Id                                 string `bson:"_id" , json:"_id" `
@@ -237,6 +254,33 @@ type ApplicantDetailGen struct {
 	CustomerName               interface{} `bson:"CustomerName"`
 	CustomerConstitution       interface{} `bson:"CustomerConstitution"`
 	DateOfIncorporation        time.Time   `bson:"DateOfIncorporation"`
+	AnyOther                   interface{} `bson:"AnyOther"`
+	TIN                        interface{} `bson:"TIN"`
+	TAN                        interface{} `bson:"TAN"`
+	CustomerRegistrationNumber interface{} `bson:"CustomerRegistrationNumber"`
+	CustomerPan                interface{} `bson:"CustomerPan"`
+	CIN                        interface{} `bson:"CIN"`
+	NatureOfBussiness          interface{} `bson:"NatureOfBussiness"`
+	YearsInBusiness            interface{} `bson:"YearsInBusiness"`
+	NoOfEmployees              interface{} `bson:"NoOfEmployees"`
+	AnnualTurnOver             interface{} `bson:"AnnualTurnOver"`
+	UserGroupCompanies         interface{} `bson:"UserGroupCompanies"`
+	CapitalExpansionPlans      interface{} `bson:"CapitalExpansionPlans"`
+	CapitalExpansionPlansBool  bool        `bson:"CapitalExpansionPlansBool,omitempty"`
+	GroupTurnOver              interface{} `bson:"GroupTurnOver"`
+	AmountLoan                 interface{} `bson:"AmountLoan"`
+	RegisteredAddress          RegisteredAddressGen
+	AddressCorrespondence      AddressCorrespondence
+	SiteWorkAddress            SiteWorkAddress
+}
+
+type ApplicantDetailGenNew struct {
+	CustomerID                 interface{} `bson:"CustomerID"`
+	DealID                     interface{} `bson:"DealID"`
+	DealNo                     interface{} `bson:"DealNo"`
+	CustomerName               interface{} `bson:"CustomerName"`
+	CustomerConstitution       interface{} `bson:"CustomerConstitution"`
+	DateOfIncorporation        interface{} `bson:"DateOfIncorporation"`
 	AnyOther                   interface{} `bson:"AnyOther"`
 	TIN                        interface{} `bson:"TIN"`
 	TAN                        interface{} `bson:"TAN"`

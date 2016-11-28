@@ -220,6 +220,7 @@ $(document).ready(function(){
         eraseCookie("topfilter"+model.PageTopMenu().split(" ").join(""));
         createCookie("topfilter"+model.PageTopMenu().split(" ").join(""),filter().CustomerSearchVal()+"|"+filter().DealNumberSearchVal(),1);
              cached_function.apply(this, arguments); // use .apply() to call it
+          RestrictWithFunction(model.PageId(),model.Rolename());
       };
     }());
 

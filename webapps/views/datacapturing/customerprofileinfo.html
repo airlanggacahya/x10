@@ -108,7 +108,7 @@ function refreshdata(){
       info.formVisibility(true)
       formVisibility(true)
       model.All(data[0]);
-      checkConfirmedOrNot(data[0].Status, 1, 2, data[0], [], "Customer Application");
+      // checkConfirmedOrNot(data[0].Status, 1, 2, data[0], [], "Customer Application");
       data[0].ApplicantDetail.DateOfIncorporation = data[0].ApplicantDetail.DateOfIncorporation+"";
       $(".grid2").getKendoGrid().dataSource.data([])
       $(".grid2").getKendoGrid().refresh()

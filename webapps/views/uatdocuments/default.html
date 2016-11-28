@@ -22,8 +22,8 @@ model.Fullname= ko.observable('{{.Fullname}}');
 		padding-right: 0px !important;
 	}
 </style>
-<div>
-	<div class="col-md-12 col-sm-12 ez panel-content">
+<div data-bind="with: uat">
+	<div class="col-md-12 col-sm-12 ez panel-content" data-bind="visible: (uat.visible() == true)">
 		<div class="panel ez">
 			<div class="panel-body" >
 				<div class="controls-left">

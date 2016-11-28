@@ -60,7 +60,7 @@ uat.renderGrid = function(){
             // dataSource: uat.filter(),
             dataSource: {
 		        data: uat.filter(),
-		        pageSize: 5
+		        pageSize: 10
 		    },
 		    pageable: true,
             columnMenu: false,

@@ -49,10 +49,10 @@ func (c *UatDocumentsController) Default(k *knot.WebContext) interface{} {
 func (c *UatDocumentsController) GetAllFile(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	pathUI := "/pdf/"
+	pathUI := "/uatdocuments/"
 	result := []tk.M{}
 
-	var path = filepath.Join(".", "assets", "pdf")
+	var path = filepath.Join(".", "assets", "uatdocuments")
 	files, _ := ioutil.ReadDir(path)
 	for _, f := range files {
 		coba := tk.M{}
@@ -65,7 +65,7 @@ func (c *UatDocumentsController) GetAllFile(k *knot.WebContext) interface{} {
 
 	conn, err := GetConnection()
 	defer conn.Close()
-	query, err := conn.NewQuery().Select().From("FormAndReportLink").Cursor(nil)
+	query, err := conn.NewQuery().Select().From("UATDocumentsLinks").Cursor(nil)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}
@@ -76,5 +76,5 @@ func (c *UatDocumentsController) GetAllFile(k *knot.WebContext) interface{} {
 		return CreateResult(false, nil, err.Error())
 	}
 
-	return CreateResult(false, tk.M{"data": result, "linkdata": "", "path": ""}, "")
+	return CreateResult(false, tk.M{"data": result, "linkdata": cust, "path": pathUI}, "")
 }

@@ -39,6 +39,10 @@ The way formula builder executed in those 3 modules is same, but there are also 
 
 ## `CalculateBalanceSheet()`
 
+### Source of Data
+
+The data used on this calculation: **Formula Master**, **Balance Sheet Input Master**, and **Balance Sheet Input Entry**.
+
 ### Intialization
 
 Used in **Detailed financial report**, request will be sent from UI to `controllers/ratio.go` → `GetReportData`, contains payloads: `CustomerId` and `DealNo`.
@@ -108,6 +112,10 @@ Like what I said earlier, the evaluation of the formula is happening on the `For
 After that we'll evaluate the formula by using `.EvalArithmetic` from `helper\eval.go`.
 
 ## `.CalculateNorm()`
+
+### Source of data
+
+The data used on this calculation: **Key Norm Master**.
 
 ### Initialization
 
@@ -197,15 +205,18 @@ for each in rows {
 
 ## `.CalculateScoreCard()`
 
+### Source of data
+
+The data used on this calculation: **Rating Model Master**.
+
 ### Initialization
 
-Used **Credit Score Card**, request will come from UI to `controllers/creditscorecard.go` → `GetCreditScoreCardData` with 3 payloads: `CustomerId`, `DealNo`, and `RatingId`.
+Used **Credit Score Card**, request will come from UI to `controllers/creditscorecard.go` → `GetCreditScoreCardData` with 3 payloads: `CustomerId`, `DealNo`.
 
 ```go
 fm := new(FormulaModel)
 fm.CustomerId = "customer id from payload"
 fm.DealNo = "deal number from payload"
-fm.RatingId = "rating id from payload"
 fm.GetData()
 result := fm.CalculateScoreCard()
 ```
@@ -214,4 +225,17 @@ result := fm.CalculateScoreCard()
 
 ### Inside `.CalculateScoreCard()`
 
-a
+First, `ParametersGroup` & `Parameters` will be looped, to construct the rows data, which is later used to be shown. 
+
+Then inside each loop, we apply same condition like on norm related to the **estimated/provision/last audited**. After that we execute the formula using result time period from the condition.
+
+After we get the value, we have to loop the categories, to find match category based on the value. There are also some process happen, like: filling the `Weight` value (taken from the `Parameters`), calculate the `WeightScore`.
+
+So now, we already got rows data with all value filled. Now we loop it (again), to calculate total `WeightScore` for each header, also to calculate the final `Rating` value (the `XFL-*`).
+
+---
+
+### On the UI
+
+For **Credit Score Card**, on the ui side happen calculation to get the breakdown of **Financial Risk Parameters** & **Banking** section. The formula is hardcoded.
+

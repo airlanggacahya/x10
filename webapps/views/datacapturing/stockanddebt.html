@@ -196,7 +196,6 @@
     var setConfirm = function(){
       return function(){
         save(function(){
-          console.log(stockanddebt().Id);
         param = {Id: stockanddebt().Id, IsConfirm: !stockanddebtCloning.IsConfirm()}
 
         var url = "{{BaseUrl}}datacapturing/confirmstockanddebt";
@@ -397,6 +396,7 @@
         if (data){
           // swal("success", "Data already saved...", "success");
           if(typeof callback === 'function'){
+            stockanddebt().Id = data.Id
             callback();
           }else{
             refreshFilter();

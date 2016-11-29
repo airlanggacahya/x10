@@ -1,0 +1,54 @@
+<script type="text/javascript">
+model.PageTopMenu("{{.TopMenu}}");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}');
+model.User= ko.observable('{{.Username}}');
+model.Fullname= ko.observable('{{.Fullname}}');
+</script>
+<script src="/static/core/uatdocuments.js"></script>
+<style type="text/css">
+	.grid .k-grid-content{
+		overflow-y: hidden;
+	}
+
+	.k-grid-header{
+		padding-right: 0px !important;
+	}
+</style>
+<div data-bind="with: uat">
+	<div class="col-md-12 col-sm-12 ez panel-content" data-bind="visible: (uat.visible() == true)">
+		<div class="panel ez">
+			<div class="panel-body" >
+				<div class="controls-left">
+			    	<div class="col-sm-6">
+						<div class="form-group">
+				            <label class="col-sm-2 form-label">Search File</label>
+				        	<div class="col-sm-5">
+			        			<input type="text" id="filter" class="form-control input-sm" placeholder="Search Files..">
+				        	</div>
+				        	<div class="clearfix"></div>
+			        	</div>
+		        	</div>
+				</div>
+				<!-- <div class="controls" style="text-align: right;">
+					<button class="btn btn-sm btn-primary" data-bind="click: formula.showModalFinancial">Add New</button>
+					<button class="btn btn-sm btn-primary" data-bind="click: formula.refresh">Refresh</button>
+					<button class="btn btn-sm btn-warning" onclick="formula.exportExcel('.grid', 'Formula')">Export to Excel</button>
+					
+				</div> -->
+
+				<div class="panel-body">
+					<div class="grid"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

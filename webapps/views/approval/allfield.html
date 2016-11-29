@@ -585,7 +585,20 @@
 // KeyFinancialParameters --------------------------------------------------------
 	var createKeyFinancialParameters = function(){
 		var column = [
-      { title: "Name", field: "name", width: 250, headerAttributes: { "class": "sub-bgcolor col-sm-2" }}
+      { title: "Name", field: "name", width: 250, headerAttributes: { "class": "sub-bgcolor col-sm-2" } , template : function(x) { 
+      		var ishead = true;
+      		_.each(r.KFI()[0].ColumnHeader(),function(v,i){
+			  if(i>0){
+			  	if(x["v"+i].trim() !=""){
+			  		ishead = false;
+			  	}
+			  }
+			})
+      		if(ishead){
+      			return "<label style=\"font-weight:bold!important;\">"+ x.name +"</label>"
+      		}
+      		return "<label>"+ x.name +"</label>"
+      } }
     ]
 
 		if( r.KFI()[0].ColumnHeader().length > 2 ){
@@ -676,7 +689,7 @@
 	        columns: [{
 		      	title:"Balance Sheet",
 		      	headerAttributes: { class: "header-bgcolor" },
-				columns: column
+				columns: column,
 			}]
 	    });
     // -------------- End BalanceSheet -------------------------
@@ -1176,7 +1189,7 @@
 
 	td { white-space: normal!important; }
     td {
-        word-break: break-all !important;
+        /*word-break: break-all !important;*/
         word-wrap: break-word !important;
   	}
 

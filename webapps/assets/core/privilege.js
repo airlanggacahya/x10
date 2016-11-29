@@ -57,6 +57,19 @@ var dataEntryPrivilege = function(){
 	forbidButtons(buttonPrivilege, allowedButtons);
 }
 
+var RestrictWithFunction = function(menuId,Rolename){
+	setTimeout(function(){
+		try{
+			var vacase = menuId + "|"+Rolename
+			switch(vacase){
+				case "Approval Form|Credit Analyst": disableDecisionCommit(); break;
+			}
+		}catch(e){
+			console.log(e)
+		}
+	},3000);
+}
+
 var getAllowedActions = function(data){
 	return _.find(
 		_.find(data, function(d, role){
@@ -76,8 +89,26 @@ var forbidButtons = function(buttons, allowedButtons){
 		});
 }
 
+var disableDecisionCommit = function(){
+		$("#commentdate").data("kendoDatePicker").enable(false);
+		$("#commentamount").attr("disabled",true)
+		$("#commentroi").attr("disabled",true)
+		$("#commentpf").attr("disabled",true)
+		$("#commentpg").attr("disabled",true)
+		$("#commentsecurity").attr("disabled",true)
+		$("#commentconditions").attr("disabled",true)
+		$("#commentremarks").attr("disabled",true)
+		$(".btn-confirm.sanction").attr("disabled",true)
+		$(".btn-hold.sanction").attr("disabled",true)
+}
+
 $(document).ready(function(){
 	switch(model.PageTopMenu()){
 		case "Data Entry": dataEntryPrivilege(); break;
+	}
+	try{
+		RestrictWithFunction(model.PageId(),model.Rolename());
+	}catch(e){
+		console.log(e)
 	}
 })

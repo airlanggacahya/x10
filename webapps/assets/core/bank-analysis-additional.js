@@ -22,16 +22,30 @@ var statusPage = {
 };
 
 var totalGrid = {
-    totalImp : ko.observable(0),
-    totalOWReturn : ko.observable(0),
-    totalIWReturn : ko.observable(0),
-    totalDRRatio : ko.observable(0),
-    totalCredit : ko.observable(0),
-    totalDebit : ko.observable(0),
-    totalNoCredit : ko.observable(0),
-    totalNoDebit : ko.observable(0),
-    totalOWCheque : ko.observable(0),
-    totalIWCheque : ko.observable(0)
+    BS : {
+        BSMonthlyCredits : ko.observable(0),
+        BSMonthlyDebits : ko.observable(0),
+        BSNoOfCredits : ko.observable(0),
+        BSNoOfDebits : ko.observable(0),
+        BSOWChequeReturns : ko.observable(0),
+        BSIWChequeReturns : ko.observable(0),
+        BSIMarginPercent : ko.observable(0),
+        BSImpMargin : ko.observable(0),
+        BSOWReturnPercent : ko.observable(0),
+        BSIWReturnPercent : ko.observable(0),
+        BSDRCRRatio : ko.observable(0),
+        ODUtilizationPercent : ko.observable(0)
+    },
+    OD : {
+        ODSactionLimit : ko.observable(0),
+        ODAvgUtilization : ko.observable(0),
+        ODInterestPaid : ko.observable(0)
+    },
+    AML : {
+        AMLAvgCredits : ko.observable(0),
+        AMLAvgDebits : ko.observable(0)
+    },
+    ABB : ko.observable(0)
 }
 
 var initEvents = function () {
@@ -179,6 +193,26 @@ var DrawDataBank = function(id){
         if(res.message != "" ){
             swal("Warning",res.message,"warning");
         }else{
+            if(typeof res.data.SummaryAll != "undefined") {
+                totalGrid.BS.BSMonthlyCredits(res.data.SummaryAll.BSMonthlyCredits)
+                totalGrid.BS.BSMonthlyDebits(res.data.SummaryAll.BSMonthlyDebits)
+                totalGrid.BS.BSNoOfCredits(res.data.SummaryAll.BSNoOfCredits)
+                totalGrid.BS.BSNoOfDebits(res.data.SummaryAll.BSNoOfDebits)
+                totalGrid.BS.BSOWChequeReturns(res.data.SummaryAll.BSOWChequeReturns)
+                totalGrid.BS.BSIWChequeReturns(res.data.SummaryAll.BSIWChequeReturns)
+                totalGrid.BS.BSIMarginPercent(res.data.SummaryAll.BSIMarginPercent)
+                totalGrid.BS.BSImpMargin(res.data.SummaryAll.BSImpMargin)
+                totalGrid.BS.BSOWReturnPercent(res.data.SummaryAll.BSOWReturnPercent)
+                totalGrid.BS.BSIWReturnPercent(res.data.SummaryAll.BSIWReturnPercent)
+                totalGrid.BS.BSDRCRRatio(res.data.SummaryAll.BSDRCRRatio)
+                totalGrid.BS.ODUtilizationPercent(res.data.SummaryAll.ODUtilizationPercent)
+                totalGrid.OD.ODSactionLimit(res.data.SummaryAll.ODSactionLimit)
+                totalGrid.OD.ODAvgUtilization(res.data.SummaryAll.ODAvgUtilization)
+                totalGrid.OD.ODInterestPaid(res.data.SummaryAll.ODInterestPaid)
+                totalGrid.AML.AMLAvgCredits(res.data.SummaryAll.AMLAvgCredits)
+                totalGrid.AML.AMLAvgDebits(res.data.SummaryAll.AMLAvgDebits)
+                totalGrid.ABB(res.data.SummaryAll.ABB)
+            }
 
             _.each(res.data.Detail, function(p){
                 if(!p.IsConfirmed){
@@ -274,27 +308,9 @@ var DrawDataBank = function(id){
 
                 for (var i = 0 ; i < res.data.Summary.length ; i++){
                     res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
-
-                    totalGrid.totalCredit(totalGrid.totalCredit()+res.data.Summary[i].TotalCredit)
-                    totalGrid.totalDebit(totalGrid.totalDebit()+res.data.Summary[i].TotalDebit)
-                    totalGrid.totalNoCredit(totalGrid.totalNoCredit()+res.data.Summary[i].NoOfCredit)
-                    totalGrid.totalNoDebit(totalGrid.totalNoDebit()+res.data.Summary[i].NoOfDebit)
-                    totalGrid.totalOWCheque(totalGrid.totalOWCheque()+res.data.Summary[i].OwCheque)
-                    totalGrid.totalIWCheque(totalGrid.totalIWCheque()+res.data.Summary[i].IwCheque)
-
-                    // totalGrid.totalImp(totalGrid.totalImp()+res.data.Summary[i].ImpMargin)
-                    // totalGrid.totalOWReturn(totalGrid.totalOWReturn()+res.data.Summary[i].OwReturnPercentage)
-                    // totalGrid.totalIWReturn(totalGrid.totalIWReturn()+res.data.Summary[i].LwReturnPercentage)
-
                 }
-                // console.log(totalGrid.totalOWCheque(),totalGrid.totalNoCredit())
-                // console.log(totalGrid.totalIWCheque(),totalGrid.totalNoDebit())
-                // console.log(totalGrid.totalDebit(),totalGrid.totalCredit())
-                totalGrid.totalOWReturn(app.checkNanOrInfinity((totalGrid.totalOWCheque()/totalGrid.totalNoCredit()), 0))
-                totalGrid.totalIWReturn(app.checkNanOrInfinity((totalGrid.totalIWCheque()/totalGrid.totalNoDebit()), 0))
-                totalGrid.totalDRRatio(app.checkNanOrInfinity((totalGrid.totalDebit()/totalGrid.totalCredit()), 0))
 
-                createBankingGrid(res.data.Summary,multiplyer*100);
+                createBankingGrid(res.data.Summary,totalGrid.BS.BSIMarginPercent()*100);
             }else if(res.data.AccountDetail.length!=0){
                 var multiplyer = 0
                 var customermargin = app.checkNanOrInfinity((res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100), 0)
@@ -2710,7 +2726,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"TotalCredit",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'> #= kendo.toString(sum, 'n2') # </div>",
+                footerTemplate: "<div style='text-align: right'> #= kendo.toString(totalGrid.BS.BSMonthlyCredits(), 'n2') # </div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: app.formatnum(TotalCredit,2) #"
             }, {
@@ -2718,7 +2734,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"TotalDebit",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n2') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.BSMonthlyDebits(), 'n2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: app.formatnum(TotalDebit,2) #"
             }, {
@@ -2726,7 +2742,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"NoOfDebit",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.BSNoOfDebits(), 'n0') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(NoOfDebit,'N0') #"
             }, {
@@ -2734,7 +2750,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"NoOfCredit",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.BSNoOfCredits(), 'n0') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(NoOfCredit,'N0') #"
             }, {
@@ -2742,7 +2758,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"OwCheque",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.BSOWChequeReturns(), 'n0') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(OwCheque,'N0') #"
             }, {
@@ -2750,7 +2766,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"IwCheque",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n0') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.BSIWChequeReturns(), 'n0') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(IwCheque,'N0') #"
             }, {
@@ -2758,7 +2774,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"Utilization",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["average"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P2') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.ODUtilizationPercent(), 'P2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(Utilization,'P2') #"
             }, {
@@ -2766,7 +2782,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"ImpMargin",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n2') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.BSImpMargin(), 'n2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: app.formatnum(ImpMargin,2) #"
             }, {
@@ -2774,7 +2790,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"OwReturnPercentage",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.totalOWReturn(), 'P2') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.BSOWReturnPercent(), 'P2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(OwReturnPercentage,'P2') #"
             }, {
@@ -2782,7 +2798,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"LwReturnPercentage",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.totalIWReturn(), 'P2') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.BSIWReturnPercent(), 'P2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(LwReturnPercentage,'P2') #"
             }, {
@@ -2790,7 +2806,7 @@ var createBankingGrid = function(res,minmargin){
                 field:"DrCrReturnPercentage",
                 headerAttributes: { class: "sub-bgcolor" },
                 aggregates: ["sum"],
-                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.totalDRRatio(), 'N2') #</div>",
+                footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.BS.BSDRCRRatio(), 'N2') #</div>",
                 attributes:{ "style": "text-align:right" },
                 template : "#: kendo.toString(DrCrReturnPercentage,'N2') #"
             }]
@@ -2895,7 +2911,7 @@ var createAmlGrid = function(data){
                         field:"CreditCash",
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["average"],
-                        footerTemplate: "<div style='text-align: right'>#=kendo.toString(average,'N2')#%</div>",
+                        footerTemplate: "<div style='text-align: right'>#=kendo.toString(totalGrid.AML.AMLAvgCredits(),'N2')#%</div>",
                         template : "#=kendo.toString(CreditCash,'N2') #%",
                         attributes:{ "style": "text-align:right" },
                     },
@@ -2904,7 +2920,7 @@ var createAmlGrid = function(data){
                         field:"DebitCash",
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["average"],
-                        footerTemplate: "<div style='text-align: right'>#=kendo.toString(average,'N2')#%</div>",
+                        footerTemplate: "<div style='text-align: right'>#=kendo.toString(totalGrid.AML.AMLAvgDebits(),'N2')#%</div>",
                         template : "#=kendo.toString(DebitCash,'N2') #%",
                         attributes:{ "style": "text-align:right" },
                     },
@@ -3037,7 +3053,7 @@ var createCurrentDetailGrid = function(res){
                         field:"abb",
                         headerAttributes: { class: "sub-bgcolor" },
                         aggregates: ["average"],
-                        footerTemplate: "<div style='text-align: right'>#= kendo.toString(abbavgs, 'n2') #</div>",
+                        footerTemplate: "<div style='text-align: right'>#= kendo.toString(totalGrid.ABB(), 'n2') #</div>",
                         attributes:{ "style": "text-align:right" },
                         template : "#: app.formatnum(abb,2) #"
                     }
@@ -3051,17 +3067,10 @@ var createCurrentDetailGrid = function(res){
 
 var createOdDetailGrid = function(res){
     $("#oddetailgrid").html("");
+
     $("#oddetailgrid").kendoGrid({
         dataSource : {
-			data : res,
-            aggregate: [
-                { field: "SancLimit", aggregate: "sum" },
-                { field: "OdCcUtilization", aggregate: "average" },
-                { field: "InterestPerMonth", aggregate: "sum" },
-                { field: "abb", aggregate: "average" },
-                // { field: "util", aggregate: "average" },
-            ],
-
+			data : res
 		},
         scrollable:true,
         height:245,
@@ -3080,51 +3089,30 @@ var createOdDetailGrid = function(res){
                         title:"Sanction Limit (Rs. Lacs)",
                         field:"SancLimit",
                         headerAttributes: { class: "sub-bgcolor" },
-                        aggregates: ["sum"],
-                        footerTemplate: "<div style='text-align: right'>#= app.formatnum(sum, 2) #</div>",
-                        attributes:{ "style": "text-align:right" },
-                        template : "#:app.formatnum(SancLimit,2) #"
+                        template : "#: app.formatnum(SancLimit, 2) #",
+                        footerTemplate: "<div style='text-align: right' id='od1'>#:app.formatnum(totalGrid.OD.ODSactionLimit(), 2)#</div>"
                     },
                     {
                         title:"OD Utilization",
                         field:"OdCcUtilization",
                         headerAttributes: { class: "sub-bgcolor" },
-                        format:"{0:p1}",
-                        aggregates: ["average"],
-                        footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'p2') #</div>",
                         attributes:{ "style": "text-align:right" },
-                        template : "#: kendo.toString(OdCcUtilization,'P2') #"
+                        template : "#: kendo.toString(OdCcUtilization,'P2') #",
+                        footerTemplate: "<div style='text-align: right' id='od2'>#: kendo.toString(totalGrid.OD.ODAvgUtilization(), 'P2') #</div>"
                     },
                     {
                         title:"Interest Paid (Rs. Lacs)",
                         field:"InterestPerMonth",
                         headerAttributes: { class: "sub-bgcolor" },
-                        aggregates: ["sum"],
-                        footerTemplate: "<div style='text-align: right'>#= app.formatnum(sum, 2) #</div>",
                         attributes:{ "style": "text-align:right" },
-                        template : "#: kendo.toString(InterestPerMonth,'N2') #"
-                    },
-                    //  {
-                    //     title:"ABB",
-                    //     field:"abb",
-                    //     headerAttributes: { class: "sub-bgcolor" },
-                    //     aggregates: ["average"],
-                    //     footerTemplate: "<div style='text-align: right'>#= kendo.toString(abbavg, 'n0') #</div>",
-                    //     attributes:{ "style": "text-align:right" },
-                    //     template : "#: kendo.toString(abb,'N0') #"
-                    // },
-                    //  {
-                    //     title:"Utilization %",
-                    //     field:"util",
-                    //     aggregates: ["average"],
-                    //     footerTemplate: "<div style='text-align: right'>#= kendo.toString(average, 'P1') #</div>",
-                    //     attributes:{ "style": "text-align:right" },
-                    //     template : "#: kendo.toString(util,'P1') #"
-                    // },
+                        template : "#: app.formatnum(InterestPerMonth,2) #",
+                        footerTemplate: "<div style='text-align: right' id='od3'>#: app.formatnum(totalGrid.OD.ODInterestPaid(), 2)#</div>"
+                    }
                 ]
             },
-        ],
+        ]
     });
+
     RebuildSummary("oddetailgrid");
     $('#oddetailgrid').height(0)
 }

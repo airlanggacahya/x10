@@ -544,6 +544,7 @@ app.masterBank = [
     { alias: 'AMLAvgCredits', name: 'AML - Average Credits' },
     { alias: 'AMLAvgDebits', name: 'AML - Average Debits' },
     { alias: 'BankingToTurnoverRatio', name: 'Banking to Turnover Ratio' },
+    { alias: 'InwardBounces', name: 'Inward Bounces' },
     { alias: 'ABB', name: 'Average ABB' }
 ]
 

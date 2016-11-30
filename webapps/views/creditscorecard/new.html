@@ -81,15 +81,17 @@
                             csc().calculateInterestCoverage(res.Data.FormulaModel, d); break
                         case 'Working Capital Cycle':
                             csc().calculateWorkingCapital(res.Data.FormulaModel, d); break
-                        case 'Banking To Turnover Ratio':
-                            d.Value = kendo.toString(fm.BankingAnalysis.BankingToTurnoverRatio, 'p2') + '%'; break
-                        case 'Inward Bounces':
-                            d.Value = kendo.toString(fm.BankingAnalysis.InwardBounces, 'p2'); break
+                        // case 'Banking To Turnover Ratio':
+                        // d.Value = kendo.toString(fm.BankingAnalysis.BankingToTurnoverRatio, 'p2') + '%'; 
+                        // break
+                        // case 'Inward Bounces':
+                        //     d.Value = kendo.toString(fm.BankingAnalysis.InwardBounces, 'p2'); 
+                        //     break
                         case 'EMI track':
                         console.log(d,"----valval")
                             csc().calculateEMITrack(res.Data.FormulaModel, d); break
-                        case 'Avg. Payment delay days with Distri.':
-                            d.Value = fm.AccountDetails.VDMaxOfAverageDelayDays; break
+                        // case 'Avg. Payment delay days with Distri.':
+                        //     d.Value = fm.AccountDetails.VDMaxOfAverageDelayDays; break
                         case 'OD/CC Utilization (average of last 3 months) ABB vs Proposed EMI':
                             csc().calculateODCCABBEMI(res.Data.FormulaModel, d); break
                         default :
@@ -407,10 +409,10 @@
 
         var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
 
-        row.Category = categoryAndScore.category
-        row.Score = categoryAndScore.score
-        row.WeightScore = row.Score * row.Weight / 100
-        row.Value = value
+        // row.Category = categoryAndScore.category
+        // row.Score = categoryAndScore.score
+        // row.WeightScore = row.Score * row.Weight / 100
+        // row.Value = value
         row.Expand = false
         row.Children = [{
             Id: "b01",
@@ -624,10 +626,10 @@
 
         var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
 
-        row.Category = categoryAndScore.category
-        row.Score = categoryAndScore.score
-        row.WeightScore = row.Score * row.Weight / 100
-        row.Value = value
+        // row.Category = categoryAndScore.category
+        // row.Score = categoryAndScore.score
+        // row.WeightScore = row.Score * row.Weight / 100
+        // row.Value = value
         row.Expand = false
         row.Children = [{
             Id: "a01",
@@ -792,10 +794,10 @@
         var value = ebdit / ( interestFI + approx / divider )
 
         var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
-        row.Category = categoryAndScore.category
-        row.Score = categoryAndScore.score
-        row.WeightScore = row.Score * row.Weight / 100
-        row.Value = value
+        // row.Category = categoryAndScore.category
+        // row.Score = categoryAndScore.score
+        // row.WeightScore = row.Score * row.Weight / 100
+        // row.Value = value
         row.Expand = false
         row.Children = [{
             Id: "a01",
@@ -957,10 +959,10 @@
 
         var categoryAndScore = csc().calculateCategoryAndScore(fm, "Financial Risk Parameters", row.Name, value)
 
-        row.Category = categoryAndScore.category
-        row.Score = categoryAndScore.score
-        row.WeightScore = row.Score * row.Weight / 100
-        row.Value = value
+        // row.Category = categoryAndScore.category
+        // row.Score = categoryAndScore.score
+        // row.WeightScore = row.Score * row.Weight / 100
+        // row.Value = value
         row.Expand = false
         row.Children = [{
                 Id: "e01",

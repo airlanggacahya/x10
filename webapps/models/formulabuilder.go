@@ -1068,7 +1068,7 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 			currentAlias = namespace + "." + each.fieldId
 		default:
 			namespace = "balancesheet"
-			currentAlias = namespace + "." + each.fieldId
+			// currentAlias = namespace + "." + each.fieldId
 		}
 
 		form := new(RatioFormula)
@@ -1110,6 +1110,10 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 				})()
 				if err != nil {
 					return nil, err
+				}
+
+				if each.period == "" {
+					each.period = NormMasterTimePeriodLastAudited
 				}
 
 				switch each.period {
@@ -1162,6 +1166,7 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 
 			// ====== set category
 			var err error
+			toolkit.Println(each.from, "--", each.fieldId, "--", namespace, "--", each.period, "--", each.Id, period, "===fieldId")
 
 			if output, err = form.Calculate(); err != nil {
 				output = toolkit.Sprintf("%v", form.GetValue(fm, namespace, each.fieldId, period))
@@ -1194,7 +1199,6 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 			}
 
 			outputFloat, _ := strconv.ParseFloat(toolkit.Sprintf("%v", output), 64)
-			toolkit.Println(output, "===output")
 			switch eachCategory.Operator {
 			case "equal":
 				if eachCategory.IsValue1String() {
@@ -1352,6 +1356,7 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 		toolkit.Println("Category", each.Category)
 		toolkit.Println("Weight", each.Weight)
 		toolkit.Println("Score", each.Score)
+		toolkit.Println("Value", each.Value)
 
 		resFinal = append(resFinal, each)
 	}

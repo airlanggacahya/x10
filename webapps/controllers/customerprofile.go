@@ -371,7 +371,6 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 	p.LastUpdate = time.Now()
 	p.UpdatedBy = Username
 
-	UpdateUnmatchData(p)
 	if p.Status == 1 {
 		custstring := cast.ToString(p.ApplicantDetail.CustomerID)
 		dealstring := cast.ToString(p.ApplicantDetail.DealNo)
@@ -382,6 +381,8 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 		if err := new(DataConfirmController).SaveDataConfirmed(cast.ToString(p.ApplicantDetail.CustomerID), p.ApplicantDetail.DealNo.(string), p.TableName(), &p, true); err != nil {
 			return err
 		}
+
+		UpdateUnmatchData(p)
 
 	} else if p.Status == 2 {
 		p.VerifiedBy = Username
@@ -406,62 +407,79 @@ func UpdateUnmatchData(c CustomerProfiles) {
 	}
 
 	isMatch := false
+	DealNos := cast.ToString(c.ApplicantDetail.DealNo)
+	CustomerIds := cast.ToInt(c.ApplicantDetail.CustomerID, "16")
 
-	filter := []*dbox.Filter{}
-	filter = append(filter, dbox.Eq("UnconfirmID", ""))
-	filter = append(filter, dbox.Eq("IsMatch", false))
-	csr, e := cn.NewQuery().From("CibilReport").Where(filter...).Cursor(nil)
-	if e != nil {
-		tk.Println(e.Error())
+	wh := []*dbox.Filter{}
+	wh = append(wh, dbox.Eq("Profile.dealno", DealNos))
+	wh = append(wh, dbox.Eq("Profile.customerid", CustomerIds))
+
+	curs, err := cn.NewQuery().Select().From("CibilReport").Where(wh...).Cursor(nil)
+	if err != nil {
+		tk.Println(err.Error())
 	}
-	result := []CibilReportModel{}
+	res := []tk.M{}
 
-	err = csr.Fetch(&result, 0, false)
-	defer csr.Close()
+	err = curs.Fetch(&res, 0, false)
+	defer curs.Close()
 
-	if len(result) > 0 {
-		tk.Println("test2")
-		setting := NewSimilaritySetting()
-		setting.SplitDelimeters = []rune{' ', '.', '-'}
+	if len(res) == 0 {
+		filter := []*dbox.Filter{}
+		filter = append(filter, dbox.Eq("UnconfirmID", ""))
+		filter = append(filter, dbox.Eq("IsMatch", false))
+		csr, e := cn.NewQuery().Select().From("CibilReport").Where(filter...).Cursor(nil)
+		if e != nil {
+			tk.Println(e.Error())
+		}
+		result := []CibilReportModel{}
 
-		for _, val := range result {
-			companyname := val.Profile.CompanyName
-			splittedcompname := strings.Split(companyname, " ")
-			splittedcpname := strings.Split(cast.ToString(c.ApplicantDetail.CustomerName), " ")
-			cuttingcompname := ""
-			cuttingcpname := ""
-			cppan := cast.ToString(c.ApplicantDetail.CustomerPan)
-			cibilpan := val.Profile.Pan
-			for _, comp := range splittedcompname {
-				if comp != "PVT" && comp != "LTD" && comp != "PRIVATE" && comp != "LIMITED" {
-					cuttingcompname = cuttingcompname + " " + comp
+		e = csr.Fetch(&result, 0, false)
+		defer csr.Close()
+
+		if len(result) > 0 {
+			tk.Println("test2")
+			setting := NewSimilaritySetting()
+			setting.SplitDelimeters = []rune{' ', '.', '-'}
+
+			for _, val := range result {
+				companyname := val.Profile.CompanyName
+				splittedcompname := strings.Split(companyname, " ")
+				splittedcpname := strings.Split(cast.ToString(c.ApplicantDetail.CustomerName), " ")
+				cuttingcompname := ""
+				cuttingcpname := ""
+				cppan := cast.ToString(c.ApplicantDetail.CustomerPan)
+				cibilpan := val.Profile.Pan
+				for _, comp := range splittedcompname {
+					if comp != "PVT" && comp != "LTD" && comp != "PRIVATE" && comp != "LIMITED" {
+						cuttingcompname = cuttingcompname + " " + comp
+					}
 				}
-			}
-			for _, comp := range splittedcpname {
-				if comp != "PVT" && comp != "LTD" && comp != "PRIVATE" && comp != "LIMITED" {
-					cuttingcpname = cuttingcpname + " " + comp
+				for _, comp := range splittedcpname {
+					if comp != "PVT" && comp != "LTD" && comp != "PRIVATE" && comp != "LIMITED" {
+						cuttingcpname = cuttingcpname + " " + comp
+					}
 				}
-			}
-			similar := Similarity(cuttingcpname, cuttingcompname, setting)
+				similar := Similarity(cuttingcpname, cuttingcompname, setting)
 
-			if similar >= 50 && cppan == cibilpan {
-				isMatch = true
-			} else if similar >= 70 {
-				isMatch = true
-			}
-
-			tk.Println(cuttingcpname, cuttingcompname, cppan, cibilpan, similar, isMatch)
-
-			if isMatch {
-				val.IsMatch = isMatch
-				val.Profile.DealNo = cast.ToString(c.ApplicantDetail.DealNo)
-				val.Profile.CustomerId = cast.ToInt(c.ApplicantDetail.CustomerID, "16")
-				err = cn.NewQuery().From("CibilReport").Update().Exec(tk.M{}.Set("data", val))
-				if err != nil {
-					tk.Println(err.Error())
+				if similar >= 50 && cppan == cibilpan {
+					isMatch = true
+				} else if similar >= 70 {
+					isMatch = true
 				}
-			}
 
+				tk.Println(cuttingcpname, cuttingcompname, cppan, cibilpan, similar, isMatch)
+
+				if isMatch {
+					val.IsMatch = isMatch
+					val.Profile.DealNo = cast.ToString(c.ApplicantDetail.DealNo)
+					val.Profile.CustomerId = cast.ToInt(c.ApplicantDetail.CustomerID, "16")
+					err = cn.NewQuery().From("CibilReport").Update().Exec(tk.M{}.Set("data", val))
+					if err != nil {
+						tk.Println(err.Error())
+					}
+				}
+
+			}
 		}
 	}
 

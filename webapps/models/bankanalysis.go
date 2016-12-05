@@ -289,18 +289,23 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	BSMonthlyCredits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 		return x.(Summary).TotalCredit
 	}).Exec().Result.Sum
+
 	BSMonthlyDebits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 		return x.(Summary).TotalDebit
 	}).Exec().Result.Sum
+
 	BSNoOfCredits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 		return x.(Summary).NoOfCredit
 	}).Exec().Result.Sum
+
 	BSNoOfDebits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 		return x.(Summary).NoOfDebit
 	}).Exec().Result.Sum
+
 	BSOWChequeReturns := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 		return x.(Summary).OwCheque
 	}).Exec().Result.Sum
+
 	BSIWChequeReturns := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 		return x.(Summary).IwCheque
 	}).Exec().Result.Sum
@@ -403,9 +408,16 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 				values = append(values, res.(float64))
 			}
 		}
-		return crowd.From(&values).Avg(func(x interface{}) interface{} {
+
+		result := crowd.From(&values).Avg(func(x interface{}) interface{} {
 			return x.(float64)
 		}).Exec().Result.Avg
+
+		if math.IsNaN(result) {
+			return 0
+		} else {
+			return result
+		}
 	})()
 
 	ODInterestPaid := crowd.From(&res).Sum(func(x interface{}) interface{} {
@@ -529,7 +541,8 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	bank.ABB = ABB
 	bank.BSIMarginPercent = BSIMarginPercent
 
-	bank.BankingToTurnoverRatio = (func() float64 {
+	tk.Println(bank)
+	/*bank.BankingToTurnoverRatio = (func() float64 {
 		totalCredit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 			return x.(Summary).TotalCredit
 		}).Exec().Result.Sum
@@ -629,7 +642,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 
 			return odValue * 100
 		}
-	})()
+	})()*/
 
 	return bank, nil
 }

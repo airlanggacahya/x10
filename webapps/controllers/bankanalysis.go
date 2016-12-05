@@ -508,8 +508,10 @@ func (c *BankAnalysisController) GetDataBankV2(k *knot.WebContext) interface{} {
 	// cust := strconv.Itoa(t.CustomerId)
 	// rtr, _ := new(RTRBottom).GetByCustomerDeal(cust, t.DealNo)
 
-	allSummary, err := new(BankAnalysis).GenerateAllSummary(fm.CustomerId, fm.DealNo)
+	_ = ressum
 
+	allSummary, err := new(BankAnalysis).GenerateAllSummary(fm.CustomerId, fm.DealNo)
+	_ = allSummary
 	result := tk.M{}.Set("Detail", res).Set("Summary", ressum).Set("SummaryAll", allSummary).Set("Ratio", ress).Set("AccountDetail", accdet)
 	return CreateResult(true, result, "")
 }

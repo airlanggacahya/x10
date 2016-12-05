@@ -146,7 +146,7 @@ adf.templateAccountSetupDetails = {
 	Scheme: '',
 	PdInfo: adf.templatePDInfo,
 	Status: 0,
-	
+
 
 
 }
@@ -181,7 +181,7 @@ adf.templateBorrowerDetails = {
 	SecondLineinBusiness: '',
 	OrdersinHand: 0,
 	ProjectsCompleted: 0,
-	CommentsonFinancials: '',
+	CommentsonFinancials: [""],
 	Status: 0,
 }
 adf.templateBorrowerDetails1 = {
@@ -201,7 +201,7 @@ adf.templateBorrowerDetails1 = {
 	SecondLineinBusiness: '',
 	OrdersinHand: 0,
 	ProjectsCompleted: '',
-	CommentsonFinancials: '',
+	CommentsonFinancials: [""],
 	Status: 0,
 }
 adf.templatePromotorDetails = {
@@ -313,7 +313,7 @@ adf.templateCustomerBussinesMix1 = {
 adf.templateDistributorMix = {
 	Data: [
 		{
-			Label: ko.observable(""), 
+			Label: ko.observable(""),
 			Result : ko.observable(0)
 		},
 	],
@@ -322,7 +322,7 @@ adf.templateDistributorMix = {
 adf.templateDistributorMix1 = {
 	Data: [
 		{
-			Label: ko.observable(""), 
+			Label: ko.observable(""),
 			Result : ko.observable(0)
 		},
 	],
@@ -411,7 +411,7 @@ adf.getForm = function () {
 	// data.VendorDetails = data.VendorDetails.filter(function (d) {
 	// 	return d.DistributorName != ''
 	// })
-	
+
 	// console.log("----- 345",data)
 
 	return data
@@ -561,7 +561,7 @@ adf.save = function () {
 
 					}
 				}
-				
+
 			}
 			if(!adf.blankdate(adf.PdDate())){
 				var ondate4 = adf.PdDate();
@@ -599,7 +599,7 @@ adf.save = function () {
 				adf.form.LoanDetails.RecenetAgreementDate("1970-01-01T00:00:00.000Z");
 
 			}
-		
+
 		if(adf.form.AccountSetupDetails.PdInfo.CustomerMargin() == ""){
 			adf.form.AccountSetupDetails.PdInfo.CustomerMargin(0)
 		}
@@ -642,12 +642,12 @@ adf.save = function () {
 				var date3 =  kendo.toString(new Date(adf.form.BorrowerDetails.DateBusinessStarted()),"dd-MMM-yyyy");
 				adf.form.BorrowerDetails.DateBusinessStarted(date3)
 			}
-			
+
 			swal("Successfully Saved", "", "success");
 		}, function () {
 			adf.isLoading(false)
 		});
-		
+
 
 	}
 
@@ -883,9 +883,9 @@ adf.getConfirm = function(){
 
 					}
 				}
-				
+
 			}
-		
+
 			if(!adf.blankdate(adf.PdDate())){
 				var ondate4 = adf.PdDate();
 				// var date4 = (new Date(adf.PdDate()).toISOString());
@@ -1008,7 +1008,7 @@ adf.getConfirm = function(){
 					swal("Please Edit / Enter Data", "", "success");
 					refreshFilter();
 				}
-				
+
 			}, function () {
 				adf.isLoading(false)
 			});
@@ -1772,7 +1772,7 @@ adf.reloadStatus = function(status){
 		adf.optionChangeConfirm(" Re-Enter");
 		// adf.EnableAllfields(false)
 		setTimeout(function(){
-			adf.optionSectionPromoterConfirm(" Re Enter"); 
+			adf.optionSectionPromoterConfirm(" Re Enter");
 			adf.sectionDisable("#c-2", false);
 			adf.sectionDisable("#c-1", false);
 			adf.sectionDisable("#c-3", false);
@@ -1784,7 +1784,7 @@ adf.reloadStatus = function(status){
 			$("#onsave").prop("disabled", true);
 			$(".onfreeze").prop("disabled", false);
 			$("#onreset").prop("disabled", true );
-			
+
 		},500);
 		$("#LoanAmount").prop("disabled", true );
 		$("#onreset1").prop("disabled", true);
@@ -1811,7 +1811,7 @@ adf.reloadStatus = function(status){
 		adf.optionChangeConfirm(" Re-Enter");
 		// adf.EnableAllfields(false)
 		setTimeout(function(){
-			adf.optionSectionPromoterConfirm(" Re Enter"); 
+			adf.optionSectionPromoterConfirm(" Re Enter");
 			adf.sectionDisable("#c-2", false);
 			adf.sectionDisable("#c-1", false);
 			adf.sectionDisable("#c-3", false);
@@ -1829,7 +1829,7 @@ adf.reloadStatus = function(status){
 			for(var i = 0; i< adf.form.PromotorDetails().length; i++){
 				$("#cibil"+i).prop("disabled", "disabled")
 				$("#real"+i).prop("disabled", "disabled")
-				
+
 			}
 			$("#req").prop("disabled", "disabled")
 			$("#mincibil").prop("disabled", "disabled")
@@ -1978,9 +1978,9 @@ adf.getData = function () {
 		}
 		// console.log("----------->>> data res", res.DetailOfPromoters)
 		if (res.Status == 1) {
-			res.DetailOfPromoters.Biodata = _.map(res.DetailOfPromoters.Biodata,function(x){ 
+			res.DetailOfPromoters.Biodata = _.map(res.DetailOfPromoters.Biodata,function(x){
 				 x.Name = toTitleCase(x.Name)
-				 return x  
+				 return x
 			})
 
 			setTimeout(function(){
@@ -2012,7 +2012,7 @@ adf.getData = function () {
 
 		app.ajaxPost(url, param, function (res) {
 			adf.isLoading(false)
-			
+
 			if (res.Message == "data not found") {
 				adf.setForm(res.Data)
 				adf.PdDate("")
@@ -2068,7 +2068,7 @@ adf.getData = function () {
 					    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy") +"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
 						})
 					}
-					
+
 				}
 			} else {
 				setTimeout(function(){
@@ -2105,7 +2105,6 @@ adf.getData = function () {
 					generatemc()
 
 
-					console.log(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
 					adf.reloadStatus(res.Data.Status)
 					// console.log("------>>1856",res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970"))
 					adf.CMISNULL(res.Data.CMISNULL);
@@ -2147,8 +2146,8 @@ adf.getData = function () {
 
 
 					if(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970") >-1 || res.Data.LoanDetails.FirstAgreementDate.indexOf("1970") >-1 || res.Data.LoanDetails.RecenetAgreementDate.indexOf("1970") >-1){
-							
-						
+
+
 
 						// adf.form.AccountSetupDetails.LoginDate((new Date).toISOString())
 						if(adf.form.Freeze() == true || adf.form.Status() == 1){
@@ -2163,7 +2162,7 @@ adf.getData = function () {
 							adf.EnableAllfields(true)
 						}
 					}
-					
+
 					if(res.Data.DistributorMix.Data == null){
 						adf.form.DistributorMix.Data([
 							{Label: ko.observable(""), Result: ko.observable(0)}
@@ -2173,11 +2172,11 @@ adf.getData = function () {
 				}, 1000)
 				adf.form.BorrowerDetails.DateBusinessStarted("");
 				adf.form.LoanDetails.IfBackedByPO("");
-				
-				res.Data.AccountSetupDetails.LeadDistributor = toTitleCase(res.Data.AccountSetupDetails.LeadDistributor); 
-				res.Data.PromotorDetails = _.map(res.Data.PromotorDetails,function(x){ 
+
+				res.Data.AccountSetupDetails.LeadDistributor = toTitleCase(res.Data.AccountSetupDetails.LeadDistributor);
+				res.Data.PromotorDetails = _.map(res.Data.PromotorDetails,function(x){
 				 x.PromoterName = toTitleCase(x.PromoterName)
-				 return x  
+				 return x
 				})
 
 				if(res.Data.Status == 1 && res.Data.Freeze != true){
@@ -2200,7 +2199,7 @@ adf.getData = function () {
 				adf.optionTemporaryData(res.Data)
 				adf.setForm(res.Data)
 				// adf.loanDetailEnable()
-				
+
 				setTimeout(function(){
 					adf.LoadPromotorEducation();
 					$("#refrence").data("kendoGrid").dataSource.data(ko.mapping.toJS(adf.form.BorrowerDetails.RefrenceCheck()));
@@ -2230,13 +2229,17 @@ adf.getData = function () {
 					}
 				}, 500)
 
-				
+
 
 				adf.PdDate(kendo.toString(new Date(adf.form.AccountSetupDetails.PdInfo.PdDate()),"dd-MMM-yyyy"))
 
 				// generatemc()
 
 				adf.onclickDismissModal();
+
+				if (adf.form.BorrowerDetails.CommentsonFinancials() === null || adf.form.BorrowerDetails.CommentsonFinancials().length === 0) {
+					adf.form.BorrowerDetails.CommentsonFinancials([""])
+				}
 			}
 		}, function () {
 			adf.isLoading(false)
@@ -2277,8 +2280,8 @@ window.refreshFilter = function () {
 	// 		})
 	// 	}
 	// }, 1000)
-	
-	
+
+
 }
 adf.initEvents = function () {
 	filter().CustomerSearchVal.subscribe(function () {
@@ -2534,12 +2537,26 @@ adf.addTopCustomerNames = function(index){
 
 }
 
+adf.addCommentsonFinancials = function(index){
+	adf.form.BorrowerDetails.CommentsonFinancials.push("");
+}
+
 adf.removeTopCustomerNames = function(index){
-return function(){
-	var realEsates = adf.form.BorrowerDetails.TopCustomerNames().filter(function (d, i) {
+	return function(){
+		var realEsates = adf.form.BorrowerDetails.TopCustomerNames().filter(function (d, i) {
 			return i !== index
 		})
 		adf.form.BorrowerDetails.TopCustomerNames(realEsates)
+	}
+}
+
+adf.removeCommentsonFinancials = function(index){
+	return function(){
+		var realEsates = adf.form.BorrowerDetails.CommentsonFinancials().filter(function (d, i) {
+			return i !== index
+		})
+
+		adf.form.BorrowerDetails.CommentsonFinancials(realEsates);
 	}
 }
 
@@ -2729,7 +2746,7 @@ adf.onclickDismissModal = function(){
 		}catch(e){
 
 		}
-		
+
 		$('#tipster').tooltipster({
 			contentAsHTML: true,
 	    	interactive: true,
@@ -2739,7 +2756,7 @@ adf.onclickDismissModal = function(){
 		try{
 			$('#tipster').tooltipster('destroy')
 		}catch(e){
-			
+
 		}
 		$('#tipster').tooltipster({
 			contentAsHTML: true,
@@ -2937,7 +2954,7 @@ adf.loanDetailEnable = function(){
 }
 
 adf.form.LoanDetails.IfBackedByPO.subscribe(function(value){
-	
+
 })
 
 adf.form.LoanDetails.CommercialCibilReport.subscribe(function(value){
@@ -3052,7 +3069,7 @@ adf.scroll = function(){
 	    } else {
 	        $('.btnFixed').removeClass('fixed');
 	       	$('.btnFixed').addClass('static');
-	    }    
+	    }
 	});
 }
 
@@ -3109,5 +3126,5 @@ $(function () {
     	content: $("<p class='info'>PD Done By : <span>&nbsp;</span><br>PD Date : <span>&nbsp;</span><br>PD Place : <span>&nbsp;</span><br>Person Met : <span>&nbsp;</span><br>PD Remarks: <span>&nbsp;</span></p>")
 	})
 
-	
+
 })

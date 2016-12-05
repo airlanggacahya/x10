@@ -165,7 +165,7 @@ type BorrowerDetails struct {
 	SecondLineinBusiness         string  `bson:"SecondLineinBusiness,omitempty"`
 	OrdersinHand                 float64 `bson:"OrdersinHand,omitempty"`
 	ProjectsCompleted            float64 `bson:"ProjectsCompleted,omitempty"`
-	CommentsonFinancials         string
+	CommentsonFinancials         []string
 	DateBusinessStarted          time.Time
 	Status                       int
 	FirstAgreementDate           time.Time

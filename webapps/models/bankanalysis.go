@@ -68,7 +68,7 @@ type NonFundBased struct {
 	OtherNatureOfFacility string    `bson:"OtherNatureOfFacility"`
 	SancLimit             float64   `bson:"SancLimit"`
 	SanctionDate          time.Time `bson:"SanctionDate"`
-	SecurityOfNFB         string    `bson:"SecurityOfFB"`
+	SecurityOfNFB         []string  `bson:"SecurityONFB"`
 }
 
 type CurrentBased struct {

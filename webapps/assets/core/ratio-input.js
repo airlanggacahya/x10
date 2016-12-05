@@ -1142,10 +1142,10 @@ r.render = function () {
                         .attr('data-field-id', field.Id)
                         .attr('data-date', au.Date)
                         .attr('status', "AUDITED")
-                        .attr('type', "number")
+                        .attr('onblur', 'r.onFinishedTypingValue(this)')
+                        .attr('onkeyup', 'r.onTypingValue(this)')
                         .attr('min', 0)
                         .attr('placeholder', yy)
-                        .attr('data-bind', 'event: {change:}')
                         .addClass('cell align-right')
                         .addClass('inputmasterform')
                         .css("width","100%")
@@ -1202,7 +1202,8 @@ r.render = function () {
                         .attr('data-field-id', field.Id)
                         .attr('data-date', au.Date)
                         .attr('status', au.Status)
-                        .attr('type', "number")
+                        .attr('onblur', 'r.onFinishedTypingValue(this)')
+                        .attr('onkeyup', 'r.onTypingValue(this)')
                         .attr('min', 0)
                         .attr('placeholder', yy)
                         .addClass('cell align-right')
@@ -1343,6 +1344,28 @@ r.render = function () {
        }
     })
 };
+r.onTypingValue = function (o) {
+    if (event.keyCode === 13) {
+        r.onFinishedTypingValue(o)
+    }
+}
+r.onFinishedTypingValue = function (o) {
+    var valueNumber = o.value;
+
+    if (valueNumber.indexOf('=') > -1) {
+        if (valueNumber[0] === '=') {
+            try {
+                valueNumber = eval(valueNumber.slice(1));
+                o.value = valueNumber;
+            } catch (err) {
+                o.value = 0;
+                console.log('error evaluating expression', err);
+            }
+        }
+    } else if (isNaN(valueNumber)) {
+        o.value = 0;
+    }
+}
 r.confirm = function () {
 
     r.save(function(){

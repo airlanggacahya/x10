@@ -522,24 +522,42 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	})()
 
 	bank := new(BankAllSummary)
-	bank.BSMonthlyCredits = BSMonthlyCredits
-	bank.BSMonthlyDebits = BSMonthlyDebits
-	bank.BSNoOfCredits = BSNoOfCredits
-	bank.BSNoOfDebits = BSNoOfDebits
-	bank.BSOWChequeReturns = BSOWChequeReturns
-	bank.BSIWChequeReturns = BSIWChequeReturns
-	bank.BSImpMargin = BSImpMargin
-	bank.BSOWReturnPercent = BSOWReturnPercent
-	bank.BSIWReturnPercent = BSIWReturnPercent
-	bank.BSDRCRRatio = BSDRCRRatio
-	bank.ODSactionLimit = ODSactionLimit
-	bank.ODUtilizationPercent = ODUtilizationPercent
-	bank.ODAvgUtilization = ODAvgUtilization
-	bank.ODInterestPaid = ODInterestPaid
-	bank.AMLAvgCredits = AMLAvgCredits
-	bank.AMLAvgDebits = AMLAvgDebits
-	bank.ABB = ABB
+	// bank.BSMonthlyCredits = BSMonthlyCredits
+	// bank.BSMonthlyDebits = BSMonthlyDebits
+	// bank.BSNoOfCredits = BSNoOfCredits
+	// bank.BSNoOfDebits = BSNoOfDebits
+	// bank.BSOWChequeReturns = BSOWChequeReturns
+	// bank.BSIWChequeReturns = BSIWChequeReturns
+	// bank.BSImpMargin = BSImpMargin
+	// bank.BSOWReturnPercent = BSOWReturnPercent
+	// bank.BSIWReturnPercent = BSIWReturnPercent
+	// bank.BSDRCRRatio = BSDRCRRatio
+	// bank.ODSactionLimit = ODSactionLimit
+	// bank.ODUtilizationPercent = ODUtilizationPercent
+	// bank.ODAvgUtilization = ODAvgUtilization
+	// bank.ODInterestPaid = ODInterestPaid
+	// bank.AMLAvgCredits = AMLAvgCredits
+	// bank.AMLAvgDebits = AMLAvgDebits
+	// bank.ABB = ABB
 	bank.BSIMarginPercent = BSIMarginPercent
+
+	bank.BSMonthlyCredits = CheckNan(BSMonthlyCredits)
+	bank.BSMonthlyDebits = CheckNan(BSMonthlyDebits)
+	bank.BSNoOfCredits = CheckNan(BSNoOfCredits)
+	bank.BSNoOfDebits = CheckNan(BSNoOfDebits)
+	bank.BSOWChequeReturns = CheckNan(BSOWChequeReturns)
+	bank.BSIWChequeReturns = CheckNan(BSIWChequeReturns)
+	bank.BSImpMargin = CheckNan(BSImpMargin)
+	bank.BSOWReturnPercent = CheckNan(BSOWReturnPercent)
+	bank.BSIWReturnPercent = CheckNan(BSIWReturnPercent)
+	bank.BSDRCRRatio = CheckNan(BSDRCRRatio)
+	bank.ODSactionLimit = CheckNan(ODSactionLimit)
+	bank.ODUtilizationPercent = CheckNan(ODUtilizationPercent)
+	bank.ODAvgUtilization = CheckNan(ODAvgUtilization)
+	bank.ODInterestPaid = CheckNan(ODInterestPaid)
+	bank.AMLAvgCredits = CheckNan(AMLAvgCredits)
+	bank.AMLAvgDebits = CheckNan(AMLAvgDebits)
+	bank.ABB = CheckNan(ABB)
 
 	tk.Println(bank)
 	/*bank.BankingToTurnoverRatio = (func() float64 {

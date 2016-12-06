@@ -209,5 +209,247 @@ input[disabled]{
   </div>
 </div>
 
+<!-- Form Modal -->
+<div class="modal fade" id="modaldb" aria-hidden="true" aria-labelledby="modalTitle" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title modal-title">Bank Data</h4>
+      </div>
+      <div class="modal-body">
+        <div class="panel">
+          <div class="panel-heading">
+            <h4 class="no-margin">Bank Account</h4>
+          </div>
+          <div class="panel-body" data-bind="with: bankaccount">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group col-sm-12">
+                  <label for="bankname" class="col-sm-4 form-control-label">Bank Name:</label>
+                  <div class="col-sm-8">
+                    <input type="text" id="bankname" class="form-control input-sm" validationMessage="Bank Name Required" required data-bind="value: bankname"  />
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group col-sm-12">
+                  <label for="bankname" class="col-sm-4 form-control-label">Facility Type:</label>
+                  <div class="col-sm-8">
+                    <!--<label class="radio-inline"><input id="fbradio" data-switch-no-init="true" type="radio" name="fb">Fund Based</label>
+                    <label class="radio-inline"><input id="nfbradio" data-switch-no-init="true" type="radio" name="nfb">Non-Fund Based</label>
+                    <label class="radio-inline"><input id="bothradio" data-switch-no-init="true" type="radio" name="both">Both</label>-->
+                    <select id="facilitytype" multiple="multiple" data-placeholder="Select Facility Type"></select>
+                  </div>
+                </div>
+              </div>
+              <div id="nfb" class="col-sm-12">
+                <h4>Non-Fund Based</h4>
+                <hr>
+                <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4">Nature of Facility:</label>
+                    <div class="col-sm-8">
+                      <input class="form-control input-sm" id="naturefacility">
+                    </div>
+                  </div>
+                  <div id="othernf" class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4"></label>
+                    <div class="col-sm-8">
+                      <input class="form-control input-sm" id="othernaturefacility">
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4">Sanction Limit (Rs. Lacs):</label>
+                    <div id="nfbsl" class="col-sm-8" style="margin-left: -10px;">
+                      <input type="number" id="nfbsanclimit" class="input-sm" data-bind="" validationMessage="NFB Sanc Limit Rs Lacs Required" required  />
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4">Sanction Date:</label>
+                    <div class="col-sm-8">
+                      <input class="form-control input-sm"  id="nfbsanctiondate">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-sm-6" >
+                  <div class="form-group">
+                    <label class="col-sm-12" data-bind="text: 'Security for NFB'" style="font-weight: normal;"></label>
+                    <div class="securitynfb" class="col-sm-12" data-bind="foreach: nfbsecurity" style="margin-top: 10px;padding-left: 0px;    width: 110%;">
+                      <div style=" padding-bottom: 57px; margin-bottom: 5px;">
+                        <div class="col-sm-12" style="padding-left: 0px;">
+                          <div style="margin-bottom: 5px;">
+                            <div class="col-sm-10">
+                              <textarea class="form-control" rows="1" data-bind="attr:{id: 'securitynfb'+$index()}"></textarea>
+                            </div>
+                            <div class="col-sm-2" style="text-align: right;">
+                            <button   class="btn btn-sm btn-add promoter plus noable" style="float: left;" data-bind="click:addRowSecurityNFB(), visible: ($index() == 0)">
+                              <i class="fa fa-plus"></i>
+                            </button>
+                              <button class="btn btn-sm btn-danger promoter bag noable" style="float: left;" data-bind="click:deleteRowSecurityNFB($index()), visible: ($index() > 0)">
+                                <i class="fa fa-trash"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+
+              <div id="fb" class="col-sm-12">
+                <h4>Fund Based</h4>
+                <hr>
+                <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-12">
+                    <label for="inputPassword3" class="col-sm-4 form-control-label">A/C Type :</label>
+                    <div class="col-sm-8">
+                      <!--<input type="text" id="actype" class="form-control input-sm" validationMessage="A/C Type Required" required data-bind="value: actype"/>-->
+                      <input id="actype" value="1"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">A/C No :</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="acno" class="form-control input-sm" validationMessage="A/C No Required" required data-bind="value: acno"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">A/C Holder :</label>
+                    <div class="col-sm-8">
+                      <input type="text" id="acholder" class="form-control input-sm" validationMessage="A/C Holder Required" required data-bind="value: acholder"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">Sanction Limit (Rs. Lacs):</label>
+                    <div id="ee" class="col-sm-8" style="margin-left: -10px;">
+                      <input type="number" id="sanclimit" class="input-sm" validationMessage="Sanc Limit Rs.Lacs required"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label"><span class="hidden-sm hidden-xs">ROI Per Annum (%) :</label>
+                    <div id="aa" class="col-sm-8" style="margin-left: -10px;">
+                      <input type="number" id="roiperannum" class=" input-sm" validationMessage="ROI PER ANNUM required"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">Interest Per Month (Rs. Lacs):</label>
+                    <div class="col-sm-8">
+                      <input type="number" disabled="disabled" id="interestpermonth" class="form-control input-sm" validationMessage="Interest Per Month required" data-bind="value: interestpermonth"/>
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-12">
+                    <label  class="form-control-label col-sm-4">Sanction Date:</label>
+                    <div class="col-sm-8">
+                      <input class="form-control input-sm"  id="fbsanctiondate">
+                    </div>
+                  </div>
+                </div>
+
+                <!--<div class="form-group col-sm-6">
+                  <label  class="form-control-label col-sm-4">Security for FB:</label>
+                  <label id="same" class="checkbox-inline"><input id="samenfb" data-switch-no-init="true" type="checkbox" name="sameasnnfb" />Same as NFB</label>
+                  <textarea class="form-control" rows="5" id="securityfb"></textarea>
+                </div>-->
+
+                <div class="col-sm-6" >
+                  <div class="form-group">
+                    <label class="col-sm-6" data-bind="text: 'Security for FB '" style="font-weight: normal;"></label>
+                    <label id="same" class="checkbox-inline"><input id="samenfb" data-switch-no-init="true" type="checkbox" name="sameasnnfb" />Same as NFB</label>
+                    <div class="securitynfb" class="col-sm-12" data-bind="foreach: fbsecurity" style="margin-top: 10px;padding-left: 0px;    width: 110%;">
+                      <div style=" padding-bottom: 57px; margin-bottom: 5px;">
+                        <div class="col-sm-12" style="padding-left: 0px;">
+                          <div style="margin-bottom: 5px;">
+                            <div class="col-sm-10">
+                              <textarea class="form-control" rows="1" data-bind="attr:{id: 'securityfb'+$index()}"></textarea>
+                            </div>
+                            <div class="col-sm-2" style="text-align: right;">
+                            <button   class="btn btn-sm btn-add promoter plus noable" style="float: left;" data-bind="click:addRowSecurityFB(), visible: ($index() == 0)">
+                              <i class="fa fa-plus"></i>
+                            </button>
+                              <button class="btn btn-sm btn-danger promoter bag noable" style="float: left;" data-bind="click:deleteRowSecurityFB($index()), visible: ($index() > 0)">
+                                <i class="fa fa-trash"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>  
+                  </div>
+                </div>
+
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-sm-12">
+                       <div class="panel-heading"><h4 class="no-margin">Bank Details</h4></div>
+                      <div id="bankdetailgridform"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              &nbsp;
+              <div id="current" class="col-sm-12">
+                <h4>Current Account</h4>
+                <hr>
+                <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-12">
+                    <label for="inputPassword3" class="col-sm-4 form-control-label">A/C Type :</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control input-sm" id="currentactype" value="Current" disabled/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">A/C No :</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="currentacno" class="form-control input-sm" validationMessage="A/C No Required" required data-bind="value: currentacno"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-4 form-control-label">A/C Holder :</label>
+                    <div class="col-sm-8">
+                      <input type="text" id="currentacholder" class="form-control input-sm" validationMessage="A/C Holder Required" required data-bind="value: currentacholder"/>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-sm-12">
+                       <div class="panel-heading"><h4 class="no-margin">Bank Details</h4></div>
+                      <div id="currentbankdetailgridform"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelbtn" class="btn btn-danger" type="button" class="btn btn-default"> Cancel</button>
+          <button id="savebtn" class="btn btn-success" type="button" class="btn btn-default">Save</button>
+          <button id="updatebtn" class="btn btn-warning" type="button" class="btn btn-default">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Form Modal -->
+
 
 

@@ -66,14 +66,14 @@ var fundbased = {
     roi : ko.observable(""),
     interestpermonth : ko.observable(""),
     sanctiondate : ko.observable(""),
-    securityoffb : ko.observable("")
+    securityoffb : ko.observableArray([]),
 }
 var nonfundbased = {
     natureoffacility : ko.observable(""),
     othernatureoffacility : ko.observable(""),
     sanclimit : ko.observable(""),
     sanctiondate : ko.observable(""),
-    securityofnfb : ko.observable(""),
+    securityofnfb : ko.observableArray([]),
 }
 var currentbased = {
     accounttype: ko.observable(""),
@@ -92,6 +92,8 @@ var bankaccount = {
     fundbased : {},
     nonfundbased : {},
     currentbased : {},
+    nfbsecurity : ko.observableArray([]),
+    fbsecurity : ko.observableArray([])
 }
 var getSearchVal = function(){
     return {
@@ -103,6 +105,30 @@ var refreshFilter = function(){
     DrawDataBank(getSearchVal());
     setdatestt()
     initEvents()
+}
+
+var addRowSecurityNFB = function(){
+    return function(){
+    bankaccount.nfbsecurity.push("")
+    }
+}
+
+var deleteRowSecurityNFB = function(idx){
+    return function(){
+    bankaccount.nfbsecurity.splice(idx,1)
+    }
+}
+
+var addRowSecurityFB = function(){
+    return function(){
+    bankaccount.fbsecurity.push("")
+    }
+}
+
+var deleteRowSecurityFB = function(idx){
+    return function(){
+    bankaccount.fbsecurity.splice(idx,1)
+    }
 }
 
 var setdatestt = function(){
@@ -477,14 +503,38 @@ var RenderGridDataBank = function(id, res){
         ]
     });
 
+    var nonfundExpanded = (function (dataBefore) {
+        var dataAfter = [];
+        dataBefore.forEach(function (d) {
+            var uniq = toolkit.randomNumber(0, 1000000);
+            d.SecurityOfNFB.forEach(function (e) {
+                dataAfter.push({
+                    uniq: uniq,
+                    NatureOfFacility: d.NatureOfFacility,
+                    OtherNatureOfFacility: d.OtherNatureOfFacility,
+                    SancLimit: d.SancLimit,
+                    SanctionDate: d.SanctionDate,
+                    SecurityOfNFB: e
+                })
+            })
+        })
+        return dataAfter;
+    })(nonfund);
+
+    console.log(nonfund);
+    console.log(nonfundExpanded);
+
     $('#nonfundgrid'+id).kendoGrid({
-        dataSource : nonfund,
+        dataSource : nonfundExpanded,
         columns :[
             {
                 title : 'Nature of Facility',
                 headerAttributes: { "class": "sub-bgcolor" },
                 width : 150,
                 field : 'NatureOfFacility',
+                template : function (d) {
+                    return '<span data-uniq="' + d.uniq + '">' + d.NatureOfFacility + '</span>'
+                }
             },
             {
                 title : 'Sanction Limit (Rs. Lacs)',
@@ -510,9 +560,29 @@ var RenderGridDataBank = function(id, res){
             {
                 title : 'Security for Non-Fun Based',
                 field : 'SecurityOfNFB',
-                headerAttributes: { "class": "sub-bgcolor" },
+                headerAttributes: { "class": "sub-bgcolor" }
             },
-        ]
+        ],
+        dataBound: function () {
+            var $nonFundSel = $('#nonfundgrid'+id);
+            var $nonFundGrid = $nonFundSel.data('kendoGrid')
+
+            Object.keys(_.groupBy(nonfundExpanded, 'uniq')).forEach(function (uniq) {
+                var $foundRows = $('[data-uniq="' + uniq + '"]');
+
+                $('[data-uniq="' + uniq + '"]').each(function (i, e) {
+                    var $row = $(e).closest('tr');
+
+                    if (i == 0) {
+                        $row.find('td:lt(3)')
+                            .attr('rowspan', $foundRows.size());
+                    } else {
+                        $row.find('td:eq(3)').css('border-left', '1px solid #ebebeb');
+                        $row.find('td:lt(3)').remove();
+                    }
+                })
+            })
+        }
     });
 
     $('#currentgrid'+id).kendoGrid({
@@ -1549,7 +1619,7 @@ var createBankDetailGrid = function(res){
                     ajaxPost(url+"/createbankanalysis",callData, function(res){
                         yo.success(res.data);
                         swal("Success","Data Saved","success");
-                        $('#modalAdd').modal('hide');
+                        $('#modaldb').modal('hide');
                         DrawDataBank(getSearchVal());
                         resetInput();
                     });
@@ -1697,7 +1767,7 @@ $(document).ready(function(){
     $('#savebtn').prop('disabled',true);
     $('#updatebtn').hide();
     $('#cancelbtn').click(function(){
-        $('#modalAdd').modal('hide');
+        $('#modaldb').modal('hide');
         resetInput();
         setdatestt();
     });
@@ -1718,6 +1788,8 @@ $(document).ready(function(){
         // $("#nfbsl").css("margin-left", "0px !important")
         // $("#ee").css("margin-left", "0px !important")
         // $("#aa").css("margin-left", "0px !important")
+        bankaccount.nfbsecurity.push("")
+        bankaccount.fbsecurity.push("")
         if (filter().CustomerSearchVal() == ""){
             swal("Warning","Select Customer First","warning");
             return;
@@ -1748,7 +1820,7 @@ $(document).ready(function(){
                     $("#sanclimit").data('kendoNumericTextBox').value("")
                     $("#roiperannum").data('kendoNumericTextBox').value("")
 
-                    $('#modalAdd').modal('show');
+                    $('#modaldb').modal('show');
 
                     setTimeout(function(){
                         $("#nfbsanctiondate").getKendoDatePicker().value("");
@@ -1757,7 +1829,7 @@ $(document).ready(function(){
                     },2000);
 
                 }else{
-                    //$('#modalAdd').modal('show');
+                    //$('#modaldb').modal('show');
                     swal("Warning","Select Statement Date","warning");
                 }
             });
@@ -1808,7 +1880,7 @@ $(document).ready(function(){
     });
 
     $("#bankdetailgridform").on("mousedown", ".k-grid-cancel-changes", function (e) {
-        $('#modalAdd').modal('hide');
+        $('#modaldb').modal('hide');
         resetInput();
     });
 
@@ -1901,8 +1973,14 @@ $(document).ready(function(){
     $("#samenfb").change(function(){
         if($("#samenfb").is(':checked')){
             $('#securityfb').val($('#securitynfb').val());
-        }else{
-            $('#securityfb').val("");
+            arrnfbsec = []
+            for (var i = 0; i < bankaccount.nfbsecurity().length; i++){
+                arrnfbsec.push($("#securitynfb"+i).val())
+            }
+            bankaccount.fbsecurity(arrnfbsec)
+            for (var i = 0; i < arrnfbsec.length; i++){
+                $('#securityfb'+i).val(arrnfbsec[i])
+            }
         }
     });
 })
@@ -1998,12 +2076,12 @@ $(document).ready(function(){
 //                 })
 //                 createBankDetailGrid(res.data[0].BankDetails);
 //                 $('#bankstt').data('kendoDatePicker').value(res.data[0].BankDetails[0].Month);
-//                 $('#modalAdd').modal('show');
+//                 $('#modaldb').modal('show');
 //                 loadGridDataBank(databank()[index].DataBank[0].BankDetails);
 //                 loadGridCurrentDataBank(databank()[index].DataBank[0].BankDetails)
 
 //             }else{
-//                 $('#modalAdd').modal('show');
+//                 $('#modaldb').modal('show');
 //                 loadGridDataBank(databank()[index].DataBank[0].BankDetails);
 //                 loadGridCurrentDataBank(databank()[index].DataBank[0].BankDetails)
 //             }
@@ -2070,7 +2148,11 @@ var editBankData = function(index){
             }else{
                 $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
             }
-            $('#securityfb').val(databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB)
+            var arrsecfbs = databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB
+            bankaccount.fbsecurity(arrsecfbs)
+            for (var i = 0; i < arrsecfbs.length; i++){
+                $('#securityfb'+i).val(arrsecfbs[i])
+            }
             //loadGridDataBank(databank()[index].DataBank[0].BankDetails)
         }
 
@@ -2093,7 +2175,12 @@ var editBankData = function(index){
             }else{
                 $('#nfbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate)
             }
-            $('#securitynfb').val(databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB)
+            var arrsecnfbs = databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB
+            bankaccount.nfbsecurity(arrsecnfbs)
+            for (var i = 0; i < arrsecnfbs.length; i++){
+                $('#securitynfb'+i).val(arrsecnfbs[i])
+            }
+            
         }
 
         if (factype.indexOf('Current') > -1){
@@ -2104,7 +2191,7 @@ var editBankData = function(index){
         }
 
         ajaxPost(url+"/getdetailbanktemplate",filter().CustomerSearchVal(),function(res){
-            $('#modalAdd').modal('show')
+            $('#modaldb').modal('show')
 
             if (res.data.length > 0){
                 $('#bankstt').data('kendoDatePicker').value(res.data[0].BankDetails[0].Month)
@@ -2142,12 +2229,12 @@ var editBankData = function(index){
         //         })
         //         createBankDetailGrid(res.data[0].BankDetails);
         //         $('#bankstt').data('kendoDatePicker').value(res.data[0].BankDetails[0].Month);
-        //         $('#modalAdd').modal('show');
+        //         $('#modaldb').modal('show');
         //         loadGridDataBank(databank()[index].DataBank[0].BankDetails);
         //         loadGridCurrentDataBank(databank()[index].DataBank[0].CurrentBankDetails)
 
         //     }else{
-        //         $('#modalAdd').modal('show');
+        //         $('#modaldb').modal('show');
         //         loadGridDataBank(databank()[index].DataBank[0].BankDetails);
         //         loadGridCurrentDataBank(databank()[index].DataBank[0].CurrentBankDetails)
         //     }
@@ -2273,7 +2360,11 @@ var saveDataBank = function(){
     fundbased.roi(Number($("#roiperannum").val()));
     fundbased.sanclimit(Number($("#sanclimit").val()));
     fundbased.interestpermonth(Number($("#interestpermonth").val()));
-    fundbased.securityoffb($("#securityfb").val());
+    arrfbsec = []
+    for (var i = 0; i < bankaccount.fbsecurity().length; i++){
+        arrfbsec.push($("#securityfb"+i).val())
+    }
+    fundbased.securityoffb(arrfbsec);
 
     if ($("#naturefacility").data("kendoDropDownList").value() != "Other"){
         nonfundbased.natureoffacility($("#naturefacility").data("kendoDropDownList").value());
@@ -2281,34 +2372,15 @@ var saveDataBank = function(){
         nonfundbased.natureoffacility($("#othernaturefacility").val());
     }
     nonfundbased.sanclimit(Number($("#nfbsanclimit").val()));
-    nonfundbased.securityofnfb($("#securitynfb").val());
+    arrnfbsec = []
+    for (var i = 0; i < bankaccount.nfbsecurity().length; i++){
+        arrnfbsec.push($("#securitynfb"+i).val())
+    }
+    nonfundbased.securityofnfb(arrnfbsec);
     bankaccount.bankname($("#bankname").val());
     bankaccount.bankstttill($("#bankstt").data("kendoDatePicker").value().toISOString());
     var todayDate = new Date().toISOString();
-    // if (bankaccount.facilitytype() != "" && bankaccount.facilitytype() == "Fund Based"){
-    //     nonfundbased.sanctiondate(todayDate);
-    //     fundbased.sanctiondate($("#fbsanctiondate").data("kendoDatePicker").value().toISOString());
-    // }else if (bankaccount.facilitytype() != "" && bankaccount.facilitytype() == "Non Fund Based"){
-    //     fundbased.sanctiondate(todayDate);
-    //     nonfundbased.sanctiondate($("#nfbsanctiondate").data("kendoDatePicker").value().toISOString());
-    // }else{
-        // var dat1 = $("#fbsanctiondate").data("kendoDatePicker").value()
-        // var dat2 = $("#nfbsanctiondate").data("kendoDatePicker").value()
-        // if(!blankdate(dat1) && !blankdate(dat2)){
-        //     var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
-        //     var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
-        //     fundbased.sanctiondate(date1);
-        //     nonfundbased.sanctiondate(date2);
-        // }else{
-        //     $("#fbsanctiondate").data("kendoDatePicker").value("01/01/1970")
-        //     $("#nfbsanctiondate").data("kendoDatePicker").value("01/01/1970")
-        //     var date1 = kendo.toString(new Date($("#fbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z";
-        //     var date2 = kendo.toString(new Date($("#nfbsanctiondate").data("kendoDatePicker").value()), "yyyy-MM-dd")+"T00:00:00.000Z"
-        //     nonfundbased.sanctiondate(date2);
-        //     fundbased.sanctiondate(date1);
-        // }
-
-    //}
+    
     var latestfacttype = $('#facilitytype').getKendoMultiSelect().value()
 
          if (latestfacttype.indexOf('Fund Based') > -1){
@@ -2399,7 +2471,7 @@ var saveDataBank = function(){
     ajaxPost(url+"/createbankanalysis",callData, function(res){
         //yo.success(res.data);
         swal("Success","Data Saved","success");
-        $('#modalAdd').modal('hide');
+        $('#modaldb').modal('hide');
         DrawDataBank(getSearchVal());
         resetInput();
         //$('#savebtn').prop('disabled',true);
@@ -2490,7 +2562,7 @@ var saveDataBank = function(){
 //         $('#updatebtn').hide();
 //         $('#savebtn').show();
 //         $('#savebtn').prop('disabled',true);
-//         $('#modalAdd').modal('hide');
+//         $('#modaldb').modal('hide');
 //         setdatestt()
 //     })
 
@@ -2513,7 +2585,11 @@ var updateDataBank = function(index){
     fundbased.roi(Number($("#roiperannum").val()))
     fundbased.sanclimit(Number($("#sanclimit").val()))
     fundbased.interestpermonth(Number($("#interestpermonth").val()))
-    fundbased.securityoffb($("#securityfb").val())
+    arrfbsec = []
+    for (var i = 0; i < bankaccount.fbsecurity().length; i++){
+        arrfbsec.push($("#securityfb"+i).val())
+    }
+    fundbased.securityoffb(arrfbsec)
 
     if ($("#naturefacility").data("kendoDropDownList").value() != "Other"){
         nonfundbased.natureoffacility($("#naturefacility").data("kendoDropDownList").value());
@@ -2521,7 +2597,12 @@ var updateDataBank = function(index){
         nonfundbased.natureoffacility($("#othernaturefacility").val());
     }
     nonfundbased.sanclimit(Number($("#nfbsanclimit").val()));
-    nonfundbased.securityofnfb($("#securitynfb").val());
+    //nonfundbased.securityofnfb($("#securitynfb").val());
+    arrnfbsec = []
+    for (var i = 0; i < bankaccount.nfbsecurity().length; i++){
+        arrnfbsec.push($("#securitynfb"+i).val())
+    }
+    nonfundbased.securityofnfb(arrnfbsec);
 
     var todayDate = new Date().toISOString();
     var latestfacttype = $('#facilitytype').getKendoMultiSelect().value()
@@ -2654,7 +2735,7 @@ var updateDataBank = function(index){
         resetInput();
         $('#updatebtn').hide();
         $('#savebtn').show();
-        $('#modalAdd').modal('hide');
+        $('#modaldb').modal('hide');
         setdatestt()
     })
 

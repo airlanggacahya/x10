@@ -51,7 +51,15 @@
                         <td class="col-sm-2 center text-bold">Expansion Plan</td>
                         <td class="col-sm-4" data-bind="text:loanapproval.expansionplan"></td>
                         <td class="col-sm-2 center text-bold">Comments On Financial</td>
-                        <td class="col-sm-4" data-bind="text:loanapproval.commentfinance"></td>
+                        <td class="col-sm-4">
+                            <table>
+                                <tbody data-bind="foreach: loanapproval.commentfinance">
+                                    <tr>
+                                        <td data-bind="text: loanapproval.commentfinance()[$index()]"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
                     </tr>
                 </table>
             </div>

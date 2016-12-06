@@ -76,7 +76,7 @@ var loanapproval = {
     topCustomersName : ko.observableArray([]),
     topproducts : ko.observableArray([]),
     expansionplan : ko.observable(""),
-    commentfinance : ko.observable(""),
+    commentfinance : ko.observableArray([]),
     referencecheck : ko.observableArray([]),
     marketref : ko.observable(""),
     detailpromoters : ko.observableArray([]),
@@ -239,7 +239,7 @@ loanApproval.reset = function(){
     loanapproval.topCustomersName([])
     loanapproval.topproducts([])
     loanapproval.expansionplan("")
-    loanapproval.commentfinance("")
+    loanapproval.commentfinance([])
     loanapproval.referencecheck([])
     loanapproval.marketref("")
     loanapproval.detailpromoters([])
@@ -919,6 +919,7 @@ loanApproval.getReport = function(param){
 
             loanapproval.expansionplan (data.Data.AD[0].borrowerdetails.expansionplans);
             loanapproval.commentfinance (data.Data.AD[0].borrowerdetails.commentsonfinancials);
+
             loanapproval.marketref(data.Data.AD[0].borrowerdetails.marketreference);
             loanapproval.referencecheck (data.Data.AD[0].borrowerdetails.refrencecheck);
             createreferencecheckgrid(loanapproval.referencecheck());

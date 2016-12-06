@@ -585,7 +585,7 @@
 // KeyFinancialParameters --------------------------------------------------------
 	var createKeyFinancialParameters = function(){
 		var column = [
-      { title: "Name", field: "name", width: 250, headerAttributes: { "class": "sub-bgcolor col-sm-2" } , template : function(x) { 
+      { title: "Name", field: "name", width: 250, headerAttributes: { "class": "sub-bgcolor col-sm-2" } , template : function(x) {
       		var ishead = true;
       		_.each(r.KFI()[0].ColumnHeader(),function(v,i){
 			  if(i>0){
@@ -1492,7 +1492,7 @@
 		                    <td class="col-sm-4"><span data-bind="text:loanapproval.businesssince"></span></td>
 
 		                    <td class="table-divider"></td>
-		                    
+
 		                    <td class="col-sm-2 text-bold">Management</td>
 		                    <td class="col-sm-4"><span data-bind="text:loanApproval.borrowerDetails.management"></span></td>
 		                </tr>
@@ -1738,7 +1738,15 @@
 					                        <td class="col-sm-2 center text-bold">Expansion Plan</td>
 					                        <td class="col-sm-4" data-bind="text:loanapproval.expansionplan"></td>
 					                        <td class="col-sm-2 center text-bold">Comments on Financial</td>
-					                        <td class="col-sm-4" data-bind="text:loanapproval.commentfinance"></td>
+					                        <td class="col-sm-4">
+					                        	<table>
+					                        		<tbody data-bind="foreach: loanapproval.commentfinance">
+					                        			<tr>
+					                        				<td data-bind="text: loanapproval.commentfinance()[$index()]"></td>
+					                        			</tr>
+					                        		</tbody>
+					                        	</table>
+					                        </td>
 					                    </tr>
 					                </table>
 					            </div>

@@ -66,7 +66,7 @@ var fundbased = {
     roi : ko.observable(""),
     interestpermonth : ko.observable(""),
     sanctiondate : ko.observable(""),
-    securityoffb : ko.observable("")
+    securityoffb : ko.observableArray([]),
 }
 var nonfundbased = {
     natureoffacility : ko.observable(""),
@@ -92,7 +92,8 @@ var bankaccount = {
     fundbased : {},
     nonfundbased : {},
     currentbased : {},
-    nfbsecurity : ko.observableArray([])
+    nfbsecurity : ko.observableArray([]),
+    fbsecurity : ko.observableArray([])
 }
 var getSearchVal = function(){
     return {
@@ -115,6 +116,18 @@ var addRowSecurityNFB = function(){
 var deleteRowSecurityNFB = function(idx){
     return function(){
     bankaccount.nfbsecurity.splice(idx,1)
+    }
+}
+
+var addRowSecurityFB = function(){
+    return function(){
+    bankaccount.fbsecurity.push("")
+    }
+}
+
+var deleteRowSecurityFB = function(idx){
+    return function(){
+    bankaccount.fbsecurity.splice(idx,1)
     }
 }
 
@@ -524,6 +537,18 @@ var RenderGridDataBank = function(id, res){
                 title : 'Security for Non-Fun Based',
                 field : 'SecurityOfNFB',
                 headerAttributes: { "class": "sub-bgcolor" },
+                template: function(d){
+                    var strnfbsec = ""
+                    for (var i = 0; i < d.SecurityOfNFB.length; i++){
+                        if (i != d.SecurityOfNFB.length-1){
+                            strnfbsec = strnfbsec + d.SecurityOfNFB[i]+","
+                        }else{
+                            strnfbsec = strnfbsec + d.SecurityOfNFB[i]
+                        }
+                         
+                    }
+                    return strnfbsec
+                }
             },
         ]
     });
@@ -1731,7 +1756,8 @@ $(document).ready(function(){
         // $("#nfbsl").css("margin-left", "0px !important")
         // $("#ee").css("margin-left", "0px !important")
         // $("#aa").css("margin-left", "0px !important")
-        bankaccount.testsecurity.push("")
+        bankaccount.nfbsecurity.push("")
+        bankaccount.fbsecurity.push("")
         if (filter().CustomerSearchVal() == ""){
             swal("Warning","Select Customer First","warning");
             return;
@@ -2084,7 +2110,11 @@ var editBankData = function(index){
             }else{
                 $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
             }
-            $('#securityfb').val(databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB)
+            var arrsecfbs = databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB
+            bankaccount.fbsecurity(arrsecfbs)
+            for (var i = 0; i < arrsecfbs.length; i++){
+                $('#securityfb'+i).val(arrsecfbs[i])
+            }
             //loadGridDataBank(databank()[index].DataBank[0].BankDetails)
         }
 
@@ -2107,7 +2137,8 @@ var editBankData = function(index){
             }else{
                 $('#nfbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate)
             }
-            arrsecnfbs = databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB
+            var arrsecnfbs = databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB
+            bankaccount.nfbsecurity(arrsecnfbs)
             for (var i = 0; i < arrsecnfbs.length; i++){
                 $('#securitynfb'+i).val(arrsecnfbs[i])
             }
@@ -2291,7 +2322,11 @@ var saveDataBank = function(){
     fundbased.roi(Number($("#roiperannum").val()));
     fundbased.sanclimit(Number($("#sanclimit").val()));
     fundbased.interestpermonth(Number($("#interestpermonth").val()));
-    fundbased.securityoffb($("#securityfb").val());
+    arrfbsec = []
+    for (var i = 0; i < bankaccount.fbsecurity().length; i++){
+        arrnfbsec.push($("#securityfb"+i).val())
+    }
+    fundbased.securityoffb(arrfbsec);
 
     if ($("#naturefacility").data("kendoDropDownList").value() != "Other"){
         nonfundbased.natureoffacility($("#naturefacility").data("kendoDropDownList").value());
@@ -2300,7 +2335,7 @@ var saveDataBank = function(){
     }
     nonfundbased.sanclimit(Number($("#nfbsanclimit").val()));
     arrnfbsec = []
-    for (var i = 0; i < nfbsecurity.length; i++){
+    for (var i = 0; i < bankaccount.nfbsecurity().length; i++){
         arrnfbsec.push($("#securitynfb"+i).val())
     }
     nonfundbased.securityofnfb(arrnfbsec);
@@ -2512,7 +2547,11 @@ var updateDataBank = function(index){
     fundbased.roi(Number($("#roiperannum").val()))
     fundbased.sanclimit(Number($("#sanclimit").val()))
     fundbased.interestpermonth(Number($("#interestpermonth").val()))
-    fundbased.securityoffb($("#securityfb").val())
+    arrfbsec = []
+    for (var i = 0; i < bankaccount.fbsecurity().length; i++){
+        arrfbsec.push($("#securityfb"+i).val())
+    }
+    fundbased.securityoffb(arrfbsec)
 
     if ($("#naturefacility").data("kendoDropDownList").value() != "Other"){
         nonfundbased.natureoffacility($("#naturefacility").data("kendoDropDownList").value());
@@ -2522,7 +2561,7 @@ var updateDataBank = function(index){
     nonfundbased.sanclimit(Number($("#nfbsanclimit").val()));
     //nonfundbased.securityofnfb($("#securitynfb").val());
     arrnfbsec = []
-    for (var i = 0; i < nfbsecurity.length; i++){
+    for (var i = 0; i < bankaccount.nfbsecurity().length; i++){
         arrnfbsec.push($("#securitynfb"+i).val())
     }
     nonfundbased.securityofnfb(arrnfbsec);

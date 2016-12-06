@@ -60,7 +60,7 @@ type FundBased struct {
 	ROI              float64   `bson:"ROI"`
 	InterestPerMonth float64   `bson:"InterestPerMonth"`
 	SanctionDate     time.Time `bson:"SanctionDate"`
-	SecurityOfFB     string    `bson:"SecurityOfFB"`
+	SecurityOfFB     []string  `bson:"SecurityOfFB"`
 }
 
 type NonFundBased struct {
@@ -68,7 +68,7 @@ type NonFundBased struct {
 	OtherNatureOfFacility string    `bson:"OtherNatureOfFacility"`
 	SancLimit             float64   `bson:"SancLimit"`
 	SanctionDate          time.Time `bson:"SanctionDate"`
-	SecurityOfNFB         []string  `bson:"SecurityONFB"`
+	SecurityOfNFB         []string  `bson:"SecurityOfNFB"`
 }
 
 type CurrentBased struct {

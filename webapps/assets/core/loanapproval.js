@@ -638,6 +638,7 @@ var outstanding = function(param){
     }
 
     var base = function(a, b) { return { fb: ko.observable(a), nfb: ko.observable(b) } };
+    var basearr = function(a, b) { return { fb: ko.observableArray(a), nfb: ko.observableArray(b) } };
 
     _.each( _.filter(param.BA,function(x){ return !(x.DataBank[0].BankAccount.FacilityType.indexOf("Current") > -1 && x.DataBank[0].BankAccount.FacilityType.length == 1)  })  , function(ba){
         var account = ba.DataBank[0].BankAccount;
@@ -660,7 +661,7 @@ var outstanding = function(param){
             amount: new base(account.FundBased.SancLimit, account.NonFundBased.SancLimit),
             roi: ko.observable(account.FundBased.ROI),
             natureOfFacility: ko.observable(account.NonFundBased.NatureOfFacility),
-            security: new base(account.FundBased.SecurityOfFB, account.NonFundBased.SecurityOfFB),
+            security: new basearr(account.FundBased.SecurityOfFB, account.NonFundBased.SecurityOfNFB),
             sanctionDate: new base(account.FundBased.SanctionDate, account.NonFundBased.SanctionDate)
         })
     })
@@ -952,7 +953,7 @@ loanApproval.getReport = function(param){
             loanApproval.propertyOwnershipData(
                 new propertyOwnership(data.Data.CP[0])
                 );
-
+        console.log("loan",data.Data)
         loanApproval.outstandingData(new outstanding(data.Data));
 
         getComments();

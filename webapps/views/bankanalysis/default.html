@@ -277,9 +277,9 @@ input[disabled]{
 
                 <div class="col-sm-6" >
                   <div class="form-group">
+                    <label class="col-sm-12" data-bind="text: 'Security for NFB'" style="font-weight: normal;"></label>
                     <div class="securitynfb" class="col-sm-12" data-bind="foreach: nfbsecurity" style="margin-top: 10px;padding-left: 0px;    width: 110%;">
                       <div style=" padding-bottom: 57px; margin-bottom: 5px;">
-                        <label class="col-sm-12" data-bind="text: 'Security for NFB ' + ($index()+1)" style="font-weight: normal;"></label>
                         <div class="col-sm-12" style="padding-left: 0px;">
                           <div style="margin-bottom: 5px;">
                             <div class="col-sm-10">
@@ -364,9 +364,10 @@ input[disabled]{
 
                 <div class="col-sm-6" >
                   <div class="form-group">
+                    <label class="col-sm-6" data-bind="text: 'Security for FB '" style="font-weight: normal;"></label>
+                    <label id="same" class="checkbox-inline"><input id="samenfb" data-switch-no-init="true" type="checkbox" name="sameasnnfb" />Same as NFB</label>
                     <div class="securitynfb" class="col-sm-12" data-bind="foreach: fbsecurity" style="margin-top: 10px;padding-left: 0px;    width: 110%;">
                       <div style=" padding-bottom: 57px; margin-bottom: 5px;">
-                        <label class="col-sm-12" data-bind="text: 'Security for FB ' + ($index()+1)" style="font-weight: normal;"></label>
                         <div class="col-sm-12" style="padding-left: 0px;">
                           <div style="margin-bottom: 5px;">
                             <div class="col-sm-10">

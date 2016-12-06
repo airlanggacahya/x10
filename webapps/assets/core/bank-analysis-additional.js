@@ -1973,8 +1973,14 @@ $(document).ready(function(){
     $("#samenfb").change(function(){
         if($("#samenfb").is(':checked')){
             $('#securityfb').val($('#securitynfb').val());
-        }else{
-            $('#securityfb').val("");
+            arrnfbsec = []
+            for (var i = 0; i < bankaccount.nfbsecurity().length; i++){
+                arrnfbsec.push($("#securitynfb"+i).val())
+            }
+            bankaccount.fbsecurity(arrnfbsec)
+            for (var i = 0; i < arrnfbsec.length; i++){
+                $('#securityfb'+i).val(arrnfbsec[i])
+            }
         }
     });
 })

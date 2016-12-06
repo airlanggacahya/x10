@@ -293,7 +293,7 @@ refreshFilter = function(){
       var filterCibil = function(condition){
         return _.map(_.filter(prommin, condition), function(value){
           return value.cibilscore
-        }); 
+        });
       }
 
       above700        = filterCibil(function(prom){ return prom.cibilscore > 700 })
@@ -325,7 +325,13 @@ refreshFilter = function(){
       loanapproval.marketref(res.Data.AD[0].borrowerdetails.marketreference);
       createreferencecheckgrid(res.Data.AD[0].borrowerdetails.refrencecheck);
       loanapproval.expansionplan(res.Data.AD[0].borrowerdetails.expansionplans);
-      loanapproval.commentfinance(res.Data.AD[0].borrowerdetails.commentsonfinancials);
+
+      if(typeof res.Data.AD[0].borrowerdetails.commentsonfinancials == "string") {
+        loanapproval.commentfinance([""]);
+      } else {
+        loanapproval.commentfinance(res.Data.AD[0].borrowerdetails.commentsonfinancials);
+      }
+
       loanApproval.companyBackgroundData(
         new companyBackground(res.Data.AD[0], res)
       );
@@ -869,7 +875,7 @@ var getreportdata = function(){
          // swal("Warning", "Report Data Not Found", "warning");
           // Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
           fixToast("Balance Sheet Data Not Confirmed");
-          
+
         return
     }
   });

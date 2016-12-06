@@ -13,13 +13,13 @@
 	}
 </style>
 <div id="content4" data-bind="with:apcom" class="content-container">
-	
+
 	<div class="col-sm-12">
 		<div class="form-group col-sm-6">
 	    	<label class="col-sm-12 text-left">Date</label>
 	    	<div class="col-sm-12">
-	    		<input id="commentdate" 
-	    		data-bind="value: apcom.Date" 
+	    		<input id="commentdate"
+	    		data-bind="value: apcom.Date"
 	    		class="input-sm form-control" style="width: 100%; margin-top: 0px; height: 27px;">
 	    	</div>
 		</div>
@@ -101,7 +101,22 @@
 	<p class="head caret1"><span id="caret1" class="fa fa-caret-down"></span> Comments on Financials</p>
 	<div class="panel-body" id="content1">
 		<div class="col-md-12">
-			<textarea class="input-sm form-control" data-bind="value: accountCommentFinancials" readonly></textarea >
+			<div class="k-grid">
+        <table class="table-bordered">
+            <tr>
+              <td class="col-sm-4" style="padding: 0px;">
+              	<table>
+              		<tbody data-bind="foreach: loanapproval.commentfinance">
+              			<tr>
+              				<td data-bind="text: loanapproval.commentfinance()[$index()]"></td>
+              			</tr>
+              		</tbody>
+              	</table>
+              </td>
+            </tr>
+        </table>
+    	</div>
+			<!-- <textarea class="input-sm form-control" data-bind="value: accountCommentFinancials" readonly></textarea > -->
 		</div>
 	</div>
 

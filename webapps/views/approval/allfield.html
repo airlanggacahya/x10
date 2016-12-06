@@ -1738,11 +1738,11 @@
 					                        <td class="col-sm-2 center text-bold">Expansion Plan</td>
 					                        <td class="col-sm-4" data-bind="text:loanapproval.expansionplan"></td>
 					                        <td class="col-sm-2 center text-bold">Comments on Financial</td>
-					                        <td class="col-sm-4">
+					                        <td class="col-sm-4" style="padding:0px;">
 					                        	<table>
 					                        		<tbody data-bind="foreach: loanapproval.commentfinance">
 					                        			<tr>
-					                        				<td data-bind="text: loanapproval.commentfinance()[$index()]"></td>
+					                        				<td class="center" data-bind="text: loanapproval.commentfinance()[$index()]"></td>
 					                        			</tr>
 					                        		</tbody>
 					                        	</table>

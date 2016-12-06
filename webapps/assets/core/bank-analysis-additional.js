@@ -539,14 +539,17 @@ var RenderGridDataBank = function(id, res){
                 headerAttributes: { "class": "sub-bgcolor" },
                 template: function(d){
                     var strnfbsec = ""
-                    for (var i = 0; i < d.SecurityOfNFB.length; i++){
-                        if (i != d.SecurityOfNFB.length-1){
-                            strnfbsec = strnfbsec + d.SecurityOfNFB[i]+","
-                        }else{
-                            strnfbsec = strnfbsec + d.SecurityOfNFB[i]
+                    if (d.SecurityOfNFB != null){
+                        for (var i = 0; i < d.SecurityOfNFB.length; i++){
+                            if (i != d.SecurityOfNFB.length-1){
+                                strnfbsec = strnfbsec + d.SecurityOfNFB[i]+","
+                            }else{
+                                strnfbsec = strnfbsec + d.SecurityOfNFB[i]
+                            }
+                            
                         }
-                         
                     }
+                    
                     return strnfbsec
                 }
             },
@@ -2324,7 +2327,7 @@ var saveDataBank = function(){
     fundbased.interestpermonth(Number($("#interestpermonth").val()));
     arrfbsec = []
     for (var i = 0; i < bankaccount.fbsecurity().length; i++){
-        arrnfbsec.push($("#securityfb"+i).val())
+        arrfbsec.push($("#securityfb"+i).val())
     }
     fundbased.securityoffb(arrfbsec);
 

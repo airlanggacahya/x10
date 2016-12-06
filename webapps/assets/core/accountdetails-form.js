@@ -1966,6 +1966,8 @@ adf.getData = function () {
 
 	adf.isLoading(true)
 
+	adf.form.BorrowerDetails.CommentsonFinancials([""])
+
 	var url = "/datacapturing/getcustomerprofiledetailconfirmed"
 	var param = {
 		CustomerId: customerId,

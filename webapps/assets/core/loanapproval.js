@@ -918,7 +918,11 @@ loanApproval.getReport = function(param){
             }
 
             loanapproval.expansionplan (data.Data.AD[0].borrowerdetails.expansionplans);
-            loanapproval.commentfinance (data.Data.AD[0].borrowerdetails.commentsonfinancials);
+            if(typeof data.Data.AD[0].borrowerdetails.commentsonfinancials == "string") {
+                loanapproval.commentfinance ([data.Data.AD[0].borrowerdetails.commentsonfinancials]);
+            } else {
+                loanapproval.commentfinance (data.Data.AD[0].borrowerdetails.commentsonfinancials);
+            }
 
             loanapproval.marketref(data.Data.AD[0].borrowerdetails.marketreference);
             loanapproval.referencecheck (data.Data.AD[0].borrowerdetails.refrencecheck);

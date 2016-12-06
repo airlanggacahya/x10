@@ -50,143 +50,143 @@ func (c *BankAnalysisController) Default(k *knot.WebContext) interface{} {
 	return DataAccess
 }
 
-func (c *BankAnalysisController) Create(k *knot.WebContext) interface{} {
-	k.Config.OutputType = knot.OutputJson
+// func (c *BankAnalysisController) Create(k *knot.WebContext) interface{} {
+// 	k.Config.OutputType = knot.OutputJson
 
-	param := DataBankParam{}
+// 	param := DataBankParam{}
 
-	err := k.GetPayload(&param)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
+// 	err := k.GetPayload(&param)
+// 	if err != nil {
+// 		return CreateResult(false, nil, err.Error())
+// 	}
 
-	conn, err := GetConnection()
-	defer conn.Close()
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
-	id, _ := strconv.Atoi(param.CustomerId)
-	query, err := conn.NewQuery().Select("customer_name").From("CustomerProfile").Where(dbox.Eq("customer_id", id)).Cursor(nil)
-	if err != nil {
-		tk.Println(err.Error())
-	}
-	cust := []tk.M{}
-	err = query.Fetch(&cust, 0, false)
-	defer query.Close()
+// 	conn, err := GetConnection()
+// 	defer conn.Close()
+// 	if err != nil {
+// 		return CreateResult(false, nil, err.Error())
+// 	}
+// 	id, _ := strconv.Atoi(param.CustomerId)
+// 	query, err := conn.NewQuery().Select("customer_name").From("CustomerProfile").Where(dbox.Eq("customer_id", id)).Cursor(nil)
+// 	if err != nil {
+// 		tk.Println(err.Error())
+// 	}
+// 	cust := []tk.M{}
+// 	err = query.Fetch(&cust, 0, false)
+// 	defer query.Close()
 
-	bankanalysis := BankAnalysis{}
-	bankanalysis.Id = bson.NewObjectId()
-	bankanalysis.CustomerId = id
-	bankanalysis.DealNo = param.DealNo
+// 	bankanalysis := BankAnalysis{}
+// 	bankanalysis.Id = bson.NewObjectId()
+// 	bankanalysis.CustomerId = id
+// 	bankanalysis.DealNo = param.DealNo
 
-	t := DataBank{}
-	t.CustomerId = param.CustomerId
-	t.BankAccount = param.BankAccount
-	t.BankDetails = param.BankDetails
+// 	t := DataBank{}
+// 	t.CustomerId = param.CustomerId
+// 	t.BankAccount = param.BankAccount
+// 	t.BankDetails = param.BankDetails
 
-	bankanalysis.DataBank = append(bankanalysis.DataBank, t)
-	ba := map[string]interface{}{"data": bankanalysis}
+// 	bankanalysis.DataBank = append(bankanalysis.DataBank, t)
+// 	ba := map[string]interface{}{"data": bankanalysis}
 
-	qinsert := conn.NewQuery().
-		From("BankAnalysis").
-		SetConfig("multiexec", true).
-		Save()
-	err = qinsert.Exec(ba)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
+// 	qinsert := conn.NewQuery().
+// 		From("BankAnalysis").
+// 		SetConfig("multiexec", true).
+// 		Save()
+// 	err = qinsert.Exec(ba)
+// 	if err != nil {
+// 		return CreateResult(false, nil, err.Error())
+// 	}
 
-	//==================================Update All//
-	wh := []*dbox.Filter{}
-	wh = append(wh, dbox.Eq("CustomerId", cast.ToInt(param.CustomerId, cast.RoundingAuto)))
-	wh = append(wh, dbox.Eq("DealNo", param.DealNo))
-	res := []BankAnalysis{}
+// 	//==================================Update All//
+// 	wh := []*dbox.Filter{}
+// 	wh = append(wh, dbox.Eq("CustomerId", cast.ToInt(param.CustomerId, cast.RoundingAuto)))
+// 	wh = append(wh, dbox.Eq("DealNo", param.DealNo))
+// 	res := []BankAnalysis{}
 
-	query, err = conn.NewQuery().Select().From("BankAnalysis").Where(wh...).Cursor(nil)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
-	err = query.Fetch(&res, 0, false)
-	defer query.Close()
+// 	query, err = conn.NewQuery().Select().From("BankAnalysis").Where(wh...).Cursor(nil)
+// 	if err != nil {
+// 		return CreateResult(false, nil, err.Error())
+// 	}
+// 	err = query.Fetch(&res, 0, false)
+// 	defer query.Close()
 
-	for _, val := range res {
-		arr := val.DataBank[0].BankDetails
+// 	for _, val := range res {
+// 		arr := val.DataBank[0].BankDetails
 
-		for idx := range arr {
-			arr[idx].Month = t.BankDetails[idx].Month
-		}
+// 		for idx := range arr {
+// 			arr[idx].Month = t.BankDetails[idx].Month
+// 		}
 
-		val.DataBank[0].BankDetails = arr
+// 		val.DataBank[0].BankDetails = arr
 
-		ba := map[string]interface{}{"data": val}
+// 		ba := map[string]interface{}{"data": val}
 
-		qinsert := conn.NewQuery().
-			From("BankAnalysis").
-			SetConfig("multiexec", true).
-			Save()
-		err = qinsert.Exec(ba)
-		if err != nil {
-			return CreateResult(false, nil, err.Error())
-		}
-	}
+// 		qinsert := conn.NewQuery().
+// 			From("BankAnalysis").
+// 			SetConfig("multiexec", true).
+// 			Save()
+// 		err = qinsert.Exec(ba)
+// 		if err != nil {
+// 			return CreateResult(false, nil, err.Error())
+// 		}
+// 	}
 
-	return CreateResult(true, bankanalysis, "")
-}
+// 	return CreateResult(true, bankanalysis, "")
+// }
 
-func (c *BankAnalysisController) Update(k *knot.WebContext) interface{} {
-	k.Config.OutputType = knot.OutputJson
+// func (c *BankAnalysisController) Update(k *knot.WebContext) interface{} {
+// 	k.Config.OutputType = knot.OutputJson
 
-	tx := DataBankPayLoad{}
-	err := k.GetPayload(&tx)
+// 	tx := DataBankPayLoad{}
+// 	err := k.GetPayload(&tx)
 
-	param := tx.Param
+// 	param := tx.Param
 
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
+// 	if err != nil {
+// 		return CreateResult(false, nil, err.Error())
+// 	}
 
-	conn, err := GetConnection()
-	defer conn.Close()
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
-	id, _ := strconv.Atoi(param.CustomerId)
-	query, err := conn.NewQuery().Select("customer_name").From("CustomerProfile").Where(dbox.Eq("customer_id", id)).Cursor(nil)
-	if err != nil {
-		tk.Println(err.Error())
-	}
-	cust := []tk.M{}
-	err = query.Fetch(&cust, 0, false)
-	defer query.Close()
+// 	conn, err := GetConnection()
+// 	defer conn.Close()
+// 	if err != nil {
+// 		return CreateResult(false, nil, err.Error())
+// 	}
+// 	id, _ := strconv.Atoi(param.CustomerId)
+// 	query, err := conn.NewQuery().Select("customer_name").From("CustomerProfile").Where(dbox.Eq("customer_id", id)).Cursor(nil)
+// 	if err != nil {
+// 		tk.Println(err.Error())
+// 	}
+// 	cust := []tk.M{}
+// 	err = query.Fetch(&cust, 0, false)
+// 	defer query.Close()
 
-	type listIdType struct {
-		Id bson.ObjectId `bson:"_id" , json:"_id" `
-	}
-	tk.Println(tx)
-	bankanalysis := BankAnalysis{}
-	bankanalysis.Id = bson.ObjectIdHex(tx.Id)
-	bankanalysis.CustomerId = id
-	bankanalysis.DealNo = param.DealNo
+// 	type listIdType struct {
+// 		Id bson.ObjectId `bson:"_id" , json:"_id" `
+// 	}
+// 	tk.Println(tx)
+// 	bankanalysis := BankAnalysis{}
+// 	bankanalysis.Id = bson.ObjectIdHex(tx.Id)
+// 	bankanalysis.CustomerId = id
+// 	bankanalysis.DealNo = param.DealNo
 
-	t := DataBank{}
-	t.CustomerId = param.CustomerId
-	t.BankAccount = param.BankAccount
-	t.BankDetails = param.BankDetails
+// 	t := DataBank{}
+// 	t.CustomerId = param.CustomerId
+// 	t.BankAccount = param.BankAccount
+// 	t.BankDetails = param.BankDetails
 
-	bankanalysis.DataBank = append(bankanalysis.DataBank, t)
-	ba := map[string]interface{}{"data": bankanalysis}
+// 	bankanalysis.DataBank = append(bankanalysis.DataBank, t)
+// 	ba := map[string]interface{}{"data": bankanalysis}
 
-	qinsert := conn.NewQuery().
-		From("BankAnalysis").
-		SetConfig("multiexec", true).
-		Update()
-	err = qinsert.Exec(ba)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
+// 	qinsert := conn.NewQuery().
+// 		From("BankAnalysis").
+// 		SetConfig("multiexec", true).
+// 		Update()
+// 	err = qinsert.Exec(ba)
+// 	if err != nil {
+// 		return CreateResult(false, nil, err.Error())
+// 	}
 
-	return CreateResult(true, bankanalysis, "")
-}
+// 	return CreateResult(true, bankanalysis, "")
+// }
 
 func (c *BankAnalysisController) GetDataBank(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson

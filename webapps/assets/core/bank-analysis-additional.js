@@ -507,6 +507,9 @@ var RenderGridDataBank = function(id, res){
         var dataAfter = [];
         dataBefore.forEach(function (d) {
             var uniq = toolkit.randomNumber(0, 1000000);
+            if(typeof d.SecurityOfNFB == "string" || d.SecurityOfNFB == null){
+                 d.SecurityOfNFB = []
+            }
             d.SecurityOfNFB.forEach(function (e) {
                 dataAfter.push({
                     uniq: uniq,
@@ -1788,6 +1791,8 @@ $(document).ready(function(){
         // $("#nfbsl").css("margin-left", "0px !important")
         // $("#ee").css("margin-left", "0px !important")
         // $("#aa").css("margin-left", "0px !important")
+         bankaccount.nfbsecurity([])
+        bankaccount.fbsecurity([])
         bankaccount.nfbsecurity.push("")
         bankaccount.fbsecurity.push("")
         if (filter().CustomerSearchVal() == ""){
@@ -2149,6 +2154,9 @@ var editBankData = function(index){
                 $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
             }
             var arrsecfbs = databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB
+            if(typeof arrsecfbs === "string" || arrsecfbs == null){
+                arrsecfbs = [arrsecfbs]
+            }
             bankaccount.fbsecurity(arrsecfbs)
             for (var i = 0; i < arrsecfbs.length; i++){
                 $('#securityfb'+i).val(arrsecfbs[i])

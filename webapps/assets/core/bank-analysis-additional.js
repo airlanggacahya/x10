@@ -503,14 +503,38 @@ var RenderGridDataBank = function(id, res){
         ]
     });
 
+    var nonfundExpanded = (function (dataBefore) {
+        var dataAfter = [];
+        dataBefore.forEach(function (d) {
+            var uniq = toolkit.randomNumber(0, 1000000);
+            d.SecurityOfNFB.forEach(function (e) {
+                dataAfter.push({
+                    uniq: uniq,
+                    NatureOfFacility: d.NatureOfFacility,
+                    OtherNatureOfFacility: d.OtherNatureOfFacility,
+                    SancLimit: d.SancLimit,
+                    SanctionDate: d.SanctionDate,
+                    SecurityOfNFB: e
+                })
+            })
+        })
+        return dataAfter;
+    })(nonfund);
+
+    console.log(nonfund);
+    console.log(nonfundExpanded);
+
     $('#nonfundgrid'+id).kendoGrid({
-        dataSource : nonfund,
+        dataSource : nonfundExpanded,
         columns :[
             {
                 title : 'Nature of Facility',
                 headerAttributes: { "class": "sub-bgcolor" },
                 width : 150,
                 field : 'NatureOfFacility',
+                template : function (d) {
+                    return '<span data-uniq="' + d.uniq + '">' + d.NatureOfFacility + '</span>'
+                }
             },
             {
                 title : 'Sanction Limit (Rs. Lacs)',
@@ -536,24 +560,29 @@ var RenderGridDataBank = function(id, res){
             {
                 title : 'Security for Non-Fun Based',
                 field : 'SecurityOfNFB',
-                headerAttributes: { "class": "sub-bgcolor" },
-                template: function(d){
-                    var strnfbsec = ""
-                    if (d.SecurityOfNFB != null){
-                        for (var i = 0; i < d.SecurityOfNFB.length; i++){
-                            if (i != d.SecurityOfNFB.length-1){
-                                strnfbsec = strnfbsec + d.SecurityOfNFB[i]+","
-                            }else{
-                                strnfbsec = strnfbsec + d.SecurityOfNFB[i]
-                            }
-                            
-                        }
-                    }
-                    
-                    return strnfbsec
-                }
+                headerAttributes: { "class": "sub-bgcolor" }
             },
-        ]
+        ],
+        dataBound: function () {
+            var $nonFundSel = $('#nonfundgrid'+id);
+            var $nonFundGrid = $nonFundSel.data('kendoGrid')
+
+            Object.keys(_.groupBy(nonfundExpanded, 'uniq')).forEach(function (uniq) {
+                var $foundRows = $('[data-uniq="' + uniq + '"]');
+
+                $('[data-uniq="' + uniq + '"]').each(function (i, e) {
+                    var $row = $(e).closest('tr');
+
+                    if (i == 0) {
+                        $row.find('td:lt(3)')
+                            .attr('rowspan', $foundRows.size());
+                    } else {
+                        $row.find('td:eq(3)').css('border-left', '1px solid #ebebeb');
+                        $row.find('td:lt(3)').remove();
+                    }
+                })
+            })
+        }
     });
 
     $('#currentgrid'+id).kendoGrid({

@@ -12,6 +12,7 @@ var unfreeze = ko.observable(false);
 var caba = ko.observable(0);
 var formVisibility = ko.observable(false);
 var textConfirm = ko.observable("confirm");
+var isEdit = false
 
 var statusPage = {
     isConfirmed : ko.observable(false),
@@ -1766,11 +1767,12 @@ var onfactypechange = function(){
          $('#savebtn').prop('disabled',false);
     }
 
-    if (bankaccount.nfbsecurity.length == 0){
+
+    if ($('#securitynfb0').val() == undefined){
         bankaccount.nfbsecurity([""])
     }
 
-    if (bankaccount.fbsecurity.length == 0){
+    if ($('#securityfb0').val() == undefined){
         bankaccount.fbsecurity([""])
     }
 }
@@ -2158,6 +2160,7 @@ var deleteBankData = function(index) {
 }
 var editBankData = function(index){
     return function(){
+        isEdit = true
         $('#savebtn').hide()
         $('#updatebtn').show()
         resetInput()
@@ -2307,6 +2310,7 @@ var editBankData = function(index){
         // if (datafunddetail != null)
 
         idx(index);
+        isEdit = false
         return true;
     }
 }

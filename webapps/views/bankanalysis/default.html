@@ -194,8 +194,9 @@ input[disabled]{
             <div class="headerdatabankgrid header-bgcolor"><span data-bind="text:DataBank[0].BankAccount.BankName"></span></div>
             <div data-bind="attr:{id:'fundgrid'+$index()}"></div>
             <div data-bind="attr:{id:'bankdetailgrid'+$index()}"></div>
-            <div data-bind="attr:{id:'headersecfbs'+$index()}" style="margin-top: 15px" class="headersecfb k-header header-bgcolor">Security for Fund Based</div>
-            <div class="SFFB" data-bind="attr:{id:'secfbs'+$index()}"><span data-bind="text:DataBank[0].BankAccount.FundBased.SecurityOfFB"></span></div>
+            <!--<div data-bind="attr:{id:'headersecfbs'+$index()}" style="margin-top: 15px" class="headersecfb k-header header-bgcolor">Security for Fund Based</div>-->
+            <!--<div class="SFFB" data-bind="attr:{id:'secfbs'+$index()}"><span data-bind="text:DataBank[0].BankAccount.FundBased.SecurityOfFB"></span></div>-->
+            <div data-bind="attr:{id:'secfbs'+$index()}"></div>
             <div data-bind="attr:{id:'headernfbs'+$index()}" style='background-color:#313d50 !important;margin-top: 15px;' class="headernfb">Non-Fund Based Detail</div>
             <div data-bind="attr:{id:'nonfundgrid'+$index()}"></div>
             <div data-bind="attr:{id:'headercurrents'+$index()}" class="headernfb">Current Detail</div>
@@ -279,9 +280,9 @@ input[disabled]{
                   <div class="form-group">
                     <label class="col-sm-12" data-bind="text: 'Security for NFB'" style="font-weight: normal;"></label>
                     <div class="securitynfb" class="col-sm-12" data-bind="foreach: nfbsecurity" style="margin-top: 10px;padding-left: 0px;    width: 110%;">
-                      <div style=" padding-bottom: 57px; margin-bottom: 5px;">
+                      <div style=" padding-top:30px; margin-bottom: 10px;">
                         <div class="col-sm-12" style="padding-left: 0px;">
-                          <div style="margin-bottom: 5px;">
+                          <div>
                             <div class="col-sm-10">
                               <textarea class="form-control" rows="1" data-bind="attr:{id: 'securitynfb'+$index()}"></textarea>
                             </div>
@@ -366,10 +367,10 @@ input[disabled]{
                   <div class="form-group">
                     <label class="col-sm-6" data-bind="text: 'Security for FB '" style="font-weight: normal;"></label>
                     <label id="same" class="checkbox-inline"><input id="samenfb" data-switch-no-init="true" type="checkbox" name="sameasnnfb" />Same as NFB</label>
-                    <div class="securitynfb" class="col-sm-12" data-bind="foreach: fbsecurity" style="margin-top: 10px;padding-left: 0px;    width: 110%;">
-                      <div style=" padding-bottom: 57px; margin-bottom: 5px;">
+                    <div class="securityfb" class="col-sm-12" data-bind="foreach: fbsecurity" style="margin-top: 10px;padding-left: 0px;    width: 110%;">
+                      <div style=" padding-top:30px; margin-bottom: 10px;">
                         <div class="col-sm-12" style="padding-left: 0px;">
-                          <div style="margin-bottom: 5px;">
+                          <div >
                             <div class="col-sm-10">
                               <textarea class="form-control" rows="1" data-bind="attr:{id: 'securityfb'+$index()}"></textarea>
                             </div>

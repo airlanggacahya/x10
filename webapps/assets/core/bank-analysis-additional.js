@@ -517,7 +517,7 @@ var RenderGridDataBank = function(id, res){
             }
         }
     }
-    if (fbsecdata.length == 0 && fbsecdata[0] == ""){
+    if (fbsecdata.length != 0 && fbsecdata[0] != ""){
         $('#secfbs'+id).kendoGrid({
         dataSource : fbsecdata,
         scrollable:false,

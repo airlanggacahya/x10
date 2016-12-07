@@ -162,6 +162,14 @@ func DetectDataType(in string, dateFormat string) interface{} {
 			if d.Year() > 1 {
 				matchDate = true
 			}
+
+			if !matchDate && dateFormat != "" {
+				d := cast.String2Date(strings.Split(in, "T")[0], dateFormat)
+				if d.Year() > 1 {
+					matchDate = true
+				}
+				return d
+			}
 		}
 
 		x := strings.Index(in, ".")

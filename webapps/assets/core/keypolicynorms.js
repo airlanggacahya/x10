@@ -471,7 +471,9 @@ formula.editFinancial = function (id) {
 formula.showModalFinancial = function () {
 		$('.modal-financial').modal('show')
 
-		ko.mapping.fromJS(formula.templateFinancial, formula.financial)
+	formula.financialIsNew(true)
+
+	ko.mapping.fromJS(formula.templateFinancial, formula.financial)
 }
 
 formula.saveFinancial = function () {

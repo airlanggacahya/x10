@@ -207,6 +207,7 @@ function resetInput(){
     $('#samenfb').attr('checked', false);
     $('#currentacno').val('')
     $('#currentacholder').val('')
+    $('#same').hide();
 }
 
 ///Create Grid Data Bank///
@@ -1760,6 +1761,13 @@ var onfactypechange = function(){
          $('#savebtn').prop('disabled',false);
     }
 
+    if (bankaccount.nfbsecurity.length == 0){
+        bankaccount.nfbsecurity([""])
+    }
+
+    if (bankaccount.fbsecurity.length == 0){
+        bankaccount.fbsecurity([""])
+    }
 }
 
 scroll = function(){
@@ -1814,10 +1822,8 @@ $(document).ready(function(){
         // $("#nfbsl").css("margin-left", "0px !important")
         // $("#ee").css("margin-left", "0px !important")
         // $("#aa").css("margin-left", "0px !important")
-         bankaccount.nfbsecurity([])
-        bankaccount.fbsecurity([])
-        bankaccount.nfbsecurity.push("")
-        bankaccount.fbsecurity.push("")
+        bankaccount.nfbsecurity([""])
+        bankaccount.fbsecurity([""])
         if (filter().CustomerSearchVal() == ""){
             swal("Warning","Select Customer First","warning");
             return;
@@ -2178,8 +2184,7 @@ var editBankData = function(index){
             }
             var arrsecfbs = databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB
             if(typeof arrsecfbs === "string" || arrsecfbs == ""){
-                bankaccount.fbsecurity.push("")
-                arrsecfbs = [arrsecfbs]
+                bankaccount.fbsecurity([""])
             }else{
                 bankaccount.fbsecurity(arrsecfbs)
             }
@@ -2210,7 +2215,12 @@ var editBankData = function(index){
                 $('#nfbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate)
             }
             var arrsecnfbs = databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB
-            bankaccount.nfbsecurity(arrsecnfbs)
+            if(typeof arrsecnfbs === "string" || arrsecnfbs == ""){
+                bankaccount.nfbsecurity([""])
+            }else{
+                bankaccount.nfbsecurity(arrsecnfbs)
+            }
+            
             for (var i = 0; i < arrsecnfbs.length; i++){
                 $('#securitynfb'+i).val(arrsecnfbs[i])
             }

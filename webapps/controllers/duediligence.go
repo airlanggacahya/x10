@@ -135,6 +135,59 @@ func (c *DueDiligenceController) FetchMasterDueDiligence() ([]DueDiligence, erro
 	return results, nil
 }
 
+func (c *DueDiligenceController) IsMasterUpdated(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	payload := toolkit.M{}
+
+	if err := k.GetPayload(&payload); err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	masterDatas, err := c.FetchMasterDueDiligence()
+	if err != nil {
+		return err.Error()
+	}
+
+	circums := toolkit.M{"order": []string{"Order"}}
+	c.Ctx.Find(new(DueDiligenceInputData), circums)
+
+	confirmedDatas := make([]DueDiligenceInput, 0)
+	err = new(DataConfirmController).GetDataConfirmed(payload.GetString("CustomerId"), payload.GetString("DealNo"), new(DueDiligenceInput).TableName(), &confirmedDatas)
+	if err != nil {
+		return err.Error()
+	}
+
+	isUpdated := false
+	for _, confirmedData := range confirmedDatas {
+		for _, masterData := range masterDatas {
+
+			isFound := false
+			for _, verification := range confirmedData.Verification {
+				if masterData.Field == verification.Particulars {
+					isFound = true
+					break
+				}
+			}
+
+			if !isUpdated {
+				for _, defaulter := range confirmedData.Defaulter {
+					if masterData.Field == defaulter.Source {
+						isFound = true
+						break
+					}
+				}
+			}
+
+			if isFound == false {
+				isUpdated = true
+			}
+		}
+	}
+
+	return isUpdated
+}
+
 func (c *DueDiligenceController) GetVerificationCheck(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	query := toolkit.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("section", "Verification Checks")}...)}

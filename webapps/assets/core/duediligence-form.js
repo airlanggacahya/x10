@@ -49,7 +49,6 @@ due.getForm = function(){
 	});
 	var dataBackground = $("#background0").data("kendoGrid").dataSource.data()
 	$.each(dataBackground, function(i, Back){
-		// console.log("----->",Back.CIBILScore)
 		due.form.Background.push({Name : Back.Name,Designation: Back.Designation,CIBILScore: Back.CIBILScore, ShareHolding: Back.ShareHolding,RedFlags: Back.RedFlags});
 	});
 }
@@ -482,7 +481,6 @@ due.saveAll = function(){
 	var param = ko.mapping.toJS(due.form);
 	ajaxPost("/duediligence/duediligenceformsaveinput", param, function(res){
 		due.isLoading(false)
-		// console.log(res)
 		$('.form-last-confirmation-info').show()
 		$('.form-last-confirmation-info').html('Last confirmed on: '+kendo.toString(new Date(due.form.LastConfirmed()),"dd-MM-yyyy h:mm:ss tt") );
 		swal("Successfully Saved", "", "success");
@@ -493,6 +491,50 @@ due.saveAll = function(){
 
 due.enableConfirm = function(what){
 	$("#AD-Container .btn").prop( "disabled", !what );
+}
+
+due.getMasterData = function(){
+	due.form.Verification([])
+	due.form.Defaulter([])
+	due.form.Background([])
+	due.form.CustomerId("")
+	due.form.DealNo("")
+	due.form.Freeze("")
+	due.form.Id("")
+	due.form.Status("")
+	due.dataTemp([])
+
+	due.EnableAllfields(true)
+	ajaxPost("/duediligence/getverificationcheck", {}, function(res){
+	   	$.each(res.Data, function(w, data){
+	   		due.form.Verification.push(
+	   			{Particulars : data.Field, Result: "", Mitigants: "",}
+	   		)
+	   	});
+		due.LoadGrid();
+	});
+
+	ajaxPost("/duediligence/getdefaultcheck", {}, function(res){
+	   	if(res.IsError != true){
+	   		_.each(res.Data, function(item){
+	   			due.form.Defaulter.push(
+		   			{ Source:item.Field, Applicable : "", BankName: "", Amount: 0, Status: "" }
+		   		)
+	   		});
+
+		due.LoadGrid();
+	   	}
+	});
+
+	due.form.Background.push(
+		{
+			Name: "",
+			Designation:"",
+			ShareHolding: 0,
+			CIBILScore: 0,
+			RedFlags: "",
+		}
+	)
 }
 
 due.getData = function(){
@@ -514,63 +556,47 @@ due.getData = function(){
 
 	ajaxPost("/duediligence/getduediligenceinputdata", param, function(res){
 		var data = res.Data[0];
-		if(res.Data.length > 0){
-			console.log("------>",data.Background)
-			due.form.Background(data.Background)
-			due.form.CustomerId(data.CustomerId)
-			due.form.DealNo(data.DealNo)
-			due.form.Defaulter(data.Defaulter)
-			due.form.Freeze(data.Freeze)
-			due.form.Id(data.Id)
-			due.form.Status(data.Status)
-			due.form.Verification(data.Verification)
-			due.dataTemp(data)
-			due.LoadGrid();
+
+		if(res.Data.length > 0) {
+			if(data.Status == 1){
+				due.form.Background(data.Background)
+				due.form.CustomerId(data.CustomerId)
+				due.form.DealNo(data.DealNo)
+				due.form.Defaulter(data.Defaulter)
+				due.form.Freeze(data.Freeze)
+				due.form.Id(data.Id)
+				due.form.Status(data.Status)
+				due.form.Verification(data.Verification)
+				due.dataTemp(data)
+				due.LoadGrid();
+
+				// if form confirmed
+				if(data.Status == 1) {
+					ajaxPost("/duediligence/ismasterupdated", due.form, function(res){
+						console.log(res);
+						if (res === true) {
+							swal("Master changed, click re-enter to update", "", "warning");
+						}
+					})
+				}
+			} else {
+				console.log(2);
+				due.getMasterData()
+			}
 			if(data.Status == 1 && data.Freeze == false){
 				$('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(data.LastConfirmed),"dd-MM-yyyy h:mm:ss tt") );
 				due.enableConfirm(false);
 				$("#onreset").prop("disabled", true)
 				$("#onsave").prop("disabled", true)
-			}else if(data.Status == 1 && data.Freeze == true){
+			} else if(data.Status == 1 && data.Freeze == true){
 				$('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(data.DateFreeze),"dd-MM-yyyy h:mm:ss tt") );
 				due.enableConfirm(false)
-			}else{
+			} else {
 				$('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(data.DateSave),"dd-MM-yyyy h:mm:ss tt") );
 			}
-		}else{
-			due.EnableAllfields(true)
-			ajaxPost("/duediligence/getverificationcheck", {}, function(res){
-			   console.log(res)
-			   	$.each(res.Data, function(w, data){
-			   		due.form.Verification.push(
-			   			{Particulars : data.Field, Result: "", Mitigants: "",}
-			   		)
-			   	});
-				due.LoadGrid();
-			});
-
-			ajaxPost("/duediligence/getdefaultcheck", {}, function(res){
-			   	console.log(res)
-			   	if(res.IsError != true){
-			   		$.each(res.Data, function(i, item){
-			   			due.form.Defaulter.push(
-				   			{Source:item.Field ,Applicable : "",BankName: "",Amount: 0,Status: "",}
-				   		)
-			   		});
-
-				due.LoadGrid();
-			   	}
-			});
-
-			due.form.Background.push(
-				{
-					Name: "",
-					Designation:"",
-					ShareHolding: 0,
-					CIBILScore: 0,
-					RedFlags: "",
-				}
-			)
+		} else {
+			console.log(1);
+			due.getMasterData()
 		}
 	});
 }
@@ -635,7 +661,6 @@ due.setConfirm = function(){
 		due.isLoading(false)
 		due.enableConfirm(false);
 
-		// console.log(res)
 		swal("Successfully Confirmed", "", "success");
 		$("#onreset").prop("disabled", true)
 		$("#onsave").prop("disabled", true)
@@ -662,6 +687,9 @@ due.setReEnter = function(){
 	}, function(){
 		due.isLoading(false);
 	});
+
+	console.log(3);
+	due.getMasterData()
 }
 
 due.setFreeze = function(){
@@ -692,7 +720,6 @@ due.setUnFreeze = function(){
 	var param = ko.mapping.toJS(due.form)
 	ajaxPost("/duediligence/duediligenceformsaveinput", param, function(res){
 		due.isLoading(false)
-		// console.log(res)
 		due.EnableAllfields(true);
 		swal("Success", "Form UnFreeze", "success");
 	}, function(){

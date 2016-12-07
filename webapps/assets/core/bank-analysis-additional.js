@@ -406,7 +406,7 @@ var checkBtnFreeze = ko.pureComputed(function(){
 })
 
 var showModal = function(){
-    console.log("sarif")
+    //console.log("sarif")
 }
 
 var RenderGridDataBank = function(id, res){
@@ -503,6 +503,29 @@ var RenderGridDataBank = function(id, res){
         ]
     });
 
+    var fbsecdata = []
+    for (var i = 0; i < fund.length; i++){
+        if (typeof fund[i].SecurityOfFB === 'string' || fund[i].SecurityOfFB == ''){
+            fbsecdata.push([])
+        }else{
+            for (var j = 0; j < fund[i].SecurityOfFB.length; j++){
+                var d = {fbsec : fund[i].SecurityOfFB[j]}
+                fbsecdata.push(d)
+            }
+        }
+    }
+     $('#secfbs'+id).kendoGrid({
+        dataSource : fbsecdata,
+        scrollable:false,
+        columns:[
+            {
+                title : 'Security for Fund Based',
+                field : 'fbsec',
+                headerAttributes: { "class": "headersecfb k-header header-bgcolor" },
+            },
+        ]
+     });
+
     var nonfundExpanded = (function (dataBefore) {
         var dataAfter = [];
         dataBefore.forEach(function (d) {
@@ -524,8 +547,8 @@ var RenderGridDataBank = function(id, res){
         return dataAfter;
     })(nonfund);
 
-    console.log(nonfund);
-    console.log(nonfundExpanded);
+    //console.log(nonfund);
+    //console.log(nonfundExpanded);
 
     $('#nonfundgrid'+id).kendoGrid({
         dataSource : nonfundExpanded,
@@ -2109,7 +2132,7 @@ var deleteBankData = function(index) {
             var id = databank()[index].Id
             var param = {Id: id}
             ajaxPost(url+"/deletev2",param,function(res){
-                console.log(res)
+                //console.log(res)
 
 
                 if(res.success) {
@@ -2154,10 +2177,13 @@ var editBankData = function(index){
                 $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
             }
             var arrsecfbs = databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB
-            if(typeof arrsecfbs === "string" || arrsecfbs == null){
+            if(typeof arrsecfbs === "string" || arrsecfbs == ""){
+                bankaccount.fbsecurity.push("")
                 arrsecfbs = [arrsecfbs]
+            }else{
+                bankaccount.fbsecurity(arrsecfbs)
             }
-            bankaccount.fbsecurity(arrsecfbs)
+            
             for (var i = 0; i < arrsecfbs.length; i++){
                 $('#securityfb'+i).val(arrsecfbs[i])
             }
@@ -2779,7 +2805,7 @@ var generateAML = function(data){
 }
 
 var createBankingGrid = function(res,minmargin){
-    console.log(res)
+    //console.log(res)
     for(var i in res){
         res[i]["Month"] = moment(res[i]["Month"].split("T")[0]).format("MMM-YYYY")
     }
@@ -3115,7 +3141,7 @@ var constructOdccModel = function(res){
 }
 
 var createCurrentDetailGrid = function(res){
-    console.log(res)
+    //console.log(res)
     $('#currentgrid').html('')
     $('#currentgrid').kendoGrid({
         dataSource : {

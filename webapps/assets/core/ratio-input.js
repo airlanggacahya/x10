@@ -311,7 +311,7 @@ r.save = function (callback) {
             sweetAlert("Oops...", res.Message, "error");
             r.isLoading(false)
             return;
-        } else if(callback == undefined){
+        } else if( !(typeof callback === 'function')){
             swal("Success", "Changes saved", "success");
         }else{
             callback();

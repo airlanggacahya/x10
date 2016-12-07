@@ -98,28 +98,29 @@
     	<!-- <button class="btn btn-sm btn-flat btn-confirm btn-space pull-left">Confirm</button> -->
     	<!-- <button class="btn btn-sm btn-flat btn-reenter btn-space pull-left">Re-Enter</button> -->
 	</div>
-	<p class="head caret1"><span id="caret1" class="fa fa-caret-down"></span> Comments on Financials</p>
-	<div class="panel-body" id="content1">
-		<div class="col-md-12">
-			<div class="k-grid">
-        <table class="table-bordered">
-            <tr>
-              <td class="col-sm-4" style="padding: 0px;">
-              	<table>
-              		<tbody data-bind="foreach: loanapproval.commentfinance">
-              			<tr>
-              				<td data-bind="text: loanapproval.commentfinance()[$index()]"></td>
-              			</tr>
-              		</tbody>
-              	</table>
-              </td>
-            </tr>
-        </table>
-    	</div>
-			<!-- <textarea class="input-sm form-control" data-bind="value: accountCommentFinancials" readonly></textarea > -->
+	<div data-bind="visible:(loanapproval.commentfinance()[0] != '' && loanapproval.commentfinance().length >= 0)">
+		<p class="head caret1"><span id="caret1" class="fa fa-caret-down"></span> Comments on Financials</p>
+		<div class="panel-body" id="content1">
+			<div class="col-md-12">
+				<div class="k-grid">
+	        <table class="table-bordered">
+	            <tr>
+	              <td class="col-sm-4" style="padding: 0px;">
+	              	<table>
+	              		<tbody data-bind="foreach: loanapproval.commentfinance">
+	              			<tr>
+	              				<td data-bind="text: loanapproval.commentfinance()[$index()]"></td>
+	              			</tr>
+	              		</tbody>
+	              	</table>
+	              </td>
+	            </tr>
+	        </table>
+	    	</div>
+				<!-- <textarea class="input-sm form-control" data-bind="value: accountCommentFinancials" readonly></textarea > -->
+			</div>
 		</div>
 	</div>
-
 	<p class="head caret2"><span id="caret2" class="fa fa-caret-down"></span> Risk / Concerns & Mitigants</p>
 	<div class="panel-body" id="content2">
 		<div class="col-md-12">

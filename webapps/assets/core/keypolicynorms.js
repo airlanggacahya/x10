@@ -69,6 +69,7 @@ formula.optionFrom = ko.computed(function () {
 		.concat(others)
 	return _.orderBy(allData)
 }, formula.data)
+
 formula.changeFrom = function () {
 	var value = this.value()
 	if (value == '') {
@@ -88,6 +89,7 @@ formula.changeFrom = function () {
 
 	formula.financial.TimePeriod('not applicable')
 }
+
 formula.optionSubSection = ko.computed(function () {
 	if (formula.financial.From() == '') {
 		return []
@@ -99,6 +101,7 @@ formula.optionSubSection = ko.computed(function () {
 		.map(function (d) { return d.name })
 }, formula.financial.From)
 formula.selectedSubSection = ko.observable('')
+
 formula.optionFields = ko.computed(function () {
 	if (formula.financial.From() == '') {
 		return [];
@@ -149,16 +152,44 @@ formula.optionFields = ko.computed(function () {
 
 	return []
 }, formula);
-formula.selectField = function () {
-	var name = this.value()
-	var field = formula.optionFields().find(function (d) {
-		return d.alias == name
+
+// formula.financial.FieldId.subscribe(function(newValue){
+// 	console.log("ww", newValue)
+
+// 	field = _.filter(formula.optionFields(), function(o){
+// 		return o.alias == newValue
+// 	})
+
+// 	console.log(field)
+
+// 	if(typeof field != "undefined" && field.length > 0 && typeof field[0].name != "undefined") {
+// 		formula.financial.Criteria(field[0].name)
+// 	}
+// })
+
+formula.FieldIdSelect = function(e) {
+	console.log("ww", e.sender._old)
+	formula.financial.FieldId(e.sender._old)
+	field = _.filter(formula.optionFields(), function(o){
+		return o.alias == e.sender._old
 	})
 
-	if (field != undefined) {
-		formula.financial.Criteria(field.name)
+	console.log(field)
+
+	if(typeof field != "undefined" && field.length > 0 && typeof field[0].name != "undefined") {
+		formula.financial.Criteria(field[0].name)
 	}
 }
+// formula.selectField = function () {
+// 	var name = this.value()
+// 	var field = formula.optionFields().find(function (d) {
+// 		return d.alias == name
+// 	})
+
+// 	if (field != undefined) {
+// 		formula.financial.Criteria(field.name)
+// 	}
+// }
 
 formula.isLoading = function (what) {
     $('.apx-loading')[what ? 'show' : 'hide']()
@@ -439,15 +470,15 @@ formula.editFinancial = function (id) {
 		return
 	}
 
-	ko.mapping.fromJS(row, formula.financial)
 	formula.financialIsNew(false)
 	$('.modal-financial').modal('show')
+	ko.mapping.fromJS(row, formula.financial)
 }
 
 formula.showModalFinancial = function () {
-	ko.mapping.fromJS(formula.templateFinancial, formula.financial)
-	formula.financialIsNew(true)
 	$('.modal-financial').modal('show')
+
+	ko.mapping.fromJS(formula.templateFinancial, formula.financial)
 }
 
 formula.saveFinancial = function () {

@@ -515,7 +515,8 @@ var RenderGridDataBank = function(id, res){
             }
         }
     }
-     $('#secfbs'+id).kendoGrid({
+    if (fbsecdata.length == 0 && fbsecdata[0] == ""){
+        $('#secfbs'+id).kendoGrid({
         dataSource : fbsecdata,
         scrollable:false,
         columns:[
@@ -526,7 +527,9 @@ var RenderGridDataBank = function(id, res){
             },
         ]
      });
-
+    }
+    
+    
     var nonfundExpanded = (function (dataBefore) {
         var dataAfter = [];
         dataBefore.forEach(function (d) {
@@ -2183,12 +2186,17 @@ var editBankData = function(index){
                 $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
             }
             var arrsecfbs = databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB
+            for (var i = 0; i < arrsecfbs.length; i++){
+                if (arrsecfbs[i] == ''){
+                    arrsecfbs.splice(i)
+                }
+            }
             if(typeof arrsecfbs === "string" || arrsecfbs == ""){
                 bankaccount.fbsecurity([""])
             }else{
                 bankaccount.fbsecurity(arrsecfbs)
             }
-            
+            console.log(bankaccount.fbsecurity())
             for (var i = 0; i < arrsecfbs.length; i++){
                 $('#securityfb'+i).val(arrsecfbs[i])
             }
@@ -2214,10 +2222,17 @@ var editBankData = function(index){
             }else{
                 $('#nfbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate)
             }
+            
             var arrsecnfbs = databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB
+            
             if(typeof arrsecnfbs === "string" || arrsecnfbs == ""){
                 bankaccount.nfbsecurity([""])
             }else{
+                for (var i = 0; i < arrsecnfbs.length; i++){
+                    if (arrsecnfbs[i] == ''){
+                        arrsecnfbs.splice(i)
+                    }
+                }
                 bankaccount.nfbsecurity(arrsecnfbs)
             }
             

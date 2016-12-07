@@ -208,6 +208,8 @@ function resetInput(){
     $('#currentacno').val('')
     $('#currentacholder').val('')
     $('#same').hide();
+    bankaccount.fbsecurity([])
+    bankaccount.nfbsecurity([])
 }
 
 ///Create Grid Data Bank///

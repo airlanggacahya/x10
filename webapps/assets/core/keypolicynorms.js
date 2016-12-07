@@ -153,28 +153,21 @@ formula.optionFields = ko.computed(function () {
 	return []
 }, formula);
 
-// formula.financial.FieldId.subscribe(function(newValue){
-// 	console.log("ww", newValue)
+formula.financial.FieldId.subscribe(function(newValue){
+	field = _.filter(formula.optionFields(), function(o){
+		return o.alias == newValue
+	})
 
-// 	field = _.filter(formula.optionFields(), function(o){
-// 		return o.alias == newValue
-// 	})
-
-// 	console.log(field)
-
-// 	if(typeof field != "undefined" && field.length > 0 && typeof field[0].name != "undefined") {
-// 		formula.financial.Criteria(field[0].name)
-// 	}
-// })
+	if(typeof field != "undefined" && field.length > 0 && typeof field[0].name != "undefined") {
+		formula.financial.Criteria(field[0].name)
+	}
+})
 
 formula.FieldIdSelect = function(e) {
-	console.log("ww", e.sender._old)
 	formula.financial.FieldId(e.sender._old)
 	field = _.filter(formula.optionFields(), function(o){
 		return o.alias == e.sender._old
 	})
-
-	console.log(field)
 
 	if(typeof field != "undefined" && field.length > 0 && typeof field[0].name != "undefined") {
 		formula.financial.Criteria(field[0].name)
@@ -476,7 +469,7 @@ formula.editFinancial = function (id) {
 }
 
 formula.showModalFinancial = function () {
-	$('.modal-financial').modal('show')
+		$('.modal-financial').modal('show')
 
 	formula.financialIsNew(true)
 

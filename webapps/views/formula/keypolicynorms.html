@@ -117,7 +117,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
 			    		<div class="col-sm-6">
 				            <label class="col-sm-4 form-label align-right">Select field</label>
 				        	<div class="col-sm-8">
-			        			<select style="width: 100%;" data-bind="kendoDropDownList: { filter: 'contains', data: formula.optionFields, dataValueField: 'alias', dataTextField: 'name', value: FieldId, optionLabel: 'Select One', change: formula.selectField }"></select>
+			        			<select style="width: 100%;" data-bind="kendoDropDownList: { filter: 'contains', data: formula.optionFields, dataValueField: 'alias', dataTextField: 'name', value: FieldId, optionLabel: 'Select One', select: formula.FieldIdSelect} "></select>
 				        	</div>
 				        	<div class="clearfix"></div>
 				        </div>

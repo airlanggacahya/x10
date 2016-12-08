@@ -280,7 +280,7 @@ r.refresh = function (callback) {
             r.render()
 
             r.endisKendoDropDown(r.isFrozen())
-
+            $("#export").prop("disabled", false)
             setTimeout(function(){
                 if(typeof callback === 'function'){
                     callback();
@@ -1440,7 +1440,6 @@ r.freeze = function (isFrozen) {
             // closeOnConfirm: false
         }).then(function () {
             r.isLoading(true)
-
             var param = {};
             param.CustomerID = r.customerId()
             param.IsFrozen = isFrozen
@@ -1503,6 +1502,7 @@ r.freeze = function (isFrozen) {
                 r.render()
 
                 r.endisKendoDropDown(r.isFrozen())
+                $("#export").prop("disabled", false)
 
             }, function () {
                 r.isLoading(false)

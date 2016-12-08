@@ -268,6 +268,17 @@ r.moveTo = function (o, id) {
 		rowDataNext = r.data()[r.data().indexOf(rowData) + 1];
 	} catch (err) { }
 
+	IsheaderPrev = $(o).closest("tr").prev().html()
+	IsheaderNext = $(o).closest("tr").next().html()
+
+	try {
+	IsheaderPrev = IsheaderPrev.indexOf("k-i-expand") > -1 || IsheaderPrev.indexOf("k-i-collapse") > -1 ? true : false;
+	} catch (err) { IsheaderPrev = false}
+
+	try {
+	IsheaderNext = IsheaderNext.indexOf("k-i-expand") > -1 || IsheaderNext.indexOf("k-i-collapse") > -1 ? true : false;
+	} catch (err) { IsheaderNext = false}
+
 	// console.log("rowData", rowData, r.data().indexOf(rowData));
 	// console.log("rowDataPrev", rowDataPrev, r.data().indexOf(rowData) - 1);
 	// console.log("rowDataNext", rowDataNext, r.data().indexOf(rowData) + 1);
@@ -283,6 +294,12 @@ r.moveTo = function (o, id) {
 		rowData.Order = rowDataPrevCloned.Order;
 		rowData.Section = rowDataPrevCloned.Section;
 		rowData.SubSection = rowDataPrevCloned.SubSection;
+
+		if(IsheaderPrev){
+			rowData.Order = rowDataPrevCloned.Order+1;
+			rowData.Section = rowDataPrevCloned.Section;
+			rowData.SubSection = rowDataPrevCloned.SubSection;
+		}
 	}
 
 	if (direction == 'down' && (typeof rowDataNext !== 'undefined')) {
@@ -296,6 +313,11 @@ r.moveTo = function (o, id) {
 		rowData.Order = rowDataNextCloned.Order;
 		rowData.Section = rowDataNextCloned.Section;
 		rowData.SubSection = rowDataNextCloned.SubSection;
+		if(IsheaderNext){
+			rowData.Order = rowDataNextCloned.Order-1;
+			rowData.Section = rowDataNextCloned.Section;
+			rowData.SubSection = rowDataNextCloned.SubSection;
+		}
 	}
 
 	var opRes1 = _.orderBy(r.data(), 'Order')

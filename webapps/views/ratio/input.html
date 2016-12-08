@@ -130,7 +130,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
 							<div id="selectDateProjected" data-bind="visible: ( (r.customerId() != '') && (r.AuditedDate() != '') )" style="float: left; margin-right: 20px;"></div>
 						</div>
 						<div style="float: right;">
-							<button class="btn btn-add button-font btn-dis" data-bind="visible: (r.customerId() != ''), enable: !IsFrozen()" onclick="r.exportExcel('.divright', filter().CustomerSearchText()+' - '+filter().DealNumberSearchVal())">Export as Excel</button>
+							<button id="export" class="btn btn-add button-font btn-dis" data-bind="visible: (r.customerId() != ''), enable: !IsFrozen()" onclick="r.exportExcel('.divright', filter().CustomerSearchText()+' - '+filter().DealNumberSearchVal())">Export as Excel</button>
 						</div>
 					</div>
 					<div class="col-sm-12 no-padding">

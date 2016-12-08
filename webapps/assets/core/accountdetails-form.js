@@ -770,6 +770,9 @@ adf.getConfirm = function(){
 		$("#addpromotor").prop("disabled", true);
 		$("#addvendor").prop("disabled", true);
 		$("#addvendor1").prop("disabled", true);
+		for(var a = 0; a< adf.form.DistributorMix.Data().length; a++){
+			$("#del"+a).prop( "disabled", true );
+		}
 		sts = "Confirmed"
 		$("#onreset1").prop("disabled", true);
 		$("#onreset2").prop("disabled", true);
@@ -1834,6 +1837,9 @@ adf.reloadStatus = function(status){
 			$("#req").prop("disabled", "disabled")
 			$("#mincibil").prop("disabled", "disabled")
 		},500);
+		for(var a = 0; a< adf.form.DistributorMix.Data().length; a++){
+			$("#del"+a).prop( "disabled", true );
+		}
 		$("#LoanAmount").prop("disabled", true );
 		$("#onreset1").prop("disabled", true);
 		$("#onreset2").prop("disabled", true);

@@ -1229,7 +1229,7 @@ mincibil = ko.observable(0);
 						            			<input class="dist" class="col-sm-4" data-bind="kendoNumericTextBox: { value: Result, format: '#.00 \\%', spinners:false }" type="number" style="width: 100%;">
 						            		</div>
 						            		<div class="col-md-4">
-						            			<button type="button" class="btn btn-sm btn-danger" data-bind="click: adf.removeDistributorMix($index())"><i class="fa fa-trash"></i></button>
+						            			<button type="button" class="btn btn-sm btn-danger" data-bind="click: adf.removeDistributorMix($index()), attr:{'id' : 'del'+$index()}"><i class="fa fa-trash"></i></button>
 						            		</div>
 						            	</div>
 						            	<div class="clearfix"></div>

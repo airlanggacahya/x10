@@ -78,13 +78,14 @@ info.condConfirmed = function(){
     $("#cf").hide();
     $("#uvf").hide();
     disableedit();
+    $("#re").prop("disabled", false);
+    $("#save").prop("disabled", true);
     EnableAllkendo(false);
     
     
 }
 
 info.condReEnter = function(){
-    console.log("re-entar")
     $("#edit").hide();
     $("#save").show();
     $("#cf").show();
@@ -172,7 +173,7 @@ info.condFreeze = function(){
     $("#edit").hide();
     $("#save").show();
     $("#save").prop("disabled", true);
-    $("#re").prop("disabled", false);
+    $("#re").prop("disabled", true);
     disableedit();
     $("#vf").hide();
 }

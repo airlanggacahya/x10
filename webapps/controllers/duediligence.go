@@ -135,6 +135,22 @@ func (c *DueDiligenceController) FetchMasterDueDiligence() ([]DueDiligence, erro
 	return results, nil
 }
 
+func (c *DueDiligenceController) FetchMasterDueDiligenceChecked() ([]DueDiligence, error) {
+	query := toolkit.M{"order": []string{"Order"}}.Set("where", dbox.Eq("use", true))
+	csr, err := c.Ctx.Find(new(DueDiligence), query)
+	defer csr.Close()
+	if err != nil {
+		return nil, err
+	}
+	results := make([]DueDiligence, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
 func (c *DueDiligenceController) IsMasterUpdated(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
@@ -144,7 +160,7 @@ func (c *DueDiligenceController) IsMasterUpdated(k *knot.WebContext) interface{}
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
-	masterDatas, err := c.FetchMasterDueDiligence()
+	masterDatas, err := c.FetchMasterDueDiligenceChecked()
 	if err != nil {
 		return err.Error()
 	}
@@ -182,6 +198,9 @@ func (c *DueDiligenceController) IsMasterUpdated(k *knot.WebContext) interface{}
 			if isFound == false {
 				isUpdated = true
 			}
+		}
+		if len(masterDatas) != (len(confirmedData.Verification) + len(confirmedData.Defaulter)) {
+			isUpdated = true
 		}
 	}
 

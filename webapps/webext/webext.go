@@ -59,6 +59,7 @@ func init() {
 	app.Register(&DashboardController{baseCtrl})
 	app.Register(&DataBrowserController{baseCtrl})
 	app.Register(&AccountDetailController{baseCtrl})
+	app.Register(&XMLReceiverController{baseCtrl})
 
 	app.Register(&UserSettingController{baseCtrl})
 	app.Register(&MenuSettingController{baseCtrl})

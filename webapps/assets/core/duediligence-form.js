@@ -575,7 +575,7 @@ due.getData = function(){
 					ajaxPost("/duediligence/ismasterupdated", due.form, function(res){
 						console.log(res);
 						if (res === true) {
-							swal("Master changed, click re-enter to update", "", "warning");
+							swal("Warning","Master changed, click re-enter to update", "warning");
 						}
 					})
 				}

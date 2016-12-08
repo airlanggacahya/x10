@@ -190,7 +190,7 @@ func (c *DueDiligenceController) IsMasterUpdated(k *knot.WebContext) interface{}
 
 func (c *DueDiligenceController) GetVerificationCheck(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
-	query := toolkit.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("section", "Verification Checks")}...)}
+	query := toolkit.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("section", "Verification Checks"), dbox.Eq("use", true)}...)}
 	sort := "asc" + "order"
 	query.Set("order", []string{sort})
 	csr, err := c.Ctx.Find(new(DueDiligence), query)
@@ -268,7 +268,7 @@ func (c *DueDiligenceController) GetDuediligenceInputDataCOnfirmed(k *knot.WebCo
 
 func (c *DueDiligenceController) GetDefaultCheck(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
-	query := toolkit.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("section", "Default Checks")}...)}
+	query := toolkit.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("section", "Default Checks"), dbox.Eq("use", true)}...)}
 	sort := "asc" + "order"
 	query.Set("order", []string{sort})
 	csr, err := c.Ctx.Find(new(DueDiligence), query)

@@ -412,16 +412,18 @@ r.saveNewData = function (e) {
 		} else {
 			info.Order = _.maxBy(r.data(), 'Order').Order + 1
 		}
+
+		r.data().forEach(function(x){
+			if(x.Section != info.Section && x.Order >= info.Order){
+				x.Order +=1
+			}
+		});
+
+		r.render();
+		r.save(true);
 	}
 
-	r.data().forEach(function(x){
-		if(x.Section != info.Section && x.Order >= info.Order){
-			x.Order +=1
-		}
-	});
-
-	r.render();
-	r.save(true);
+	
 
 	info.Alias = info.Alias.toUpperCase();
 

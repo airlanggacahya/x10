@@ -333,6 +333,8 @@ function getData(){
                     }else{
                         condSave()
                         $('.form-last-confirmation-info').html('Last Save on: '+moment( data[0].DateSave).format("DD-MMM-YYYY hh:mm:ss a") )
+                        $('.form-last-confirmation-info').show()
+
                         rtr.Freeze(false)
                     }
 
@@ -342,6 +344,7 @@ function getData(){
                     }else{
                         condConfirm()
                         $('.form-last-confirmation-info').html('Last Confirmed on: '+moment( data[0].DateConfirmed).format("DD-MMM-YYYY hh:mm:ss a") )
+                        $('.form-last-confirmation-info').show()
                         rtr.Freeze(true)
                     }
 
@@ -351,6 +354,8 @@ function getData(){
                     }else{
                         condFreeze();
                         $('.form-last-confirmation-info').html('Last Freezed on: '+moment( data[0].DateFreeze).format("DD-MMM-YYYY hh:mm:ss a") )
+                        $('.form-last-confirmation-info').show()
+
                         rtr.Freeze(true)
                     }
 
@@ -803,7 +808,9 @@ onsave = function(){
             // yo.success(res.data);
             condSave()
             swal("Success","Data saved","success");
-            $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
+            $('.form-last-confirmation-info').html('Last Saved on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
+             $('.form-last-confirmation-info').show()
+            
             getData()
         })
     }
@@ -819,7 +826,9 @@ onreenter = function(){
         // yo.success(res.data);
         condReenter()
         swal("Please Edit / Enter Data", "", "success");
-        $('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
+        $('.form-last-confirmation-info').html('Last Saved on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
+             $('.form-last-confirmation-info').show()
+        
         getData()
     })
 }
@@ -838,7 +847,9 @@ onFreeze = function(){
         // yo.success(res.data);
         condFreeze();
         swal("Success","Successfully Freezed", "success");
-        $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
+        $('.form-last-confirmation-info').html('Last Freezed on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
+             $('.form-last-confirmation-info').show()
+        
         getData()
     })
 }
@@ -851,7 +862,9 @@ onUnfreeze = function(){
     ajaxPost("/rtr/update",data, function(res){
         // yo.success(res.data);
         swal("Successfully Unfreezed", "", "success");
-        $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
+        $('.form-last-confirmation-info').html('Last Confirmed on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
+             $('.form-last-confirmation-info').show()
+        
         getData()
     })
 }
@@ -956,7 +969,8 @@ function confirm(){
             // yo.success(res.data);
             condConfirm()
             swal("Successfully Confirmed", "", "success");
-            $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MMM-yyyy hh:mm:ss t") )
+            $('.form-last-confirmation-info').html('Last Confirmed on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
+             $('.form-last-confirmation-info').show()
             getData()
         });
     }

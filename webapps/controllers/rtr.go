@@ -192,17 +192,17 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 
 		ar.Status = val.GetInt("Status")
 		if strings.Contains(val.GetString("DateFreeze"), ".") {
-			ar.DateFreeze = cast.String2Date(strings.Split(strings.Replace(val.GetString("DateFreeze"), "T", " ", -1), ".")[0], "yyyy-MM-dd hh:mm:ss")
+			ar.DateFreeze = cast.String2Date(strings.Split(strings.Replace(val.GetString("DateFreeze"), "T", " ", -1), ".")[0], "yyyy-MM-dd HH:mm:ss")
 		} else {
 			ar.DateFreeze = list[0].DateFreeze
 		}
 		if strings.Contains(val.GetString("DateSave"), ".") {
-			ar.DateSave = cast.String2Date(strings.Split(strings.Replace(val.GetString("DateSave"), "T", " ", -1), ".")[0], "yyyy-MM-dd hh:mm:ss")
+			ar.DateSave = cast.String2Date(strings.Split(strings.Replace(val.GetString("DateSave"), "T", " ", -1), ".")[0], "yyyy-MM-dd HH:mm:ss")
 		} else {
 			ar.DateSave = list[0].DateSave
 		}
 		if strings.Contains(val.GetString("DateConfirmed"), ".") {
-			ar.DateConfirmed = cast.String2Date(strings.Split(strings.Replace(val.GetString("DateConfirmed"), "T", " ", -1), ".")[0], "yyyy-MM-dd hh:mm:ss")
+			ar.DateConfirmed = cast.String2Date(strings.Split(strings.Replace(val.GetString("DateConfirmed"), "T", " ", -1), ".")[0], "yyyy-MM-dd HH:mm:ss")
 		} else {
 			ar.DateConfirmed = list[0].DateConfirmed
 		}

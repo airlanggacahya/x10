@@ -286,17 +286,16 @@ r.moveTo = function (o, id) {
 	if (direction == 'up' && (typeof rowDataPrev !== 'undefined')) {
 		var rowDataPrevCloned = $.extend(true, {}, rowDataPrev);
 		var rowDataCloned = $.extend(true, {}, rowData);
-
-		rowDataPrev.Order = rowDataCloned.Order;
-		// rowDataPrev.Section = rowDataCloned.Section;
-		// rowDataPrev.SubSection = rowDataCloned.SubSection;
-
-		rowData.Order = rowDataPrevCloned.Order;
-		rowData.Section = rowDataPrevCloned.Section;
-		rowData.SubSection = rowDataPrevCloned.SubSection;
-
 		if(IsheaderPrev){
-			rowData.Order = rowDataPrevCloned.Order+1;
+			// rowData.Order = rowDataPrevCloned.Order+1;
+			rowData.Section = rowDataPrevCloned.Section;
+			rowData.SubSection = rowDataPrevCloned.SubSection;
+		}else{
+			rowDataPrev.Order = rowDataCloned.Order;
+			// rowDataPrev.Section = rowDataCloned.Section;
+			// rowDataPrev.SubSection = rowDataCloned.SubSection;
+
+			rowData.Order = rowDataPrevCloned.Order;
 			rowData.Section = rowDataPrevCloned.Section;
 			rowData.SubSection = rowDataPrevCloned.SubSection;
 		}
@@ -305,16 +304,16 @@ r.moveTo = function (o, id) {
 	if (direction == 'down' && (typeof rowDataNext !== 'undefined')) {
 		var rowDataNextCloned = $.extend(true, {}, rowDataNext);
 		var rowDataCloned = $.extend(true, {}, rowData);
-
-		rowDataNext.Order = rowDataCloned.Order;
-		// rowDataNext.Section = rowDataCloned.Section;
-		// rowDataNext.SubSection = rowDataCloned.SubSection;
-
-		rowData.Order = rowDataNextCloned.Order;
-		rowData.Section = rowDataNextCloned.Section;
-		rowData.SubSection = rowDataNextCloned.SubSection;
 		if(IsheaderNext){
-			rowData.Order = rowDataNextCloned.Order-1;
+			// rowData.Order = rowDataNextCloned.Order-1;
+			rowData.Section = rowDataNextCloned.Section;
+			rowData.SubSection = rowDataNextCloned.SubSection;
+		}else{
+			rowDataNext.Order = rowDataCloned.Order;
+			// rowDataNext.Section = rowDataCloned.Section;
+			// rowDataNext.SubSection = rowDataCloned.SubSection;
+
+			rowData.Order = rowDataNextCloned.Order;
 			rowData.Section = rowDataNextCloned.Section;
 			rowData.SubSection = rowDataNextCloned.SubSection;
 		}
@@ -342,7 +341,7 @@ r.getMasterBalanceSheetInput = function (callback) {
     });
 };
 
-r.save = function () {
+r.save = function (nomsg) {
 	r.writeDownLoading()
 
 	var param = { data: r.data() }
@@ -352,7 +351,9 @@ r.save = function () {
             return;
         }
 
+        if(nomsg)
         swal("Success!", "Changes saved!", "success");
+
     	r.refresh()
     });
 }
@@ -412,6 +413,15 @@ r.saveNewData = function (e) {
 			info.Order = _.maxBy(r.data(), 'Order').Order + 1
 		}
 	}
+
+	r.data().forEach(function(x){
+		if(x.Section != info.Section && x.Order >= info.Order){
+			x.Order +=1
+		}
+	});
+
+	r.render();
+	r.save(true);
 
 	info.Alias = info.Alias.toUpperCase();
 

@@ -417,7 +417,7 @@ function getData(){
             width: 80, attributes: { style: 'background: rgb(238, 238, 238)' }}),
         col.push({ title : "Yearly Repayment (Rs Lacs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "YearlyRepayment", width: 160, template : "<label style=\"width:100%; text-align: right;\">#:app.formatnum(YearlyRepayment,2)#</label>", attributes: { style: 'background: rgb(238, 238, 238)' }})
 
-        col.push({ headerAttributes: { "class": "header-bgcolor wrap" }, template : "<button type='button' btn-sm='' class='btn btn-sm btn-danger tooltipster' title='Delete' onclick='DeleteData(\"#: Id #\");'> <span class='glyphicon glyphicon-trash'></span>&nbsp; </button>", width: 50 })
+        col.push({ headerAttributes: { "class": "header-bgcolor wrap" }, template : "<button type='button' btn-sm='' class='btn btn-sm btn-danger del tooltipster' title='Delete' onclick='DeleteData(\"#: Id #\");'> <span class='glyphicon glyphicon-trash'></span>&nbsp; </button>", width: 50 })
         NewestData(datagrid);
 
         CreateBottomGrid(filter().CustomerSearchVal(), filter().DealNumberSearchVal(), datagrid, col)
@@ -744,6 +744,7 @@ condConfirm = function(){
     setTimeout(function(){
         $(".k-grid-add").hide()
         $(".k-grid-cancel-changes").hide()
+        $(".del").prop("disabled", true)
     }, 200)
 
 }

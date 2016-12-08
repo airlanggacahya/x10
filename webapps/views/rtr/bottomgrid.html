@@ -425,7 +425,7 @@ function getData(){
         col.push({ title : "Bounces", headerAttributes: { "class": "header-bgcolor wrap" }, field : "Bounces",
             width: 80, attributes: { style: 'background: rgb(238, 238, 238)' }}),
         col.push({ title : "Max. of DPD Track", headerAttributes: { "class": "header-bgcolor wrap" }, field : "DpdMaxTrack", template : "<label style=\"width:100%;\">#:DpdMaxTrack#</label>",
-            width: 80, attributes: { style: 'background: rgb(238, 238, 238)' }, editor: MaxDPDEditor}),
+            width: 80, attributes: { style: 'background: rgb(238, 238, 238)' }}),
         col.push({ title : "Yearly Repayment (Rs Lacs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "YearlyRepayment", width: 160, template : "<label style=\"width:100%; text-align: right;\">#:app.formatnum(YearlyRepayment,2)#</label>", attributes: { style: 'background: rgb(238, 238, 238)' }})
 
 
@@ -629,7 +629,8 @@ function CreateBottomGrid(cust, deal, data, col){
                                         Month2: {},
                                         Month3: {},
                                         Month4: {},
-                                        Month5: {}
+                                        Month5: {},
+                                        DpdMaxTrack : { editable: false },
                                         //Bounces: { validation: {  } },
                                     }
                                 }

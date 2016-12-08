@@ -573,14 +573,12 @@ due.getData = function(){
 				// if form confirmed
 				if(data.Status == 1) {
 					ajaxPost("/duediligence/ismasterupdated", due.form, function(res){
-						console.log(res);
 						if (res === true) {
 							swal("Warning","Master changed, click re-enter to update", "warning");
 						}
 					})
 				}
 			} else {
-				console.log(2);
 				due.getMasterData()
 			}
 			if(data.Status == 1 && data.Freeze == false){
@@ -595,7 +593,6 @@ due.getData = function(){
 				$('.form-last-confirmation-info').html('Last Saved on: '+kendo.toString(new Date(data.DateSave),"dd-MM-yyyy h:mm:ss tt") );
 			}
 		} else {
-			console.log(1);
 			due.getMasterData()
 		}
 	});
@@ -688,7 +685,6 @@ due.setReEnter = function(){
 		due.isLoading(false);
 	});
 
-	console.log(3);
 	due.getMasterData()
 }
 

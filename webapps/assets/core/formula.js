@@ -570,15 +570,21 @@ formula.saveFinancial = function () {
 	var param = formula.getFinancialParam()
 
 	if ($.trim(param.Id) == '') {
-		swal("Error!", "Alias cannot be empty!", "error");
+		swal("Error!", "Alias cannot be empty!", "error").then(function(){
+			formula.isLoading(false)
+		});
 		return
 	}
 	if ($.trim(param.Title) == '') {
-		swal("Error!", "Name cannot be empty!", "error");
+		swal("Error!", "Name cannot be empty!", "error").then(function(){
+			formula.isLoading(false)
+		});
 		return
 	}
 	if ($.trim(param.PutAfter) == '') {
-		swal("Error!", "Put after cannot be empty!", "error");
+		swal("Error!", "Put after cannot be empty!", "error").then(function(){
+			formula.isLoading(false)
+		});
 		return
 	}
 

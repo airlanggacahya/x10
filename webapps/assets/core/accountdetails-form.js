@@ -439,6 +439,20 @@ adf.setForm = function (data) {
 		}
 
 	}
+	var res = '';
+	$.each(adf.form.VendorDetails(), function(i, dex){
+		res = _.filter(adf.optionLeadDistributors(), function(item){
+			var data = dex.DistributorName();
+			return item.toLowerCase() == data.toLowerCase();
+		})
+
+		if (res != undefined){
+			adf.form.VendorDetails()[i].DistributorName(res[0]);
+		}
+	})
+
+
+	
 	// adf.Tempform.PromotorDetails.RealEstatePosition(data)
 
 	adf.form.PromotorDetails().forEach(function (d) {
@@ -3111,7 +3125,7 @@ adf.checkVendor = function(){
 
 	console.log(numloop)
 	if(numloop != adf.form.VendorDetails().length){
-		Materialize.toast("Please fill distributor name", 2000);
+		Materialize.toast("Please fill Distributor name", 2000);
         $('.toast').css("background-color","#F26419").css("color","white")
 	}
 }

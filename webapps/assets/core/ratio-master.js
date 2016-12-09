@@ -419,8 +419,8 @@ r.saveNewData = function (e) {
 			}
 		});
 
-		r.render();
-		r.save(true);
+		//r.render();
+		//r.save(true);
 	}
 
 	

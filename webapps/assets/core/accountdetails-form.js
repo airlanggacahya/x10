@@ -3109,8 +3109,9 @@ adf.checkVendor = function(){
 		}
 	})
 
+	console.log(numloop)
 	if(numloop != adf.form.VendorDetails().length){
-		Materialize.toast(" Please Fill Distributtor Name", 2000);
+		Materialize.toast("Please fill distributor name", 2000);
         $('.toast').css("background-color","#F26419").css("color","white")
 	}
 }

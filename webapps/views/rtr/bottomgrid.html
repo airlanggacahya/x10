@@ -816,14 +816,15 @@ onsave = function(callback){
 
             if(typeof callback != "function"){
             swal("Success","Data saved","success");
+            getData()
+            
         }else{
-            callback();
+             getData(callback);
         }
             
             $('.form-last-confirmation-info').html('Last Saved on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
              $('.form-last-confirmation-info').show()
 
-            getData()
         })
     }
 }

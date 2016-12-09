@@ -259,7 +259,7 @@ function getData(callback){
                 }
         }},
         { title : "BSL / PBSL", headerAttributes: { "class": "header-bgcolor wrap" }, field : "BSLStatus", width: 80, editor: bslsDropDownEditor  },
-        { title : "Loan Closed / Live", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanStatus", width: 130, editor: loanStatusDropDownEditor },
+        { title : "(Closed / Live)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanStatus", width: 130, editor: loanStatusDropDownEditor },
         { title : "Amount (Rs Lacs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "Amount", width: 120, editor : checkeditor, template : function(o) {
 
             if(o.IsBankAnalys) {
@@ -822,7 +822,7 @@ onsave = function(nomsg){
             
             $('.form-last-confirmation-info').html('Last Saved on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
              $('.form-last-confirmation-info').show()
-            
+
             getData()
         })
     }
@@ -841,14 +841,13 @@ onreenter = function(){
         $('.form-last-confirmation-info').html('Last Saved on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
              $('.form-last-confirmation-info').show()
 
-
-        
         getData(function(){
             if(SaveAfterReEnter){
                 onsave(true)
                 SaveAfterReEnter = false;
             }
         })
+
     })
 }
 
@@ -868,7 +867,7 @@ onFreeze = function(){
         swal("Success","Successfully Freezed", "success");
         $('.form-last-confirmation-info').html('Last Freezed on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
              $('.form-last-confirmation-info').show()
-        
+
         getData()
     })
 }
@@ -883,7 +882,7 @@ onUnfreeze = function(){
         swal("Successfully Unfreezed", "", "success");
         $('.form-last-confirmation-info').html('Last Confirmed on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
              $('.form-last-confirmation-info').show()
-        
+
         getData()
     })
 }

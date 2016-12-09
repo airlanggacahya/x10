@@ -1080,7 +1080,10 @@ func (r *RTRBottom) updateRtrPosFromBank(rtr RTRBottom, bank BankAnalysisV2) (RT
 		SetConfig("multiexec", true).
 		Save()
 
+	tk.Println(bank.DataBank[0].BankAccount.FundBased.InterestPerMonth * 100000)
+
 	rtr.EMI = bank.DataBank[0].BankAccount.FundBased.InterestPerMonth * 100000
+	rtr.Amount = bank.DataBank[0].BankAccount.FundBased.SancLimit
 
 	insdata := map[string]interface{}{"data": rtr}
 	em = qinsert.Exec(insdata)

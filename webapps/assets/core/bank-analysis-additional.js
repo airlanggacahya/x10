@@ -314,61 +314,61 @@ var DrawDataBank = function(id){
                 createBankingGrid(res.data.Summary,0);
             }else{
 
-            if (res.data.Ratio.Data.AuditStatus.length != 0 && res.data.AccountDetail.length!=0){
-                var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100
-                var CMISNULL = res.data.AccountDetail[0].CMISNULL
-                idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
-                latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
-                var ISNA = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Na
-                ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
-                var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
+            // if (res.data.Ratio.Data.AuditStatus.length != 0 && res.data.AccountDetail.length!=0){
+            //     var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100
+            //     var CMISNULL = res.data.AccountDetail[0].CMISNULL
+            //     idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
+            //     latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
+            //     var ISNA = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Na
+            //     ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
+            //     var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
 
-                var ebitdaFinis = latestebidmargin
+            //     var ebitdaFinis = latestebidmargin
 
-                var multiplyer = 0
-                if(CMISNULL && ISNA == "A") {
-                    multiplyer = ebitdaFinis
-                } else if(ISNA != "A" && !CMISNULL) {
-                    multiplyer = customermargin
-                } else if( ISNA == "A" && !CMISNULL ){
-                    multiplyer = _.min([ebitdaFinis,customermargin])
-                }else{
-                    multiplyer = 0;
-                }
+            //     var multiplyer = 0
+            //     if(CMISNULL && ISNA == "A") {
+            //         multiplyer = ebitdaFinis
+            //     } else if(ISNA != "A" && !CMISNULL) {
+            //         multiplyer = customermargin
+            //     } else if( ISNA == "A" && !CMISNULL ){
+            //         multiplyer = _.min([ebitdaFinis,customermargin])
+            //     }else{
+            //         multiplyer = 0;
+            //     }
 
-                for (var i = 0 ; i < res.data.Summary.length ; i++){
-                    res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
-                }
+            //     for (var i = 0 ; i < res.data.Summary.length ; i++){
+            //         res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
+            //     }
 
                 createBankingGrid(res.data.Summary,totalGrid.BS.BSIMarginPercent()*100);
-            }else if(res.data.AccountDetail.length!=0){
-                var multiplyer = 0
-                var customermargin = app.checkNanOrInfinity((res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100), 0)
-                var CMISNULL = res.data.AccountDetail[0].CMISNULL
-                    if(!CMISNULL) {
-                        multiplyer = customermargin
-                        for (var i = 0 ; i < res.data.Summary.length ; i++){
-                            res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
-                        }
-                    }
+            // }else if(res.data.AccountDetail.length!=0){
+            //     var multiplyer = 0
+            //     var customermargin = app.checkNanOrInfinity((res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100), 0)
+            //     var CMISNULL = res.data.AccountDetail[0].CMISNULL
+            //         if(!CMISNULL) {
+            //             multiplyer = customermargin
+            //             for (var i = 0 ; i < res.data.Summary.length ; i++){
+            //                 res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
+            //             }
+            //         }
 
-                createBankingGrid(res.data.Summary,multiplyer*100);
-            }else{
-                   idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
-                latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
-                var ISNA = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Na
-                ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
-                var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
+            //     createBankingGrid(res.data.Summary,multiplyer*100);
+            // }else{
+            //        idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
+            //     latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
+            //     var ISNA = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Na
+            //     ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
+            //     var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
 
-                if(ISNA=="A"){
-                     for (var i = 0 ; i < res.data.Summary.length ; i++){
-                        res.data.Summary[i].ImpMargin = latestebidmargin*res.data.Summary[i].TotalCredit
-                    }
-                }else{
-                    latestebidmargin = 0;
-                }
-                    createBankingGrid(res.data.Summary,latestebidmargin*100);
-            }
+            //     if(ISNA=="A"){
+            //          for (var i = 0 ; i < res.data.Summary.length ; i++){
+            //             res.data.Summary[i].ImpMargin = latestebidmargin*res.data.Summary[i].TotalCredit
+            //         }
+            //     }else{
+            //         latestebidmargin = 0;
+            //     }
+            //         createBankingGrid(res.data.Summary,latestebidmargin*100);
+            // }
         }
 
             setTimeout(function() {
@@ -509,7 +509,7 @@ var RenderGridDataBank = function(id, res){
 
     var fbsecdata = []
     for (var i = 0; i < fund.length; i++){
-        if (typeof fund[i].SecurityOfFB === 'string' || fund[i].SecurityOfFB == ''){
+        if (typeof fund[i].SecurityOfFB === 'string' || fund[i].SecurityOfFB == '' || fund[i].SecurityOfFB == null){
             fbsecdata.push([])
         }else{
             for (var j = 0; j < fund[i].SecurityOfFB.length; j++){
@@ -2191,6 +2191,9 @@ var editBankData = function(index){
                 $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
             }
             var arrsecfbs = databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB
+                 if (typeof arrsecfbs === 'string' || arrsecfbs == '' || arrsecfbs == null){
+                arrsecfbs = []
+            }
             for (var i = 0; i < arrsecfbs.length; i++){
                 if (arrsecfbs[i] == ''){
                     arrsecfbs.splice(i)

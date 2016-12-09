@@ -234,7 +234,9 @@ function calcMaxMonth(months){
     return max
 }
 
-function getData(){
+var SaveAfterReEnter = false;
+
+function getData(callback){
     $("#bottomgrid").html("");
     $("#topgrid").html("");
 
@@ -306,6 +308,7 @@ function getData(){
         }else{
             if(res.data[3].thereisupdate != undefined  &&  res.data[3].thereisupdate){
                 swal("Warning", "There is an update from other Form, please Re Enter to load changes","warning");
+                SaveAfterReEnter = true;
             }
 
             condSave()
@@ -457,6 +460,11 @@ function getData(){
         topgriddata[0].DpdMaxTrack = (res.data[1].summary.DPDTrack == -1 || res.data[1].summary.DPDTrack == 0)?maxGlobal:res.data[1].summary.DPDTrack
 
         CreateTopGrid();
+
+        if(typeof callback === "function"){
+            callback();
+        }
+
     });
 }
 
@@ -787,7 +795,7 @@ condReenter = function(){
     $(".btn-save").prop("disabled", false);
 }
 
-onsave = function(){
+onsave = function(nomsg){
     var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
     if(data.length == 0) {
         swal("Warning","Data Grid is empty","warning");
@@ -808,7 +816,10 @@ onsave = function(){
         ajaxPost("/rtr/update",data, function(res){
             // yo.success(res.data);
             condSave()
+
+            if(!nomsg)
             swal("Success","Data saved","success");
+            
             $('.form-last-confirmation-info').html('Last Saved on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
              $('.form-last-confirmation-info').show()
             
@@ -829,8 +840,15 @@ onreenter = function(){
         swal("Please Edit / Enter Data", "", "success");
         $('.form-last-confirmation-info').html('Last Saved on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
              $('.form-last-confirmation-info').show()
+
+
         
-        getData()
+        getData(function(){
+            if(SaveAfterReEnter){
+                onsave(true)
+                SaveAfterReEnter = false;
+            }
+        })
     })
 }
 

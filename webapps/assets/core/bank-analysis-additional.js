@@ -550,6 +550,17 @@ var RenderGridDataBank = function(id, res){
                     SecurityOfNFB: e
                 })
             })
+
+            if(d.SecurityOfNFB.length ==0){
+                dataAfter.push({
+                    uniq: uniq,
+                    NatureOfFacility: d.NatureOfFacility,
+                    OtherNatureOfFacility: d.OtherNatureOfFacility,
+                    SancLimit: d.SancLimit,
+                    SanctionDate: d.SanctionDate,
+                    SecurityOfNFB: ""
+                })
+            }
         })
         return dataAfter;
     })(nonfund);

@@ -234,8 +234,6 @@ function calcMaxMonth(months){
     return max
 }
 
-var SaveAfterReEnter = false;
-
 function getData(callback){
     $("#bottomgrid").html("");
     $("#topgrid").html("");
@@ -308,7 +306,6 @@ function getData(callback){
         }else{
             if(res.data[3].thereisupdate != undefined  &&  res.data[3].thereisupdate){
                 swal("Warning", "There is an update from other Form, please Re Enter to load changes","warning");
-                SaveAfterReEnter = true;
             }
 
             condSave()
@@ -795,7 +792,7 @@ condReenter = function(){
     $(".btn-save").prop("disabled", false);
 }
 
-onsave = function(nomsg){
+onsave = function(callback){
     var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
     if(data.length == 0) {
         swal("Warning","Data Grid is empty","warning");
@@ -817,8 +814,11 @@ onsave = function(nomsg){
             // yo.success(res.data);
             condSave()
 
-            if(!nomsg)
+            if(typeof callback != "function"){
             swal("Success","Data saved","success");
+        }else{
+            callback();
+        }
             
             $('.form-last-confirmation-info').html('Last Saved on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
              $('.form-last-confirmation-info').show()
@@ -841,12 +841,7 @@ onreenter = function(){
         $('.form-last-confirmation-info').html('Last Saved on: '+moment( new Date()).format("DD-MMM-YYYY hh:mm:ss a") )
              $('.form-last-confirmation-info').show()
 
-        getData(function(){
-            if(SaveAfterReEnter){
-                onsave(true)
-                SaveAfterReEnter = false;
-            }
-        })
+        getData()
 
     })
 }
@@ -970,6 +965,9 @@ function typeOfLoanDropDownEditor(container, options) {
 }
 
 function confirm(){
+
+    onsave(function(){
+           
     var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
     if(data.length == 0) {
         swal("Warning","Data Grid is empty","warning");
@@ -992,6 +990,8 @@ function confirm(){
             getData()
         });
     }
+
+});
 }
 
 function monthValue(e){

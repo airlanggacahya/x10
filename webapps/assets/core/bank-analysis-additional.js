@@ -280,31 +280,6 @@ var DrawDataBank = function(id){
         if(res.data.Detail.length != 0){
             formVisibility(true)
             isempty(false)
-            // console.log(res.data.AccountDetail[0].Status)
-            // if(res.data.Detail.length == fre){
-            //     //alert("fre")
-            //     $('.form-last-confirmation-info').html('Last Freezed on: '+kendo.toString(new Date(res.data.Detail[0].DateFreeze),"dd-MM-yyyy h:mm:ss tt") )
-            //     caba(1)
-            //     unfreeze(true);
-            //     setTimeout(function(){
-            //         disabledAll(false);
-            //     },100)
-
-            //     $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter");
-            // } else if(res.data.Detail.length == un){
-            //      // alert("un")
-            //     caba(1)
-            //     setTimeout(function(){
-            //         $(".btn-reenter").prop("disabled", false)
-            //     },100)
-            //     $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(res.data.Detail[0].DateConfirmed),"dd-MM-yyyy h:mm:ss tt") )
-            //     $('#bconfirm').removeClass('btn-confirm').addClass('btn-reenter').html("Re Enter");
-            // } else if(res.data.Detail.length == sa){
-            //      // alert("sa")
-            //      caba(0)
-            //     $('.form-last-confirmation-info').html('')
-            //     $('#bconfirm').removeClass('btn-reenter').addClass('btn-confirm').html("Confirm");
-            // }
 
             constructOdccModel(res);
             databank(res.data.Detail);
@@ -313,63 +288,8 @@ var DrawDataBank = function(id){
                 // swal("Warning", "Please Fill Account Detail Data First","warning");
                 createBankingGrid(res.data.Summary,0);
             }else{
-
-            // if (res.data.Ratio.Data.AuditStatus.length != 0 && res.data.AccountDetail.length!=0){
-            //     var customermargin = res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100
-            //     var CMISNULL = res.data.AccountDetail[0].CMISNULL
-            //     idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
-            //     latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
-            //     var ISNA = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Na
-            //     ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
-            //     var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
-
-            //     var ebitdaFinis = latestebidmargin
-
-            //     var multiplyer = 0
-            //     if(CMISNULL && ISNA == "A") {
-            //         multiplyer = ebitdaFinis
-            //     } else if(ISNA != "A" && !CMISNULL) {
-            //         multiplyer = customermargin
-            //     } else if( ISNA == "A" && !CMISNULL ){
-            //         multiplyer = _.min([ebitdaFinis,customermargin])
-            //     }else{
-            //         multiplyer = 0;
-            //     }
-
-            //     for (var i = 0 ; i < res.data.Summary.length ; i++){
-            //         res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
-            //     }
-
                 createBankingGrid(res.data.Summary,totalGrid.BS.BSIMarginPercent()*100);
-            // }else if(res.data.AccountDetail.length!=0){
-            //     var multiplyer = 0
-            //     var customermargin = app.checkNanOrInfinity((res.data.AccountDetail[0].accountsetupdetails.pdinfo.customermargin/100), 0)
-            //     var CMISNULL = res.data.AccountDetail[0].CMISNULL
-            //         if(!CMISNULL) {
-            //             multiplyer = customermargin
-            //             for (var i = 0 ; i < res.data.Summary.length ; i++){
-            //                 res.data.Summary[i].ImpMargin = multiplyer*res.data.Summary[i].TotalCredit
-            //             }
-            //         }
-
-            //     createBankingGrid(res.data.Summary,multiplyer*100);
-            // }else{
-            //        idxlatestaudited = _.findLastIndex(res.data.Ratio.Data.AuditStatus,['Status','AUDITED'])
-            //     latestauditeddate = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Date
-            //     var ISNA = res.data.Ratio.Data.AuditStatus[idxlatestaudited].Na
-            //     ebitdamargin = _.find(res.data.Ratio.Data.FormData,{'FieldAlias':"EBITDAMARGIN"})
-            //     var latestebidmargin = _.find(ebitdamargin.Values,{'Date':latestauditeddate}).Value
-
-            //     if(ISNA=="A"){
-            //          for (var i = 0 ; i < res.data.Summary.length ; i++){
-            //             res.data.Summary[i].ImpMargin = latestebidmargin*res.data.Summary[i].TotalCredit
-            //         }
-            //     }else{
-            //         latestebidmargin = 0;
-            //     }
-            //         createBankingGrid(res.data.Summary,latestebidmargin*100);
-            // }
-        }
+            }
 
             setTimeout(function() {
                 databank().forEach(function(e,i) {
@@ -531,8 +451,8 @@ var RenderGridDataBank = function(id, res){
         ]
      });
     }
-    
-    
+
+
     var nonfundExpanded = (function (dataBefore) {
         var dataAfter = [];
         dataBefore.forEach(function (d) {
@@ -2241,9 +2161,9 @@ var editBankData = function(index){
             }else{
                 $('#nfbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.NonFundBased.SanctionDate)
             }
-            
+
             var arrsecnfbs = databank()[index].DataBank[0].BankAccount.NonFundBased.SecurityOfNFB
-            
+
             if(typeof arrsecnfbs === "string" || arrsecnfbs == ""){
                 bankaccount.nfbsecurity([""])
             }else{
@@ -2254,11 +2174,11 @@ var editBankData = function(index){
                 }
                 bankaccount.nfbsecurity(arrsecnfbs)
             }
-            
+
             for (var i = 0; i < arrsecnfbs.length; i++){
                 $('#securitynfb'+i).val(arrsecnfbs[i])
             }
-            
+
         }
 
         if (factype.indexOf('Current') > -1){
@@ -2459,7 +2379,7 @@ var saveDataBank = function(){
     bankaccount.bankname($("#bankname").val());
     bankaccount.bankstttill($("#bankstt").data("kendoDatePicker").value().toISOString());
     var todayDate = new Date().toISOString();
-    
+
     var latestfacttype = $('#facilitytype').getKendoMultiSelect().value()
 
          if (latestfacttype.indexOf('Fund Based') > -1){

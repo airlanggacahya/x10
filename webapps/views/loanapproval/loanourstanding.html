@@ -32,8 +32,24 @@
                      <td class="center" data-bind="text: amount.nfb" style="text-align: right;"></td>
                      <td class="center" data-bind="text: roi" style="text-align: right;"></td>
                      <td class="center" data-bind="text: natureOfFacility"></td>
-                     <td data-bind="text: security.fb"></td>
-                     <td data-bind="text: security.nfb"></td>
+                     <td style="padding: 0px;">
+                        <table style="margin-bottom: 0px;">
+                           <tbody data-bind="foreach: security.fb">
+                              <tr>
+                                 <td data-bind="text: $data"></td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                     <td style="padding: 0px;">
+                        <table style="margin-bottom: 0px;">
+                           <tbody data-bind="foreach: security.nfb">
+                              <tr>
+                                 <td data-bind="text: $data"></td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
                      <td class="center" data-bind="text: (sanctionDate.fb() == '' || moment(sanctionDate.fb()).format('DD-MM-YYYY') == '01-01-1970' || sanctionDate.fb() == null ? '' : moment(sanctionDate.fb()).format('DD-MMM-YYYY'))    "></td>
                      <td class="center" data-bind="text:(sanctionDate.nfb() == '' || moment(sanctionDate.nfb()).format('DD-MM-YYYY') == '01-01-1970' || sanctionDate.nfb() == null? '' : moment(sanctionDate.nfb()).format('DD-MMM-YYYY'))  "></td>
                   </tr>

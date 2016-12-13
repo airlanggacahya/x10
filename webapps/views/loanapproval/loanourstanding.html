@@ -1,3 +1,11 @@
+<style type="text/css">
+   .first {
+      border-top: none !important;
+   }
+   .last {
+      border-bottom: none !important;
+   }
+</style>
 <div class="container-fluid">
 
    <div class="row">
@@ -33,19 +41,19 @@
                      <td class="center" data-bind="text: roi" style="text-align: right;"></td>
                      <td class="center" data-bind="text: natureOfFacility"></td>
                      <td style="padding: 0px;">
-                        <table style="margin-bottom: 0px;">
+                        <table class="table-bank-security" style="margin-bottom: 0px;">
                            <tbody data-bind="foreach: security.fb">
                               <tr>
-                                 <td data-bind="text: $data"></td>
+                                 <td data-bind="text: $data, css: checkTd($index)"></td>
                               </tr>
                            </tbody>
                         </table>
                      </td>
                      <td style="padding: 0px;">
-                        <table style="margin-bottom: 0px;">
+                        <table class="table-bank-security" style="margin-bottom: 0px;">
                            <tbody data-bind="foreach: security.nfb">
                               <tr>
-                                 <td data-bind="text: $data"></td>
+                                 <td data-bind="text: $data, css: checkTd($index)"></td>
                               </tr>
                            </tbody>
                         </table>

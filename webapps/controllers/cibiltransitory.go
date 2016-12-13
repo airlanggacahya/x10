@@ -85,8 +85,7 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 	k.Config.OutputType = knot.OutputJson
 
 	param := tk.M{}
-	xx := k.GetForms(&param)
-	tk.Println("--------------------", param, xx)
+	k.GetPayload(&param)
 
 	cn, _ := GetConnection()
 	defer cn.Close()

@@ -9,25 +9,32 @@ trans.RenderGrid = function(){
 	$("#transgrid").kendoGrid({
 		dataSource: new kendo.data.DataSource({
 	        transport: {
-	            read: {
-	               	url: "/cibiltransitory/getdatacibilpromotor",
-	               	dataType: "json",
-	               	type: "POST",
-	               	data: { 
-	               		searchkey: searchKey,
+	            read: function(o) {
+	            	ajaxPost("/cibiltransitory/getdatacibilpromotor", { 
+               			searchkey: searchKey,
 	               		additional: function(){
 	               			if(searchKey != ""){
-		               			var foundCust = _.uniq(_.map(_.filter(filter().CustomerSearchAll(), function(cust){
-									return cust.customer_name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1
-								}), function(cust){
-		               				return cust.customer_id
-								}));
+		               			var foundCust = _.uniq(
+		               				_.map(
+		               					_.filter(filter().CustomerSearchAll(), function(cust){
+		               						return cust.customer_name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1
+		               					}), function(cust){
+		               						return cust.customer_id
+		               					})
+		               				);
+		               			console.log(JSON.stringify(foundCust));
 								return JSON.stringify(foundCust)
 		               		} else {
 		               			return -1
 		               		}
-	               		}()
-	               	}
+	               		}(),
+	               		page: o.data.page,
+	               		pageSize: o.data.pageSize,
+	               		skip: o.data.skip,
+	               		take: o.data.take
+	               	}, function(res){
+	               		o.success(res);
+	               	})
 	            }
 	        },
 	        schema: {

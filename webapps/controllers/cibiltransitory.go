@@ -85,7 +85,7 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 	k.Config.OutputType = knot.OutputJson
 
 	param := tk.M{}
-	k.GetForms(&param)
+	k.GetPayload(&param)
 
 	cn, _ := GetConnection()
 	defer cn.Close()
@@ -107,8 +107,8 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 
 		additionals := strings.Split(reg.ReplaceAllString(param.GetString("additional"), ""), ",")
 		for _, additional := range additionals {
-			a, _ := strconv.Atoi(additional)
-			if a != -1 {
+			a, e := strconv.Atoi(additional)
+			if a != -1 && e == nil {
 				keys = append(keys, dbox.Eq("ConsumerInfo.CustomerId", a))
 			}
 		}
@@ -133,8 +133,10 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 	if err != nil {
 		res.SetError(err)
 	}
+	res.SetData(cibilIndividual)
 
 	cursor, e := cn.NewQuery().
+		Where(dbox.And(query...)).
 		From("CibilReportPromotorFinal").
 		Cursor(nil)
 	defer cursor.Close()
@@ -142,8 +144,6 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 	if e != nil {
 		res.SetError(e)
 	}
-
-	res.SetData(cibilIndividual)
 
 	return struct {
 		Res   interface{}

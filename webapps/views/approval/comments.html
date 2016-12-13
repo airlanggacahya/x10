@@ -11,6 +11,9 @@
 	.btn-space {
 	    margin-right: 5px;
 	}
+	.finance{
+		text-align: left;
+	}
 </style>
 <div id="content4" data-bind="with:apcom" class="content-container">
 
@@ -108,7 +111,7 @@
               	<table>
               		<tbody data-bind="foreach: loanapproval.commentfinance">
               			<tr>
-              				<td data-bind="text: (loanapproval.commentfinance()[$index()] != '' ? loanapproval.commentfinance()[$index()] : '&nbsp;')"></td>
+              				<td class="finance" data-bind="text: (loanapproval.commentfinance()[$index()] != '' ? loanapproval.commentfinance()[$index()] : '&nbsp;')"></td>
               			</tr>
               		</tbody>
               	</table>

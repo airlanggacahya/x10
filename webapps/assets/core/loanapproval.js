@@ -675,14 +675,17 @@ var outstanding = function(param){
             }else{
                 var temp2 = [];
             }
-            attr.topTable().push({
-                bankName: ko.observable(account.BankName),
-                amount: new base(account.FundBased.SancLimit, account.NonFundBased.SancLimit),
-                roi: ko.observable(account.FundBased.ROI),
-                natureOfFacility: ko.observable(account.NonFundBased.NatureOfFacility),
-                security: new basearr(temp1, temp2),
-                sanctionDate: new base(account.FundBased.SanctionDate, account.NonFundBased.SanctionDate)
-            })
+
+            setTimeout(function(){
+                attr.topTable().push({
+                    bankName: ko.observable(account.BankName),
+                    amount: new base(account.FundBased.SancLimit, account.NonFundBased.SancLimit),
+                    roi: ko.observable(account.FundBased.ROI),
+                    natureOfFacility: ko.observable(account.NonFundBased.NatureOfFacility),
+                    security: new basearr(temp1, temp2),
+                    sanctionDate: new base(account.FundBased.SanctionDate, account.NonFundBased.SanctionDate)
+                })
+            }, 200)
 
         })
     }

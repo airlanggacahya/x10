@@ -6,6 +6,9 @@
     .summary{
         padding-left : 10px;
     }
+    .finance{
+        text-align: left;
+    }
 </style>
 
 <script type="text/html" id="topcust-product-template">
@@ -55,7 +58,7 @@
                             <table>
                                 <tbody data-bind="foreach: loanapproval.commentfinance">
                                     <tr>
-                                        <td class="center" data-bind="text: loanapproval.commentfinance()[$index()]"></td>
+                                        <td class="finance" data-bind="text: loanapproval.commentfinance()[$index()]"></td>
                                     </tr>
                                 </tbody>
                             </table>

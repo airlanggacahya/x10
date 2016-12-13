@@ -640,31 +640,54 @@ var outstanding = function(param){
     var base = function(a, b) { return { fb: ko.observable(a), nfb: ko.observable(b) } };
     var basearr = function(a, b) { return { fb: ko.observableArray(a), nfb: ko.observableArray(b) } };
 
-    _.each( _.filter(param.BA,function(x){ return !(x.DataBank[0].BankAccount.FacilityType.indexOf("Current") > -1 && x.DataBank[0].BankAccount.FacilityType.length == 1)  })  , function(ba){
-        var account = ba.DataBank[0].BankAccount;
-        console.log(account)
-        if ( account.FacilityType.indexOf("Non-Fund Based") == -1){
-            account.NonFundBased.NatureOfFacility = "";
-            account.NonFundBased.SanctionDate =  "";
-            account.NonFundBased.SancLimit = "";
-            account.NonFundBased.SecurityOfFB = "";
-        }
+    var res =  _.filter(param.BA,function(x){ return !(x.DataBank[0].BankAccount.FacilityType.indexOf("Current") > -1 && x.DataBank[0].BankAccount.FacilityType.length == 1)  })
 
-         if (account.FacilityType.indexOf("Fund Based") == -1){
-            account.FundBased.SancLimit = "";
-            account.FundBased.SecurityOfFB = "";
-            account.FundBased.SanctionDate =  null;
-        }
+    if(res != undefined){
+        _.each( res , function(ba){
 
-        attr.topTable().push({
-            bankName: ko.observable(account.BankName),
-            amount: new base(account.FundBased.SancLimit, account.NonFundBased.SancLimit),
-            roi: ko.observable(account.FundBased.ROI),
-            natureOfFacility: ko.observable(account.NonFundBased.NatureOfFacility),
-            security: new basearr(account.FundBased.SecurityOfFB, account.NonFundBased.SecurityOfNFB),
-            sanctionDate: new base(account.FundBased.SanctionDate, account.NonFundBased.SanctionDate)
+            var account = ba.DataBank[0].BankAccount;
+            if ( account.FacilityType.indexOf("Non-Fund Based") == -1){
+                account.NonFundBased.NatureOfFacility = "";
+                account.NonFundBased.SanctionDate =  "";
+                account.NonFundBased.SancLimit = "";
+                account.NonFundBased.SecurityOfFB = "";
+            }
+
+             if (account.FacilityType.indexOf("Fund Based") == -1){
+                account.FundBased.SancLimit = "";
+                account.FundBased.SecurityOfFB = "";
+                account.FundBased.SanctionDate =  "";
+            }
+
+            if(typeof account.FundBased.SecurityOfFB == "object"){
+                var temp1 = account.FundBased.SecurityOfFB;
+            }else{
+                var temp1 = [];
+            }
+
+            if(account.NonFundBased.SecurityOfNFB != undefined){
+                if(typeof account.NonFundBased.SecurityOfNFB == "object"){
+                    var temp2 = account.NonFundBased.SecurityOfNFB;
+                }else{
+                    var temp2 = [];
+                }
+                
+            }else{
+                var temp2 = [];
+            }
+            attr.topTable().push({
+                bankName: ko.observable(account.BankName),
+                amount: new base(account.FundBased.SancLimit, account.NonFundBased.SancLimit),
+                roi: ko.observable(account.FundBased.ROI),
+                natureOfFacility: ko.observable(account.NonFundBased.NatureOfFacility),
+                security: new basearr(temp1, temp2),
+                sanctionDate: new base(account.FundBased.SanctionDate, account.NonFundBased.SanctionDate)
+            })
+
         })
-    })
+    }
+
+    
 
     _.each(param.RTR, function(rtr){
         if(rtr.LoanStatus == "Live")

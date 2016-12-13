@@ -6,6 +6,9 @@
    .last {
       border-bottom: none !important;
    }
+   .noborder {
+      border: none !important;
+   }
    .table-bank-security > tbody > tr > td {
       border-right: none;
       border-left : none;
@@ -58,7 +61,7 @@
                         <table class="table-bank-security" style="margin-bottom: 0px;">
                            <tbody data-bind="foreach: security.nfb">
                               <tr>
-                                 <td data-bind="text: $data, css: checkTd($index)"></td>
+                                 <td data-bind="text: $data, css: checkTd($index, $data)"></td>
                               </tr>
                            </tbody>
                         </table>

@@ -1438,7 +1438,10 @@ due.getCostumerData = function(){
 	});
 }
 
-var checkTd = function(index){
-    console.log(index())
-    return (index() === 0)? "first":"last"
+var checkTd = function(index, data){
+    if(data === "") {
+        return "noborder"
+    } else {
+        return (index() === 0)? "first":"last"
+    }
 }

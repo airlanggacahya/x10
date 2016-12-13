@@ -22,7 +22,6 @@ trans.RenderGrid = function(){
 		               						return cust.customer_id
 		               					})
 		               				);
-		               			console.log(JSON.stringify(foundCust));
 								return JSON.stringify(foundCust)
 		               		} else {
 		               			return -1

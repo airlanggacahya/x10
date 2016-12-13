@@ -99,6 +99,7 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 		keys := []*dbox.Filter{}
 		keys = append(keys, dbox.Contains("FileName", key))
 		keys = append(keys, dbox.Contains("ConsumerInfo.ConsumerName", key))
+		keys = append(keys, dbox.Contains("ConsumerInfo.DealNo", key))
 
 		reg, err := regexp.Compile(`\[|\]`)
 		if err != nil {

@@ -11,6 +11,9 @@
 	#gridKeyRatios .k-grid-header-wrap{
 		margin-bottom: -6px;
 	}
+	.finance{
+		text-align: left;
+	}
 </style>
 <!-- BankingandOsSnapshot -->
 	<script id="rowTemplateTop" type="text/x-kendo-tmpl">
@@ -1742,7 +1745,7 @@
 					                        	<table>
 					                        		<tbody data-bind="foreach: loanapproval.commentfinance">
 					                        			<tr>
-					                        				<td class="center" data-bind="text: loanapproval.commentfinance()[$index()]"></td>
+					                        				<td class="finance" data-bind="text: loanapproval.commentfinance()[$index()]"></td>
 					                        			</tr>
 					                        		</tbody>
 					                        	</table>

@@ -1437,3 +1437,8 @@ due.getCostumerData = function(){
 		// due.isLoading(false);
 	});
 }
+
+var checkTd = function(index){
+    console.log(index())
+    return (index() === 0)? "first":"last"
+}

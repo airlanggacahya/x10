@@ -16,29 +16,29 @@ import (
 )
 
 type BankAllSummary struct {
-	BSMonthlyCredits                         float64 // Banking Snapshot
-	BSMonthlyDebits                          float64
-	BSNoOfCredits                            float64
-	BSNoOfDebits                             float64
-	BSOWChequeReturns                        float64
-	BSIWChequeReturns                        float64
-	BSImpMargin                              float64
-	BSIMarginPercent                         float64
-	BSOWReturnPercent                        float64
-	BSIWReturnPercent                        float64
-	BSDRCRRatio                              float64
-	ODSactionLimit                           float64 // OD Details
-	ODUtilizationPercent                     float64
-	ODAvgUtilization                         float64
-	ODInterestPaid                           float64
-	AMLAvgCredits                            float64
-	AMLAvgDebits                             float64
-	ABB                                      float64
-	BankingToTurnoverRatio                   float64
-	InwardBounces                            float64
-	SactionLimit                             float64
-	ODCCUtilizationABBvsProposedEMI          float64
-	ODCCUtilizationABBvsProposedEMIIsCurrent bool
+	BSMonthlyCredits                         float64 `bson:"BSMonthlyCredits"` // Banking Snapshot
+	BSMonthlyDebits                          float64 `bson:"BSMonthlyDebits"`
+	BSNoOfCredits                            float64 `bson:"BSNoOfCredits"`
+	BSNoOfDebits                             float64 `bson:"BSNoOfDebits"`
+	BSOWChequeReturns                        float64 `bson:"BSOWChequeReturns"`
+	BSIWChequeReturns                        float64 `bson:"BSIWChequeReturns"`
+	BSImpMargin                              float64 `bson:"BSImpMargin"`
+	BSIMarginPercent                         float64 `bson:"BSIMarginPercent"`
+	BSOWReturnPercent                        float64 `bson:"BSOWReturnPercent"`
+	BSIWReturnPercent                        float64 `bson:"BSIWReturnPercent"`
+	BSDRCRRatio                              float64 `bson:"BSDRCRRatio"`
+	ODSactionLimit                           float64 `bson:"ODSactionLimit"` // OD Details
+	ODUtilizationPercent                     float64 `bson:"ODUtilizationPercent"`
+	ODAvgUtilization                         float64 `bson:"ODAvgUtilization"`
+	ODInterestPaid                           float64 `bson:"ODInterestPaid"`
+	AMLAvgCredits                            float64 `bson:"AMLAvgCredits"`
+	AMLAvgDebits                             float64 `bson:"AMLAvgDebits"`
+	ABB                                      float64 `bson:"ABB"`
+	BankingToTurnoverRatio                   float64 `bson:"BankingToTurnoverRatio"`
+	InwardBounces                            float64 `bson:"InwardBounces"`
+	SactionLimit                             float64 `bson:"SactionLimit"`
+	ODCCUtilizationABBvsProposedEMI          float64 `bson:"ODCCUtilizationABBvsProposedEMI"`
+	ODCCUtilizationABBvsProposedEMIIsCurrent bool    `bson:"ODCCUtilizationABBvsProposedEMIIsCurrent"`
 }
 
 type BankAccount struct {
@@ -132,15 +132,16 @@ type BankAnalysis struct {
 }
 
 type BankAnalysisV2 struct {
-	Id            bson.ObjectId `bson:"_id" , json:"_id" `
-	CustomerId    int           `bson:"CustomerId"`
-	DealNo        string        `bson:"DealNo"`
-	IsConfirmed   bool          `bson:"IsConfirmed"`
-	DateConfirmed time.Time     `bson:"DateConfirmed,omitempty"`
-	DataBank      []DataBankV2  `bson:"DataBank"`
-	IsFreeze      bool          `bson:"IsFreeze"`
-	DateFreeze    time.Time     `bson:"DateFreeze"`
-	Status        int           `bson: "Status"`
+	Id            bson.ObjectId  `bson:"_id" , json:"_id" `
+	CustomerId    int            `bson:"CustomerId"`
+	DealNo        string         `bson:"DealNo"`
+	IsConfirmed   bool           `bson:"IsConfirmed"`
+	DateConfirmed time.Time      `bson:"DateConfirmed,omitempty"`
+	DataBank      []DataBankV2   `bson:"DataBank"`
+	BankSummary   BankAllSummary `bson:"BankSummary", json: "BankSummary"`
+	IsFreeze      bool           `bson:"IsFreeze"`
+	DateFreeze    time.Time      `bson:"DateFreeze"`
+	Status        int            `bson: "Status"`
 }
 
 type DataBank struct {
@@ -279,11 +280,11 @@ func (b *BankAnalysis) GetDataV2Confirmed(CustomerId int, DealNo string) ([]Bank
 	return res, ressum, nil
 }
 
-func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*BankAllSummary, error) {
+func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*BankAllSummary, bool, error) {
 	custid, _ := strconv.ParseInt(CustomerId, 10, 64)
 	res, ressum, err := new(BankAnalysis).GetDataV2(int(custid), DealNo)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	BSMonthlyCredits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
@@ -388,6 +389,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 
 		return 0
 	}).Exec().Result.Sum
+
 	ODUtilizationPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
 		return x.(Summary).Utilization
 	}).Exec().Result.Avg
@@ -522,23 +524,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	})()
 
 	bank := new(BankAllSummary)
-	// bank.BSMonthlyCredits = BSMonthlyCredits
-	// bank.BSMonthlyDebits = BSMonthlyDebits
-	// bank.BSNoOfCredits = BSNoOfCredits
-	// bank.BSNoOfDebits = BSNoOfDebits
-	// bank.BSOWChequeReturns = BSOWChequeReturns
-	// bank.BSIWChequeReturns = BSIWChequeReturns
-	// bank.BSImpMargin = BSImpMargin
-	// bank.BSOWReturnPercent = BSOWReturnPercent
-	// bank.BSIWReturnPercent = BSIWReturnPercent
-	// bank.BSDRCRRatio = BSDRCRRatio
-	// bank.ODSactionLimit = ODSactionLimit
-	// bank.ODUtilizationPercent = ODUtilizationPercent
-	// bank.ODAvgUtilization = ODAvgUtilization
-	// bank.ODInterestPaid = ODInterestPaid
-	// bank.AMLAvgCredits = AMLAvgCredits
-	// bank.AMLAvgDebits = AMLAvgDebits
-	// bank.ABB = ABB
+
 	bank.BSIMarginPercent = BSIMarginPercent
 
 	bank.BSMonthlyCredits = CheckNan(BSMonthlyCredits)
@@ -559,110 +545,51 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	bank.AMLAvgDebits = CheckNan(AMLAvgDebits)
 	bank.ABB = CheckNan(ABB)
 
-	tk.Println(bank)
-	/*bank.BankingToTurnoverRatio = (func() float64 {
-		totalCredit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
-			return x.(Summary).TotalCredit
-		}).Exec().Result.Sum
-		sumCreditByTotalCredit := toolkit.Div(totalCredit*12, float64(len(ressum)))
+	isUpdate := false
+	if (res[0].BankSummary.BSIMarginPercent != bank.BSIMarginPercent || res[0].BankSummary.BSImpMargin != bank.BSImpMargin) && res[0].IsConfirmed {
+		isUpdate = true
+	}
 
-		fm := NewFormulaModel()
-		fm.CustomerId = CustomerId
-		fm.DealNo = DealNo
-		fm.GetDataBalanceSheet()
-
-		sales := (func() float64 {
-			res := new(RatioFormula).
-				GetValue(fm, "balancesheet", "SALES", fm.GetLastAuditedYear())
-			value, _ := strconv.ParseFloat(toolkit.Sprintf("%v", res), 64)
-
-			return value
-		})()
-
-		otherIncome := (func() float64 {
-			res := new(RatioFormula).
-				GetValue(fm, "balancesheet", "OIBI", fm.GetLastAuditedYear())
-			value, _ := strconv.ParseFloat(toolkit.Sprintf("%v", res), 64)
-
-			return value
-		})()
-
-		return toolkit.Div(sumCreditByTotalCredit, sales+otherIncome) //* 100
-	})()
-
-	bank.InwardBounces = (func() float64 {
-		totalOwCheque := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
-			return x.(Summary).OwCheque
-		}).Exec().Result.Sum
-
-		totalNoOfDebit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
-			return x.(Summary).NoOfDebit
-		}).Exec().Result.Sum
-
-		totalNoOfCredit := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
-			return x.(Summary).NoOfCredit
-		}).Exec().Result.Sum
-
-		res := toolkit.Div(totalOwCheque, totalNoOfDebit)
-		if res != 0 {
-			res = toolkit.Div(totalOwCheque, totalNoOfCredit)
+	if !res[0].IsConfirmed {
+		err = b.SaveBankAllSummary(bank, CustomerId, DealNo)
+		if err != nil {
+			return nil, isUpdate, err
 		}
+	}
 
-		return res
-	})()
+	return bank, isUpdate, nil
+}
 
-	bank.SactionLimit = crowd.From(&res).Sum(func(x interface{}) interface{} {
-		account := x.(BankAnalysisV2).DataBank[0].BankAccount
-		return account.FundBased.SancLimit
-	}).Exec().Result.Sum
+func (b *BankAnalysis) SaveBankAllSummary(bank *BankAllSummary, CustomerId string, DealNo string) error {
+	cust, _ := strconv.Atoi(CustomerId)
 
-	bank.ODCCUtilizationABBvsProposedEMIIsCurrent = (func() bool {
-		totalCurrent := 0
-		for _, each := range res {
-			if each.DataBank[0].BankAccount.FundBased.AccountType == "Current" && containsArr(each.DataBank[0].BankAccount.FacilityType, "Current") {
-				totalCurrent++
-			}
+	res, _, em := new(BankAnalysis).GetDataV2(cust, DealNo)
+
+	if em != nil {
+		return em
+	}
+
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return em
+	}
+
+	qinsert := cMongo.NewQuery().
+		From("BankAnalysisV2").
+		SetConfig("multiexec", true).
+		Save()
+
+	for _, v := range res {
+		v.BankSummary = *bank
+		insdata := map[string]interface{}{"data": v}
+		em = qinsert.Exec(insdata)
+		if em != nil {
+			return em
 		}
+	}
 
-		return (totalCurrent == len(res))
-	})()
-
-	bank.ODCCUtilizationABBvsProposedEMI = (func() float64 {
-
-		if bank.ODCCUtilizationABBvsProposedEMIIsCurrent {
-			fm := new(FormulaModel)
-			fm.CustomerId = CustomerId
-			fm.DealNo = DealNo
-			fm.GetDataAccountDetails()
-
-			abb := crowd.From(&res).Avg(func(y interface{}) interface{} {
-				details := y.(BankAnalysisV2).DataBank[0].BankDetails
-
-				return crowd.From(&details).Avg(func(x interface{}) interface{} {
-					return x.(BankDetails).AvgBalon
-				}).Exec().Result.Avg
-			}).Exec().Result.Avg
-
-			multiplier := (float64(1) + toolkit.Div(fm.AccountDetails.LDProposedRateInterest, float64(100)))
-			left := fm.AccountDetails.LDRequestedLimitAmount * multiplier
-			emi := toolkit.Div(left, fm.AccountDetails.LDLimitTenor)
-			abbOfEmi := toolkit.Div(abb, emi)
-
-			return abbOfEmi
-		} else {
-			odValue := crowd.From(&res).Avg(func(y interface{}) interface{} {
-				details := y.(BankAnalysisV2).DataBank[0].BankDetails
-
-				return crowd.From(&details).Max(func(x interface{}) interface{} {
-					return toolkit.Div(x.(BankDetails).AvgBalon, x.(BankDetails).OdCcLimit)
-				}).Exec().Result.Max
-			}).Exec().Result.Avg
-
-			return odValue * 100
-		}
-	})()*/
-
-	return bank, nil
+	return em
 }
 
 func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo string) (*BankAllSummary, error) {

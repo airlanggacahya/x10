@@ -1718,6 +1718,28 @@
 					    <!-- /ko -->
 					</script>
 
+					<script type="text/html" id="expansion-comment-template">
+					    <!-- ko foreach: loanapproval.commentfinance -->
+					        <tr>
+					            <!-- ko if: $index() == 0-->
+					                <td class="col-sm-2 center text-bold"
+					                data-bind="attr: { rowspan: loanapproval.commentfinance().length }">
+					                    Expansion Plan</td>
+					                
+					                <td class="col-sm-4" 
+					                data-bind="attr: { rowspan: loanapproval.commentfinance().length }, 
+					                text:loanapproval.expansionplan"></td>
+					                
+					                <td class="col-sm-2 center text-bold"
+					                data-bind="attr: { rowspan: loanapproval.commentfinance().length }">
+					                    Comments On Financial</td>
+					            <!-- /ko -->
+					            
+					            <td class="col-sm-4 finance" data-bind="text: loanapproval.commentfinance()[$index()]"></td>
+					        </tr>
+					    <!-- /ko -->
+					</script>
+
 					<div class="container-fluid no-padding">
 					    <div class="row">
 					        <div class="col-sm-12">
@@ -1736,21 +1758,7 @@
 					    <div class="row">
 					        <div class="col-sm-12">
 					            <div class="k-grid">
-					                <table class="table-bordered">
-					                    <tr>
-					                        <td class="col-sm-2 center text-bold">Expansion Plan</td>
-					                        <td class="col-sm-4" data-bind="text:loanapproval.expansionplan"></td>
-					                        <td class="col-sm-2 center text-bold">Comments on Financial</td>
-					                        <td class="col-sm-4" style="padding:0px;">
-					                        	<table>
-					                        		<tbody data-bind="foreach: loanapproval.commentfinance">
-					                        			<tr>
-					                        				<td class="finance" data-bind="text: loanapproval.commentfinance()[$index()]"></td>
-					                        			</tr>
-					                        		</tbody>
-					                        	</table>
-					                        </td>
-					                    </tr>
+					                <table class="table-bordered" data-bind="template: { name: 'expansion-comment-template' }">
 					                </table>
 					            </div>
 					        </div>

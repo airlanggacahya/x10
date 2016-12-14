@@ -770,7 +770,7 @@ mincibil = ko.observable(0);
 						        			<div class="form-group" data-bind="visible: ($index() > 0)">
 						        				<!-- <input data-bind="value: DistributorName" type="text" class="input-sm form-control" placeholder="Enter value" style="float: left; width: 152px; margin-right: 5px;"> -->
 						        				<input class="vendor" data-bind="kendoDropDownList: { data: adf.optionLeadDistributors, value: DistributorName, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 152px;">
-							            		<button class="btn btn-sm btn-danger" style="float: right;" data-bind="click: adf.removeVendor($data)">
+							            		<button class="btn btn-sm btn-danger dlt" style="float: right;" data-bind="click: adf.removeVendor($data)">
 							            			<i class="fa fa-trash"></i>
 							            		</button>
 							            		<div class="clearfix"></div>

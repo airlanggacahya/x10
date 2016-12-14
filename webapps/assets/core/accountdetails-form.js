@@ -442,7 +442,7 @@ adf.setForm = function (data) {
 	var res = '';
 	$.each(adf.form.VendorDetails(), function(i, dex){
 		res = _.filter(adf.optionLeadDistributors(), function(item){
-			var data = dex.DistributorName();
+			var data = dex.DistributorName();	
 			return item.toLowerCase() == data.toLowerCase();
 		})
 
@@ -787,6 +787,7 @@ adf.getConfirm = function(){
 		for(var a = 0; a< adf.form.DistributorMix.Data().length; a++){
 			$("#del"+a).prop( "disabled", true );
 		}
+		$(".dlt").prop("disabled", "disabled");
 		sts = "Confirmed"
 		$("#onreset1").prop("disabled", true);
 		$("#onreset2").prop("disabled", true);
@@ -1850,6 +1851,7 @@ adf.reloadStatus = function(status){
 			}
 			$("#req").prop("disabled", "disabled")
 			$("#mincibil").prop("disabled", "disabled")
+			$(".dlt").prop("disabled", "disabled");
 		},500);
 		for(var a = 0; a< adf.form.DistributorMix.Data().length; a++){
 			$("#del"+a).prop( "disabled", true );

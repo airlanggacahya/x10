@@ -345,7 +345,7 @@ r.save = function (nomsg) {
         }
         if(nomsg != true)
         swal("Success!", "Changes saved!", "success");
-      
+
       r.refresh()
     });
 }
@@ -413,8 +413,7 @@ r.saveNewData = function (e) {
 
   }
 
-
-
+  setTimeout(function(){  
     app.ajaxPost("/duediligence/addmasterduediligence", info, function (res) {
         if (res.Message != '') {
             sweetAlert("Oops...", res.Message, "error");
@@ -425,6 +424,7 @@ r.saveNewData = function (e) {
       r.refresh()
       $('.modal-add-new').modal('hide')
     });
+   },500);
 };
 
 r.edit = function (o, id) {

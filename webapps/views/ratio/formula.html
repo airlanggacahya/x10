@@ -12,7 +12,7 @@ model.Edit= ko.observable('{{.Edit}}')
 model.User= ko.observable('{{.Username}}');
 </script>
 
-<script src="/static/core/ratio-formula.js"></script>
+<script>document.write('<script src="/static/core/ratio-formula.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 <style>
 	.k-grid {

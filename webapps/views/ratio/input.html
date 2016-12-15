@@ -14,7 +14,7 @@ model.Rolename= ko.observable('{{.Rolename}}')
 model.Fullname = ko.observable('{{.Fullname}}');
 </script>
 
-<script src="/static/core/ratio-input.js"></script>
+<script>document.write('<script src="/static/core/ratio-input.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 <style>
 	.button-font {

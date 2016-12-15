@@ -54,7 +54,7 @@ model.User= ko.observable('{{.Username}}');
 
 </style>
 
-<script src="/static/core/cibil.js"></script>
+<script>document.write('<script src="/static/core/cibil.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 {{template "filter.html"}}
 <div data-bind="with: cibil" >
 	<div class="col-md-12 col-sm-12 ez panel-content" data-bind="visible:(cibil.entry() == false)">

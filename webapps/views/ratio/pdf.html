@@ -156,7 +156,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
   }
 </style>
 
-<script src="/static/core/ratio-pdf.js"></script>
+<script>document.write('<script src="/static/core/ratio-pdf.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 {{template "filter.html"}}
 

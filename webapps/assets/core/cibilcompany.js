@@ -16,7 +16,10 @@ cc.templateDetailReportSummary = {
 
 cc.templateCreditTypeSummary = {
 	NoCreditFacilitiesBorrower: '',
+	CreditType: '',
+	CurrencyCode: '',
 	Standard: '',
+	Substandard: '',
 	Doubtful: '',
 	Loss: '',
 	SpecialMention: '',
@@ -171,16 +174,42 @@ cc.RenderGrid = function(){
 	});
 }
 
-cc.removeCreditTypeSummary = function(){
+cc.removeCreditTypeSummary = function(index){
+	return function(){
+		var credit = cc.form.CreditTypeSummary().filter(function(d,i){
+			return i !== index
+		})
 
+		cc.form.CreditTypeSummary(credit)
+	}
 }
 
-cc.removeCreditTypeSummary = function(){
+cc.removeDetailReportSummary = function(index){
+	return function(){
+		var details = cc.form.DetailReportSummary().filter(function(d,i){
+			return i !== index
+		})
 
+		cc.form.DetailReportSummary(details)
+	}
+}
+
+cc.addDetailReportSummary = function(){
+	cc.form.DetailReportSummary.push(cc.templateDetailReportSummary)
 }
 
 cc.addCreditTypeSummary = function(){
+	cc.form.CreditTypeSummary.push(cc.templateCreditTypeSummary)
+}
 
+cc.saveReport = function(){
+	var param = ko.mapping.toJS(cc.form);
+	ajaxPost("/cibilcompany/update", param, function(res){
+		if(res.success == true){
+			cc.edit(false);
+			swal("Success", "Data Save Successfully","success")
+		}
+	})
 }
 
 cc.backToMain = function(){
@@ -188,23 +217,32 @@ cc.backToMain = function(){
 }
 
 cc.getEdit = function(e){
-	cc.edit(true);
 	var data = $("#transgrid").data("kendoGrid").dataSource.data();
 	var res = _.filter(data, function(dt){
 		return dt.Id == e
 	})
 
 	if(res != undefined){
-		var param = {CustomerId :res[0].ConsumersInfos.CustomerId.toString(), DealNo: res[0].ConsumersInfos.DealNo.toString()}
+		var param = {CustomerId :res[0].ConsumersInfos.CustomerId, DealNo: res[0].ConsumersInfos.DealNo.toString()}
 		ajaxPost("/cibilcompany/getdata", param, function(res){
 			var data = res.data
 			if(data != null && res.success == true){
+				cc.edit(true);
 				cc.setForm(data)
+			}else{
+				swal("Error", "Data not found", "error")
 			}
 		})
 	}
 
 }
+
+function FilterInput(event) {
+  var keyCode = ('which' in event) ? event.which : event.keyCode;
+
+  isNotWanted = (keyCode == 69 || keyCode == 101);
+  return !isNotWanted;
+};
 
 cc.setForm = function(data){
 	ko.mapping.fromJS(data, cc.form)

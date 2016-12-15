@@ -98,11 +98,11 @@
     </div>
   </div>
   <div class="col-md-12" data-bind="visible: !(edit() != true)">
-    <ul class="entryEditCompany active" data-collapsible="accordion" style="margin-left: -41px;" data-bind="with:form">
+    <ul class="entryEditCompany active" data-collapsible="accordion" style="margin-left: -41px;margin-top: 58px;">
       <li>
         <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Please enter following details for the Borrower<i class="fa fa-chevron-down pull-right"></i></div>
         <div class="collapsible-body no-margin no-padding">
-          <div class="row">
+          <div class="row" data-bind="with:form">
             <div class="col-md-12 cibilgridfixed">
               <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
                 <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry1">
@@ -129,7 +129,7 @@
                   </tbody>
                 </table>
 
-                <table class="k-grid table-bordered" style="margin-bottom: 0px;" id="tblCibilReportSumarry2">
+                <table class="k-grid table-bordered" style="margin-bottom: 0px;width: 100%;" id="tblCibilReportSumarry2">
                   <thead>
                     <tr>
                       <th class="sub-bgcolor text-center" style="min-width: 94px;">Credit Facilities</th>
@@ -239,7 +239,7 @@
                 <button class="btn btn-sm btn-primary" onclick="saveCibilReport('save')">
                   <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;
                 Save Draft</button>&nbsp;&nbsp;
-                <button class="btn btn-sm btn-warning" onclick="backToMain();">
+                <button class="btn btn-sm btn-warning" onclick="cc.backToMain();">
                 <span class="glyphicon glyphicon-share-alt"></span>&nbsp;
                  Cancel</button>
               </div>

@@ -46,7 +46,7 @@ cc.templateReportSummary = {
 cc.templateForm = {
 	ReportSummary: cc.templateReportSummary,
 	EnquirySummary: cc.templateEnquirySummary,
-	DetailReportSummary:[],
+	DetailReportSummary:[],	
 	CreditTypeSummary: [],
 }
 
@@ -195,9 +195,25 @@ cc.getEdit = function(e){
 	})
 
 	if(res != undefined){
-		console.log(res)
+		var param = {CustomerId :res[0].ConsumersInfos.CustomerId.toString(), DealNo: res[0].ConsumersInfos.DealNo.toString()}
+		ajaxPost("/cibilcompany/getdata", param, function(res){
+			var data = res.data
+			if(data != null && res.success == true){
+				cc.setForm(data)
+			}
+		})
 	}
 
+}
+
+cc.setForm = function(data){
+	ko.mapping.fromJS(data, cc.form)
+	var FirstopenDate = (cc.form.ReportSummary.FirstCreditFacilityOpenDate()).replace(/\s/g, '');
+	var LatestopenDate = (cc.form.ReportSummary.LatestCreditFacilityOpenDate()).replace(/\s/g, '');
+	var MostRecentDate = (cc.form.EnquirySummary.MostRecentDate()).replace(/\s/g, '');
+	cc.form.ReportSummary.FirstCreditFacilityOpenDate(FirstopenDate);
+	cc.form.ReportSummary.LatestCreditFacilityOpenDate(LatestopenDate);
+	cc.form.EnquirySummary.MostRecentDate(MostRecentDate);
 }
 
 function GetCustomer(){
@@ -213,8 +229,8 @@ $(document).ready(function(){
 	GetCustomer();
 
 	$('.entryEditCompany').collapsible({
-    accordion : true
-  });
+	    accordion : true
+	 });
 
 	$("#filter").keydown(function(){
 		setTimeout(function(){

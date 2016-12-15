@@ -376,7 +376,7 @@ r.showFormAdd = function () {
 	setTimeout(function(){
 		$("#aliasinp").keydown(function(e){
 			var charCode = (e.which) ? e.which : e.keyCode;
-		    if (!(charCode > 31 && (charCode < 48 || charCode > 57 ))  && charCode  != 8 || [189,187,219,220,221,222,186,188,191,190].indexOf(charCode) > -1) {
+		    if (!(charCode > 31 && (charCode < 48 || charCode > 57 ))  && charCode  != 8 || [189,187,219,220,221,222,186,188,191,190,32].indexOf(charCode) > -1) {
 		        return false;
 		    }
 		    return true;

@@ -1402,7 +1402,7 @@ r.confirm = function () {
             } else {
                 if(r.confirmLabel() == "Re-Enter"){
                     swal("Please Edit / Enter Data", "", "success");
-                    r.refresh(r.savereenter);
+                    r.refresh();
                 }else{
                     swal("Successfully Confirmed", "", "success");
                     r.refresh()

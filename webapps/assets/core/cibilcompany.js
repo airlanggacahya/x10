@@ -1,10 +1,58 @@
 var cc = {}
 
+cc.edit = ko.observable(false)
 cc.AllData = ko.observableArray([]);
 cc.CurrentData = ko.observable(null);
 
+cc.templateDetailReportSummary = {
+	CreditFacilities: '',
+	CurrentBalanceOtherThanStandard: '',
+	CurrentBalanceStandard: '',
+	NoOfLawSuits: '',
+	NoOfOtherThanStandard: '',
+	NoOfStandard:'',
+	NoOfWilfulDefaults: '',
+}
+
+cc.templateCreditTypeSummary = {
+	NoCreditFacilitiesBorrower: '',
+	Standard: '',
+	Doubtful: '',
+	Loss: '',
+	SpecialMention: '',
+	TotalCurrentBalance: '',
+}
+
+cc.templateEnquirySummary = {
+	Enquiries3Month: '',
+	Enquiries6Month: '',
+	Enquiries9Month: '',
+	Enquiries12Month: '',
+	Enquiries24Month: '',
+	EnquiriesThan24Month: '',
+	TotalEnquiries: '',
+	MostRecentDate: '',
+}
+
+cc.templateReportSummary = {
+	Grantors: '',
+	Facilities: '',
+	CreditFacilities: '',
+	FacilitiesGuaranteed: '',
+	LatestCreditFacilityOpenDate: '',
+	FirstCreditFacilityOpenDate: '',	
+}
+
+cc.templateForm = {
+	ReportSummary: cc.templateReportSummary,
+	EnquirySummary: cc.templateEnquirySummary,
+	DetailReportSummary:[],
+	CreditTypeSummary: [],
+}
+
+cc.form = ko.mapping.fromJS(cc.templateForm);
+
 cc.RenderGrid = function(){
-	alert("masuk")
 	var searchKey = $("#filter").val().toLowerCase();
 
 	$("#transgrid").html("");
@@ -115,12 +163,41 @@ cc.RenderGrid = function(){
 			width : 100
 		}, {
 		 	template : function(x){
-		 		return "<button class='btn btn-xs btn-primary tooltipster' onclick='cc.showProm(\""+ x.Id + "\")'><i class='fa fa-edit'></i></button>"
+		 		return "<button class='btn btn-xs btn-primary tooltipster' onclick='cc.getEdit(\""+ x.Id + "\")'><i class='fa fa-edit'></i></button>"
 		 	},
 		 	width : 50,
 		 	     headerAttributes: { class: 'k-header header-bgcolor' },
 		}]
 	});
+}
+
+cc.removeCreditTypeSummary = function(){
+
+}
+
+cc.removeCreditTypeSummary = function(){
+
+}
+
+cc.addCreditTypeSummary = function(){
+
+}
+
+cc.backToMain = function(){
+	cc.edit(false);
+}
+
+cc.getEdit = function(e){
+	cc.edit(true);
+	var data = $("#transgrid").data("kendoGrid").dataSource.data();
+	var res = _.filter(data, function(dt){
+		return dt.Id == e
+	})
+
+	if(res != undefined){
+		console.log(res)
+	}
+
 }
 
 function GetCustomer(){
@@ -134,6 +211,10 @@ function GetCustomer(){
 $(document).ready(function(){
 
 	GetCustomer();
+
+	$('.entryEditCompany').collapsible({
+    accordion : true
+  });
 
 	$("#filter").keydown(function(){
 		setTimeout(function(){

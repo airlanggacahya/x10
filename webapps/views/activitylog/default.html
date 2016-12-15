@@ -12,8 +12,8 @@ model.Process= ko.observable('{{.Process}}');
 model.Edit= ko.observable('{{.Edit}}');
 model.User= ko.observable('{{.Username}}');
 </script>
-<script src="/static/core/activity-logs.js"></script>
-<script src="/static/core/authentication.js"></script>
+<script>document.write('<script src="/static/core/activity-logs.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+<script>document.write('<script src="/static/core/authentication.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 <style type="text/css">
   .modal-backdrop
   {

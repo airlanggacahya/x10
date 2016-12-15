@@ -14,7 +14,7 @@ model.User= ko.observable('{{.Username}}');
 model.Fullname= ko.observable('{{.Fullname}}');
 </script>
 
-<script src="/static/core/rating-input.js"></script>
+<script>document.write('<script src="/static/core/rating-input.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 <style>
 	.k-grid {

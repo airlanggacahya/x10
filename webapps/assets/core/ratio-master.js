@@ -351,7 +351,7 @@ r.save = function (nomsg) {
             return;
         }
 
-        if(nomsg)
+        if(nomsg != true)
         swal("Success!", "Changes saved!", "success");
 
     	r.refresh()
@@ -376,7 +376,7 @@ r.showFormAdd = function () {
 	setTimeout(function(){
 		$("#aliasinp").keydown(function(e){
 			var charCode = (e.which) ? e.which : e.keyCode;
-		    if (!(charCode > 31 && (charCode < 48 || charCode > 57 ))  && charCode  != 8 || [189,187,219,220,221,222,186,188,191,190].indexOf(charCode) > -1) {
+		    if (!(charCode > 31 && (charCode < 48 || charCode > 57 ))  && charCode  != 8 || [189,187,219,220,221,222,186,188,191,190,32].indexOf(charCode) > -1) {
 		        return false;
 		    }
 		    return true;
@@ -413,30 +413,35 @@ r.saveNewData = function (e) {
 			info.Order = _.maxBy(r.data(), 'Order').Order + 1
 		}
 
-		r.data().forEach(function(x){
-			if(x.Section != info.Section && x.Order >= info.Order){
-				x.Order +=1
+		var listorder = [];
+		listorder.push(info.Order)
+
+		r.data().forEach(function(x,i){
+			var currorder = x.Order;
+			if(listorder.indexOf(currorder) > -1){
+				x.Order = _.max(listorder) + 1
 			}
+			listorder.push(x.Order);
 		});
 
 		//r.render();
-		//r.save(true);
+		r.save(true);
 	}
 
-	
+	setTimeout(function(){	
+		info.Alias = info.Alias.toUpperCase();
 
-	info.Alias = info.Alias.toUpperCase();
+	    app.ajaxPost("/ratio/addmasterbalancesheetinput", info, function (res) {
+	        if (res.Message != '') {
+	            sweetAlert("Oops...", res.Message, "error");
+	            return;
+	        }
 
-    app.ajaxPost("/ratio/addmasterbalancesheetinput", info, function (res) {
-        if (res.Message != '') {
-            sweetAlert("Oops...", res.Message, "error");
-            return;
-        }
-
-        swal("Success!", "New item saved!", "success");
-    	r.refresh()
-    	$('.modal-add-new').modal('hide')
-    });
+	        swal("Success!", "New item saved!", "success");
+	    	r.refresh()
+	    	$('.modal-add-new').modal('hide')
+	    });
+    },500);
 };
 
 r.edit = function (o, id) {

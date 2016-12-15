@@ -14,7 +14,7 @@ model.Rolename= ko.observable('{{.Rolename}}')
 model.Fullname = ko.observable('{{.Fullname}}');
 // $('#btnconfirm').hide()
 </script>
-<script src="/static/core/rtr.js"></script>
+<script>document.write('<script src="/static/core/rtr.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 {{template "filter.html"}}
 <div>

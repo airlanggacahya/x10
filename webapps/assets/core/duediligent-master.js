@@ -334,7 +334,7 @@ r.getMasterBalanceSheetInput = function (callback) {
     });
 };
 
-r.save = function () {
+r.save = function (nomsg) {
   r.writeDownLoading()
 
   var param = { data: r.data() }
@@ -343,8 +343,9 @@ r.save = function () {
             sweetAlert("Oops...", res.Message, "error");
             return;
         }
-
+        if(nomsg != true)
         swal("Success!", "Changes saved!", "success");
+
       r.refresh()
     });
 }
@@ -396,19 +397,23 @@ r.saveNewData = function (e) {
       info.Order = 1
     }
 
-    r.data().forEach(function(x){
-    if(x.Section != info.Section && x.Order >= info.Order){
-        x.Order +=1
+   var listorder = [];
+    listorder.push(info.Order)
+
+    r.data().forEach(function(x,i){
+      var currorder = x.Order;
+      if(listorder.indexOf(currorder) > -1){
+        x.Order = _.max(listorder) + 1
       }
+      listorder.push(x.Order);
     });
 
     //r.render();
-    //r.save(true);
+    r.save(true);
 
   }
 
-
-
+  setTimeout(function(){  
     app.ajaxPost("/duediligence/addmasterduediligence", info, function (res) {
         if (res.Message != '') {
             sweetAlert("Oops...", res.Message, "error");
@@ -419,6 +424,7 @@ r.saveNewData = function (e) {
       r.refresh()
       $('.modal-add-new').modal('hide')
     });
+   },500);
 };
 
 r.edit = function (o, id) {

@@ -133,7 +133,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
     text-align: center;
   }
 </style>
-<script src="/static/core/cibilnew.js"></script>
+<script>document.write('<script src="/static/core/cibilnew.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 <!-- <div class="spacer"></div> -->
 {{template "filter.html"}}

@@ -301,6 +301,8 @@ loanApproval.reset = function(){
     loanApproval.outstandingData("")
 }
 
+
+securityBank = ko.observableArray()
 due.getForm = function(){
     due.form.Background([]);
     due.form.Verification([]);
@@ -671,12 +673,21 @@ var outstanding = function(param){
                 }else{
                     var temp2 = [];
                 }
-                
+
             }else{
                 var temp2 = [];
             }
 
             setTimeout(function(){
+                securityBank.push({
+                    bankName: ko.observable(account.BankName),
+                    amount: new base(account.FundBased.SancLimit, account.NonFundBased.SancLimit),
+                    roi: ko.observable(account.FundBased.ROI),
+                    natureOfFacility: ko.observable(account.NonFundBased.NatureOfFacility),
+                    security: new basearr(temp1, temp2),
+                    sanctionDate: new base(account.FundBased.SanctionDate, account.NonFundBased.SanctionDate)
+                })
+
                 attr.topTable().push({
                     bankName: ko.observable(account.BankName),
                     amount: new base(account.FundBased.SancLimit, account.NonFundBased.SancLimit),
@@ -690,7 +701,7 @@ var outstanding = function(param){
         })
     }
 
-    
+
 
     _.each(param.RTR, function(rtr){
         if(rtr.LoanStatus == "Live")

@@ -88,6 +88,7 @@ func init() {
 	app.Register(&StandardController{baseCtrl})
 	app.Register(&CibilTransitoryController{baseCtrl})
 	app.Register(&UatDocumentsController{baseCtrl})
+	app.Register(&CibilCompanyController{baseCtrl})
 
 	app.Static("static", wd+"assets")
 	app.LayoutTemplate = "_layout.html"

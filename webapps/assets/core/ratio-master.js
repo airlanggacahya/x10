@@ -428,20 +428,20 @@ r.saveNewData = function (e) {
 		r.save(true);
 	}
 
-	
+	setTimeout(function(){	
+		info.Alias = info.Alias.toUpperCase();
 
-	info.Alias = info.Alias.toUpperCase();
+	    app.ajaxPost("/ratio/addmasterbalancesheetinput", info, function (res) {
+	        if (res.Message != '') {
+	            sweetAlert("Oops...", res.Message, "error");
+	            return;
+	        }
 
-    app.ajaxPost("/ratio/addmasterbalancesheetinput", info, function (res) {
-        if (res.Message != '') {
-            sweetAlert("Oops...", res.Message, "error");
-            return;
-        }
-
-        swal("Success!", "New item saved!", "success");
-    	r.refresh()
-    	$('.modal-add-new').modal('hide')
-    });
+	        swal("Success!", "New item saved!", "success");
+	    	r.refresh()
+	    	$('.modal-add-new').modal('hide')
+	    });
+    },500);
 };
 
 r.edit = function (o, id) {

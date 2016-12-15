@@ -351,7 +351,7 @@ r.save = function (nomsg) {
             return;
         }
 
-        if(nomsg)
+        if(nomsg != true)
         swal("Success!", "Changes saved!", "success");
 
     	r.refresh()
@@ -413,14 +413,19 @@ r.saveNewData = function (e) {
 			info.Order = _.maxBy(r.data(), 'Order').Order + 1
 		}
 
-		r.data().forEach(function(x){
-			if(x.Section != info.Section && x.Order >= info.Order){
-				x.Order +=1
+		var listorder = [];
+		listorder.push(info.Order)
+
+		r.data().forEach(function(x,i){
+			var currorder = x.Order;
+			if(listorder.indexOf(currorder) > -1){
+				x.Order = _.max(listorder) + 1
 			}
+			listorder.push(x.Order);
 		});
 
 		//r.render();
-		//r.save(true);
+		r.save(true);
 	}
 
 	

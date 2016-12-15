@@ -995,7 +995,8 @@ loanApproval.getReport = function(param){
             loanApproval.propertyOwnershipData(
                 new propertyOwnership(data.Data.CP[0])
                 );
-        console.log("loan",data.Data)
+
+        securityBank([])
         loanApproval.outstandingData(new outstanding(data.Data));
 
         getComments();

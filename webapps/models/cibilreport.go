@@ -166,3 +166,62 @@ func (m *CibilReportModel) GetReportDataByUnconfirmID(unconfirmid string) ([]Cib
 
 	return data, err
 }
+
+func (m *CibilReportModel) GetData(cust int, dealno string) (CibilReportModel, error) {
+
+	data := CibilReportModel{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return data, err
+	}
+
+	query := []*dbox.Filter{}
+	query = append(query, dbox.Eq("Profile.customerid", cust))
+	query = append(query, dbox.Eq("Profile.dealno", dealno))
+	csr, err := conn.NewQuery().
+		Where(query...).
+		From("CibilReport").
+		Cursor(nil)
+
+	// _ = csr
+	if err != nil {
+		panic(err)
+	} else if csr == nil {
+		panic(csr)
+	}
+
+	defer csr.Close()
+
+	err = csr.Fetch(&data, 1, false)
+	if err != nil {
+		return data, err
+	}
+
+	return data, err
+}
+
+func (m *CibilReportModel) Update(data CibilReportModel) error {
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return err
+	}
+
+	qinsert := conn.NewQuery().
+		From("CibilReport").
+		SetConfig("multiexec", true).
+		Save()
+
+	defer qinsert.Close()
+
+	insdata := map[string]interface{}{"data": data}
+	err = qinsert.Exec(insdata)
+	if err != nil {
+		return err
+	}
+
+	return err
+}

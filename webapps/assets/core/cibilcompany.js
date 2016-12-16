@@ -43,13 +43,13 @@ cc.templateReportSummary = {
 	CreditFacilities: '',
 	FacilitiesGuaranteed: '',
 	LatestCreditFacilityOpenDate: '',
-	FirstCreditFacilityOpenDate: '',	
+	FirstCreditFacilityOpenDate: '',
 }
 
 cc.templateForm = {
 	ReportSummary: cc.templateReportSummary,
 	EnquirySummary: cc.templateEnquirySummary,
-	DetailReportSummary:[],	
+	DetailReportSummary:[],
 	CreditTypeSummary: [],
 }
 
@@ -63,7 +63,7 @@ cc.RenderGrid = function(){
 		dataSource: new kendo.data.DataSource({
 	        transport: {
 	            read: function(o) {
-	            	ajaxPost("/cibiltransitory/getdatacibilpromotor", { 
+	            	ajaxPost("/cibilcompany/getalldata", {
                			searchkey: searchKey,
 	               		additional: function(){
 	               			if(searchKey != ""){
@@ -73,9 +73,11 @@ cc.RenderGrid = function(){
 		               						return cust.customer_name.toLowerCase().indexOf(searchKey.toLowerCase()) > -1
 		               					}), function(cust){
 		               						return cust.customer_id
-		               					})
-		               				);
-								return JSON.stringify(foundCust)
+		               					}
+		               				)
+		               			);
+
+		               			return JSON.stringify(foundCust)
 		               		} else {
 		               			return -1
 		               		}
@@ -93,75 +95,65 @@ cc.RenderGrid = function(){
 	        	parse: function(data){
 	        		cc.AllData([])
 	        		cc.AllData(data.Res.Data)
-	        		
-	        		_.each(cc.AllData(), function(x){
-				 		_.extend(x, function(cust){
-				 			return { CustomerName: cust != undefined ? cust.customer_name : "" }
-				 		}(_.find(filter().CustomerSearchAll(), function(xi){
-				 				return xi.customer_id == x.ConsumersInfos.CustomerId
-				 			})));
-				 	})
-	        		return {
-	        			Data: data.Res.Data,
-	        			Total: data.Total
-	        		}
+
+	       //  		_.each(cc.AllData(), function(x){
+					 		// 	_.extend(x, function(cust){
+					 		// 		return { CustomerName: cust != undefined ? cust.customer_name : "" }
+					 		// 	}(_.find(filter().CustomerSearchAll(), function(xi){
+					 		// 		return xi.customer_id == x.ConsumersInfos.CustomerId
+					 		// 	})));
+				 			// })
+
+							return {
+		        		Data: data.Res.Data,
+		        		Total: data.Total
+		        	}
 	        	},
-	            data: "Data",
-	            total: "Total"
+	          data: "Data",
+	          total: "Total"
 	        },
 	        serverPaging: true,
 	        pageSize: 10,
 	    }),
 		pageable: true,
 		columns :[{
-		 	field : "FileName", 
+		 	field : "FileName",
 		 	title : "File Name",
 			headerAttributes: { class: 'k-header header-bgcolor' },
 			width: 200
 		}, {
-		 	field : "ConsumersInfos.ConsumerName", 
-		 	title : "Promoter Name",
+		 	field : "Profile.CompanyName",
+		 	title : "Customer Name",
 		 	headerAttributes: { class: 'k-header header-bgcolor' },
 		 	width: 200
 		}, {
-		 	field : "CustomerName", 
-		 	title : "Customer Name",
-			headerAttributes: { class: 'k-header header-bgcolor' },
-			width: 200
-		}, {
-			field : "ConsumersInfos.DealNo", 
+			field : "Profile.DealNo",
 		 	title : "Deal Number",
 			headerAttributes: { class: 'k-header header-bgcolor' },
 			width: 150
 		}, {
-			field : 'DateOfReport',
-			title : 'Report Generated Date',
+			field : 'Profile.Pan',
+			title : 'Pan',
 			headerAttributes: { class: 'k-header header-bgcolor' },
-			width : 150,
-			attributes : { "style" : "text-align:center" },
-			template : function(x){
-				var date = moment(x.DateOfReport).format("DD-MMM-YYYY")
-				var time = moment(new Date(x.TimeOfReport)).utc().format("HH:mm:ss")
-		 		return date + " " + time
-		 	},
-		}, {
-		 	field : "ConsumersInfos.DateOfBirth", 
-		 	title : "Date of Birth",
-		 	template : function(x){
-		 		return moment(x.ConsumersInfos.DateOfBirth).format("DD-MMM-YYYY")
-		 	},
-		 	attributes : { "style" : "text-align:center" },
-		 	headerAttributes: { class: 'k-header header-bgcolor' },
 			width : 150
 		}, {
-		 	field : "CibilScore", 
-		 	title : "CIBIL Score",
-			width : 100,
-		 	attributes : { "style" : "text-align:right" },
-			headerAttributes: {class: 'k-header header-bgcolor'},
+			field : 'Profile.DunsNumber',
+			title : 'Duns Number',
+			headerAttributes: { class: 'k-header header-bgcolor' },
+			width : 150
 		}, {
-		 	field : "IncomeTaxIdNumber", 
-		 	title : "Income Tax Id",
+		 	field : "Profile.FileOpenDate",
+		 	title : "File Open Date",
+			headerAttributes: { class: 'k-header header-bgcolor' },
+			width : 150
+		}, {
+		 	field : "Profile.CityTown",
+		 	title : "City",
+			width : 100,
+			headerAttributes: {class: 'k-header header-bgcolor'}
+		}, {
+		 	field : "Profile.StateUnion",
+		 	title : "State",
 		 	headerAttributes: { class: 'k-header header-bgcolor' },
 			width : 100
 		}, {
@@ -206,6 +198,7 @@ cc.saveReport = function(){
 	var param = ko.mapping.toJS(cc.form);
 	ajaxPost("/cibilcompany/update", param, function(res){
 		if(res.success == true){
+			$('#transgrid').data('kendoGrid').dataSource.read();
 			cc.edit(false);
 			swal("Success", "Data Save Successfully","success")
 		}
@@ -218,23 +211,26 @@ cc.backToMain = function(){
 
 cc.getEdit = function(e){
 	var data = $("#transgrid").data("kendoGrid").dataSource.data();
-	var res = _.filter(data, function(dt){
+	var res = _.filter(cc.AllData(), function(dt){
 		return dt.Id == e
 	})
 
+	console.log(res[0])
 	if(res != undefined){
-		var param = {CustomerId :res[0].ConsumersInfos.CustomerId, DealNo: res[0].ConsumersInfos.DealNo.toString()}
-		ajaxPost("/cibilcompany/getdata", param, function(res){
-			var data = res.data
-			if(data != null && res.success == true){
-				cc.edit(true);
-				cc.setForm(data)
-			}else{
-				swal("Error", "Data not found", "error")
-			}
-		})
-	}
+		cc.edit(true)
+		cc.setForm(res[0])
 
+		// var param = {CustomerId :res[0].ConsumersInfos.CustomerId, DealNo: res[0].ConsumersInfos.DealNo.toString()}
+		// ajaxPost("/cibilcompany/getdata", param, function(res){
+		// 	var data = res.data
+		// 	if(data != null && res.success == true){
+				// cc.edit(true);
+				// cc.setForm(res[0])
+		// 	}else{
+		// 		swal("Error", "Data not found", "error")
+		// 	}
+		// })
+	}
 }
 
 function FilterInput(event) {
@@ -246,6 +242,25 @@ function FilterInput(event) {
 
 cc.setForm = function(data){
 	ko.mapping.fromJS(data, cc.form)
+
+	_.each(cc.form.CreditTypeSummary(), function(o){
+		o.Standard(o.Standard().split(",").join(""));
+		o.Substandard(o.Substandard().split(",").join(""));
+		o.Doubtful(o.Doubtful().split(",").join(""));
+		o.Loss(o.Loss().split(",").join(""));
+		o.SpecialMention(o.SpecialMention().split(",").join(""));
+		o.TotalCurrentBalance(o.TotalCurrentBalance().split(",").join(""));
+	})
+
+	_.each(cc.form.DetailReportSummary(), function(o){
+		o.CurrentBalanceOtherThanStandard(o.CurrentBalanceStandard().split(",").join(""));
+		o.CurrentBalanceStandard(o.CurrentBalanceStandard().split(",").join(""));
+		o.NoOfLawSuits(o.NoOfLawSuits().split(",").join(""));
+		o.NoOfOtherThanStandard(o.NoOfOtherThanStandard().split(",").join(""));
+		o.NoOfStandard(o.NoOfStandard().split(",").join(""));
+		o.NoOfWilfulDefaults(o.NoOfWilfulDefaults().split(",").join(""));
+	})
+
 	var FirstopenDate = (cc.form.ReportSummary.FirstCreditFacilityOpenDate()).replace(/\s/g, '');
 	var LatestopenDate = (cc.form.ReportSummary.LatestCreditFacilityOpenDate()).replace(/\s/g, '');
 	var MostRecentDate = (cc.form.EnquirySummary.MostRecentDate()).replace(/\s/g, '');
@@ -273,7 +288,7 @@ $(document).ready(function(){
 	$("#filter").keydown(function(){
 		setTimeout(function(){
 			cc.RenderGrid();
-		},500);  
+		},500);
 	})
-	
+
 })

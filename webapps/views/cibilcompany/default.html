@@ -81,7 +81,7 @@
     <div class="col-sm-6">
       <div class="form-group clearfix">
         <label class="col-sm-2 form-label">Search File</label>
-        
+
         <div class="col-sm-8">
           <input type="text" id="filter" class="form-control input-sm" placeholder="Search Files..">
         </div>
@@ -185,12 +185,12 @@
                       <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:NoCreditFacilitiesBorrower"></td>
                       <td><textarea data-bind="value: CreditType" ></textarea></td>
                       <td><input type="text" class="form-control input-sm" data-bind="value:CurrencyCode"></td>
-                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Standard" ></td>
-                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Substandard"></td>
-                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Doubtful"></td>
-                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Loss"></td>
-                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:SpecialMention"></td>
-                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:TotalCurrentBalance"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:Standard" ></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:Substandard"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:Doubtful"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:Loss"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:SpecialMention"></td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:TotalCurrentBalance"></td>
                       <td><button class="btn btn-sm btn-danger" data-bind="click:cc.removeCreditTypeSummary($index()), visible:$index() > 0"><span class="fa fa-remove"></span></button></td>
                     </tr>
                   </tbody>

@@ -4,7 +4,11 @@ import (
 	. "eaciit/x10/webapps/connection"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
+	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -167,6 +171,37 @@ func (m *CibilReportModel) GetReportDataByUnconfirmID(unconfirmid string) ([]Cib
 	return data, err
 }
 
+func (m *CibilReportModel) GetAllData() ([]CibilReportModel, error) {
+
+	data := []CibilReportModel{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return data, err
+	}
+
+	csr, err := conn.NewQuery().
+		From("CibilReport").
+		Cursor(nil)
+
+	// _ = csr
+	if err != nil {
+		panic(err)
+	} else if csr == nil {
+		panic(csr)
+	}
+
+	defer csr.Close()
+
+	err = csr.Fetch(&data, 0, false)
+	if err != nil {
+		return data, err
+	}
+
+	return data, err
+}
+
 func (m *CibilReportModel) GetData(cust int, dealno string) (CibilReportModel, error) {
 
 	data := CibilReportModel{}
@@ -202,6 +237,64 @@ func (m *CibilReportModel) GetData(cust int, dealno string) (CibilReportModel, e
 	return data, err
 }
 
+func (m *CibilReportModel) GetAllDataByParam(param tk.M) (tk.Result, int) {
+	conn, _ := GetConnection()
+	defer conn.Close()
+
+	res := tk.Result{}
+	data := []CibilReportModel{}
+
+	query := []*dbox.Filter{}
+	query = append(query, dbox.Ne("_id", ""))
+
+	key := param.GetString("searchkey")
+
+	if key != "" {
+		keys := []*dbox.Filter{}
+		keys = append(keys, dbox.Contains("FileName", key))
+		keys = append(keys, dbox.Contains("Profile.companyname", key))
+		keys = append(keys, dbox.Contains("Profile.dealno", key))
+
+		reg, err := regexp.Compile(`\[|\]`)
+		if err != nil {
+			res.SetError(err)
+		}
+
+		additionals := strings.Split(reg.ReplaceAllString(param.GetString("additional"), ""), ",")
+		for _, additional := range additionals {
+			a, e := strconv.Atoi(additional)
+			if a != -1 && e == nil {
+				keys = append(keys, dbox.Eq("Profile.customerid", a))
+			}
+		}
+
+		query = append(query, dbox.Or(keys...))
+	}
+
+	csr, err := conn.NewQuery().
+		Where(dbox.And(query...)).
+		From("CibilReport").
+		Skip(param.GetInt("skip")).
+		Take(param.GetInt("take")).
+		Cursor(nil)
+	defer csr.Close()
+
+	if err != nil {
+		res.SetError(err)
+	}
+
+	err = csr.Fetch(&data, 0, false)
+	if err != nil {
+		res.SetError(err)
+	}
+
+	res.SetData(data)
+
+	total, _ := m.GetTotalRow(query)
+
+	return res, total
+}
+
 func (m *CibilReportModel) Update(data CibilReportModel) error {
 
 	conn, err := GetConnection()
@@ -224,4 +317,21 @@ func (m *CibilReportModel) Update(data CibilReportModel) error {
 	}
 
 	return err
+}
+
+func (m *CibilReportModel) GetTotalRow(query []*dbox.Filter) (int, error) {
+	conn, _ := GetConnection()
+	defer conn.Close()
+
+	cursor, e := conn.NewQuery().
+		Where(dbox.And(query...)).
+		From("CibilReport").
+		Cursor(nil)
+	defer cursor.Close()
+
+	if e != nil {
+		return 0, e
+	}
+
+	return cursor.Count(), e
 }

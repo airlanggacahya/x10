@@ -753,15 +753,19 @@ var companyBackground = function(param) {
                 return attr.topProducts()
         })
 
+        attr.isEmptyMostLength = ko.computed(function() {
+            return attr.mostLength().length == 0
+        })
+
         if(param.borrowerdetails.TopCustomerNames != undefined)
-            attr.topCustomersName(param.borrowerdetails.TopCustomerNames);
+            attr.topCustomersName(_.compact(param.borrowerdetails.TopCustomerNames));
         else
-            attr.topCustomersName(param.borrowerdetails.topcustomernames);
+            attr.topCustomersName(_.compact(param.borrowerdetails.topcustomernames));
 
         if(param.borrowerdetails.ProductNameandDetails != undefined)
-            attr.topProducts(param.borrowerdetails.ProductNameandDetails);
+            attr.topProducts(_.compact(param.borrowerdetails.ProductNameandDetails));
         else
-            attr.topProducts(param.borrowerdetails.productnameanddetails);
+            attr.topProducts(_.compact(param.borrowerdetails.productnameanddetails));
 
         return attr
     } else {

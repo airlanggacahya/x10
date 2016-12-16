@@ -1,145 +1,106 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"github.com/eaciit/dbox"
-	_ "github.com/eaciit/dbox/dbc/mongo"
+	. "eaciit/x10/consoleapps/OmnifinMaster/helpers"
 	tk "github.com/eaciit/toolkit"
-	"gopkg.in/gomail.v2"
 	"gopkg.in/mgo.v2/bson"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"strings"
 	"time"
 )
 
-var (
-	wd = func() string {
-		d, _ := os.Getwd()
-		return d + "/"
-	}()
-)
-
-func ReadConfig() map[string]string {
-	ret := make(map[string]string)
-	file, err := os.Open(wd + "conf/app.conf")
-	if err == nil {
-		defer file.Close()
-
-		reader := bufio.NewReader(file)
-		for {
-			line, _, e := reader.ReadLine()
-			if e != nil {
-				break
-			}
-
-			sval := strings.Split(string(line), "=")
-			ret[sval[0]] = sval[1]
-		}
-	} else {
-		fmt.Println(err.Error())
-	}
-
-	return ret
-}
-
-func GetConnection() (dbox.IConnection, error) {
-
-	c := ReadConfig()
-	ci := &dbox.ConnectionInfo{c["host"], c["database"], c["username"], c["password"], nil}
-	conn, e := dbox.NewConnection("mongo", ci)
-
-	e = conn.Connect()
-	if e != nil {
-		return nil, e
-	}
-
-	return conn, nil
-}
-
-func GetContentString(url string) (string, error) {
-	r, e := http.Get(url)
-	defer r.Body.Close()
-	if e != nil {
-		return "", e
-	}
-
-	x, e := ioutil.ReadAll(r.Body)
-	if e != nil {
-		return "", e
-	}
-
-	return string(x), e
-}
-
-func SendMail(em string, logID string) {
-	conf := gomail.NewDialer("smtp.office365.com", 587, "admin.support@eaciit.com", "B920Support")
-	s, err := conf.Dial()
-	if err != nil {
-		panic(err)
-	}
-	mailsubj := tk.Sprintf("%v", "[noreply] CAT XML Error Reminder")
-	mailmsg := tk.Sprintf("%v", "XML receiver has some error.</br>Error Message : "+em+".</br> Log ID : "+logID)
-	m := gomail.NewMessage()
-
-	m.SetHeader("From", "admin.support@eaciit.com")
-	m.SetHeader("To", "reza.saputra@eaciit.com")
-	m.SetHeader("Subject", mailsubj)
-	m.SetBody("text/html", mailmsg)
-
-	if err := gomail.Send(s, m); err != nil {
-		fmt.Println(err.Error(), "-----------ERROR")
-	} else {
-		fmt.Println("Successfully Send Mails")
-	}
-	m.Reset()
-}
-
-func CreateLog(LogData tk.M) error {
-	conn, err := GetConnection()
-
-	defer conn.Close()
-	if err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-
-	qinsert := conn.NewQuery().
-		From("OmnifinMasterLog").
-		SetConfig("multiexec", true).
-		Save()
-
-	csc := map[string]interface{}{"data": LogData}
-	err = qinsert.Exec(csc)
-	if err != nil {
-		fmt.Print(err.Error())
-		return err
-	}
-
-	if LogData.Get("error") != nil {
-		SendMail(LogData.GetString("error"), LogData.GetString("_id"))
-	}
-
-	return nil
+type Url struct {
+	portName    string
+	wsdlAddress string
 }
 
 func main() {
-	log := tk.M{}
-	log.Set("_id", bson.NewObjectId())
-	log.Set("createddate", time.Now().UTC())
-	log.Set("error", nil)
-	log.Set("xmlstring", "")
-	log.Set("iscomplete", false)
-	CreateLog(log)
-
-	xmlString, err := GetContentString("http://103.251.60.132:8085/OmniFinServices/leadOperationsWS?wsdl")
-	if err != nil {
-		log.Set("error", err)
+	urls := []Url{
+		Url{"MasterLeadOperations", "http://103.251.60.132:8085/OmniFinServices/leadOperationsWS?wsdl"},
+		Url{"MasterDealCAMDetail", "http://103.251.60.132:8085/OmniFinServices/dealCAMDetailWS?wsdl"},
+		Url{"MasterChargeCode", "http://103.251.60.132:8085/OmniFinServices/chargeCodeWS?wsdl"},
+		Url{"MasterGenericOperation", "http://103.251.60.132:8085/OmniFinServices/genericOperationWS?wsdl"},
+		Url{"MasterCountry", "http://103.251.60.132:8085/OmniFinServices/countryMasterWS?wsdl"},
+		Url{"MasterState", "http://103.251.60.132:8085/OmniFinServices/stateMasterWS?wsdl"},
+		Url{"MasterDistrict", "http://103.251.60.132:8085/OmniFinServices/districtMasterWS?wsdl"},
+		Url{"MasterTehsil", "http://103.251.60.132:8085/OmniFinServices/tehsilMasterWS?wsdl"},
+		Url{"MasterPincode", "http://103.251.60.132:8085/OmniFinServices/pincodeMasterWS?wsdl"},
+		Url{"MasterBank", "http://103.251.60.132:8085/OmniFinServices/bankMasterWS?wsdl"},
+		Url{"MasterBankBranch", "http://103.251.60.132:8085/OmniFinServices/bankBranchMasterWS?wsdl"},
+		Url{"MasterProduct", "http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl"},
+		Url{"MasterScheme", "http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl"},
+		Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
+		Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
+		Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},
+		Url{"MasterCharges", "http://103.251.60.132:8085/OmniFinServices/chargesMasterWS?wsdl"},
+		Url{"MasterBranch", "http://103.251.60.132:8085/OmniFinServices/branchMasterWS?wsdl"},
+		Url{"MasterDealDocumentOperation", "http://103.251.60.132:8085/OmniFinServices/dealDocumentOperationWS?wsdl"},
+		Url{"MasterApplicationProcessing", "http://103.251.60.132:8085/OmniFinServices/applicationProcessingWS?wsdl"},
+		Url{"MasterAdditionalDisbursement", "http://103.251.60.132:8085/OmniFinServices/additionalDisbursementWS?wsdl"},
+		Url{"MasterReportDownload", "http://103.251.60.132:8085/OmniFinServices/reportDownloadWS?wsdl"},
+		Url{"MasterDMSServiceHandlerImpl", "http://103.251.60.132:8085/OmniFinServices/DMSServiceHandlerWS?wsdl"},
 	}
 
-	log.Set("xmlstring", xmlString)
-	log.Set("iscomplete", err == nil)
-	CreateLog(log)
+	createLog := func(log tk.M) {
+		conn, err := GetConnection()
+		defer conn.Close()
+
+		if err != nil {
+			panic(err.Error())
+		}
+
+		qinsert := conn.NewQuery().From("OmnifinMasterLog").SetConfig("multiexec", true).Save()
+
+		csc := map[string]interface{}{"data": log}
+		if err := qinsert.Exec(csc); err != nil {
+			panic(err.Error())
+		}
+
+		if log.Get("error") != nil {
+			res := []tk.M{}
+			query, err := conn.NewQuery().Select().From("OmnifinMail").Cursor(nil)
+			defer query.Close()
+
+			if err != nil {
+				panic(err.Error())
+			}
+			err = query.Fetch(&res, 0, false)
+
+			for _, mail := range res {
+				addr := mail.GetString("address")
+				if err := SendMail(
+					tk.Sprintf("%v", "[noreply] CAT XML Error Reminder"),
+					tk.Sprintf("%v", "XML receiver has some error.</br>Error Message : "+
+						log.GetString("error")+".</br> Log ID : "+
+						log.GetString("_id")),
+					addr); err != nil {
+					panic(err.Error())
+				} else {
+					tk.Println("Email sent to", addr)
+					tk.Println("------- Error:", log.GetString("error"))
+				}
+			}
+		}
+	}
+
+	for _, u := range urls {
+		tk.Println("Getting", u.portName, "content from", u.wsdlAddress)
+		log := tk.M{}
+		log.Set("_id", bson.NewObjectId())
+		log.Set("name", u.portName)
+		log.Set("createddate", time.Now().UTC())
+		log.Set("error", nil)
+		log.Set("xmlstring", nil)
+		log.Set("iscomplete", false)
+
+		createLog(log)
+
+		xmlString, err := GetHttpContentString(u.wsdlAddress)
+		if err != nil {
+			log.Set("error", err)
+		}
+
+		log.Set("xmlstring", xmlString)
+		log.Set("iscomplete", err == nil)
+
+		createLog(log)
+	}
 }

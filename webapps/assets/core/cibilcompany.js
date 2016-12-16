@@ -1,10 +1,61 @@
 var cc = {}
 
+cc.edit = ko.observable(false)
 cc.AllData = ko.observableArray([]);
 cc.CurrentData = ko.observable(null);
 
+cc.templateDetailReportSummary = {
+	CreditFacilities: '',
+	CurrentBalanceOtherThanStandard: '',
+	CurrentBalanceStandard: '',
+	NoOfLawSuits: '',
+	NoOfOtherThanStandard: '',
+	NoOfStandard:'',
+	NoOfWilfulDefaults: '',
+}
+
+cc.templateCreditTypeSummary = {
+	NoCreditFacilitiesBorrower: '',
+	CreditType: '',
+	CurrencyCode: '',
+	Standard: '',
+	Substandard: '',
+	Doubtful: '',
+	Loss: '',
+	SpecialMention: '',
+	TotalCurrentBalance: '',
+}
+
+cc.templateEnquirySummary = {
+	Enquiries3Month: '',
+	Enquiries6Month: '',
+	Enquiries9Month: '',
+	Enquiries12Month: '',
+	Enquiries24Month: '',
+	EnquiriesThan24Month: '',
+	TotalEnquiries: '',
+	MostRecentDate: '',
+}
+
+cc.templateReportSummary = {
+	Grantors: '',
+	Facilities: '',
+	CreditFacilities: '',
+	FacilitiesGuaranteed: '',
+	LatestCreditFacilityOpenDate: '',
+	FirstCreditFacilityOpenDate: '',	
+}
+
+cc.templateForm = {
+	ReportSummary: cc.templateReportSummary,
+	EnquirySummary: cc.templateEnquirySummary,
+	DetailReportSummary:[],	
+	CreditTypeSummary: [],
+}
+
+cc.form = ko.mapping.fromJS(cc.templateForm);
+
 cc.RenderGrid = function(){
-	alert("masuk")
 	var searchKey = $("#filter").val().toLowerCase();
 
 	$("#transgrid").html("");
@@ -115,12 +166,92 @@ cc.RenderGrid = function(){
 			width : 100
 		}, {
 		 	template : function(x){
-		 		return "<button class='btn btn-xs btn-primary tooltipster' onclick='cc.showProm(\""+ x.Id + "\")'><i class='fa fa-edit'></i></button>"
+		 		return "<button class='btn btn-xs btn-primary tooltipster' onclick='cc.getEdit(\""+ x.Id + "\")'><i class='fa fa-edit'></i></button>"
 		 	},
 		 	width : 50,
 		 	     headerAttributes: { class: 'k-header header-bgcolor' },
 		}]
 	});
+}
+
+cc.removeCreditTypeSummary = function(index){
+	return function(){
+		var credit = cc.form.CreditTypeSummary().filter(function(d,i){
+			return i !== index
+		})
+
+		cc.form.CreditTypeSummary(credit)
+	}
+}
+
+cc.removeDetailReportSummary = function(index){
+	return function(){
+		var details = cc.form.DetailReportSummary().filter(function(d,i){
+			return i !== index
+		})
+
+		cc.form.DetailReportSummary(details)
+	}
+}
+
+cc.addDetailReportSummary = function(){
+	cc.form.DetailReportSummary.push(cc.templateDetailReportSummary)
+}
+
+cc.addCreditTypeSummary = function(){
+	cc.form.CreditTypeSummary.push(cc.templateCreditTypeSummary)
+}
+
+cc.saveReport = function(){
+	var param = ko.mapping.toJS(cc.form);
+	ajaxPost("/cibilcompany/update", param, function(res){
+		if(res.success == true){
+			cc.edit(false);
+			swal("Success", "Data Save Successfully","success")
+		}
+	})
+}
+
+cc.backToMain = function(){
+	cc.edit(false);
+}
+
+cc.getEdit = function(e){
+	var data = $("#transgrid").data("kendoGrid").dataSource.data();
+	var res = _.filter(data, function(dt){
+		return dt.Id == e
+	})
+
+	if(res != undefined){
+		var param = {CustomerId :res[0].ConsumersInfos.CustomerId, DealNo: res[0].ConsumersInfos.DealNo.toString()}
+		ajaxPost("/cibilcompany/getdata", param, function(res){
+			var data = res.data
+			if(data != null && res.success == true){
+				cc.edit(true);
+				cc.setForm(data)
+			}else{
+				swal("Error", "Data not found", "error")
+			}
+		})
+	}
+
+}
+
+function FilterInput(event) {
+  var keyCode = ('which' in event) ? event.which : event.keyCode;
+
+  isNotWanted = (keyCode == 69 || keyCode == 101);
+  return !isNotWanted;
+};
+
+cc.setForm = function(data){
+	ko.mapping.fromJS(data, cc.form)
+	var FirstopenDate = (cc.form.ReportSummary.FirstCreditFacilityOpenDate()).replace(/\s/g, '');
+	var LatestopenDate = (cc.form.ReportSummary.LatestCreditFacilityOpenDate()).replace(/\s/g, '');
+	var MostRecentDate = (cc.form.EnquirySummary.MostRecentDate()).replace(/\s/g, '');
+	cc.form.ReportSummary.FirstCreditFacilityOpenDate(FirstopenDate);
+	cc.form.ReportSummary.LatestCreditFacilityOpenDate(LatestopenDate);
+	cc.form.EnquirySummary.MostRecentDate(MostRecentDate);
 }
 
 function GetCustomer(){
@@ -134,6 +265,10 @@ function GetCustomer(){
 $(document).ready(function(){
 
 	GetCustomer();
+
+	$('.entryEditCompany').collapsible({
+	    accordion : true
+	 });
 
 	$("#filter").keydown(function(){
 		setTimeout(function(){

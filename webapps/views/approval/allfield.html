@@ -152,15 +152,19 @@
 	            return attr.topProducts()
 	    })
 
-	    if(param.borrowerdetails.TopCustomerNames != undefined)
-	        attr.topCustomersName(param.borrowerdetails.TopCustomerNames);
-	    else
-	        attr.topCustomersName(param.borrowerdetails.topcustomernames);
+        attr.isEmptyMostLength = ko.computed(function() {
+            return attr.mostLength().length == 0
+        })
 
-	    if(param.borrowerdetails.ProductNameandDetails != undefined)
-	        attr.topProducts(param.borrowerdetails.ProductNameandDetails);
-	    else
-	        attr.topProducts(param.borrowerdetails.productnameanddetails);
+        if(param.borrowerdetails.TopCustomerNames != undefined)
+            attr.topCustomersName(_.compact(param.borrowerdetails.TopCustomerNames));
+        else
+            attr.topCustomersName(_.compact(param.borrowerdetails.topcustomernames));
+
+        if(param.borrowerdetails.ProductNameandDetails != undefined)
+            attr.topProducts(_.compact(param.borrowerdetails.ProductNameandDetails));
+        else
+            attr.topProducts(_.compact(param.borrowerdetails.productnameanddetails));
 
 	    return attr
 	}
@@ -1698,23 +1702,34 @@
 				</div>
 				<div class="panel-body">
 					<script type="text/html" id="topcust-product-template">
-					    <!-- ko foreach: loanApproval.companyBackgroundData().mostLength -->
+					    <!-- ko if: loanApproval.companyBackgroundData().isEmptyMostLength -->
 					        <tr>
-					            <!-- ko if: $index() == 0 -->
-					                <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
-					                    Top Customers Name
-					                </td>
-					                <td class="col-sm-4 text-center" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
-					                <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
-					                    Products
-					                </td>
-					                <td class="col-sm-4 text-center" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
-					            <!-- /ko -->
-					            <!-- ko ifnot: $index() == 0 -->
-					                <td class="col-sm-4 text-center" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
-					                <td class="col-sm-4 text-center" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
-					            <!-- /ko -->
+					            <td class="col-sm-2 text-center text-bold">Top Customers Name</td>
+					            <td class="col-sm-4"></td>
+					            <td class="col-sm-2 text-center text-bold">Products</td>
+					            <td class="col-sm-4""></td>
 					        </tr>
+					    <!-- /ko -->
+
+					    <!-- ko ifnot: loanApproval.companyBackgroundData().isEmptyMostLength -->
+					        <!-- ko foreach: loanApproval.companyBackgroundData().mostLength -->
+					            <tr>
+					                <!-- ko if: $index() == 0-->
+					                    <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
+					                        Top Customers Name
+					                    </td>
+					                    <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
+					                    <td class="col-sm-2 text-center text-bold" data-bind="attr: { rowspan: loanApproval.companyBackgroundData().mostLength().length }">
+					                        Products
+					                    </td>
+					                    <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
+					                <!-- /ko -->
+					                <!-- ko ifnot: $index() == 0 -->
+					                    <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topCustomersName()[$index()]"></td>
+					                    <td class="col-sm-4" data-bind="text: loanApproval.companyBackgroundData().topProducts()[$index()]"></td>
+					                <!-- /ko -->
+					            </tr>
+					        <!-- /ko -->
 					    <!-- /ko -->
 					</script>
 

@@ -183,6 +183,24 @@ cc.RenderGrid = function(){
 	});
 }
 
+cc.loadDateString = function(){
+	var FileOpenDate = kendo.toString(new Date(cc.form.Profile.FileOpenDate()), "dd-MMM-yyyy");
+	cc.form.Profile.FileOpenDate(FileOpenDate);
+
+	var FirstopenDate = kendo.toString(new Date(cc.form.ReportSummary.FirstCreditFacilityOpenDate()), "dd-MMM-yyyy");
+	cc.form.ReportSummary.FirstCreditFacilityOpenDate(FirstopenDate);
+
+	var LatestopenDate = kendo.toString(new Date(cc.form.ReportSummary.LatestCreditFacilityOpenDate()), "dd-MMM-yyyy");
+	cc.form.ReportSummary.LatestCreditFacilityOpenDate(LatestopenDate);
+
+	var MostRecentDate = kendo.toString(new Date(cc.form.EnquirySummary.MostRecentDate()), "dd-MMM-yyyy");
+	cc.form.EnquirySummary.MostRecentDate(MostRecentDate);
+
+	// var FileOpen = kendo.toString(new Date(cc.form.EnquirySummary()), "dd-MMM-yyyy");
+	// cc.form.Profile.FileOpenDate(FileOpen)
+
+}
+
 cc.removeCreditTypeSummary = function(index){
 	return function(){
 		var credit = cc.form.CreditTypeSummary().filter(function(d,i){
@@ -212,10 +230,11 @@ cc.addCreditTypeSummary = function(){
 }
 
 cc.saveReport = function(){
+	cc.loadDateString()
 	var param = ko.mapping.toJS(cc.form);
 	ajaxPost("/cibilcompany/update", param, function(res){
 		if(res.success == true){
-			$('#transgrid').data('kendoGrid').dataSource.read();
+			// $('#transgrid').data('kendoGrid').dataSource.read();
 			cc.edit(false);
 			cc.RenderGrid();
 			swal("Success", "Data Save Successfully","success")

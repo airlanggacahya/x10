@@ -74,6 +74,10 @@
    .width-container{
     width: 58.333333%
   }
+
+  input[disabled]{
+     cursor: default !important;
+  }
 </style>
 
 <div class="col-md-12 col-sm-12 ez panel-content" data-bind="with:cc">
@@ -99,16 +103,26 @@
     </div>
   </div>
   <div class="col-md-12" data-bind="visible: !(edit() != true)">
-    <ul class="entryEditCompany active" data-collapsible="accordion" style="margin-left: -41px;margin-top: 58px;padding-bottom: 10px;">
+    <div class="panel-body">
+      <div style="text-align: left;margin-left: -15px;">
+        <button class="btn btn-sm btn-primary" onclick="cc.saveReport()">
+          <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;
+        Save</button>&nbsp;&nbsp;
+        <button class="btn btn-sm btn-warning" onclick="cc.backToMain();">
+        <span class="glyphicon glyphicon-share-alt"></span>&nbsp;
+         Cancel</button>
+      </div>
+    </div>
+    <ul class="entryEditCompany active" data-collapsible="accordion" style="margin-left: -41px;">
       <li>
-        <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Please enter following details for the Borrower<i class="fa fa-chevron-down pull-right"></i></div>
+        <div class="collapsible-header header-bgcolor" style="text-align: center; "><i class="fa fa-list"></i>Please enter following details for the Borrower<i class="fa fa-chevron-down pull-right"></i></div>
         <div class="collapsible-body no-margin no-padding">
           <div class="row" data-bind="with:form">
             <div class="col-md-12 cibilgridfixed">
               <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
                 <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry1">
                   <thead>
-                    <tr><th colspan="6">Report Summary</th></tr>
+                    <tr><th colspan="6">Profile</th></tr>
                   </thead>
                   <tbody data-bind="with: ReportSummary">
                     <tr>
@@ -146,11 +160,11 @@
                   <tbody data-bind="foreach: DetailReportSummary">
                     <tr>
                       <td class="text-center"><input type="text" class="form-control input-sm onlyNumb" data-bind="value: CreditFacilities"></td>
-                      <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:CurrentBalanceOtherThanStandard"></td>
+                      <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value: NoOfStandard"></td>
                       <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:CurrentBalanceStandard"></td>
-                      <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfLawSuits"></td>
                       <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfOtherThanStandard"></td>
-                      <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfStandard"></td>
+                      <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value: CurrentBalanceOtherThanStandard"></td>
+                      <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value: NoOfLawSuits"></td>
                       <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfWilfulDefaults"></td>
                       <td><button class="btn btn-sm btn-danger" onclick="" data-bind="click:cc.removeDetailReportSummary($index()), visible:$index() > 0"><span class="fa fa-remove"></span></button></td>
                     </tr>
@@ -232,17 +246,55 @@
                 </table>
               </div>
             </div>
-            <div class="col-md-12">
-              <div style="text-align: center">
-                <!-- <button class="btn btn-sm btn-primary" onclick="saveCibilReport('submit')">
-                <span class="glyphicon glyphicon-ok"></span>&nbsp;
-                Submit Details</button> &nbsp; -->
-                <button class="btn btn-sm btn-primary" onclick="cc.saveReport()">
-                  <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;
-                Save</button>&nbsp;&nbsp;
-                <button class="btn btn-sm btn-warning" onclick="cc.backToMain();">
-                <span class="glyphicon glyphicon-share-alt"></span>&nbsp;
-                 Cancel</button>
+            
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="collapsible-header header-bgcolor" style="text-align: center; "><i class="fa fa-list"></i>Profile<i class="fa fa-chevron-down pull-right"></i></div>
+        <div class="collapsible-body no-margin no-padding">
+          <div class="row" data-bind="with:form">
+            <div class="col-md-12 cibilgridfixed">
+              <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
+                <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry1">
+                  <thead>
+                    <tr><th colspan="6">Profile</th></tr>
+                  </thead>
+                  <tbody data-bind="with: Profile">
+                    <tr>
+                      <td class="sub-bgcolor">Company Name</td>
+                      <td><textarea type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:CompanyName"></textarea></td>
+                      <td class="sub-bgcolor">Deal No</td>
+                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:DealNo" disabled="disabled"></td>
+                      <td class="sub-bgcolor">Customer Id</td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:CustomerId" disabled="disabled"></td>
+                    </tr>
+                    <tr>
+                      <td class="sub-bgcolor">Duns Number</td>
+                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:DunsNumber"></td>
+                      <td class="sub-bgcolor">Pan</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="value:Pan"></td>
+                      <td class="sub-bgcolor">Address</td>
+                      <td><textarea type="text" class="form-control input-sm" data-bind="value:Address"></textarea></td>
+                    </tr>
+                    <tr>
+                      <td class="sub-bgcolor">City Town</td>
+                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:CityTown"></td>
+                      <td class="sub-bgcolor">Telephone</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="value:Telephone"></td>
+                      <td class="sub-bgcolor">State Union</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="value:StateUnion"></td>
+                    </tr>
+                    <tr>
+                      <td class="sub-bgcolor">Pin Code</td>
+                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:PinCode"></td>
+                      <td class="sub-bgcolor">Country</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="value:Country"></td>
+                      <td class="sub-bgcolor">File Open Date</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:FileOpenDate, format: 'dd-MMM-yyyy'}"></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

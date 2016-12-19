@@ -46,11 +46,27 @@ cc.templateReportSummary = {
 	FirstCreditFacilityOpenDate: '',
 }
 
+cc.templateProfile = {
+	CompanyName: '',
+	DealNo: '',
+	CustomerId: 0,
+	DunsNumber: '',
+	Pan: '',
+	Address: '',
+	CityTown: '',
+	Telephone: '',
+	StateUnion: '',
+	PinCode: '',
+	Country: '',
+	FileOpenDate: '',
+}
+
 cc.templateForm = {
 	ReportSummary: cc.templateReportSummary,
 	EnquirySummary: cc.templateEnquirySummary,
 	DetailReportSummary:[],
 	CreditTypeSummary: [],
+	Profile: cc.templateProfile,
 }
 
 cc.form = ko.mapping.fromJS(cc.templateForm);
@@ -200,6 +216,7 @@ cc.saveReport = function(){
 		if(res.success == true){
 			$('#transgrid').data('kendoGrid').dataSource.read();
 			cc.edit(false);
+			cc.RenderGrid();
 			swal("Success", "Data Save Successfully","success")
 		}
 	})
@@ -207,6 +224,7 @@ cc.saveReport = function(){
 
 cc.backToMain = function(){
 	cc.edit(false);
+	cc.RenderGrid()
 }
 
 cc.getEdit = function(e){
@@ -224,8 +242,8 @@ cc.getEdit = function(e){
 		// ajaxPost("/cibilcompany/getdata", param, function(res){
 		// 	var data = res.data
 		// 	if(data != null && res.success == true){
-				// cc.edit(true);
-				// cc.setForm(res[0])
+		// 		cc.edit(true);
+		// 		cc.setForm(res[0])
 		// 	}else{
 		// 		swal("Error", "Data not found", "error")
 		// 	}
@@ -253,7 +271,7 @@ cc.setForm = function(data){
 	})
 
 	_.each(cc.form.DetailReportSummary(), function(o){
-		o.CurrentBalanceOtherThanStandard(o.CurrentBalanceStandard().split(",").join(""));
+		o.CurrentBalanceOtherThanStandard(o.CurrentBalanceOtherThanStandard().split(",").join(""));
 		o.CurrentBalanceStandard(o.CurrentBalanceStandard().split(",").join(""));
 		o.NoOfLawSuits(o.NoOfLawSuits().split(",").join(""));
 		o.NoOfOtherThanStandard(o.NoOfOtherThanStandard().split(",").join(""));
@@ -264,9 +282,11 @@ cc.setForm = function(data){
 	var FirstopenDate = (cc.form.ReportSummary.FirstCreditFacilityOpenDate()).replace(/\s/g, '');
 	var LatestopenDate = (cc.form.ReportSummary.LatestCreditFacilityOpenDate()).replace(/\s/g, '');
 	var MostRecentDate = (cc.form.EnquirySummary.MostRecentDate()).replace(/\s/g, '');
+	var FileOpen = (cc.form.Profile.FileOpenDate()).replace(/\s/g, '');
 	cc.form.ReportSummary.FirstCreditFacilityOpenDate(FirstopenDate);
 	cc.form.ReportSummary.LatestCreditFacilityOpenDate(LatestopenDate);
 	cc.form.EnquirySummary.MostRecentDate(MostRecentDate);
+	cc.form.Profile.FileOpenDate(FileOpen)
 }
 
 function GetCustomer(){

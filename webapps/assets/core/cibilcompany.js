@@ -255,19 +255,24 @@ cc.getEdit = function(e){
 
 	console.log(res[0])
 	if(res != undefined){
-		cc.edit(true)
-		cc.setForm(res[0])
+		// cc.edit(true)
+		// cc.setForm(res[0])
 
-		// var param = {CustomerId :res[0].ConsumersInfos.CustomerId, DealNo: res[0].ConsumersInfos.DealNo.toString()}
-		// ajaxPost("/cibilcompany/getdata", param, function(res){
-		// 	var data = res.data
-		// 	if(data != null && res.success == true){
-		// 		cc.edit(true);
-		// 		cc.setForm(res[0])
-		// 	}else{
-		// 		swal("Error", "Data not found", "error")
-		// 	}
-		// })
+		var param = {CustomerId :res[0].Profile.CustomerId, DealNo: res[0].Profile.DealNo.toString()}
+		ajaxPost("/cibilcompany/getdata", param, function(res){
+			var data = res.data
+			if(data != null && res.success == true){
+				if(data.IsConfirm ==1){
+					swal("Warning","Data already confirmed, please Re Enter first","warning")
+					return
+				}
+
+				cc.edit(true);
+				cc.setForm(data)
+			}else{
+				swal("Error", "Data not found", "error")
+			}
+		})
 	}
 }
 

@@ -371,17 +371,18 @@ r.setData = function() {
   if(r.reportCibilList().length > 1) {
     if(cibil.reportDraft().Status == 1 || cibil.reportDraft().Status == 2|| cibil.reportDraft().Status == 3|| cibil.reportDraft().Status == -3) {
         $.each(cibil.reportDraft().CreditTypeSummary, function(key2, val2){
-          val2.Doubtful =  kendo.toString(parseInt(val2.Doubtful),"N0")
-          val2.Loss =  kendo.toString(parseInt(val2.Loss),"N0")
-          val2.Substandard =  kendo.toString(parseInt(val2.Substandard),"N0")
-          val2.Standard =  kendo.toString(parseInt(val2.Standard),"N0")
-          val2.SpecialMention =  kendo.toString(parseInt(val2.SpecialMention),"N0")
-          val2.TotalCurrentBalance =  kendo.toString(parseInt(val2.TotalCurrentBalance),"N0")
+          val2.Doubtful =  app.formatnum(parseInt(val2.Doubtful))
+          val2.Loss =  app.formatnum(parseInt(val2.Loss))
+          val2.Substandard =  app.formatnum(parseInt(val2.Substandard))
+          val2.Standard =  app.formatnum(parseInt(val2.Standard))
+          val2.SpecialMention =  app.formatnum(parseInt(val2.SpecialMention))
+          val2.TotalCurrentBalance =  app.formatnum(parseInt(val2.TotalCurrentBalance))
 
           cibil.CreditTypeSummary.push(val2);
         });
       r.addDataReport(cibil.reportDraft());
     } else {
+
       // r.addDataReport(cibil.reportCibilList()[0]);
     }
 
@@ -420,7 +421,7 @@ r.setData = function() {
       var clientWidth = document.getElementById('test').clientWidth;
 
       var offset = $("#test").offset();
-      console.log(offset.top)
+      // console.log(offset.top)
 
       $(".swal2-overlay").css("opacity", "1").css("display", "block").css("width", (clientWidth-18)+"px").css("height", clientHeight+"px").css("top", (offset.top+35) + "px").css("left", (offset.left+9)+"px")
 
@@ -434,7 +435,17 @@ r.setData = function() {
   } else if(r.reportCibilList().length != 0) {
 
     $.each(r.reportCibilList()[0].CreditTypeSummary, function(key2, val2){
-      r.CreditTypeSummary.push(val2);
+      r.CreditTypeSummary.push({
+          NoCreditFacilitiesBorrower  : val2.NoCreditFacilitiesBorrower,
+          CreditType  : val2.CreditType,
+          CurrencyCode  : val2.CurrencyCode,
+          TotalCurrentBalance  : app.formatnum(val2.TotalCurrentBalance),
+          Standard: app.formatnum(val2.Standard.split(",").join("")),
+          Substandard: app.formatnum(val2.Substandard.split(",").join("")),
+          Doubtful:  app.formatnum(val2.Doubtful.split(",").join("")),
+          Loss: (val2.Loss != undefined) ? app.formatnum(val2.Loss.split(",").join("")):"", 
+          SpecialMention: app.formatnum(val2.SpecialMention.split(",").join("")),
+        });
 
       r.assetClassificationAmount.push(
         {
@@ -594,11 +605,18 @@ r.addDataReport = function(data) {
   for (var i = 0; i<r.CreditTypeSummary().length; i++ ){
     totalSt += parseInt(r.CreditTypeSummary()[i].Standard.split(",").join("")  );
     totalCur += parseInt(r.CreditTypeSummary()[i].TotalCurrentBalance.split(",").join(""));
-    r.CreditTypeSummary()[i].Standard =  kendo.toString(parseInt(r.CreditTypeSummary()[i].Standard.split(",").join("")),"n0");
+    r.CreditTypeSummary()[i].Standard =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Standard.split(",").join("")));
+    r.CreditTypeSummary()[i].Substandard =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Substandard.split(",").join("")));
+    r.CreditTypeSummary()[i].Doubtful =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Doubtful.split(",").join("")));
+    r.CreditTypeSummary()[i].Loss =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Loss.split(",").join("")));
+    r.CreditTypeSummary()[i].SpecialMention =  app.formatnum(parseInt(r.CreditTypeSummary()[i].SpecialMention.split(",").join("")));
+    r.CreditTypeSummary()[i].TotalCurrentBalance =  app.formatnum(parseInt(r.CreditTypeSummary()[i].TotalCurrentBalance.split(",").join("")));
   }
 
-  r.totalStandard(cibil.formatnum(totalSt));
-  r.totalCurrentBalance(cibil.formatnum(totalCur));
+
+
+  r.totalStandard(app.formatnum(totalSt));
+  r.totalCurrentBalance(app.formatnum(totalCur));
 
   r.creditgrantor(kendo.toString(parseInt(data.ReportSummary.Grantors),"n0"));
   r.creditfacilities(kendo.toString(parseInt(data.ReportSummary.Facilities),"n0"));

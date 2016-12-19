@@ -979,7 +979,7 @@
 	                headerAttributes: { class: "sub-bgcolor" },
 	                aggregates: ["sum"],
 	                width:150,
-	                footerTemplate: "<div style='text-align: right'>#= kendo.toString(sum, 'n2') #</div>",
+	                footerTemplate: "<div style='text-align: right'>#= kendo.toString("+ allsum.BSImpMargin +", 'n2') #</div>",
 	                attributes:{ "style": "text-align:right" },
 	                template : "#: app.formatnum(ImpMargin,2) #"
 	            }, {

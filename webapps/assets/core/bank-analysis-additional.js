@@ -2769,11 +2769,12 @@ var generateAML = function(data){
     createAmlGrid(res);
 }
 
-var createBankingGrid = function(res,minmargin){
-    //console.log(res)
+var createBankingGrid = function(res, minmargin){
     for(var i in res){
         res[i]["Month"] = moment(res[i]["Month"].split("T")[0]).format("MMM-YYYY")
+        res[i]["ImpMargin"] = (minmargin / 100) * res[i]["TotalCredit"]
     }
+    
     $("#bankinggrid").html("");
     $("#bankinggrid").kendoGrid({
         dataSource : {

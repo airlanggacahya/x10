@@ -37,6 +37,20 @@ func (c *CibilCompanyController) Default(k *knot.WebContext) interface{} {
 	return DataAccess
 }
 
+func (c *CibilCompanyController) GetAllData(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	param := tk.M{}
+	k.GetPayload(&param)
+
+	data, total := new(CibilReportModel).GetAllDataByParam(param)
+
+	return struct {
+		Res   interface{}
+		Total int
+	}{data, total}
+}
+
 func (c *CibilCompanyController) GetData(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 

@@ -96,8 +96,8 @@
 
   .static{
     position: static;
-    margin-left: -15px;
-    margin-top: -10px;
+    margin-left: 6px;
+    margin-top: -6px;
   }
 </style>
 
@@ -134,13 +134,225 @@
          Cancel</button>
       </div>
     </div>
-    <ul class="entryEditCompany active" data-collapsible="accordion" style="margin-left: -41px;">
+    <div data-bind="with:form">
+      <div class="col-md-12 cibilgridfixed">
+        <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
+          <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry6">
+            <thead>
+              <tr><th colspan="6">Profile</th></tr>
+            </thead>
+            <tbody data-bind="with: Profile">
+              <tr>
+                <td class="sub-bgcolor">Company Name</td>
+                <td><textarea type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:CompanyName"></textarea></td>
+                <td class="sub-bgcolor">Deal No</td>
+                <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:DealNo" disabled="disabled"></td>
+                <td class="sub-bgcolor">Customer Id</td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:CustomerId" disabled="disabled"></td>
+              </tr>
+              <tr>
+                <td class="sub-bgcolor">Duns Number</td>
+                <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:DunsNumber"></td>
+                <td class="sub-bgcolor">Pan</td>
+                <td><input type="text" class="form-control input-sm" data-bind="value:Pan"></td>
+                <td class="sub-bgcolor">Address</td>
+                <td><textarea type="text" class="form-control input-sm" data-bind="value:Address"></textarea></td>
+              </tr>
+              <tr>
+                <td class="sub-bgcolor">City Town</td>
+                <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:CityTown"></td>
+                <td class="sub-bgcolor">Telephone</td>
+                <td><input type="text" class="form-control input-sm" data-bind="value:Telephone"></td>
+                <td class="sub-bgcolor">State Union</td>
+                <td><input type="text" class="form-control input-sm" data-bind="value:StateUnion"></td>
+              </tr>
+              <tr>
+                <td class="sub-bgcolor">Pin Code</td>
+                <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:PinCode"></td>
+                <td class="sub-bgcolor">Country</td>
+                <td><input type="text" class="form-control input-sm" data-bind="value:Country"></td>
+                <td class="sub-bgcolor">File Open Date</td>
+                <td><input type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:FileOpenDate, format: 'dd-MMM-yyyy'}"></td>
+              </tr>
+            </tbody>
+          </table>
+          <br/>
+          <br/>
+          
+          <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry1">
+            <thead>
+              <tr><th colspan="6">Report Summary</th></tr>
+            </thead>
+            <tbody data-bind="with: ReportSummary">
+              <tr>
+                <td class="sub-bgcolor">No. of Credit Grantors</td>
+                <td style="width: 60px;"><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditGrantors" class="form-control input-sm" data-bind="value:Grantors"></td>
+                <td class="sub-bgcolor">No. of Credit Facilities</td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditFacilities" class="form-control input-sm" data-bind="value:Facilities"></td>
+                <td class="sub-bgcolor">No. of Closed Credit Facilities</td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="value:CreditFacilities"></td>
+              </tr>
+              <tr>
+                <td class="sub-bgcolor">No. of Credit Facilities <br>Guaranteed by Others</td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditFacilitiesGrantorsGuarantedOther" class="form-control input-sm" data-bind="value:FacilitiesGuaranteed"></td>
+                <td class="sub-bgcolor">Latest Credit Facility Open Date</td>
+                <td><input type="text" name="noCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:LatestCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"></td>
+                <td class="sub-bgcolor">First Credit Facility Open Date</td>
+                <td><input type="text" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:FirstCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="k-grid table-bordered" style="margin-bottom: 0px;width: 100%;" id="tblCibilReportSumarry2">
+            <thead>
+              <tr>
+                <th class="sub-bgcolor text-center" style="min-width: 94px;">Credit Facilities</th>
+                <th class="sub-bgcolor text-center">No. of Standard</th>
+                <th class="sub-bgcolor text-center">Current Balance in Standard</th>
+                <th class="sub-bgcolor text-center">No. of Other than Standard</th>
+                <th class="sub-bgcolor text-center">Current Balance in Other than Standard</th>
+                <th class="sub-bgcolor text-center">No. of Law Suits</th>
+                <th class="sub-bgcolor text-center">No. of Wilful Defaults</th>
+                <th class="sub-bgcolor text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: DetailReportSummary">
+              <tr>
+                <td class="text-center"><input type="text" class="form-control input-sm onlyNumb" data-bind="value: CreditFacilities"></td>
+                <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value: NoOfStandard"></td>
+                <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:CurrentBalanceStandard"></td>
+                <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfOtherThanStandard"></td>
+                <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value: CurrentBalanceOtherThanStandard"></td>
+                <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value: NoOfLawSuits"></td>
+                <td><input type="text" class="form-control input-sm onlyNumb" data-bind="value:NoOfWilfulDefaults"></td>
+                <td><button class="btn btn-sm btn-danger" onclick="" data-bind="click:cc.removeDetailReportSummary($index()), visible:$index() > 0"><span class="fa fa-remove"></span></button></td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <button class="btn btn-sm btn-success" onclick="cc.addDetailReportSummary()"><span class="fa fa-plus"></span> Add Row</button>
+          <div class="spacer"></div>
+          <table class="k-grid table-bordered" style="margin-bottom: 0px;" id="tblCibilCreditTypeSummary">
+            <thead>
+              <tr><th colspan="10">Credit Type Summary</th></tr>
+            </thead>
+            <thead>
+              <tr style="text-align: center;">
+                <th class="sub-bgcolor text-center" rowspan="2">No. of Credit Facilities As Borrower</th>
+                <th class="sub-bgcolor text-center" rowspan="2">Credit Type</th>
+                <th class="sub-bgcolor text-center" rowspan="2">Currency Code</th>
+                <th class="sub-bgcolor text-center" colspan="5" style="text-align: center !important;">Asset Classification</th>
+                <th class="sub-bgcolor text-center" rowspan="2">Current Balance</th>
+                <th class="sub-bgcolor text-center" rowspan="2">Action</th>
+              </tr>
+              <tr>
+                <th class="sub-bgcolor text-center" style="min-width: 100px">Standard</th>
+                <th class="sub-bgcolor text-center" style="min-width: 100px">Sub - Standard</th>
+                <th class="sub-bgcolor text-center" style="min-width: 100px">Doubtful</th>
+                <th class="sub-bgcolor text-center" style="min-width: 100px">Loss</th>
+                <th class="sub-bgcolor text-center" style="min-width: 110px">Special Mention A/C</th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: CreditTypeSummary">
+              <tr>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:NoCreditFacilitiesBorrower"></td>
+                <td><textarea data-bind="value: CreditType" ></textarea></td>
+                <td><input type="text" class="form-control input-sm" data-bind="value:CurrencyCode"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:Standard" ></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:Substandard"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:Doubtful"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:Loss"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:SpecialMention"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm onlyNumb" data-bind="value:TotalCurrentBalance"></td>
+                <td><button class="btn btn-sm btn-danger" data-bind="click:cc.removeCreditTypeSummary($index()), visible:$index() > 0"><span class="fa fa-remove"></span></button></td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <button class="btn btn-sm btn-success" onclick="cc.addCreditTypeSummary()"><span class="fa fa-plus"></span> Add Row</button>
+          <br>
+          <br>
+          <table class="k-grid table-bordered" style="margin-bottom: 0px;" id="tblCibilCreditTypeSummary">
+            <thead>
+              <tr><th colspan="9">Enquiry Summary</th></tr>
+            </thead>
+            <thead>
+              <tr>
+                <th class="sub-bgcolor text-center">Enquiry</th>
+                <th class="sub-bgcolor text-center" style="width:68px">3 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">6 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">9 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">12 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">24 Months</th>
+                <th class="sub-bgcolor text-center" style="width:68px">>24 Months</th>
+                <th class="sub-bgcolor text-center">Total</th>
+                <th class="sub-bgcolor text-center" style="min-width:100px">Most Recent Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-bind="with:EnquirySummary">
+                <td class="th">No. of Enquiries</td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:Enquiries3Month"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:Enquiries6Month"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:Enquiries9Month"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:Enquiries12Month"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:Enquiries24Month"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquiriesThan24Month"></td>
+                <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:TotalEnquiries" ></td>
+                <td style="width: 120px;"><input type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:MostRecentDate, format: 'dd-MMM-yyyy'}"></td>
+              </tr>
+            </tbody>
+          </table>        
+        </div>
+      </div>
+    </div>
+    <!-- <ul class="entryEditCompany active" data-collapsible="accordion" style="margin-left: -41px;">
       <li>
         <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Please enter following details for the Borrower<i class="fa fa-chevron-down pull-right"></i></div>
         <div class="collapsible-body no-margin no-padding">
           <div class="row" data-bind="with:form">
             <div class="col-md-12 cibilgridfixed">
               <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
+                <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry6">
+                  <thead>
+                    <tr><th colspan="6">Profile</th></tr>
+                  </thead>
+                  <tbody data-bind="with: Profile">
+                    <tr>
+                      <td class="sub-bgcolor">Company Name</td>
+                      <td><textarea type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:CompanyName"></textarea></td>
+                      <td class="sub-bgcolor">Deal No</td>
+                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:DealNo" disabled="disabled"></td>
+                      <td class="sub-bgcolor">Customer Id</td>
+                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:CustomerId" disabled="disabled"></td>
+                    </tr>
+                    <tr>
+                      <td class="sub-bgcolor">Duns Number</td>
+                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:DunsNumber"></td>
+                      <td class="sub-bgcolor">Pan</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="value:Pan"></td>
+                      <td class="sub-bgcolor">Address</td>
+                      <td><textarea type="text" class="form-control input-sm" data-bind="value:Address"></textarea></td>
+                    </tr>
+                    <tr>
+                      <td class="sub-bgcolor">City Town</td>
+                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:CityTown"></td>
+                      <td class="sub-bgcolor">Telephone</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="value:Telephone"></td>
+                      <td class="sub-bgcolor">State Union</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="value:StateUnion"></td>
+                    </tr>
+                    <tr>
+                      <td class="sub-bgcolor">Pin Code</td>
+                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:PinCode"></td>
+                      <td class="sub-bgcolor">Country</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="value:Country"></td>
+                      <td class="sub-bgcolor">File Open Date</td>
+                      <td><input type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:FileOpenDate, format: 'dd-MMM-yyyy'}"></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br/>
                 <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry1">
                   <thead>
                     <tr><th colspan="6">Report Summary</th></tr>
@@ -265,54 +477,14 @@
                     </tr>
                   </tbody>
                 </table>
-                <br>
-                <br>
-                <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry6">
-                  <thead>
-                    <tr><th colspan="6">Profile</th></tr>
-                  </thead>
-                  <tbody data-bind="with: Profile">
-                    <tr>
-                      <td class="sub-bgcolor">Company Name</td>
-                      <td><textarea type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:CompanyName"></textarea></td>
-                      <td class="sub-bgcolor">Deal No</td>
-                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:DealNo" disabled="disabled"></td>
-                      <td class="sub-bgcolor">Customer Id</td>
-                      <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:CustomerId" disabled="disabled"></td>
-                    </tr>
-                    <tr>
-                      <td class="sub-bgcolor">Duns Number</td>
-                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:DunsNumber"></td>
-                      <td class="sub-bgcolor">Pan</td>
-                      <td><input type="text" class="form-control input-sm" data-bind="value:Pan"></td>
-                      <td class="sub-bgcolor">Address</td>
-                      <td><textarea type="text" class="form-control input-sm" data-bind="value:Address"></textarea></td>
-                    </tr>
-                    <tr>
-                      <td class="sub-bgcolor">City Town</td>
-                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:CityTown"></td>
-                      <td class="sub-bgcolor">Telephone</td>
-                      <td><input type="text" class="form-control input-sm" data-bind="value:Telephone"></td>
-                      <td class="sub-bgcolor">State Union</td>
-                      <td><input type="text" class="form-control input-sm" data-bind="value:StateUnion"></td>
-                    </tr>
-                    <tr>
-                      <td class="sub-bgcolor">Pin Code</td>
-                      <td><input type="text" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value:PinCode"></td>
-                      <td class="sub-bgcolor">Country</td>
-                      <td><input type="text" class="form-control input-sm" data-bind="value:Country"></td>
-                      <td class="sub-bgcolor">File Open Date</td>
-                      <td><input type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:FileOpenDate, format: 'dd-MMM-yyyy'}"></td>
-                    </tr>
-                  </tbody>
-                </table>
+                
               </div>
             </div>
             
           </div>
         </div>
       </li>
-    </ul>
+    </ul> -->
   </div>
 </div>
 

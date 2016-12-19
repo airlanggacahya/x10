@@ -222,11 +222,13 @@ cc.removeDetailReportSummary = function(index){
 }
 
 cc.addDetailReportSummary = function(){
-	cc.form.DetailReportSummary.push(cc.templateDetailReportSummary)
+	var temp = JSON.parse(JSON.stringify(cc.templateDetailReportSummary))
+	cc.form.DetailReportSummary.push(  temp)
 }
 
 cc.addCreditTypeSummary = function(){
-	cc.form.CreditTypeSummary.push(cc.templateCreditTypeSummary)
+	var temp = JSON.parse(JSON.stringify(cc.templateCreditTypeSummary))
+	cc.form.CreditTypeSummary.push(temp)
 }
 
 cc.saveReport = function(){

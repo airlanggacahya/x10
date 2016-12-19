@@ -104,6 +104,7 @@ cc.RenderGrid = function(){
 	               		take: o.data.take
 	               	}, function(res){
 	               		o.success(res);
+	               		cc.isLoading(false)
 	               	})
 	            }
 	        },
@@ -308,6 +309,11 @@ function GetCustomer(){
 	    filter().CustomerSearchAll(data);
 		cc.RenderGrid();
 	});
+}
+
+cc.isLoading = function (what) {
+    $('.apx-loading')[what ? 'show' : 'hide']()
+    $('.app-content')[what ? 'hide' : 'show']()
 }
 
 $(document).ready(function(){

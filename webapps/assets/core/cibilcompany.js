@@ -258,6 +258,19 @@ function FilterInput(event) {
   return !isNotWanted;
 };
 
+cc.scroll = function(){
+	var elementPosition = $('.btnFixed').offset();
+	$(window).scroll(function(){
+	    if($(window).scrollTop() > elementPosition.top){
+	          $('.btnFixed').removeClass('static');
+	          $('.btnFixed').addClass('fixed');
+	    } else {
+	        $('.btnFixed').removeClass('fixed');
+	       	$('.btnFixed').addClass('static');
+	    }
+	});
+}
+
 cc.setForm = function(data){
 	ko.mapping.fromJS(data, cc.form)
 
@@ -298,7 +311,7 @@ function GetCustomer(){
 }
 
 $(document).ready(function(){
-
+	cc.scroll();
 	GetCustomer();
 
 	$('.entryEditCompany').collapsible({

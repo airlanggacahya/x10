@@ -76,7 +76,28 @@
   }
 
   input[disabled]{
-     cursor: default !important;
+    cursor: default !important;
+  }
+
+  .btnFixed{
+    margin-top: -15px;
+    margin-bottom: -11px;
+  }
+
+  .fixed{
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    margin-top: -23px;
+    margin-left: -36px;
+    background-color: #f0f3f4;
+    padding: 10px;
+  }
+
+  .static{
+    position: static;
+    margin-left: -15px;
+    margin-top: -10px;
   }
 </style>
 
@@ -104,7 +125,7 @@
   </div>
   <div class="col-md-12" data-bind="visible: !(edit() != true)">
     <div class="panel-body">
-      <div style="text-align: left;margin-left: -15px;">
+      <div style="text-align: left;" class="btnFixed static">
         <button class="btn btn-sm btn-primary" onclick="cc.saveReport()">
           <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;
         Save</button>&nbsp;&nbsp;
@@ -115,14 +136,14 @@
     </div>
     <ul class="entryEditCompany active" data-collapsible="accordion" style="margin-left: -41px;">
       <li>
-        <div class="collapsible-header header-bgcolor" style="text-align: center; "><i class="fa fa-list"></i>Please enter following details for the Borrower<i class="fa fa-chevron-down pull-right"></i></div>
+        <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Please enter following details for the Borrower<i class="fa fa-chevron-down pull-right"></i></div>
         <div class="collapsible-body no-margin no-padding">
           <div class="row" data-bind="with:form">
             <div class="col-md-12 cibilgridfixed">
               <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
                 <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry1">
                   <thead>
-                    <tr><th colspan="6">Profile</th></tr>
+                    <tr><th colspan="6">Report Summary</th></tr>
                   </thead>
                   <tbody data-bind="with: ReportSummary">
                     <tr>
@@ -244,19 +265,9 @@
                     </tr>
                   </tbody>
                 </table>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-      </li>
-      <li>
-        <div class="collapsible-header header-bgcolor" style="text-align: center; "><i class="fa fa-list"></i>Profile<i class="fa fa-chevron-down pull-right"></i></div>
-        <div class="collapsible-body no-margin no-padding">
-          <div class="row" data-bind="with:form">
-            <div class="col-md-12 cibilgridfixed">
-              <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
-                <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry1">
+                <br>
+                <br>
+                <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry6">
                   <thead>
                     <tr><th colspan="6">Profile</th></tr>
                   </thead>
@@ -297,6 +308,7 @@
                 </table>
               </div>
             </div>
+            
           </div>
         </div>
       </li>

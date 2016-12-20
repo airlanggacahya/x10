@@ -39,6 +39,8 @@ func (c *DataCapturingController) Cibil(k *knot.WebContext) interface{} {
 		DataAccess.Username = o["Username"].(string)
 	}
 
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{"shared/filter.html", "shared/loading.html", "datacapturing/cibilcomment.html", "datacapturing/cibilgrid.html", "datacapturing/panelcibil.html", "datacapturing/entryreportcibil.html"}
 
@@ -65,6 +67,8 @@ func (c *DataCapturingController) CibilNew(k *knot.WebContext) interface{} {
 		DataAccess.Rolename = o["Rolename"].(string)
 		DataAccess.Fullname = o["Fullname"].(string)
 	}
+
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{"shared/filter.html", "shared/loading.html", "datacapturing/cibilcomment.html", "datacapturing/cibilgridnew.html", "datacapturing/panelcibilnew.html", "datacapturing/entryreportcibil.html", "datacapturing/panelcibildetails.html", "datacapturing/panelcibilguarantors.html", "datacapturing/entryreportcibilnew.html"}

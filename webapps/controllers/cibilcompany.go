@@ -31,6 +31,8 @@ func (c *CibilCompanyController) Default(k *knot.WebContext) interface{} {
 		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{"shared/filter.html", "shared/loading.html"}
 

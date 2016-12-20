@@ -1,6 +1,6 @@
 
 <script type="text/javascript">
-model.PageTopMenu("Data Masters");
+model.PageTopMenu("{{.TopMenu}}");
 model.PageId('{{.Menuname}}');
 model.BreadCrumbs.push(new BreadCrumb("Data Masters", "Data Masters", "", "", ""));
 model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));

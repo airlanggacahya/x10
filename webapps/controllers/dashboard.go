@@ -32,6 +32,8 @@ func (c *DashboardController) Default(k *knot.WebContext) interface{} {
 		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	// if access != nil {
 	// 	tk.Println("sdsfsdf")
 	// 	e := tk.Serde(access, DataAccess, "json")

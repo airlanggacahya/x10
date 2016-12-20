@@ -1,6 +1,6 @@
 <script type="text/javascript">
-  model.PageTopMenu('Data Masters');
-  model.PageId('Standards Master');
+  model.PageTopMenu('{{.TopMenu}}');
+  model.PageId('{{.Menuname}}');
   model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
   model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
   model.Access = ko.observable('{{.Menuid}}');

@@ -37,6 +37,8 @@ func (c *RatioController) Input(k *knot.WebContext) interface{} {
 		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{"shared/filter.html", "shared/loading.html"}
 
@@ -115,6 +117,8 @@ func (c *RatioController) Formula(k *knot.WebContext) interface{} {
 		DataAccess.Username = o["Username"].(string)
 	}
 
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{"shared/filter.html", "shared/loading.html"}
 
@@ -140,6 +144,8 @@ func (c *RatioController) Report(k *knot.WebContext) interface{} {
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Fullname = o["Fullname"].(string)
 	}
+
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{"shared/filter.html", "shared/loading.html"}

@@ -118,7 +118,21 @@ menusett.updateAppmenu = function(){
 			$("#title").attr("readonly", true);
 			$("#Icon").attr("readonly", true);
 			$('#Enable').bootstrapSwitch('readonly', true);
-			swal("Success!", data.Message, "success");
+			// swal("Success!", data.Message, "success");
+			swal({
+				title: "Success!",
+				text: data.Message,
+				type: 'success',
+				showCancelButton: false,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+			}).then(function() {
+				location.reload();
+			}, function(dismiss) {
+				if (dismiss === 'cancel') {
+					console.log("dismiss");
+				}
+			});
 		}else{
 			return swal("Error!", data.Message, "error");
 		}

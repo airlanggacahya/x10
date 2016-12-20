@@ -140,8 +140,8 @@
 
        .line-logo {
         background: url('/static/img/shadowku.png') no-repeat center top;
-        height: 35px;
-        background-size: 335px 13px;
+          height: 5%;
+    background-size: 95% 50%;
         /*margin-bottom: 10px;*/
         /*margin-top: 60px;*/
         /*margin-bottom: 30px;*/
@@ -149,12 +149,20 @@
 
        .label-logo {
         background: url('/static/img/logo-newest.png') no-repeat center top;
-        height: 90px;
-        background-size: 329px 58px;
+        height: 10%;
+        background-size: 95% 75%;
         margin-bottom: 10px;
         /*margin-top: 60px;*/
         /*margin-bottom: 30px;*/
       }
+
+       @media screen and (max-width:px) {
+  294          ul.topnav li:not(:first-child) {display: none;}
+  295          ul.topnav li.icon {
+  ...
+  299        }
+
+
       .login-loader { text-align: center; }
       .login-loadingImage{opacity:0.1;}
       #registeredEmailInput{

@@ -1,11 +1,11 @@
 <html>
   <head>
-    <title>EACIIT SmartView</title>
+    <title>X10 Data Analytics</title>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="shortcut icon" href="/static/faviconvale.ico" type="image/x-icon" />
+   <link rel="shortcut icon" href="/static/img/eaciit_logo.png" type="image/x-icon" />
     <link rel="icon" href="/static/faviconvale.ico" type="image/x-icon" />
 
     <script src="/static/js/jquery-2.1.0.min.js"></script>
@@ -135,7 +135,25 @@
         background-size: 186px 75px;
         margin-bottom: 10px;
         margin-top: 60px;
-        margin-bottom: 30px;
+        /*margin-bottom: 30px;*/
+      }
+
+       .line-logo {
+        background: url('/static/img/shadowku.png') no-repeat center top;
+        height: 35px;
+        background-size: 335px 13px;
+        /*margin-bottom: 10px;*/
+        /*margin-top: 60px;*/
+        /*margin-bottom: 30px;*/
+      }
+
+       .label-logo {
+        background: url('/static/img/logo-newest.png') no-repeat center top;
+        height: 90px;
+        background-size: 329px 58px;
+        margin-bottom: 10px;
+        /*margin-top: 60px;*/
+        /*margin-bottom: 30px;*/
       }
       .login-loader { text-align: center; }
       .login-loadingImage{opacity:0.1;}
@@ -170,6 +188,9 @@
       .back {
           background-color: red;
       }
+      .ea-lbl{
+        font-size: 14px;
+      }
     </style>
     <script>
       var model = {
@@ -190,6 +211,10 @@
               <div class="form form-horizontal fh" style="padding-left:20px;">
 
                 <div class="login-logo"></div>
+
+                <div class="line-logo"></div>
+
+                <div class="label-logo"></div>
 
                 <div data-bind="visible:Mode()=='Process'" class="align-center" id="Loader">
                   <!-- <img src="/static/img/loader.gif" alt="Loading..." /> -->
@@ -223,9 +248,9 @@
                   <div class="row">
                     <div class="col-sm-12">
                       <button class="btn btn-primary btn-sm" id="btnLogin">Login</button>
-                      <div class="form-login-forgot">
+                    <!--   <div class="form-login-forgot">
                         <a href="#" id="forgetPassword">Can't access your account?</a>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                   <div class="row" data-bind="visible:Message()!=''">
@@ -235,7 +260,7 @@
                   </div>
                   <div class="row">
                     <div class="col-sm-12 login-form-footer">
-                      <label>&copy; 2013 - 2017 EACIIT Pte Ltd</label><br/>
+                      <label class="ea-lbl">&copy; EACIIT Pte Ltd</label><br/>
                       Earnings & Cash Improvement Information Technologies
                     </div>
                   </div>
@@ -249,11 +274,11 @@
                             <div class="tp-banner" >
                                 <ul>
                                     <!-- SLIDE  1-->
-                                    <li data-transition="fade" data-slotamount="5" data-masterspeed="700" >
+                                    <!-- <li data-transition="fade" data-slotamount="5" data-masterspeed="700" > -->
                                         <!-- MAIN IMAGE -->
-                                        <img src="/static/rs-plugin/images-content/connected_6.jpg"   alt="slidebg1"  data-bgfit="cover" data-bgposition="center center" data-bgrepeat="no-repeat">
+                                        <!-- <img src="/static/rs-plugin/images-content/connected_6.jpg"   alt="slidebg1"  data-bgfit="cover" data-bgposition="center center" data-bgrepeat="no-repeat"> -->
 
-                                    </li>
+                                    <!-- </li> -->
 
                                     <!-- SLIDE  2-->
                                     <li data-transition="zoomout" data-slotamount="5" data-masterspeed="700" >
@@ -268,11 +293,11 @@
                                     </li>
 
                                     <!-- SLIDE  3-->
-                                    <li data-transition="zoomout" data-slotamount="5" data-masterspeed="700" >
+                                    <!-- <li data-transition="zoomout" data-slotamount="5" data-masterspeed="700" > -->
                                         <!-- MAIN IMAGE -->
-                                        <img src="/static/rs-plugin/images-content/connected_3.jpg"   alt="slidebg1"  data-bgfit="cover" data-bgposition="center center" data-bgrepeat="no-repeat">
+                                        <!-- <img src="/static/rs-plugin/images-content/connected_3.jpg"   alt="slidebg1"  data-bgfit="cover" data-bgposition="center center" data-bgrepeat="no-repeat"> -->
 
-                                    </li>
+                                    <!-- </li> -->
                                 </ul>
                                 <div class="tp-bannertimer"></div>
                             </div>

@@ -8,6 +8,7 @@ import (
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 type MenuSettingController struct {
@@ -33,6 +34,9 @@ func (c *MenuSettingController) Default(k *knot.WebContext) interface{} {
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Fullname = o["Fullname"].(string)
 	}
+
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	k.Config.IncludeFiles = []string{"shared/loading.html"}
 
 	return DataAccess
@@ -526,5 +530,21 @@ func (c *MenuSettingController) UpdateMenuTop(k *knot.WebContext) interface{} {
 		ModelRole.Landing = dt.Landing
 		c.Ctx.Save(ModelRole)
 	}
+
+	data1 := make([]SysRolesModel, 0)
+	crsData1, errData1 := c.Ctx.Find(NewSysRolesModel(), nil)
+	defer crsData1.Close()
+	if errData1 != nil {
+		return c.SetResultInfo(true, errData1.Error(), nil)
+	}
+	errData1 = crsData1.Fetch(&data1, 0, false)
+	if errData1 != nil {
+		return c.SetResultInfo(true, errData1.Error(), nil)
+	}
+
+	k.SetSession("roles", data1)
+	k.SetSession("rolesid", data1[0].Id.Hex())
+	k.SetSession("stime", time.Now())
+
 	return c.SetResultInfo(false, "Menu has been successfully update.", nil)
 }

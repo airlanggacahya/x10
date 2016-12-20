@@ -39,6 +39,8 @@ func (c *DataCapturingController) CustomerProfileInfo(k *knot.WebContext) interf
 		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{"shared/filter.html", "datacapturing/detailforapplicant.html", "datacapturing/financialinformation.html", "datacapturing/nonrefundableprocessingfeesdetails.html", "datacapturing/detailsofpromotersdirectorsguarantors.html", "shared/loading.html"}
 

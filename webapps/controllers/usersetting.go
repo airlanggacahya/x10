@@ -41,6 +41,9 @@ func (c *UserSettingController) Default(k *knot.WebContext) interface{} {
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Fullname = o["Fullname"].(string)
 	}
+
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	k.Config.IncludeFiles = []string{"shared/loading.html"}
 
 	return DataAccess

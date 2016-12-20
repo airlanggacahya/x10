@@ -32,6 +32,8 @@ func (c *ActivityLogController) Default(k *knot.WebContext) interface{} {
 		DataAccess.Username = o["Username"].(string)
 	}
 
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	return DataAccess
 }
 

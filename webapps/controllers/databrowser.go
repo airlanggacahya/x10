@@ -34,6 +34,8 @@ func (c *DataBrowserController) Default(k *knot.WebContext) interface{} {
 		DataAccess.Username = o["Username"].(string)
 	}
 
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{"databrowser/customer.html", "shared/loading.html"}
 

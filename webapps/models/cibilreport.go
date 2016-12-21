@@ -309,7 +309,9 @@ func (m *CibilReportModel) GetAllDataByParam(param tk.M) (tk.Result, int) {
 	// temp := []CibilTempModel{}
 
 	query := []*dbox.Filter{}
+	querydraft := []*dbox.Filter{}
 	query = append(query, dbox.Ne("_id", ""))
+	querydraft = append(querydraft, dbox.Eq("Status", 1))
 
 	key := param.GetString("searchkey")
 
@@ -333,6 +335,8 @@ func (m *CibilReportModel) GetAllDataByParam(param tk.M) (tk.Result, int) {
 		}
 
 		query = append(query, dbox.Or(keys...))
+		querydraft = append(querydraft, dbox.Or(keys...))
+
 	}
 
 	csr, err := conn.NewQuery().
@@ -343,26 +347,46 @@ func (m *CibilReportModel) GetAllDataByParam(param tk.M) (tk.Result, int) {
 		Cursor(nil)
 	defer csr.Close()
 
-	csr1, err1 := conn.NewQuery().
-		From("CibilDraft").
-		Where(dbox.And(query...)).
-		Skip(param.GetInt("skip")).
-		Take(param.GetInt("take")).
-		Cursor(nil)
-	defer csr1.Close()
+	total, _ := m.GetTotalRow(query)
+	totaldraft, _ := m.GetTotalRowDraft(querydraft)
+
+	skipdraft := 0
+	takedraft := 0
+
+	diff := total - param.GetInt("skip")
+	total += totaldraft
+
+	if diff >= 0 && diff < 10 {
+		takedraft = 10 - diff
+	} else if diff < 0 {
+		skipdraft = diff * -1
+		takedraft = 10
+	}
+
+	tk.Println("skip--", skipdraft)
+	tk.Println("take--", takedraft)
+	tk.Println("diff--", diff)
+	if takedraft > 0 {
+		csr1, err1 := conn.NewQuery().
+			From("CibilDraft").
+			Where(dbox.And(query...)).
+			Skip(skipdraft).
+			Take(takedraft).
+			Cursor(nil)
+		defer csr1.Close()
+		err1 = csr1.Fetch(&dataDraft, 0, false)
+		if err1 != nil {
+			res.SetError(err1)
+		}
+	}
 
 	if err != nil {
 		res.SetError(err)
 	}
 
 	err = csr.Fetch(&dataReport, 0, false)
-	err1 = csr1.Fetch(&dataDraft, 0, false)
 	if err != nil {
 		res.SetError(err)
-	}
-
-	if err1 != nil {
-		res.SetError(err1)
 	}
 
 	arr := []*CibilTempModel{}
@@ -420,8 +444,6 @@ func (m *CibilReportModel) GetAllDataByParam(param tk.M) (tk.Result, int) {
 	res.SetData(arr)
 
 	// re ,_ := m.GetTotalRow(query)
-
-	total, _ := m.GetTotalRow(query)
 
 	return res, total
 }
@@ -481,6 +503,23 @@ func (m *CibilReportModel) GetTotalRow(query []*dbox.Filter) (int, error) {
 	cursor, e := conn.NewQuery().
 		Where(dbox.And(query...)).
 		From("CibilReport").
+		Cursor(nil)
+	defer cursor.Close()
+
+	if e != nil {
+		return 0, e
+	}
+
+	return cursor.Count(), e
+}
+
+func (m *CibilReportModel) GetTotalRowDraft(query []*dbox.Filter) (int, error) {
+	conn, _ := GetConnection()
+	defer conn.Close()
+
+	cursor, e := conn.NewQuery().
+		Where(dbox.And(query...)).
+		From("CibilDraft").
 		Cursor(nil)
 	defer cursor.Close()
 

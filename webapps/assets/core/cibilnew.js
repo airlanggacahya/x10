@@ -578,6 +578,20 @@ r.addCreditTypeSummary = function (){
   //model.dataEntryCibilReport().CreditTypeSummary(model.dataEntryCibilReport().CreditTypeSummary());
 }
 
+r.editCibilGrid = function(){
+  checkEntryCibilReport()
+}
+
+r.checkShowEdit = function(){
+  console.log("sarif")
+  if(r.reportDraft.length > 0 && r.reportDraft()[0].status == 1) {
+    console.log("sarif")
+    return true
+  } else {
+    return false
+  }
+}
+
 r.addDetailReportSummary = function(){
   r.dataEntryCibilReport().DetailReportSummary.push({
     CreditFacilities: ko.observable(''),

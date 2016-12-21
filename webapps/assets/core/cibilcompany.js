@@ -3,6 +3,7 @@ var cc = {}
 cc.edit = ko.observable(false)
 cc.AllData = ko.observableArray([]);
 cc.CurrentData = ko.observable(null);
+cc.IsDraft = ko.observable(false);
 
 cc.templateDetailReportSummary = {
 	CreditFacilities: '',
@@ -234,14 +235,25 @@ cc.addCreditTypeSummary = function(){
 cc.saveReport = function(){
 	cc.loadDateString()
 	var param = ko.mapping.toJS(cc.form);
-	ajaxPost("/cibilcompany/update", param, function(res){
-		if(res.success == true){
-			// $('#transgrid').data('kendoGrid').dataSource.read();
-			cc.edit(false);
-			cc.RenderGrid();
-			swal("Success", "Data Save Successfully","success")
-		}
-	})
+	if(cc.IsDraft() == false){
+		ajaxPost("/cibilcompany/updatereport", param, function(res){
+			if(res.success == true){
+				// $('#transgrid').data('kendoGrid').dataSource.read();
+				cc.edit(false);
+				cc.RenderGrid();
+				swal("Success", "Data Save Successfully","success")
+			}
+		})
+	}else{
+		ajaxPost("/cibilcompany/updatedraft", param, function(res){
+			if(res.success == true){
+				// $('#transgrid').data('kendoGrid').dataSource.read();
+				cc.edit(false);
+				cc.RenderGrid();
+				swal("Success", "Data Save Successfully","success")
+			}
+		})
+	}
 }
 
 cc.backToMain = function(){
@@ -255,26 +267,50 @@ cc.getEdit = function(e){
 		return dt.Id == e
 	})
 
-	console.log(res[0])
+	// console.log(res[0])
 	if(res != undefined){
 		// cc.edit(true)
 		// cc.setForm(res[0])
+		console.log(res[0])
+		if(res[0].IsCibilDraft == false){
+			var param = {CustomerId :res[0].Profile.CustomerId, DealNo: res[0].Profile.DealNo.toString()}
+			ajaxPost("/cibilcompany/getdataonreport", param, function(res){
+				var data = res.data
+				if(data != null && res.success == true){
+					if(data.IsConfirm ==1){
+						swal("Warning","Data already confirmed, please Re Enter first","warning")
+						return
+					}
 
-		var param = {CustomerId :res[0].Profile.CustomerId, DealNo: res[0].Profile.DealNo.toString()}
-		ajaxPost("/cibilcompany/getdata", param, function(res){
-			var data = res.data
-			if(data != null && res.success == true){
-				if(data.IsConfirm ==1){
-					swal("Warning","Data already confirmed, please Re Enter first","warning")
-					return
+					cc.edit(true);
+					cc.IsDraft(false)
+					cc.setForm(data)
+				}else{
+					swal("Error", "Data not found", "error")
 				}
+			})
+		}else{
+			var param = {CustomerId :res[0].Profile.CustomerId, DealNo: res[0].Profile.DealNo.toString()}
+			ajaxPost("/cibilcompany/getdataonreport", param, function(res){
+				var data = res.data
+				if(data.IsConfirm != 1){
+					ajaxPost("/cibilcompany/getdataondraft", param, function(res){
+						var data = res.data
+						if(data != null && res.success == true){
 
-				cc.edit(true);
-				cc.setForm(data)
-			}else{
-				swal("Error", "Data not found", "error")
-			}
-		})
+							cc.edit(true);
+							cc.IsDraft(true)
+							cc.setForm(data)
+						}else{
+							swal("Error", "Data not found", "error")
+						}
+
+					});
+				}else{
+					swal("Warning","Data already confirmed, please Re Enter first","warning")
+				}
+			})
+		}
 	}
 }
 

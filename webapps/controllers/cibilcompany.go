@@ -53,7 +53,7 @@ func (c *CibilCompanyController) GetAllData(k *knot.WebContext) interface{} {
 	}{data, total}
 }
 
-func (c *CibilCompanyController) GetData(k *knot.WebContext) interface{} {
+func (c *CibilCompanyController) GetDataOnReport(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
 	param := tk.M{}
@@ -63,7 +63,7 @@ func (c *CibilCompanyController) GetData(k *knot.WebContext) interface{} {
 		return CreateResult(false, nil, err.Error())
 	}
 
-	data, err := new(CibilReportModel).GetData(param.GetInt("CustomerId"), param.GetString("DealNo"))
+	data, err := new(CibilReportModel).GetDataReport(param.GetInt("CustomerId"), param.GetString("DealNo"))
 
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
@@ -72,7 +72,26 @@ func (c *CibilCompanyController) GetData(k *knot.WebContext) interface{} {
 	return CreateResult(true, data, "")
 }
 
-func (c *CibilCompanyController) Update(k *knot.WebContext) interface{} {
+func (c *CibilCompanyController) GetDataOnDraft(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	param := tk.M{}
+
+	err := k.GetPayload(&param)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	data, err := new(CibilDraftModel).GetDataDraft(param.GetInt("CustomerId"), param.GetString("DealNo"))
+
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	return CreateResult(true, data, "")
+}
+
+func (c *CibilCompanyController) UpdateReport(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
 	param := CibilReportModel{}
@@ -83,7 +102,27 @@ func (c *CibilCompanyController) Update(k *knot.WebContext) interface{} {
 		return CreateResult(false, nil, err.Error())
 	}
 
-	err = new(CibilReportModel).Update(param)
+	err = new(CibilReportModel).UpdateReport(param)
+
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	return CreateResult(true, nil, "")
+}
+
+func (c *CibilCompanyController) UpdateDraft(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	param := CibilReportModel{}
+
+	err := k.GetPayload(&param)
+	tk.Println(err)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	err = new(CibilReportModel).UpdateDraft(param)
 
 	if err != nil {
 		return CreateResult(false, nil, err.Error())

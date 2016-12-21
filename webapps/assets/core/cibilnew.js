@@ -162,7 +162,7 @@ r.getData = function() {
       r.promotorsscore(data[3].Promotors);
 
       r.setData();
-      r.setDataEntry(r.reportDraft());
+      r.setDataEntry(JSON.parse( JSON.stringify(r.reportDraft())));
 
       r.cibilStatus(1)
       if(data[1].CibilReport.length > 1) {
@@ -579,7 +579,7 @@ r.addCreditTypeSummary = function (){
 }
 
 r.editCibilGrid = function(){
-  checkEntryCibilReport()
+  checkEntryCibilReport();
 }
 
 r.checkShowEdit = function(){
@@ -672,6 +672,19 @@ var savePromotors = function() {
   return false
 }
 
+var loadDateString = function(rr){
+  var FirstopenDate = kendo.toString(new Date(rr.ReportSummary().FirstCreditFacilityOpenDate()), "dd-MMM-yyyy");
+  rr.ReportSummary().FirstCreditFacilityOpenDate(FirstopenDate);
+
+  var LatestopenDate = kendo.toString(new Date(rr.ReportSummary().LatestCreditFacilityOpenDate()), "dd-MMM-yyyy");
+  rr.ReportSummary().LatestCreditFacilityOpenDate(LatestopenDate);
+
+  var MostRecentDate = kendo.toString(new Date(rr.EnquirySummary().MostRecentDate()), "dd-MMM-yyyy");
+  rr.EnquirySummary().MostRecentDate(MostRecentDate);
+
+return rr
+}
+
 var saveCibilReport = function(status){
   r.addProfileCompanyData(r.reportCibilList()[0]);
 
@@ -688,6 +701,8 @@ var saveCibilReport = function(status){
   if (status == "save"){
     r.dataEntryCibilReport().Status = 0;
     param = r.dataEntryCibilReport();
+    param = loadDateString(param)
+
     ajaxPost(url, param, function(data) {
       if (data) {
         swal("Data Saved", "Data have been saved", "success");
@@ -723,6 +738,8 @@ var saveCibilReport = function(status){
 
           var url = "/datacapturing/submitreportcibil";
           param = r.dataEntryCibilReport();
+          param = loadDateString(param)
+
           ajaxPost(url, param, function(data) {
             if (data) {
               swal("Data Submited", "Data have been submited", "success");
@@ -852,6 +869,7 @@ function checkEntryCibilReport() {
   $(".reportSummary").hide()
   $(".promoters").hide()
   $(".entryreportCibil").show()
+  r.setDataEntry(JSON.parse( JSON.stringify(r.reportDraft())));
 }
 
 var checkConfirmPromotors = function(customerProfile, promotorFinal) {

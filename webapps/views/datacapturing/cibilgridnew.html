@@ -1,12 +1,15 @@
 <div class="row" class="background-color: #fafafa;">
   <div class="col-md-12">
-  <table class="k-grid no-border">
+  <table class="k-grid no-border col-md-6">
     <tr class="jancok">
       <td style="font-weight: bold;">Select Rating :</td>
       <td>  <input id="acct" data-bind="kendoDropDownList: { data: ratingList, value: rating}" type="text" class="acct input-sm form-control"></td>
-      <td><button type="button" class="btn btn-warning" data-bind="click: editCibilGrid, visible: (cibil.reportDraft().Status != undefined && cibil.reportDraft().Status == 1) ">Edit</button></td>
+      <td></td>
     </tr>
   </table>
+  <div class="col-md-6">
+    <button type="button" class="btn btn-warning btn-disabled-confirm pull-right" style="margin-top: 5px;" data-bind="click: editCibilGrid, visible: (cibil.reportDraft().Status != undefined && cibil.reportDraft().Status == 1)">Edit</button>
+  </div>
    <!--  <div class="col-md-2">
       <label class="pull-right">Select Rating :</label>
     </div>

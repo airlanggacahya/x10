@@ -583,7 +583,6 @@ r.editCibilGrid = function(){
 }
 
 r.checkShowEdit = function(){
-  console.log("sarif")
   if(r.reportDraft.length > 0 && r.reportDraft()[0].status == 1) {
     console.log("sarif")
     return true
@@ -788,6 +787,7 @@ var updateConfirmCibil = function(){
           if(status == 0){
             swal("Please Edit / Enter Data", "", "success");
           } else {
+
             swal("Successfully Confirmed", "", "success");
           }
 
@@ -886,6 +886,7 @@ var checkConfirmCibil = function(cibilList) {
     // $(".btn-unfreeze").attr('disabled', true)
     cibil.unfreeze(false, 1)
     if(cibilList != null) {
+      $(".btn-disabled-confirm").prop("disabled", true);
       $(".confirmdate").text("Last Confirmed at " + moment(cibilList.AcceptRejectTime).format("DD-MM-YYYY HH:mm A"));
     }
 
@@ -1037,6 +1038,7 @@ function backToMain(){
 }
 
 function refreshFilter(){
+  $(".btn-disabled-confirm").prop("disabled", false);
   $(".swal-custom").hide()
   $(".swal2-overlay").hide()
   backToMain();
@@ -1123,6 +1125,7 @@ cibil.unfreeze = function(what, cibil){
         $txt.enable(what);
       }
 
+      $(".btn-disabled-confirm").prop("disabled", !what);
     });
   } else {
     //$(".container-all button").prop( "disabled", !what );
@@ -1147,6 +1150,7 @@ cibil.unfreeze = function(what, cibil){
         $txt.enable(what);
       }
 
+      $(".btn-disabled-confirm").prop("disabled", !what);
     });
   }
 }

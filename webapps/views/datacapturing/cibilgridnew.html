@@ -4,6 +4,7 @@
     <tr class="jancok">
       <td style="font-weight: bold;">Select Rating :</td>
       <td>  <input id="acct" data-bind="kendoDropDownList: { data: ratingList, value: rating}" type="text" class="acct input-sm form-control"></td>
+      <td><button type="button" class="btn btn-warning" data-bind="click: editCibilGrid, visible: (cibil.reportDraft().Status != undefined && cibil.reportDraft().Status == 1) ">Edit</button></td>
     </tr>
   </table>
    <!--  <div class="col-md-2">

@@ -132,7 +132,7 @@
       <button class="btn btn-sm btn-primary" onclick="saveCibilReport('submit')">
       <span class="glyphicon glyphicon-ok"></span>&nbsp;
       Submit Details</button> &nbsp;
-      <button class="btn btn-sm btn-primary" onclick="saveCibilReport('save')">
+      <button class="btn btn-sm btn-primary" data-bind="visible: (cibil.reportDraft().Status == undefined || (cibil.reportDraft().Status != undefined && cibil.reportDraft().Status == 0))" onclick="saveCibilReport('save')">
         <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;
       Save Draft</button>&nbsp;&nbsp;
       <button class="btn btn-sm btn-warning" onclick="backToMain();">

@@ -165,6 +165,15 @@ r.getData = function() {
       r.setDataEntry(JSON.parse( JSON.stringify(r.reportDraft())));
 
       r.cibilStatus(1)
+
+      if(r.reportCibilList()[0].IsConfirm == 1) {
+        $(".btn-disabled-confirm").prop("disabled", true);
+      }
+
+      if(r.reportCibilList()[0].IsConfirm == 0 && r.reportCibilList()[0].IsFreeze) {
+       $(".btn-disabled-confirm").prop("disabled", true); 
+      }
+
       if(data[1].CibilReport.length > 1) {
         r.cibilStatus(data[2].CibilDraft.Status)
         if(data[2].CibilDraft.Status == 0 && data[1].CibilReport[0].Status != undefined) {
@@ -803,8 +812,9 @@ var updateConfirmCibil = function(){
         if(data.success) {
           if(status == 0){
             swal("Please Edit / Enter Data", "", "success");
+            $(".btn-disabled-confirm").prop("disabled", false);
           } else {
-
+            $(".btn-disabled-confirm").prop("disabled", true);
             swal("Successfully Confirmed", "", "success");
           }
 
@@ -904,7 +914,6 @@ var checkConfirmCibil = function(cibilList) {
     // $(".btn-unfreeze").attr('disabled', true)
     cibil.unfreeze(false, 1)
     if(cibilList != null) {
-      $(".btn-disabled-confirm").prop("disabled", true);
       $(".confirmdate").text("Last Confirmed at " + moment(cibilList.AcceptRejectTime).format("DD-MM-YYYY HH:mm A"));
     }
 
@@ -1056,7 +1065,6 @@ function backToMain(){
 }
 
 function refreshFilter(){
-  $(".btn-disabled-confirm").prop("disabled", false);
   $(".swal-custom").hide()
   $(".swal2-overlay").hide()
   backToMain();
@@ -1120,6 +1128,7 @@ cibil.lastcomment = ko.observable("");
 
 cibil.unfreeze = function(what, cibil){
   if(cibil == 0) {
+
     //$(".container-all button").prop( "disabled", !what );
     $(".btn-disabled").prop( "disabled", !what );
     //$(".btn-disabled1").prop( "disabled", !what );
@@ -1143,7 +1152,6 @@ cibil.unfreeze = function(what, cibil){
         $txt.enable(what);
       }
 
-      $(".btn-disabled-confirm").prop("disabled", !what);
     });
   } else {
     //$(".container-all button").prop( "disabled", !what );
@@ -1167,8 +1175,6 @@ cibil.unfreeze = function(what, cibil){
       }else if ($txt != undefined){
         $txt.enable(what);
       }
-
-      $(".btn-disabled-confirm").prop("disabled", !what);
     });
   }
 }
@@ -1185,9 +1191,17 @@ cibil.SendFreeze = function(what){
             r.isFreeze(what)
 
             if(what) {
+              if(r.reportCibilList()[0].IsConfirm == 0) {
+                $(".btn-disabled-confirm").prop("disabled", true);
+              }
+
               swal("Success","Data Freezed","success");
               r.FreezeText("Unfreeze")
             } else {
+              if(r.reportCibilList()[0].IsConfirm == 0) {
+                $(".btn-disabled-confirm").prop("disabled", false);
+              }
+
               swal("Success","Data Unfreezed","success");
               r.FreezeText("Freeze")
             }

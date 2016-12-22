@@ -750,6 +750,9 @@
 
   model.FindSubMenu = function(){
     var subarr = _.find(model.menu(),function(x){
+      if (model.PageTopMenu() == ""){
+        model.PageTopMenu(x.title())
+      }
       return x.title() == model.PageTopMenu()
     })
 

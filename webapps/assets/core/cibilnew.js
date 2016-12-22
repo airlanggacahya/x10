@@ -622,7 +622,43 @@ r.setDataEntry = function(data) {
 
   r.dataEntryCibilReport().CreditTypeSummary([]);
   if (data.CreditTypeSummary != null){
-    r.dataEntryCibilReport().CreditTypeSummary(data.CreditTypeSummary);
+
+    //console.log(data.CreditTypeSummary)
+
+    // r.dataEntryCibilReport().CreditTypeSummary = ko.mapping.fromJS(data.CreditTypeSummary)
+    
+    for (var i=0; i < data.CreditTypeSummary.length; i++) {
+      var temp = {}
+      temp.CreditType = data.CreditTypeSummary[i].CreditType
+      temp.CurrencyCode = data.CreditTypeSummary[i].CurrencyCode
+      temp.NoCreditFacilitiesBorrower = data.CreditTypeSummary[i].NoCreditFacilitiesBorrower
+      temp.SpecialMention = data.CreditTypeSummary[i].SpecialMention.split(",").join("")
+      temp.Standard = data.CreditTypeSummary[i].Standard.split(",").join("")
+      temp.Substandard = data.CreditTypeSummary[i].Substandard.split(",").join("")
+      temp.Doubtful = data.CreditTypeSummary[i].Doubtful.split(",").join("")
+      temp.Loss = data.CreditTypeSummary[i].Loss.split(",").join("")
+      temp.TotalCurrentBalance = data.CreditTypeSummary[i].TotalCurrentBalance.split(",").join("")
+      
+      r.dataEntryCibilReport().CreditTypeSummary.push(temp)
+    }
+    // _.each(r.dataEntryCibilReport().CreditTypeSummary(), function(o){
+    //   o.Standard = (o.Standard.split(",").join(""));
+    //   o.Substandard = (o.Substandard.split(",").join(""));
+    //   o.Doubtful = (o.Doubtful.split(",").join(""));
+    //   o.Loss = (o.Loss.split(",").join(""));
+    //   o.SpecialMention = (o.SpecialMention.split(",").join(""));
+    //   o.TotalCurrentBalance = (o.TotalCurrentBalance.split(",").join(""));
+
+    //   // r.dataEntryCibilReport().CreditTypeSummary.push([{
+    //   //   Standard : ko.observable((o.Standard.split(",").join(""))),
+    //   //   Substandard : ko.observable((o.Substandard.split(",").join(""))),
+    //   //   Doubtful : ko.observable((o.Doubtful.split(",").join(""))),
+    //   //   Loss : ko.observable((o.Loss.split(",").join(""))),
+    //   //   SpecialMention : ko.observable((o.SpecialMention.split(",").join(""))),
+    //   //   TotalCurrentBalance : ko.observable((o.TotalCurrentBalance.split(",").join("")))
+    //   // }])
+    // })
+
   } else {
     r.addCreditTypeSummary();
   }

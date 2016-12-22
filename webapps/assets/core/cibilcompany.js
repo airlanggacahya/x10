@@ -232,7 +232,80 @@ cc.addCreditTypeSummary = function(){
 	cc.form.CreditTypeSummary.push(temp)
 }
 
+function ValidateCibil()
+{
+  var repsum = cc.form.ReportSummary;
+  var detailsummary = cc.form.DetailReportSummary();
+  var enquiry = cc.form.EnquirySummary;
+  var credtype = cc.form.CreditTypeSummary();
+
+  var Valid = true;
+  var dt = repsum;
+    _.each(dt,function(e,i){
+        if(e() == "" && parseInt(e()) != 0){
+         Valid = false;
+        }
+    });
+
+  if(!Valid){
+    return false;
+  }
+
+  var Valid = true;
+  var dt = detailsummary;
+  _.each(dt,function(e,i){
+    _.each(e,function(v,k){
+      if(v == "" && parseInt(v) != 0){
+        Valid = false;
+      }
+    });
+  });
+
+  if(!Valid){
+    return false;
+  }
+
+  var Valid = true;
+  var dt = enquiry;
+  _.each(dt,function(e,i){
+    if(e() == "" && parseInt(e()) != 0){
+     Valid = false;
+    }
+  });
+
+  if(!Valid){
+    return false;
+  }
+
+  var Valid = true;
+  var dt = credtype;
+  _.each(dt,function(e,i){
+    _.each(e,function(ex,ix){
+      if(typeof ex === "function") {
+        if(ex() == "" && parseInt(ex()) != 0){
+          Valid = false;
+        }else{
+          if(ex == "" && parseInt(ex) != 0){
+            Valid = false;
+          }
+        }
+      }
+    });
+  });
+
+  if(!Valid){
+    return false;
+  }
+
+  return true;
+}
+
 cc.saveReport = function(){
+	  if(!ValidateCibil()){
+    swal("Warning","Please complete all fields","warning");
+    return false;
+  }
+
 	cc.loadDateString()
 	var param = ko.mapping.toJS(cc.form);
 	if(cc.IsDraft() == false){

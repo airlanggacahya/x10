@@ -834,7 +834,7 @@ var saveCibilReport = function(status){
 
     swal({
         title: "Are you sure",
-        text: "Submit this data?",
+        text: "want to submit this data?",
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn-primary",

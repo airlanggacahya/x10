@@ -169,11 +169,51 @@ r.getData = function() {
       if(r.reportCibilList()[0].IsConfirm == 1) {
         $(".btn-disabled-confirm").prop("disabled", true);
         $(".btn-disabled").prop( "disabled", true );
+
+        $(".container-all .k-widget").each(function(i,e){
+
+          var $ddl = $(e).find("select").getKendoDropDownList();
+
+          if($ddl == undefined)
+            var $ddl = $(e).find("input").getKendoDropDownList();
+
+          var $dtm = $(e).find("input").getKendoDatePicker();
+          var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+          if($ddl != undefined)
+          {
+            $ddl.enable(false);
+          }else if($dtm != undefined){
+            $dtm.enable(false);
+          }else if ($txt != undefined){
+            $txt.enable(false);
+          }
+        });
       }
 
       if(r.reportCibilList()[0].IsConfirm == 0 && r.reportCibilList()[0].IsFreeze) {
        $(".btn-disabled-confirm").prop("disabled", true);
        $(".btn-disabled").prop( "disabled", true ); 
+      
+       $(".container-all .k-widget").each(function(i,e){
+
+          var $ddl = $(e).find("select").getKendoDropDownList();
+
+          if($ddl == undefined)
+            var $ddl = $(e).find("input").getKendoDropDownList();
+
+          var $dtm = $(e).find("input").getKendoDatePicker();
+          var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+          if($ddl != undefined)
+          {
+            $ddl.enable(false);
+          }else if($dtm != undefined){
+            $dtm.enable(false);
+          }else if ($txt != undefined){
+            $txt.enable(false);
+          }
+        });
       }
 
       if(data[1].CibilReport.length > 1) {
@@ -816,9 +856,50 @@ var updateConfirmCibil = function(){
             swal("Please Edit / Enter Data", "", "success");
             $(".btn-disabled-confirm").prop("disabled", false);
             $(".btn-disabled").prop( "disabled", false );
+
+            $(".container-all .k-widget").each(function(i,e){
+
+              var $ddl = $(e).find("select").getKendoDropDownList();
+
+              if($ddl == undefined)
+                var $ddl = $(e).find("input").getKendoDropDownList();
+
+              var $dtm = $(e).find("input").getKendoDatePicker();
+              var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+              if($ddl != undefined)
+              {
+                $ddl.enable(true);
+              }else if($dtm != undefined){
+                $dtm.enable(true);
+              }else if ($txt != undefined){
+                $txt.enable(true);
+              }
+            });
+
           } else {
             $(".btn-disabled-confirm").prop("disabled", true);
             $(".btn-disabled").prop( "disabled", true );
+            $(".container-all .k-widget").each(function(i,e){
+
+              var $ddl = $(e).find("select").getKendoDropDownList();
+
+              if($ddl == undefined)
+                var $ddl = $(e).find("input").getKendoDropDownList();
+
+              var $dtm = $(e).find("input").getKendoDatePicker();
+              var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+              if($ddl != undefined)
+              {
+                $ddl.enable(false);
+              }else if($dtm != undefined){
+                $dtm.enable(false);
+              }else if ($txt != undefined){
+                $txt.enable(false);
+              }
+            });
+
             swal("Successfully Confirmed", "", "success");
           }
 
@@ -1136,49 +1217,30 @@ cibil.unfreeze = function(what, cibil){
     //$(".container-all button").prop( "disabled", !what );
     //$(".btn-disabled1").prop( "disabled", !what );
 
-    $(".container-all .k-widget").each(function(i,e){
 
-      var $ddl = $(e).find("select").getKendoDropDownList();
-
-      if($ddl == undefined)
-        var $ddl = $(e).find("input").getKendoDropDownList();
-
-      var $dtm = $(e).find("input").getKendoDatePicker();
-      var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
-
-      if($ddl != undefined)
-      {
-        $ddl.enable(what);
-      }else if($dtm != undefined){
-        $dtm.enable(what);
-      }else if ($txt != undefined){
-        $txt.enable(what);
-      }
-
-    });
   } else {
     //$(".container-all button").prop( "disabled", !what );
     $(".btn-disabled").prop( "disabled", !what );
 
-    $(".container-all .k-widget").each(function(i,e){
+    // $(".container-all .k-widget").each(function(i,e){
 
-      var $ddl = $(e).find("select").getKendoDropDownList();
+    //   var $ddl = $(e).find("select").getKendoDropDownList();
 
-      if($ddl == undefined)
-        var $ddl = $(e).find("input").getKendoDropDownList();
+    //   if($ddl == undefined)
+    //     var $ddl = $(e).find("input").getKendoDropDownList();
 
-      var $dtm = $(e).find("input").getKendoDatePicker();
-      var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+    //   var $dtm = $(e).find("input").getKendoDatePicker();
+    //   var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
 
-      if($ddl != undefined)
-      {
-        $ddl.enable(what);
-      }else if($dtm != undefined){
-        $dtm.enable(what);
-      }else if ($txt != undefined){
-        $txt.enable(what);
-      }
-    });
+    //   if($ddl != undefined)
+    //   {
+    //     $ddl.enable(what);
+    //   }else if($dtm != undefined){
+    //     $dtm.enable(what);
+    //   }else if ($txt != undefined){
+    //     $txt.enable(what);
+    //   }
+    // });
   }
 }
 
@@ -1197,6 +1259,26 @@ cibil.SendFreeze = function(what){
               if(r.reportCibilList()[0].IsConfirm == 0) {
                 $(".btn-disabled-confirm").prop("disabled", true);
                 $(".btn-disabled").prop( "disabled", true );
+
+                $(".container-all .k-widget").each(function(i,e){
+
+                  var $ddl = $(e).find("select").getKendoDropDownList();
+
+                  if($ddl == undefined)
+                    var $ddl = $(e).find("input").getKendoDropDownList();
+
+                  var $dtm = $(e).find("input").getKendoDatePicker();
+                  var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+                  if($ddl != undefined)
+                  {
+                    $ddl.enable(false);
+                  }else if($dtm != undefined){
+                    $dtm.enable(false);
+                  }else if ($txt != undefined){
+                    $txt.enable(false);
+                  }
+                });
               }
 
               swal("Success","Data Freezed","success");
@@ -1205,6 +1287,26 @@ cibil.SendFreeze = function(what){
               if(r.reportCibilList()[0].IsConfirm == 0) {
                 $(".btn-disabled-confirm").prop("disabled", false);
                 $(".btn-disabled").prop( "disabled", false );
+
+                $(".container-all .k-widget").each(function(i,e){
+
+                  var $ddl = $(e).find("select").getKendoDropDownList();
+
+                  if($ddl == undefined)
+                    var $ddl = $(e).find("input").getKendoDropDownList();
+
+                    var $dtm = $(e).find("input").getKendoDatePicker();
+                    var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+                    if($ddl != undefined)
+                    {
+                      $ddl.enable(true);
+                    }else if($dtm != undefined){
+                      $dtm.enable(true);
+                    }else if ($txt != undefined){
+                      $txt.enable(true);
+                    }
+                });
               }
 
               swal("Success","Data Unfreezed","success");

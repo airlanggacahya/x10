@@ -168,10 +168,12 @@ r.getData = function() {
 
       if(r.reportCibilList()[0].IsConfirm == 1) {
         $(".btn-disabled-confirm").prop("disabled", true);
+        $(".btn-disabled").prop( "disabled", true );
       }
 
       if(r.reportCibilList()[0].IsConfirm == 0 && r.reportCibilList()[0].IsFreeze) {
-       $(".btn-disabled-confirm").prop("disabled", true); 
+       $(".btn-disabled-confirm").prop("disabled", true);
+       $(".btn-disabled").prop( "disabled", true ); 
       }
 
       if(data[1].CibilReport.length > 1) {
@@ -813,8 +815,10 @@ var updateConfirmCibil = function(){
           if(status == 0){
             swal("Please Edit / Enter Data", "", "success");
             $(".btn-disabled-confirm").prop("disabled", false);
+            $(".btn-disabled").prop( "disabled", false );
           } else {
             $(".btn-disabled-confirm").prop("disabled", true);
+            $(".btn-disabled").prop( "disabled", true );
             swal("Successfully Confirmed", "", "success");
           }
 
@@ -1130,7 +1134,6 @@ cibil.unfreeze = function(what, cibil){
   if(cibil == 0) {
 
     //$(".container-all button").prop( "disabled", !what );
-    $(".btn-disabled").prop( "disabled", !what );
     //$(".btn-disabled1").prop( "disabled", !what );
 
     $(".container-all .k-widget").each(function(i,e){
@@ -1193,6 +1196,7 @@ cibil.SendFreeze = function(what){
             if(what) {
               if(r.reportCibilList()[0].IsConfirm == 0) {
                 $(".btn-disabled-confirm").prop("disabled", true);
+                $(".btn-disabled").prop( "disabled", true );
               }
 
               swal("Success","Data Freezed","success");
@@ -1200,6 +1204,7 @@ cibil.SendFreeze = function(what){
             } else {
               if(r.reportCibilList()[0].IsConfirm == 0) {
                 $(".btn-disabled-confirm").prop("disabled", false);
+                $(".btn-disabled").prop( "disabled", false );
               }
 
               swal("Success","Data Unfreezed","success");

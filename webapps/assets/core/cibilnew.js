@@ -139,6 +139,30 @@ r.FreezeText = ko.observable("Freeze")
 
 r.getData = function() {
 
+  r.ConfirmText("Confirm")
+  $(".btn-disabled-confirm").prop("disabled", false);
+  $(".btn-disabled").prop( "disabled", false );
+
+  $(".container-all .k-widget").each(function(i,e){
+
+    var $ddl = $(e).find("select").getKendoDropDownList();
+
+    if($ddl == undefined)
+      var $ddl = $(e).find("input").getKendoDropDownList();
+
+    var $dtm = $(e).find("input").getKendoDatePicker();
+    var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+    if($ddl != undefined)
+    {
+      $ddl.enable(true);
+    }else if($dtm != undefined){
+      $dtm.enable(true);
+    }else if ($txt != undefined){
+      $txt.enable(true);
+    }
+  });
+
   var param = {CustomerId: filter().CustomerSearchVal()}
   param["DealNo"] = filter().DealNumberSearchVal()
   var url = "/datacapturing/getcustomerprofiledetailbycustid"

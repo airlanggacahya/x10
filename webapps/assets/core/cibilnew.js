@@ -139,6 +139,30 @@ r.FreezeText = ko.observable("Freeze")
 
 r.getData = function() {
 
+  r.ConfirmText("Confirm")
+  $(".btn-disabled-confirm").prop("disabled", false);
+  $(".btn-disabled").prop( "disabled", false );
+
+  $(".container-all .k-widget").each(function(i,e){
+
+    var $ddl = $(e).find("select").getKendoDropDownList();
+
+    if($ddl == undefined)
+      var $ddl = $(e).find("input").getKendoDropDownList();
+
+    var $dtm = $(e).find("input").getKendoDatePicker();
+    var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+    if($ddl != undefined)
+    {
+      $ddl.enable(true);
+    }else if($dtm != undefined){
+      $dtm.enable(true);
+    }else if ($txt != undefined){
+      $txt.enable(true);
+    }
+  });
+
   var param = {CustomerId: filter().CustomerSearchVal()}
   param["DealNo"] = filter().DealNumberSearchVal()
   var url = "/datacapturing/getcustomerprofiledetailbycustid"
@@ -162,9 +186,60 @@ r.getData = function() {
       r.promotorsscore(data[3].Promotors);
 
       r.setData();
-      r.setDataEntry(r.reportDraft());
+      r.setDataEntry(JSON.parse( JSON.stringify(r.reportDraft())));
 
       r.cibilStatus(1)
+
+      if(r.reportCibilList()[0].IsConfirm == 1) {
+        $(".btn-disabled-confirm").prop("disabled", true);
+        $(".btn-disabled").prop( "disabled", true );
+
+        $(".container-all .k-widget").each(function(i,e){
+
+          var $ddl = $(e).find("select").getKendoDropDownList();
+
+          if($ddl == undefined)
+            var $ddl = $(e).find("input").getKendoDropDownList();
+
+          var $dtm = $(e).find("input").getKendoDatePicker();
+          var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+          if($ddl != undefined)
+          {
+            $ddl.enable(false);
+          }else if($dtm != undefined){
+            $dtm.enable(false);
+          }else if ($txt != undefined){
+            $txt.enable(false);
+          }
+        });
+      }
+
+      if(r.reportCibilList()[0].IsConfirm == 0 && r.reportCibilList()[0].IsFreeze) {
+       $(".btn-disabled-confirm").prop("disabled", true);
+       $(".btn-disabled").prop( "disabled", true ); 
+      
+       $(".container-all .k-widget").each(function(i,e){
+
+          var $ddl = $(e).find("select").getKendoDropDownList();
+
+          if($ddl == undefined)
+            var $ddl = $(e).find("input").getKendoDropDownList();
+
+          var $dtm = $(e).find("input").getKendoDatePicker();
+          var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+          if($ddl != undefined)
+          {
+            $ddl.enable(false);
+          }else if($dtm != undefined){
+            $dtm.enable(false);
+          }else if ($txt != undefined){
+            $txt.enable(false);
+          }
+        });
+      }
+
       if(data[1].CibilReport.length > 1) {
         r.cibilStatus(data[2].CibilDraft.Status)
         if(data[2].CibilDraft.Status == 0 && data[1].CibilReport[0].Status != undefined) {
@@ -547,7 +622,43 @@ r.setDataEntry = function(data) {
 
   r.dataEntryCibilReport().CreditTypeSummary([]);
   if (data.CreditTypeSummary != null){
-    r.dataEntryCibilReport().CreditTypeSummary(data.CreditTypeSummary);
+
+    //console.log(data.CreditTypeSummary)
+
+    // r.dataEntryCibilReport().CreditTypeSummary = ko.mapping.fromJS(data.CreditTypeSummary)
+    
+    for (var i=0; i < data.CreditTypeSummary.length; i++) {
+      var temp = {}
+      temp.CreditType = data.CreditTypeSummary[i].CreditType
+      temp.CurrencyCode = data.CreditTypeSummary[i].CurrencyCode
+      temp.NoCreditFacilitiesBorrower = data.CreditTypeSummary[i].NoCreditFacilitiesBorrower
+      temp.SpecialMention = data.CreditTypeSummary[i].SpecialMention.split(",").join("")
+      temp.Standard = data.CreditTypeSummary[i].Standard.split(",").join("")
+      temp.Substandard = data.CreditTypeSummary[i].Substandard.split(",").join("")
+      temp.Doubtful = data.CreditTypeSummary[i].Doubtful.split(",").join("")
+      temp.Loss = data.CreditTypeSummary[i].Loss.split(",").join("")
+      temp.TotalCurrentBalance = data.CreditTypeSummary[i].TotalCurrentBalance.split(",").join("")
+      
+      r.dataEntryCibilReport().CreditTypeSummary.push(temp)
+    }
+    // _.each(r.dataEntryCibilReport().CreditTypeSummary(), function(o){
+    //   o.Standard = (o.Standard.split(",").join(""));
+    //   o.Substandard = (o.Substandard.split(",").join(""));
+    //   o.Doubtful = (o.Doubtful.split(",").join(""));
+    //   o.Loss = (o.Loss.split(",").join(""));
+    //   o.SpecialMention = (o.SpecialMention.split(",").join(""));
+    //   o.TotalCurrentBalance = (o.TotalCurrentBalance.split(",").join(""));
+
+    //   // r.dataEntryCibilReport().CreditTypeSummary.push([{
+    //   //   Standard : ko.observable((o.Standard.split(",").join(""))),
+    //   //   Substandard : ko.observable((o.Substandard.split(",").join(""))),
+    //   //   Doubtful : ko.observable((o.Doubtful.split(",").join(""))),
+    //   //   Loss : ko.observable((o.Loss.split(",").join(""))),
+    //   //   SpecialMention : ko.observable((o.SpecialMention.split(",").join(""))),
+    //   //   TotalCurrentBalance : ko.observable((o.TotalCurrentBalance.split(",").join("")))
+    //   // }])
+    // })
+
   } else {
     r.addCreditTypeSummary();
   }
@@ -579,7 +690,7 @@ r.addCreditTypeSummary = function (){
 }
 
 r.editCibilGrid = function(){
-  checkEntryCibilReport()
+  checkEntryCibilReport();
 }
 
 r.checkShowEdit = function(){
@@ -672,6 +783,19 @@ var savePromotors = function() {
   return false
 }
 
+var loadDateString = function(rr){
+  var FirstopenDate = kendo.toString(new Date(rr.ReportSummary().FirstCreditFacilityOpenDate()), "dd-MMM-yyyy");
+  rr.ReportSummary().FirstCreditFacilityOpenDate(FirstopenDate);
+
+  var LatestopenDate = kendo.toString(new Date(rr.ReportSummary().LatestCreditFacilityOpenDate()), "dd-MMM-yyyy");
+  rr.ReportSummary().LatestCreditFacilityOpenDate(LatestopenDate);
+
+  var MostRecentDate = kendo.toString(new Date(rr.EnquirySummary().MostRecentDate()), "dd-MMM-yyyy");
+  rr.EnquirySummary().MostRecentDate(MostRecentDate);
+
+return rr
+}
+
 var saveCibilReport = function(status){
   r.addProfileCompanyData(r.reportCibilList()[0]);
 
@@ -688,6 +812,8 @@ var saveCibilReport = function(status){
   if (status == "save"){
     r.dataEntryCibilReport().Status = 0;
     param = r.dataEntryCibilReport();
+    param = loadDateString(param)
+
     ajaxPost(url, param, function(data) {
       if (data) {
         swal("Data Saved", "Data have been saved", "success");
@@ -708,7 +834,7 @@ var saveCibilReport = function(status){
 
     swal({
         title: "Are you sure",
-        text: "Submit this data?",
+        text: "want to submit this data?",
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn-primary",
@@ -723,6 +849,8 @@ var saveCibilReport = function(status){
 
           var url = "/datacapturing/submitreportcibil";
           param = r.dataEntryCibilReport();
+          param = loadDateString(param)
+
           ajaxPost(url, param, function(data) {
             if (data) {
               swal("Data Submited", "Data have been submited", "success");
@@ -786,7 +914,51 @@ var updateConfirmCibil = function(){
         if(data.success) {
           if(status == 0){
             swal("Please Edit / Enter Data", "", "success");
+            $(".btn-disabled-confirm").prop("disabled", false);
+            $(".btn-disabled").prop( "disabled", false );
+
+            $(".container-all .k-widget").each(function(i,e){
+
+              var $ddl = $(e).find("select").getKendoDropDownList();
+
+              if($ddl == undefined)
+                var $ddl = $(e).find("input").getKendoDropDownList();
+
+              var $dtm = $(e).find("input").getKendoDatePicker();
+              var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+              if($ddl != undefined)
+              {
+                $ddl.enable(true);
+              }else if($dtm != undefined){
+                $dtm.enable(true);
+              }else if ($txt != undefined){
+                $txt.enable(true);
+              }
+            });
+
           } else {
+            $(".btn-disabled-confirm").prop("disabled", true);
+            $(".btn-disabled").prop( "disabled", true );
+            $(".container-all .k-widget").each(function(i,e){
+
+              var $ddl = $(e).find("select").getKendoDropDownList();
+
+              if($ddl == undefined)
+                var $ddl = $(e).find("input").getKendoDropDownList();
+
+              var $dtm = $(e).find("input").getKendoDatePicker();
+              var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+              if($ddl != undefined)
+              {
+                $ddl.enable(false);
+              }else if($dtm != undefined){
+                $dtm.enable(false);
+              }else if ($txt != undefined){
+                $txt.enable(false);
+              }
+            });
 
             swal("Successfully Confirmed", "", "success");
           }
@@ -852,6 +1024,7 @@ function checkEntryCibilReport() {
   $(".reportSummary").hide()
   $(".promoters").hide()
   $(".entryreportCibil").show()
+  r.setDataEntry(JSON.parse( JSON.stringify(r.reportDraft())));
 }
 
 var checkConfirmPromotors = function(customerProfile, promotorFinal) {
@@ -886,7 +1059,6 @@ var checkConfirmCibil = function(cibilList) {
     // $(".btn-unfreeze").attr('disabled', true)
     cibil.unfreeze(false, 1)
     if(cibilList != null) {
-      $(".btn-disabled-confirm").prop("disabled", true);
       $(".confirmdate").text("Last Confirmed at " + moment(cibilList.AcceptRejectTime).format("DD-MM-YYYY HH:mm A"));
     }
 
@@ -1009,12 +1181,12 @@ function ValidateCibil()
       if(typeof ex === "function") {
         if(ex() == "" && parseInt(ex()) != 0){
           Valid = false;
-        }else{
+        }
+      }else{
           if(ex == "" && parseInt(ex) != 0){
             Valid = false;
           }
         }
-      }
     });
   });
 
@@ -1038,7 +1210,6 @@ function backToMain(){
 }
 
 function refreshFilter(){
-  $(".btn-disabled-confirm").prop("disabled", false);
   $(".swal-custom").hide()
   $(".swal2-overlay").hide()
   backToMain();
@@ -1102,56 +1273,34 @@ cibil.lastcomment = ko.observable("");
 
 cibil.unfreeze = function(what, cibil){
   if(cibil == 0) {
+
     //$(".container-all button").prop( "disabled", !what );
-    $(".btn-disabled").prop( "disabled", !what );
     //$(".btn-disabled1").prop( "disabled", !what );
 
-    $(".container-all .k-widget").each(function(i,e){
 
-      var $ddl = $(e).find("select").getKendoDropDownList();
-
-      if($ddl == undefined)
-        var $ddl = $(e).find("input").getKendoDropDownList();
-
-      var $dtm = $(e).find("input").getKendoDatePicker();
-      var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
-
-      if($ddl != undefined)
-      {
-        $ddl.enable(what);
-      }else if($dtm != undefined){
-        $dtm.enable(what);
-      }else if ($txt != undefined){
-        $txt.enable(what);
-      }
-
-      $(".btn-disabled-confirm").prop("disabled", !what);
-    });
   } else {
     //$(".container-all button").prop( "disabled", !what );
     $(".btn-disabled").prop( "disabled", !what );
 
-    $(".container-all .k-widget").each(function(i,e){
+    // $(".container-all .k-widget").each(function(i,e){
 
-      var $ddl = $(e).find("select").getKendoDropDownList();
+    //   var $ddl = $(e).find("select").getKendoDropDownList();
 
-      if($ddl == undefined)
-        var $ddl = $(e).find("input").getKendoDropDownList();
+    //   if($ddl == undefined)
+    //     var $ddl = $(e).find("input").getKendoDropDownList();
 
-      var $dtm = $(e).find("input").getKendoDatePicker();
-      var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+    //   var $dtm = $(e).find("input").getKendoDatePicker();
+    //   var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
 
-      if($ddl != undefined)
-      {
-        $ddl.enable(what);
-      }else if($dtm != undefined){
-        $dtm.enable(what);
-      }else if ($txt != undefined){
-        $txt.enable(what);
-      }
-
-      $(".btn-disabled-confirm").prop("disabled", !what);
-    });
+    //   if($ddl != undefined)
+    //   {
+    //     $ddl.enable(what);
+    //   }else if($dtm != undefined){
+    //     $dtm.enable(what);
+    //   }else if ($txt != undefined){
+    //     $txt.enable(what);
+    //   }
+    // });
   }
 }
 
@@ -1167,9 +1316,59 @@ cibil.SendFreeze = function(what){
             r.isFreeze(what)
 
             if(what) {
+              if(r.reportCibilList()[0].IsConfirm == 0) {
+                $(".btn-disabled-confirm").prop("disabled", true);
+                $(".btn-disabled").prop( "disabled", true );
+
+                $(".container-all .k-widget").each(function(i,e){
+
+                  var $ddl = $(e).find("select").getKendoDropDownList();
+
+                  if($ddl == undefined)
+                    var $ddl = $(e).find("input").getKendoDropDownList();
+
+                  var $dtm = $(e).find("input").getKendoDatePicker();
+                  var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+                  if($ddl != undefined)
+                  {
+                    $ddl.enable(false);
+                  }else if($dtm != undefined){
+                    $dtm.enable(false);
+                  }else if ($txt != undefined){
+                    $txt.enable(false);
+                  }
+                });
+              }
+
               swal("Success","Data Freezed","success");
               r.FreezeText("Unfreeze")
             } else {
+              if(r.reportCibilList()[0].IsConfirm == 0) {
+                $(".btn-disabled-confirm").prop("disabled", false);
+                $(".btn-disabled").prop( "disabled", false );
+
+                $(".container-all .k-widget").each(function(i,e){
+
+                  var $ddl = $(e).find("select").getKendoDropDownList();
+
+                  if($ddl == undefined)
+                    var $ddl = $(e).find("input").getKendoDropDownList();
+
+                    var $dtm = $(e).find("input").getKendoDatePicker();
+                    var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+                    if($ddl != undefined)
+                    {
+                      $ddl.enable(true);
+                    }else if($dtm != undefined){
+                      $dtm.enable(true);
+                    }else if ($txt != undefined){
+                      $txt.enable(true);
+                    }
+                });
+              }
+
               swal("Success","Data Unfreezed","success");
               r.FreezeText("Freeze")
             }

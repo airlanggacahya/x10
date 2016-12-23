@@ -859,7 +859,7 @@ var saveCibilReport = function(status){
 
             ajaxPost(url, param, function(data) {
               if (data) {
-                swal("Data Submited", "Data have been submited", "success");
+                swal("Data Submited", "", "success");
                 refreshFilter();
               }
             }, undefined);
@@ -876,7 +876,7 @@ var saveCibilReport = function(status){
           }, 1000);
         }, function(dismiss) {
           if (dismiss === 'cancel') {
-            swal("Cancelled!", "Data didn't submit", "error");
+            // swal("Cancelled!", "Data didn't submit", "error");
           }
         })
 

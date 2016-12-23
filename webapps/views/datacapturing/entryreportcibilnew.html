@@ -1,4 +1,4 @@
-<div class="row" data-bind="with: dataEntryCibilReport">
+<form id="entryCR" class="row" data-bind="with: dataEntryCibilReport">
   <div class="col-md-12 cibilgridfixed">
     <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
       <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry1">
@@ -18,14 +18,14 @@
             <td class="sub-bgcolor">No. of Credit Facilities <br>Guaranteed by Others</td>
             <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditFacilitiesGrantorsGuarantedOther" class="form-control input-sm" data-bind="value:ReportSummary().FacilitiesGuaranteed"></td>
             <td class="sub-bgcolor">Latest Credit Facility Open Date</td>
-            <td><input type="text" name="noCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().LatestCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"></td>
+            <td><input required name="Latest Credit Facility Open Date" type="text" name="noCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().LatestCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="Latest Credit Facility Open Date"></span></td>
             <td class="sub-bgcolor">First Credit Facility Open Date</td>
-            <td><input type="text" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().FirstCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"></td>
+            <td><input required name="First Credit Facility Open Date" type="text" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().FirstCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="First Credit Facility Open Date"></span></td>
           </tr>
         </tbody>
       </table>
 
-      <table class="k-grid table-bordered" style="margin-bottom: 0px;" id="tblCibilReportSumarry2">
+      <table class="k-grid table-bordered" width="100%" style="margin-bottom: 0px;" id="tblCibilReportSumarry2">
         <thead>
           <tr>
             <th class="sub-bgcolor text-center" style="min-width: 94px;">Credit Facilities</th>
@@ -121,7 +121,7 @@
             <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries24Month"></td>
             <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().EnquiriesThan24Month"></td>
             <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:EnquirySummary().TotalEnquiries" ></td>
-            <td style="width: 120px;"><input type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:EnquirySummary().MostRecentDate, format: 'dd-MMM-yyyy'}"></td>
+            <td style="width: 120px;"><input required name="Most Recent Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:EnquirySummary().MostRecentDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="Most Recent Date"></span></td>
           </tr>
         </tbody>
       </table>
@@ -140,4 +140,4 @@
        Cancel</button>
     </div>
   </div>
-</div>
+</form>

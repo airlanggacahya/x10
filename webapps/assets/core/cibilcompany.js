@@ -301,31 +301,39 @@ function ValidateCibil()
 }
 
 cc.saveReport = function(){
-	  if(!ValidateCibil()){
-    swal("Warning","Please complete all fields","warning");
-    return false;
-  }
+	if (!app.isFormValid("#cbForm")) {
+		swal("Warning","Please complete all fields","warning");
+		return;
+	}
+
+	var validator = $("#cbForm").data("kendoValidator")
+	if(!ValidateCibil()){
+	    swal("Warning","Please complete all fields","warning");
+	    return false;
+	}
 
 	cc.loadDateString()
 	var param = ko.mapping.toJS(cc.form);
-	if(cc.IsDraft() == false){
-		ajaxPost("/cibilcompany/updatereport", param, function(res){
-			if(res.success == true){
-				// $('#transgrid').data('kendoGrid').dataSource.read();
-				cc.edit(false);
-				cc.RenderGrid();
-				swal("Success", "Data Save Successfully","success")
-			}
-		})
-	}else{
-		ajaxPost("/cibilcompany/updatedraft", param, function(res){
-			if(res.success == true){
-				// $('#transgrid').data('kendoGrid').dataSource.read();
-				cc.edit(false);
-				cc.RenderGrid();
-				swal("Success", "Data Save Successfully","success")
-			}
-		})
+	if (validator.validate()) {
+		if(cc.IsDraft() == false){
+			ajaxPost("/cibilcompany/updatereport", param, function(res){
+				if(res.success == true){
+					// $('#transgrid').data('kendoGrid').dataSource.read();
+					cc.edit(false);
+					cc.RenderGrid();
+					swal("Success", "Data Save Successfully","success")
+				}
+			})
+		}else{
+			ajaxPost("/cibilcompany/updatedraft", param, function(res){
+				if(res.success == true){
+					// $('#transgrid').data('kendoGrid').dataSource.read();
+					cc.edit(false);
+					cc.RenderGrid();
+					swal("Success", "Data Save Successfully","success")
+				}
+			})
+		}
 	}
 }
 
@@ -339,6 +347,9 @@ cc.getEdit = function(e){
 	var res = _.filter(cc.AllData(), function(dt){
 		return dt.Id == e
 	})
+
+	$("#cbForm").kendoValidator().data("kendoValidator");
+	$("k-invalid-msg").css("margin-top", "5px");
 
 	// console.log(res[0])
 	if(res != undefined){

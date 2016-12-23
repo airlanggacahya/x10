@@ -99,6 +99,9 @@
     margin-left: 6px;
     margin-top: -6px;
   }
+  .k-invalid-msg{
+    margin-top: : 3px !important;
+  }
 </style>
 
 <div class="col-md-12 col-sm-12 ez panel-content" data-bind="with:cc">
@@ -134,7 +137,7 @@
          Cancel</button>
       </div>
     </div>
-    <div data-bind="with:form">
+    <form id="cbForm" data-bind="with:form">
       <div class="col-md-12 cibilgridfixed">
         <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
           <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry6">
@@ -172,7 +175,7 @@
                 <td class="sub-bgcolor">Country</td>
                 <td><input type="text" class="form-control input-sm" data-bind="value:Country"></td>
                 <td class="sub-bgcolor">File Open Date</td>
-                <td><input type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:FileOpenDate, format: 'dd-MMM-yyyy'}"></td>
+                <td><input required name="File Open Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:FileOpenDate, format: 'dd-MMM-yyyy'}"><br/><span  class="k-invalid-msg" data-for="File Open Date"/></span></td>
               </tr>
             </tbody>
           </table>
@@ -196,9 +199,9 @@
                 <td class="sub-bgcolor">No. of Credit Facilities <br>Guaranteed by Others</td>
                 <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditFacilitiesGrantorsGuarantedOther" class="form-control input-sm" data-bind="value:FacilitiesGuaranteed"></td>
                 <td class="sub-bgcolor">Latest Credit Facility Open Date</td>
-                <td><input type="text" name="noCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:LatestCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"></td>
+                <td><input type="text" required  name="Latest Credit Facility Open Date" class="form-control input-sm" data-bind="kendoDatePicker:{value:LatestCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="Latest Credit Facility Open Date"></td>
                 <td class="sub-bgcolor">First Credit Facility Open Date</td>
-                <td><input type="text" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:FirstCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"></td>
+                <td><input required name="First Credit Facility Open Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:FirstCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="First Credit Facility Open Date"></span></td>
               </tr>
             </tbody>
           </table>
@@ -299,13 +302,13 @@
                 <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:Enquiries24Month"></td>
                 <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquiriesThan24Month"></td>
                 <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:TotalEnquiries" ></td>
-                <td style="width: 120px;"><input type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:MostRecentDate, format: 'dd-MMM-yyyy'}"></td>
+                <td style="width: 120px;"><input required name="Most Recent Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:MostRecentDate, format: 'dd-MMM-yyyy'}"><br/><span  class="k-invalid-msg" data-for="Most Recent Date"/></span></td>
               </tr>
             </tbody>
           </table>        
         </div>
       </div>
-    </div>
+    </form>
     <!-- <ul class="entryEditCompany active" data-collapsible="accordion" style="margin-left: -41px;">
       <li>
         <div class="collapsible-header header-bgcolor active" style="text-align: center; "><i class="fa fa-list"></i>Please enter following details for the Borrower<i class="fa fa-chevron-down pull-right"></i></div>

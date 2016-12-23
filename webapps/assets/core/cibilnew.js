@@ -1159,10 +1159,16 @@ function ValidateCibil()
   var Valid = true;
   var dt = detailsummary;
   _.each(dt,function(e,i){
-    _.each(e,function(v,k){
-      if(v == "" && parseInt(v) != 0){
-        Valid = false;
-      }
+    _.each(e,function(ex,ix){
+      if(typeof ex === "function") {
+        if(ex() == "" && parseInt(ex()) != 0){
+          Valid = false;
+        }
+      }else{
+          if(ex == "" && parseInt(ex) != 0){
+            Valid = false;
+          }
+        }
     });
   });
 

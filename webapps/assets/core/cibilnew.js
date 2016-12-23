@@ -1181,12 +1181,12 @@ function ValidateCibil()
       if(typeof ex === "function") {
         if(ex() == "" && parseInt(ex()) != 0){
           Valid = false;
-        }else{
+        }
+      }else{
           if(ex == "" && parseInt(ex) != 0){
             Valid = false;
           }
         }
-      }
     });
   });
 

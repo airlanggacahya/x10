@@ -60,7 +60,6 @@ trans.RenderGrid = function(){
 	        pageSize: 10,
 	    }),
 		pageable: true,
-		scrollable:false,
 		columns :[{
 		 	field : "FileName", 
 		 	title : "File Name",

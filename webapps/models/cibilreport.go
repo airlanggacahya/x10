@@ -420,7 +420,7 @@ func (m *CibilReportModel) GetAllDataByParam(param tk.M) (tk.Result, int) {
 		l := NewCibilTempModel()
 		l.Id = o.Id
 		l.FilePath = o.FilePath
-		l.FileName = o.Profile.CompanyName + "_Manual Data Entry"
+		l.FileName = o.FileName
 		l.ReportType = o.ReportType
 		// l.IsMatch = o.IsMatch
 		// l.UnconfirmID = o.UnconfirmID

@@ -797,6 +797,12 @@ return rr
 }
 
 var saveCibilReport = function(status){
+  if (!app.isFormValid("#entryCR")) {
+    swal("Warning","Please complete all fields","warning");
+    return;
+  }
+
+  var validator = $("#entryCR").data("kendoValidator")
   r.addProfileCompanyData(r.reportCibilList()[0]);
 
   var url = "/datacapturing/savingreportcibil";
@@ -808,73 +814,74 @@ var saveCibilReport = function(status){
 
   r.dataEntryCibilReport().Profile().CustomerId(parseInt(filter().CustomerSearchVal()));
   r.dataEntryCibilReport().Profile().DealNo( filter().DealNumberSearchVal());
+  if (validator.validate()) {
+    if (status == "save"){
+      r.dataEntryCibilReport().Status = 0;
+      param = r.dataEntryCibilReport();
+      param = loadDateString(param)
 
-  if (status == "save"){
-    r.dataEntryCibilReport().Status = 0;
-    param = r.dataEntryCibilReport();
-    param = loadDateString(param)
-
-    ajaxPost(url, param, function(data) {
-      if (data) {
-        swal("Data Saved", "Data have been saved", "success");
-        r.dataEntryCibilReport().Id = data.Id;
-
-        $(".collapsiblecibil").hide()
-        $(".collapsibleguarantor").hide()
-        $(".guarantorhide").hide()
-        $(".comment-container").show()
-
-        $(".reportSummary").show()
-        $(".promoters").show()
-        $(".entryreportCibil").hide()
-      }
-    }, undefined);
-  }else {
-    r.dataEntryCibilReport().Status = 1
-
-    swal({
-        title: "Are you sure",
-        text: "want to submit this data?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-primary",
-        cancelButtonClass: "btn-success",
-        confirmButtonText: "Submit",
-        cancelButtonText: "Cancel",
-        closeOnConfirm: true,
-        closeOnCancel: false
-      }).then(function() {
-        setTimeout(function() {
-          r.dataEntryCibilReport().Status = 1
-
-          var url = "/datacapturing/submitreportcibil";
-          param = r.dataEntryCibilReport();
-          param = loadDateString(param)
-
-          ajaxPost(url, param, function(data) {
-            if (data) {
-              swal("Data Submited", "Data have been submited", "success");
-              refreshFilter();
-            }
-          }, undefined);
+      ajaxPost(url, param, function(data) {
+        if (data) {
+          swal("Data Saved", "Data have been saved", "success");
+          r.dataEntryCibilReport().Id = data.Id;
 
           $(".collapsiblecibil").hide()
           $(".collapsibleguarantor").hide()
           $(".guarantorhide").hide()
-
           $(".comment-container").show()
+
           $(".reportSummary").show()
           $(".promoters").show()
           $(".entryreportCibil").hide()
-
-        }, 1000);
-      }, function(dismiss) {
-        if (dismiss === 'cancel') {
-          swal("Cancelled!", "Data didn't submit", "error");
         }
-      })
+      }, undefined);
+    }else {
+      r.dataEntryCibilReport().Status = 1
+
+      swal({
+          title: "Are you sure",
+          text: "want to submit this data?",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-primary",
+          cancelButtonClass: "btn-success",
+          confirmButtonText: "Submit",
+          cancelButtonText: "Cancel",
+          closeOnConfirm: true,
+          closeOnCancel: false
+        }).then(function() {
+          setTimeout(function() {
+            r.dataEntryCibilReport().Status = 1
+
+            var url = "/datacapturing/submitreportcibil";
+            param = r.dataEntryCibilReport();
+            param = loadDateString(param)
+
+            ajaxPost(url, param, function(data) {
+              if (data) {
+                swal("Data Submited", "Data have been submited", "success");
+                refreshFilter();
+              }
+            }, undefined);
+
+            $(".collapsiblecibil").hide()
+            $(".collapsibleguarantor").hide()
+            $(".guarantorhide").hide()
+
+            $(".comment-container").show()
+            $(".reportSummary").show()
+            $(".promoters").show()
+            $(".entryreportCibil").hide()
+
+          }, 1000);
+        }, function(dismiss) {
+          if (dismiss === 'cancel') {
+            swal("Cancelled!", "Data didn't submit", "error");
+          }
+        })
 
 
+    }
   }
 }
 
@@ -1016,6 +1023,7 @@ function checkShowHideGuarantor(index) {
 }
 
 function checkEntryCibilReport() {
+  $("#entryCR").data("kendoValidator");
   $(".collapsiblecibil").hide()
   $(".collapsibleguarantor").hide()
   $(".guarantorhide").hide()

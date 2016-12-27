@@ -2,6 +2,8 @@ package main
 
 import (
 	. "eaciit/x10/consoleapps/OmnifinMaster/helpers"
+	. "eaciit/x10/consoleapps/OmnifinMaster/models"
+	"encoding/xml"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
 	"time"
@@ -12,37 +14,49 @@ type Url struct {
 	wsdlAddress string
 }
 
+type Fetch struct {
+	Return MasterData `xml:"return"`
+}
+
+type Body struct {
+	FetchcountryMasterResponse Fetch `xml:"fetchcountryMasterResponse"`
+}
+
+type MyRespEnvelope struct {
+	XMLName  xml.Name `xml:"Envelope"`
+	RespBody Body     `xml:"Body"`
+}
+
 func main() {
 	urls := []Url{
-		Url{"MasterLeadOperations", "http://103.251.60.132:8085/OmniFinServices/leadOperationsWS?wsdl"},
-		Url{"MasterDealCAMDetail", "http://103.251.60.132:8085/OmniFinServices/dealCAMDetailWS?wsdl"},
-		Url{"MasterChargeCode", "http://103.251.60.132:8085/OmniFinServices/chargeCodeWS?wsdl"},
-		Url{"MasterGenericOperation", "http://103.251.60.132:8085/OmniFinServices/genericOperationWS?wsdl"},
+		// Url{"MasterLeadOperations", "http://103.251.60.132:8085/OmniFinServices/leadOperationsWS?wsdl"},
+		// Url{"MasterDealCAMDetail", "http://103.251.60.132:8085/OmniFinServices/dealCAMDetailWS?wsdl"},
+		// Url{"MasterChargeCode", "http://103.251.60.132:8085/OmniFinServices/chargeCodeWS?wsdl"},
+		// Url{"MasterGenericOperation", "http://103.251.60.132:8085/OmniFinServices/genericOperationWS?wsdl"},
 		Url{"MasterCountry", "http://103.251.60.132:8085/OmniFinServices/countryMasterWS?wsdl"},
-		Url{"MasterState", "http://103.251.60.132:8085/OmniFinServices/stateMasterWS?wsdl"},
-		Url{"MasterDistrict", "http://103.251.60.132:8085/OmniFinServices/districtMasterWS?wsdl"},
-		Url{"MasterTehsil", "http://103.251.60.132:8085/OmniFinServices/tehsilMasterWS?wsdl"},
-		Url{"MasterPincode", "http://103.251.60.132:8085/OmniFinServices/pincodeMasterWS?wsdl"},
-		Url{"MasterBank", "http://103.251.60.132:8085/OmniFinServices/bankMasterWS?wsdl"},
-		Url{"MasterBankBranch", "http://103.251.60.132:8085/OmniFinServices/bankBranchMasterWS?wsdl"},
-		Url{"MasterProduct", "http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl"},
-		Url{"MasterScheme", "http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl"},
-		Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
-		Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
-		Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},
-		Url{"MasterCharges", "http://103.251.60.132:8085/OmniFinServices/chargesMasterWS?wsdl"},
-		Url{"MasterBranch", "http://103.251.60.132:8085/OmniFinServices/branchMasterWS?wsdl"},
-		Url{"MasterDealDocumentOperation", "http://103.251.60.132:8085/OmniFinServices/dealDocumentOperationWS?wsdl"},
-		Url{"MasterApplicationProcessing", "http://103.251.60.132:8085/OmniFinServices/applicationProcessingWS?wsdl"},
-		Url{"MasterAdditionalDisbursement", "http://103.251.60.132:8085/OmniFinServices/additionalDisbursementWS?wsdl"},
-		Url{"MasterReportDownload", "http://103.251.60.132:8085/OmniFinServices/reportDownloadWS?wsdl"},
-		Url{"MasterDMSServiceHandlerImpl", "http://103.251.60.132:8085/OmniFinServices/DMSServiceHandlerWS?wsdl"},
+		// Url{"MasterState", "http://103.251.60.132:8085/OmniFinServices/stateMasterWS?wsdl"},
+		// Url{"MasterDistrict", "http://103.251.60.132:8085/OmniFinServices/districtMasterWS?wsdl"},
+		// Url{"MasterTehsil", "http://103.251.60.132:8085/OmniFinServices/tehsilMasterWS?wsdl"},
+		// Url{"MasterPincode", "http://103.251.60.132:8085/OmniFinServices/pincodeMasterWS?wsdl"},
+		// Url{"MasterBank", "http://103.251.60.132:8085/OmniFinServices/bankMasterWS?wsdl"},
+		// Url{"MasterBankBranch", "http://103.251.60.132:8085/OmniFinServices/bankBranchMasterWS?wsdl"},
+		// Url{"MasterProduct", "http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl"},
+		// Url{"MasterScheme", "http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl"},
+		// Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
+		// Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
+		// Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},
+		// Url{"MasterCharges", "http://103.251.60.132:8085/OmniFinServices/chargesMasterWS?wsdl"},
+		// Url{"MasterBranch", "http://103.251.60.132:8085/OmniFinServices/branchMasterWS?wsdl"},
+		// Url{"MasterDealDocumentOperation", "http://103.251.60.132:8085/OmniFinServices/dealDocumentOperationWS?wsdl"},
+		// Url{"MasterApplicationProcessing", "http://103.251.60.132:8085/OmniFinServices/applicationProcessingWS?wsdl"},
+		// Url{"MasterAdditionalDisbursement", "http://103.251.60.132:8085/OmniFinServices/additionalDisbursementWS?wsdl"},
+		// Url{"MasterReportDownload", "http://103.251.60.132:8085/OmniFinServices/reportDownloadWS?wsdl"},
+		// Url{"MasterDMSServiceHandlerImpl", "http://103.251.60.132:8085/OmniFinServices/DMSServiceHandlerWS?wsdl"},
 	}
 
 	createLog := func(log tk.M) {
 		conn, err := GetConnection()
 		defer conn.Close()
-
 		if err != nil {
 			panic(err.Error())
 		}
@@ -81,6 +95,40 @@ func main() {
 		}
 	}
 
+	updateLog := func(log tk.M, err error, xmlString string) {
+		log.Set("error", err)
+		log.Set("xmlstring", xmlString)
+		log.Set("iscomplete", err == nil)
+		createLog(log)
+	}
+
+	saveData := func(masterData MasterData) (err error) {
+		conn, err := GetConnection()
+		defer conn.Close()
+		if err != nil {
+			panic(err.Error())
+		}
+
+		err = conn.NewQuery().
+			Delete().
+			From("OmnifinMasterData").
+			SetConfig("multiexec", true).
+			Exec(nil)
+		if err != nil {
+			return
+		}
+
+		qinsert := conn.NewQuery().From("OmnifinMasterData").SetConfig("multiexec", true).Save()
+
+		data := map[string]interface{}{"data": masterData}
+		err = qinsert.Exec(data)
+		if err != nil {
+			return
+		}
+
+		return nil
+	}
+
 	for _, u := range urls {
 		tk.Println("Getting", u.portName, "content from", u.wsdlAddress)
 		log := tk.M{}
@@ -95,12 +143,22 @@ func main() {
 
 		xmlString, err := GetHttpContentString(u.wsdlAddress)
 		if err != nil {
-			log.Set("error", err)
+			updateLog(log, err, "")
+			break
+		}
+		updateLog(log, err, xmlString)
+
+		res := MyRespEnvelope{}
+		err = xml.Unmarshal([]byte(xmlString), &res)
+		if err != nil {
+			updateLog(log, err, "")
+			break
 		}
 
-		log.Set("xmlstring", xmlString)
-		log.Set("iscomplete", err == nil)
-
-		createLog(log)
+		err = saveData(res.RespBody.FetchcountryMasterResponse.Return)
+		if err != nil {
+			updateLog(log, err, "")
+			break
+		}
 	}
 }

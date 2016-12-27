@@ -327,7 +327,7 @@ cc.saveReport = function(){
 					// $('#transgrid').data('kendoGrid').dataSource.read();
 					cc.edit(false);
 					cc.RenderGrid();
-					swal("Success", "Data Save Successfully","success")
+					swal("Success", "Data Saved Successfully","success")
 				}
 			})
 		}else{
@@ -336,7 +336,7 @@ cc.saveReport = function(){
 					// $('#transgrid').data('kendoGrid').dataSource.read();
 					cc.edit(false);
 					cc.RenderGrid();
-					swal("Success", "Data Save Successfully","success")
+					swal("Success", "Data Saved Successfully","success")
 				}
 			})
 		}

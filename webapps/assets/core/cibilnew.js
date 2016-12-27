@@ -839,8 +839,8 @@ var saveCibilReport = function(status){
       r.dataEntryCibilReport().Status = 1
 
       swal({
-          title: "Are you sure",
-          text: "want to submit this data?",
+          title: "",
+          text: "Are you sure want to submit this data?",
           type: "warning",
           showCancelButton: true,
           confirmButtonClass: "btn-primary",
@@ -859,7 +859,7 @@ var saveCibilReport = function(status){
 
             ajaxPost(url, param, function(data) {
               if (data) {
-                swal("Data Submited", "", "success");
+                swal("Data Submitted", "", "success");
                 refreshFilter();
               }
             }, undefined);

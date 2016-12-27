@@ -564,13 +564,13 @@ r.exportExcel = function(title){
   var tempTable = $("<table/>").attr("id", "temp-table").appendTo(body);
   var head = $("<thead/>").attr("id", "head").appendTo(tempTable);
   var tr = $("<tr/>").appendTo(head);
-  $("body > div.app > div > div.div-container > div:nth-child(8) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-locked > table > thead > tr > th").eq(0).clone(true).appendTo(tr)
+  $(".form-container > div > div.k-grid-header > div.k-grid-header-locked > table > thead > tr > th").eq(0).clone(true).appendTo(tr)
   // $("body > div.app > div > div > div > div > div.app-content > div:nth-child(7) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-locked > table > thead > tr > th.header-bgcolor").clone(true).appendTo(tr);
   // $("body > div.app > div > div > div > div > div.app-content > div:nth-child(7) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-wrap > table > thead > tr>").clone(true).appendTo(tr)
-  $("body > div.app > div > div.div-container > div:nth-child(8) > div > div > div.panel-body > div.form-container > div > div.k-grid-header > div.k-grid-header-wrap > table > thead > tr>").clone(true).appendTo(tr)
+  $(".form-container > div > div.k-grid-header > div.k-grid-header-wrap > table > thead > tr>").clone(true).appendTo(tr)
 
   var tbody1 = $("<tbody/>");
-  var len = $("body > div.app > div > div.div-container > div:nth-child(8) > div > div > div.panel-body > div.form-container > div > div.k-grid-content-locked > table > tbody>").clone(true);
+  var len = $("body > div.app > div > div.div-container > div:nth-child(9) > div > div > div.panel-body > div.form-container > div > div.k-grid-content-locked > table > tbody>").clone(true);
 
   var tdon = len
   // len.clone(true).appendTo(tbody1);
@@ -578,7 +578,7 @@ r.exportExcel = function(title){
   var tbody = tbody1.appendTo(tempTable);
 
   var tr1 = $("<tbody/>")
- $("body > div.app > div > div.div-container > div:nth-child(8) > div > div > div.panel-body > div.form-container > div > div.k-grid-content.k-auto-scrollable > table > tbody>tr").clone(true).appendTo(tr1)
+ $(".form-container > div > div.k-grid-content.k-auto-scrollable > table > tbody>tr").clone(true).appendTo(tr1)
   $.each(len, function(i, items){
     var temptr = $("<tr/>").appendTo(tbody1)
     tdon.eq(i).find("td").eq(0).appendTo(tbody1.find("tr").eq(i))

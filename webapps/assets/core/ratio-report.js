@@ -623,11 +623,11 @@ $( document ).ajaxComplete(function( event,request, settings ) {
 
 r.openAjaxComplete = function(){
   // alert("masuk")
-    r.panel_scrollrelocated();
     $('.form-container').css('width',$(window).width() - 55 + "px")
     $(".k-grid-header-wrap").css("width", $(window).width() - 459 + "px" )
     $('.k-grid-content').css('width',$(window).width() - 459 + "px" ).css('overflow-y','hidden');
     $(".scroll-grid-bottom .viewscrollfix").css('width',$(window).width() - 459 + "px" );
+    r.panel_scrollrelocated();
 }
 
 $(window).resize(function() {

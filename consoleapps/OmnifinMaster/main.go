@@ -68,31 +68,31 @@ func main() {
 			panic(err.Error())
 		}
 
-		if log.Get("error") != nil {
-			res := []tk.M{}
-			query, err := conn.NewQuery().Select().From("OmnifinMail").Cursor(nil)
-			defer query.Close()
+		// if log.Get("error") != nil {
+		// 	res := []tk.M{}
+		// 	query, err := conn.NewQuery().Select().From("OmnifinMail").Cursor(nil)
+		// 	defer query.Close()
 
-			if err != nil {
-				panic(err.Error())
-			}
-			err = query.Fetch(&res, 0, false)
+		// 	if err != nil {
+		// 		panic(err.Error())
+		// 	}
+		// 	err = query.Fetch(&res, 0, false)
 
-			for _, mail := range res {
-				addr := mail.GetString("address")
-				if err := SendMail(
-					tk.Sprintf("%v", "[noreply] CAT XML Error Reminder"),
-					tk.Sprintf("%v", "XML receiver has some error.</br>Error Message : "+
-						log.GetString("error")+".</br> Log ID : "+
-						log.GetString("_id")),
-					addr); err != nil {
-					panic(err.Error())
-				} else {
-					tk.Println("Email sent to", addr)
-					tk.Println("------- Error:", log.GetString("error"))
-				}
-			}
-		}
+		// 	for _, mail := range res {
+		// 		addr := mail.GetString("address")
+		// 		if err := SendMail(
+		// 			tk.Sprintf("%v", "[noreply] CAT XML Error Reminder"),
+		// 			tk.Sprintf("%v", "XML receiver has some error.</br>Error Message : "+
+		// 				log.GetString("error")+".</br> Log ID : "+
+		// 				log.GetString("_id")),
+		// 			addr); err != nil {
+		// 			panic(err.Error())
+		// 		} else {
+		// 			tk.Println("Email sent to", addr)
+		// 			tk.Println("------- Error:", log.GetString("error"))
+		// 		}
+		// 	}
+		// }
 	}
 
 	updateLog := func(log tk.M, err error, xmlString string) {

@@ -508,9 +508,22 @@ r.setData = function() {
       });
     }
   } else if(r.reportCibilList().length != 0) {
-
     $.each(r.reportCibilList()[0].CreditTypeSummary, function(key2, val2){
-      r.CreditTypeSummary.push({
+      var str = val2.TotalCurrentBalance;
+      if(str.indexOf(",") > -1){
+        r.CreditTypeSummary.push({
+          NoCreditFacilitiesBorrower  : val2.NoCreditFacilitiesBorrower,
+          CreditType  : val2.CreditType,
+          CurrencyCode  : val2.CurrencyCode,
+          TotalCurrentBalance  : val2.TotalCurrentBalance,
+          Standard: app.formatnum(val2.Standard.split(",").join("")),
+          Substandard: app.formatnum(val2.Substandard.split(",").join("")),
+          Doubtful:  app.formatnum(val2.Doubtful.split(",").join("")),
+          Loss: (val2.Loss != undefined) ? app.formatnum(val2.Loss.split(",").join("")):"", 
+          SpecialMention: app.formatnum(val2.SpecialMention.split(",").join("")),
+        });
+      }else{
+        r.CreditTypeSummary.push({
           NoCreditFacilitiesBorrower  : val2.NoCreditFacilitiesBorrower,
           CreditType  : val2.CreditType,
           CurrencyCode  : val2.CurrencyCode,
@@ -521,6 +534,8 @@ r.setData = function() {
           Loss: (val2.Loss != undefined) ? app.formatnum(val2.Loss.split(",").join("")):"", 
           SpecialMention: app.formatnum(val2.SpecialMention.split(",").join("")),
         });
+      }
+      
 
       r.assetClassificationAmount.push(
         {

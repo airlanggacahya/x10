@@ -2,11 +2,13 @@ package main
 
 import (
 	. "eaciit/x10/consoleapps/OmnifinMaster/helpers"
-	. "eaciit/x10/consoleapps/OmnifinMaster/models"
+	"encoding/json"
 	"encoding/xml"
 	"errors"
+	xj "github.com/basgys/goxml2json"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"strings"
 	"time"
 )
 
@@ -15,18 +17,7 @@ type Url struct {
 	WSDLAddress string
 }
 
-type Fetch struct {
-	MasterData MasterData `xml:"return"`
-}
-
-type Body struct {
-	Fetch Fetch `xml:"fetchcountryMasterResponse"`
-}
-
-type RespEnvelope struct {
-	XMLName xml.Name `xml:"Envelope"`
-	Body    Body     `xml:"Body"`
-}
+//-------------------------
 
 type RespWSDL struct {
 	XMLName xml.Name `xml:"definitions"`
@@ -41,6 +32,8 @@ type Operation struct {
 	Name string `xml:"name,attr"`
 }
 
+//-------------------------
+
 func createLog(log tk.M) {
 	conn, err := GetConnection()
 	defer conn.Close()
@@ -49,6 +42,7 @@ func createLog(log tk.M) {
 	}
 
 	qinsert := conn.NewQuery().From("OmnifinMasterLog").SetConfig("multiexec", true).Save()
+	defer qinsert.Close()
 
 	csc := map[string]interface{}{"data": log}
 	if err := qinsert.Exec(csc); err != nil {
@@ -89,7 +83,7 @@ func updateLog(log tk.M, err error, xmlString string) {
 	createLog(log)
 }
 
-func saveData(masterData MasterData) (err error) {
+func resetData() (err error) {
 	conn, err := GetConnection()
 	defer conn.Close()
 	if err != nil {
@@ -103,6 +97,16 @@ func saveData(masterData MasterData) (err error) {
 		Exec(nil)
 	if err != nil {
 		return
+	}
+
+	return nil
+}
+
+func saveData(masterData interface{}) (err error) {
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		panic(err.Error())
 	}
 
 	qinsert := conn.NewQuery().From("OmnifinMasterData").SetConfig("multiexec", true).Save()
@@ -146,7 +150,9 @@ func main() {
 		Url{"MasterBranch", "http://103.251.60.132:8085/OmniFinServices/branchMasterWS?wsdl"},
 	}
 
+	resetData()
 	for _, u := range urls {
+		tk.Println("")
 		tk.Println("Getting", u.PortName, "content from", u.WSDLAddress)
 
 		log := tk.M{}
@@ -161,7 +167,7 @@ func main() {
 		operationName, err := getOperationName(u.WSDLAddress)
 		if err != nil {
 			updateLog(log, err, "")
-			break
+			continue
 		}
 
 		body := tk.Sprintf(`<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.omnifin.a3spl.com/">
@@ -185,34 +191,76 @@ func main() {
 				               	<userPassword>0775f757de88e601a24c197d68cfb2b7</userPassword>
 				            </userCredentials>
 			         	</inputParameterWrapper>
-			      	</web:fetchcountryMaster>
+			      	</web:%s>
 			   	</soapenv:Body>
-			</soapenv:Envelope>`, operationName)
+			</soapenv:Envelope>`, operationName, operationName)
 
 		xmlString, err := GetHttpPOSTContentString(u.WSDLAddress, body)
 		if err != nil {
 			updateLog(log, err, "")
-			break
+			continue
 		}
-		updateLog(log, err, xmlString)
+		updateLog(log, err, "")
 
-		resp := RespEnvelope{}
-		err = xml.Unmarshal([]byte(xmlString), &resp)
+		xml := strings.NewReader(xmlString)
+		resultah, err := xj.Convert(xml)
 		if err != nil {
-			updateLog(log, err, "")
-			break
+			panic(err)
 		}
 
-		masterData := resp.Body.Fetch.MasterData
+		var msg interface{}
+		err = json.Unmarshal([]byte(resultah.String()), &msg)
 
-		if masterData.OperationStatus == 1 {
-			err = saveData(masterData)
+		msgMap, ok := msg.(map[string]interface{})
+		if ok {
+			envelope := msgMap["Envelope"]
+			if envelopeMap := envelope.(map[string]interface{}); envelopeMap != nil {
+
+				bodi := envelopeMap["Body"]
+				if bodiMap := bodi.(map[string]interface{}); bodiMap != nil {
+
+					var beforeReturn interface{}
+					beforeReturn = bodiMap[operationName]
+					if beforeReturn == nil {
+						operationName = operationName + "Response"
+						beforeReturn = bodiMap[operationName]
+						if beforeReturn == nil {
+							err = errors.New("WS Error.")
+							tk.Println(err.Error())
+							updateLog(log, err, "")
+							continue
+						}
+					}
+
+					if beforeReturnMap := beforeReturn.(map[string]interface{}); beforeReturnMap != nil {
+
+						riturn := beforeReturnMap["return"]
+						if riturnMap := riturn.(map[string]interface{}); riturnMap != nil {
+							tk.Printf("Operation Status: %+v\n", riturnMap["operationStatus"])
+
+							if tk.ToInt(riturnMap["operationStatus"], "Int64") == 1 {
+								riturnMap["_id"] = bson.NewObjectId()
+								err = saveData(riturn)
+							} else {
+								err = errors.New("Operation status is not met.")
+							}
+							if err != nil {
+								updateLog(log, err, "")
+								tk.Println(err.Error())
+								continue
+							} else {
+								tk.Println("Saved.")
+							}
+
+						}
+					}
+				}
+			}
 		} else {
-			err = errors.New("Operation status is not met")
-		}
-		if err != nil {
+			err = errors.New("Unknown Error.")
+			tk.Println(err.Error())
 			updateLog(log, err, "")
-			break
+			continue
 		}
 	}
 }

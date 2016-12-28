@@ -55,31 +55,22 @@ func GetConnection() (dbox.IConnection, error) {
 	return conn, nil
 }
 
-func GetHttpContentString(url string) (data string, err error) {
-	body := `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.omnifin.a3spl.com/">
-				<soapenv:Header/>
-				   <soapenv:Body>
-				      <web:fetchcountryMaster>
-				        <!--Optional:-->
-				         <inputParameterWrapper>
-				            <!--Optional:-->
-				            <syncParameter>
-				               <!--Optional:-->
-				               <fetchFull>1</fetchFull>
-				               <!--Optional:-->
-				               <lastUpdate>?</lastUpdate>
-				            </syncParameter>
-				            <!--Optional:-->
-				            <userCredentials>
-				               <!--Optional:-->
-				               <userId>CAT</userId>
-				               <!--Optional:-->
-				               <userPassword>0775f757de88e601a24c197d68cfb2b7</userPassword>
-				            </userCredentials>
-				         </inputParameterWrapper>
-				      </web:fetchcountryMaster>
-				   </soapenv:Body>
-				</soapenv:Envelope>`
+func GetHttpGETContentString(url string) string {
+	response, err := http.Get(url)
+	if err != nil {
+		panic(err)
+	}
+	defer response.Body.Close()
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(responseData)
+}
+
+func GetHttpPOSTContentString(url string, body string) (data string, err error) {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(body)))
 
 	req.Header.Set("Content-Type", "text/xml; charset=utf-8")

@@ -4,27 +4,28 @@ import (
 	. "eaciit/x10/consoleapps/OmnifinMaster/helpers"
 	. "eaciit/x10/consoleapps/OmnifinMaster/models"
 	"encoding/xml"
+	"errors"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
 	"time"
 )
 
 type Url struct {
-	portName    string
-	wsdlAddress string
+	PortName    string
+	WSDLAddress string
 }
 
 type Fetch struct {
-	Return MasterData `xml:"return"`
+	MasterData MasterData `xml:"return"`
 }
 
 type Body struct {
-	FetchcountryMasterResponse Fetch `xml:"fetchcountryMasterResponse"`
+	Fetch Fetch `xml:"fetchcountryMasterResponse"`
 }
 
-type MyRespEnvelope struct {
-	XMLName  xml.Name `xml:"Envelope"`
-	RespBody Body     `xml:"Body"`
+type RespEnvelope struct {
+	XMLName xml.Name `xml:"Envelope"`
+	Body    Body     `xml:"Body"`
 }
 
 func main() {
@@ -130,10 +131,10 @@ func main() {
 	}
 
 	for _, u := range urls {
-		tk.Println("Getting", u.portName, "content from", u.wsdlAddress)
+		tk.Println("Getting", u.PortName, "content from", u.WSDLAddress)
 		log := tk.M{}
 		log.Set("_id", bson.NewObjectId())
-		log.Set("name", u.portName)
+		log.Set("name", u.PortName)
 		log.Set("createddate", time.Now().UTC())
 		log.Set("error", nil)
 		log.Set("xmlstring", nil)
@@ -141,21 +142,27 @@ func main() {
 
 		createLog(log)
 
-		xmlString, err := GetHttpContentString(u.wsdlAddress)
+		xmlString, err := GetHttpContentString(u.WSDLAddress)
 		if err != nil {
 			updateLog(log, err, "")
 			break
 		}
 		updateLog(log, err, xmlString)
 
-		res := MyRespEnvelope{}
-		err = xml.Unmarshal([]byte(xmlString), &res)
+		resp := RespEnvelope{}
+		err = xml.Unmarshal([]byte(xmlString), &resp)
 		if err != nil {
 			updateLog(log, err, "")
 			break
 		}
 
-		err = saveData(res.RespBody.FetchcountryMasterResponse.Return)
+		masterData := resp.Body.Fetch.MasterData
+
+		if masterData.OperationStatus == 1 {
+			err = saveData(masterData)
+		} else {
+			err = errors.New("Operation status is not met")
+		}
 		if err != nil {
 			updateLog(log, err, "")
 			break

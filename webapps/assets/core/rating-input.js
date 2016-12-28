@@ -1449,6 +1449,7 @@ formula.templateFinancial = {
 // formula.financial = ko.mapping.fromJS(formula.templateFinancial)
 
 function addcategorymen(){
+	$(".modal-dialog").css("overflow", "auto")
 	r.newData.MultipleCategories.push(ko.mapping.fromJS(formula.templateFinancial))
 }
 

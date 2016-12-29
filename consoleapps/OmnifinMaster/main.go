@@ -36,7 +36,19 @@ type Operation struct {
 
 //-------------------------
 
-func createLog(log tk.M) {
+func createLog(portName string) (tk.M, error) {
+	log := tk.M{}
+	log.Set("_id", bson.NewObjectId())
+	log.Set("name", portName)
+	log.Set("createddate", time.Now().UTC())
+	log.Set("error", nil)
+	log.Set("xmlstring", nil)
+	log.Set("iscomplete", false)
+	err := saveLog(log)
+	return log, err
+}
+
+func saveLog(log tk.M) (err error) {
 	conn, err := GetConnection()
 	defer conn.Close()
 	if err != nil {
@@ -47,9 +59,12 @@ func createLog(log tk.M) {
 	defer qinsert.Close()
 
 	csc := map[string]interface{}{"data": log}
-	if err := qinsert.Exec(csc); err != nil {
-		panic(err.Error())
+	err = qinsert.Exec(csc)
+	if err != nil {
+		updateLog(log, err, "")
 	}
+
+	return
 
 	// if log.Get("error") != nil {
 	// 	res := []tk.M{}
@@ -78,11 +93,13 @@ func createLog(log tk.M) {
 	// }
 }
 
-func updateLog(log tk.M, err error, xmlString string) {
-	log.Set("error", err)
+func updateLog(log tk.M, err error, xmlString interface{}) {
+	if err != nil {
+		log.Set("error", err.Error())
+	}
 	log.Set("xmlstring", xmlString)
 	log.Set("iscomplete", err == nil)
-	createLog(log)
+	saveLog(log)
 }
 
 func resetData() (err error) {
@@ -173,14 +190,10 @@ func main() {
 		tk.Println("")
 		tk.Println("Getting", u.PortName, "content from", u.WSDLAddress)
 
-		log := tk.M{}
-		log.Set("_id", bson.NewObjectId())
-		log.Set("name", u.PortName)
-		log.Set("createddate", time.Now().UTC())
-		log.Set("error", nil)
-		log.Set("xmlstring", nil)
-		log.Set("iscomplete", false)
-		createLog(log)
+		log, err := createLog(u.PortName)
+		if err != nil {
+			tk.Println("Error creating log:", err.Error())
+		}
 
 		operationName, err := getOperationName(u.WSDLAddress)
 		if err != nil {
@@ -214,11 +227,16 @@ func main() {
 			</soapenv:Envelope>`, operationName, operationName)
 
 		xmlString, err := GetHttpPOSTContentString(u.WSDLAddress, body)
+
+		xmlStringLog := xmlString
+		if len(xmlStringLog) > 5000 {
+			xmlStringLog = xmlStringLog[:5000]
+		}
+
+		updateLog(log, err, xmlStringLog)
 		if err != nil {
-			updateLog(log, err, "")
 			continue
 		}
-		updateLog(log, err, "")
 
 		xml := strings.NewReader(xmlString)
 		resultah, err := xmlToJson(xml)
@@ -245,7 +263,7 @@ func main() {
 						if beforeReturn == nil {
 							err = errors.New("WS Error.")
 							tk.Println(err.Error())
-							updateLog(log, err, "")
+							updateLog(log, err, xmlStringLog)
 							continue
 						}
 					}
@@ -263,7 +281,7 @@ func main() {
 								err = errors.New("Operation status is not met.")
 							}
 							if err != nil {
-								updateLog(log, err, "")
+								updateLog(log, err, xmlStringLog)
 								tk.Println(err.Error())
 								continue
 							} else {
@@ -275,9 +293,7 @@ func main() {
 				}
 			}
 		} else {
-			err = errors.New("Unknown Error.")
-			tk.Println(err.Error())
-			updateLog(log, err, "")
+			tk.Println("Unknown Error.")
 			continue
 		}
 	}

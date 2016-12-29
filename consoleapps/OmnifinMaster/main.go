@@ -1,13 +1,15 @@
 package main
 
 import (
+	"bytes"
 	. "eaciit/x10/consoleapps/OmnifinMaster/helpers"
+	. "eaciit/x10/consoleapps/OmnifinMaster/models"
 	"encoding/json"
 	"encoding/xml"
 	"errors"
-	xj "github.com/basgys/goxml2json"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"io"
 	"strings"
 	"time"
 )
@@ -132,6 +134,22 @@ func getOperationName(url string) (string, error) {
 	return resp.Binding.Operation.Name, nil
 }
 
+func xmlToJson(r io.Reader) (*bytes.Buffer, error) {
+	root := &Node{}
+	err := NewDecoder(r).Decode(root)
+	if err != nil {
+		return nil, err
+	}
+
+	buf := new(bytes.Buffer)
+	err = NewEncoder(buf).Encode(root)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
 func main() {
 	urls := []Url{
 		Url{"MasterCountry", "http://103.251.60.132:8085/OmniFinServices/countryMasterWS?wsdl"},
@@ -203,7 +221,7 @@ func main() {
 		updateLog(log, err, "")
 
 		xml := strings.NewReader(xmlString)
-		resultah, err := xj.Convert(xml)
+		resultah, err := xmlToJson(xml)
 		if err != nil {
 			panic(err)
 		}

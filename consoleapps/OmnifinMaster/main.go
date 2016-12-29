@@ -2,163 +2,265 @@ package main
 
 import (
 	. "eaciit/x10/consoleapps/OmnifinMaster/helpers"
-	. "eaciit/x10/consoleapps/OmnifinMaster/models"
+	"encoding/json"
 	"encoding/xml"
+	"errors"
+	xj "github.com/basgys/goxml2json"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"strings"
 	"time"
 )
 
 type Url struct {
-	portName    string
-	wsdlAddress string
+	PortName    string
+	WSDLAddress string
 }
 
-type Fetch struct {
-	Return MasterData `xml:"return"`
+//-------------------------
+
+type RespWSDL struct {
+	XMLName xml.Name `xml:"definitions"`
+	Binding Binding  `xml:"binding"`
 }
 
-type Body struct {
-	FetchcountryMasterResponse Fetch `xml:"fetchcountryMasterResponse"`
+type Binding struct {
+	Operation Operation `xml:"operation"`
 }
 
-type MyRespEnvelope struct {
-	XMLName  xml.Name `xml:"Envelope"`
-	RespBody Body     `xml:"Body"`
+type Operation struct {
+	Name string `xml:"name,attr"`
+}
+
+//-------------------------
+
+func createLog(log tk.M) {
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	qinsert := conn.NewQuery().From("OmnifinMasterLog").SetConfig("multiexec", true).Save()
+	defer qinsert.Close()
+
+	csc := map[string]interface{}{"data": log}
+	if err := qinsert.Exec(csc); err != nil {
+		panic(err.Error())
+	}
+
+	// if log.Get("error") != nil {
+	// 	res := []tk.M{}
+	// 	query, err := conn.NewQuery().Select().From("OmnifinMail").Cursor(nil)
+	// 	defer query.Close()
+
+	// 	if err != nil {
+	// 		panic(err.Error())
+	// 	}
+	// 	err = query.Fetch(&res, 0, false)
+
+	// 	for _, mail := range res {
+	// 		addr := mail.GetString("address")
+	// 		if err := SendMail(
+	// 			tk.Sprintf("%v", "[noreply] CAT XML Error Reminder"),
+	// 			tk.Sprintf("%v", "XML receiver has some error.</br>Error Message : "+
+	// 				log.GetString("error")+".</br> Log ID : "+
+	// 				log.GetString("_id")),
+	// 			addr); err != nil {
+	// 			panic(err.Error())
+	// 		} else {
+	// 			tk.Println("Email sent to", addr)
+	// 			tk.Println("------- Error:", log.GetString("error"))
+	// 		}
+	// 	}
+	// }
+}
+
+func updateLog(log tk.M, err error, xmlString string) {
+	log.Set("error", err)
+	log.Set("xmlstring", xmlString)
+	log.Set("iscomplete", err == nil)
+	createLog(log)
+}
+
+func resetData() (err error) {
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	err = conn.NewQuery().
+		Delete().
+		From("OmnifinMasterData").
+		SetConfig("multiexec", true).
+		Exec(nil)
+	if err != nil {
+		return
+	}
+
+	return nil
+}
+
+func saveData(masterData interface{}) (err error) {
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	qinsert := conn.NewQuery().From("OmnifinMasterData").SetConfig("multiexec", true).Save()
+
+	data := map[string]interface{}{"data": masterData}
+	err = qinsert.Exec(data)
+	if err != nil {
+		return
+	}
+
+	return nil
+}
+
+func getOperationName(url string) (string, error) {
+	xmlString := GetHttpGETContentString(url)
+
+	resp := RespWSDL{}
+	err := xml.Unmarshal([]byte(xmlString), &resp)
+	if err != nil {
+		tk.Printf("error: %v", err)
+		return "", err
+	}
+	return resp.Binding.Operation.Name, nil
 }
 
 func main() {
 	urls := []Url{
-		// Url{"MasterLeadOperations", "http://103.251.60.132:8085/OmniFinServices/leadOperationsWS?wsdl"},
-		// Url{"MasterDealCAMDetail", "http://103.251.60.132:8085/OmniFinServices/dealCAMDetailWS?wsdl"},
-		// Url{"MasterChargeCode", "http://103.251.60.132:8085/OmniFinServices/chargeCodeWS?wsdl"},
-		// Url{"MasterGenericOperation", "http://103.251.60.132:8085/OmniFinServices/genericOperationWS?wsdl"},
 		Url{"MasterCountry", "http://103.251.60.132:8085/OmniFinServices/countryMasterWS?wsdl"},
-		// Url{"MasterState", "http://103.251.60.132:8085/OmniFinServices/stateMasterWS?wsdl"},
-		// Url{"MasterDistrict", "http://103.251.60.132:8085/OmniFinServices/districtMasterWS?wsdl"},
-		// Url{"MasterTehsil", "http://103.251.60.132:8085/OmniFinServices/tehsilMasterWS?wsdl"},
-		// Url{"MasterPincode", "http://103.251.60.132:8085/OmniFinServices/pincodeMasterWS?wsdl"},
-		// Url{"MasterBank", "http://103.251.60.132:8085/OmniFinServices/bankMasterWS?wsdl"},
-		// Url{"MasterBankBranch", "http://103.251.60.132:8085/OmniFinServices/bankBranchMasterWS?wsdl"},
-		// Url{"MasterProduct", "http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl"},
-		// Url{"MasterScheme", "http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl"},
-		// Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
-		// Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
-		// Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},
-		// Url{"MasterCharges", "http://103.251.60.132:8085/OmniFinServices/chargesMasterWS?wsdl"},
-		// Url{"MasterBranch", "http://103.251.60.132:8085/OmniFinServices/branchMasterWS?wsdl"},
-		// Url{"MasterDealDocumentOperation", "http://103.251.60.132:8085/OmniFinServices/dealDocumentOperationWS?wsdl"},
-		// Url{"MasterApplicationProcessing", "http://103.251.60.132:8085/OmniFinServices/applicationProcessingWS?wsdl"},
-		// Url{"MasterAdditionalDisbursement", "http://103.251.60.132:8085/OmniFinServices/additionalDisbursementWS?wsdl"},
-		// Url{"MasterReportDownload", "http://103.251.60.132:8085/OmniFinServices/reportDownloadWS?wsdl"},
-		// Url{"MasterDMSServiceHandlerImpl", "http://103.251.60.132:8085/OmniFinServices/DMSServiceHandlerWS?wsdl"},
+		Url{"MasterState", "http://103.251.60.132:8085/OmniFinServices/stateMasterWS?wsdl"},
+		Url{"MasterDistrict", "http://103.251.60.132:8085/OmniFinServices/districtMasterWS?wsdl"},
+		Url{"MasterTehsil", "http://103.251.60.132:8085/OmniFinServices/tehsilMasterWS?wsdl"},
+		Url{"MasterPincode", "http://103.251.60.132:8085/OmniFinServices/pincodeMasterWS?wsdl"},
+		Url{"MasterBank", "http://103.251.60.132:8085/OmniFinServices/bankMasterWS?wsdl"},
+		Url{"MasterBankBranch", "http://103.251.60.132:8085/OmniFinServices/bankBranchMasterWS?wsdl"},
+		Url{"MasterProduct", "http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl"},
+		Url{"MasterScheme", "http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl"},
+		Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
+		Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
+		Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},
+		Url{"MasterCharges", "http://103.251.60.132:8085/OmniFinServices/chargesMasterWS?wsdl"},
+		Url{"MasterBranch", "http://103.251.60.132:8085/OmniFinServices/branchMasterWS?wsdl"},
 	}
 
-	createLog := func(log tk.M) {
-		conn, err := GetConnection()
-		defer conn.Close()
-		if err != nil {
-			panic(err.Error())
-		}
-
-		qinsert := conn.NewQuery().From("OmnifinMasterLog").SetConfig("multiexec", true).Save()
-
-		csc := map[string]interface{}{"data": log}
-		if err := qinsert.Exec(csc); err != nil {
-			panic(err.Error())
-		}
-
-		if log.Get("error") != nil {
-			res := []tk.M{}
-			query, err := conn.NewQuery().Select().From("OmnifinMail").Cursor(nil)
-			defer query.Close()
-
-			if err != nil {
-				panic(err.Error())
-			}
-			err = query.Fetch(&res, 0, false)
-
-			for _, mail := range res {
-				addr := mail.GetString("address")
-				if err := SendMail(
-					tk.Sprintf("%v", "[noreply] CAT XML Error Reminder"),
-					tk.Sprintf("%v", "XML receiver has some error.</br>Error Message : "+
-						log.GetString("error")+".</br> Log ID : "+
-						log.GetString("_id")),
-					addr); err != nil {
-					panic(err.Error())
-				} else {
-					tk.Println("Email sent to", addr)
-					tk.Println("------- Error:", log.GetString("error"))
-				}
-			}
-		}
-	}
-
-	updateLog := func(log tk.M, err error, xmlString string) {
-		log.Set("error", err)
-		log.Set("xmlstring", xmlString)
-		log.Set("iscomplete", err == nil)
-		createLog(log)
-	}
-
-	saveData := func(masterData MasterData) (err error) {
-		conn, err := GetConnection()
-		defer conn.Close()
-		if err != nil {
-			panic(err.Error())
-		}
-
-		err = conn.NewQuery().
-			Delete().
-			From("OmnifinMasterData").
-			SetConfig("multiexec", true).
-			Exec(nil)
-		if err != nil {
-			return
-		}
-
-		qinsert := conn.NewQuery().From("OmnifinMasterData").SetConfig("multiexec", true).Save()
-
-		data := map[string]interface{}{"data": masterData}
-		err = qinsert.Exec(data)
-		if err != nil {
-			return
-		}
-
-		return nil
-	}
-
+	resetData()
 	for _, u := range urls {
-		tk.Println("Getting", u.portName, "content from", u.wsdlAddress)
+		tk.Println("")
+		tk.Println("Getting", u.PortName, "content from", u.WSDLAddress)
+
 		log := tk.M{}
 		log.Set("_id", bson.NewObjectId())
-		log.Set("name", u.portName)
+		log.Set("name", u.PortName)
 		log.Set("createddate", time.Now().UTC())
 		log.Set("error", nil)
 		log.Set("xmlstring", nil)
 		log.Set("iscomplete", false)
-
 		createLog(log)
 
-		xmlString, err := GetHttpContentString(u.wsdlAddress)
+		operationName, err := getOperationName(u.WSDLAddress)
 		if err != nil {
 			updateLog(log, err, "")
-			break
-		}
-		updateLog(log, err, xmlString)
-
-		res := MyRespEnvelope{}
-		err = xml.Unmarshal([]byte(xmlString), &res)
-		if err != nil {
-			updateLog(log, err, "")
-			break
+			continue
 		}
 
-		err = saveData(res.RespBody.FetchcountryMasterResponse.Return)
+		body := tk.Sprintf(`<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.omnifin.a3spl.com/">
+			<soapenv:Header/>
+			   	<soapenv:Body>
+			      	<web:%s>
+			        	<!--Optional:-->
+			         	<inputParameterWrapper>
+			            	<!--Optional:-->
+			            	<syncParameter>
+				               	<!--Optional:-->
+				               	<fetchFull>1</fetchFull>
+				               	<!--Optional:-->
+				               	<lastUpdate>?</lastUpdate>
+			            	</syncParameter>
+				            <!--Optional:-->
+				            <userCredentials>
+				               	<!--Optional:-->
+				               	<userId>CAT</userId>
+				               	<!--Optional:-->
+				               	<userPassword>0775f757de88e601a24c197d68cfb2b7</userPassword>
+				            </userCredentials>
+			         	</inputParameterWrapper>
+			      	</web:%s>
+			   	</soapenv:Body>
+			</soapenv:Envelope>`, operationName, operationName)
+
+		xmlString, err := GetHttpPOSTContentString(u.WSDLAddress, body)
 		if err != nil {
 			updateLog(log, err, "")
-			break
+			continue
+		}
+		updateLog(log, err, "")
+
+		xml := strings.NewReader(xmlString)
+		resultah, err := xj.Convert(xml)
+		if err != nil {
+			panic(err)
+		}
+
+		var msg interface{}
+		err = json.Unmarshal([]byte(resultah.String()), &msg)
+
+		msgMap, ok := msg.(map[string]interface{})
+		if ok {
+			envelope := msgMap["Envelope"]
+			if envelopeMap := envelope.(map[string]interface{}); envelopeMap != nil {
+
+				bodi := envelopeMap["Body"]
+				if bodiMap := bodi.(map[string]interface{}); bodiMap != nil {
+
+					var beforeReturn interface{}
+					beforeReturn = bodiMap[operationName]
+					if beforeReturn == nil {
+						operationName = operationName + "Response"
+						beforeReturn = bodiMap[operationName]
+						if beforeReturn == nil {
+							err = errors.New("WS Error.")
+							tk.Println(err.Error())
+							updateLog(log, err, "")
+							continue
+						}
+					}
+
+					if beforeReturnMap := beforeReturn.(map[string]interface{}); beforeReturnMap != nil {
+
+						riturn := beforeReturnMap["return"]
+						if riturnMap := riturn.(map[string]interface{}); riturnMap != nil {
+							tk.Printf("Operation Status: %+v\n", riturnMap["operationStatus"])
+
+							if tk.ToInt(riturnMap["operationStatus"], "Int64") == 1 {
+								riturnMap["_id"] = bson.NewObjectId()
+								err = saveData(riturn)
+							} else {
+								err = errors.New("Operation status is not met.")
+							}
+							if err != nil {
+								updateLog(log, err, "")
+								tk.Println(err.Error())
+								continue
+							} else {
+								tk.Println("Saved.")
+							}
+
+						}
+					}
+				}
+			}
+		} else {
+			err = errors.New("Unknown Error.")
+			tk.Println(err.Error())
+			updateLog(log, err, "")
+			continue
 		}
 	}
 }

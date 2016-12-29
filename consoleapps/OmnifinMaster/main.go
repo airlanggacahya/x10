@@ -227,7 +227,13 @@ func main() {
 			</soapenv:Envelope>`, operationName, operationName)
 
 		xmlString, err := GetHttpPOSTContentString(u.WSDLAddress, body)
-		updateLog(log, err, xmlString)
+
+		xmlStringLog := xmlString
+		if len(xmlStringLog) > 5000 {
+			xmlStringLog = xmlStringLog[:5000]
+		}
+
+		updateLog(log, err, xmlStringLog)
 		if err != nil {
 			continue
 		}
@@ -257,7 +263,7 @@ func main() {
 						if beforeReturn == nil {
 							err = errors.New("WS Error.")
 							tk.Println(err.Error())
-							updateLog(log, err, xmlString)
+							updateLog(log, err, xmlStringLog)
 							continue
 						}
 					}
@@ -275,7 +281,7 @@ func main() {
 								err = errors.New("Operation status is not met.")
 							}
 							if err != nil {
-								updateLog(log, err, xmlString)
+								updateLog(log, err, xmlStringLog)
 								tk.Println(err.Error())
 								continue
 							} else {

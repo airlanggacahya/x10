@@ -4,12 +4,10 @@ import (
 	"bytes"
 	. "eaciit/x10/consoleapps/OmnifinMaster/helpers"
 	. "eaciit/x10/consoleapps/OmnifinMaster/models"
-	"encoding/json"
 	"encoding/xml"
 	"errors"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	"io"
 	"strings"
 	"time"
 )
@@ -151,20 +149,17 @@ func getOperationName(url string) (string, error) {
 	return resp.Binding.Operation.Name, nil
 }
 
-func xmlToJson(r io.Reader) (*bytes.Buffer, error) {
-	root := &Node{}
-	err := NewDecoder(r).Decode(root)
-	if err != nil {
-		return nil, err
+func makeFirstLowerCase(s string) string {
+	if len(s) < 2 {
+		return strings.ToLower(s)
 	}
 
-	buf := new(bytes.Buffer)
-	err = NewEncoder(buf).Encode(root)
-	if err != nil {
-		return nil, err
-	}
+	bts := []byte(s)
 
-	return buf, nil
+	lc := bytes.ToLower([]byte{bts[0]})
+	rest := bts[1:]
+
+	return string(bytes.Join([][]byte{lc, rest}, nil))
 }
 
 func main() {
@@ -195,11 +190,19 @@ func main() {
 			tk.Println("Error creating log:", err.Error())
 		}
 
+		x := NewReturnedXML()
 		operationName, err := getOperationName(u.WSDLAddress)
 		if err != nil {
 			updateLog(log, err, "")
 			continue
 		}
+
+		x.ListTagName = tk.Sprintf(
+			"%sList",
+			makeFirstLowerCase(
+				strings.Replace(
+					strings.Replace(operationName, "fetch", "", 1),
+					"Response", "", 1)))
 
 		body := tk.Sprintf(`<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.omnifin.a3spl.com/">
 			<soapenv:Header/>
@@ -226,9 +229,9 @@ func main() {
 			   	</soapenv:Body>
 			</soapenv:Envelope>`, operationName, operationName)
 
-		xmlString, err := GetHttpPOSTContentString(u.WSDLAddress, body)
+		x.InString, err = GetHttpPOSTContentString(u.WSDLAddress, body)
 
-		xmlStringLog := xmlString
+		xmlStringLog := x.InString
 		if len(xmlStringLog) > 5000 {
 			xmlStringLog = xmlStringLog[:5000]
 		}
@@ -238,63 +241,24 @@ func main() {
 			continue
 		}
 
-		xml := strings.NewReader(xmlString)
-		resultah, err := xmlToJson(xml)
-		if err != nil {
-			panic(err)
-		}
-
-		var msg interface{}
-		err = json.Unmarshal([]byte(resultah.String()), &msg)
-
-		msgMap, ok := msg.(map[string]interface{})
-		if ok {
-			envelope := msgMap["Envelope"]
-			if envelopeMap := envelope.(map[string]interface{}); envelopeMap != nil {
-
-				bodi := envelopeMap["Body"]
-				if bodiMap := bodi.(map[string]interface{}); bodiMap != nil {
-
-					var beforeReturn interface{}
-					beforeReturn = bodiMap[operationName]
-					if beforeReturn == nil {
-						operationName = operationName + "Response"
-						beforeReturn = bodiMap[operationName]
-						if beforeReturn == nil {
-							err = errors.New("WS Error.")
-							tk.Println(err.Error())
-							updateLog(log, err, xmlStringLog)
-							continue
-						}
-					}
-
-					if beforeReturnMap := beforeReturn.(map[string]interface{}); beforeReturnMap != nil {
-
-						riturn := beforeReturnMap["return"]
-						if riturnMap := riturn.(map[string]interface{}); riturnMap != nil {
-							tk.Printf("Operation Status: %+v\n", riturnMap["operationStatus"])
-
-							if tk.ToInt(riturnMap["operationStatus"], "Int64") == 1 {
-								riturnMap["_id"] = bson.NewObjectId()
-								err = saveData(riturn)
-							} else {
-								err = errors.New("Operation status is not met.")
-							}
-							if err != nil {
-								updateLog(log, err, xmlStringLog)
-								tk.Println(err.Error())
-								continue
-							} else {
-								tk.Println("Saved.")
-							}
-
-						}
-					}
-				}
-			}
+		if err := x.FetchReturnValues(); err != nil {
+			tk.Println(err.Error())
 		} else {
-			tk.Println("Unknown Error.")
-			continue
+			masterData := x.GenerateMasterData().(map[string]interface{})
+
+			if tk.ToInt(masterData["operationStatus"], "Int64") == 1 {
+				err = saveData(masterData)
+			} else {
+				err = errors.New("Operation status is not met.")
+			}
+
+			if err != nil {
+				updateLog(log, err, xmlStringLog)
+				tk.Println(err.Error())
+				continue
+			} else {
+				tk.Println("Saved.")
+			}
 		}
 	}
 }

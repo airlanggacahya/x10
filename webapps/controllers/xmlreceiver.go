@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"bytes"
+	. "eaciit/x10/consoleapps/OmnifinMaster/models"
 	. "eaciit/x10/webapps/connection"
-	// "bytes"
 	. "eaciit/x10/webapps/models"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"github.com/eaciit/cast"
@@ -12,6 +14,7 @@ import (
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/gomail.v2"
 	"gopkg.in/mgo.v2/bson"
+	"io"
 	"io/ioutil"
 	"regexp"
 	"strconv"
@@ -23,6 +26,22 @@ type XMLReceiverController struct {
 	*BaseController
 }
 
+func xmlToJson(r io.Reader) (*bytes.Buffer, error) {
+	root := &Node{}
+	err := NewDecoder(r).Decode(root)
+	if err != nil {
+		return nil, err
+	}
+
+	buf := new(bytes.Buffer)
+	err = NewEncoder(buf).Encode(root)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
 func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	r.Config.OutputType = knot.OutputHtml
 	LogID := bson.NewObjectId()
@@ -31,6 +50,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	LogData.Set("createddate", time.Now().UTC())
 	LogData.Set("error", nil)
 	LogData.Set("xmlstring", "")
+	LogData.Set("xmltkm", "")
 	LogData.Set("iscomplete", false)
 
 	res := `<return>
@@ -64,7 +84,35 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 
 	obj := MyRespEnvelope{}
 
-	err := xml.Unmarshal(Soap, &obj)
+	xmlstr := strings.NewReader(string(bs))
+	resjson, err := xmlToJson(xmlstr)
+	if err != nil {
+		LogData.Set("error", err.Error())
+		CreateLog(LogData)
+		return resFail
+
+	}
+
+	var msg interface{}
+	err = json.Unmarshal([]byte(resjson.String()), &msg)
+	if err != nil {
+		LogData.Set("error", err.Error())
+		CreateLog(LogData)
+		return resFail
+	}
+
+	msgMap, ok := msg.(map[string]interface{})
+	if ok {
+		LogData.Set("xmltkm", msgMap)
+		CreateLog(LogData)
+
+	} else {
+		LogData.Set("error", "Unknown Error")
+		CreateLog(LogData)
+		return resFail
+	}
+
+	err = xml.Unmarshal(Soap, &obj)
 
 	if err != nil {
 		fmt.Println("Payload Decode Error: " + err.Error() + " .Bytes Data: " + string(bs))

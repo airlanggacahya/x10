@@ -29,7 +29,7 @@ r.getDataMaster = function(callback){
                   r.isError(false)
               }
             }else{
-              sweetAlert("Oops...", res.Message, "error");
+              sweetAlert("Oops...", "Data not available.", "error");
               r.isError(true)
             }
           });
@@ -70,7 +70,7 @@ refreshFilter = function () {
       r.render("PROFIT & LOSS ACCOUNT")
       r.render("RATIO")
     } else {
-      sweetAlert("Oops...", "Data Not Found", "error");
+      sweetAlert("Oops...", "Data not available.", "error");
       r.isLoading(false)
       return
     }
@@ -579,7 +579,7 @@ r.exportExcel = function(title){
   $(".form-container > div > div.k-grid-header > div.k-grid-header-wrap > table > thead > tr>").clone(true).appendTo(tr)
 
   var tbody1 = $("<tbody/>");
-  var len = $("body > div.app > div > div.div-container > div:nth-child(9) > div > div > div.panel-body > div.form-container > div > div.k-grid-content-locked > table > tbody>").clone(true);
+  var len = $("body > div.app > div > div.div-container > div:nth-child(9) > div > div > div.panel-body > div > div.form-container > div > div.k-grid-content-locked > table > tbody>").clone(true);
 
   var tdon = len
   // len.clone(true).appendTo(tbody1);

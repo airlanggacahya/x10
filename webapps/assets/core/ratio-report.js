@@ -15,15 +15,22 @@ r.isLoading = function (what) {
     }
 }
 
+r.isError = ko.observable(false);
+
 r.getDataMaster = function(callback){
      var param = {}
     param.customerId = r.customerId()
       ajaxPost("/ratio/getratioinputdataallconfirmed", param, function (res) {
             if (res.Data != null){
+
               r.DataInput(res.Data)
               if (typeof callback === 'function') {
                   callback()
+                  r.isError(false)
               }
+            }else{
+              sweetAlert("Oops...", res.Message, "error");
+              r.isError(true)
             }
           });
 }
@@ -48,10 +55,12 @@ refreshFilter = function () {
 		if (res.Message != '') {
 			sweetAlert("Oops...", res.Message, "error");
 			r.isLoading(false)
+      r.isError(true)
 			return
 		}
 
     if(res.Data.AuditStatus.length > 0) {
+      r.isError(false)
       var currentdata = _.map(r.DataInput().FormData,function(x) {  return x.FieldId.split("-")[1] });
       res.Data.FormData = _.filter(res.Data.FormData,function(x){ return currentdata.indexOf(x.RealId) > -1 || x.RealId == "" });
 

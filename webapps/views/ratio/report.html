@@ -97,20 +97,22 @@ model.Fullname= ko.observable('{{.Fullname}}');
 						<i class="fa fa-refresh"></i> Refresh
 					</button>
 				</div> -->
-				<div class="tabs tabs-style-linemove tabme" data-bind="visible: (r.data().length > 0)">
-		  		<nav>
-		  			<ul role="tablist">
-		  				<li class="borderon tab-current"><a href="javascript:r.render('PROFIT & LOSS ACCOUNT');">PROFIT & LOSS ACCOUNT</a></li>
-		  				<li class="borderon"><a href="javascript:r.render('BALANCE SHEET');">BALANCE SHEET</a></li>
-		  				<li class="borderon"><a href="javascript:r.render('RATIO');">RATIO</a></li>
-		  				<li class="borderon"><a href="javascript:r.render('CASH FLOW STATEMENT');">CASH FLOW STATEMENT</a></li>
-		  			</ul>
-		  		</nav>
-		  		<button class="btn btn-flat btn-sm btn-success" id="xls" onclick="r.exportExcel(filter().CustomerSearchText()+' - '+filter().DealNumberSearchVal())">Export to Excel</button>
-	  		</div>
-				<div class="clearfix"></div>
-				<div class="form-container" style="padding-top: 10px;">
-					<div class="grid"></div>
+				<div data-bind="visible: (r.isError() != true)">
+					<div class="tabs tabs-style-linemove tabme" data-bind="visible: (r.data().length > 0)">
+				  		<nav>
+				  			<ul role="tablist">
+				  				<li class="borderon tab-current"><a href="javascript:r.render('PROFIT & LOSS ACCOUNT');">PROFIT & LOSS ACCOUNT</a></li>
+				  				<li class="borderon"><a href="javascript:r.render('BALANCE SHEET');">BALANCE SHEET</a></li>
+				  				<li class="borderon"><a href="javascript:r.render('RATIO');">RATIO</a></li>
+				  				<li class="borderon"><a href="javascript:r.render('CASH FLOW STATEMENT');">CASH FLOW STATEMENT</a></li>
+				  			</ul>
+				  		</nav>
+			  			<button class="btn btn-flat btn-sm btn-success" id="xls" onclick="r.exportExcel(filter().CustomerSearchText()+' - '+filter().DealNumberSearchVal())">Export to Excel</button>
+		  			</div>
+					<div class="clearfix"></div>
+					<div class="form-container" style="padding-top: 10px;">
+						<div class="grid"></div>
+					</div>
 				</div>
 			</div>
 		</div>

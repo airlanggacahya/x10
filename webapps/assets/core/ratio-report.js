@@ -29,7 +29,7 @@ r.getDataMaster = function(callback){
                   r.isError(false)
               }
             }else{
-              sweetAlert("Oops...", "Data not available.", "error");
+              sweetAlert("Oops...", "Data Not Found.", "error");
               r.isError(true)
             }
           });
@@ -70,7 +70,7 @@ refreshFilter = function () {
       r.render("PROFIT & LOSS ACCOUNT")
       r.render("RATIO")
     } else {
-      sweetAlert("Oops...", "Data not available.", "error");
+      sweetAlert("Oops...", "Data Not Found.", "error");
       r.isLoading(false)
       return
     }

@@ -159,10 +159,20 @@ function refreshdata(){
         $('#CapitalExpansionPlansBoolDetail').prop("checked", false);
       }
 
-      $(".grid2").getKendoGrid().dataSource.data(data[0].FinancialReport.DetailsPertainingBanker)
-      $(".grid2").getKendoGrid().refresh()
-       $(".grid3").getKendoGrid().dataSource.data(data[0].FinancialReport.ExistingRelationship)
-      $(".grid3").getKendoGrid().refresh()
+      // $(".grid2").getKendoGrid().dataSource.data(data[0].FinancialReport.DetailsPertainingBanker)
+      // $(".grid2").getKendoGrid().refresh()
+      // $(".grid3").getKendoGrid().dataSource.data(data[0].FinancialReport.ExistingRelationship)
+      var ds2 = new kendo.data.DataSource({
+        data:data[0].FinancialReport.DetailsPertainingBanker,
+        pageSize:10
+      });
+      $(".grid2").getKendoGrid().setDataSource(ds2)
+      var ds = new kendo.data.DataSource({
+        data:data[0].FinancialReport.ExistingRelationship,
+        pageSize:10
+      });
+      $(".grid3").getKendoGrid().setDataSource(ds)
+      //$(".grid3").getKendoGrid().refresh()
       if (ApplicantDetail.Detail().length > 0 ){
         ApplicantDetail.Detail([]);
       }

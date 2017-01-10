@@ -137,6 +137,25 @@ r.isFreeze = ko.observable(0)
 r.ConfirmText = ko.observable("Confirm")
 r.FreezeText = ko.observable("Freeze")
 
+r.resetData = function(){
+  r.CibilDetails.Office.compname("");
+  r.CibilDetails.Office.pan("");
+  r.CibilDetails.Office.address("");
+  r.CibilDetails.Office.duns("");
+  r.CibilDetails.Office.city("");
+  r.CibilDetails.Office.tlp("");
+  r.CibilDetails.Office.state("");
+  r.CibilDetails.Office.pin("");
+  r.CibilDetails.Office.fileopendate("");
+  r.CibilDetails.Office.country("");
+  r.CibilDetails.ReportSummary.creditgrantor("");
+  r.CibilDetails.ReportSummary.creditfacilities("");
+  r.CibilDetails.ReportSummary.closecreditfacilitis("");
+  r.CibilDetails.ReportSummary.creditguaranteothers("");
+  r.CibilDetails.ReportSummary.latestopendate("");
+  r.CibilDetails.ReportSummary.firstopendate("");
+}
+
 r.getData = function() {
 
   r.ConfirmText("Confirm")
@@ -171,6 +190,7 @@ r.getData = function() {
   r.customerName(filter().CustomerSearchText())
   var Name = r.customerName().split("-").splice(1);
 
+  r.resetData()
   r.titleCibil(toTitleCase(Name.join(" ") +" - Company Summary"));
 
   ajaxPost(url, param, function(data) {

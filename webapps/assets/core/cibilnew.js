@@ -476,6 +476,19 @@ r.setData = function() {
           cibil.CreditTypeSummary.push(val2);
         });
       r.addDataReport(cibil.reportDraft());
+      cibil.reportDraft().Profile =  {
+        CompanyName : "",
+        Pan : "",
+        Address : "",
+        DunsNumber : "",
+        CityTown : "",
+        Telephone : "",
+        StateUnion : "",
+        PinCode : "",
+        FileOpenDate : "",
+        Country : ""
+      };
+       r.setDataCibilDetails(cibil.reportDraft());
     } else {
 
       // r.addDataReport(cibil.reportCibilList()[0]);

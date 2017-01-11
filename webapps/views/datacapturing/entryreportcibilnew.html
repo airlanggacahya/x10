@@ -1,6 +1,45 @@
 <div id="entryCR" class="row" data-bind="with: dataEntryCibilReport">
   <div class="col-md-12 cibilgridfixed">
     <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
+      <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry6">
+        <thead>
+          <tr><th colspan="6">Profile</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="sub-bgcolor">Company Name</td>
+            <td><textarea type="text" onpaste="handlePaste(event)" data-bind="value:Profile().CompanyName" class="form-control input-sm"></textarea></td>
+            <td class="sub-bgcolor">Deal No</td>
+            <td><input type="text" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value: Profile().DealNo" disabled="disabled"></td>
+            <td class="sub-bgcolor">Customer Id</td>
+            <td><input type="number" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value: Profile().CustomerId" disabled="disabled"></td>
+          </tr>
+          <tr>
+            <td class="sub-bgcolor">Duns Number</td>
+            <td><input type="text" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value: Profile().DunsNumber"></td>
+            <td class="sub-bgcolor">Pan</td>
+            <td><input type="text" class="form-control input-sm" data-bind="value: Profile().Pan"></td>
+            <td class="sub-bgcolor">Address</td>
+            <td><textarea type="text" class="form-control input-sm" data-bind="value: Profile().Address"></textarea></td>
+          </tr>
+          <tr>
+            <td class="sub-bgcolor">City Town</td>
+            <td><input type="text" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value: Profile().CityTown"></td>
+            <td class="sub-bgcolor">Telephone</td>
+            <td><input type="number" onkeydown="return FilterInput(event)" class="form-control input-sm" data-bind="value: Profile().Telephone"></td>
+            <td class="sub-bgcolor">State Union</td>
+            <td><input type="text" class="form-control input-sm" data-bind="value: Profile().StateUnion"></td>
+          </tr>
+          <tr>
+            <td class="sub-bgcolor">Pin Code</td>
+            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value: Profile().PinCode"></td>
+            <td class="sub-bgcolor">Country</td>
+            <td><input type="text" class="form-control input-sm" data-bind="value: Profile().Country"></td>
+            <td class="sub-bgcolor">File Open Date</td>
+            <td><input required name="File Open Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value: Profile().FileOpenDate, format: 'dd-MMM-yyyy'}"><br/><span  class="k-invalid-msg" data-for="File Open Date"/></span></td>
+          </tr>
+        </tbody>
+      </table>
       <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry1">
         <thead>
           <tr><th colspan="6">Report Summary</th></tr>

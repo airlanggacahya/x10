@@ -638,10 +638,14 @@ r.setDataCibilDetails = function(data) {
 }
 
 r.setDataEntry = function(data) {
+
+  console.log(data)
   r.dataEntryCibilReport().Id = data.Id
   r.dataEntryCibilReport().Profile().CompanyName(data.Profile.CompanyName)
-  r.dataEntryCibilReport().Profile().CustomerId(data.Profile.CustomerId)
-  r.dataEntryCibilReport().Profile().DealNo(data.Profile.DealNo)
+  r.dataEntryCibilReport().Profile().CustomerId(parseInt(filter().CustomerSearchVal()));
+  r.dataEntryCibilReport().Profile().DealNo( filter().DealNumberSearchVal());
+  // r.dataEntryCibilReport().Profile().CustomerId(data.Profile.CustomerId)
+  // r.dataEntryCibilReport().Profile().DealNo(data.Profile.DealNo)
   r.dataEntryCibilReport().Profile().DunsNumber(data.Profile.DunsNumber)
   r.dataEntryCibilReport().Profile().Pan(data.Profile.Pan)
   r.dataEntryCibilReport().Profile().Address(data.Profile.Address)
@@ -841,17 +845,23 @@ var loadDateString = function(rr){
   var MostRecentDate = kendo.toString(new Date(rr.EnquirySummary().MostRecentDate()), "dd-MMM-yyyy");
   rr.EnquirySummary().MostRecentDate(MostRecentDate);
 
+  var fileOpenDate = kendo.toString(new Date(rr.Profile().FileOpenDate()), "dd-MMM-yyyy");
+  rr.Profile().FileOpenDate(fileOpenDate);  
+
 return rr
 }
 
 var saveCibilReport = function(status){
+  var sample = r.dataEntryCibilReport();
+  console.log(sample.Profile())
+
   if (!app.isFormValid("#entryCR")) {
     swal("Warning","Please complete all fields","warning");
     return;
   }
 
   var validator = $("#entryCR").data("kendoValidator")
-  r.addProfileCompanyData(r.reportCibilList()[0]);
+  // r.addProfileCompanyData(r.reportCibilList()[0]);
 
   var url = "/datacapturing/savingreportcibil";
 
@@ -1167,6 +1177,7 @@ openreportsGuarantor = function(fileName) {
 function FilterInput(event) {
   var keyCode = ('which' in event) ? event.which : event.keyCode;
 
+  console.log(keyCode)
   isNotWanted = (keyCode == 69 || keyCode == 101);
   return !isNotWanted;
 };

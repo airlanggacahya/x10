@@ -515,3 +515,141 @@ func (c *AccountDetailController) SaveSectionDistributor(k *knot.WebContext) int
 
 	return res
 }
+
+func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+	payload := tk.M{}
+
+	if err := k.GetPayload(&payload); err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	filtersAD := []*dbox.Filter{}
+	var filterAD *dbox.Filter
+	filterAD = new(dbox.Filter)
+
+	filtersCA := []*dbox.Filter{}
+	var filterCA *dbox.Filter
+	filterCA = new(dbox.Filter)
+
+	if len(payload.Get("city").([]interface{})) == 0 {
+		filtersCA = append(filtersCA, dbox.Ne("applicantdetail.registeredaddress.CityRegistered", "!z"))
+		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.cityname", "!z"))
+	} else {
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.registeredaddress.CityRegistered", payload.Get("city").([]interface{})...))
+		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.cityname", payload.Get("city").([]interface{})...))
+	}
+
+	if len(payload.Get("product").([]interface{})) == 0 {
+		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.product", "!z"))
+	} else {
+		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.product", payload.Get("product").([]interface{})...))
+	}
+
+	if len(payload.Get("brhead").([]interface{})) == 0 {
+		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.brhead", "!z"))
+	} else {
+		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.brhead", payload.Get("brhead").([]interface{})...))
+	}
+
+	if len(payload.Get("scheme").([]interface{})) == 0 {
+		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.scheme", "!z"))
+	} else {
+		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.scheme", payload.Get("scheme").([]interface{})...))
+	}
+
+	if len(payload.Get("rm").([]interface{})) == 0 {
+		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.rmname", "!z"))
+	} else {
+		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.rmname", payload.Get("rm").([]interface{})...))
+	}
+
+	if len(payload.Get("ca").([]interface{})) == 0 {
+		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.creditanalyst", "!z"))
+	} else {
+		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.creditanalyst", payload.Get("ca").([]interface{})...))
+	}
+
+	filterAD = dbox.And(filtersAD...)
+	tk.Println(payload.Get("rm"))
+	//get data grid
+	cn, err := GetConnection()
+	defer cn.Close()
+	csr, e := cn.NewQuery().
+		Where(filterAD).
+		From("AccountDetails").
+		// Order(SORT).
+		// Take(take).
+		// Skip(skip).
+		Cursor(nil)
+
+	if e != nil {
+		res.SetError(e)
+		return res
+	}
+
+	defer csr.Close()
+
+	resultsAD := []tk.M{}
+	err = csr.Fetch(&resultsAD, 0, false)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	customerids := []interface{}{}
+	dealnos := []interface{}{}
+
+	for _, val := range resultsAD {
+		customerids = append(customerids, val.GetInt("customerid"))
+		dealnos = append(dealnos, val.GetString("dealno"))
+	}
+
+	tk.Println(customerids, dealnos)
+
+	if len(payload.Get("product").([]interface{})) > 0 || len(payload.Get("brhead").([]interface{})) > 0 || len(payload.Get("scheme").([]interface{})) > 0 || len(payload.Get("ca").([]interface{})) > 0 || len(payload.Get("rm").([]interface{})) > 0 {
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
+	}
+	filterCA = dbox.And(filtersCA...)
+
+	csr, e = cn.NewQuery().
+		Where(filterCA).
+		From("CustomerProfile").
+		// Order(SORT).
+		// Take(take).
+		// Skip(skip).
+		Cursor(nil)
+
+	if e != nil {
+		res.SetError(e)
+		return res
+	}
+
+	resultsCA := []tk.M{}
+	err = csr.Fetch(&resultsCA, 0, false)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	finalres := []tk.M{}
+
+	for _, val := range resultsCA {
+		re := tk.M{}
+		re.Set("CA", val)
+		for _, valx := range resultsAD {
+			if val.GetString("_id") == valx.GetString("_id") {
+				re.Set("AD", valx)
+				break
+			}
+		}
+		finalres = append(finalres, re)
+	}
+
+	res.SetData(finalres)
+
+	return res
+}

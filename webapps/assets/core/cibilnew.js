@@ -155,6 +155,8 @@ r.resetData = function(){
   r.CibilDetails.ReportSummary.latestopendate("");
   r.CibilDetails.ReportSummary.firstopendate("");
 }
+  
+r.cibilDraftTemp = ko.observableArray();
 
 r.getData = function() {
 
@@ -194,6 +196,8 @@ r.getData = function() {
   r.titleCibil(toTitleCase(Name.join(" ") +" - Company Summary"));
 
   ajaxPost(url, param, function(data) {
+    r.cibilDraftTemp(data[2].CibilDraft)
+
     checkConfirmedOrNot(data[0].CustomerProfile.Status, 1, 2, data[0].CustomerProfile, null, "Customer Application");
     if(data.success != false) {
 
@@ -205,8 +209,9 @@ r.getData = function() {
       r.reportDraft(data[2].CibilDraft);
       r.promotorsscore(data[3].Promotors);
 
-      r.setData();
       r.setDataEntry(JSON.parse( JSON.stringify(r.reportDraft())));
+
+      r.setData();
 
       r.cibilStatus(1)
 
@@ -293,6 +298,7 @@ r.getData = function() {
 }
 
 r.setData = function() {
+  
   r.promotorsList([])
   r.promotorsOnList([])
   r.CreditTypeSummary([])
@@ -476,18 +482,18 @@ r.setData = function() {
           cibil.CreditTypeSummary.push(val2);
         });
       r.addDataReport(cibil.reportDraft());
-      cibil.reportDraft().Profile =  {
-        CompanyName : "",
-        Pan : "",
-        Address : "",
-        DunsNumber : "",
-        CityTown : "",
-        Telephone : "",
-        StateUnion : "",
-        PinCode : "",
-        FileOpenDate : "",
-        Country : ""
-      };
+      // cibil.reportDraft().Profile =  {
+      //   CompanyName : "",
+      //   Pan : "",
+      //   Address : "",
+      //   DunsNumber : "",
+      //   CityTown : "",
+      //   Telephone : "",
+      //   StateUnion : "",
+      //   PinCode : "",
+      //   FileOpenDate : "",
+      //   Country : ""
+      // };
        r.setDataCibilDetails(cibil.reportDraft());
     } else {
 
@@ -639,13 +645,10 @@ r.setDataCibilDetails = function(data) {
 
 r.setDataEntry = function(data) {
 
-  console.log(data)
   r.dataEntryCibilReport().Id = data.Id
   r.dataEntryCibilReport().Profile().CompanyName(data.Profile.CompanyName)
   r.dataEntryCibilReport().Profile().CustomerId(parseInt(filter().CustomerSearchVal()));
   r.dataEntryCibilReport().Profile().DealNo( filter().DealNumberSearchVal());
-  // r.dataEntryCibilReport().Profile().CustomerId(data.Profile.CustomerId)
-  // r.dataEntryCibilReport().Profile().DealNo(data.Profile.DealNo)
   r.dataEntryCibilReport().Profile().DunsNumber(data.Profile.DunsNumber)
   r.dataEntryCibilReport().Profile().Pan(data.Profile.Pan)
   r.dataEntryCibilReport().Profile().Address(data.Profile.Address)
@@ -724,6 +727,8 @@ r.setDataEntry = function(data) {
   }
 
   r.dataEntryCibilReport().Status = data.Status
+
+  setDataOffice();
 }
 
 r.addCreditTypeSummary = function (){
@@ -851,6 +856,22 @@ var loadDateString = function(rr){
 return rr
 }
 
+var setDataOffice = function(){
+  if(r.dataEntryCibilReport().Status === 1) {
+    console.log("sarif")
+    r.CibilDetails.Office.compname(r.dataEntryCibilReport().Profile().CompanyName())
+    r.CibilDetails.Office.pan(r.dataEntryCibilReport().Profile().Pan())
+    r.CibilDetails.Office.address(r.dataEntryCibilReport().Profile().Address())
+    r.CibilDetails.Office.duns(r.dataEntryCibilReport().Profile().DunsNumber())
+    r.CibilDetails.Office.city(r.dataEntryCibilReport().Profile().CityTown())
+    r.CibilDetails.Office.tlp(r.dataEntryCibilReport().Profile().Telephone())
+    r.CibilDetails.Office.state(r.dataEntryCibilReport().Profile().StateUnion())
+    r.CibilDetails.Office.pin(r.dataEntryCibilReport().Profile().PinCode())
+    r.CibilDetails.Office.fileopendate(r.dataEntryCibilReport().Profile().FileOpenDate())
+    r.CibilDetails.Office.country(r.dataEntryCibilReport().Profile().Country())
+      
+  }
+}
 var saveCibilReport = function(status){
   var sample = r.dataEntryCibilReport();
   console.log(sample.Profile())

@@ -1,0 +1,336 @@
+<div class="col-md-12 no-padding">
+	<div class="col-md-6">
+	    <div class="form-group form-group-table-name">
+	        <div class="input-group input-group-sm ez width-full">
+		     	<span class="input-group-addon width-100 align-right">Customer</span>
+		        <select class="multifield"  id="multiCustomer" data-bind="kendoMultiSelect: { 
+		        data: filter().CustomerSearchList,
+		        value: filter().CustomerSearchVal,
+		        dataValueField: 'customer_id', 
+		        dataTextField: 'customer_name',
+		        filter:'contains'
+		        }"></select>
+	        </div>
+	    </div>
+	</div>
+	<div class="col-md-6">
+	    <div class="form-group form-group-table-name">
+	        <div class="input-group input-group-sm ez width-full">
+		     	<span class="input-group-addon width-100 align-right">Dealno</span>
+		        <select class="multifield"  id="multiDealno" data-bind="kendoMultiSelect: {
+		        data: filter().DealNumberSearchList,
+		        value: filter().DealNumberSearchVal,
+		        filter: 'contains'
+		        }"></select>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+<div class="col-md-12 no-padding">
+	<div class="col-md-6">
+	    <div class="form-group form-group-table-name">
+	        <div class="input-group input-group-sm ez width-full">
+		     	<span class="input-group-addon width-100 align-right">City</span>
+		        <select class="multifield"  id="multiCity" data-bind="kendoMultiSelect: {
+		        data: multiCity, 
+		        value: multiCityVal,
+		        filter: 'contains'
+		        }"></select>
+	        </div>
+	    </div>
+	</div>
+	<div class="col-md-6">
+	    <div class="form-group form-group-table-name">
+	        <div class="input-group input-group-sm ez width-full">
+		     	<span class="input-group-addon width-100 align-right">Product</span>
+		        <select class="multifield"  id="multiProduct" data-bind="kendoMultiSelect: {
+		        data: multiProduct, 
+		        value: multiProductVal,
+		        filter: 'contains'
+		        }"></select>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+<div class="col-md-12 no-padding">
+	<div class="col-md-6">
+	    <div class="form-group form-group-table-name">
+	        <div class="input-group input-group-sm ez width-full">
+		     	<span class="input-group-addon width-100 align-right">BR Head</span>
+		        <select class="multifield"  id="multiBRHead" data-bind="kendoMultiSelect: {
+		        data: multiBRHead, 
+		        value: multiBRHeadVal,
+		        filter: 'contains'
+		        }"></select>
+	        </div>
+	    </div>
+	</div>
+	<div class="col-md-6">
+	    <div class="form-group form-group-table-name">
+	        <div class="input-group input-group-sm ez width-full">
+		     	<span class="input-group-addon width-100 align-right">Scheme</span>
+		        <select class="multifield"  id="multiScheme" data-bind="kendoMultiSelect: {
+		        data: multiScheme, 
+		        value: multiSchemeVal,
+		        filter: 'contains'
+		        }"></select>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+<div class="col-md-12 no-padding">
+	<div class="col-md-6">
+	    <div class="form-group form-group-table-name">
+	        <div class="input-group input-group-sm ez width-full">
+		     	<span class="input-group-addon width-100 align-right">RM</span>
+		        <select class="multifield"  id="multiRM" data-bind="kendoMultiSelect: {
+		        data: multiRM, 
+		        value: multiRMVal,
+		        filter: 'contains'
+		        }"></select>
+	        </div>
+	    </div>
+	</div>
+	<div class="col-md-6 no-padding">
+		<div class="col-md-8">
+		    <div class="form-group form-group-table-name">
+		        <div class="input-group input-group-sm ez width-full">
+			     	<span class="input-group-addon width-100 align-right">Requested Loan Amount - Ranges</span>
+			        <select class="multifield"  id="ddRLARanges" 
+			        data-bind="kendoDropDownList: {data: dddata, value: ddRLARangesVal, dataTextField: 'text', dataValueField: 'value'}"></select>
+		        </div>
+		    </div>
+		</div>
+		<div class="col-md-4">
+		    <div class="form-group form-group-table-name">
+		        <div class="input-group input-group-sm ez width-full">
+			        <input id="inputRLARange" type="number" data-bind="value: inputRLARangeVal"/>
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+
+<div class="col-md-12 no-padding">
+	<div class="col-md-6">
+	    <div class="form-group form-group-table-name">
+	        <div class="input-group input-group-sm ez width-full">
+		     	<span class="input-group-addon width-100 align-right">Credit Analyst</span>
+		        <select class="multifield"  id="multiCA" data-bind="kendoMultiSelect: {
+		        data: multiCA, 
+		        value: multiCAVal,
+		        filter: 'contains'
+		        }"></select>
+	        </div>
+	    </div>
+	</div>
+	<div class="col-md-6 no-padding">
+		<div class="col-md-8">
+		    <div class="form-group form-group-table-name">
+		        <div class="input-group input-group-sm ez width-full">
+			     	<span class="input-group-addon width-100 align-right">Internal Rating</span>
+			        <select class="multifield"  id="ddIR" 
+			        data-bind="kendoDropDownList: { data: dddata, value: ddIRVal, dataTextField: 'text', dataValueField: 'value'}"></select>
+		        </div>
+		    </div>
+		</div>
+		<div class="col-md-4">
+		    <div class="form-group form-group-table-name">
+		        <div class="input-group input-group-sm ez width-full">
+			        <input id="inputIRRange" type="number" data-bind="value: inputIRRangeVal" />
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+var dddata = [
+    { text: "Greater Than", value: "gt" },
+    { text: "Greater Than or Equal", value: "gte" },
+    { text: "Equal", value: "eq" },
+    { text: "Lower Than or Equal", value: "lte" },
+    { text: "Lower Than", value: "lt" }
+]
+$("#inputRLARange").kendoNumericTextBox();
+$("#inputIRRange").kendoNumericTextBox();
+
+var FilteredCust = ko.observableArray([])
+filter().CustomerSearchVal.subscribe(function(custIds){
+  	filter().DealNumberSearchList([]);
+  	FilteredCust([])
+	_.each(custIds, function(custId) {
+		_.each(_.filter(filter().CustomerSearchAll(), function(x){ 
+		  	return x.customer_id == custId 
+		}), function(cust) {
+			filter().DealNumberSearchList.push(cust.deal_no)
+			FilteredCust.push(cust)
+		})
+	})
+});
+
+var multiCity = ko.observableArray()
+filter().DealNumberSearchVal.subscribe(function(custIds){
+  	multiCity([])
+  	if(custIds.length > 0){
+	  	ajaxPost("/databrowser/getfilterdata", { 
+			name: "city",
+			key: { 
+				ids: _.uniq(
+					_.map(FilteredCust(), function(cust){
+						return cust.customer_id + "|" + cust.deal_no
+					})),
+				val: []
+			}
+	   	}, function(res){
+	   		multiCity(
+	   			_.uniq(
+	   				_.map(res.data, function(d){
+	   					return d.applicantdetail.registeredaddress.CityRegistered
+	   				}))
+	   			);
+	   	})
+	}
+});
+
+var accountdetail = ko.observableArray();
+
+var multiProduct = ko.observableArray()
+var multiBRHead = ko.observableArray()
+var multiScheme = ko.observableArray()
+var multiRM = ko.observableArray()
+var multiCA = ko.observableArray()
+
+var accountdetailfiltered = ko.observableArray();
+accountdetailfiltered.subscribe(function(values){
+	var getValueFromAd = function(fangsyen) {
+		return _.compact(_.uniq(_.map(values, fangsyen)))
+	}
+
+	multiProduct(getValueFromAd(function(a){
+		return a.accountsetupdetails.product
+	}))
+
+	multiBRHead(getValueFromAd(function(a){
+		return a.accountsetupdetails.brhead
+	}))
+
+	multiScheme(getValueFromAd(function(a){
+		return a.accountsetupdetails.scheme
+	}))
+
+	multiRM(getValueFromAd(function(a){
+		return a.accountsetupdetails.rmname
+	}))
+
+	multiCA(getValueFromAd(function(a){
+		return a.accountsetupdetails.creditanalyst
+	}))
+})
+
+var filterAD = function(){
+	accountdetailfiltered([])
+	accountdetailfiltered(accountdetail.slice(0))
+
+	var filterADWith = function(inputVal, ...itemProps){
+		if(inputVal().length > 0)
+			accountdetailfiltered(
+				_.filter(
+					accountdetailfiltered(), function(item) {
+						return _.find(inputVal(), function(value){
+							var comparator = item
+							_.each(itemProps, function(prop, i){
+								comparator = comparator[prop]
+							})
+							return value == comparator
+						}) != undefined
+					})
+				);
+	};
+
+	filterADWith(multiCityVal, "accountsetupdetails", "cityname")
+	filterADWith(multiProductVal, "accountsetupdetails", "product")
+	filterADWith(multiBRHeadVal, "accountsetupdetails", "brhead")
+	filterADWith(multiSchemeVal, "accountsetupdetails", "scheme")
+	filterADWith(multiRMVal, "accountsetupdetails", "rmname")
+	filterADWith(multiCAVal, "accountsetupdetails", "creditanalyst")
+
+	if(ddRLARangesVal() != undefined && inputRLARangeVal() != undefined)
+		accountdetailfiltered(
+			_.filter(accountdetailfiltered(), function(item) {
+				var item = item.loandetails.requestedlimitamount
+				var ret = false;
+				console.log(typeof inputRLARangeVal(), typeof item, inputRLARangeVal(), item);
+				switch(ddRLARangesVal()){
+					case "gt":
+					console.log(item, "gt", inputRLARangeVal(), item > inputRLARangeVal());
+						return item > inputRLARangeVal()
+					case "gte":
+					console.log(item, "gte", inputRLARangeVal(), item >= inputRLARangeVal());
+						return item >= inputRLARangeVal()
+					case "eq":
+					console.log(item, "eq", inputRLARangeVal(), item == inputRLARangeVal());
+						return item == inputRLARangeVal()
+					case "lte":
+					console.log(item, "lte", inputRLARangeVal(), item <= inputRLARangeVal());
+						return item <= inputRLARangeVal()
+					case "lt":
+					console.log(item, "lt", inputRLARangeVal(), item < inputRLARangeVal());
+						return item < inputRLARangeVal()
+				}
+			}));
+	console.log(accountdetailfiltered());
+}
+
+var multiCityVal = ko.observableArray("")
+multiCityVal.subscribe(function(values){
+	ajaxPost("/databrowser/getfilterdata", { 
+		name: "ad",
+		key: { 
+			ids: _.uniq(
+			_.map(FilteredCust(), function(cust){
+				return cust.customer_id + "|" + cust.deal_no
+			})),
+			vals: multiCityVal()
+		}
+   	}, function(res){
+   		accountdetail(res.data)
+   		filterAD()
+   	})
+})
+
+var multiProductVal = ko.observableArray();
+multiProductVal.subscribe(filterAD)
+
+var multiBRHeadVal = ko.observableArray();
+multiBRHeadVal.subscribe(filterAD)
+
+var multiSchemeVal = ko.observableArray();
+multiSchemeVal.subscribe(filterAD)
+
+var multiRMVal = ko.observableArray()
+multiRMVal.subscribe(filterAD)
+
+var ddRLARangesVal = ko.observable("gt")
+ddRLARangesVal.subscribe(filterAD)
+
+var inputRLARangeVal = ko.observable(5)
+inputRLARangeVal.subscribe(filterAD)
+
+//-------------------------------------------------------------------------
+
+var multiCAVal = ko.observableArray()
+multiCAVal.subscribe(filterAD)
+
+//-------------------------------------------------------------------------
+
+var ddIRVal = ko.observable("gt")
+ddIRVal.subscribe(filterAD)
+
+var inputIRRangeVal = ko.observable(6)
+inputIRRangeVal.subscribe(filterAD)
+
+</script>

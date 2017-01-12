@@ -37,7 +37,7 @@ func (c *DataBrowserController) Default(k *knot.WebContext) interface{} {
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 
 	k.Config.OutputType = knot.OutputTemplate
-	k.Config.IncludeFiles = []string{"databrowser/customer.html", "shared/loading.html"}
+	k.Config.IncludeFiles = []string{"databrowser/customer.html", "databrowser/filter.html", "shared/loading.html"}
 
 	return DataAccess
 }
@@ -208,4 +208,82 @@ func (a *DataBrowserController) GetListData(r *knot.WebContext) interface{} {
 	res.Set("data", results)
 
 	return CreateResult(true, res, "success")
+}
+
+func (a *DataBrowserController) GetFilterData(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	p := struct {
+		Name string
+		Key  struct {
+			Ids  []string
+			Vals []string
+		}
+	}{}
+	err := k.GetPayload(&p)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	tableName := ""
+	keyField := ""
+	retField := ""
+
+	if p.Name == "city" {
+		tableName = "CustomerProfile"
+		keyField = "_id"
+		retField = "applicantdetail.registeredaddress.CityRegistered"
+	} else {
+		tableName = "AccountDetails"
+		keyField = "accountsetupdetails.cityname"
+	}
+
+	ids := []*dbox.Filter{}
+	for _, key := range p.Key.Ids {
+		ids = append(ids, dbox.Eq("_id", key))
+	}
+
+	vals := []*dbox.Filter{}
+	for _, val := range p.Key.Vals {
+		vals = append(vals, dbox.Eq(keyField, val))
+	}
+
+	where := new(dbox.Filter)
+	if len(vals) > 0 {
+		wheres := []*dbox.Filter{}
+		wheres = append(wheres, dbox.Or(ids...))
+		wheres = append(wheres, dbox.Or(vals...))
+		where = dbox.And(wheres...)
+	} else {
+		where = dbox.Or(ids...)
+	}
+
+	prepQuery := conn.NewQuery()
+	if retField != "" {
+		prepQuery = prepQuery.Select(retField)
+	} else {
+		prepQuery = prepQuery.Select()
+	}
+
+	query, err := prepQuery.
+		From(tableName).
+		Where(where).
+		Cursor(nil)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	res := []tk.M{}
+	err = query.Fetch(&res, 0, false)
+	defer query.Close()
+
+	tk.Println("------", len(res))
+
+	return CreateResult(true, res, "")
 }

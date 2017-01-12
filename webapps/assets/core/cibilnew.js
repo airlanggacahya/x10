@@ -876,45 +876,44 @@ var saveCibilReport = function(status){
   var sample = r.dataEntryCibilReport();
   console.log(sample.Profile())
 
-  if (!app.isFormValid("#entryCR")) {
+  if (!app.isFormValid("#entryCR") && status == 'submit') {
     swal("Warning","Please complete all fields","warning");
     return;
   }
 
-  var validator = $("#entryCR").data("kendoValidator")
+  if(status == 'submit'){
+    var validator = $("#entryCR").data("kendoValidator")
+  }
   // r.addProfileCompanyData(r.reportCibilList()[0]);
 
   var url = "/datacapturing/savingreportcibil";
 
-  if(!ValidateCibil()){
-    swal("Warning","Please complete all fields","warning");
-    return false;
-  }
-
   r.dataEntryCibilReport().Profile().CustomerId(parseInt(filter().CustomerSearchVal()));
   r.dataEntryCibilReport().Profile().DealNo( filter().DealNumberSearchVal());
-  if (validator.validate()) {
-    if (status == "save"){
-      r.dataEntryCibilReport().Status = 0;
-      param = r.dataEntryCibilReport();
-      param = loadDateString(param)
+  
+  if (status == "save"){
+    $(".k-widget.k-tooltip-validation").hide()  
+    r.dataEntryCibilReport().Status = 0;
+    param = r.dataEntryCibilReport();
+    param = loadDateString(param)
 
-      ajaxPost(url, param, function(data) {
-        if (data) {
-          swal("Data Saved", "Data have been saved", "success");
-          r.dataEntryCibilReport().Id = data.Id;
+    ajaxPost(url, param, function(data) {
+      if (data) {
+        swal("Data Saved", "Data have been saved", "success");
+        r.dataEntryCibilReport().Id = data.Id;
 
-          $(".collapsiblecibil").hide()
-          $(".collapsibleguarantor").hide()
-          $(".guarantorhide").hide()
-          $(".comment-container").show()
+        $(".collapsiblecibil").hide()
+        $(".collapsibleguarantor").hide()
+        $(".guarantorhide").hide()
+        $(".comment-container").show()
 
-          $(".reportSummary").show()
-          $(".promoters").show()
-          $(".entryreportCibil").hide()
-        }
-      }, undefined);
-    }else {
+        $(".reportSummary").show()
+        $(".promoters").show()
+        $(".entryreportCibil").hide()
+      }
+    }, undefined);
+  }else {
+    if (validator.validate()) {
       r.dataEntryCibilReport().Status = 1
 
       swal({
@@ -958,10 +957,11 @@ var saveCibilReport = function(status){
             // swal("Cancelled!", "Data didn't submit", "error");
           }
         })
-
-
     }
+
+
   }
+  
 }
 
 var updateConfirmPromotors = function(status){
@@ -1102,6 +1102,7 @@ function checkShowHideGuarantor(index) {
 }
 
 function checkEntryCibilReport() {
+  $(".k-widget.k-tooltip-validation").hide()  
   $("#entryCR").data("kendoValidator");
   $(".collapsiblecibil").hide()
   $(".collapsibleguarantor").hide()

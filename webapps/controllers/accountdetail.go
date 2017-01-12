@@ -645,6 +645,7 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 				re.Set("AD", valx)
 				break
 			}
+			re.Set("AD", new(AccountDetail))
 		}
 		finalres = append(finalres, re)
 	}

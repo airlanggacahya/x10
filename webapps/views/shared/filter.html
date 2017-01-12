@@ -228,7 +228,7 @@ $(document).ready(function(){
       };
     }());
 
-    if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null){
+    if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null && parse("customerid") == "Not found"){
       var cook = readCookie("topfilter"+model.PageTopMenu().split(" ").join(""));
       filter().CustomerSearchVal(cook.split("|")[0]);
       filter().DealNumberSearchVal(cook.split("|")[1]);

@@ -214,6 +214,13 @@ function refreshdata(){
       // $("#reset").show();
       info.initEvents();
       $("#pdf").show();
+
+      if(parse("scrollto") != "Not found"){
+               var topi = $($("#tab0 div:contains('"+ parse("scrollto") +"')")[$("#tab0 div:contains('"+ parse("scrollto") +"')").length -1]).offset().top;
+                $('body').animate({
+                  scrollTop: topi - 330
+                })
+      }
       // buttonlogicstatus(customerprofile().Status());
     }else if(filter().CustomerSearchVal() != "" && filter().DealNumberSearchVal() != "" ){
        swal("warning","Data not available", "warning");

@@ -132,6 +132,8 @@ r.dataEntryCibilReport = ko.observable({
 });
 
 r.cibilStatus = ko.observable(1)
+r.cibilStatusDraft = ko.observable(1)
+
 r.isConfirm = ko.observable(0)
 r.isFreeze = ko.observable(0)
 r.ConfirmText = ko.observable("Confirm")
@@ -214,6 +216,7 @@ r.getData = function() {
       r.setData();
 
       r.cibilStatus(1)
+      r.cibilStatusDraft(0)
 
       if(r.reportCibilList()[0].IsConfirm == 1) {
         $(".btn-disabled-confirm").prop("disabled", true);
@@ -266,7 +269,7 @@ r.getData = function() {
       }
 
       if(data[1].CibilReport.length > 1) {
-        r.cibilStatus(data[2].CibilDraft.Status)
+        r.cibilStatusDraft(data[2].CibilDraft.Status)
         if(data[2].CibilDraft.Status == 0 && data[1].CibilReport[0].Status != undefined) {
           r.cibilStatus(data[1].CibilReport[0].Status)
         }

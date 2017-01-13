@@ -36,7 +36,7 @@
             <td class="sub-bgcolor">Country</td>
             <td><input type="text" class="form-control input-sm" data-bind="value: Profile().Country"></td>
             <td class="sub-bgcolor">File Open Date</td>
-            <td><input required name="File Open Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value: Profile().FileOpenDate, format: 'dd-MMM-yyyy'}"><br/><span  class="k-invalid-msg" data-for="File Open Date"/></span></td>
+            <td><input required name="File Open Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value: Profile().FileOpenDate, format: 'dd-MMM-yyyy'}" onkeydown="return false;"><br/><span  class="k-invalid-msg" data-for="File Open Date"/></span></td>
           </tr>
         </tbody>
       </table>
@@ -57,9 +57,9 @@
             <td class="sub-bgcolor">No. of Credit Facilities <br>Guaranteed by Others</td>
             <td><input type="number" onkeydown="return FilterInput(event)"  name="noCreditFacilitiesGrantorsGuarantedOther" class="form-control input-sm" data-bind="value:ReportSummary().FacilitiesGuaranteed"></td>
             <td class="sub-bgcolor">Latest Credit Facility Open Date</td>
-            <td><input required name="Latest Credit Facility Open Date" type="text" name="noCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().LatestCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="Latest Credit Facility Open Date"></span></td>
+            <td><input required name="Latest Credit Facility Open Date" type="text" onkeydown="return false;" name="noCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().LatestCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}" onkeydown="return false;"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="Latest Credit Facility Open Date"></span></td>
             <td class="sub-bgcolor">First Credit Facility Open Date</td>
-            <td><input required name="First Credit Facility Open Date" type="text" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().FirstCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="First Credit Facility Open Date"></span></td>
+            <td><input required name="First Credit Facility Open Date" type="text" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().FirstCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}" onkeydown="return false;"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="First Credit Facility Open Date"></span></td>
           </tr>
         </tbody>
       </table>
@@ -160,7 +160,7 @@
             <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries24Month"></td>
             <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().EnquiriesThan24Month"></td>
             <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm" data-bind="value:EnquirySummary().TotalEnquiries" ></td>
-            <td style="width: 120px;"><input required name="Most Recent Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:EnquirySummary().MostRecentDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="Most Recent Date"></span></td>
+            <td style="width: 120px;"><input required name="Most Recent Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:EnquirySummary().MostRecentDate, format: 'dd-MMM-yyyy'}" onkeydown="return false;"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="Most Recent Date"></span></td>
           </tr>
         </tbody>
       </table>

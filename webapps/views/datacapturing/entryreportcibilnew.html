@@ -8,15 +8,15 @@
         <tbody>
           <tr>
             <td class="sub-bgcolor">Company Name</td>
-            <td><textarea type="text" onpaste="handlePaste(event)" data-bind="value:Profile().CompanyName" class="form-control input-sm"></textarea></td>
+            <td><textarea type="text"  data-bind="value:Profile().CompanyName" class="form-control input-sm"></textarea></td>
             <td class="sub-bgcolor">Deal No</td>
-            <td><input type="text" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value: Profile().DealNo" disabled="disabled"></td>
+            <td><input type="text"  class="form-control input-sm" data-bind="value: Profile().DealNo" disabled="disabled"></td>
             <td class="sub-bgcolor">Customer Id</td>
-            <td><input type="number" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value: Profile().CustomerId" disabled="disabled"></td>
+            <td><input type="number"  class="form-control input-sm" data-bind="value: Profile().CustomerId" disabled="disabled"></td>
           </tr>
           <tr>
             <td class="sub-bgcolor">Duns Number</td>
-            <td><input type="text" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value: Profile().DunsNumber"></td>
+            <td><input type="text"   class="form-control input-sm" data-bind="value: Profile().DunsNumber"></td>
             <td class="sub-bgcolor">Pan</td>
             <td><input type="text" class="form-control input-sm" data-bind="value: Profile().Pan"></td>
             <td class="sub-bgcolor">Address</td>
@@ -24,7 +24,7 @@
           </tr>
           <tr>
             <td class="sub-bgcolor">City / Town</td>
-            <td><input type="text" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value: Profile().CityTown"></td>
+            <td><input type="text"   class="form-control input-sm" data-bind="value: Profile().CityTown"></td>
             <td class="sub-bgcolor">Telephone</td>
             <td><input type="number" onkeydown="return FilterInput(event)" class="form-control input-sm" data-bind="value: Profile().Telephone"></td>
             <td class="sub-bgcolor">State / Union</td>
@@ -32,7 +32,7 @@
           </tr>
           <tr>
             <td class="sub-bgcolor">Pin Code</td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)"  class="form-control input-sm" data-bind="value: Profile().PinCode"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"   class="form-control input-sm" data-bind="value: Profile().PinCode"></td>
             <td class="sub-bgcolor">Country</td>
             <td><input type="text" class="form-control input-sm" data-bind="value: Profile().Country"></td>
             <td class="sub-bgcolor">File Open Date</td>
@@ -47,15 +47,15 @@
         <tbody>
           <tr>
             <td class="sub-bgcolor">No. of Credit Grantors</td>
-            <td style="width: 60px;"><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditGrantors" class="form-control input-sm" data-bind="value:ReportSummary().Grantors"></td>
+            <td style="width: 60px;"><input type="number" onkeydown="return FilterInput(event)"  name="noCreditGrantors" class="form-control input-sm" data-bind="value:ReportSummary().Grantors"></td>
             <td class="sub-bgcolor">No. of Credit Facilities</td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditFacilities" class="form-control input-sm" data-bind="value:ReportSummary().Facilities"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  name="noCreditFacilities" class="form-control input-sm" data-bind="value:ReportSummary().Facilities"></td>
             <td class="sub-bgcolor">No. of Closed Credit Facilities</td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noClosedCreditFacilities" class="form-control input-sm" data-bind="value:ReportSummary().CreditFacilities"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  name="noClosedCreditFacilities" class="form-control input-sm" data-bind="value:ReportSummary().CreditFacilities"></td>
           </tr>
           <tr>
             <td class="sub-bgcolor">No. of Credit Facilities <br>Guaranteed by Others</td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" name="noCreditFacilitiesGrantorsGuarantedOther" class="form-control input-sm" data-bind="value:ReportSummary().FacilitiesGuaranteed"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  name="noCreditFacilitiesGrantorsGuarantedOther" class="form-control input-sm" data-bind="value:ReportSummary().FacilitiesGuaranteed"></td>
             <td class="sub-bgcolor">Latest Credit Facility Open Date</td>
             <td><input required name="Latest Credit Facility Open Date" type="text" name="noCreditFacilities" class="form-control input-sm" data-bind="kendoDatePicker:{value:ReportSummary().LatestCreditFacilityOpenDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="Latest Credit Facility Open Date"></span></td>
             <td class="sub-bgcolor">First Credit Facility Open Date</td>
@@ -116,15 +116,15 @@
         </thead>
         <tbody data-bind="foreach: CreditTypeSummary">
           <tr>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:NoCreditFacilitiesBorrower"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm" data-bind="value:NoCreditFacilitiesBorrower"></td>
             <td><textarea data-bind="value:CreditType" ></textarea></td>
             <td><input type="text" class="form-control input-sm" data-bind="value:CurrencyCode"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Standard" ></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Substandard"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Doubtful"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:Loss"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:SpecialMention"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:TotalCurrentBalance"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm" data-bind="value:Standard" ></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm" data-bind="value:Substandard"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm" data-bind="value:Doubtful"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm" data-bind="value:Loss"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm" data-bind="value:SpecialMention"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm" data-bind="value:TotalCurrentBalance"></td>
             <td><button class="btn btn-sm btn-danger" data-bind="click:cibil.removeCreditTypeSummary, visible:$index() > 0"><span class="fa fa-remove"></span></button></td>
           </tr>
         </tbody>
@@ -153,13 +153,13 @@
         <tbody>
           <tr>
             <td class="th">No. of Enquiries</td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries3Month"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries6Month"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries9Month"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries12Month"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries24Month"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().EnquiriesThan24Month"></td>
-            <td><input type="number" onkeydown="return FilterInput(event)" onpaste="handlePaste(event)" class="form-control input-sm" data-bind="value:EnquirySummary().TotalEnquiries" ></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries3Month"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries6Month"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries9Month"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries12Month"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().Enquiries24Month"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm calculateMonth" data-bind="value:EnquirySummary().EnquiriesThan24Month"></td>
+            <td><input type="number" onkeydown="return FilterInput(event)"  class="form-control input-sm" data-bind="value:EnquirySummary().TotalEnquiries" ></td>
             <td style="width: 120px;"><input required name="Most Recent Date" type="text" class="form-control input-sm" data-bind="kendoDatePicker:{value:EnquirySummary().MostRecentDate, format: 'dd-MMM-yyyy'}"><br/><span style="margin-top: 3px;" class="k-invalid-msg" data-for="Most Recent Date"></span></td>
           </tr>
         </tbody>

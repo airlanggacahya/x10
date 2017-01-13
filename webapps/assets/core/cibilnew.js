@@ -815,7 +815,20 @@ r.addDataReport = function(data) {
   first =  moment(first).format("DD-MMM-YYYY");
   r.firstopendate(first);
 
-  r.detailreportsummary(data.DetailReportSummary);
+  temp = []
+
+  _.each(data.DetailReportSummary, function(row){
+    row.CurrentBalanceOtherThanStandard = app.formatnum(parseInt(row.CurrentBalanceOtherThanStandard.split(",").join("")));
+    row.CurrentBalanceStandard = app.formatnum(parseInt(row.CurrentBalanceStandard.split(",").join("")));
+    row.NoOfLawSuits = app.formatnum(parseInt(row.NoOfLawSuits.split(",").join("")));
+    row.NoOfOtherThanStandard = app.formatnum(parseInt(row.NoOfOtherThanStandard.split(",").join("")));
+    row.NoOfStandard = app.formatnum(parseInt(row.NoOfStandard.split(",").join("")));
+    row.NoOfWilfulDefaults = app.formatnum(parseInt(row.NoOfWilfulDefaults.split(",").join("")));
+    
+    temp.push(row)
+  })
+
+  r.detailreportsummary(temp);
 
   r.threemonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries3Month),"n0"));
   r.sixmonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries6Month  ),"n0"));

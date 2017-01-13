@@ -263,26 +263,19 @@ var filterAD = function(){
 			_.filter(accountdetailfiltered(), function(item) {
 				var item = item.loandetails.requestedlimitamount
 				var ret = false;
-				console.log(typeof inputRLARangeVal(), typeof item, inputRLARangeVal(), item);
 				switch(ddRLARangesVal()){
 					case "gt":
-					console.log(item, "gt", inputRLARangeVal(), item > inputRLARangeVal());
 						return item > inputRLARangeVal()
 					case "gte":
-					console.log(item, "gte", inputRLARangeVal(), item >= inputRLARangeVal());
 						return item >= inputRLARangeVal()
 					case "eq":
-					console.log(item, "eq", inputRLARangeVal(), item == inputRLARangeVal());
 						return item == inputRLARangeVal()
 					case "lte":
-					console.log(item, "lte", inputRLARangeVal(), item <= inputRLARangeVal());
 						return item <= inputRLARangeVal()
 					case "lt":
-					console.log(item, "lt", inputRLARangeVal(), item < inputRLARangeVal());
 						return item < inputRLARangeVal()
 				}
 			}));
-	console.log(accountdetailfiltered());
 }
 
 var multiCityVal = ko.observableArray("")

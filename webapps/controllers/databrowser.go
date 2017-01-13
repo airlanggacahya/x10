@@ -310,7 +310,5 @@ func (a *DataBrowserController) GetFilterData(k *knot.WebContext) interface{} {
 	err = query.Fetch(&res, 0, false)
 	defer query.Close()
 
-	tk.Println("------", len(res))
-
 	return CreateResult(true, res, "")
 }

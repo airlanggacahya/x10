@@ -4,10 +4,10 @@
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Customer</span>
 		        <select class="multifield"  id="multiCustomer" data-bind="kendoMultiSelect: { 
-		        data: filter().CustomerSearchList,
-		        value: filter().CustomerSearchVal,
-		        dataValueField: 'customer_id', 
-		        dataTextField: 'customer_name',
+		        data: multiCustomerDS,
+		        value: filters.CustomerVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
 		        filter:'contains'
 		        }"></select>
 	        </div>
@@ -18,9 +18,11 @@
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Dealno</span>
 		        <select class="multifield"  id="multiDealno" data-bind="kendoMultiSelect: {
-		        data: filter().DealNumberSearchList,
-		        value: filter().DealNumberSearchVal,
-		        filter: 'contains'
+		        data: multiDealNoDS,
+		        value: filters.DealNoVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
+		        filter:'contains'
 		        }"></select>
 	        </div>
 	    </div>
@@ -32,10 +34,12 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">City</span>
-		        <select class="multifield"  id="multiCity" data-bind="kendoMultiSelect: {
-		        data: multiCity, 
-		        value: multiCityVal,
-		        filter: 'contains'
+		        <select class="multifield"  id="multiCity" data-bind="kendoMultiSelect: { 
+		        data: multiCityDS,
+		        value: filters.CityVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
+		        filter:'contains'
 		        }"></select>
 	        </div>
 	    </div>
@@ -44,10 +48,12 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Product</span>
-		        <select class="multifield"  id="multiProduct" data-bind="kendoMultiSelect: {
-		        data: multiProduct, 
-		        value: multiProductVal,
-		        filter: 'contains'
+		        <select class="multifield"  id="multiProduct" data-bind="kendoMultiSelect: { 
+		        data: multiProductDS,
+		        value: filters.ProductVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
+		        filter:'contains'
 		        }"></select>
 	        </div>
 	    </div>
@@ -59,10 +65,12 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">BR Head</span>
-		        <select class="multifield"  id="multiBRHead" data-bind="kendoMultiSelect: {
-		        data: multiBRHead, 
-		        value: multiBRHeadVal,
-		        filter: 'contains'
+		        <select class="multifield"  id="multiBRHead" data-bind="kendoMultiSelect: { 
+		        data: multiBRHeadDS,
+		        value: filters.BRHeadVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
+		        filter:'contains'
 		        }"></select>
 	        </div>
 	    </div>
@@ -71,10 +79,12 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Scheme</span>
-		        <select class="multifield"  id="multiScheme" data-bind="kendoMultiSelect: {
-		        data: multiScheme, 
-		        value: multiSchemeVal,
-		        filter: 'contains'
+		        <select class="multifield"  id="multiScheme" data-bind="kendoMultiSelect: { 
+		        data: multiSchemeDS,
+		        value: filters.SchemeVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
+		        filter:'contains'
 		        }"></select>
 	        </div>
 	    </div>
@@ -86,10 +96,12 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">RM</span>
-		        <select class="multifield"  id="multiRM" data-bind="kendoMultiSelect: {
-		        data: multiRM, 
-		        value: multiRMVal,
-		        filter: 'contains'
+		        <select class="multifield"  id="multiRM" data-bind="kendoMultiSelect: { 
+		        data: multiRMDS,
+		        value: filters.RMVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
+		        filter:'contains'
 		        }"></select>
 	        </div>
 	    </div>
@@ -100,14 +112,14 @@
 		        <div class="input-group input-group-sm ez width-full">
 			     	<span class="input-group-addon width-100 align-right">Requested Loan Amount - Ranges</span>
 			        <select class="multifield"  id="ddRLARanges" 
-			        data-bind="kendoDropDownList: {data: dddata, value: ddRLARangesVal, dataTextField: 'text', dataValueField: 'value'}"></select>
+			        data-bind="kendoDropDownList: {data: dddata, value: filters.ddRLARangesVal, dataTextField: 'text', dataValueField: 'value'}"></select>
 		        </div>
 		    </div>
 		</div>
 		<div class="col-md-4">
 		    <div class="form-group form-group-table-name">
 		        <div class="input-group input-group-sm ez width-full">
-			        <input id="inputRLARange" type="number" data-bind="value: inputRLARangeVal"/>
+			        <input id="inputRLARange" type="number" data-bind="value: filters.inputRLARangeVal"/>
 		        </div>
 		    </div>
 		</div>
@@ -119,10 +131,12 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Credit Analyst</span>
-		        <select class="multifield"  id="multiCA" data-bind="kendoMultiSelect: {
-		        data: multiCA, 
-		        value: multiCAVal,
-		        filter: 'contains'
+		        <select class="multifield"  id="multiCA" data-bind="kendoMultiSelect: { 
+		        data: multiCADS,
+		        value: filters.CAVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
+		        filter:'contains'
 		        }"></select>
 	        </div>
 	    </div>
@@ -133,14 +147,14 @@
 		        <div class="input-group input-group-sm ez width-full">
 			     	<span class="input-group-addon width-100 align-right">Internal Rating</span>
 			        <select class="multifield"  id="ddIR" 
-			        data-bind="kendoDropDownList: { data: dddata, value: ddIRVal, dataTextField: 'text', dataValueField: 'value'}"></select>
+			        data-bind="kendoDropDownList: { data: dddata, value: filters.ddIRRangesVal, dataTextField: 'text', dataValueField: 'value'}"></select>
 		        </div>
 		    </div>
 		</div>
 		<div class="col-md-4">
 		    <div class="form-group form-group-table-name">
 		        <div class="input-group input-group-sm ez width-full">
-			        <input id="inputIRRange" type="number" data-bind="value: inputIRRangeVal" />
+			        <input id="inputIRRange" type="number" data-bind="value: filters.inputIRRangeVal" />
 		        </div>
 		    </div>
 		</div>
@@ -148,6 +162,120 @@
 </div>
 
 <script type="text/javascript">
+var filters = {}
+filters.CustomerVal = ko.observableArray()
+filters.DealNoVal = ko.observableArray()
+filters.CityVal = ko.observableArray()
+filters.ProductVal = ko.observableArray()
+filters.BRHeadVal = ko.observableArray()
+filters.SchemeVal = ko.observableArray()
+filters.RMVal = ko.observableArray()
+filters.ddRLARangesVal = ko.observable("gt")
+filters.inputRLARangeVal = ko.observable(0)
+filters.CAVal = ko.observableArray()
+filters.ddIRRangesVal = ko.observable("gt")
+filters.inputIRRangeVal = ko.observable(0)
+
+var filteredCustId = ko.computed(function(){
+	return _.uniq(filters.CustomerVal().concat(filters.DealNoVal()));
+})
+
+//--------------------------------------------------------------------
+
+var generateDataSource = function(url, param, c){
+	return new kendo.data.DataSource({
+		serverFiltering: true,
+	    transport: {
+	        read: function(o) {
+	        	ajaxPost(url, param, function(res){
+	           		o.success(res);
+	           	})
+	        }
+	    },
+	    schema: {
+	    	parse: function(data){
+	    		return _.reject(
+	    			_.map(
+	    				_.groupBy(
+	    					_.sortBy(
+	    						_.map(data.data, c), function(d){
+	    							return d.value
+	    						}), 
+	    					function(d){
+	    						return d.text;
+	    					}), 
+	    				function(d){
+	    					return d[0];
+	    				}), 
+	    			function(d) {
+	    				return _.isEmpty(d.text)
+	    			})
+	    	}
+	    },
+	})
+}
+
+var getMasterCustomerDS = function(c) {
+	return generateDataSource("/databrowser/getmastercustomerdata", {}, c)
+}
+
+var multiCustomerDS = getMasterCustomerDS(function(d){
+	return {
+		"text": d.customer_id + " - " + d.customer_name,
+		"value": d.customer_id
+	}
+})
+
+var multiDealNoDS = getMasterCustomerDS(function(d){
+	return {
+		"text": d.deal_no,
+		"value": d.customer_id
+	}
+})
+
+// --------------------------------------------------------------------
+
+var multiCityDS = generateDataSource("/databrowser/getcustomerprofiledata", {}, function(d){
+	return {
+		"text": d.applicantdetail.registeredaddress.CityRegistered,
+		"value": d.applicantdetail.registeredaddress.CityRegistered
+	}
+})
+
+//--------------------------------------------------------------------
+
+var getAccountDetailDS = function(c) {
+	return generateDataSource("/databrowser/getaccountdetaildata", {}, c)
+}
+
+var multiProductDS = getAccountDetailDS(function(d){
+	return {
+		"text": d.accountsetupdetails.product,
+		"value": d.accountsetupdetails.product
+	}
+})
+
+var multiBRHeadDS = getAccountDetailDS(function(d){
+	return {
+		"text": d.accountsetupdetails.brhead,
+		"value": d.accountsetupdetails.brhead
+	}
+})
+
+var multiSchemeDS = getAccountDetailDS(function(d){
+	return {
+		"text": d.accountsetupdetails.scheme,
+		"value": d.accountsetupdetails.scheme
+	}
+})
+
+var multiRMDS = getAccountDetailDS(function(d){
+	return {
+		"text": d.accountsetupdetails.rmname,
+		"value": d.accountsetupdetails.rmname
+	}
+})
+
 var dddata = [
     { text: "Greater Than", value: "gt" },
     { text: "Greater Than or Equal", value: "gte" },
@@ -158,172 +286,10 @@ var dddata = [
 $("#inputRLARange").kendoNumericTextBox();
 $("#inputIRRange").kendoNumericTextBox();
 
-var FilteredCust = ko.observableArray([])
-filter().CustomerSearchVal.subscribe(function(custIds){
-  	filter().DealNumberSearchList([]);
-  	FilteredCust([])
-	_.each(custIds, function(custId) {
-		_.each(_.filter(filter().CustomerSearchAll(), function(x){ 
-		  	return x.customer_id == custId 
-		}), function(cust) {
-			filter().DealNumberSearchList.push(cust.deal_no)
-			FilteredCust.push(cust)
-		})
-	})
-});
-
-var multiCity = ko.observableArray()
-filter().DealNumberSearchVal.subscribe(function(custIds){
-  	multiCity([])
-  	if(custIds.length > 0){
-	  	ajaxPost("/databrowser/getfilterdata", { 
-			name: "city",
-			key: { 
-				ids: _.uniq(
-					_.map(FilteredCust(), function(cust){
-						return cust.customer_id + "|" + cust.deal_no
-					})),
-				val: []
-			}
-	   	}, function(res){
-	   		multiCity(
-	   			_.uniq(
-	   				_.map(res.data, function(d){
-	   					return d.applicantdetail.registeredaddress.CityRegistered
-	   				}))
-	   			);
-	   	})
+var multiCADS = getAccountDetailDS(function(d){
+	return {
+		"text": d.accountsetupdetails.creditanalyst,
+		"value": d.accountsetupdetails.creditanalyst
 	}
-});
-
-var accountdetail = ko.observableArray();
-
-var multiProduct = ko.observableArray()
-var multiBRHead = ko.observableArray()
-var multiScheme = ko.observableArray()
-var multiRM = ko.observableArray()
-var multiCA = ko.observableArray()
-
-var accountdetailfiltered = ko.observableArray();
-accountdetailfiltered.subscribe(function(values){
-	var getValueFromAd = function(fangsyen) {
-		return _.compact(_.uniq(_.map(values, fangsyen)))
-	}
-
-	multiProduct(getValueFromAd(function(a){
-		return a.accountsetupdetails.product
-	}))
-
-	multiBRHead(getValueFromAd(function(a){
-		return a.accountsetupdetails.brhead
-	}))
-
-	multiScheme(getValueFromAd(function(a){
-		return a.accountsetupdetails.scheme
-	}))
-
-	multiRM(getValueFromAd(function(a){
-		return a.accountsetupdetails.rmname
-	}))
-
-	multiCA(getValueFromAd(function(a){
-		return a.accountsetupdetails.creditanalyst
-	}))
 })
-
-var filterAD = function(){
-	accountdetailfiltered([])
-	accountdetailfiltered(accountdetail.slice(0))
-
-	var filterADWith = function(inputVal, ...itemProps){
-		if(inputVal().length > 0)
-			accountdetailfiltered(
-				_.filter(
-					accountdetailfiltered(), function(item) {
-						return _.find(inputVal(), function(value){
-							var comparator = item
-							_.each(itemProps, function(prop, i){
-								comparator = comparator[prop]
-							})
-							return value == comparator
-						}) != undefined
-					})
-				);
-	};
-
-	filterADWith(multiCityVal, "accountsetupdetails", "cityname")
-	filterADWith(multiProductVal, "accountsetupdetails", "product")
-	filterADWith(multiBRHeadVal, "accountsetupdetails", "brhead")
-	filterADWith(multiSchemeVal, "accountsetupdetails", "scheme")
-	filterADWith(multiRMVal, "accountsetupdetails", "rmname")
-	filterADWith(multiCAVal, "accountsetupdetails", "creditanalyst")
-
-	if(ddRLARangesVal() != undefined && inputRLARangeVal() != undefined)
-		accountdetailfiltered(
-			_.filter(accountdetailfiltered(), function(item) {
-				var item = item.loandetails.requestedlimitamount
-				var ret = false;
-				switch(ddRLARangesVal()){
-					case "gt":
-						return item > inputRLARangeVal()
-					case "gte":
-						return item >= inputRLARangeVal()
-					case "eq":
-						return item == inputRLARangeVal()
-					case "lte":
-						return item <= inputRLARangeVal()
-					case "lt":
-						return item < inputRLARangeVal()
-				}
-			}));
-}
-
-var multiCityVal = ko.observableArray("")
-multiCityVal.subscribe(function(values){
-	ajaxPost("/databrowser/getfilterdata", { 
-		name: "ad",
-		key: { 
-			ids: _.uniq(
-			_.map(FilteredCust(), function(cust){
-				return cust.customer_id + "|" + cust.deal_no
-			})),
-			vals: multiCityVal()
-		}
-   	}, function(res){
-   		accountdetail(res.data)
-   		filterAD()
-   	})
-})
-
-var multiProductVal = ko.observableArray();
-multiProductVal.subscribe(filterAD)
-
-var multiBRHeadVal = ko.observableArray();
-multiBRHeadVal.subscribe(filterAD)
-
-var multiSchemeVal = ko.observableArray();
-multiSchemeVal.subscribe(filterAD)
-
-var multiRMVal = ko.observableArray()
-multiRMVal.subscribe(filterAD)
-
-var ddRLARangesVal = ko.observable("gt")
-ddRLARangesVal.subscribe(filterAD)
-
-var inputRLARangeVal = ko.observable(5)
-inputRLARangeVal.subscribe(filterAD)
-
-//-------------------------------------------------------------------------
-
-var multiCAVal = ko.observableArray()
-multiCAVal.subscribe(filterAD)
-
-//-------------------------------------------------------------------------
-
-var ddIRVal = ko.observable("gt")
-ddIRVal.subscribe(filterAD)
-
-var inputIRRangeVal = ko.observable(6)
-inputIRRangeVal.subscribe(filterAD)
-
 </script>

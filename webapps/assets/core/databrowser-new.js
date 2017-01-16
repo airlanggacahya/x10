@@ -286,7 +286,7 @@ databrowser.fullcoll = [
  	{
  		title : "Previous Loan Details",
  		template :  function(dt){
- 			return "<button onclick='databrowser.GoPrev(\""+ dt.CA._id +"\")'>Details..</button>"
+ 			return "<a style='cursor: pointer;' onclick='databrowser.GoPrev(\""+ dt.CA._id +"\")'>Details..</a>"
  		},
 		width : 100,
 		headerTemplate : "Previous Loan </br> Details",
@@ -295,7 +295,7 @@ databrowser.fullcoll = [
  	{
  		title : "Details Pertaining to Bankers / FIs",
  		template :  function(dt){
- 			return "<button onclick='databrowser.GoDet(\""+ dt.CA._id +"\")'>Details..</button>"
+ 			return "<a style='cursor: pointer;' onclick='databrowser.GoDet(\""+ dt.CA._id +"\")'>Details..</a>"
  		},
 		width : 100 ,
 		headerTemplate : "Details Pertaining </br> to Bankers / FIs",
@@ -304,7 +304,7 @@ databrowser.fullcoll = [
  	{
  		title : "Existing Relationship With X10 Financial Services Limited",
  		template :  function(dt){
- 			return "<button onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Details..</button>"
+ 			return "<a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Details..</a>"
  		},
 		width : 100 ,
 		headerTemplate : "Existing Relationship </br> With X10 Financial Services Limited",
@@ -423,7 +423,7 @@ databrowser.fullcoll = [
  		},
  		{
  			title : "Details",
- 			template : function(dt){ return "<button onclick='databrowser.GoProm(\""+ dt.CA._id +"\")'>Details..</button>" },
+ 			template : function(dt){ return "<a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\")'>Details..</a>" },
 			width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
  		},
@@ -539,7 +539,7 @@ databrowser.expand = function(text){
 	}else if (text == "loandet"){
 		if(databrowser.statusexpand[text]){
 			databrowser.fullcoll[6].headerTemplate = function(dt){
-		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
+		 		return "<a id='on1' class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.loandetailscoll){
@@ -567,6 +567,7 @@ databrowser.expand = function(text){
 	databrowser.statusexpand[text] = !databrowser.statusexpand[text] 
 	dbgrid.setOptions({ columns :  databrowser.fullcoll })
 	dbgrid.refresh();
+	$('#griddb .k-grid-content').scrollLeft( 1000 );
 }
 
 databrowser.GoPrev = function(id){
@@ -598,6 +599,7 @@ databrowser.GetDataGrid = function(){
 			 	pageSize: 5
 			 },
 			 columns : databrowser.fullcoll,
+			 groupable: true,
 			 scrollable : true,
 			 pageable: true,
 			 dataBinding: function(x) {

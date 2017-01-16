@@ -423,7 +423,19 @@ databrowser.fullcoll = [
  		},
  		{
  			title : "Details",
- 			template : function(dt){ return "<button onclick='databrowser.GoProm(\""+ dt.CA._id +"\")'>Details..</button>" },
+ 			template : function(dt){ 
+ 				var str = "<table class='intable'>";
+ 					str += "<tr>"
+ 				for(var i in dt.CA.detailofpromoters.biodata){
+ 					if(dt.CA.detailofpromoters.biodata[i].Name == undefined){
+ 						break;
+ 					}
+ 				str += "<td><button onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Details..</button></td>" 
+ 					str+="</tr>"
+ 			}
+ 			str += "</table>";
+ 				return str;
+ 			},
 			width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
  		},
@@ -512,7 +524,7 @@ databrowser.expand = function(text){
 		}
 	}else if (text == "accsetup"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[5].headerTemplate = function(dt){
+			databrowser.fullcoll[6].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -522,23 +534,23 @@ databrowser.expand = function(text){
 
 		 	databrowser.accsetupcoll[0].hidden = false;
 		 	databrowser.accsetupcoll[1].hidden = false;
-		 	databrowser.fullcoll[5].columns = databrowser.accsetupcoll;
+		 	databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[5].headerTemplate = function(dt){
+			databrowser.fullcoll[6].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.accsetupcoll){
 		 		databrowser.accsetupcoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[5].columns = databrowser.accsetupcoll;
+		 	databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
 			//open
 		}
 	}else if (text == "loandet"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[6].headerTemplate = function(dt){
+			databrowser.fullcoll[7].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -549,18 +561,18 @@ databrowser.expand = function(text){
 		 	databrowser.loandetailscoll[0].hidden = false;
 		 	databrowser.loandetailscoll[4].hidden = false;
 		 	databrowser.loandetailscoll[7].hidden = false;
-		 	databrowser.fullcoll[6].columns = databrowser.loandetailscoll;
+		 	databrowser.fullcoll[7].columns = databrowser.loandetailscoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[6].headerTemplate = function(dt){
+			databrowser.fullcoll[7].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.loandetailscoll){
 		 		databrowser.loandetailscoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[6].columns = databrowser.loandetailscoll;
+		 	databrowser.fullcoll[7].columns = databrowser.loandetailscoll;
 			//open
 		}
 	}
@@ -582,9 +594,9 @@ databrowser.GoExis = function(id){
 	 window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrollto=Existing Relationship With X10")
 }
 
-databrowser.GoProm = function(id){
+databrowser.GoProm = function(id,name){
 	var ids=id.split("|");
-	 window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrollto=Details of Promoters/Directors/Guarantors")
+	 window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrolltoinp="+name)
 }
 
 var dbgrid = ""

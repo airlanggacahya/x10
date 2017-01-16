@@ -106,7 +106,7 @@
                           <label for="Acc" class="control-label">Name :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="Name"  name="name" class="form-control input-sm Name" data-bind="value: detail.biodata()[$index()].Name" validationMessage="Name required" required/>
+                          <input type="text" name="name" class="form-control input-sm Name" data-bind="value: detail.biodata()[$index()].Name,attr : { id : detail.biodata()[$index()].Name }" validationMessage="Name required" required/>
                         </div>
                       </div>
 

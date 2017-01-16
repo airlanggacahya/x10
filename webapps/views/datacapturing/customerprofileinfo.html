@@ -221,6 +221,13 @@ function refreshdata(){
                   scrollTop: topi - 330
                 })
       }
+
+      if(parse("scrolltoinp") != "Not found"){
+               var topi = $('input[id="'+parse("scrolltoinp")+'"]:eq(0)').offset().top;
+                $('body').animate({
+                  scrollTop: topi - 400
+                })
+      }
       // buttonlogicstatus(customerprofile().Status());
     }else if(filter().CustomerSearchVal() != "" && filter().DealNumberSearchVal() != "" ){
        swal("warning","Data not available", "warning");

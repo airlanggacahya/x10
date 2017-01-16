@@ -1,3 +1,15 @@
+<script type="text/javascript">
+model.PageTopMenu("{{.TopMenu}}");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}');
+model.User= ko.observable('{{.Username}}');
+</script>
 <style type="text/css">
 	.intable tbody > tr:last-child > td {
     	border-bottom: 0;

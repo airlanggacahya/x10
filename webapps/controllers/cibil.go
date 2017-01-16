@@ -253,6 +253,7 @@ func (c *DataCapturingController) SavingReportCibil(k *knot.WebContext) interfac
 	}
 
 	e := c.Ctx.Save(&p)
+	c.WriteLog(e)
 	if e != nil {
 		fmt.Println(e)
 	}

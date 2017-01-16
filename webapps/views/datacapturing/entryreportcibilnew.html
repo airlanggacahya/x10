@@ -1,6 +1,10 @@
 <div id="entryCR" class="row" data-bind="with: dataEntryCibilReport">
   <div class="col-md-12 cibilgridfixed">
     <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
+      <div class="col-md-12">
+        <input id="acct" data-bind="kendoDropDownList: { data: cibil.cibilFileNameList, value: cibil.cibilFileNameSelected, optionLabel: '--select one--'}" placeholder="select one" type="text" class="acct input-sm form-control">
+      </div>
+      
       <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry6">
         <thead>
           <tr><th colspan="6">Profile</th></tr>

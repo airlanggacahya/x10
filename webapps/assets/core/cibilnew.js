@@ -1,5 +1,8 @@
 var cibil = {}; var r = cibil;
 
+r.cibilFileNameList = ko.observableArray([])
+r.cibilFileNameSelected = ko.observable("")
+
 r.statusAccept = ko.observable("")
 r.customerName = ko.observable("")
 r.titleCibil = ko.observable("")
@@ -139,6 +142,17 @@ r.isFreeze = ko.observable(0)
 r.ConfirmText = ko.observable("Confirm")
 r.FreezeText = ko.observable("Freeze")
 
+r.cibilFileNameSelected.subscribe(function(value){
+  if(value != "") {
+    cibilSelected = _.filter(r.reportCibilList(), function(row){
+      return value === row.FileName
+    })
+
+    r.setDataEntry(cibilSelected[0])  
+  }
+  
+});
+
 r.resetData = function(){
   r.CibilDetails.Office.compname("");
   r.CibilDetails.Office.pan("");
@@ -162,6 +176,7 @@ r.cibilDraftTemp = ko.observableArray();
 
 r.getData = function() {
 
+  r.cibilFileNameList([])
   r.ConfirmText("Confirm")
   $(".btn-disabled-confirm").prop("disabled", false);
   $(".btn-disabled").prop( "disabled", false );
@@ -622,6 +637,11 @@ r.setData = function() {
                 position:"bottom",
                 interactive: true,
     });
+
+    _.each(r.reportCibilList(), function(row){
+      r.cibilFileNameList.push(row.FileName)  
+    })
+    
 }
 
 r.setDataCibilDetails = function(data) {
@@ -726,7 +746,21 @@ r.setDataEntry = function(data) {
   if(data.DetailReportSummary == null) {
     r.addDetailReportSummary()
   } else {
-    r.dataEntryCibilReport().DetailReportSummary(data.DetailReportSummary)
+    var temp = {}
+
+    _.each(data.DetailReportSummary, function(row){
+      temp.CreditFacilities = row.CreditFacilities
+      temp.CurrentBalanceOtherThanStandard = row.CurrentBalanceOtherThanStandard.split(",").join("")
+      temp.CurrentBalanceStandard = row.CurrentBalanceStandard.split(",").join("")
+      temp.NoOfLawSuits = row.NoOfLawSuits.split(",").join("")
+      temp.NoOfOtherThanStandard = row.NoOfOtherThanStandard.split(",").join("")
+      temp.NoOfStandard = row.NoOfStandard.split(",").join("")
+      temp.NoOfWilfulDefaults = row.NoOfWilfulDefaults.split(",").join("")
+
+      r.dataEntryCibilReport().DetailReportSummary.push(temp)  
+    })
+
+    // r.dataEntryCibilReport().DetailReportSummary(data.DetailReportSummary)
   }
 
   r.dataEntryCibilReport().Status = data.Status

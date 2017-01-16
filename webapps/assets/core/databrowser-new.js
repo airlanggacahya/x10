@@ -608,7 +608,7 @@ databrowser.GoProm = function(id,name){
 var dbgrid = ""
 
 databrowser.GetDataGrid = function(){
-	ajaxPost("/accountdetail/getdatabrowser",{ city : [], product : [], brhead : [], scheme : [], rm : [], ca : [] }, function(data){
+	ajaxPost("/accountdetail/getdatabrowser",{ rating : "", ratingopr : "gt",loanamount : "",loanamountopr : "gte", city : [], product : [], brhead : [], scheme : [], rm : [], ca : [] }, function(data){
 		databrowser.normalisasiAD(data.Data);
 		dbgrid = $("#griddb").kendoGrid({
 			 dataSource: {

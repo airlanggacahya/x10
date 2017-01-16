@@ -92,6 +92,7 @@ frp.render = function () {
 		DealNo: filter().DealNumberSearchVal(),
 		Data: data,
 		FinalScore : kendo.toString(score, 'n2'),
+		FinalScoreDob : parseFloat(kendo.toString(score, 'n2')),
 		FinalRating : rating
 	}, function(res){
 		console.log(res)

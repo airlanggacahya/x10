@@ -272,12 +272,13 @@ func (c *CreditScoreCardController) SaveData(k *knot.WebContext) interface{} {
 	res := new(tk.Result)
 
 	t := struct {
-		Id          bson.ObjectId `bson:"_id" , json:"_id" `
-		CustomerId  string        `bson:"CustomerId"`
-		DealNo      string        `bson:"DealNo"`
-		Data        []interface{} `bson:"Data"`
-		FinalScore  string        `bson:"FinalScore"`
-		FinalRating string        `bson:"FinalRating"`
+		Id            bson.ObjectId `bson:"_id" , json:"_id" `
+		CustomerId    string        `bson:"CustomerId"`
+		DealNo        string        `bson:"DealNo"`
+		Data          []interface{} `bson:"Data"`
+		FinalScore    string        `bson:"FinalScore"`
+		FinalScoreDob float64       `bson:"FinalScoreDob"`
+		FinalRating   string        `bson:"FinalRating"`
 	}{}
 
 	err := k.GetPayload(&t)

@@ -572,11 +572,92 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.creditanalyst", payload.Get("ca").([]interface{})...))
 	}
 
-	filterAD = dbox.And(filtersAD...)
-	tk.Println(payload.Get("rm"))
-	//get data grid
 	cn, err := GetConnection()
 	defer cn.Close()
+
+	if payload.GetString("rating") != "" {
+		filtersRT := []*dbox.Filter{}
+		opr := payload.GetString("ratingopr")
+		valrat := payload.GetFloat64("rating")
+		if opr == "gt" {
+			filtersRT = append(filtersRT, dbox.Gt("FinalScoreDob", valrat))
+		} else if opr == "gte" {
+			filtersRT = append(filtersRT, dbox.Gte("FinalScoreDob", valrat))
+		} else if opr == "lte" {
+			filtersRT = append(filtersRT, dbox.Lte("FinalScoreDob", valrat))
+		} else if opr == "lt" {
+			filtersRT = append(filtersRT, dbox.Lt("FinalScoreDob", valrat))
+		} else if opr == "eq" {
+			filtersRT = append(filtersRT, dbox.Eq("FinalScoreDob", valrat))
+		}
+		tk.Println(opr, "-----OPR")
+		tk.Println(valrat, "VAL----")
+		csr, e := cn.NewQuery().
+			Where(dbox.And(filtersRT...)).
+			From("CreditScorecard").
+			// Order(SORT).
+			// Take(take).
+			// Skip(skip).
+			Cursor(nil)
+
+		if e != nil {
+			res.SetError(e)
+			return res
+		}
+
+		defer csr.Close()
+
+		resultsRT := []tk.M{}
+		err = csr.Fetch(&resultsRT, 0, false)
+		if err != nil {
+			res.SetError(err)
+			return res
+		}
+
+		tk.Println(resultsRT, "----RT")
+
+		customerids := []interface{}{}
+		customeridsstr := []interface{}{}
+		dealnos := []interface{}{}
+
+		for _, val := range resultsRT {
+			customerids = append(customerids, val.GetInt("CustomerId"))
+
+			customeridsstr = append(customeridsstr, val.GetString("CustomerId"))
+			dealnos = append(dealnos, val.GetString("DealNo"))
+		}
+
+		tk.Println(customerids, "----INT")
+		tk.Println(customeridsstr, "----STR")
+
+		if len(resultsRT) > 0 {
+			filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
+			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
+			filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
+			filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
+		}
+	}
+
+	if payload.GetString("loanamount") != "" {
+		opr := payload.GetString("loanamountopr")
+		valrat := payload.GetFloat64("loanamount")
+		if opr == "gt" {
+			filtersCA = append(filtersCA, dbox.Gt("applicantdetail.AmountLoan", valrat))
+		} else if opr == "gte" {
+			filtersCA = append(filtersCA, dbox.Gte("applicantdetail.AmountLoan", valrat))
+		} else if opr == "lte" {
+			filtersCA = append(filtersCA, dbox.Lte("applicantdetail.AmountLoan", valrat))
+		} else if opr == "lt" {
+			filtersCA = append(filtersCA, dbox.Lt("applicantdetail.AmountLoan", valrat))
+		} else if opr == "eq" {
+			filtersCA = append(filtersCA, dbox.Eq("applicantdetail.AmountLoan", valrat))
+		}
+	}
+
+	filterAD = dbox.And(filtersAD...)
+
+	//get data grid
+
 	csr, e := cn.NewQuery().
 		Where(filterAD).
 		From("AccountDetails").
@@ -607,11 +688,11 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		dealnos = append(dealnos, val.GetString("dealno"))
 	}
 
-	tk.Println(customerids, dealnos)
-
 	if len(payload.Get("product").([]interface{})) > 0 || len(payload.Get("brhead").([]interface{})) > 0 || len(payload.Get("scheme").([]interface{})) > 0 || len(payload.Get("ca").([]interface{})) > 0 || len(payload.Get("rm").([]interface{})) > 0 {
-		filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
-		filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
+		if len(resultsAD) > 0 {
+			filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
+			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
+		}
 	}
 	filterCA = dbox.And(filtersCA...)
 

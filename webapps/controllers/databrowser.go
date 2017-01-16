@@ -237,80 +237,68 @@ func (c *DataBrowserController) NewDefault(k *knot.WebContext) interface{} {
 	return DataAccess
 }
 
-func (a *DataBrowserController) GetFilterData(k *knot.WebContext) interface{} {
+func (a *DataBrowserController) GetMasterCustomerData(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
-
-	p := struct {
-		Name string
-		Key  struct {
-			Ids  []string
-			Vals []string
-		}
-	}{}
-	err := k.GetPayload(&p)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
 
 	conn, err := GetConnection()
 	defer conn.Close()
+
+	csr, e := conn.NewQuery().From("MasterCustomer").Cursor(nil)
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(true, nil, "")
+	}
+
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
 	if err != nil {
-		return CreateResult(false, nil, err.Error())
+		return CreateResult(false, nil, e.Error())
 	}
 
-	tableName := ""
-	keyField := ""
-	retField := ""
+	return CreateResult(true, results, "")
+}
 
-	if p.Name == "city" {
-		tableName = "CustomerProfile"
-		keyField = "_id"
-		retField = "applicantdetail.registeredaddress.CityRegistered"
-	} else {
-		tableName = "AccountDetails"
-		keyField = "accountsetupdetails.cityname"
+func (a *DataBrowserController) GetCustomerProfileData(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	csr, e := conn.NewQuery().From("CustomerProfile").Cursor(nil)
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(true, nil, "")
 	}
 
-	ids := []*dbox.Filter{}
-	for _, key := range p.Key.Ids {
-		ids = append(ids, dbox.Eq("_id", key))
-	}
-
-	vals := []*dbox.Filter{}
-	for _, val := range p.Key.Vals {
-		vals = append(vals, dbox.Eq(keyField, val))
-	}
-
-	where := new(dbox.Filter)
-	if len(vals) > 0 {
-		wheres := []*dbox.Filter{}
-		wheres = append(wheres, dbox.Or(ids...))
-		wheres = append(wheres, dbox.Or(vals...))
-		where = dbox.And(wheres...)
-	} else {
-		where = dbox.Or(ids...)
-	}
-
-	prepQuery := conn.NewQuery()
-	if retField != "" {
-		prepQuery = prepQuery.Select(retField)
-	} else {
-		prepQuery = prepQuery.Select()
-	}
-
-	query, err := prepQuery.
-		From(tableName).
-		Where(where).
-		Cursor(nil)
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
 	if err != nil {
-		return CreateResult(false, nil, err.Error())
+		return CreateResult(false, nil, e.Error())
 	}
 
-	res := []tk.M{}
-	err = query.Fetch(&res, 0, false)
-	defer query.Close()
+	return CreateResult(true, results, "")
+}
 
-	tk.Println("------", len(res))
+func (a *DataBrowserController) GetAccountDetailData(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
 
-	return CreateResult(true, res, "")
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	csr, e := conn.NewQuery().From("AccountDetails").Cursor(nil)
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(true, nil, "")
+	}
+
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return CreateResult(false, nil, e.Error())
+	}
+
+	return CreateResult(true, results, "")
 }

@@ -220,7 +220,7 @@ databrowser.loandetailscoll = [
 	field : "AD.loandetails.requestedlimitamount",
 	title : "Proposed Amount of Limit (Rs. Lacs)",
 	hidden : false,
-	width : 100,
+	width : 120,
 	headerTemplate : "Proposed Amount of </br> Limit (Rs. Lacs)",
 	headerAttributes: { "class": "sub-bgcolor" },
 },
@@ -306,8 +306,8 @@ databrowser.fullcoll = [
  		template :  function(dt){
  			return "<a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Details..</a>"
  		},
-		width : 100 ,
-		headerTemplate : "Existing Relationship </br> With X10 Financial Services Limited",
+		width : 120,
+		headerTemplate : "Existing Relationship </br> With X10 Financial<br> Services Limited",
 	headerAttributes: { "class": "sub-bgcolor" },
  	},
  	],

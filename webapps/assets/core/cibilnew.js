@@ -553,8 +553,7 @@ r.setData = function() {
       var clientWidth = document.getElementById('test').clientWidth;
 
       var offset = $("#test").offset();
-      // console.log(offset.top)
-
+      
       $(".swal2-overlay").css("opacity", "1").css("display", "block").css("width", (clientWidth-18)+"px").css("height", clientHeight+"px").css("top", (offset.top+35) + "px").css("left", (offset.left+9)+"px")
 
       $(window).scroll(function() {
@@ -680,14 +679,24 @@ r.setDataEntry = function(data) {
   r.dataEntryCibilReport().Profile().StateUnion(data.Profile.StateUnion)
   r.dataEntryCibilReport().Profile().PinCode(data.Profile.PinCode)
   r.dataEntryCibilReport().Profile().Country(data.Profile.Country)
-  r.dataEntryCibilReport().Profile().FileOpenDate(data.Profile.FileOpenDate)
+  
+  var temp = data.Profile.FileOpenDate.split(" ").join("")
+  temp = moment(temp).format("DD-MMM-YYYY");
+  r.dataEntryCibilReport().Profile().FileOpenDate(temp);
 
+  
   r.dataEntryCibilReport().ReportSummary().Grantors(data.ReportSummary.Grantors)
   r.dataEntryCibilReport().ReportSummary().Facilities(data.ReportSummary.Facilities)
   r.dataEntryCibilReport().ReportSummary().CreditFacilities(data.ReportSummary.CreditFacilities)
   r.dataEntryCibilReport().ReportSummary().FacilitiesGuaranteed(data.ReportSummary.FacilitiesGuaranteed)
-  r.dataEntryCibilReport().ReportSummary().LatestCreditFacilityOpenDate(data.ReportSummary.LatestCreditFacilityOpenDate)
-  r.dataEntryCibilReport().ReportSummary().FirstCreditFacilityOpenDate(data.ReportSummary.FirstCreditFacilityOpenDate)
+  
+  temp = data.ReportSummary.LatestCreditFacilityOpenDate.split(" ").join("")
+  temp = moment(temp).format("DD-MMM-YYYY");
+  r.dataEntryCibilReport().ReportSummary().LatestCreditFacilityOpenDate(temp);
+
+  temp = data.ReportSummary.FirstCreditFacilityOpenDate.split(" ").join("")
+  temp = moment(temp).format("DD-MMM-YYYY");
+  r.dataEntryCibilReport().ReportSummary().FirstCreditFacilityOpenDate(temp);
 
   r.dataEntryCibilReport().EnquirySummary().Enquiries3Month(data.EnquirySummary.Enquiries3Month);
   r.dataEntryCibilReport().EnquirySummary().Enquiries6Month(data.EnquirySummary.Enquiries6Month);
@@ -698,12 +707,13 @@ r.setDataEntry = function(data) {
   r.dataEntryCibilReport().EnquirySummary().MostRecentDate(data.EnquirySummary.MostRecentDate);
   r.dataEntryCibilReport().EnquirySummary().TotalEnquiries(data.EnquirySummary.TotalEnquiries);
 
+  temp = data.EnquirySummary.MostRecentDate.split(" ").join("")
+  temp = moment(temp).format("DD-MMM-YYYY");
+  r.dataEntryCibilReport().EnquirySummary().MostRecentDate(temp);
+
   r.dataEntryCibilReport().CreditTypeSummary([]);
   if (data.CreditTypeSummary != null){
 
-    //console.log(data.CreditTypeSummary)
-
-    // r.dataEntryCibilReport().CreditTypeSummary = ko.mapping.fromJS(data.CreditTypeSummary)
     
     for (var i=0; i < data.CreditTypeSummary.length; i++) {
       var temp = {}
@@ -741,26 +751,26 @@ r.setDataEntry = function(data) {
     r.addCreditTypeSummary();
   }
 
-  r.dataEntryCibilReport().DetailReportSummary([])
+  r.dataEntryCibilReport().DetailReportSummary.removeAll()
 
   if(data.DetailReportSummary == null) {
     r.addDetailReportSummary()
   } else {
-    var temp = {}
+    var tempResult = []
+    
+    for(var i=0; i<data.DetailReportSummary.length; i++) {
+      var temp = {}
+      temp.CreditFacilities = data.DetailReportSummary[i].CreditFacilities
+      temp.CurrentBalanceOtherThanStandard = data.DetailReportSummary[i].CurrentBalanceOtherThanStandard.split(",").join("")
+      temp.CurrentBalanceStandard = data.DetailReportSummary[i].CurrentBalanceStandard.split(",").join("")
+      temp.NoOfLawSuits = data.DetailReportSummary[i].NoOfLawSuits.split(",").join("")
+      temp.NoOfOtherThanStandard = data.DetailReportSummary[i].NoOfOtherThanStandard.split(",").join("")
+      temp.NoOfStandard = data.DetailReportSummary[i].NoOfStandard.split(",").join("")
+      temp.NoOfWilfulDefaults = data.DetailReportSummary[i].NoOfWilfulDefaults.split(",").join("")
 
-    _.each(data.DetailReportSummary, function(row){
-      temp.CreditFacilities = row.CreditFacilities
-      temp.CurrentBalanceOtherThanStandard = row.CurrentBalanceOtherThanStandard.split(",").join("")
-      temp.CurrentBalanceStandard = row.CurrentBalanceStandard.split(",").join("")
-      temp.NoOfLawSuits = row.NoOfLawSuits.split(",").join("")
-      temp.NoOfOtherThanStandard = row.NoOfOtherThanStandard.split(",").join("")
-      temp.NoOfStandard = row.NoOfStandard.split(",").join("")
-      temp.NoOfWilfulDefaults = row.NoOfWilfulDefaults.split(",").join("")
-
-      r.dataEntryCibilReport().DetailReportSummary.push(temp)  
-    })
-
-    // r.dataEntryCibilReport().DetailReportSummary(data.DetailReportSummary)
+      r.dataEntryCibilReport().DetailReportSummary.push(temp)
+      // r.dataEntryCibilReport().DetailReportSummary.push(temp)
+    }
   }
 
   r.dataEntryCibilReport().Status = data.Status
@@ -789,7 +799,6 @@ r.editCibilGrid = function(){
 
 r.checkShowEdit = function(){
   if(r.reportDraft.length > 0 && r.reportDraft()[0].status == 1) {
-    console.log("sarif")
     return true
   } else {
     return false
@@ -908,7 +917,6 @@ return rr
 
 var setDataOffice = function(){
   if(r.dataEntryCibilReport().Status === 1) {
-    console.log("sarif")
     r.CibilDetails.Office.compname(r.dataEntryCibilReport().Profile().CompanyName())
     r.CibilDetails.Office.pan(r.dataEntryCibilReport().Profile().Pan())
     r.CibilDetails.Office.address(r.dataEntryCibilReport().Profile().Address())
@@ -924,8 +932,7 @@ var setDataOffice = function(){
 }
 var saveCibilReport = function(status){
   var sample = r.dataEntryCibilReport();
-  console.log(sample.Profile())
-
+  
   if (!app.isFormValid("#entryCR") && status == 'submit') {
     swal("Warning","Please complete all fields","warning");
     return;
@@ -1249,7 +1256,6 @@ openreportsGuarantor = function(fileName) {
 function FilterInput(event) {
   var keyCode = ('which' in event) ? event.which : event.keyCode;
 
-  console.log(keyCode)
   isNotWanted = (keyCode == 69 || keyCode == 101);
   return !isNotWanted;
 };

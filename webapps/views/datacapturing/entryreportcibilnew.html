@@ -2,7 +2,10 @@
   <div class="col-md-12 cibilgridfixed">
     <div style="margin: 10px; background-color: #fafafa;" id="cibilgrid-container">
       <div class="col-md-12">
-        <input id="acct" data-bind="kendoDropDownList: { data: cibil.cibilFileNameList, value: cibil.cibilFileNameSelected, optionLabel: '--select one--'}" placeholder="select one" type="text" class="acct input-sm form-control">
+        <div class="col-md-1" style="min-width: 10%; margin-top: 5px;"><strong>Filename PDF : </strong></label></div>
+        <div class="col-md-6">
+          <input id="acct" data-bind="kendoDropDownList: { data: cibil.cibilFileNameList, value: cibil.cibilFileNameSelected, optionLabel: '--select one--'}" placeholder="select one" type="text" class="acct input-sm form-control">
+        </div>
       </div>
       
       <table class="k-grid table-bordered" style="margin-bottom: 0px; width: 100%;" id="tblCibilReportSumarry6">

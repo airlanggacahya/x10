@@ -668,7 +668,7 @@ r.setDataCibilDetails = function(data) {
 
 r.setDataEntry = function(data) {
 
-  r.dataEntryCibilReport().Id = data.Id
+  r.dataEntryCibilReport().Id = r.reportDraft().Id
   r.dataEntryCibilReport().Profile().CompanyName(data.Profile.CompanyName)
   r.dataEntryCibilReport().Profile().CustomerId(parseInt(filter().CustomerSearchVal()));
   r.dataEntryCibilReport().Profile().DealNo( filter().DealNumberSearchVal());

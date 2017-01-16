@@ -253,62 +253,62 @@ func (c *DataCapturingController) SavingReportCibil(k *knot.WebContext) interfac
 	}
 
 	e := c.Ctx.Save(&p)
-	c.WriteLog(e)
+
 	if e != nil {
 		fmt.Println(e)
 	}
 
-	cibilReports := []CibilReportModel{}
-	cn, err := GetConnection()
-	defer cn.Close()
+	// cibilReports := []CibilReportModel{}
+	// cn, err := GetConnection()
+	// defer cn.Close()
 
-	query := []*dbox.Filter{}
-	query = append(query, dbox.Eq("Profile.customerid", p.Profile.CustomerId))
-	query = append(query, dbox.Eq("Profile.dealno", p.Profile.DealNo))
-	csr, e := cn.NewQuery().
-		Where(query...).
-		From("CibilReport").
-		Cursor(nil)
+	// query := []*dbox.Filter{}
+	// query = append(query, dbox.Eq("Profile.customerid", p.Profile.CustomerId))
+	// query = append(query, dbox.Eq("Profile.dealno", p.Profile.DealNo))
+	// csr, e := cn.NewQuery().
+	// 	Where(query...).
+	// 	From("CibilReport").
+	// 	Cursor(nil)
 
-	// _ = csr
-	if e != nil {
-		panic(e)
-	} else if csr == nil {
-		panic(csr)
-	}
+	// // _ = csr
+	// if e != nil {
+	// 	panic(e)
+	// } else if csr == nil {
+	// 	panic(csr)
+	// }
 
-	defer csr.Close()
+	// defer csr.Close()
 
-	err = csr.Fetch(&cibilReports, 0, false)
-	if err != nil {
-		return CreateResult(false, nil, e.Error())
-	}
+	// err = csr.Fetch(&cibilReports, 0, false)
+	// if err != nil {
+	// 	return CreateResult(false, nil, e.Error())
+	// }
 
-	query = []*dbox.Filter{}
-	query = append(query, dbox.Eq("Profile.customerid", p.Profile.CustomerId))
-	query = append(query, dbox.Eq("Profile.dealno", p.Profile.DealNo))
-	csr, e = cn.NewQuery().
-		Where(query...).
-		From("CibilReport").
-		Cursor(nil)
+	// query = []*dbox.Filter{}
+	// query = append(query, dbox.Eq("Profile.customerid", p.Profile.CustomerId))
+	// query = append(query, dbox.Eq("Profile.dealno", p.Profile.DealNo))
+	// csr, e = cn.NewQuery().
+	// 	Where(query...).
+	// 	From("CibilReport").
+	// 	Cursor(nil)
 
-	cibilReporttk := []tk.M{}
-	err = csr.Fetch(&cibilReporttk, 0, false)
-	if err != nil {
-		return CreateResult(false, nil, e.Error())
-	}
+	// cibilReporttk := []tk.M{}
+	// err = csr.Fetch(&cibilReporttk, 0, false)
+	// if err != nil {
+	// 	return CreateResult(false, nil, e.Error())
+	// }
 
-	for idx, _ := range cibilReporttk {
-		detail := cibilReporttk[idx]["DetailReportSummary"]
-		resjson := []DetailReportSummary{}
-		tk.Serde(detail, &resjson, "json")
-		cibilReports[idx].DetailReportSummary = resjson
-	}
+	// for idx, _ := range cibilReporttk {
+	// 	detail := cibilReporttk[idx]["DetailReportSummary"]
+	// 	resjson := []DetailReportSummary{}
+	// 	tk.Serde(detail, &resjson, "json")
+	// 	cibilReports[idx].DetailReportSummary = resjson
+	// }
 
-	for _, cibil := range cibilReports {
-		cibil.Status = 1
-		c.Ctx.Save(&cibil)
-	}
+	// for _, cibil := range cibilReports {
+	// 	cibil.Status = 1
+	// 	c.Ctx.Save(&cibil)
+	// }
 
 	return p
 }

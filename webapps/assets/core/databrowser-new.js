@@ -64,6 +64,17 @@ databrowser.applicantdetailcoll = [{
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
+{
+	field : "",
+	title : "Address",
+	hidden : true,
+	template : function(dt){
+		return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
+	},
+	width : 100,
+	headerTemplate : "Address",
+	headerAttributes: { "class": "sub-bgcolor" },
+},
 ]
 
 databrowser.nonrefundcoll = [
@@ -585,6 +596,11 @@ databrowser.GoExis = function(id){
 databrowser.GoProm = function(id,name){
 	var ids=id.split("|");
 	 window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrolltoinp="+name)
+}
+
+databrowser.GoAddress = function(id,name){
+	var ids=id.split("|");
+	 window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrollto=Company Address Details")
 }
 
 var dbgrid = ""

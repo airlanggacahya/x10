@@ -35,6 +35,22 @@ customerprofile().FinancialReport = ko.observable();
 customerprofile().Status = ko.observable();
 customerprofile().Freeze = ko.observable(false);
 customerprofile().DateSave = ko.observable('');
+
+NonRefundableProcessingFeesDetailsTemplate = {
+  Amount : '',
+  BankName : '',
+  InstrumentDate : '',
+  InstrumentNo : '',
+  InstrumentType : ''
+}
+customerprofile().NonRefundableProcessingFeesDetails = {
+  Amount : ko.observable(''),
+  BankName : ko.observable(''),
+  InstrumentDate : ko.observable(''),
+  InstrumentNo : ko.observable(''),
+  InstrumentType : ko.observable('')
+}
+
 var formVisibility = ko.observable(false)
 model.All = ko.observable("customerprofile");
 
@@ -136,7 +152,7 @@ function refreshdata(){
       customerprofile().id = data[0].Id;
       customerprofile().ConfirmedBy = data[0].ConfirmedBy;
       customerprofile().ConfirmedDate = data[0].ConfirmedDate;
-      ApplicantDetail.DateIncorporation(kendo.parseDate(new Date(data[0].ApplicantDetail.DateOfIncorporation), 'dd-MM-yyyy'));
+      ApplicantDetail.DateIncorporation(moment(data[0].ApplicantDetail.DateOfIncorporation).format("DD-MMM-YYYY"))
       data[0].ApplicantDetail.AmountLoan = formatnum(data[0].ApplicantDetail.AmountLoan)
       data[0].ApplicantDetail.RegisteredAddress.Title = "Registered Address";
       data[0].ApplicantDetail.AddressCorrespondence.Title = "Address for Correspondence";
@@ -183,10 +199,29 @@ function refreshdata(){
       // pushaddressfake();
       //data[0].ApplicantDetail.RegisteredAddress = ApplicantDetail.Detail()[0]
       customerprofile().ApplicantDetail(data[0].ApplicantDetail);
-      data[0].NonRefundableProcessingFeesDetails.InstrumentDate = moment(data[0].NonRefundableProcessingFeesDetails.InstrumentDate).format("DD-MMM-YYYY");
+      data[0].NonRefundableProcessingFeesDetails.InstrumentDate = new Date(moment(data[0].NonRefundableProcessingFeesDetails.InstrumentDate).format("DD-MMM-YYYY"));
 
       customerprofile().FinancialReport(data[0].FinancialReport);
-      customerprofile().NonRefundableProcessingFeesDetails(data[0].NonRefundableProcessingFeesDetails)
+
+      if(data[0].NonRefundableProcessingFeesDetails.Amount != undefined) {
+        customerprofile().NonRefundableProcessingFeesDetails.Amount(data[0].NonRefundableProcessingFeesDetails.Amount)
+      }
+
+      if(data[0].NonRefundableProcessingFeesDetails.BankName != undefined) {
+        customerprofile().NonRefundableProcessingFeesDetails.BankName(data[0].NonRefundableProcessingFeesDetails.BankName)
+      }
+
+      if(data[0].NonRefundableProcessingFeesDetails.InstrumentDate != undefined) {
+        customerprofile().NonRefundableProcessingFeesDetails.InstrumentDate(data[0].NonRefundableProcessingFeesDetails.InstrumentDate)
+      }
+
+      if(data[0].NonRefundableProcessingFeesDetails.InstrumentNo != undefined) {
+        customerprofile().NonRefundableProcessingFeesDetails.InstrumentNo(data[0].NonRefundableProcessingFeesDetails.InstrumentNo)
+      }
+
+      if(data[0].NonRefundableProcessingFeesDetails.InstrumentType != undefined) {
+        customerprofile().NonRefundableProcessingFeesDetails.InstrumentType(data[0].NonRefundableProcessingFeesDetails.InstrumentType)
+      }
 
       $.each(data[0].DetailOfPromoters.Biodata, function(i,v){
         if(data[0].DetailOfPromoters.Biodata[i].PropertyOwned == null || data[0].DetailOfPromoters.Biodata[i].PropertyOwned.length == 0){
@@ -194,6 +229,22 @@ function refreshdata(){
         } else{
           data[0].DetailOfPromoters.Biodata[i].PropertyOwnedkendo = ko.observableArray(data[0].DetailOfPromoters.Biodata[i].PropertyOwned)
         }
+
+        if(data[0].DetailOfPromoters.Biodata[i].Gender === "M") {
+          data[0].DetailOfPromoters.Biodata[i].Gender = "MALE"
+        }else {
+          data[0].DetailOfPromoters.Biodata[i].Gender = "FEMALE"
+        }
+
+        if(data[0].DetailOfPromoters.Biodata[i].MaritalStatus === "M") {
+          data[0].DetailOfPromoters.Biodata[i].MaritalStatus = "Married"
+        }else {
+          data[0].DetailOfPromoters.Biodata[i].MaritalStatus = "Single"
+        }
+      })
+
+      _.each(data[0].DetailOfPromoters.Biodata, function(row){
+        row.AnniversaryDate = new Date(row.AnniversaryDate).toISOString()
       })
 
       detail.biodata(data[0].DetailOfPromoters.Biodata)
@@ -285,40 +336,6 @@ function pushaddressfakeComplete(){
   );
 }
 
-// function buttonlogicstatus(status){
-//   if (status == 0) {
-//     $("#vf").prop( "disabled", true );
-//     $("#cf").prop( "disabled", false );
-//     $("#edit").prop( "disabled", false );
-//   } else if(status == 1){
-//     $("#vf").prop( "disabled", false );
-//     $("#cf").prop( "disabled", true );
-//     $("#edit").prop( "disabled", true );
-//   } else if(status == 2){
-//     $("#vf").prop( "disabled", true );
-//     $("#cf").prop( "disabled", true );
-//     $("#edit").prop( "disabled", true );
-//   }
-//}
-
-// function onSelectDealno(e){
-//   var dataItem = this.dataItem(e.item);
-//   customerprofile().DealNumberSearchList([]);
-//   $.each( customerprofile().CustomerSearchList(), function( key, value ) {
-//     if (value.customer_id == dataItem.customer_id){
-//       customerprofile().DealNumberSearchList.push(value.deal_no);
-//     }
-//   });
-// }
-
-// function getDetailmen(e){
-//   var dataItem = this.dataItem(e.item);
-//   var param = {CustomerId: customerprofile().CustomerSearchVal(), Dealno: customerprofile().DealNumberSearchVal()}
-//   var url = "{{BaseUrl}}datacapturing/getcustomerprofiledetail";
-//   ajaxPost(url, param, function(data) {
-//     console.log(data)
-//   }, undefined);
-// }
 var editmode = ko.observable(false);
 function enableedit(){
   $(".cotainer-tab input").prop("disabled", false);
@@ -331,7 +348,7 @@ function enableedit(){
   // // $("#di").data("kendoDatePicker").enable(true);
   // // $("#datebirth").data("kendoDatePicker").enable(true);
   // $("#anniversarrydate").data("kendoDatePicker").enable(true);
-  $("#doi").data("kendoDatePicker").enable(true);
+  // $("#doi").data("kendoDatePicker").enable(true);
   // // $("#id").data("kendoDatePicker").enable(true);
   // $("#holdingpercent").data("kendoNumericTextBox").enable(true);
   editmode(true);
@@ -367,18 +384,18 @@ function disableedit(){
   $(".btnsave").hide();
   $(".cotainer-tab input").prop("disabled", true);
   $(".cotainer-tab textarea").prop("disabled", true);
-  $("#doi").data("kendoDatePicker").enable(false);
-  $("#genderdropdown").data("kendoDropDownList").enable(false);
-  $("#Martialdropdown").data("kendoDropDownList").enable(false);
-  $("#Guarantodropdown").data("kendoDropDownList").enable(false);
-  $("#designation").data("kendoDropDownList").enable(false);
-  $("#ownership").data("kendoDropDownList").enable(false);
+  // $("#doi").data("kendoDatePicker").enable(false);
+  // $("#genderdropdown").data("kendoDropDownList").enable(false);
+  // $("#Martialdropdown").data("kendoDropDownList").enable(false);
+  // $("#Guarantodropdown").data("kendoDropDownList").enable(false);
+  // $("#designation").data("kendoDropDownList").enable(false);
+  // $("#ownership").data("kendoDropDownList").enable(false);
   // $("#di").data("kendoDatePicker").enable(false);
   // $("#datebirth").data("kendoDatePicker").enable(false);
-  $("#anniversarrydate").data("kendoDatePicker").enable(false);
-  $("#doi").data("kendoDatePicker").enable(false);
+  // $("#anniversarrydate").data("kendoDatePicker").enable(false);
+  // $("#doi").data("kendoDatePicker").enable(false);
   // $("#id").data("kendoDatePicker").enable(false);
-  $("#holdingpercent").data("kendoNumericTextBox").enable(false);
+  // $("#holdingpercent").data("kendoNumericTextBox").enable(false);
   EnableAllkendo(false);
 
 }catch(e){
@@ -393,25 +410,63 @@ function disableedit(){
 
 function EnableAllkendo(param){
   $("#biodata .k-widget").each(function(i,e){
+    var $ddl = $(e).find("select").getKendoDropDownList();
 
-  var $ddl = $(e).find("select").getKendoDropDownList();
+    if($ddl == undefined)
+    var $ddl = $(e).find("input").getKendoDropDownList();
 
-  if($ddl == undefined)
-  var $ddl = $(e).find("input").getKendoDropDownList();
+    var $dtm = $(e).find("input").getKendoDatePicker();
+    var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
 
-  var $dtm = $(e).find("input").getKendoDatePicker();
-  var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+    if($ddl != undefined)
+    {
+      $ddl.enable(param);
+    }else if($dtm != undefined){
+      $dtm.enable(param);
+    }else if ($txt != undefined){
+      $txt.enable(param);
+    }
+  });
 
-  if($ddl != undefined)
-  {
-    $ddl.enable(param);
-  }else if($dtm != undefined){
-    $dtm.enable(param);
-  }else if ($txt != undefined){
-    $txt.enable(param);
+  if(customerprofile().Status() === 0) {
+    $(".ndisable").each(function(i,e){
+      var $ddl = $(e).find("select").getKendoDropDownList();
+
+      if($ddl == undefined)
+      var $ddl = $(e).find("input").getKendoDropDownList();
+
+      var $dtm = $(e).find("input").getKendoDatePicker();
+      var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+      if($ddl != undefined)
+      {
+        $ddl.enable(true);
+      }else if($dtm != undefined){
+        $dtm.enable(true);
+      }else if ($txt != undefined){
+        $txt.enable(true);
+      }
+    });
+  } else if (customerprofile().Status() === 1) {
+    $(".ndisable").each(function(i,e){
+      var $ddl = $(e).find("select").getKendoDropDownList();
+
+      if($ddl == undefined)
+      var $ddl = $(e).find("input").getKendoDropDownList();
+
+      var $dtm = $(e).find("input").getKendoDatePicker();
+      var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+      if($ddl != undefined)
+      {
+        $ddl.enable(false);
+      }else if($dtm != undefined){
+        $dtm.enable(false);
+      }else if ($txt != undefined){
+        $txt.enable(false);
+      }
+    });
   }
-
-});
 }
 
 function reset(){
@@ -419,7 +474,8 @@ function reset(){
   filter().DealNumberSearchVal('');
   customerprofile().ApplicantDetail({});
   ApplicantDetail.Detail([]);
-  customerprofile().NonRefundableProcessingFeesDetails({});
+  // customerprofile().NonRefundableProcessingFeesDetails = ko.mapping.fromJS(NonRefundableProcessingFeesDetailsTemplate)
+  //customerprofile().NonRefundableProcessingFeesDetails({});
   disableedit();
   // $("#cf").hide();
   // $("#vf").hide();
@@ -437,8 +493,10 @@ function blanked(){
   pushaddressfakeComplete();
   customerprofile().FinancialReport().DetailsPertainingBanker = [];
   customerprofile().FinancialReport().ExistingRelationship = [];
-  customerprofile().FinancialReport().PreviousLoansDetail = [];
-  customerprofile().NonRefundableProcessingFeesDetails({})
+  customerprofile().FinancialReport().PreviousLoansDetail = []; 
+  
+  //customerprofile().NonRefundableProcessingFeesDetails({})
+  
   disableedit();
   // $("#cf").hide();
   // $("#vf").hide();
@@ -460,93 +518,6 @@ function confirmorverify(status){
     sweetAlert("Please Confirm Data First", "", "warning");
     return;
   }
-  // if(status==1){
-  //   var dt = detail.biodata();
-  //   _.each(dt,function(e,i){
-  //       _.each(e,function(ex,ix){
-  //             if((ix=="Name"||ix=="FatherName"||ix=="Gender"||ix=="MaritalStatus"||ix=="DateOfBirth"||ix=="Address"||ix=="Phone"||ix=="Mobile"||ix=="Ownership"||ix=="Ownership"||ix=="NoOfYears")&& (ex == "" ||ex == 0 )){
-  //               alert("kosong cok");
-  //               return;
-  //             }
-  //         });
-  //   });
-  // }
-
-  // if (status == 1){
-  //   if (customerprofile().ApplicantDetail().CustomerName == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().CustomerConstitution == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().DateOfIncorporation == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().CustomerPan == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().NatureOfBussiness == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().YearsInBusiness == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().NoOfEmployees == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().AnnualTurnOver == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().AmountLoan == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.CityRegistered == ""){
-  //    swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.StateRegistered == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.PhoneRegistered == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.ContactPersonRegistered == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.OfficeRegistered == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.NoOfYearsAtAboveAddressRegistered == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.AreaOfPlotRegistered == ""){
-  //    swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.BuiltUpAreaRegistered == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  //   else if (customerprofile().ApplicantDetail().RegisteredAddress.MobileRegistered == ""){
-  //     swal("Detail Of Aplicant Still Empty", "Check Field Again", "error");
-  //     return;
-  //   }
-  // }
-
   if(status == 1){
     customerprofile().Status(status);
     info.getConfirmed();
@@ -573,7 +544,7 @@ function save1(){
   param.DateFreeze = (new Date()).toISOString();
   param.ConfirmedBy = customerprofile().ConfirmedBy;
   param.ConfirmedDate = customerprofile().ConfirmedDate;
-  param.NonRefundableProcessingFeesDetails = customerprofile().NonRefundableProcessingFeesDetails();
+  param.NonRefundableProcessingFeesDetails = ko.mapping.toJS(customerprofile().NonRefundableProcessingFeesDetails);
   param.FinancialReport = customerprofile().FinancialReport();
   param.DetailOfPromoters = customerprofile().DetailofPromoters();
   param.ApplicantDetail = customerprofile().ApplicantDetail();
@@ -588,6 +559,9 @@ function save1(){
       detail.biodata()[i].PropertyOwnedkendo()[ii].MarketValue = parseFloat(vv.MarketValue)
     })
     detail.biodata()[i].PropertyOwned = detail.biodata()[i].PropertyOwnedkendo();
+    
+    detail.biodata()[i].AnniversaryDate = new Date(detail.biodata()[i].AnniversaryDate)
+    detail.biodata()[i].AnniversaryDate = new Date(Date.UTC(detail.biodata()[i].AnniversaryDate.getFullYear(), detail.biodata()[i].AnniversaryDate.getMonth(), detail.biodata()[i].AnniversaryDate.getDate(), 0, 0, 0));
   })
 
   param.DetailOfPromoters.Biodata = detail.biodata();
@@ -619,7 +593,7 @@ function save(){
   param.DateFreeze = (new Date()).toISOString();
   param.ConfirmedBy = customerprofile().ConfirmedBy;
   param.ConfirmedDate = customerprofile().ConfirmedDate;
-  param.NonRefundableProcessingFeesDetails = customerprofile().NonRefundableProcessingFeesDetails();
+  param.NonRefundableProcessingFeesDetails = customerprofile().NonRefundableProcessingFeesDetails;
   param.FinancialReport = customerprofile().FinancialReport();
   param.DetailOfPromoters = customerprofile().DetailofPromoters();
   param.ApplicantDetail = customerprofile().ApplicantDetail();
@@ -634,6 +608,9 @@ function save(){
       detail.biodata()[i].PropertyOwnedkendo()[ii].MarketValue = parseFloat(vv.MarketValue)
     })
     detail.biodata()[i].PropertyOwned = detail.biodata()[i].PropertyOwnedkendo();
+
+    detail.biodata()[i].AnniversaryDate = new Date(detail.biodata()[i].AnniversaryDate)
+    detail.biodata()[i].AnniversaryDate = new Date(Date.UTC(detail.biodata()[i].AnniversaryDate.getFullYear(), detail.biodata()[i].AnniversaryDate.getMonth(), detail.biodata()[i].AnniversaryDate.getDate(), 0, 0, 0));
   })
 
   param.DetailOfPromoters.Biodata = detail.biodata();

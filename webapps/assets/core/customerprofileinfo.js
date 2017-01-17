@@ -98,12 +98,13 @@ info.condReEnter = function(){
     enableedit()
     $("#CustomerName").prop("disabled", true);
     $("#CustomerConstitution").prop("disabled", true);
-    $("#doi").data("kendoDatePicker").enable(false);
+    
+    $("#doi").prop("disabled", true);
     $("#TIN").prop("disabled", true);
-    $("#TAN").prop("disabled", true);
+    // $("#TAN").prop("disabled", true);
     $("#CustomerRegistrationNumber").prop("disabled", true);
     $("#CustomerPan").prop("disabled", true);
-    $("#CIN").prop("disabled", true);
+    // $("#CIN").prop("disabled", true);
     $("#NatureOfBussiness").prop("disabled", true);
     $("#YearsInBusiness").prop("disabled", true);
     $("#NoOfEmployees").prop("disabled", true);
@@ -117,25 +118,25 @@ info.condReEnter = function(){
     $("#Ownership").prop("disabled", true);
     $("#NoOfYearsAtAboveAddressRegistered").prop("disabled", true);
     $("#CityRegistered").prop("disabled", true);
-    $("#InstrumentType").prop("disabled", true);
-    $("#AnnualTurnOver").prop("disabled", true);
+    // $("#InstrumentType").prop("disabled", true);
+    // $("#AnnualTurnOver").prop("disabled", true);
     $("#AmountLoan").prop("disabled", true);
-    $("#GroupTurnOver").prop("disabled", true);
-    $("#InstrumentNo").prop("disabled", true);
-    $("#InstrumentDate").prop("disabled", true);
-    $("#BankName").prop("disabled", true);
-    $("#Amount").prop("disabled", true);
+    // $("#GroupTurnOver").prop("disabled", true);
+    // $("#InstrumentNo").prop("disabled", true);
+    // $("#InstrumentDate").prop("disabled", true);
+    // $("#BankName").prop("disabled", true);
+    // $("#Amount").prop("disabled", true);
 
     // promotor / guuarantor
 
     $(".Name").prop("disabled", true);
     $(".FatherName").prop("disabled", true);
-    // $(".Gender").data("kendoDropDownList").enable(false);
+    $(".Gender").prop("disabled", true);
     $(".DateOfBirth").prop("disabled", true);
-    // $(".MaritalStatus").data("kendoDropDownList").enable(false);
-    $(".AnniversaryDate").prop("disabled", true);
-    $(".ShareHoldingPercentage").prop("disabled", true);;
-    // $(".Guarantor").data("kendoDropDownList").enable(false);
+    $(".MaritalStatus").prop("disabled", true);
+    // $(".AnniversaryDate").prop("disabled", true);
+    $(".ShareHoldingPercentage").prop("disabled", true);
+    $(".Guarantor").prop("disabled", true);
     $(".Education").prop("disabled", true);
     // $(".Designation").data("kendoDropDownList").enable(false);
     $(".PAN").prop("disabled", true);
@@ -146,13 +147,18 @@ info.condReEnter = function(){
     $(".Pincode").prop("disabled", true);
     $(".Phone").prop("disabled", true);
     $(".Mobile").prop("disabled", true);
-    $(".NoOfYears").prop("disabled", true);
-    $(".ValueOfPot").prop("disabled", true);
-    $(".VehiclesOwned").prop("disabled", true);
-    $(".NetWorth").prop("disabled", true);
+    $(".ContactPerson").prop("disabled", true);
     $(".Email").prop("disabled", true);
-    // $(".Director").data("kendoDropDownList").enable(false);
-    // $(".Promotor").data("kendoDropDownList").enable(false);
+    $(".Ownership").prop("disabled", true);
+    $(".NoOfYears").prop("disabled", true);
+    // $(".ValueOfPot").prop("disabled", true);
+    // $(".VehiclesOwned").prop("disabled", true);
+    // $(".NetWorth").prop("disabled", true);
+    $(".Email").prop("disabled", true);
+    $(".Director").prop("disabled", true);
+    $(".Promotor").prop("disabled", true);
+
+    $(".disabled").prop("disabled", true);
     EnableAllkendo(false);
     $("#Ownership").prop("disabled", true);
     $("#Ownership").prop("disabled", true);

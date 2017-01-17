@@ -172,6 +172,12 @@ function refreshdata(){
         pageSize:10
       });
 
+      var h1 = $('.grid1 .k-grid-content').height();
+
+      if( h1 > 100){
+          $('.grid1 .k-grid-content').height(100);
+      }
+
       var ds2 = new kendo.data.DataSource({
         data:data[0].FinancialReport.DetailsPertainingBanker,
         pageSize:10
@@ -181,6 +187,13 @@ function refreshdata(){
         data:data[0].FinancialReport.ExistingRelationship,
         pageSize:10
       });
+
+      var h2 = $('.grid2 .k-grid-content').height();
+
+      if( h2 > 100){
+          $('.grid2 .k-grid-content').height(100);
+      }
+
       $(".grid3").getKendoGrid().setDataSource(ds)
       //$(".grid3").getKendoGrid().refresh()
       if (ApplicantDetail.Detail().length > 0 ){
@@ -675,7 +688,7 @@ function save(){
       SecuredUnsecured: data.SecuredUnsecured,
     });
   });
-  
+
   param = {};
   param.Id = customerprofile().id;
   param.Status = customerprofile().Status();

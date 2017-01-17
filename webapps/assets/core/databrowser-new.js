@@ -284,24 +284,6 @@ databrowser.fullcoll = [
  	title : "Financial Information",
  	columns : [
  	{
- 		title : "Previous Loan Details",
- 		template :  function(dt){
- 			return "<a style='cursor: pointer;' onclick='databrowser.GoPrev(\""+ dt.CA._id +"\")'>Details..</a>"
- 		},
-		width : 100,
-		headerTemplate : "Previous Loan </br> Details",
-	headerAttributes: { "class": "sub-bgcolor" },
- 	},
- 	{
- 		title : "Details Pertaining to Bankers / FIs",
- 		template :  function(dt){
- 			return "<a style='cursor: pointer;' onclick='databrowser.GoDet(\""+ dt.CA._id +"\")'>Details..</a>"
- 		},
-		width : 100 ,
-		headerTemplate : "Details Pertaining </br> to Bankers / FIs",
-	headerAttributes: { "class": "sub-bgcolor" },
- 	},
- 	{
  		title : "Existing Relationship With X10 Financial Services Limited",
  		template :  function(dt){
  			return "<a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Details..</a>"

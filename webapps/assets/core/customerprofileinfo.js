@@ -235,7 +235,7 @@ info.templateGrid1 = {
 }
 
 info.addPreviousLoanDetails= function(){
-    var b = $('.grid2 .k-grid-content').height();
+    var b = $('.grid1 .k-grid-content').height();
     var data = $(".grid1").data("kendoGrid").dataSource.data();
     var temp = ko.mapping.toJS(info.templateGrid1);
     data.push(temp);

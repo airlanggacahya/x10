@@ -608,7 +608,18 @@ databrowser.GoProm = function(id,name){
 var dbgrid = ""
 
 databrowser.GetDataGrid = function(){
-	ajaxPost("/accountdetail/getdatabrowser",{ rating : "", ratingopr : "gt",loanamount : "",loanamountopr : "gte", city : [], product : [], brhead : [], scheme : [], rm : [], ca : [] }, function(data){
+	ajaxPost("/accountdetail/getdatabrowser", { 
+		rating : filters.inputIRRangeVal() != undefined ? filters.inputIRRangeVal() : "", 
+		ratingopr : filters.ddIRRangesVal(),
+		loanamount : filters.inputRLARangeVal() != undefined ? filters.inputRLARangeVal() : "",
+		loanamountopr : filters.ddRLARangesVal(), 
+		city : filters.CityVal(), 
+		product : filters.ProductVal(), 
+		brhead : filters.BRHeadVal(), 
+		scheme : filters.SchemeVal(), 
+		rm : filters.RMVal(), 
+		ca : filters.CAVal()
+	}, function(data){
 		databrowser.normalisasiAD(data.Data);
 		dbgrid = $("#griddb").kendoGrid({
 			 dataSource: {

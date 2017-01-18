@@ -335,13 +335,6 @@ info.MonthlyInstallment = function(container, options){
         });
 }
 
-info.TypeOfAc = function(container, options){
-    $('<input data-bind="value:' + options.field + '"/>')
-        .appendTo(container)
-        .kendoNumericTextBox({
-            spinners : false
-        });
-}
 
 $(function(){
 	// info.customerList()

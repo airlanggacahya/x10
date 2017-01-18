@@ -151,8 +151,16 @@ function refreshdata(){
       }
       customerprofile().id = data[0].Id;
       customerprofile().ConfirmedBy = data[0].ConfirmedBy;
-      customerprofile().ConfirmedDate = data[0].ConfirmedDate;
+      customerprofile().ConfirmedDate = (new Date(moment(data[0].ConfirmedDate))).toISOString();
+      
+      if(customerprofile().ConfirmedDate === "0001-01-01T00:00:00Z") {
+        customerprofile().ConfirmedDate = ""
+      }
+
       ApplicantDetail.DateIncorporation(moment(data[0].ApplicantDetail.DateOfIncorporation).format("DD-MMM-YYYY"))
+      if(ApplicantDetail.DateIncorporation() === "01-Jan-0001") {
+        ApplicantDetail.DateIncorporation("")
+      }
       data[0].ApplicantDetail.AmountLoan = formatnum(data[0].ApplicantDetail.AmountLoan)
       data[0].ApplicantDetail.RegisteredAddress.Title = "Registered";
       data[0].ApplicantDetail.AddressCorrespondence.Title = "Residence";
@@ -577,8 +585,8 @@ function save1(){
       AddressContactNo: data.AddressContactNo,
       NameOfBanks: data.NameOfBanks,
       SrNo: data.SrNo,
-      TypeOfAc : data.TypeOfAc,
-      YearOpening: data.YearOpening
+      TypeOfAc : (data.TypeOfAc).toString(),
+      YearOpening: parseInt(data.YearOpening)
     })
   });
   
@@ -603,14 +611,20 @@ function save1(){
   param.DateFreeze = (new Date()).toISOString();
   param.ConfirmedBy = customerprofile().ConfirmedBy;
   param.ConfirmedDate = customerprofile().ConfirmedDate;
+  
   param.NonRefundableProcessingFeesDetails = ko.mapping.toJS(customerprofile().NonRefundableProcessingFeesDetails);
+  if(isNaN( param.NonRefundableProcessingFeesDetails.InstrumentDate )) {
+    param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"
+  }
+
+  param.NonRefundableProcessingFeesDetails.InstrumentDate = (new Date(moment(param.NonRefundableProcessingFeesDetails.InstrumentDate))).toISOString();
   param.FinancialReport = customerprofile().FinancialReport();
   param.DetailOfPromoters = customerprofile().DetailofPromoters();
   param.ApplicantDetail = customerprofile().ApplicantDetail();
+  param.ApplicantDetail.DateOfIncorporation = (new Date(moment(param.ApplicantDetail.DateOfIncorporation))).toISOString();
   param.ApplicantDetail.RegisteredAddress = ApplicantDetail.Detail()[0];
   param.ApplicantDetail.AddressCorrespondence = ApplicantDetail.Detail()[1];
   param.ApplicantDetail.SiteWorkAddress = ApplicantDetail.Detail()[2];
-  param.ApplicantDetail.DateOfIncorporation = ApplicantDetail.DateIncorporation();
   param.ApplicantDetail.AmountLoan = customerprofile().ApplicantDetail().AmountLoan.split(",").join("");
 
   $.each(detail.biodata(),function(i,v){
@@ -621,6 +635,8 @@ function save1(){
     
     detail.biodata()[i].AnniversaryDate = new Date(detail.biodata()[i].AnniversaryDate)
     detail.biodata()[i].AnniversaryDate = new Date(Date.UTC(detail.biodata()[i].AnniversaryDate.getFullYear(), detail.biodata()[i].AnniversaryDate.getMonth(), detail.biodata()[i].AnniversaryDate.getDate(), 0, 0, 0));
+
+    detail.biodata()[i].DateOfBirth = (new Date(moment(detail.biodata()[i].DateOfBirth))).toISOString();
   })
 
   param.DetailOfPromoters.Biodata = detail.biodata();
@@ -658,6 +674,7 @@ function save(){
     })
   });
   
+
   var grid1 = $(".grid1").data("kendoGrid").dataSource.data(); 
   customerprofile().FinancialReport().PreviousLoansDetail = []
   $.each(grid1, function(i, data){
@@ -680,13 +697,18 @@ function save(){
   param.ConfirmedBy = customerprofile().ConfirmedBy;
   param.ConfirmedDate = customerprofile().ConfirmedDate;
   param.NonRefundableProcessingFeesDetails = customerprofile().NonRefundableProcessingFeesDetails;
+  if(isNaN( param.NonRefundableProcessingFeesDetails.InstrumentDate )) {
+    param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"
+  }
+
+  param.NonRefundableProcessingFeesDetails.InstrumentDate = (new Date(moment(param.NonRefundableProcessingFeesDetails.InstrumentDate))).toISOString();
   param.FinancialReport = customerprofile().FinancialReport();
   param.DetailOfPromoters = customerprofile().DetailofPromoters();
   param.ApplicantDetail = customerprofile().ApplicantDetail();
+  param.ApplicantDetail.DateOfIncorporation = (new Date(param.ApplicantDetail.DateOfIncorporation)).toISOString();
   param.ApplicantDetail.RegisteredAddress = ApplicantDetail.Detail()[0];
   param.ApplicantDetail.AddressCorrespondence = ApplicantDetail.Detail()[1];
   param.ApplicantDetail.SiteWorkAddress = ApplicantDetail.Detail()[2];
-  param.ApplicantDetail.DateOfIncorporation = ApplicantDetail.DateIncorporation();
   param.ApplicantDetail.AmountLoan = customerprofile().ApplicantDetail().AmountLoan.split(",").join("");
 
   $.each(detail.biodata(),function(i,v){
@@ -697,6 +719,8 @@ function save(){
 
     detail.biodata()[i].AnniversaryDate = new Date(detail.biodata()[i].AnniversaryDate)
     detail.biodata()[i].AnniversaryDate = new Date(Date.UTC(detail.biodata()[i].AnniversaryDate.getFullYear(), detail.biodata()[i].AnniversaryDate.getMonth(), detail.biodata()[i].AnniversaryDate.getDate(), 0, 0, 0));
+
+    detail.biodata()[i].DateOfBirth = (new Date(moment(detail.biodata()[i].DateOfBirth))).toISOString();
   })
 
   param.DetailOfPromoters.Biodata = detail.biodata();

@@ -149,7 +149,7 @@
                           <label for="Acc" class="control-label">Anniversary Date :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="AnniversaryDate" class="AnniversaryDate ndisable" data-bind="kendoDatePicker: {value: detail.biodata()[$index()].AnniversaryDate, format: 'dd-MM-yyyy', change:function(){ changeAnniversaryDate(this.value(), $index()) }}" required>
+                          <input type="text" id="AnniversaryDate" class="AnniversaryDate ndisable" data-bind="kendoDatePicker: {value: detail.biodata()[$index()].AnniversaryDate, format: 'dd-MMM-yyyy', change:function(){ changeAnniversaryDate(this.value(), $index()) }}" required>
                           <span class="k-invalid-msg" data-for="datebirth"></span>
                         </div>
                       </div>
@@ -335,7 +335,7 @@
                     <div class="col-sm-2"></div>
                     <div class="col-sm-10" style="padding-left: 30px; padding-right: 30px;">
                       <label class="control-label" style="margin-right: 28px">Other Property (Owned) Details: </label>
-                      <button class="btn btn-xs btn-success btnop" style="padding: 5px 10px !important" data-bind="visible:editmode(),click: function(){addOPD($index(), $index())}">add</button>
+                      <button class="btn btn-xs btn-success btnop" style="padding: 5px 10px !important" data-bind="visible:editmode(),click: function(){addOPD($index(), $index())}">Add</button>
                       <br><br>
                       <table class="table table-bordered" width="100%" data-bind="visible: ($data.PropertyOwnedkendo != undefined && $data.PropertyOwnedkendo().length > 0)">
                         <thead>

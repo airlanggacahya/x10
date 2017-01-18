@@ -303,6 +303,22 @@ info.removeRowGrid3 = function(id){
     allData.splice(index, 1);
 }
 
+info.LoanAmount = function(container, options){
+    $('<input data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoNumericTextBox({
+            spinners : false
+        });
+}
+
+info.Outstanding = function(container, options){
+    $('<input data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoNumericTextBox({
+            spinners : false
+        });
+}
+
 $(function(){
 	// info.customerList()
     info.scroll()

@@ -1,5 +1,20 @@
 var databrowser = {};
-databrowser.applicantdetailcoll = [{
+databrowser.applicantdetailcoll = [
+ {
+ 	title : "Name of the Applicant",
+ 	field : "CA.applicantdetail.CustomerName",
+	width : 200,
+	headerAttributes: { "class": "sub-bgcolor" },
+ },
+ {
+	field : "CA.applicantdetail.CustomerConstitution",
+	title : "Constitution of the Entity",
+	hidden : true,
+	width : 100,
+	headerTemplate : "Constitution of </br> the Entity",
+	headerAttributes: { "class": "sub-bgcolor" },
+ },
+ {
 	field : "CA.applicantdetail.CustomerRegistrationNumber",
 	title : "Registration Number",
 	hidden : false,
@@ -7,19 +22,6 @@ databrowser.applicantdetailcoll = [{
 	headerTemplate : "Registration </br> Number",
 	headerAttributes: { "class": "sub-bgcolor" },
 },
-{
-	field : "CA.applicantdetail.CustomerPan",
-	title : "PAN",
-	hidden : false,
-	width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
-},
-// {
-// 	field : "CA.applicantdetail.CustomerName",
-// 	title : "Customer Name",
-// 	hidden : true,
-// 	width : 100
-// },
 {
 	field : "CA.applicantdetail.DateOfIncorporation",
 	title : "Date of Incorporation",
@@ -36,13 +38,18 @@ databrowser.applicantdetailcoll = [{
 	headerAttributes: { "class": "sub-bgcolor" },
 },
 {
-	field : "CA.applicantdetail.CustomerConstitution",
-	title : "Constitution of the Entity",
-	hidden : true,
+	field : "CA.applicantdetail.CustomerPan",
+	title : "PAN",
+	hidden : false,
 	width : 100,
-	headerTemplate : "Constitution of </br> the Entity",
 	headerAttributes: { "class": "sub-bgcolor" },
 },
+// {
+// 	field : "CA.applicantdetail.CustomerName",
+// 	title : "Customer Name",
+// 	hidden : true,
+// 	width : 100
+// },
 {
 	field : "CA.applicantdetail.TIN",
 	title : "TIN",
@@ -50,20 +57,20 @@ databrowser.applicantdetailcoll = [{
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
-{
-	field : "CA.applicantdetail.TAN",
-	title : "TAN",
-	hidden : true,
-	width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
-},
-{
-	field : "CA.applicantdetail.CIN",
-	title : "CIN",
-	hidden : true,
-	width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
-},
+// {
+// 	field : "CA.applicantdetail.TAN",
+// 	title : "TAN",
+// 	hidden : true,
+// 	width : 100,
+// 	headerAttributes: { "class": "sub-bgcolor" },
+// },
+// {
+// 	field : "CA.applicantdetail.CIN",
+// 	title : "CIN",
+// 	hidden : true,
+// 	width : 100,
+// 	headerAttributes: { "class": "sub-bgcolor" },
+// },
 {
 	field : "",
 	title : "Address",
@@ -123,16 +130,9 @@ databrowser.nonrefundcoll = [
 
 databrowser.accsetupcoll = [
 {
-	field : "AD.accountsetupdetails.cityname",
-	title : "City Name",
-	hidden : false,
-	width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
-},
-{
 	field : "AD.accountsetupdetails.logindate",
 	title : "Login Date",
-	hidden : false,
+	hidden : true,
 	template : function(dt){
 		if(dt.AD.accountsetupdetails.logindate == null || dt.AD.accountsetupdetails.logindate.indexOf("0001") > -1 ||  dt.AD.accountsetupdetails.logindate.indexOf("date") > -1){
 			return "";
@@ -144,15 +144,15 @@ databrowser.accsetupcoll = [
 	headerAttributes: { "class": "sub-bgcolor" },
 },
 {
-	field : "AD.accountsetupdetails.rmname",
-	title : "RM Name",
+	field : "AD.accountsetupdetails.dealno",
+	title : "Deal No",
 	hidden : true,
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
 {
-	field : "AD.accountsetupdetails.brhead",
-	title : "Branch Head",
+	field : "AD.accountsetupdetails.rmname",
+	title : "RM Name",
 	hidden : true,
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
@@ -164,6 +164,13 @@ databrowser.accsetupcoll = [
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
+// {
+// 	field : "AD.accountsetupdetails.brhead",
+// 	title : "Branch Head",
+// 	hidden : true,
+// 	width : 100,
+// 	headerAttributes: { "class": "sub-bgcolor" },
+// },
 {
 	field : "AD.accountsetupdetails.leaddistributor",
 	title : "Lead Distributor",
@@ -172,25 +179,26 @@ databrowser.accsetupcoll = [
 	headerAttributes: { "class": "sub-bgcolor" },
 },
 {
+	field : "AD.accountsetupdetails.cityname",
+	title : "City Name",
+	hidden : false,
+	width : 100,
+	headerAttributes: { "class": "sub-bgcolor" },
+},
+{
 	field : "AD.accountsetupdetails.product",
 	title : "Product",
-	hidden : true,
+	hidden : false,
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
 {
 	field : "AD.accountsetupdetails.scheme",
 	title : "Scheme",
-	hidden : true,
+	hidden : false,
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
-// {
-// 	field : "AD.accountsetupdetails.dealno",
-// 	title : "Deal No",
-// 	hidden : true,
-// 	width : 100
-// },
 ]
 
 
@@ -276,12 +284,6 @@ databrowser.fullcoll = [
 	width : 150,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
- {
- 	title : "Name of the Customer",
- 	field : "CA.applicantdetail.CustomerName",
-	width : 200,
-	headerAttributes: { "class": "sub-bgcolor" },
- },
  {
  	title : "Applicant Details",
  	columns : databrowser.applicantdetailcoll,

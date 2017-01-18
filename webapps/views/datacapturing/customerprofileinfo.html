@@ -577,8 +577,8 @@ function save1(){
       AddressContactNo: data.AddressContactNo,
       NameOfBanks: data.NameOfBanks,
       SrNo: data.SrNo,
-      TypeOfAc : data.TypeOfAc,
-      YearOpening: data.YearOpening
+      TypeOfAc : (data.TypeOfAc).toString(),
+      YearOpening: parseInt(data.YearOpening)
     })
   });
   

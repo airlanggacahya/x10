@@ -456,15 +456,29 @@ var updateCADS = function(){
 }
 
 var generateDataSource = function(url, param, text, c){
+
 	var checkFilter = function(filter) {
         _.each(filter.filters, function(fs){
-        	if (fs.filters != undefined) {
+        	if (fs.filters != undefined)
         		checkFilter(fs)
-        	} else{
+        	else
 				if(fs.field == "text")
 					fs.field = text
-			}
-		});
+		})
+
+		var checkDuplicatedAnd = function(f){
+			if(f.logic == "and")
+				_.each(f.filters, function(value, key, list){
+		        	if (value.filters != undefined)
+		        		checkDuplicatedAnd(value)
+		        	else
+						if (key > 0)
+							if(value.field == list[key-1].field)
+								list.splice(0, 1)
+				})
+		}
+		
+		checkDuplicatedAnd(filter)
 	}
 
 	return new kendo.data.DataSource({

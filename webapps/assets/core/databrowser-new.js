@@ -64,6 +64,17 @@ databrowser.applicantdetailcoll = [{
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
+{
+	field : "",
+	title : "Address",
+	hidden : true,
+	template : function(dt){
+		return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
+	},
+	width : 100,
+	headerTemplate : "Address",
+	headerAttributes: { "class": "sub-bgcolor" },
+},
 ]
 
 databrowser.nonrefundcoll = [
@@ -283,24 +294,6 @@ databrowser.fullcoll = [
  {
  	title : "Financial Information",
  	columns : [
- 	{
- 		title : "Previous Loan Details",
- 		template :  function(dt){
- 			return "<a style='cursor: pointer;' onclick='databrowser.GoPrev(\""+ dt.CA._id +"\")'>Details..</a>"
- 		},
-		width : 100,
-		headerTemplate : "Previous Loan </br> Details",
-	headerAttributes: { "class": "sub-bgcolor" },
- 	},
- 	{
- 		title : "Details Pertaining to Bankers / FIs",
- 		template :  function(dt){
- 			return "<a style='cursor: pointer;' onclick='databrowser.GoDet(\""+ dt.CA._id +"\")'>Details..</a>"
- 		},
-		width : 100 ,
-		headerTemplate : "Details Pertaining </br> to Bankers / FIs",
-	headerAttributes: { "class": "sub-bgcolor" },
- 	},
  	{
  		title : "Existing Relationship With X10 Financial Services Limited",
  		template :  function(dt){
@@ -605,10 +598,26 @@ databrowser.GoProm = function(id,name){
 	 window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrolltoinp="+name)
 }
 
+databrowser.GoAddress = function(id,name){
+	var ids=id.split("|");
+	 window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrollto=Company Address Details")
+}
+
 var dbgrid = ""
 
 databrowser.GetDataGrid = function(){
-	ajaxPost("/accountdetail/getdatabrowser",{ rating : "", ratingopr : "gt",loanamount : "",loanamountopr : "gte", city : [], product : [], brhead : [], scheme : [], rm : [], ca : [] }, function(data){
+	ajaxPost("/accountdetail/getdatabrowser", { 
+		rating : filters.inputIRRangeVal() != undefined ? filters.inputIRRangeVal() : "", 
+		ratingopr : filters.ddIRRangesVal(),
+		loanamount : filters.inputRLARangeVal() != undefined ? filters.inputRLARangeVal() : "",
+		loanamountopr : filters.ddRLARangesVal(), 
+		city : filters.CityVal(), 
+		product : filters.ProductVal(), 
+		brhead : filters.BRHeadVal(), 
+		scheme : filters.SchemeVal(), 
+		rm : filters.RMVal(), 
+		ca : filters.CAVal()
+	}, function(data){
 		databrowser.normalisasiAD(data.Data);
 		dbgrid = $("#griddb").kendoGrid({
 			 dataSource: {

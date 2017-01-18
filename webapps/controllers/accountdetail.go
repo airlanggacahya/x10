@@ -599,13 +599,12 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			// Take(take).
 			// Skip(skip).
 			Cursor(nil)
+		defer csr.Close()
 
 		if e != nil {
 			res.SetError(e)
 			return res
 		}
-
-		defer csr.Close()
 
 		resultsRT := []tk.M{}
 		err = csr.Fetch(&resultsRT, 0, false)
@@ -665,13 +664,12 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		// Take(take).
 		// Skip(skip).
 		Cursor(nil)
+	defer csr.Close()
 
 	if e != nil {
 		res.SetError(e)
 		return res
 	}
-
-	defer csr.Close()
 
 	resultsAD := []tk.M{}
 	err = csr.Fetch(&resultsAD, 0, false)
@@ -703,6 +701,7 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		// Take(take).
 		// Skip(skip).
 		Cursor(nil)
+	defer csr.Close()
 
 	if e != nil {
 		res.SetError(e)

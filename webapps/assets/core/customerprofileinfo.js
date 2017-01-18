@@ -79,6 +79,8 @@ info.condConfirmed = function(){
     $("#uvf").hide();
     disableedit();
     $("#re").prop("disabled", false);
+    $(".add").prop("disabled", true);
+    $(".del").prop("disabled", true);
     $("#save").prop("disabled", true);
     EnableAllkendo(false);
     
@@ -95,6 +97,8 @@ info.condReEnter = function(){
     $("#save").prop("disabled", false);
     $("#re").prop("disabled", false);
     $("#save").prop("disabled", false);
+    $(".add").prop("disabled", false);
+    $(".del").prop("disabled", false);
     enableedit()
     $("#CustomerName").prop("disabled", true);
     $("#CustomerConstitution").prop("disabled", true);
@@ -180,6 +184,8 @@ info.condFreeze = function(){
     $("#save").show();
     $("#save").prop("disabled", true);
     $("#re").prop("disabled", true);
+    $(".add").prop("disabled", true);
+    $(".del").prop("disabled", true);
     disableedit();
     $("#vf").hide();
 }
@@ -207,6 +213,126 @@ info.ButtonLogic = function(status){
             info.condFreeze()
         }
     }, 500)
+}
+
+info.templateGrid3 = {
+    LoanNo : "",
+    TypeOfLoan: "",
+    Payment: ""
+}
+
+info.templateGrid2 = {
+    SrNo: "",
+    NameOfBanks: "",
+    AddressContactNo: "",
+    AcNo: "",
+    TypeOfAc: "",
+    YearOpening: "",
+}
+
+info.templateGrid1 = {
+    SrNo: "",
+    Banks: "",
+    Loan: "",
+    Tenure: "",
+    Installment: "",
+    Outstanding: "",
+    SecUnsec: ""
+}
+
+info.addPreviousLoanDetails= function(){
+    var b = $('.grid1 .k-grid-content').height();
+    var data = $(".grid1").data("kendoGrid").dataSource.data();
+    var temp = ko.mapping.toJS(info.templateGrid1);
+    data.push(temp);
+
+    if(b < 100){
+        var h = $('.grid1 .k-grid-content').height();
+
+        if( h > 100){
+            $('.grid1 .k-grid-content').height(100);
+        }
+    }
+}
+
+info.addDetailsPertainingtoBankers = function(){
+    var b = $('.grid2 .k-grid-content').height();
+    var data = $(".grid2").data("kendoGrid").dataSource.data();
+    var temp = ko.mapping.toJS(info.templateGrid2);
+    data.push(temp);
+    if(b < 100){
+        var h = $('.grid2 .k-grid-content').height();
+
+        if( h > 100){
+            var h = $('.grid2 .k-grid-content').height(100);
+        }
+    }
+    
+}
+
+// info.addExistingRelationship = function(){
+//     var b = $('.grid3 .k-grid-content').height();
+//     var data = $(".grid3").data("kendoGrid").dataSource.data();
+//     var temp = ko.mapping.toJS(info.templateGrid3);
+//     data.push(temp);
+
+//     if(b < 100){
+//         var h = $('.grid3 .k-grid-content').height();
+
+//         if( h > 100){
+//             var h = $('.grid3 .k-grid-content').height(100);
+//         }
+//     }
+// }
+
+info.removeRowGrid1 = function(id){
+    var index =  $('.grid1 tr[data-uid="'+id+'"]').index();
+    var allData = $('.grid1').data('kendoGrid').dataSource.data();
+    allData.splice(index, 1);
+}
+
+info.removeRowGrid2 = function(id){
+    var index =  $('.grid2 tr[data-uid="'+id+'"]').index();
+    var allData = $('.grid2').data('kendoGrid').dataSource.data();
+    allData.splice(index, 1);
+}
+
+info.removeRowGrid3 = function(id){
+    var index =  $('.grid3 tr[data-uid="'+id+'"]').index();
+    var allData = $('.grid3').data('kendoGrid').dataSource.data();
+    allData.splice(index, 1);
+}
+
+info.LoanAmount = function(container, options){
+    $('<input data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoNumericTextBox({
+            spinners : false
+        });
+}
+
+info.Tenure = function(container, options){
+    $('<input data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoNumericTextBox({
+            spinners : false
+        });
+}
+
+info.Outstanding = function(container, options){
+    $('<input data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoNumericTextBox({
+            spinners : false
+        });
+}
+
+info.MonthlyInstallment = function(container, options){
+    $('<input data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoNumericTextBox({
+            spinners : false
+        });
 }
 
 $(function(){

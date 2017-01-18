@@ -1,8 +1,17 @@
+<script type="text/javascript" src="/static/core/customerprofileinfo.js"></script>
+<style type="text/css">
+    .k-grid-toolbar{
+        display: none;
+    }
+</style>
 <ul class="collapsible" data-collapsible="accordion">
   <li class="panel">
     <div class="panel-heading"><h5 class="no-margin">Previous Loan Details (Non X10 loans)</h5></div>
     <div class="panel-body">
-      <div class="row">
+      <div class="row" style="padding: 25px; margin-top: -40px;">
+        <div>
+          <button id="btn1" class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" onclick = "info.addPreviousLoanDetails()">Add <span class="fa fa-plus"></i></button>
+        </div>
         <div class="grid1"></div>
       </div>
     </div>
@@ -10,7 +19,10 @@
   <li class="panel">
     <div class="panel-heading"><h5 class="no-margin">Details Pertaining to Bankers / Financial Institutions</h5></div>
     <div class="panel-body">
-      <div class="row">
+      <div class="row" style="padding: 25px; margin-top: -40px;">
+        <div>
+          <button class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" class="fa fa-plus" onclick="info.addDetailsPertainingtoBankers()">Add <i class="fa fa-plus"></i></button>
+        </div>
         <div class="grid2"></div>
       </div>
     </div>
@@ -18,7 +30,7 @@
   <li class="panel">
     <div class="panel-heading"><h5 class="no-margin">Existing Relationship With X10 Financial Services Limited</h5></div>
     <div class="panel-body">
-      <div class="row">
+      <div class="row" style="padding: 25px; margin-top: -40px;">
         <div class="grid3"></div>
       </div>
     </div>
@@ -41,19 +53,43 @@
                 //     data : [],
                 //     pageSize:10
                 // },
-                pageable: true,
+                // pageable: true,
                 // height: 350,
+                schema:{
+                  model:{
+                    id:"SrNo",
+                    fields:{
+                      SrNo:{editable: true, nullable: true},
+                      BanksFls:{editable: true, nullable: true},
+                      LoanAmount:{type: "number", editable: true, nullable: true},
+                      Tenure:{type: "number", editable: true, nullable: true},
+                      MonthlyInstallment:{type: "number", editable: true, nullable: true},
+                      OutstandingAmount:{type: "number", editable: true, nullable: true},
+                      SecuredUnsecured:{editable: true, nullable: true},
+                    }
+                  }
+                },
                 toolbar: ["create"],
+                scrolable : true,
                 columns: [
-                    { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", format: "{0:c}", width: "120px" },
-                    { field: "Banks", headerAttributes: { "class": "sub-bgcolor" }, title: "Banks/Fls", width: "120px" },
-                    { field: "Loan", headerAttributes: { "class": "sub-bgcolor" }, title: "Loan Amount", format: "{0:c}", width: "120px" },
-                    { field: "Tenure", headerAttributes: { "class": "sub-bgcolor" }, title: "Tenure", format: "{0:c}", width: "120px" },
-                    { field: "Installment", headerAttributes: { "class": "sub-bgcolor" }, title: "Monthly Installment", format: "{0:c}", width: "120px" },
-                    { field: "Outstanding", headerAttributes: { "class": "sub-bgcolor" }, title: "Outstanding Amount", format: "{0:c}", width: "120px" },
-                    { field: "SecUnsec", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", format: "{0:c}", width: "120px" },
-                    ],
-                editable: "inline"
+                    { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", width: "120px" },
+                    { field: "BanksFls", headerAttributes: { "class": "sub-bgcolor" }, title: "Banks/Fls", width: "120px" },
+                    { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Loan Amount", width: "120px",editor: info.LoanAmount, },
+                    { field: "Tenure", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Tenure", width: "120px", editor: info.Tenure },
+                    { field: "MonthlyInstallment", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Monthly Installment", width: "120px", editor: info.MonthlyInstallment },
+                    { field: "OutstandingAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Outstanding Amount", width: "120px", editor: info.Outstanding },
+                    { field: "SecuredUnsecured", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", width: "120px" },
+                    { headerAttributes: { "class": "sub-bgcolor" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid1(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
+                    ],                
+                editable: {
+                  createAt: "bottom"
+                },
+                edit: function (e) {
+                  if(customerprofile().Status() == 1 || customerprofile().Status() == 2){
+                    this.closeCell();
+                  }
+
+                },
             });
             $(".grid2").kendoGrid({
                     //dataSource: dataSource,
@@ -61,9 +97,10 @@
                 //     data : [],
                 //     pageSize:10
                 // },
-                    pageable: true,
+                    // pageable: true,
                     // height: 350,
                     toolbar: ["create"],
+                    scrolable : true,
                     columns: [
                         { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", width: "120px" },
                         { field: "NameOfBanks", headerAttributes: { "class": "sub-bgcolor" }, title: "Name Of the Banks/Fls", width: "120px" },
@@ -71,8 +108,16 @@
                         { field: "AcNo", headerAttributes: { "class": "sub-bgcolor" }, title: "A/c. No", format: "{0:c}", width: "120px" },
                         { field: "TypeOfAc", headerAttributes: { "class": "sub-bgcolor" }, title: "Type Of A/c", width: "120px" },
                         { field: "YearOpening", headerAttributes: { "class": "sub-bgcolor" }, title: "Year Of Opening",  width: "120px" },
+                        { headerAttributes: { "class": "sub-bgcolor del" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid2(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
                         ],
-                    editable: "inline"
+                    editable: {
+                      createAt: "bottom"
+                    },
+                    edit: function (e) {
+                      if(customerprofile().Status() == 1 || customerprofile().Status() == 2){
+                        this.closeCell();
+                      }
+                    },
                 });
             $(".grid3").kendoGrid({
                     //dataSource: dataSource,
@@ -80,19 +125,18 @@
                     //     data : [],
                     //     pageSize:10
                     // },
-                    pageable: true,
+                    // pageable: true,
                     // height: 350,
                     toolbar: ["create"],
+                    scrolable : true,
                     columns: [
                         { field: "LoanNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Loan No.", format: "{0:c}", width: "120px" },
                         { field: "TypeOfLoan", headerAttributes: { "class": "sub-bgcolor" }, title: "Type of Loan", width: "120px" },
                         { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, title: "Loan Amount", format: "{0:n0}", width: "120px" ,   "attributes":{ class:"align-right", style: "text-align: right;"}, },
                         { field: "Payment", headerAttributes: { "class": "sub-bgcolor" }, title: "Payment", format: "{0:n0}", width: "120px" ,   "attributes":{ class:"align-right", style: "text-align: right;"}, },
                         ],
-                    editable: "inline"
+                    editable: "inline",
                 });
-
-
         });
 
 </script>

@@ -178,13 +178,13 @@ type SiteWorkAddress struct {
 }
 
 type PreviousLoansDetail struct {
-	SrNo               string `bson:"SrNo"`
-	BanksFls           string `bson:"BanksFls"`
-	LoanAmount         string `bson:"LoanAmount"`
-	Tenure             string `bson:"Tenure"`
-	MonthlyInstallment string `bson:"MonthlyInstallment"`
-	OutstandingAmount  string `bson:"OutstandingAmount"`
-	SecuredUnsecured   string `bson:"SecuredUnsecured"`
+	SrNo               string  `bson:"SrNo"`
+	BanksFls           string  `bson:"BanksFls"`
+	LoanAmount         float64 `bson:"LoanAmount"`
+	Tenure             float64 `bson:"Tenure"`
+	MonthlyInstallment float64 `bson:"MonthlyInstallment"`
+	OutstandingAmount  float64 `bson:"OutstandingAmount"`
+	SecuredUnsecured   string  `bson:"SecuredUnsecured"`
 }
 
 type DetailsPertainingBanker struct {

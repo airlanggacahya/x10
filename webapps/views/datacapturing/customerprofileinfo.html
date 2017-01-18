@@ -154,9 +154,9 @@ function refreshdata(){
       customerprofile().ConfirmedDate = data[0].ConfirmedDate;
       ApplicantDetail.DateIncorporation(moment(data[0].ApplicantDetail.DateOfIncorporation).format("DD-MMM-YYYY"))
       data[0].ApplicantDetail.AmountLoan = formatnum(data[0].ApplicantDetail.AmountLoan)
-      data[0].ApplicantDetail.RegisteredAddress.Title = "Registered Address";
-      data[0].ApplicantDetail.AddressCorrespondence.Title = "Address for Correspondence";
-      data[0].ApplicantDetail.SiteWorkAddress.Title = "Site/Work Address";
+      data[0].ApplicantDetail.RegisteredAddress.Title = "Registered";
+      data[0].ApplicantDetail.AddressCorrespondence.Title = "Residence";
+      data[0].ApplicantDetail.SiteWorkAddress.Title = "Site/Work";
       if (data[0].ApplicantDetail.NoOfEmployees == 0){
         data[0].ApplicantDetail.NoOfEmployees = ""
       }

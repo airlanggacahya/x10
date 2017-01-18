@@ -194,6 +194,8 @@ function refreshdata(){
           $('.grid1 .k-grid-content').height(100);
       }
 
+      data[0].FinancialReport.DetailsPertainingBanker[0].TypeOfAc = (data[0].FinancialReport.DetailsPertainingBanker[0].TypeOfAc).toString();
+
       var ds2 = new kendo.data.DataSource({
         data:data[0].FinancialReport.DetailsPertainingBanker,
         pageSize:10

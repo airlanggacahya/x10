@@ -276,7 +276,6 @@ var critRLA = function(fieldName){
 			criteria.filters.push({ field: fieldName, operator: "eq", value: data.applicantdetail.DealNo })
 		})
 	})
-	console.log(criteria);
 	return criteria
 }
 
@@ -456,7 +455,18 @@ var updateCADS = function(){
 	}, 1000)
 }
 
-var generateDataSource = function(url, param, c){
+var generateDataSource = function(url, param, text, c){
+	var checkFilter = function(filter) {
+        _.each(filter.filters, function(fs){
+        	if (fs.filters != undefined) {
+        		checkFilter(fs)
+        	} else{
+				if(fs.field == "text")
+					fs.field = text
+			}
+		});
+	}
+
 	return new kendo.data.DataSource({
 		serverFiltering: true,
 	    transport: {
@@ -466,19 +476,21 @@ var generateDataSource = function(url, param, c){
 	        	} else {
 		        	param.filter = { filters: [] }
 		        }
+		        	
+		        checkFilter(param.filter)
 
 	        	ajaxPost(url, param, function(res){
-	           		o.success(res);
+	           		o.success(res.data);
 	           	})
 	        }
 	    },
 	    schema: {
-	    	parse: function(res){
+	    	parse: function(data){
 	    		return _.reject(
 	    			_.map(
 	    				_.groupBy(
 	    					_.sortBy(
-	    						_.map(res.data, c), function(d){
+	    						_.map(data, c), function(d){
 	    							return d.value
 	    						}), 
 	    					function(d){
@@ -492,24 +504,21 @@ var generateDataSource = function(url, param, c){
 	    			})
 	    	}
 	    },
-	    filter: function(a){
-	    	console.log("-------", a);
-	    }
 	})
 }
 
-var getMasterCustomerDS = function(c) {
-	return generateDataSource("/databrowser/getmastercustomerdata", {}, c)
+var getMasterCustomerDS = function(text, c) {
+	return generateDataSource("/databrowser/getmastercustomerdata", {}, text, c)
 }
 
-var multiCustomerDS = getMasterCustomerDS(function(d){
+var multiCustomerDS = getMasterCustomerDS("customer_name", function(d){
 	return {
-		"text": d.customer_id + " - " + d.customer_name,
+		"text": d.customer_name,
 		"value": d.customer_id
 	}
 })
 
-var multiDealNoDS = getMasterCustomerDS(function(d){
+var multiDealNoDS = getMasterCustomerDS("deal_no", function(d){
 	return {
 		"text": d.deal_no,
 		"value": d.deal_no
@@ -518,7 +527,7 @@ var multiDealNoDS = getMasterCustomerDS(function(d){
 
 // --------------------------------------------------------------------
 
-var multiCityDS = generateDataSource("/databrowser/getcustomerprofiledata", {}, function(d){
+var multiCityDS = generateDataSource("/databrowser/getcustomerprofiledata", {}, "applicantdetail.registeredaddress.CityRegistered", function(d){
 	return {
 		"text": d.applicantdetail.registeredaddress.CityRegistered,
 		"value": d.applicantdetail.registeredaddress.CityRegistered
@@ -527,32 +536,32 @@ var multiCityDS = generateDataSource("/databrowser/getcustomerprofiledata", {}, 
 
 //--------------------------------------------------------------------
 
-var getAccountDetailDS = function(c) {
-	return generateDataSource("/databrowser/getaccountdetaildata", {}, c)
+var getAccountDetailDS = function(text, c) {
+	return generateDataSource("/databrowser/getaccountdetaildata", {}, text, c)
 }
 
-var multiProductDS = getAccountDetailDS(function(d){
+var multiProductDS = getAccountDetailDS("accountsetupdetails.product", function(d){
 	return {
 		"text": d.accountsetupdetails.product,
 		"value": d.accountsetupdetails.product
 	}
 })
 
-var multiBRHeadDS = getAccountDetailDS(function(d){
+var multiBRHeadDS = getAccountDetailDS("accountsetupdetails.brhead", function(d){
 	return {
 		"text": d.accountsetupdetails.brhead,
 		"value": d.accountsetupdetails.brhead
 	}
 })
 
-var multiSchemeDS = getAccountDetailDS(function(d){
+var multiSchemeDS = getAccountDetailDS("accountsetupdetails.scheme", function(d){
 	return {
 		"text": d.accountsetupdetails.scheme,
 		"value": d.accountsetupdetails.scheme
 	}
 })
 
-var multiRMDS = getAccountDetailDS(function(d){
+var multiRMDS = getAccountDetailDS("accountsetupdetails.rmname", function(d){
 	return {
 		"text": d.accountsetupdetails.rmname,
 		"value": d.accountsetupdetails.rmname
@@ -569,7 +578,7 @@ var dddata = [
 $("#inputRLARange").kendoNumericTextBox();
 $("#inputIRRange").kendoNumericTextBox();
 
-var multiCADS = getAccountDetailDS(function(d){
+var multiCADS = getAccountDetailDS("accountsetupdetails.creditanalyst", function(d){
 	return {
 		"text": d.accountsetupdetails.creditanalyst,
 		"value": d.accountsetupdetails.creditanalyst

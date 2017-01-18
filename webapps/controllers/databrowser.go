@@ -37,177 +37,9 @@ func (c *DataBrowserController) Default(k *knot.WebContext) interface{} {
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 
 	k.Config.OutputType = knot.OutputTemplate
-	k.Config.IncludeFiles = []string{"databrowser/customer.html", "databrowser/filter.html", "shared/loading.html"}
+	k.Config.IncludeFiles = []string{"databrowser/customer.html", "shared/loading.html"}
 
 	return DataAccess
-}
-
-//get data grid
-func (a *DataBrowserController) GetListData(r *knot.WebContext) interface{} {
-	r.Config.OutputType = knot.OutputJson
-
-	t := tk.M{}
-	err := r.GetPayload(&t)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
-
-	// PROJECTID := ""
-	FILT := tk.M{}
-	SORT := ""
-	// CLIENTID := ""
-	// DATEF := ""
-	// DATET := ""
-	// datefrom := time.Date(2016, 01, 01, 0, 0, 0, 0, time.UTC)
-	// dateto := time.Date(2016, 12, 01, 0, 0, 0, 0, time.UTC)
-
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	} else {
-		// PROJECTID = t.Get("project", "").(string)
-		// CLIENTID = t.Get("client", "").(string)
-		// DATEF = t.Get("datefrom", "").(string)
-		// DATET = t.Get("dateto", "").(string)
-		SORT = t.Get("sort", "").(string)
-		FILT = t.Get("filter", "").(map[string]interface{})
-		// datefrom = cast.String2Date(DATEF, "dd MMM yyyy")
-		// dateto = cast.String2Date(DATET, "dd MMM yyyy")
-	}
-
-	arrfilt := FILT.Get("filters", "").([]interface{})
-
-	filters := []*dbox.Filter{}
-	var filter *dbox.Filter
-	filter = new(dbox.Filter)
-
-	//generate query from kendo grid header filter
-	fis := []*dbox.Filter{}
-	for _, val := range arrfilt {
-		v := val.(map[string]interface{})
-		fin := v["filters"]
-		fins := []*dbox.Filter{}
-		if fin != nil {
-			for _, valin := range fin.([]interface{}) {
-				vin := valin.(map[string]interface{})
-				value := vin["value"].(string)
-				fi := vin["field"].(string)
-				operator := vin["operator"].(string)
-				if operator == "eq" {
-					fins = append(fins, dbox.Eq(fi, value))
-				} else if operator == "contains" {
-					fins = append(fins, dbox.Contains(fi, value))
-				} else if operator == "startwith" {
-					fins = append(fins, dbox.Startwith(fi, value))
-				} else if operator == "endwith" {
-					fins = append(fins, dbox.Endwith(fi, value))
-				}
-			}
-			if len(fins) > 0 {
-				ops := v["logic"].(string)
-				if ops == "or" {
-					fis = append(fis, dbox.Or(fins...))
-				} else {
-					fis = append(fis, dbox.And(fins...))
-				}
-			}
-		} else {
-			value := v["value"].(string)
-			fi := v["field"].(string)
-			operator := v["operator"].(string)
-			if operator == "eq" {
-				fis = append(fis, dbox.Eq(fi, value))
-			} else if operator == "contains" {
-				fis = append(fis, dbox.Contains(fi, value))
-			} else if operator == "startwith" {
-				fis = append(fis, dbox.Startwith(fi, value))
-			} else if operator == "endwith" {
-				fis = append(fis, dbox.Endwith(fi, value))
-			}
-		}
-	}
-	if len(fis) > 0 {
-		ops := FILT["logic"].(string)
-		if ops == "and" {
-			filters = append(filters, dbox.And(fis...))
-		} else {
-			filters = append(filters, dbox.Or(fis...))
-		}
-	}
-
-	// filters = append(filters, dbox.Gte("time_date", datefrom))
-	// filters = append(filters, dbox.Lte("time_date", dateto))
-
-	// if PROJECTID == "" {
-	// 	filters = append(filters, dbox.Ne("project_code", PROJECTID))
-	// } else {
-	// 	filters = append(filters, dbox.Eq("project_code", PROJECTID))
-	// }
-
-	// if CLIENTID == "" {
-	// 	filters = append(filters, dbox.Ne("client_code", CLIENTID))
-	// } else {
-	// 	filters = append(filters, dbox.Eq("client_code", CLIENTID))
-	// }
-
-	if SORT == "" {
-		SORT = "_id"
-	}
-
-	filters = append(filters, dbox.Ne("_id", nil))
-	filter = dbox.And(filters...)
-
-	take := tk.ToInt(t["take"], tk.RoundingAuto)
-	skip := tk.ToInt(t["skip"], tk.RoundingAuto)
-
-	//get data grid
-	c, err := GetConnection()
-	defer c.Close()
-	csr, e := c.NewQuery().
-		Where(filter).
-		From("NewCust").
-		Order(SORT).
-		Take(take).
-		Skip(skip).
-		Cursor(nil)
-
-	if e != nil {
-		return CreateResult(false, nil, e.Error())
-	} else if csr == nil {
-		return CreateResult(true, nil, "")
-	}
-
-	defer csr.Close()
-
-	results := []tk.M{}
-	err = csr.Fetch(&results, 0, false)
-	if err != nil {
-		return CreateResult(false, nil, e.Error())
-	} else if csr == nil {
-		return CreateResult(false, nil, "No data found !")
-	}
-
-	//get data grid total count
-	csrc, e := c.NewQuery().
-		Where(filter).
-		From("NewCust").
-		Cursor(nil)
-
-	defer csrc.Close()
-
-	if e != nil {
-		return CreateResult(false, nil, e.Error())
-	}
-
-	res := tk.M{}
-	if csrc != nil {
-		res.Set("total", csrc.Count())
-	} else {
-		res.Set("total", 0)
-	}
-
-	res.Set("data", results)
-
-	return CreateResult(true, res, "success")
 }
 
 func (c *DataBrowserController) NewDefault(k *knot.WebContext) interface{} {
@@ -232,18 +64,203 @@ func (c *DataBrowserController) NewDefault(k *knot.WebContext) interface{} {
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 
 	k.Config.OutputType = knot.OutputTemplate
-	k.Config.IncludeFiles = []string{"shared/loading.html"}
+	k.Config.IncludeFiles = []string{"shared/loading.html", "databrowser/filter.html"}
 
 	return DataAccess
+}
+
+func (d *DataBrowserController) getFilter(t tk.M) *dbox.Filter {
+
+	FILT := tk.M{}
+	FILT = t.Get("filter", "").(map[string]interface{})
+
+	arrfilt := FILT.Get("filters", "").([]interface{})
+
+	filters := []*dbox.Filter{}
+	var filter *dbox.Filter
+	filter = new(dbox.Filter)
+
+	fis := []*dbox.Filter{}
+	for _, val := range arrfilt {
+		v := val.(map[string]interface{})
+		fin := v["filters"]
+		fins := []*dbox.Filter{}
+
+		if fin != nil {
+			for _, valin := range fin.([]interface{}) {
+				vin := valin.(map[string]interface{})
+
+				fi := vin["field"].(string)
+				operator := vin["operator"].(string)
+
+				switch value := vin["value"].(type) {
+				case string:
+					if operator == "eq" {
+						fins = append(fins, dbox.Eq(fi, value))
+					} else if operator == "contains" {
+						fins = append(fins, dbox.Contains(fi, value))
+					} else if operator == "startwith" {
+						fins = append(fins, dbox.Startwith(fi, value))
+					} else if operator == "endwith" {
+						fins = append(fins, dbox.Endwith(fi, value))
+					}
+				default:
+					if operator == "gt" {
+						fins = append(fins, dbox.Gt(fi, value))
+					} else if operator == "gte" {
+						fins = append(fins, dbox.Gte(fi, value))
+					} else if operator == "eq" {
+						fins = append(fins, dbox.Eq(fi, value))
+					} else if operator == "lte" {
+						fins = append(fins, dbox.Lte(fi, value))
+					} else if operator == "lt" {
+						fins = append(fins, dbox.Lt(fi, value))
+					}
+				}
+
+			}
+			if len(fins) > 0 {
+				ops := v["logic"].(string)
+				if ops == "or" {
+					fis = append(fis, dbox.Or(fins...))
+				} else {
+					fis = append(fis, dbox.And(fins...))
+				}
+			}
+		} else {
+			fi := v["field"].(string)
+			operator := v["operator"].(string)
+
+			switch value := v["value"].(type) {
+			case string:
+				if operator == "eq" {
+					fis = append(fis, dbox.Eq(fi, value))
+				} else if operator == "contains" {
+					fis = append(fis, dbox.Contains(fi, value))
+				} else if operator == "startwith" {
+					fis = append(fis, dbox.Startwith(fi, value))
+				} else if operator == "endwith" {
+					fis = append(fis, dbox.Endwith(fi, value))
+				}
+			default:
+				if operator == "gt" {
+					fins = append(fins, dbox.Gt(fi, value))
+				} else if operator == "gte" {
+					fins = append(fins, dbox.Gte(fi, value))
+				} else if operator == "eq" {
+					fins = append(fins, dbox.Eq(fi, value))
+				} else if operator == "lte" {
+					fins = append(fins, dbox.Lte(fi, value))
+				} else if operator == "lt" {
+					fins = append(fins, dbox.Lt(fi, value))
+				}
+			}
+		}
+	}
+	if len(fis) > 0 {
+		ops := FILT["logic"].(string)
+		if ops == "and" {
+			filters = append(filters, dbox.And(fis...))
+		} else {
+			filters = append(filters, dbox.Or(fis...))
+		}
+	}
+
+	filters = append(filters, dbox.Ne("_id", nil))
+	filter = dbox.And(filters...)
+
+	return filter
+}
+
+//get data grid
+func (a *DataBrowserController) GetListData(r *knot.WebContext) interface{} {
+	r.Config.OutputType = knot.OutputJson
+
+	t := tk.M{}
+	err := r.GetPayload(&t)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	SORT := ""
+	SORT = t.Get("sort", "").(string)
+	filter := a.getFilter(t)
+
+	take := tk.ToInt(t["take"], tk.RoundingAuto)
+	skip := tk.ToInt(t["skip"], tk.RoundingAuto)
+
+	if SORT == "" {
+		SORT = "_id"
+	}
+
+	//get data grid
+	c, err := GetConnection()
+	defer c.Close()
+	csr, e := c.NewQuery().
+		Where(filter).
+		From("NewCust").
+		Order(SORT).
+		Take(take).
+		Skip(skip).
+		Cursor(nil)
+	defer csr.Close()
+
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(true, nil, "")
+	}
+
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(false, nil, "No data found !")
+	}
+
+	//get data grid total count
+	csrc, e := c.NewQuery().
+		Where(filter).
+		From("NewCust").
+		Cursor(nil)
+	defer csrc.Close()
+
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	}
+
+	res := tk.M{}
+	if csrc != nil {
+		res.Set("total", csrc.Count())
+	} else {
+		res.Set("total", 0)
+	}
+
+	res.Set("data", results)
+
+	return CreateResult(true, res, "success")
 }
 
 func (a *DataBrowserController) GetMasterCustomerData(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
+	t := tk.M{}
+	err := k.GetPayload(&t)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
 	conn, err := GetConnection()
 	defer conn.Close()
 
-	csr, e := conn.NewQuery().From("MasterCustomer").Cursor(nil)
+	prepQuery := conn.NewQuery().From("MasterCustomer")
+	if t.Has("filter") {
+		prepQuery = prepQuery.Where(a.getFilter(t))
+	}
+	csr, e := prepQuery.Cursor(nil)
+	defer csr.Close()
+
 	if e != nil {
 		return CreateResult(false, nil, e.Error())
 	} else if csr == nil {
@@ -262,10 +279,22 @@ func (a *DataBrowserController) GetMasterCustomerData(k *knot.WebContext) interf
 func (a *DataBrowserController) GetCustomerProfileData(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
+	t := tk.M{}
+	err := k.GetPayload(&t)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
 	conn, err := GetConnection()
 	defer conn.Close()
 
-	csr, e := conn.NewQuery().From("CustomerProfile").Cursor(nil)
+	prepQuery := conn.NewQuery().From("CustomerProfile")
+	if t.Has("filter") {
+		prepQuery = prepQuery.Where(a.getFilter(t))
+	}
+	csr, e := prepQuery.Cursor(nil)
+	defer csr.Close()
+
 	if e != nil {
 		return CreateResult(false, nil, e.Error())
 	} else if csr == nil {
@@ -284,10 +313,56 @@ func (a *DataBrowserController) GetCustomerProfileData(k *knot.WebContext) inter
 func (a *DataBrowserController) GetAccountDetailData(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
+	t := tk.M{}
+	err := k.GetPayload(&t)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
 	conn, err := GetConnection()
 	defer conn.Close()
 
-	csr, e := conn.NewQuery().From("AccountDetails").Cursor(nil)
+	prepQuery := conn.NewQuery().From("AccountDetails")
+	if t.Has("filter") {
+		prepQuery = prepQuery.Where(a.getFilter(t))
+	}
+	csr, e := prepQuery.Cursor(nil)
+	defer csr.Close()
+
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(true, nil, "")
+	}
+
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return CreateResult(false, nil, e.Error())
+	}
+
+	return CreateResult(true, results, "")
+}
+
+func (a *DataBrowserController) GetCreditScorecardData(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	t := tk.M{}
+	err := k.GetPayload(&t)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	prepQuery := conn.NewQuery().From("CreditScorecard")
+	if t.Has("filter") {
+		prepQuery = prepQuery.Where(a.getFilter(t))
+	}
+	csr, e := prepQuery.Cursor(nil)
+	defer csr.Close()
+
 	if e != nil {
 		return CreateResult(false, nil, e.Error())
 	} else if csr == nil {

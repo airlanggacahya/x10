@@ -26,6 +26,11 @@ model.User= ko.observable('{{.Username}}');
 </style>
 
 <script>document.write('<script src="/static/core/databrowser-new.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+
+<div style="margin-top: 100px">
+	{{template "filter.html"}}
+</div>
+
 <div class="col-md-12">
 	<div id="griddb"></div>
 </div>

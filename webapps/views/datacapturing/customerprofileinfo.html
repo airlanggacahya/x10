@@ -582,7 +582,7 @@ function save1(){
       LoanAmount: parseFloat(data.LoanAmount),
       Tenure: data.Tenure,
       MonthlyInstallment: data.MonthlyInstallment,
-      OutstandingAmount: data.OutstandingAmount,
+      OutstandingAmount: (data.OutstandingAmount).toString(),
       SecuredUnsecured: data.SecuredUnsecured,
     });
   });
@@ -658,7 +658,7 @@ function save(){
       LoanAmount: parseFloat(data.LoanAmount),
       Tenure: data.Tenure,
       MonthlyInstallment: data.MonthlyInstallment,
-      OutstandingAmount: data.OutstandingAmount,
+      OutstandingAmount: (data.OutstandingAmount).toString(),
       SecuredUnsecured: data.SecuredUnsecured,
     });
   });

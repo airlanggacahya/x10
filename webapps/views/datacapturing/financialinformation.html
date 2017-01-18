@@ -1,3 +1,4 @@
+<script type="text/javascript" src="/static/core/customerprofileinfo.js"></script>
 <style type="text/css">
     .k-grid-toolbar{
         display: none;
@@ -54,15 +55,29 @@
                 // },
                 // pageable: true,
                 // height: 350,
+                schema:{
+                  model:{
+                    id:"SrNo",
+                    fields:{
+                      SrNo:{editable: true, nullable: true},
+                      BanksFls:{editable: true, nullable: true},
+                      LoanAmount:{type: "number", editable: true, nullable: true},
+                      Tenure:{editable: true, nullable: true},
+                      MonthlyInstallment:{editable: true, nullable: true},
+                      OutstandingAmount:{type: "number", editable: true, nullable: true},
+                      SecuredUnsecured:{editable: true, nullable: true},
+                    }
+                  }
+                },
                 toolbar: ["create"],
                 scrolable : true,
                 columns: [
                     { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", format: "{0:c}", width: "120px" },
                     { field: "BanksFls", headerAttributes: { "class": "sub-bgcolor" }, title: "Banks/Fls", width: "120px" },
-                    { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, title: "Loan Amount", format: "{0:c}", width: "120px" },
+                    { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{style: 'text-align: right'}, title: "Loan Amount", width: "120px",editor: info.LoanAmount, },
                     { field: "Tenure", headerAttributes: { "class": "sub-bgcolor" }, title: "Tenure", format: "{0:c}", width: "120px" },
                     { field: "MonthlyInstallment", headerAttributes: { "class": "sub-bgcolor" }, title: "Monthly Installment", format: "{0:c}", width: "120px" },
-                    { field: "OutstandingAmount", headerAttributes: { "class": "sub-bgcolor" }, title: "Outstanding Amount", format: "{0:c}", width: "120px" },
+                    { field: "OutstandingAmount", headerAttributes: { "class": "sub-bgcolor" }, title: "Outstanding Amount",width: "120px", editor: info.Outstanding, attributes:{style: 'text-align: right'}},
                     { field: "SecuredUnsecured", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", format: "{0:c}", width: "120px" },
                     { headerAttributes: { "class": "sub-bgcolor" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid1(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
                     ],

@@ -244,7 +244,16 @@ function refreshdata(){
       })
 
       _.each(data[0].DetailOfPromoters.Biodata, function(row){
-        row.AnniversaryDate = new Date(row.AnniversaryDate).toISOString()
+        var temp = moment(row.AnniversaryDate).format("DD-MMM-YYYY")
+
+        if( temp === "01-Jan-1970"){
+          console.log("sarif")
+          row.AnniversaryDate = ""
+        } else {
+          row.AnniversaryDate = new Date(row.AnniversaryDate).toISOString()
+        }
+
+        row.DateOfBirth = moment(row.DateOfBirth).format("DD-MMM-YYYY")
       })
 
       detail.biodata(data[0].DetailOfPromoters.Biodata)

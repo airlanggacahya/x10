@@ -116,7 +116,7 @@
             <label for="inputEmail3" class="col-sm-4 form-control-label">Date of Incorporation :</label>
             <div class="col-sm-8">
               <!-- <input type="text" id="di" class="form-control input-sm" validationMessage="Date Incorporation required" required data-bind="kendoDatePicker:{value:customerprofile().ApplicantDetail().DateOfIncorporation,format: 'dd-MM-yyyy'}"/> -->
-                <input type="text" id="doi" class="form-control input-sm" validationMessage="Any Other required" required data-bind="kendoDatePicker: {value:ApplicantDetail.DateIncorporation, format:  'dd-MM-yyyy'}"/>
+                <input type="text" id="doi" class="form-control input-sm" validationMessage="Any Other required" required data-bind="value:ApplicantDetail.DateIncorporation"/>
             </div>
           </div>
 
@@ -231,7 +231,7 @@
           <div class="form-group col-sm-12">
             <label for="inputEmail3" class="col-sm-4 form-control-label">Group Turnover :</label>
             <div class="col-sm-8">
-              <input type="text" id="GroupTurnOver" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().GroupTurnOver"  placeholder="Group Turnover not available"/>
+              <input type="number" id="GroupTurnOver" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().GroupTurnOver"  placeholder="Group Turnover not available"/>
             </div>
           </div>
 
@@ -300,63 +300,63 @@
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Address :</label>
               <div class="col-sm-8">
-                <textarea class="form-control input-sm" id="AddressRegistered" data-bind="value:AddressRegistered"></textarea>
+                <textarea class="Address form-control input-sm" id="AddressRegistered" data-bind="value:AddressRegistered"></textarea>
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Landmark :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control input-sm" data-bind="value:LandmarkRegistered" />
+                <input type="text" class="Landmark form-control input-sm" data-bind="value:LandmarkRegistered" disabled />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">City :</label>
               <div class="col-sm-8">
-                <input type="text" id="CityRegistered" class="form-control input-sm" data-bind="value:CityRegistered" />
+                <input type="text" id="CityRegistered" class="City form-control input-sm" data-bind="value:CityRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Pin Code :</label>
               <div class="col-sm-8">
-                <input type="number" class="form-control input-sm" onkeydown="return FilterInputNumber(event)" data-bind="value:PincodeRegistered" />
+                <input type="number" class="Pincode form-control input-sm" onkeydown="return FilterInputNumber(event)" data-bind="value:PincodeRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">State :</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control input-sm" onkeydown="return FilterInputAlphabet(event)" data-bind="value:StateRegistered" />
+                <input type="text" class="State form-control input-sm" onkeydown="return FilterInputAlphabet(event)" data-bind="value:StateRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Tel1 :</label>
               <div class="col-sm-8">
-                <input type="text" id="PhoneRegistered" class="form-control input-sm" data-bind="value:PhoneRegistered" />
+                <input type="text" id="PhoneRegistered" class="Phone form-control input-sm" data-bind="value:PhoneRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Mobile No. :</label>
               <div class="col-sm-8">
-                <input type="text" id="MobileRegistered" class="form-control input-sm" data-bind="value:MobileRegistered" />
+                <input type="text" id="MobileRegistered" class="Mobile form-control input-sm" data-bind="value:MobileRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Contact Person :</label>
               <div class="col-sm-8">
-                <input type="text" id="ContactPersonRegistered" class="form-control input-sm" data-bind="value:ContactPersonRegistered" />
+                <input type="text" id="ContactPersonRegistered" class="ContactPerson form-control input-sm" data-bind="value:ContactPersonRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">Email :</label>
               <div class="col-sm-8">
-                <input type="text" id="EmailRegistered" class="form-control input-sm" data-bind="value:EmailRegistered" />
+                <input type="text" id="EmailRegistered" class="Email form-control input-sm" data-bind="value:EmailRegistered" />
               </div>
             </div>
 
@@ -364,14 +364,14 @@
               <label for="inputEmail3" class="col-sm-4 form-control-label">Ownership :</label>
               <div class="col-sm-8">
                 <!-- <select name="page" id="c" data-bind="kendoDropDownList: {data:ApplicantDetail.Office, value:OfficeValue , optionLabel: 'Select One'}" ></select> -->
-                <input type="text" class="form-control input-sm" data-bind="value:OfficeRegistered" />
+                <input type="text" class="Ownership form-control input-sm" data-bind="value:OfficeRegistered" />
               </div>
             </div>
 
             <div class="form-group col-sm-12">
               <label for="inputEmail3" class="col-sm-4 form-control-label">No. of years at above address :</label>
               <div class="col-sm-8">
-                <input type="text" id="NoOfYearsAtAboveAddressRegistered" class="form-control input-sm" data-bind="value:NoOfYearsAtAboveAddressRegistered" />
+                <input type="text" id="NoOfYearsAtAboveAddressRegistered" class="NoOfYears form-control input-sm" data-bind="value:NoOfYearsAtAboveAddressRegistered" />
               </div>
             </div>
 

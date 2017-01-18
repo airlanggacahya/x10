@@ -311,7 +311,23 @@ info.LoanAmount = function(container, options){
         });
 }
 
+info.Tenure = function(container, options){
+    $('<input data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoNumericTextBox({
+            spinners : false
+        });
+}
+
 info.Outstanding = function(container, options){
+    $('<input data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoNumericTextBox({
+            spinners : false
+        });
+}
+
+info.MonthlyInstallment = function(container, options){
     $('<input data-bind="value:' + options.field + '"/>')
         .appendTo(container)
         .kendoNumericTextBox({

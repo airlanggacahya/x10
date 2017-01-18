@@ -580,9 +580,9 @@ function save1(){
       SrNo : data.SrNo,
       BanksFls: data.BanksFls,
       LoanAmount: parseFloat(data.LoanAmount),
-      Tenure: data.Tenure,
-      MonthlyInstallment: data.MonthlyInstallment,
-      OutstandingAmount: (data.OutstandingAmount).toString(),
+      Tenure: parseFloat(data.Tenure),
+      MonthlyInstallment: parseFloat(data.MonthlyInstallment),
+      OutstandingAmount: parseFloat(data.OutstandingAmount),
       SecuredUnsecured: data.SecuredUnsecured,
     });
   });
@@ -656,9 +656,9 @@ function save(){
       SrNo : data.SrNo,
       BanksFls: data.BanksFls,
       LoanAmount: parseFloat(data.LoanAmount),
-      Tenure: data.Tenure,
-      MonthlyInstallment: data.MonthlyInstallment,
-      OutstandingAmount: (data.OutstandingAmount).toString(),
+      Tenure: parseFloat(data.Tenure),
+      MonthlyInstallment: parseFloat(data.MonthlyInstallment),
+      OutstandingAmount: parseFloat(data.OutstandingAmount),
       SecuredUnsecured: data.SecuredUnsecured,
     });
   });

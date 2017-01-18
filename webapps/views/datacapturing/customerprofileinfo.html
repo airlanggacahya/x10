@@ -162,6 +162,22 @@ function refreshdata(){
       // $(".grid2").getKendoGrid().dataSource.data(data[0].FinancialReport.DetailsPertainingBanker)
       // $(".grid2").getKendoGrid().refresh()
       // $(".grid3").getKendoGrid().dataSource.data(data[0].FinancialReport.ExistingRelationship)
+      var ds1 = new kendo.data.DataSource({
+        data:data[0].FinancialReport.PreviousLoansDetail,
+        pageSize:10
+      });
+      $(".grid1").getKendoGrid().setDataSource(ds1)
+      var ds = new kendo.data.DataSource({
+        data:data[0].FinancialReport.PreviousLoansDetail,
+        pageSize:10
+      });
+
+      var h1 = $('.grid1 .k-grid-content').height();
+
+      if( h1 > 100){
+          $('.grid1 .k-grid-content').height(100);
+      }
+
       var ds2 = new kendo.data.DataSource({
         data:data[0].FinancialReport.DetailsPertainingBanker,
         pageSize:10
@@ -171,6 +187,13 @@ function refreshdata(){
         data:data[0].FinancialReport.ExistingRelationship,
         pageSize:10
       });
+
+      var h2 = $('.grid2 .k-grid-content').height();
+
+      if( h2 > 100){
+          $('.grid2 .k-grid-content').height(100);
+      }
+
       $(".grid3").getKendoGrid().setDataSource(ds)
       //$(".grid3").getKendoGrid().refresh()
       if (ApplicantDetail.Detail().length > 0 ){
@@ -566,6 +589,33 @@ function confirmorverify(status){
 }
 
 function save1(){
+  var grid2 = $(".grid2").data("kendoGrid").dataSource.data();
+  customerprofile().FinancialReport().DetailsPertainingBanker = []
+  $.each(grid2, function(i, data){
+    customerprofile().FinancialReport().DetailsPertainingBanker.push({
+      AcNo : data.AcNo,
+      AddressContactNo: data.AddressContactNo,
+      NameOfBanks: data.NameOfBanks,
+      SrNo: data.SrNo,
+      TypeOfAc : data.TypeOfAc,
+      YearOpening: data.YearOpening
+    })
+  });
+  
+  var grid1 = $(".grid1").data("kendoGrid").dataSource.data(); 
+  customerprofile().FinancialReport().PreviousLoansDetail = []
+  $.each(grid1, function(i, data){
+    customerprofile().FinancialReport().PreviousLoansDetail.push({
+      SrNo : data.SrNo,
+      BanksFls: data.BanksFls,
+      LoanAmount: parseFloat(data.LoanAmount),
+      Tenure: data.Tenure,
+      MonthlyInstallment: data.MonthlyInstallment,
+      OutstandingAmount: data.OutstandingAmount,
+      SecuredUnsecured: data.SecuredUnsecured,
+    });
+  });
+
   param = {};
   param.Id = customerprofile().id;
   param.Status = customerprofile().Status();
@@ -612,6 +662,33 @@ function save1(){
 }
 
 function save(){
+  var grid2 = $(".grid2").data("kendoGrid").dataSource.data();
+  customerprofile().FinancialReport().DetailsPertainingBanker = []
+  $.each(grid2, function(i, data){
+    customerprofile().FinancialReport().DetailsPertainingBanker.push({
+      AcNo : data.AcNo,
+      AddressContactNo: data.AddressContactNo,
+      NameOfBanks: data.NameOfBanks,
+      SrNo: data.SrNo,
+      TypeOfAc : data.TypeOfAc,
+      YearOpening: data.YearOpening
+    })
+  });
+  
+  var grid1 = $(".grid1").data("kendoGrid").dataSource.data(); 
+  customerprofile().FinancialReport().PreviousLoansDetail = []
+  $.each(grid1, function(i, data){
+    customerprofile().FinancialReport().PreviousLoansDetail.push({
+      SrNo : data.SrNo,
+      BanksFls: data.BanksFls,
+      LoanAmount: parseFloat(data.LoanAmount),
+      Tenure: data.Tenure,
+      MonthlyInstallment: data.MonthlyInstallment,
+      OutstandingAmount: data.OutstandingAmount,
+      SecuredUnsecured: data.SecuredUnsecured,
+    });
+  });
+
   param = {};
   param.Id = customerprofile().id;
   param.Status = customerprofile().Status();
@@ -856,13 +933,13 @@ input[disabled]{
          $(e).trigger("click");
         });
 
-           $("#tab0 .k-grid-add").each(function(i,e){
-         $(e).css("display","none");
-        });
+        //    $("#tab0 .k-grid-add").each(function(i,e){
+        //  $(e).css("display","none");
+        // });
 
-             $("#tab0 .btn-success").each(function(i,e){
-         $(e).css("display","none");
-        });
+        //      $("#tab0 .btn-success").each(function(i,e){
+        //  $(e).css("display","none");
+        // });
         setTimeout(function(){
             $("#tab0 .collapsible-body").each(function(i,e){
               $(e).css("display","block");

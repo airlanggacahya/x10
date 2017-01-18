@@ -194,6 +194,14 @@ function refreshdata(){
           $('.grid1 .k-grid-content').height(100);
       }
 
+      //console.log("***************************",(data[0].FinancialReport.DetailsPertainingBanker).length)
+
+      if((data[0].FinancialReport.DetailsPertainingBanker).length > 0){
+        $.each(data[0].FinancialReport.DetailsPertainingBanker, function(i, item){
+          data[0].FinancialReport.DetailsPertainingBanker[i].TypeOfAc = (item.TypeOfAc).toString();
+        })
+      }
+
       var ds2 = new kendo.data.DataSource({
         data:data[0].FinancialReport.DetailsPertainingBanker,
         pageSize:10

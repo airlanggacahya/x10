@@ -181,9 +181,9 @@ type PreviousLoansDetail struct {
 	SrNo               string  `bson:"SrNo"`
 	BanksFls           string  `bson:"BanksFls"`
 	LoanAmount         float64 `bson:"LoanAmount"`
-	Tenure             string  `bson:"Tenure"`
-	MonthlyInstallment string  `bson:"MonthlyInstallment"`
-	OutstandingAmount  string  `bson:"OutstandingAmount"`
+	Tenure             float64 `bson:"Tenure"`
+	MonthlyInstallment float64 `bson:"MonthlyInstallment"`
+	OutstandingAmount  float64 `bson:"OutstandingAmount"`
 	SecuredUnsecured   string  `bson:"SecuredUnsecured"`
 }
 

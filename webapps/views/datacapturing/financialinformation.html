@@ -62,8 +62,8 @@
                       SrNo:{editable: true, nullable: true},
                       BanksFls:{editable: true, nullable: true},
                       LoanAmount:{type: "number", editable: true, nullable: true},
-                      Tenure:{editable: true, nullable: true},
-                      MonthlyInstallment:{editable: true, nullable: true},
+                      Tenure:{type: "number", editable: true, nullable: true},
+                      MonthlyInstallment:{type: "number", editable: true, nullable: true},
                       OutstandingAmount:{type: "number", editable: true, nullable: true},
                       SecuredUnsecured:{editable: true, nullable: true},
                     }
@@ -72,17 +72,17 @@
                 toolbar: ["create"],
                 scrolable : true,
                 columns: [
-                    { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", format: "{0:c}", width: "120px" },
+                    { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", width: "120px" },
                     { field: "BanksFls", headerAttributes: { "class": "sub-bgcolor" }, title: "Banks/Fls", width: "120px" },
-                    { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{style: 'text-align: right'}, title: "Loan Amount", width: "120px",editor: info.LoanAmount, },
-                    { field: "Tenure", headerAttributes: { "class": "sub-bgcolor" }, title: "Tenure", format: "{0:c}", width: "120px" },
-                    { field: "MonthlyInstallment", headerAttributes: { "class": "sub-bgcolor" }, title: "Monthly Installment", format: "{0:c}", width: "120px" },
-                    { field: "OutstandingAmount", headerAttributes: { "class": "sub-bgcolor" }, title: "Outstanding Amount",width: "120px", editor: info.Outstanding, attributes:{style: 'text-align: right'}},
-                    { field: "SecuredUnsecured", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", format: "{0:c}", width: "120px" },
+                    { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Loan Amount", width: "120px",editor: info.LoanAmount, },
+                    { field: "Tenure", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Tenure", width: "120px", editor: info.Tenure },
+                    { field: "MonthlyInstallment", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Monthly Installment", width: "120px", editor: info.MonthlyInstallment },
+                    { field: "OutstandingAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Outstanding Amount", width: "120px", editor: info.Outstanding },
+                    { field: "SecuredUnsecured", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", width: "120px" },
                     { headerAttributes: { "class": "sub-bgcolor" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid1(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
-                    ],
+                    ],                
                 editable: {
-                    createAt: "bottom"
+                  createAt: "bottom"
                 },
                 edit: function (e) {
                   if(customerprofile().Status() == 1 || customerprofile().Status() == 2){

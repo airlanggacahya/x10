@@ -145,7 +145,7 @@
 		<div class="col-md-4">
 		    <div class="form-group form-group-table-name">
 		        <div class="input-group input-group-sm ez width-full">
-			        <input id="inputRLARange" type="number" data-bind="value: filters.inputRLARangeVal"/>
+			        <input id="inputRLARange" type="number" data-bind="kendoNumericTextBox: { value: filters.inputRLARangeVal }"/>
 		        </div>
 		    </div>
 		</div>
@@ -183,11 +183,15 @@
 		<div class="col-md-4">
 		    <div class="form-group form-group-table-name">
 		        <div class="input-group input-group-sm ez width-full">
-			        <input id="inputIRRange" type="number" data-bind="value: filters.inputIRRangeVal" />
+			        <input id="inputIRRange" type="number" data-bind="kendoNumericTextBox: { value: filters.inputIRRangeVal }" />
 		        </div>
 		    </div>
 		</div>
 	</div>
+</div>
+
+<div class="col-md-12" style="text-align: center">
+	<button  type="button" btn-sm class="btn btn-sm btn-default " data-bind="click: resetFilter">Reset</button>
 </div>
 
 <script>document.write('<script src="/static/core/newdefaultfilter.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>

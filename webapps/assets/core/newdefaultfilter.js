@@ -1,164 +1,117 @@
 var filters = {}
 filters.CustomerVal = ko.observableArray()
 filters.CustomerVal.subscribe(function(values) {
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("Cust")
 	databrowser.GetDataGrid();
 })
 
 filters.DealNoVal = ko.observableArray()
 filters.DealNoVal.subscribe(function(values) {
-	updateCustDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("Dealno")
 	databrowser.GetDataGrid();
 })
 
 filters.CityVal = ko.observableArray()
 filters.CityVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("City")
 	databrowser.GetDataGrid();
 })
 
 filters.ProductVal = ko.observableArray()
 filters.ProductVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("Product")
 	databrowser.GetDataGrid();
 })
 
 filters.BRHeadVal = ko.observableArray()
 filters.BRHeadVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("BRHead")
 	databrowser.GetDataGrid();
 })
 
 filters.SchemeVal = ko.observableArray()
 filters.SchemeVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("Scheme")
 	databrowser.GetDataGrid();
 })
 
 filters.RMVal = ko.observableArray()
 filters.RMVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("RM")
 	databrowser.GetDataGrid();
 })
 
 filters.ddRLARangesVal = ko.observable("")
 filters.ddRLARangesVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout()
 	databrowser.GetDataGrid();
 })
 
 filters.inputRLARangeVal = ko.observable()
 filters.inputRLARangeVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout()
 	databrowser.GetDataGrid();
 })
 
 filters.CAVal = ko.observableArray()
 filters.CAVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-
+	updateDSWithout("CA")
 	databrowser.GetDataGrid();
 })
 
 filters.ddIRRangesVal = ko.observable("")
 filters.ddIRRangesVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout()
 	databrowser.GetDataGrid();
 })
 
 filters.inputIRRangeVal = ko.observable()
 filters.inputIRRangeVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout()
 	databrowser.GetDataGrid();
 })
+
+var resetFilter = function(){
+	_.each($(".k-button > .k-select > .k-icon.k-i-close"), function(e) {
+		$(e).trigger("click")
+	})
+
+	filters.ddRLARangesVal("")
+	$("#ddRLARanges").data("kendoDropDownList").value("");
+
+	filters.inputRLARangeVal("")
+
+	filters.ddIRRangesVal("")
+	$("#ddIR").data("kendoDropDownList").value("");
+
+	filters.inputIRRangeVal("")
+}
+
+var updateDSWithout = function(DSName = ""){
+	if(DSName != "Cust")
+		updateCustDS()
+	
+	if(DSName != "Dealno")
+		updateDealNoDS()
+	
+	if(DSName != "City")
+		updateCityDS()
+	
+	if(DSName != "Product")
+		updateProductDS()
+	
+	if(DSName != "BRHead")
+		updateBRHeadDS()
+	
+	if(DSName != "Scheme")
+		updateSchemeDS()
+	
+	if(DSName != "RM")
+		updateRMDS()
+	
+	if(DSName != "CA")
+		updateCADS
+}
 
 //--------------------------------------------------------------------
 

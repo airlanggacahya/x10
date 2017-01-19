@@ -5,6 +5,7 @@ import (
 	. "eaciit/x10/webapps/models"
 	"errors"
 	"fmt"
+	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -651,6 +652,22 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		} else if opr == "eq" {
 			filtersCA = append(filtersCA, dbox.Eq("applicantdetail.AmountLoan", valrat))
 		}
+	}
+
+	if len(payload.Get("customer").([]interface{})) > 0 {
+		arrcust := payload.Get("customer").([]interface{})
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", arrcust...))
+
+		arinter := []interface{}{}
+		for _, val := range arrcust {
+			arinter = append(arinter, interface{}(cast.ToString(val)))
+		}
+		filtersAD = append(filtersAD, dbox.In("customerid", arinter...))
+	}
+
+	if len(payload.Get("dealno").([]interface{})) > 0 {
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", payload.Get("dealno").([]interface{})...))
+		filtersAD = append(filtersAD, dbox.In("dealno", payload.Get("dealno").([]interface{})...))
 	}
 
 	filterAD = dbox.And(filtersAD...)

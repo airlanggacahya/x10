@@ -1,164 +1,117 @@
 var filters = {}
 filters.CustomerVal = ko.observableArray()
 filters.CustomerVal.subscribe(function(values) {
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("Cust")
 	databrowser.GetDataGrid();
 })
 
 filters.DealNoVal = ko.observableArray()
 filters.DealNoVal.subscribe(function(values) {
-	updateCustDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("Dealno")
 	databrowser.GetDataGrid();
 })
 
 filters.CityVal = ko.observableArray()
 filters.CityVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("City")
 	databrowser.GetDataGrid();
 })
 
 filters.ProductVal = ko.observableArray()
 filters.ProductVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("Product")
 	databrowser.GetDataGrid();
 })
 
 filters.BRHeadVal = ko.observableArray()
 filters.BRHeadVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("BRHead")
 	databrowser.GetDataGrid();
 })
 
 filters.SchemeVal = ko.observableArray()
 filters.SchemeVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("Scheme")
 	databrowser.GetDataGrid();
 })
 
 filters.RMVal = ko.observableArray()
 filters.RMVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout("RM")
 	databrowser.GetDataGrid();
 })
 
-filters.ddRLARangesVal = ko.observable("gt")
+filters.ddRLARangesVal = ko.observable("")
 filters.ddRLARangesVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout()
 	databrowser.GetDataGrid();
 })
 
 filters.inputRLARangeVal = ko.observable()
 filters.inputRLARangeVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout()
 	databrowser.GetDataGrid();
 })
 
 filters.CAVal = ko.observableArray()
 filters.CAVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-
+	updateDSWithout("CA")
 	databrowser.GetDataGrid();
 })
 
-filters.ddIRRangesVal = ko.observable("gt")
+filters.ddIRRangesVal = ko.observable("")
 filters.ddIRRangesVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout()
 	databrowser.GetDataGrid();
 })
 
-filters.inputIRRangeVal = ko.observable(0)
+filters.inputIRRangeVal = ko.observable()
 filters.inputIRRangeVal.subscribe(function(values) {
-	updateCustDS()
-	updateDealNoDS()
-	updateCityDS()
-	updateProductDS()
-	updateBRHeadDS()
-	updateSchemeDS()
-	updateRMDS()
-	updateCADS()
-
+	updateDSWithout()
 	databrowser.GetDataGrid();
 })
+
+var resetFilter = function(){
+	_.each($(".k-button > .k-select > .k-icon.k-i-close"), function(e) {
+		$(e).trigger("click")
+	})
+
+	filters.ddRLARangesVal("")
+	$("#ddRLARanges").data("kendoDropDownList").value("");
+
+	filters.inputRLARangeVal("")
+
+	filters.ddIRRangesVal("")
+	$("#ddIR").data("kendoDropDownList").value("");
+
+	filters.inputIRRangeVal("")
+}
+
+var updateDSWithout = function(DSName = ""){
+	if(DSName != "Cust")
+		updateCustDS()
+	
+	if(DSName != "Dealno")
+		updateDealNoDS()
+	
+	if(DSName != "City")
+		updateCityDS()
+	
+	if(DSName != "Product")
+		updateProductDS()
+	
+	if(DSName != "BRHead")
+		updateBRHeadDS()
+	
+	if(DSName != "Scheme")
+		updateSchemeDS()
+	
+	if(DSName != "RM")
+		updateRMDS()
+	
+	if(DSName != "CA")
+		updateCADS
+}
 
 //--------------------------------------------------------------------
 
@@ -266,16 +219,18 @@ var critRM = function(fieldName){
 var critRLA = function(fieldName){
 	var criteria = { logic: "or", filters: [] }
 	
-	ajaxPost("/databrowser/getcustomerprofiledata", { 
-		filter: { 
-			logic: "or", 
-			filters: [{ field: "applicantdetail.AmountLoan", operator: filters.ddRLARangesVal(), value: filters.inputRLARangeVal() }] 
-		} 
-	}, function(res){
-		_.each(res.data, function(data){
-			criteria.filters.push({ field: fieldName, operator: "eq", value: data.applicantdetail.DealNo })
+	if(filters.ddRLARangesVal() != "")
+		ajaxPost("/databrowser/getcustomerprofiledata", { 
+			filter: { 
+				logic: "or", 
+				filters: [{ field: "applicantdetail.AmountLoan", operator: filters.ddRLARangesVal(), value: filters.inputRLARangeVal() }] 
+			} 
+		}, function(res){
+			_.each(res.data, function(data){
+				criteria.filters.push({ field: fieldName, operator: "eq", value: data.applicantdetail.DealNo })
+			})
 		})
-	})
+
 	return criteria
 }
 
@@ -299,16 +254,17 @@ var critCA = function(fieldName){
 var critIR = function(fieldName){
 	var criteria = { logic: "or", filters: [] }
 	
-	ajaxPost("/databrowser/getcreditscorecarddata", { 
-		filter: { 
-			logic: "or", 
-			filters: [{ field: "FinalScoreDob", operator: filters.ddIRRangesVal(), value: filters.inputIRRangeVal() }] 
-		} 
-	}, function(res){
-		_.each(res.data, function(data){
-			criteria.filters.push({ field: fieldName, operator: "eq", value: data.DealNo })
+	if(filters.ddIRRangesVal() != "")
+		ajaxPost("/databrowser/getcreditscorecarddata", { 
+			filter: { 
+				logic: "or", 
+				filters: [{ field: "FinalScoreDob", operator: filters.ddIRRangesVal(), value: filters.inputIRRangeVal() }] 
+			} 
+		}, function(res){
+			_.each(res.data, function(data){
+				criteria.filters.push({ field: fieldName, operator: "eq", value: data.DealNo })
+			})
 		})
-	})
 	
 	return criteria
 }
@@ -583,6 +539,7 @@ var multiRMDS = getAccountDetailDS("accountsetupdetails.rmname", function(d){
 })
 
 var dddata = [
+	{ text: "Choose Ranges", value: "" },
     { text: "Greater Than", value: "gt" },
     { text: "Greater Than or Equal", value: "gte" },
     { text: "Equal", value: "eq" },

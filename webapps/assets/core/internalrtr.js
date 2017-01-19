@@ -72,6 +72,8 @@ intrtr.optionDataDPD = ko.observableArray([
 intrtr.showDetails = ko.observable(false);
 
 intrtr.dataTemp = ko.observableArray([]);
+intrtr.dataInternalSnapshot = ko.observableArray([])
+intrtr.dataInternalDealist = ko.observableArray([])
 
 intrtr.getData = function(){
 	intrtr.optionDataAccountDetail([])
@@ -132,7 +134,23 @@ intrtr.getData = function(){
 		}
 	});
 
+	intrtr.getDataIntRTR(dealNo, customerId);
 
+}
+
+intrtr.getDataIntRTR = function(dealNo, customerId){
+	var id = customerId +"|"+dealNo;
+	var param = {
+		Id : id
+	}
+
+	ajaxPost("/internalrtr/getdatainternalrtr", param, function(res){
+		if (res.Data != null){
+			intrtr.dataTemp(res.Data[0])
+			intrtr.dataInternalSnapshot(res.Data[0].Snapshot)
+			intrtr.dataInternalDealist(res.Data[0].Dealist)
+		}
+	})
 }
 
 intrtr.getDetails = function(){
@@ -148,10 +166,12 @@ intrtr.getHideDetails = function(){
 
 intrtr.loadGrid = function(){
 	var data =  ko.mapping.toJS(intrtr.form);
+	var data1 =  ko.mapping.toJS(intrtr.dataInternalSnapshot);
+	var data2 =  ko.mapping.toJS(intrtr.dataInternalDealist);
 	$("#topgrid").html("");
 	$("#topgrid").kendoGrid({
 		dataSource:  {
-			data : data.DataTop
+			data : data1
 		},
 		scrollable:true,
 		columns:[
@@ -159,43 +179,43 @@ intrtr.loadGrid = function(){
 				title: "Internal RTR Snapshot",
 				columns:[
 					{
-                		field:"ActiveLoans",
+                		field:"NoActiveLoan",
                 		title: "No. of Active Loans",
                 		width: 100,
                 		attributes: { style: 'background: rgb(238, 238, 238);' },
                 	},
                 	{
-			        	field:"Accrued",
-			        	title: "Amt Ounstanding (Accrued)",
+			        	field:"AmountOutstandingAccured",
+			        	title: "Amt Ounstanding (Accured)",
 			        	width:  100,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        },
 			        {
-			        	field:"Deliquent",
+			        	field:"AmountOutstandingDelinquent",
 			        	title: "Amt Ounstanding (Deliquent)",
 			        	width: 100,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        },
 			        {
-			        	field:"Outstand",
+			        	field:"TotalAmount",
 			        	title: "Total Amt Outstanding (Accrued and Deliquent)",
 			        	width: 150,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        },
 			        {
-			        	field:"Delay",
+			        	field:"NPRDelays",
 			        	title: "No.Of Principal Repayment Delays",
 			        	width: 125,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        },
 			        {
-			        	field:"Early",
+			        	field:"NPREarlyClosures",
 			        	title: "No. Of Principal Repayment Early Closures",
 			        	width: 145,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        },
 			        {
-			        	field:"DueDate",
+			        	field:"NoOfPaymentDueDate",
 			        	title: "Number of Payment on due date",
 			        	width: 125,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
@@ -212,13 +232,13 @@ intrtr.loadGrid = function(){
                 		attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
                 	},
 			        {
-			        	field:"Max",
+			        	field:"Maximum",
 			        	title: "Maximum",
 			        	width: 65,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        },
 			      	{
-			        	field:"Min",
+			        	field:"Minimum",
 			        	title: "Minimum",
 			        	width: 65,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
@@ -229,19 +249,19 @@ intrtr.loadGrid = function(){
 				title: "DPD Track",
 				columns:[
 					{
-                		field:"Loan",
+                		field:"MaxDPDDays",
                 		title: "Max. DPD in Closed Loan in Days",
                 		width: 125,
                 		attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
                 	},
 			        {
-			        	field:"Amount",
+			        	field:"MaxDPDDAmount",
 			        	title: "Max. DPD in Closed Loan in Amount",
 			        	width: 125,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        },
 			        {
-			        	field:"AverageDPD",
+			        	field:"AVGDPDDays",
 			        	title: "Avg DPD Days",
 			        	width: 70,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
@@ -253,52 +273,52 @@ intrtr.loadGrid = function(){
 
 	$("#unselect").html("");
     $("#unselect").kendoGrid({
-        dataSource : data.DataFilter,
+        dataSource : data2,
         columns:[
         		{
         	 	title:"Deal List",
                 headerAttributes: { class: "header-bgcolor" },
                 columns:[
+           //      	{
+			        // 	title: "",
+			        // 	width: 100,
+			        // 	template: function(d){
+			        // 		var a ='';
+			        // 		if(intrtr.showDetails() == false){
+			        // 			a = "<button class='btn btn-sm btn-flat btn-primary' onclick='intrtr.getDetails()'>Show Details</button>"
+			        // 		}else{
+			        // 			a = "<button class='btn btn-sm btn-flat btn-primary' onclick='intrtr.getHideDetails()'>Hide Details</button>"
+			        // 		}
+			        // 		return "<button class='btn btn-sm btn-flat btn-primary' onclick='intrtr.getDetails()'>Show Details</button>"
+			        // 	}
+			        // },
                 	{
-			        	title: "",
-			        	width: 100,
-			        	template: function(d){
-			        		var a ='';
-			        		if(intrtr.showDetails() == false){
-			        			a = "<button class='btn btn-sm btn-flat btn-primary' onclick='intrtr.getDetails()'>Show Details</button>"
-			        		}else{
-			        			a = "<button class='btn btn-sm btn-flat btn-primary' onclick='intrtr.getHideDetails()'>Hide Details</button>"
-			        		}
-			        		return a
-			        	}
-			        },
-                	{
-                		field:"dealno",
+                		field:"DealNo",
                 		title: "Deal No",
                 		attributes: { style: 'background: rgb(238, 238, 238)' },
                 	},
 			        {
-			        	field:"product",
+			        	field:"Product",
 			        	title: "Product",
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
 			        {
-			        	field:"scheme",
+			        	field:"Scheme",
 			        	title: "Scheme",
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
 			        {
-			        	field:"approval",
+			        	field:"AgreementDate",
 			        	title: "Deal Approval Date",
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
 			        {
-			        	field:"validiy",
+			        	field:"DealSanctionTillValidate",
 			        	title: "Deal Validity Date",
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
 			        {
-			        	field:"amount",
+			        	field:"TotalLoanAmount",
 			        	title: "Loan Amount",
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
@@ -309,109 +329,122 @@ intrtr.loadGrid = function(){
         ]
     });
 
-	$("#bottomgrid").html("");
-	$("#bottomgrid").kendoGrid({
-		dataSource:  {
-			data : data.DataBottom
-		},
-		columns:[
-			{
-				title: "Details",
-				columns:[
-					{
-                		field:"ActiveLoans",
-                		title: "No. of Active Loans",
-                		width: 100,
-                		attributes: { style: 'background: rgb(238, 238, 238);' },
-                	},
-                	{
-			        	field:"Accrued",
-			        	title: "Amt Ounstanding (Accrued)",
-			        	width:  100,
-			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },
-			        {
-			        	field:"Deliquent",
-			        	title: "Amt Ounstanding (Deliquent)",
-			        	width: 100,
-			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },
-			        {
-			        	field:"Outstand",
-			        	title: "Total Amt Outstanding (Accrued and Deliquent)",
-			        	width: 150,
-			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },
-			        {
-			        	field:"Delay",
-			        	title: "No.Of Principal Repayment Delays",
-			        	width: 125,
-			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },
-			        {
-			        	field:"Early",
-			        	title: "No. Of Principal Repayment Early Closures",
-			        	width: 145,
-			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },
-			        {
-			        	field:"DueDate",
-			        	title: "Number of Payment on due date",
-			        	width: 125,
-			        	attributes: { style: 'background: rgb(238, 238, 238)' },
-			        },
-				],
-			},
-			{
-				title: "Utilization",
-				columns:[
-					{
-                		field:"Average",
-                		title: "Average",
-                		width: 65,
-                		attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-                	},
-			        {
-			        	field:"Max",
-			        	title: "Maximum",
-			        	width: 65,
-			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },
-			      	{
-			        	field:"Min",
-			        	title: "Minimum",
-			        	width: 65,
-			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },
-				]
-			},
-			{
-				title: "DPD Track",
-				columns:[
-					{
-                		field:"Loan",
-                		title: "Max. DPD in Closed Loan in Days",
-                		width: 125,
-                		attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-                	},
-			        {
-			        	field:"Amount",
-			        	title: "Max. DPD in Closed Loan in Amount",
-			        	width: 125,
-			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },
-			        {
-			        	field:"AverageDPD",
-			        	title: "Avg DPD Days",
-			        	width: 70,
-			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
-			        },
-				]
-			}
-		]
-	});
+	// $("#bottomgrid").html("");
+	// $("#bottomgrid").kendoGrid({
+	// 	dataSource:  {
+	// 		data : data2
+	// 	},
+	// 	columns:[
+	// 		{
+	// 			title: "Details",
+	// 			columns:[
+	// 				{
+ //                		field:"ActiveLoans",
+ //                		title: "No. of Active Loans",
+ //                		width: 100,
+ //                		attributes: { style: 'background: rgb(238, 238, 238);' },
+ //                	},
+ //                	{
+	// 		        	field:"Accrued",
+	// 		        	title: "Amt Ounstanding (Accrued)",
+	// 		        	width:  100,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+	// 		        },
+	// 		        {
+	// 		        	field:"Deliquent",
+	// 		        	title: "Amt Ounstanding (Deliquent)",
+	// 		        	width: 100,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+	// 		        },
+	// 		        {
+	// 		        	field:"Outstand",
+	// 		        	title: "Total Amt Outstanding (Accrued and Deliquent)",
+	// 		        	width: 150,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+	// 		        },
+	// 		        {
+	// 		        	field:"Delay",
+	// 		        	title: "No.Of Principal Repayment Delays",
+	// 		        	width: 125,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+	// 		        },
+	// 		        {
+	// 		        	field:"Early",
+	// 		        	title: "No. Of Principal Repayment Early Closures",
+	// 		        	width: 145,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+	// 		        },
+	// 		        {
+	// 		        	field:"DueDate",
+	// 		        	title: "Number of Payment on due date",
+	// 		        	width: 125,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238)' },
+	// 		        },
+	// 			],
+	// 		},
+	// 		{
+	// 			title: "Utilization",
+	// 			columns:[
+	// 				{
+ //                		field:"Average",
+ //                		title: "Average",
+ //                		width: 65,
+ //                		attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+ //                	},
+	// 		        {
+	// 		        	field:"Max",
+	// 		        	title: "Maximum",
+	// 		        	width: 65,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+	// 		        },
+	// 		      	{
+	// 		        	field:"Min",
+	// 		        	title: "Minimum",
+	// 		        	width: 65,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+	// 		        },
+	// 			]
+	// 		},
+	// 		{
+	// 			title: "DPD Track",
+	// 			columns:[
+	// 				{
+ //                		field:"Loan",
+ //                		title: "Max. DPD in Closed Loan in Days",
+ //                		width: 125,
+ //                		attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+ //                	},
+	// 		        {
+	// 		        	field:"Amount",
+	// 		        	title: "Max. DPD in Closed Loan in Amount",
+	// 		        	width: 125,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+	// 		        },
+	// 		        {
+	// 		        	field:"AverageDPD",
+	// 		        	title: "Avg DPD Days",
+	// 		        	width: 70,
+	// 		        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+	// 		        },
+	// 			]
+	// 		}
+	// 	]
+	// });
 }
 
+intrtr.getConfirmedFreeze = function(status, isfreeze){
+	intrtr.dataTemp().Status = status;
+	intrtr.dataTemp().Isfreeze = isfreeze;
+	ajaxPost("/internalrtr/internalrtrconfirmed", intrtr.dataTemp(), function(res){
+		if(res.IsError != true){
+			if(isfreeze == false){
+				swal("Data Successfully Confirm", "", "success");
+			}
+		}else{
+			swal(res.Message, "","error");
+		}
+	});
+}
 
 
 $(function(){

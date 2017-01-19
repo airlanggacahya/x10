@@ -63,6 +63,56 @@ func (c *InternalRtrController) FetchAccountDetail(customerID string, DealNo str
 	return &results[0], nil
 }
 
+func (d *InternalRtrController) GetDataInternalRtR(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	payload := struct {
+		Id string
+	}{}
+
+	err := k.GetPayload(&payload)
+	if err != nil {
+		d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	query := tk.M{"where": dbox.Eq("_id", payload.Id)}
+	csr, err := d.Ctx.Find(new(InternalRtr), query)
+	defer csr.Close()
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	results := make([]InternalRtr, 0)
+	err = csr.Fetch(&results, 0, false)
+
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	return d.SetResultInfo(false, "success", results)
+
+}
+
+func (d *InternalRtrController) InternalRtrConfirmed(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	// res := new(tk.Result)
+
+	payload := new(InternalRtr)
+	err := k.GetPayload(payload)
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	err = d.Ctx.Save(payload)
+
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	return d.SetResultInfo(false, "success", nil)
+}
+
 // func (d *InternalRtrController) GetAccountDetails(k *knot.WebContext) interface{} {
 // 	k.Config.OutputType = knot.OutputJson
 // 	res := new(tk.Result)

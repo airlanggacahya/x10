@@ -169,12 +169,20 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
 	}
+
+	err = GenerateInternalRTR(contentbody, cid, dealno)
+	if err != nil {
+		LogData.Set("error", err.Error()+" | InternalRTR")
+		CreateLog(LogData)
+	}
+
 	infos = tk.M{}.Set("CreateDate", time.Now().UTC()).Set("IsSaved", IsSavedCP).Set("IsNew", IsNew).Set("IsConfirmed", IsConfirmed)
 	LogInfos.Set("adinfos", infos)
 
 	LogData.Set("infos", LogInfos)
 	CreateLog(LogData)
 
+	contentbody.Set("_id", bson.NewObjectId())
 	csc := map[string]interface{}{"data": contentbody}
 	err = qinsert.Exec(csc)
 	if err != nil {
@@ -744,10 +752,11 @@ func CheckArray(dt interface{}) []tk.M {
 	return []tk.M{}
 }
 
-func GenerateInternalRTR(body tk.M) error {
+func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 	exs := CheckArray(body.Get("existingDealDetails"))
 
 	arr := []tk.M{}
+	fin := tk.M{}
 	for _, val := range exs {
 		ar := tk.M{}
 		ar.Set("NoActiveLoan", val.GetFloat64("NoOfActiveLoans"))
@@ -759,8 +768,33 @@ func GenerateInternalRTR(body tk.M) error {
 		ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
 		ar.Set("MaxDPDDays", val.GetFloat64("MaxDPDInClosedLoanInDays"))
 		ar.Set("MaxDPDDAmount", val.GetFloat64("NoOfActiveLoans"))
-		ar.Set("AVGDPDDays", val.GetFloat64("MaxDPDInClosedLoanInDays")/val.GetFloat64("NoOfActiveLoans"))
+		ar.Set("AVGDPDDays", CheckNan(val.GetFloat64("MaxDPDInClosedLoanInDays")/val.GetFloat64("NoOfActiveLoans")))
+		ar.Set("Minimum", CheckNan(val.GetFloat64("Minimum")))
+		ar.Set("Average", CheckNan(val.GetFloat64("Average")))
+		ar.Set("Maximum", CheckNan(val.GetFloat64("Maximum")))
+
 		arr = append(arr, ar)
+	}
+
+	fin.Set("_id", cid+"|"+dealno)
+	fin.Set("snapshot", arr)
+
+	cn, err := GetConnection()
+	if err != nil {
+		return err
+	}
+
+	defer cn.Close()
+
+	qinsert := cn.NewQuery().
+		From("InternalRTR").
+		SetConfig("multiexec", true).
+		Save()
+
+	csc := map[string]interface{}{"data": fin}
+	err = qinsert.Exec(csc)
+	if err != nil {
+		return err
 	}
 
 	return nil

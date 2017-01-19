@@ -291,6 +291,9 @@ function refreshdata(){
         }
 
         row.DateOfBirth = moment(row.DateOfBirth).format("DD-MMM-YYYY")
+        if(row.DateOfBirth === "01-Jan-0001") {
+          row.DateOfBirth = ""
+        }
       })
 
       detail.biodata(data[0].DetailOfPromoters.Biodata)
@@ -619,7 +622,10 @@ function save1(){
   param.ConfirmedDate = customerprofile().ConfirmedDate;
   
   param.NonRefundableProcessingFeesDetails = ko.mapping.toJS(customerprofile().NonRefundableProcessingFeesDetails);
-  if(isNaN( param.NonRefundableProcessingFeesDetails.InstrumentDate )) {
+  
+  var dateTemp = ""+param.NonRefundableProcessingFeesDetails.InstrumentDate
+  var dateTempLength = dateTemp.split("-")
+  if(dateTempLength.length === 1) {
     param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"
   }
 
@@ -641,6 +647,12 @@ function save1(){
     
     detail.biodata()[i].AnniversaryDate = new Date(detail.biodata()[i].AnniversaryDate)
     detail.biodata()[i].AnniversaryDate = new Date(Date.UTC(detail.biodata()[i].AnniversaryDate.getFullYear(), detail.biodata()[i].AnniversaryDate.getMonth(), detail.biodata()[i].AnniversaryDate.getDate(), 0, 0, 0));
+
+    var dateTemp = detail.biodata()[i].DateOfBirth
+    var dateTempLength = dateTemp.split("-")
+    if(dateTempLength.length === 1) {
+      detail.biodata()[i].DateOfBirth = "0001-01-01T00:00:00Z"
+    }
 
     detail.biodata()[i].DateOfBirth = (new Date(moment(detail.biodata()[i].DateOfBirth))).toISOString();
   })
@@ -703,7 +715,10 @@ function save(){
   param.ConfirmedBy = customerprofile().ConfirmedBy;
   param.ConfirmedDate = customerprofile().ConfirmedDate;
   param.NonRefundableProcessingFeesDetails = ko.mapping.toJS(customerprofile().NonRefundableProcessingFeesDetails);
-  if(isNaN( param.NonRefundableProcessingFeesDetails.InstrumentDate )) {
+  
+  var dateTemp = ""+param.NonRefundableProcessingFeesDetails.InstrumentDate
+  var dateTempLength = dateTemp.split("-")
+  if(dateTempLength.length === 1) {
     param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"
   }
 
@@ -725,6 +740,12 @@ function save(){
 
     detail.biodata()[i].AnniversaryDate = new Date(detail.biodata()[i].AnniversaryDate)
     detail.biodata()[i].AnniversaryDate = new Date(Date.UTC(detail.biodata()[i].AnniversaryDate.getFullYear(), detail.biodata()[i].AnniversaryDate.getMonth(), detail.biodata()[i].AnniversaryDate.getDate(), 0, 0, 0));
+
+    var dateTemp = detail.biodata()[i].DateOfBirth
+    var dateTempLength = dateTemp.split("-")
+    if(dateTempLength.length === 1) {
+      detail.biodata()[i].DateOfBirth = "0001-01-01T00:00:00Z"
+    }
 
     detail.biodata()[i].DateOfBirth = (new Date(moment(detail.biodata()[i].DateOfBirth))).toISOString();
   })

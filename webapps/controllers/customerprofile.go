@@ -368,7 +368,12 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 
 	p := CustomerProfiles{}
 
-	k.GetPayload(&p)
+	err := k.GetPayload(&p)
+
+	c.WriteLog(err)
+	if err != nil {
+		return p
+	}
 
 	p.LastUpdate = time.Now()
 	p.UpdatedBy = Username

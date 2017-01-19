@@ -7,13 +7,11 @@ import (
 	tk "github.com/eaciit/toolkit"
 )
 
-func TransformMaster(parentField string, childField string, data interface{}) []map[string]string {
-	var ret []map[string]string
+func TransformMaster(parentField string, data interface{}, transfunc func(tk.M) tk.M) []tk.M {
+	var ret []tk.M
 	products := data.(map[string]interface{})[parentField].([]map[string]interface{})
 	for _, product := range products {
-		p := make(map[string]string)
-		p["name"] = tk.ToString(product[childField])
-		ret = append(ret, p)
+		ret = append(ret, transfunc(product))
 	}
 
 	return ret

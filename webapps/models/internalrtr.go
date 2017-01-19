@@ -3,74 +3,54 @@ package models
 import (
 	"github.com/eaciit/orm"
 	"gopkg.in/mgo.v2/bson"
-	"time"
+	// "time"
 )
 
-type InternalRtrModel struct {
-	orm.ModelBase `bson: "-", json: "-"`
-	Id            string `bson: " _id", json: "_id"`
-	CustomerId    string
-	DealNo        string
-	Product       string
-	Scheme        string
-	DataTop       []DataTopDetails
-	DataBottom    []DataBottomDetails
-	DataFilter    []DataFilterDetails
-	Status        int
-	Freeze        bool
+type InternalRtr struct {
+	orm.ModelBase `bson:"-", json:"-"`
+	Id            string                `bson:"_id", json:"_id"`
+	Snapshot      []DataSnapshotDetails `bson:"snapshot", json:"snapshot"`
+	Dealist       []DataSnapshotDealist `bson:"deallist", json:"deallist"`
+	Status        int                   `bson:"status,omitempty"`
+	Isfreeze      bool                  `bson:"isfreeze,omitempty"`
 }
 
-type DataTopDetails struct {
-	ActiveLoans float64
-	Accrued     float64
-	Deliquent   float64
-	Outstand    float64
-	Delay       float64
-	Early       float64
-	DueDate     time.Time
-	Average     float64
-	Max         float64
-	Min         float64
-	Loan        float64
-	Amount      float64
-	AverageDPD  float64
+type DataSnapshotDetails struct {
+	NoActiveLoan             float64 `bson:"NoActiveLoan", json:"NoActiveLoan"`
+	AmountOutstandingAccured float64 `bson:"AmountOutstandingAccured", json:"AmountOutstandingAccured"`
+	TotalAmount              float64 `bson:"TotalAmount", json:"TotalAmount"`
+	NPREarlyClosures         float64 `bson:"NPREarlyClosures", json:"NPREarlyClosures"`
+	Minimum                  float64 `bson:"Minimum", json:"Minimum"`
+	NPRDelays                float64 `bson:"NPRDelays", json:"NPRDelays"`
+	NoOfPaymentDueDate       float64 `bson:"NoOfPaymentDueDate", json:"NoOfPaymentDueDate"`
+	MaxDPDDays               float64 `bson:"MaxDPDDays", json:"MaxDPDDays"`
+	MaxDPDDAmount            float64 `bson:"MaxDPDDAmount", json:"MaxDPDDAmount"`
+	AVGDPDDays               float64 `bson:"AVGDPDDays", json:"AVGDPDDays"`
+	Average                  float64 `bson:"Average", json:"Average"`
+	Maximum                  float64 `bson:"Maximum", json:"Maximum"`
 }
 
-type DataBottomDetails struct {
-	ActiveLoans float64
-	Accrued     float64
-	Deliquent   float64
-	Outstand    float64
-	Delay       float64
-	Early       float64
-	DueDate     time.Time
-	Average     float64
-	Max         float64
-	Min         float64
-	Loan        float64
-	Amount      float64
-	AverageDPD  float64
+type DataSnapshotDealist struct {
+	AgreementDate            string  `bson:"AgreementDate", json:"AgreementDate"`
+	DealNo                   string  `bson:"DealNo", json:"DealNo"`
+	DealSanctionTillValidate string  `bson:"DealSanctionTillValidate", json:"DealSanctionTillValidate"`
+	Product                  string  `bson:"Product", json:"Product"`
+	ProductId                string  `bson:"ProductId", json:"ProductId"`
+	Scheme                   string  `bson:"Scheme", json:"Scheme"`
+	SchemeId                 string  `bson:"SchemeId", json:"SchemeId"`
+	TotalLoanAmount          float64 `bson:"TotalLoanAmount", json:"TotalLoanAmount"`
 }
 
-type DataFilterDetails struct {
-	Dealno   string
-	Product  string
-	Scheme   string
-	Approval time.Time
-	Validiy  time.Time
-	Amount   string
-}
-
-func NewInternaRtrModel() *InternalRtrModel {
-	m := new(InternalRtrModel)
+func NewInternaRtr() *InternalRtr {
+	m := new(InternalRtr)
 	m.Id = bson.NewObjectId().Hex()
 	return m
 }
 
-func (c *InternalRtrModel) RecordID() interface{} {
+func (c *InternalRtr) RecordID() interface{} {
 	return c.Id
 }
 
-func (c *InternalRtrModel) TableName() string {
+func (c *InternalRtr) TableName() string {
 	return "InternalRTR"
 }

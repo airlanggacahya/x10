@@ -240,6 +240,8 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 
 		//================ EXISTING LOAN START =================
 		exist := CheckArray(body.Get("existingDealDetails"))
+		Ld := tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
+
 		current.FinancialReport.ExistingRelationship = []ExistingRelationshipGen{}
 		if len(exist) > 0 {
 			for _, val := range exist {
@@ -247,6 +249,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				for _, valx := range ld {
 					ex := ExistingRelationshipGen{}
 					ex.LoanNo = valx.GetString("loanNo")
+					ex.TypeOfLoan = Ld.GetString("loanTypeDesc")
 					ex.LoanAmount = valx.GetInt("loanAmount")
 					ex.Payment = tk.M(valx.Get("crInstrumentDtl").(map[string]interface{})).GetString("instrumentAmount")
 					current.FinancialReport.ExistingRelationship = append(current.FinancialReport.ExistingRelationship, ex)
@@ -779,7 +782,7 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 		arb.Set("Scheme", val.GetString("scheme"))
 		arb.Set("AgreementDate", val.GetString("agreementDate"))
 		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
-		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("totalLoanAmount")))
+		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))
 		arb.Set("ProductId", val.GetString("productId"))
 		arb.Set("SchemeId", val.GetString("schemeId"))
 

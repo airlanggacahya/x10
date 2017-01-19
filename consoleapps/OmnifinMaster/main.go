@@ -6,10 +6,11 @@ import (
 	. "eaciit/x10/consoleapps/OmnifinMaster/models"
 	"encoding/xml"
 	"errors"
-	tk "github.com/eaciit/toolkit"
-	"gopkg.in/mgo.v2/bson"
 	"strings"
 	"time"
+
+	tk "github.com/eaciit/toolkit"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type Url struct {
@@ -30,6 +31,11 @@ type Binding struct {
 
 type Operation struct {
 	Name string `xml:"name,attr"`
+}
+
+type UrlHandler struct {
+	url     Url
+	handler func(interface{}) error
 }
 
 //-------------------------
@@ -163,35 +169,41 @@ func makeFirstLowerCase(s string) string {
 }
 
 func main() {
-	urls := []Url{
-		Url{"MasterCountry", "http://103.251.60.132:8085/OmniFinServices/countryMasterWS?wsdl"},
-		Url{"MasterState", "http://103.251.60.132:8085/OmniFinServices/stateMasterWS?wsdl"},
-		Url{"MasterDistrict", "http://103.251.60.132:8085/OmniFinServices/districtMasterWS?wsdl"},
-		Url{"MasterTehsil", "http://103.251.60.132:8085/OmniFinServices/tehsilMasterWS?wsdl"},
-		Url{"MasterPincode", "http://103.251.60.132:8085/OmniFinServices/pincodeMasterWS?wsdl"},
-		Url{"MasterBank", "http://103.251.60.132:8085/OmniFinServices/bankMasterWS?wsdl"},
-		Url{"MasterBankBranch", "http://103.251.60.132:8085/OmniFinServices/bankBranchMasterWS?wsdl"},
-		Url{"MasterProduct", "http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl"},
-		Url{"MasterScheme", "http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl"},
-		Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
-		Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
-		Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},
-		Url{"MasterCharges", "http://103.251.60.132:8085/OmniFinServices/chargesMasterWS?wsdl"},
-		Url{"MasterBranch", "http://103.251.60.132:8085/OmniFinServices/branchMasterWS?wsdl"},
+	urls := []UrlHandler{
+		// Url{"MasterCountry", "http://103.251.60.132:8085/OmniFinServices/countryMasterWS?wsdl"},
+		// Url{"MasterState", "http://103.251.60.132:8085/OmniFinServices/stateMasterWS?wsdl"},
+		// Url{"MasterDistrict", "http://103.251.60.132:8085/OmniFinServices/districtMasterWS?wsdl"},
+		// Url{"MasterTehsil", "http://103.251.60.132:8085/OmniFinServices/tehsilMasterWS?wsdl"},
+		// Url{"MasterPincode", "http://103.251.60.132:8085/OmniFinServices/pincodeMasterWS?wsdl"},
+		// Url{"MasterBank", "http://103.251.60.132:8085/OmniFinServices/bankMasterWS?wsdl"},
+		// Url{"MasterBankBranch", "http://103.251.60.132:8085/OmniFinServices/bankBranchMasterWS?wsdl"},
+		{
+			Url{"MasterProduct", "http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl"},
+			SaveProduct,
+		},
+		{
+			Url{"MasterScheme", "http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl"},
+			SaveScheme,
+		},
+		// Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
+		// Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
+		// Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},
+		// Url{"MasterCharges", "http://103.251.60.132:8085/OmniFinServices/chargesMasterWS?wsdl"},
+		// Url{"MasterBranch", "http://103.251.60.132:8085/OmniFinServices/branchMasterWS?wsdl"},
 	}
 
 	resetData()
 	for _, u := range urls {
 		tk.Println("")
-		tk.Println("Getting", u.PortName, "content from", u.WSDLAddress)
+		tk.Println("Getting", u.url.PortName, "content from", u.url.WSDLAddress)
 
-		log, err := createLog(u.PortName)
+		log, err := createLog(u.url.PortName)
 		if err != nil {
 			tk.Println("Error creating log:", err.Error())
 		}
 
 		x := NewReturnedXML()
-		operationName, err := getOperationName(u.WSDLAddress)
+		operationName, err := getOperationName(u.url.WSDLAddress)
 		if err != nil {
 			updateLog(log, err, "")
 			continue
@@ -229,7 +241,7 @@ func main() {
 			   	</soapenv:Body>
 			</soapenv:Envelope>`, operationName, operationName)
 
-		x.InString, err = GetHttpPOSTContentString(u.WSDLAddress, body)
+		x.InString, err = GetHttpPOSTContentString(u.url.WSDLAddress, body)
 
 		xmlStringLog := x.InString
 		if len(xmlStringLog) > 5000 {
@@ -241,24 +253,41 @@ func main() {
 			continue
 		}
 
+		// fetch error
 		if err := x.FetchReturnValues(); err != nil {
 			tk.Println(err.Error())
-		} else {
-			masterData := x.GenerateMasterData().(map[string]interface{})
-
-			if tk.ToInt(masterData["operationStatus"], "Int64") == 1 {
-				err = saveData(masterData)
-			} else {
-				err = errors.New("Operation status is not met.")
-			}
-
-			if err != nil {
-				updateLog(log, err, xmlStringLog)
-				tk.Println(err.Error())
-				continue
-			} else {
-				tk.Println("Saved.")
-			}
+			continue
 		}
+		masterData := x.GenerateMasterData().(map[string]interface{})
+
+		// operation status is not 1
+		if tk.ToInt(masterData["operationStatus"], "Int64") != 1 {
+			err = errors.New("Operation status is not met")
+
+			updateLog(log, err, xmlStringLog)
+			tk.Println(err.Error())
+			continue
+		}
+
+		// save to OmnifinMasterData
+		err = saveData(masterData)
+		if err != nil {
+			updateLog(log, err, xmlStringLog)
+			tk.Println(err.Error())
+			continue
+		}
+
+		// run individual save code transformation
+		if u.handler != nil {
+			err = u.handler(masterData)
+		}
+
+		if err != nil {
+			updateLog(log, err, xmlStringLog)
+			tk.Println(err.Error())
+			continue
+		}
+
+		tk.Println("Saved.")
 	}
 }

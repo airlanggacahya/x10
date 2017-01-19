@@ -6,7 +6,7 @@ import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
 	"encoding/json"
-	"encoding/xml"
+	// "encoding/xml"
 	"fmt"
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
@@ -16,6 +16,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"io"
 	"io/ioutil"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -80,10 +81,6 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	IsSavedCP := true
 	// IsSavedAD := true
 
-	Soap := []byte(string(bs))
-
-	obj := MyRespEnvelope{}
-
 	xmlstr := strings.NewReader(string(bs))
 	resjson, err := xmlToJson(xmlstr)
 	if err != nil {
@@ -112,8 +109,6 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		return resFail
 	}
 
-	err = xml.Unmarshal(Soap, &obj)
-
 	if err != nil {
 		fmt.Println("Payload Decode Error: " + err.Error() + " .Bytes Data: " + string(bs))
 		LogData.Set("error", err.Error())
@@ -135,13 +130,23 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		SetConfig("multiexec", true).
 		Save()
 
-	obj.Body.GetResponse.Id = obj.Body.GetResponse.GcdCustomerId + "|" + obj.Body.GetResponse.DealNo
-	content := obj.Body.GetResponse
+	content := tk.M(msgMap)
+	contentbody := tk.M(content.Get("crDealDtl").(map[string]interface{}))
+	crList := []tk.M{}
+	crL := contentbody.Get("crDealCustomerRoleList").([]interface{})
 
-	LogData.Set("dataid", obj.Body.GetResponse.Id)
+	for _, varL := range crL {
+		crList = append(crList, tk.M(varL.(map[string]interface{})))
+	}
+
+	cid := contentbody.GetString("dealCustomerId")
+	dealno := contentbody.GetString("dealNo")
+	dataid := cid + "|" + dealno
+
+	LogData.Set("dataid", dataid)
 	CreateLog(LogData)
 
-	IsNew, IsConfirmed, err = GenerateCustomerProfile(content)
+	IsNew, IsConfirmed, err = GenerateCustomerProfile(contentbody, crList, cid, dealno)
 
 	if err != nil {
 		IsSavedCP = false
@@ -151,26 +156,34 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 
 	LogInfos := tk.M{}
 
-	obj.Body.GetResponse.LogInfos = tk.M{}.Set("CreateDate", time.Now().UTC()).Set("IsSaved", IsSavedCP).Set("IsNew", IsNew).Set("IsConfirmed", IsConfirmed)
-	LogInfos.Set("cpinfos", obj.Body.GetResponse.LogInfos)
+	infos := tk.M{}.Set("CreateDate", time.Now().UTC()).Set("IsSaved", IsSavedCP).Set("IsNew", IsNew).Set("IsConfirmed", IsConfirmed)
+	LogInfos.Set("cpinfos", infos)
 
 	LogData.Set("infos", LogInfos)
 	CreateLog(LogData)
 
-	IsNew, IsConfirmed, err = GenerateAccountDetail(content)
+	IsNew, IsConfirmed, err = GenerateAccountDetail(contentbody, crList, cid, dealno)
 
 	if err != nil {
 		IsSavedCP = false
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
 	}
-	obj.Body.GetResponse.LogInfos = tk.M{}.Set("CreateDate", time.Now().UTC()).Set("IsSaved", IsSavedCP).Set("IsNew", IsNew).Set("IsConfirmed", IsConfirmed)
-	LogInfos.Set("adinfos", obj.Body.GetResponse.LogInfos)
+
+	err = GenerateInternalRTR(contentbody, cid, dealno)
+	if err != nil {
+		LogData.Set("error", err.Error()+" | InternalRTR")
+		CreateLog(LogData)
+	}
+
+	infos = tk.M{}.Set("CreateDate", time.Now().UTC()).Set("IsSaved", IsSavedCP).Set("IsNew", IsNew).Set("IsConfirmed", IsConfirmed)
+	LogInfos.Set("adinfos", infos)
 
 	LogData.Set("infos", LogInfos)
 	CreateLog(LogData)
 
-	csc := map[string]interface{}{"data": &obj.Body.GetResponse}
+	contentbody.Set("_id", bson.NewObjectId())
+	csc := map[string]interface{}{"data": contentbody}
 	err = qinsert.Exec(csc)
 	if err != nil {
 		fmt.Print(err.Error())
@@ -182,8 +195,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	return res
 }
 
-func GenerateCustomerProfile(data ContentXML) (bool, bool, error) {
-	cd, err := CheckOnCP(data.GcdCustomerId, data.DealNo)
+func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (bool, bool, error) {
+	cd, err := CheckOnCP(cid, dealno)
 	if err != nil {
 		fmt.Println(err.Error())
 		return false, false, err
@@ -201,119 +214,200 @@ func GenerateCustomerProfile(data ContentXML) (bool, bool, error) {
 
 	stat := current.Status
 
-	comp := FindCompany(data.CrDealCustomerRoleList)
+	comp := FindCompany(crList, body.GetString("dealCustomerId"))
 
-	if stat == 0 && len(cd) == 0 { //data baru
+	valid := comp.GetString("dealCustomerId")
+
+	if stat == 0 && valid != "" { //data baru
+		customerDtl := tk.M(comp.Get("customerDtl").(map[string]interface{}))
+		loanDtl := tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
 
 		//================ APPLICANT DETAIL START ================
-		current.ApplicantDetail.CustomerName = comp.CustomerDtl.CustomerName
-		current.ApplicantDetail.CustomerConstitution = comp.CustomerDtl.CustomerConstitution
-		current.ApplicantDetail.DateOfIncorporation = DetectDataType(comp.CustomerDtl.CustomerDob, "yyyy-MM-dd").(time.Time)
-		current.ApplicantDetail.CustomerRegistrationNumber = comp.CustomerDtl.CustomerRegistrationNo
-		current.ApplicantDetail.CustomerPan = comp.CustomerDtl.CustmerPan
-		current.ApplicantDetail.NatureOfBussiness = comp.CustomerDtl.CustomerBusinessSegment
-		current.ApplicantDetail.YearsInBusiness = DetectDataType(comp.CustomerDtl.NoBvYears, "")
-		// customer.AnnualTurnOver = DetectDataType(val.GetString("turnover"), "yyyy-MM-dd")
-		current.ApplicantDetail.UserGroupCompanies = comp.CustomerDtl.CustomerGroupDesc
-		current.ApplicantDetail.AmountLoan = DetectDataType(data.DealLoanDetails.DealLoanAmount, "")
-		current.ApplicantDetail.RegisteredAddress.AddressRegistered = comp.CustomerDtl.CustomerAddresses.AddressLine1
-		// customer.RegisteredAddress.ContactPersonRegistered =  DetectDataType(val.GetString("contact_person"), "yyyy-MM-dd")
-		current.ApplicantDetail.RegisteredAddress.PhoneRegistered = comp.CustomerDtl.CustomerAddresses.PrimaryPhone
-		current.ApplicantDetail.RegisteredAddress.EmailRegistered = comp.CustomerDtl.CustomerEmail
-		current.ApplicantDetail.RegisteredAddress.MobileRegistered = comp.CustomerDtl.CustomerAddresses.AlternatePhone
-		// customer.RegisteredAddress.Ownership = comp.CustomerDtl.CustomerAddresses
-		current.ApplicantDetail.RegisteredAddress.NoOfYearsAtAboveAddressRegistered = DetectDataType(comp.CustomerDtl.CustomerAddresses.NoOfYears, "")
-		// customer.RegisteredAddress.CityRegistered = val.GetString("lead_generation_city")
+		current.ApplicantDetail.CustomerName = customerDtl.GetString("customerName")
+		current.ApplicantDetail.CustomerConstitution = customerDtl.GetString("customerConstitution")
+		if customerDtl.GetString("customerDob") != "" {
+			current.ApplicantDetail.DateOfIncorporation = DetectDataType(customerDtl.GetString("customerDob"), "yyyy-MM-dd").(time.Time)
+		}
+		current.ApplicantDetail.CustomerRegistrationNumber = customerDtl.GetString("customerRegistrationNo")
+		current.ApplicantDetail.TIN = customerDtl.GetString("salesTaxTinNo")
+		current.ApplicantDetail.CustomerPan = customerDtl.GetString("custmerPan")
+		current.ApplicantDetail.NatureOfBussiness = customerDtl.GetString("natureOfBusiness")
+		current.ApplicantDetail.YearsInBusiness = DetectDataType(customerDtl.GetString("yearOfEstblishment"), "")
+		current.ApplicantDetail.NoOfEmployees = DetectDataType(customerDtl.GetString("noOfEmployees"), "")
+		current.ApplicantDetail.UserGroupCompanies = customerDtl.GetString("customerGroupDesc")
+		current.ApplicantDetail.AmountLoan = DetectDataType(loanDtl.GetString("dealLoanAmount"), "")
 		//================ APPLICANT DETAIL END ================
 
-		//================ PROMOTOR START ======================
-		BioS := []BiodataGen{}
+		//================ EXISTING LOAN START =================
+		exist := CheckArray(body.Get("existingDealDetails"))
+		current.FinancialReport.ExistingRelationship = []ExistingRelationshipGen{}
+		if len(exist) > 0 {
+			for _, val := range exist {
+				ld := CheckArray(val.Get("loanDetails"))
+				for _, valx := range ld {
+					ex := ExistingRelationshipGen{}
+					ex.LoanNo = valx.GetString("loanNo")
+					ex.LoanAmount = valx.GetInt("loanAmount")
+					ex.Payment = tk.M(valx.Get("crInstrumentDtl").(map[string]interface{})).GetString("instrumentAmount")
+					current.FinancialReport.ExistingRelationship = append(current.FinancialReport.ExistingRelationship, ex)
+				}
+			}
+		}
+		//================ EXISTING LOAN END =================
 
-		for _, val := range data.CrDealCustomerRoleList {
-			if val.DealCustomerType == "C" {
+		BioS := []BiodataGen{}
+		current.DetailOfPromoters.DetailOfReference = []DetailOfReference{}
+		for _, val := range crList {
+			dtl := tk.M(val.Get("customerDtl").(map[string]interface{}))
+			reff := CheckArray(dtl.Get("crDealReferenceM"))
+			addr := CheckArray(dtl.Get("customerAddresses"))
+
+			//=============== REFERENCE START =========================
+			for _, revl := range reff {
+				rr := DetailOfReference{}
+				rr.Name = revl.GetString("fName") + " " + revl.GetString("lName")
+				rr.Address = revl.GetString("refAddress")
+				rr.ContactNo = revl.GetString("mobileNumber")
+				rr.RelationAplicant = revl.GetString("relationship")
+				current.DetailOfPromoters.DetailOfReference = append(current.DetailOfPromoters.DetailOfReference, rr)
+			}
+			//=============== REFERENCE END =========================
+
+			//=============== OFFICE ADDRESS =========================
+			for _, ad := range addr {
+				adt := ad.GetString("addressType")
+				if strings.Contains(adt, "REGOFF") {
+					tk.Println("Masuuuk")
+					current.ApplicantDetail.RegisteredAddress.AddressRegistered = ad.GetString("addressLine1") + ", " + ad.GetString("addressLine2") + ", " + ad.GetString("addressLine3")
+					current.ApplicantDetail.RegisteredAddress.PhoneRegistered = ad.GetString("alternatePhone")
+					current.ApplicantDetail.RegisteredAddress.MobileRegistered = ad.GetString("primaryPhone")
+					current.ApplicantDetail.RegisteredAddress.LandmarkRegistered = ad.GetString("landmark")
+					current.ApplicantDetail.RegisteredAddress.CityRegistered = ad.GetString("districtDesc")
+					current.ApplicantDetail.RegisteredAddress.StateRegistered = ad.GetString("stateDesc")
+					current.ApplicantDetail.RegisteredAddress.PincodeRegistered = ad.GetString("pincode")
+					current.ApplicantDetail.RegisteredAddress.Ownership = ad.GetString("addressDetailDesc")
+					current.ApplicantDetail.RegisteredAddress.NoOfYearsAtAboveAddressRegistered = ad.GetFloat64("noOfYears")
+				} else if strings.Contains(adt, "REI") || strings.Contains(adt, "RES") {
+					current.ApplicantDetail.AddressCorrespondence.AddressRegistered = ad.GetString("addressLine1") + ", " + ad.GetString("addressLine2") + ", " + ad.GetString("addressLine3")
+					current.ApplicantDetail.AddressCorrespondence.PhoneRegistered = ad.GetString("alternatePhone")
+					current.ApplicantDetail.AddressCorrespondence.MobileRegistered = ad.GetString("primaryPhone")
+					current.ApplicantDetail.AddressCorrespondence.LandmarkRegistered = ad.GetString("landmark")
+					current.ApplicantDetail.AddressCorrespondence.CityRegistered = ad.GetString("districtDesc")
+					current.ApplicantDetail.AddressCorrespondence.StateRegistered = ad.GetString("stateDesc")
+					current.ApplicantDetail.AddressCorrespondence.PincodeRegistered = ad.GetString("pincode")
+					current.ApplicantDetail.AddressCorrespondence.Ownership = ad.GetString("addressDetailDesc")
+				} else if strings.Contains(adt, "OFFICE") {
+					current.ApplicantDetail.SiteWorkAddress.AddressRegistered = ad.GetString("addressLine1") + ", " + ad.GetString("addressLine2") + ", " + ad.GetString("addressLine3")
+					current.ApplicantDetail.SiteWorkAddress.PhoneRegistered = ad.GetString("alternatePhone")
+					current.ApplicantDetail.SiteWorkAddress.MobileRegistered = ad.GetString("primaryPhone")
+					current.ApplicantDetail.SiteWorkAddress.LandmarkRegistered = ad.GetString("landmark")
+					current.ApplicantDetail.SiteWorkAddress.CityRegistered = ad.GetString("districtDesc")
+					current.ApplicantDetail.SiteWorkAddress.StateRegistered = ad.GetString("stateDesc")
+					current.ApplicantDetail.SiteWorkAddress.PincodeRegistered = ad.GetString("pincode")
+					current.ApplicantDetail.SiteWorkAddress.Ownership = ad.GetString("addressDetailDesc")
+				}
+			}
+			//=============== OFFICE ADDRESS END =========================
+
+			//================ PROMOTOR START ======================
+			if val.GetString("dealCustomerId") == comp.GetString("dealCustomerId") {
 				continue
 			}
+			stkhold := CheckArray(dtl.Get("crDealCustomerStakeholderM"))
+
 			Bio := BiodataGen{}
-			Bio.Name = val.CustomerDtl.CustomerName
-			Bio.FatherName = val.CustomerDtl.FatherHusbandName
-			Bio.Gender = val.CustomerDtl.Gender
-			Bio.DateOfBirth = DetectDataType(val.CustomerDtl.CustomerDob, "yyyy-MM-dd")
-			Bio.MaritalStatus = val.CustomerDtl.MaritalStatus
-			// Bio.AnniversaryDate = DetectDataType(val.GetString("date_of_incorporation"), "yyyy-MM-dd")
-			Bio.Education = val.CustomerDtl.EduDetail
-			Bio.PAN = val.CustomerDtl.CustmerPan
-			Bio.Address = val.CustomerDtl.CustomerAddresses.AddressLine1
-			Bio.City = val.CustomerDtl.CustomerAddresses.AddressLine2 + " " + val.CustomerDtl.CustomerAddresses.AddressLine3
-			// Bio.State = DetectDataType(val.GetString("state"), "yyyy-MM-dd")
-			Bio.Pincode = val.CustomerDtl.CustomerAddresses.Pincode
-			Bio.Phone = val.CustomerDtl.CustomerAddresses.PrimaryPhone
-			Bio.Mobile = val.CustomerDtl.CustomerAddresses.AlternatePhone
-			Bio.NoOfYears = DetectDataType(comp.CustomerDtl.CustomerAddresses.NoOfYears, "")
-			Bio.Email = comp.CustomerDtl.CustomerEmail
+			Bio.Name = dtl.GetString("customerName")
+			Bio.FatherName = dtl.GetString("FatherHusbandName")
+			Bio.Gender = dtl.GetString("genderDesc")
+			Bio.DateOfBirth = DetectDataType(dtl.GetString("customerDob"), "yyyy-MM-dd")
+			Bio.MaritalStatus = dtl.GetString("maritalStatusDesc")
+
+			if len(stkhold) > 0 {
+				Bio.ShareHoldingPercentage = stkhold[0].GetFloat64("stakeholderPercentage")
+				Bio.Designation = stkhold[0].GetString("stakeholderPosition")
+			}
+			Bio.Education = dtl.GetString("eduDetail")
+			Bio.PAN = dtl.GetString("custmerPan")
+
+			if len(addr) > 0 {
+				Bio.Address = addr[0].GetString("addressLine1") + ", " + addr[0].GetString("addressLine2") + ", " + addr[0].GetString("addressLine3")
+				Bio.Landmark = addr[0].GetString("landmark")
+				Bio.City = addr[0].GetString("districtDesc")
+				Bio.State = addr[0].GetString("stateDesc")
+				Bio.Pincode = addr[0].GetString("pincode")
+				Bio.Phone = addr[0].GetString("alternatePhone")
+				Bio.Mobile = addr[0].GetString("primaryPhone")
+				Bio.Ownership = addr[0].GetString("addressDetailDesc")
+				Bio.NoOfYears = addr[0].GetFloat64("noOfYears")
+			}
+
+			Bio.Email = dtl.GetString("customerEmail")
+
 			BioS = append(BioS, Bio)
 		}
 		current.DetailOfPromoters.Biodata = BioS
 		//================ PROMOTOR END ================
 
-		current.Id = data.Id
-		current.ApplicantDetail.CustomerID = DetectDataType(data.GcdCustomerId, "")
-		current.ApplicantDetail.DealID = DetectDataType(data.DealId, "")
-		current.ApplicantDetail.DealNo = data.DealNo
-	} else if stat == 0 && len(cd) > 0 { //data sudah ada
-
-		//================ APPLICANT DETAIL START ================
-		current.ApplicantDetail.CustomerName = comp.CustomerDtl.CustomerName
-		current.ApplicantDetail.CustomerConstitution = comp.CustomerDtl.CustomerConstitution
-		current.ApplicantDetail.DateOfIncorporation = DetectDataType(comp.CustomerDtl.CustomerDob, "yyyy-MM-dd").(time.Time)
-		current.ApplicantDetail.CustomerRegistrationNumber = comp.CustomerDtl.CustomerRegistrationNo
-		current.ApplicantDetail.CustomerPan = comp.CustomerDtl.CustmerPan
-		current.ApplicantDetail.NatureOfBussiness = comp.CustomerDtl.CustomerBusinessSegment
-		current.ApplicantDetail.YearsInBusiness = DetectDataType(comp.CustomerDtl.NoBvYears, "")
-		// customer.AnnualTurnOver = DetectDataType(val.GetString("turnover"), "yyyy-MM-dd")
-		current.ApplicantDetail.UserGroupCompanies = comp.CustomerDtl.CustomerGroupDesc
-		current.ApplicantDetail.AmountLoan = DetectDataType(data.DealLoanDetails.DealLoanAmount, "")
-		current.ApplicantDetail.RegisteredAddress.AddressRegistered = comp.CustomerDtl.CustomerAddresses.AddressLine1
-		// customer.RegisteredAddress.ContactPersonRegistered =  DetectDataType(val.GetString("contact_person"), "yyyy-MM-dd")
-		current.ApplicantDetail.RegisteredAddress.PhoneRegistered = comp.CustomerDtl.CustomerAddresses.PrimaryPhone
-		current.ApplicantDetail.RegisteredAddress.EmailRegistered = comp.CustomerDtl.CustomerEmail
-		current.ApplicantDetail.RegisteredAddress.MobileRegistered = comp.CustomerDtl.CustomerAddresses.AlternatePhone
-		// customer.RegisteredAddress.Ownership = comp.CustomerDtl.CustomerAddresses
-		current.ApplicantDetail.RegisteredAddress.NoOfYearsAtAboveAddressRegistered = DetectDataType(comp.CustomerDtl.CustomerAddresses.NoOfYears, "")
-		// customer.RegisteredAddress.CityRegistered = val.GetString("lead_generation_city")
-		//================ APPLICANT DETAIL END ================
-
-		//================ PROMOTOR START ======================
-		BioS := []BiodataGen{}
-
-		for _, val := range data.CrDealCustomerRoleList {
-			if val.DealCustomerType == "C" {
-				continue
-			}
-			Bio := BiodataGen{}
-			Bio.Name = val.CustomerDtl.CustomerName
-			Bio.FatherName = val.CustomerDtl.FatherHusbandName
-			Bio.Gender = val.CustomerDtl.Gender
-			Bio.DateOfBirth = DetectDataType(val.CustomerDtl.CustomerDob, "yyyy-MM-dd")
-			Bio.MaritalStatus = val.CustomerDtl.MaritalStatus
-			// Bio.AnniversaryDate = DetectDataType(val.GetString("date_of_incorporation"), "yyyy-MM-dd")
-			Bio.Education = val.CustomerDtl.EduDetail
-			Bio.PAN = val.CustomerDtl.CustmerPan
-			Bio.Address = val.CustomerDtl.CustomerAddresses.AddressLine1
-			Bio.City = val.CustomerDtl.CustomerAddresses.AddressLine2 + " " + val.CustomerDtl.CustomerAddresses.AddressLine3
-			// Bio.State = DetectDataType(val.GetString("state"), "yyyy-MM-dd")
-			Bio.Pincode = val.CustomerDtl.CustomerAddresses.Pincode
-			Bio.Phone = val.CustomerDtl.CustomerAddresses.PrimaryPhone
-			Bio.Mobile = val.CustomerDtl.CustomerAddresses.AlternatePhone
-			Bio.NoOfYears = DetectDataType(comp.CustomerDtl.CustomerAddresses.NoOfYears, "")
-			Bio.Email = comp.CustomerDtl.CustomerEmail
-			BioS = append(BioS, Bio)
-		}
-		current.DetailOfPromoters.Biodata = BioS
-		//================ PROMOTOR END ================
-
+		current.Id = cid + "|" + dealno
+		current.ApplicantDetail.CustomerID = DetectDataType(cid, "")
+		current.ApplicantDetail.DealID = DetectDataType(body.GetString("dealId"), "")
+		current.ApplicantDetail.DealNo = dealno
 	} else {
 		IsConfirmed = true
 	}
+	// else if stat == 0 && len(cd) > 0 { //data sudah ada
+
+	// //================ APPLICANT DETAIL START ================
+	// current.ApplicantDetail.CustomerName = comp.CustomerDtl.CustomerName
+	// current.ApplicantDetail.CustomerConstitution = comp.CustomerDtl.CustomerConstitution
+	// current.ApplicantDetail.DateOfIncorporation = DetectDataType(comp.CustomerDtl.CustomerDob, "yyyy-MM-dd").(time.Time)
+	// current.ApplicantDetail.CustomerRegistrationNumber = comp.CustomerDtl.CustomerRegistrationNo
+	// current.ApplicantDetail.CustomerPan = comp.CustomerDtl.CustmerPan
+	// current.ApplicantDetail.NatureOfBussiness = comp.CustomerDtl.CustomerBusinessSegment
+	// current.ApplicantDetail.YearsInBusiness = DetectDataType(comp.CustomerDtl.NoBvYears, "")
+	// // customer.AnnualTurnOver = DetectDataType(val.GetString("turnover"), "yyyy-MM-dd")
+	// current.ApplicantDetail.UserGroupCompanies = comp.CustomerDtl.CustomerGroupDesc
+	// current.ApplicantDetail.AmountLoan = DetectDataType(data.DealLoanDetails.DealLoanAmount, "")
+	// current.ApplicantDetail.RegisteredAddress.AddressRegistered = comp.CustomerDtl.CustomerAddresses.AddressLine1
+	// // customer.RegisteredAddress.ContactPersonRegistered =  DetectDataType(val.GetString("contact_person"), "yyyy-MM-dd")
+	// current.ApplicantDetail.RegisteredAddress.PhoneRegistered = comp.CustomerDtl.CustomerAddresses.PrimaryPhone
+	// current.ApplicantDetail.RegisteredAddress.EmailRegistered = comp.CustomerDtl.CustomerEmail
+	// current.ApplicantDetail.RegisteredAddress.MobileRegistered = comp.CustomerDtl.CustomerAddresses.AlternatePhone
+	// // customer.RegisteredAddress.Ownership = comp.CustomerDtl.CustomerAddresses
+	// current.ApplicantDetail.RegisteredAddress.NoOfYearsAtAboveAddressRegistered = DetectDataType(comp.CustomerDtl.CustomerAddresses.NoOfYears, "")
+	// // customer.RegisteredAddress.CityRegistered = val.GetString("lead_generation_city")
+	// //================ APPLICANT DETAIL END ================
+
+	// //================ PROMOTOR START ======================
+	// BioS := []BiodataGen{}
+
+	// for _, val := range data.CrDealCustomerRoleList {
+	// 	if val.DealCustomerType == "C" {
+	// 		continue
+	// 	}
+	// 	Bio := BiodataGen{}
+	// 	Bio.Name = val.CustomerDtl.CustomerName
+	// 	Bio.FatherName = val.CustomerDtl.FatherHusbandName
+	// 	Bio.Gender = val.CustomerDtl.Gender
+	// 	Bio.DateOfBirth = DetectDataType(val.CustomerDtl.CustomerDob, "yyyy-MM-dd")
+	// 	Bio.MaritalStatus = val.CustomerDtl.MaritalStatus
+	// 	// Bio.AnniversaryDate = DetectDataType(val.GetString("date_of_incorporation"), "yyyy-MM-dd")
+	// 	Bio.Education = val.CustomerDtl.EduDetail
+	// 	Bio.PAN = val.CustomerDtl.CustmerPan
+	// 	Bio.Address = val.CustomerDtl.CustomerAddresses.AddressLine1
+	// 	Bio.City = val.CustomerDtl.CustomerAddresses.AddressLine2 + " " + val.CustomerDtl.CustomerAddresses.AddressLine3
+	// 	// Bio.State = DetectDataType(val.GetString("state"), "yyyy-MM-dd")
+	// 	Bio.Pincode = val.CustomerDtl.CustomerAddresses.Pincode
+	// 	Bio.Phone = val.CustomerDtl.CustomerAddresses.PrimaryPhone
+	// 	Bio.Mobile = val.CustomerDtl.CustomerAddresses.AlternatePhone
+	// 	Bio.NoOfYears = DetectDataType(comp.CustomerDtl.CustomerAddresses.NoOfYears, "")
+	// 	Bio.Email = comp.CustomerDtl.CustomerEmail
+	// 	BioS = append(BioS, Bio)
+	// }
+	// current.DetailOfPromoters.Biodata = BioS
+	// //================ PROMOTOR END ================
+
+	// }
 
 	if !IsConfirmed {
 		conn, err := GetConnection()
@@ -336,11 +430,15 @@ func GenerateCustomerProfile(data ContentXML) (bool, bool, error) {
 		}
 	}
 
-	return IsNew, IsConfirmed, nil
+	customerDtl := tk.M(comp.Get("customerDtl").(map[string]interface{}))
+
+	err = SaveMaster(cid, dealno, customerDtl.GetString("customerName"))
+
+	return IsNew, IsConfirmed, err
 }
 
-func GenerateAccountDetail(data ContentXML) (bool, bool, error) {
-	cd, err := CheckOnAD(data.GcdCustomerId, data.DealNo)
+func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (bool, bool, error) {
+	cd, err := CheckOnAD(cid, dealno)
 	if err != nil {
 		fmt.Println(err.Error())
 		return false, false, err
@@ -357,19 +455,26 @@ func GenerateAccountDetail(data ContentXML) (bool, bool, error) {
 	}
 	stat := current.Status
 
-	if stat == 0 && len(cd) == 0 {
-		current.Id = data.Id
-		current.CustomerId = data.GcdCustomerId
-		current.DealNo = data.DealNo
-		current.AccountSetupDetails.DealNo = data.DealNo
+	comp := FindCompany(crList, body.GetString("dealCustomerId"))
+	Ld := tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
 
-		current.AccountSetupDetails.LoginDate = DetectDataType(data.DealEncodedDate, "yyyy-MM-dd").(time.Time)
-		current.AccountSetupDetails.RmName = data.UserDetailsForRM.UserName
-		current.AccountSetupDetails.LeadDistributor = data.DealSourceName
-	} else if stat == 0 && len(cd) > 0 {
-		current.AccountSetupDetails.LoginDate = DetectDataType(data.DealEncodedDate, "yyyy-MM-dd").(time.Time)
-		current.AccountSetupDetails.RmName = data.UserDetailsForRM.UserName
-		current.AccountSetupDetails.LeadDistributor = data.DealSourceName
+	valid := comp.GetString("dealCustomerId")
+
+	if stat == 0 && valid != "" {
+		dtl := tk.M(comp.Get("customerDtl").(map[string]interface{}))
+
+		current.Id = cid + "|" + dealno
+		current.CustomerId = cid
+		current.DealNo = dealno
+		current.AccountSetupDetails.DealNo = dealno
+
+		current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
+		current.AccountSetupDetails.LeadDistributor = body.GetString("dealSourceName")
+		current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
+		current.AccountSetupDetails.Product = Ld.GetString("dealProductDesc")
+		current.AccountSetupDetails.Scheme = Ld.GetString("dealSchemeDesc")
+		current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitution")
 	} else {
 		IsConfirmed = true
 	}
@@ -398,13 +503,13 @@ func GenerateAccountDetail(data ContentXML) (bool, bool, error) {
 	return IsNew, IsConfirmed, nil
 }
 
-func FindCompany(datas []CrDealCustomerRoleList) CrDealCustomerRoleList {
+func FindCompany(datas []tk.M, custid string) tk.M {
 	for _, val := range datas {
-		if val.DealCustomerType == "C" {
+		if val.GetString("dealCustomerId") == custid {
 			return val
 		}
 	}
-	return *new(CrDealCustomerRoleList)
+	return tk.M{}
 }
 
 func CreateLog(LogData tk.M) error {
@@ -428,7 +533,7 @@ func CreateLog(LogData tk.M) error {
 	}
 
 	if LogData.Get("error") != nil {
-		SendMail(LogData.GetString("error"), LogData.GetString("_id"))
+		// SendMail(LogData.GetString("error"), LogData.GetString("_id"))
 	}
 
 	return nil
@@ -576,4 +681,121 @@ func SendMail(em string, logID string) {
 		fmt.Println("Successfully Send Mails")
 	}
 	m.Reset()
+}
+
+func SaveMaster(cid string, dealno string, cname string) error {
+	//========== Master Customer ======================
+	cn, err := GetConnection()
+	if err != nil {
+		return err
+	}
+
+	results := []tk.M{}
+
+	defer cn.Close()
+	csr, e := cn.NewQuery().
+		Where(dbox.And(dbox.Eq("customer_id", cast.ToInt(cid, cast.RoundingUp)), dbox.Eq("deal_no", dealno))).
+		From("MasterCustomer").
+		Cursor(nil)
+
+	if e != nil {
+		return e
+	}
+
+	defer csr.Close()
+
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return err
+	}
+
+	obj := tk.M{}
+
+	if len(results) > 0 {
+		obj = results[0]
+		obj.Set("customer_name", cname)
+	} else {
+		obj.Set("customer_id", cast.ToInt(cid, cast.RoundingUp))
+		obj.Set("customer_name", cname)
+		obj.Set("deal_no", dealno)
+	}
+
+	qinsert := cn.NewQuery().
+		From("MasterCustomer").
+		SetConfig("multiexec", true).
+		Save()
+
+	csc := map[string]interface{}{"data": obj}
+	err = qinsert.Exec(csc)
+	if err != nil {
+		return err
+	}
+
+	return nil
+	//========== Master Customer END======================
+}
+
+func CheckArray(dt interface{}) []tk.M {
+	if fmt.Sprintf("%v", reflect.TypeOf(dt)) == "[]interface {}" {
+		arr := dt.([]interface{})
+		arrf := []tk.M{}
+		for _, vf := range arr {
+			arrf = append(arrf, tk.M(vf.(map[string]interface{})))
+		}
+		return arrf
+	}
+
+	if dt != nil {
+		return []tk.M{tk.M(dt.(map[string]interface{}))}
+	}
+
+	return []tk.M{}
+}
+
+func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
+	exs := CheckArray(body.Get("existingDealDetails"))
+
+	arr := []tk.M{}
+	fin := tk.M{}
+	for _, val := range exs {
+		ar := tk.M{}
+		ar.Set("NoActiveLoan", val.GetFloat64("NoOfActiveLoans"))
+		ar.Set("AmountOutstandingAccured", val.GetFloat64("AmountOutstandingAccrued"))
+		ar.Set("AmountOutstandingDelinquent", val.GetFloat64("AmountOutstandingDelinquent"))
+		ar.Set("TotalAmount", val.GetFloat64("AmountOutstandingAccrued")+val.GetFloat64("AmountOutstandingDelinquent"))
+		ar.Set("NPRDelays", val.GetFloat64("NoOfPrincipalRepaymentDelays"))
+		ar.Set("NPREarlyClosures", val.GetFloat64("NoOfPrincipalRepaymentEarlyClosures"))
+		ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
+		ar.Set("MaxDPDDays", val.GetFloat64("MaxDPDInClosedLoanInDays"))
+		ar.Set("MaxDPDDAmount", val.GetFloat64("NoOfActiveLoans"))
+		ar.Set("AVGDPDDays", CheckNan(val.GetFloat64("MaxDPDInClosedLoanInDays")/val.GetFloat64("NoOfActiveLoans")))
+		ar.Set("Minimum", CheckNan(val.GetFloat64("Minimum")))
+		ar.Set("Average", CheckNan(val.GetFloat64("Average")))
+		ar.Set("Maximum", CheckNan(val.GetFloat64("Maximum")))
+
+		arr = append(arr, ar)
+	}
+
+	fin.Set("_id", cid+"|"+dealno)
+	fin.Set("snapshot", arr)
+
+	cn, err := GetConnection()
+	if err != nil {
+		return err
+	}
+
+	defer cn.Close()
+
+	qinsert := cn.NewQuery().
+		From("InternalRTR").
+		SetConfig("multiexec", true).
+		Save()
+
+	csc := map[string]interface{}{"data": fin}
+	err = qinsert.Exec(csc)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -140,6 +140,11 @@
         margin-top: 60px;
         /*margin-bottom: 30px;*/
       }
+      @media (max-width: 1023px) {
+        .login-logo {
+          margin-top: 20px;
+        }
+      }
 
        .line-logo {
         background: url('/static/img/shadowku.png') no-repeat center top;
@@ -152,8 +157,8 @@
 
        .label-logo {
         background: url('/static/img/logo-newest2.png') no-repeat center top;
-        height: 10%;
-        background-size: 95% 75%;
+        height: 35px;
+        background-size: contain;
         margin-bottom: 10px;
         /*margin-top: 60px;*/
         /*margin-bottom: 30px;*/
@@ -194,6 +199,23 @@
       }
       .ea-lbl{
         font-size: 14px;
+      }
+
+      /* Kendo Validator Tooltip Override */
+      span.k-tooltip {
+        display: block;
+        padding-bottom: 3px;
+        text-align: left;
+      }
+      @media (max-width: 1023px) {
+        .span.k-tooltip {
+          margin-top: 20px;
+        }
+      }
+
+      /* Alert Override */
+      .alert {
+        margin-bottom: 0px;
       }
     </style>
     <script>
@@ -239,6 +261,7 @@
                     <div class="col-sm-12">
                       <input type="text" class="form-control input-sm" id="UserName" name="UserName" placeholder="Username" required />
                       <i class="fa fa-user"></i>
+                      <span class="k-invalid-msg" data-for="UserName"></span>
                     </div>
                   </div>
                   <div class="row">
@@ -246,6 +269,7 @@
                     <div class="col-sm-12">
                       <input type="password" class="form-control input-sm"  id="Password" name="Password" placeholder="Password" required />
                       <i class="fa fa-key"></i>
+                      <span class="k-invalid-msg" data-for="Password"></span>
                     </div>
                   </div>
 

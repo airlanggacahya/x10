@@ -7,6 +7,9 @@ import (
 	tk "github.com/eaciit/toolkit"
 )
 
+// TransformMaster convert from data remote into specific Items
+// transfunc is responsible for transformating data format between source and desctination
+// It work like array map
 func TransformMaster(parentField string, data interface{}, transfunc func(tk.M) tk.M) []tk.M {
 	var ret []tk.M
 	products := data.(map[string]interface{})[parentField].([]map[string]interface{})
@@ -17,6 +20,8 @@ func TransformMaster(parentField string, data interface{}, transfunc func(tk.M) 
 	return ret
 }
 
+// SaveMasterAccountDetail update Items data in MasterAccountDetail
+// field denote Field Name that wants to be updated
 func SaveMasterAccountDetail(field string, data interface{}) error {
 	conn, err := GetConnection()
 	defer conn.Close()

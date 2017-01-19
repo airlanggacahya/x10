@@ -7,16 +7,42 @@ import (
 	tk "github.com/eaciit/toolkit"
 )
 
+// TransformMaster convert from data remote into specific Items
+// transfunc is responsible for transformating data format between source and desctination
+// It work like array map
 func TransformMaster(parentField string, data interface{}, transfunc func(tk.M) tk.M) []tk.M {
 	var ret []tk.M
-	products := data.(map[string]interface{})[parentField].([]map[string]interface{})
-	for _, product := range products {
-		ret = append(ret, transfunc(product))
+	source := data.(map[string]interface{})[parentField]
+
+	// tk.Printfn("%v", reflect.TypeOf(source))
+	/*
+		The thing is, sometimes we found the type is []interface{},
+		which really is []map[string]interface
+		It's kinda confusing.
+
+		So let's check the type and cast them.
+	*/
+	switch products := source.(type) {
+	default:
+		return ret
+	case []interface{}:
+		for _, product := range products {
+			// tk.Printfn("%v", reflect.TypeOf(product))
+			p := product.(map[string]interface{})
+			ret = append(ret, transfunc(p))
+		}
+	case []map[string]interface{}:
+		for _, product := range products {
+			// tk.Printfn("%v", reflect.TypeOf(product))
+			ret = append(ret, transfunc(product))
+		}
 	}
 
 	return ret
 }
 
+// SaveMasterAccountDetail update Items data in MasterAccountDetail
+// field denote Field Name that wants to be updated
 func SaveMasterAccountDetail(field string, data interface{}) error {
 	conn, err := GetConnection()
 	defer conn.Close()

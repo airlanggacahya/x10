@@ -468,7 +468,7 @@ databrowser.statusexpand = {
 databrowser.expand = function(text){
 	if(text == "applicant"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[2].headerTemplate = function(dt){
+			databrowser.fullcoll[1].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 		 	for(var i in databrowser.applicantdetailcoll){
@@ -477,23 +477,23 @@ databrowser.expand = function(text){
 
 		 	databrowser.applicantdetailcoll[0].hidden = false;
 		 	databrowser.applicantdetailcoll[1].hidden = false;
-		 	databrowser.fullcoll[2].columns = databrowser.applicantdetailcoll;
+		 	databrowser.fullcoll[1].columns = databrowser.applicantdetailcoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[2].headerTemplate = function(dt){
+			databrowser.fullcoll[1].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.applicantdetailcoll){
 		 		databrowser.applicantdetailcoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[2].columns = databrowser.applicantdetailcoll;
+		 	databrowser.fullcoll[1].columns = databrowser.applicantdetailcoll;
 			//open
 		}
 	}else if (text == "nonrefund"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[4].headerTemplate = function(dt){
+			databrowser.fullcoll[3].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br> Fee Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -503,23 +503,23 @@ databrowser.expand = function(text){
 
 		 	databrowser.nonrefundcoll[3].hidden = false;
 		 	databrowser.nonrefundcoll[4].hidden = false;
-		 	databrowser.fullcoll[4].columns = databrowser.nonrefundcoll;
+		 	databrowser.fullcoll[3].columns = databrowser.nonrefundcoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[4].headerTemplate = function(dt){
+			databrowser.fullcoll[3].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br> Fee Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.nonrefundcoll){
 		 		databrowser.nonrefundcoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[4].columns = databrowser.nonrefundcoll;
+		 	databrowser.fullcoll[3].columns = databrowser.nonrefundcoll;
 			//open
 		}
 	}else if (text == "accsetup"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[6].headerTemplate = function(dt){
+			databrowser.fullcoll[5].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -529,23 +529,23 @@ databrowser.expand = function(text){
 
 		 	databrowser.accsetupcoll[0].hidden = false;
 		 	databrowser.accsetupcoll[1].hidden = false;
-		 	databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
+		 	databrowser.fullcoll[5].columns = databrowser.accsetupcoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[6].headerTemplate = function(dt){
+			databrowser.fullcoll[5].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.accsetupcoll){
 		 		databrowser.accsetupcoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
+		 	databrowser.fullcoll[5].columns = databrowser.accsetupcoll;
 			//open
 		}
 	}else if (text == "loandet"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[7].headerTemplate = function(dt){
+			databrowser.fullcoll[6].headerTemplate = function(dt){
 		 		return "<a id='on1' class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -556,18 +556,18 @@ databrowser.expand = function(text){
 		 	databrowser.loandetailscoll[0].hidden = false;
 		 	databrowser.loandetailscoll[4].hidden = false;
 		 	databrowser.loandetailscoll[7].hidden = false;
-		 	databrowser.fullcoll[7].columns = databrowser.loandetailscoll;
+		 	databrowser.fullcoll[6].columns = databrowser.loandetailscoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[7].headerTemplate = function(dt){
+			databrowser.fullcoll[6].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.loandetailscoll){
 		 		databrowser.loandetailscoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[7].columns = databrowser.loandetailscoll;
+		 	databrowser.fullcoll[6].columns = databrowser.loandetailscoll;
 			//open
 		}
 	}

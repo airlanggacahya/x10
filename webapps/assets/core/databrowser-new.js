@@ -608,7 +608,9 @@ databrowser.GoAddress = function(id,name){
 var dbgrid = ""
 
 databrowser.GetDataGrid = function(){
-	ajaxPost("/accountdetail/getdatabrowser", { 
+	ajaxPost("/accountdetail/getdatabrowser", {
+		customer : filters.CustomerVal(),
+		dealno : filters.DealNoVal(), 
 		rating : filters.ddIRRangesVal() != "" ? filters.inputIRRangeVal() : "", 
 		ratingopr : filters.ddIRRangesVal() != "" ? filters.ddIRRangesVal() : "",
 		loanamount : filters.ddRLARangesVal() != "" ? filters.inputRLARangeVal() : "",

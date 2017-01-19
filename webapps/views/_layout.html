@@ -923,17 +923,21 @@
       deactivate: function(e){
         if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null){
           if(typeof showFilter === 'function')
+          var selected = _.filter(filter().CustomerSearchList(),function(val){ return val.customer_id == filter().CustomerSearchVal() })
+
+            if (selected.length > 0)
             showFilter(false);
         }
       }
     });
 
     $("#myTopnavhide .tab-current").parent().appendTo("#menubackup nav");
+      var selected = _.filter(filter().CustomerSearchList(),function(val){ return val.customer_id == filter().CustomerSearchVal() })
 
     if(typeof showFilter === 'function'){
       if(filter().CustomerSearchVal() == "" && filter().DealNumberSearchVal() == ""){
         showFilter(true);
-      }else{
+      }else if (selected.length > 0){
         showFilter(false);
       }
     }else{

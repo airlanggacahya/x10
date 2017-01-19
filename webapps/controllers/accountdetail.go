@@ -737,12 +737,13 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 	for _, val := range resultsCA {
 		re := tk.M{}
 		re.Set("CA", val)
+		re.Set("AD", new(AccountDetail))
+
 		for _, valx := range resultsAD {
 			if val.GetString("_id") == valx.GetString("_id") {
 				re.Set("AD", valx)
 				break
 			}
-			re.Set("AD", new(AccountDetail))
 		}
 		finalres = append(finalres, re)
 	}

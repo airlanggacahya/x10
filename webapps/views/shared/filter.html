@@ -230,14 +230,23 @@ $(document).ready(function(){
 
     if(readCookie("topfilter" + model.PageTopMenu().split(" ").join("")) != null && parse("customerid") == "Not found"){
       var cook = readCookie("topfilter"+model.PageTopMenu().split(" ").join(""));
+      var selected = _.filter(filter().CustomerSearchList(),function(val){ return val.customer_id == cook.split("|")[0] })
+
       filter().CustomerSearchVal(cook.split("|")[0]);
       filter().DealNumberSearchVal(cook.split("|")[1]);
-      setTimeout(function(){
-       refreshFilter();
-      },500);
-      if($("#myTopnav").getKendoMenu() != undefined)
-      showFilter(false);
-    } else if(parse("customerid") != "Not found" && parse("dealno") != "Not found" ){
+      
+      if($("#myTopnav").getKendoMenu() != undefined && selected.length > 0 ){
+        if(filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" && filter().DealNumberSearchVal()!="Deal No" ){
+          setTimeout(function(){
+           refreshFilter();
+          },500);
+
+           showFilter(false);
+        }
+      }
+
+    } else if(parse("customerid") != "Not found" && parse("dealno") != "Not found"){
+      alert()
       filter().CustomerSearchVal( parse("customerid") );
       filter().DealNumberSearchVal( parse("dealno") );
       setTimeout(function(){
@@ -288,7 +297,7 @@ $("body").click(function(e){
 });
 
 $(document).scroll(function(e){  
-  if(filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" ){
+  if(filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" && filter().DealNumberSearchVal()!="Deal No" ){
     showFilter(false);
   }
 });

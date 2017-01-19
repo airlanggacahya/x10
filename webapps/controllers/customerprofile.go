@@ -201,7 +201,7 @@ func (c *DataCapturingController) GetCustomerProfileDetail(k *knot.WebContext) i
 	results := []CustomerProfiles{}
 	err = csr.Fetch(&results, 0, false)
 	if err != nil {
-		return CreateResult(false, nil, e.Error())
+		return CreateResult(false, nil, err.Error())
 	} else if csr == nil {
 		return CreateResult(false, nil, "No data found !")
 	}

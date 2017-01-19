@@ -81,7 +81,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	IsSavedCP := true
 	// IsSavedAD := true
 
-	xmlstr := strings.NewReader(string(bs))
+	xmlstr := strings.NewReader(CleaningXMLText(string(bs)))
 	resjson, err := xmlToJson(xmlstr)
 	if err != nil {
 		LogData.Set("error", err.Error())
@@ -277,7 +277,6 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 			for _, ad := range addr {
 				adt := ad.GetString("addressType")
 				if strings.Contains(adt, "REGOFF") {
-					tk.Println("Masuuuk")
 					current.ApplicantDetail.RegisteredAddress.AddressRegistered = ad.GetString("addressLine1") + ", " + ad.GetString("addressLine2") + ", " + ad.GetString("addressLine3")
 					current.ApplicantDetail.RegisteredAddress.PhoneRegistered = ad.GetString("alternatePhone")
 					current.ApplicantDetail.RegisteredAddress.MobileRegistered = ad.GetString("primaryPhone")
@@ -756,9 +755,11 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 	exs := CheckArray(body.Get("existingDealDetails"))
 
 	arr := []tk.M{}
+	arrb := []tk.M{}
 	fin := tk.M{}
 	for _, val := range exs {
 		ar := tk.M{}
+		arb := tk.M{}
 		ar.Set("NoActiveLoan", val.GetFloat64("NoOfActiveLoans"))
 		ar.Set("AmountOutstandingAccured", val.GetFloat64("AmountOutstandingAccrued"))
 		ar.Set("AmountOutstandingDelinquent", val.GetFloat64("AmountOutstandingDelinquent"))
@@ -773,11 +774,22 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 		ar.Set("Average", CheckNan(val.GetFloat64("Average")))
 		ar.Set("Maximum", CheckNan(val.GetFloat64("Maximum")))
 
+		arb.Set("DealNo", val.GetString("dealNo"))
+		arb.Set("Product", val.GetString("product"))
+		arb.Set("Scheme", val.GetString("scheme"))
+		arb.Set("AgreementDate", val.GetString("agreementDate"))
+		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
+		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("totalLoanAmount")))
+		arb.Set("ProductId", val.GetString("productId"))
+		arb.Set("SchemeId", val.GetString("schemeId"))
+
 		arr = append(arr, ar)
+		arrb = append(arrb, arb)
 	}
 
 	fin.Set("_id", cid+"|"+dealno)
 	fin.Set("snapshot", arr)
+	fin.Set("deallist", arrb)
 
 	cn, err := GetConnection()
 	if err != nil {
@@ -798,4 +810,11 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 	}
 
 	return nil
+}
+
+func CleaningXMLText(xml string) string {
+	xml = strings.Replace(xml, "&", "&amp;", -1)
+	xml = strings.Replace(xml, "\"", "&quot;", -1)
+	xml = strings.Replace(xml, "'", "&apos;", -1)
+	return xml
 }

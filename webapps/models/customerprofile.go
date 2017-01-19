@@ -139,6 +139,8 @@ type RegisteredAddress struct {
 	NoOfYearsAtAboveAddressRegistered int    `bson:"NoOfYearsAtAboveAddressRegistered"`
 	AreaOfPlotRegistered              string `bson:"AreaOfPlotRegistered"`
 	BuiltUpAreaRegistered             string `bson:"BuiltUpAreaRegistered"`
+	AddressType                       string `bson:"AddressType,omitempty"`
+	CorrespondeceAddress              string `bson:"CorrespondeceAddress,omitempty"`
 }
 
 type AddressCorrespondence struct {
@@ -157,6 +159,8 @@ type AddressCorrespondence struct {
 	ValueRegistered                   string `bson:"ValueRegistered,omitempty"`
 	LandmarkRegistered                string `bson:"LandmarkRegistered,omitempty"`
 	PincodeRegistered                 string `bson:"PincodeRegistered,omitempty"`
+	AddressType                       string `bson:"AddressType,omitempty"`
+	CorrespondeceAddress              string `bson:"CorrespondeceAddress,omitempty"`
 }
 
 type SiteWorkAddress struct {
@@ -175,6 +179,8 @@ type SiteWorkAddress struct {
 	ValueRegistered                   string `bson:"ValueRegistered,omitempty"`
 	LandmarkRegistered                string `bson:"LandmarkRegistered,omitempty"`
 	PincodeRegistered                 string `bson:"PincodeRegistered,omitempty"`
+	AddressType                       string `bson:"AddressType,omitempty"`
+	CorrespondeceAddress              string `bson:"CorrespondeceAddress,omitempty"`
 }
 
 type PreviousLoansDetail struct {

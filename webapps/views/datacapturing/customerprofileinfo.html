@@ -118,8 +118,6 @@ function refreshdata(){
   var param = {CustomerId: filter().CustomerSearchVal(), Dealno: filter().DealNumberSearchVal()}
   var url = "{{BaseUrl}}datacapturing/getcustomerprofiledetail";
   ajaxPost(url, param, function(data) {
-    // console.log(data);
-    console.log(data);
     if (data.length > 0) {
       info.formVisibility(true)
       formVisibility(true)
@@ -704,7 +702,7 @@ function save(){
   param.DateFreeze = (new Date()).toISOString();
   param.ConfirmedBy = customerprofile().ConfirmedBy;
   param.ConfirmedDate = customerprofile().ConfirmedDate;
-  param.NonRefundableProcessingFeesDetails = customerprofile().NonRefundableProcessingFeesDetails;
+  param.NonRefundableProcessingFeesDetails = ko.mapping.toJS(customerprofile().NonRefundableProcessingFeesDetails);
   if(isNaN( param.NonRefundableProcessingFeesDetails.InstrumentDate )) {
     param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"
   }

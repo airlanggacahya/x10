@@ -9,6 +9,7 @@ import (
 func transformScheme(in tk.M) tk.M {
 	p := make(tk.M)
 	p.Set("productId", in.GetString("productId"))
+	p.Set("schemeId", in.GetString("schemeId"))
 	p.Set("schemeDesc", in.GetString("schemeDesc"))
 	p.Set("name", fmt.Sprintf("%s - %s", in.GetString("productId"), in.GetString("schemeDesc")))
 

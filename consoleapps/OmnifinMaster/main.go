@@ -16,26 +16,23 @@ import (
 type Url struct {
 	PortName    string
 	WSDLAddress string
+	Operation   string
+	SaveHandler func(interface{}) error
 }
 
 //-------------------------
 
 type RespWSDL struct {
-	XMLName xml.Name `xml:"definitions"`
-	Binding Binding  `xml:"binding"`
+	// XMLName xml.Name `xml:"definitions"`
+	Binding Binding `xml:"binding"`
 }
 
 type Binding struct {
-	Operation Operation `xml:"operation"`
+	Operation []Operation `xml:"operation"`
 }
 
 type Operation struct {
 	Name string `xml:"name,attr"`
-}
-
-type UrlHandler struct {
-	url     Url
-	handler func(interface{}) error
 }
 
 //-------------------------
@@ -143,16 +140,22 @@ func saveData(masterData interface{}) (err error) {
 	return nil
 }
 
-func getOperationName(url string) (string, error) {
+func getOperationName(url string) ([]string, error) {
 	xmlString := GetHttpGETContentString(url)
 
 	resp := RespWSDL{}
 	err := xml.Unmarshal([]byte(xmlString), &resp)
 	if err != nil {
 		tk.Printf("error: %v", err)
-		return "", err
+		return nil, err
 	}
-	return resp.Binding.Operation.Name, nil
+
+	var ret []string
+	for _, op := range resp.Binding.Operation {
+		ret = append(ret, op.Name)
+	}
+
+	return ret, nil
 }
 
 func makeFirstLowerCase(s string) string {
@@ -169,7 +172,7 @@ func makeFirstLowerCase(s string) string {
 }
 
 func main() {
-	urls := []UrlHandler{
+	urls := []Url{
 		// Url{"MasterCountry", "http://103.251.60.132:8085/OmniFinServices/countryMasterWS?wsdl"},
 		// Url{"MasterState", "http://103.251.60.132:8085/OmniFinServices/stateMasterWS?wsdl"},
 		// Url{"MasterDistrict", "http://103.251.60.132:8085/OmniFinServices/districtMasterWS?wsdl"},
@@ -178,12 +181,22 @@ func main() {
 		// Url{"MasterBank", "http://103.251.60.132:8085/OmniFinServices/bankMasterWS?wsdl"},
 		// Url{"MasterBankBranch", "http://103.251.60.132:8085/OmniFinServices/bankBranchMasterWS?wsdl"},
 		{
-			Url{"MasterProduct", "http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl"},
+			"MasterProduct",
+			"http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl",
+			"",
 			SaveProduct,
 		},
 		{
-			Url{"MasterScheme", "http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl"},
+			"MasterScheme",
+			"http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl",
+			"",
 			SaveScheme,
+		},
+		{
+			"ConstitutionMaster",
+			"http://103.251.60.132:8085/OmniFinServices/genericOperationWS?wsdl",
+			"fetchConstitutionMaster",
+			SaveBorrowerConstitutionList,
 		},
 		// Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
 		// Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
@@ -195,17 +208,34 @@ func main() {
 	resetData()
 	for _, u := range urls {
 		tk.Println("")
-		tk.Println("Getting", u.url.PortName, "content from", u.url.WSDLAddress)
+		tk.Println("Getting", u.PortName, "content from", u.WSDLAddress)
 
-		log, err := createLog(u.url.PortName)
+		log, err := createLog(u.PortName)
 		if err != nil {
 			tk.Println("Error creating log:", err.Error())
 		}
 
 		x := NewReturnedXML()
-		operationName, err := getOperationName(u.url.WSDLAddress)
+		operationList, err := getOperationName(u.WSDLAddress)
 		if err != nil {
 			updateLog(log, err, "")
+			continue
+		}
+
+		var operationName string
+		if len(u.Operation) == 0 {
+			operationName = operationList[0]
+		} else {
+			for _, op := range operationList {
+				if op == u.Operation {
+					operationName = u.Operation
+					break
+				}
+			}
+		}
+
+		if len(operationName) == 0 {
+			tk.Printfn("Operation Not Found On: %s", u.PortName)
 			continue
 		}
 
@@ -241,11 +271,11 @@ func main() {
 			   	</soapenv:Body>
 			</soapenv:Envelope>`, operationName, operationName)
 
-		x.InString, err = GetHttpPOSTContentString(u.url.WSDLAddress, body)
+		x.InString, err = GetHttpPOSTContentString(u.WSDLAddress, body)
 
 		xmlStringLog := x.InString
-		if len(xmlStringLog) > 5000 {
-			xmlStringLog = xmlStringLog[:5000]
+		if len(xmlStringLog) > 10240 {
+			xmlStringLog = xmlStringLog[:10240]
 		}
 
 		updateLog(log, err, xmlStringLog)
@@ -260,8 +290,12 @@ func main() {
 		}
 		masterData := x.GenerateMasterData().(map[string]interface{})
 
-		// operation status is not 1
-		if tk.ToInt(masterData["operationStatus"], "Int64") != 1 {
+		// operation success is either
+		//  operationMsg = Operation Compleated Successfully (NOT TYPO)
+		//  or
+		//  operationStatus = 1
+		if tk.ToString(masterData["operationMsg"]) != "Operation Compleated Successfully" &&
+			tk.ToInt(masterData["operationStatus"], "Int64") != 1 {
 			err = errors.New("Operation status is not met")
 
 			updateLog(log, err, xmlStringLog)
@@ -278,8 +312,8 @@ func main() {
 		}
 
 		// run individual save code transformation
-		if u.handler != nil {
-			err = u.handler(masterData)
+		if u.SaveHandler != nil {
+			err = u.SaveHandler(masterData)
 		}
 
 		if err != nil {

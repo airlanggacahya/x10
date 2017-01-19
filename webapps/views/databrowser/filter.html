@@ -1,14 +1,22 @@
+<style type="text/css">
+	.width-full{
+		width: 100%
+	}
+</style>
 <div class="col-md-12 no-padding">
 	<div class="col-md-6">
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Customer</span>
-		        <select class="multifield"  id="multiCustomer" data-bind="kendoMultiSelect: { 
+		        <select class="multifield"  id="multiCustomer" 
+		        data-placeholder="Choose Customer"
+		        data-bind="kendoMultiSelect: { 
 		        data: multiCustomerDS,
 		        value: filters.CustomerVal,
 		        dataValueField: 'value', 
 		        dataTextField: 'text',
-		        filter: 'contains'
+		        filter: 'contains', 
+		        clearButton: false
 		        }"></select>
 	        </div>
 	    </div>
@@ -17,12 +25,15 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Dealno</span>
-		        <select class="multifield"  id="multiDealno" data-bind="kendoMultiSelect: {
+		        <select class="multifield"  id="multiDealno"  
+		        data-placeholder="Choose Deal No"
+		        data-bind="kendoMultiSelect: {
 		        data: multiDealNoDS,
 		        value: filters.DealNoVal,
 		        dataValueField: 'value', 
 		        dataTextField: 'text',
-		        filter: 'contains'
+		        filter: 'contains', 
+		        clearButton: false
 		        }"></select>
 	        </div>
 	    </div>
@@ -34,12 +45,15 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">City</span>
-		        <select class="multifield"  id="multiCity" data-bind="kendoMultiSelect: { 
+		        <select class="multifield"  id="multiCity"  
+		        data-placeholder="Choose City"
+		        data-bind="kendoMultiSelect: { 
 		        data: multiCityDS,
 		        value: filters.CityVal,
 		        dataValueField: 'value', 
 		        dataTextField: 'text',
-		        filter: 'contains'
+		        filter: 'contains', 
+		        clearButton: false
 		        }"></select>
 	        </div>
 	    </div>
@@ -48,12 +62,15 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Product</span>
-		        <select class="multifield"  id="multiProduct" data-bind="kendoMultiSelect: { 
+		        <select class="multifield"  id="multiProduct"  
+		        data-placeholder="Choose Product"
+		        data-bind="kendoMultiSelect: { 
 		        data: multiProductDS,
 		        value: filters.ProductVal,
 		        dataValueField: 'value', 
 		        dataTextField: 'text',
-		        filter: 'contains'
+		        filter: 'contains', 
+		        clearButton: false
 		        }"></select>
 	        </div>
 	    </div>
@@ -65,12 +82,15 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">BR Head</span>
-		        <select class="multifield"  id="multiBRHead" data-bind="kendoMultiSelect: { 
+		        <select class="multifield"  id="multiBRHead"  
+		        data-placeholder="Choose Branch Head"
+		        data-bind="kendoMultiSelect: { 
 		        data: multiBRHeadDS,
 		        value: filters.BRHeadVal,
 		        dataValueField: 'value', 
 		        dataTextField: 'text',
-		        filter: 'contains'
+		        filter: 'contains', 
+		        clearButton: false
 		        }"></select>
 	        </div>
 	    </div>
@@ -79,12 +99,15 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Scheme</span>
-		        <select class="multifield"  id="multiScheme" data-bind="kendoMultiSelect: { 
+		        <select class="multifield"  id="multiScheme"  
+		        data-placeholder="Choose Scheme"
+		        data-bind="kendoMultiSelect: { 
 		        data: multiSchemeDS,
 		        value: filters.SchemeVal,
 		        dataValueField: 'value', 
 		        dataTextField: 'text',
-		        filter: 'contains'
+		        filter: 'contains', 
+		        clearButton: false
 		        }"></select>
 	        </div>
 	    </div>
@@ -96,12 +119,15 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">RM</span>
-		        <select class="multifield"  id="multiRM" data-bind="kendoMultiSelect: { 
+		        <select class="multifield"  id="multiRM"  
+		        data-placeholder="Choose RM"
+		        data-bind="kendoMultiSelect: { 
 		        data: multiRMDS,
 		        value: filters.RMVal,
 		        dataValueField: 'value', 
 		        dataTextField: 'text',
-		        filter: 'contains'
+		        filter: 'contains', 
+		        clearButton: false
 		        }"></select>
 	        </div>
 	    </div>
@@ -119,7 +145,7 @@
 		<div class="col-md-4">
 		    <div class="form-group form-group-table-name">
 		        <div class="input-group input-group-sm ez width-full">
-			        <input id="inputRLARange" type="number" data-bind="value: filters.inputRLARangeVal"/>
+			        <input id="inputRLARange" type="number" data-bind="kendoNumericTextBox: { value: filters.inputRLARangeVal }"/>
 		        </div>
 		    </div>
 		</div>
@@ -131,12 +157,15 @@
 	    <div class="form-group form-group-table-name">
 	        <div class="input-group input-group-sm ez width-full">
 		     	<span class="input-group-addon width-100 align-right">Credit Analyst</span>
-		        <select class="multifield"  id="multiCA" data-bind="kendoMultiSelect: { 
+		        <select class="multifield"  id="multiCA"  
+		        data-placeholder="Choose Credit Analyst"
+		        data-bind="kendoMultiSelect: { 
 		        data: multiCADS,
 		        value: filters.CAVal,
 		        dataValueField: 'value', 
 		        dataTextField: 'text',
-		        filter: 'contains'
+		        filter: 'contains', 
+		        clearButton: false
 		        }"></select>
 	        </div>
 	    </div>
@@ -145,7 +174,7 @@
 		<div class="col-md-8">
 		    <div class="form-group form-group-table-name">
 		        <div class="input-group input-group-sm ez width-full">
-			     	<span class="input-group-addon width-100 align-right">Internal Rating</span>
+			     	<span class="input-group-addon width-100 align-right">Internal Rating - Ranges</span>
 			        <select class="multifield"  id="ddIR" 
 			        data-bind="kendoDropDownList: { data: dddata, value: filters.ddIRRangesVal, dataTextField: 'text', dataValueField: 'value'}"></select>
 		        </div>
@@ -154,11 +183,15 @@
 		<div class="col-md-4">
 		    <div class="form-group form-group-table-name">
 		        <div class="input-group input-group-sm ez width-full">
-			        <input id="inputIRRange" type="number" data-bind="value: filters.inputIRRangeVal" />
+			        <input id="inputIRRange" type="number" data-bind="kendoNumericTextBox: { value: filters.inputIRRangeVal }" />
 		        </div>
 		    </div>
 		</div>
 	</div>
+</div>
+
+<div class="col-md-12" style="text-align: center">
+	<button  type="button" btn-sm class="btn btn-sm btn-default " data-bind="click: resetFilter">Reset</button>
 </div>
 
 <script>document.write('<script src="/static/core/newdefaultfilter.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>

@@ -91,7 +91,7 @@ filters.RMVal.subscribe(function(values) {
 	databrowser.GetDataGrid();
 })
 
-filters.ddRLARangesVal = ko.observable("gt")
+filters.ddRLARangesVal = ko.observable("")
 filters.ddRLARangesVal.subscribe(function(values) {
 	updateCustDS()
 	updateDealNoDS()
@@ -132,7 +132,7 @@ filters.CAVal.subscribe(function(values) {
 	databrowser.GetDataGrid();
 })
 
-filters.ddIRRangesVal = ko.observable("gt")
+filters.ddIRRangesVal = ko.observable("")
 filters.ddIRRangesVal.subscribe(function(values) {
 	updateCustDS()
 	updateDealNoDS()
@@ -146,7 +146,7 @@ filters.ddIRRangesVal.subscribe(function(values) {
 	databrowser.GetDataGrid();
 })
 
-filters.inputIRRangeVal = ko.observable(0)
+filters.inputIRRangeVal = ko.observable()
 filters.inputIRRangeVal.subscribe(function(values) {
 	updateCustDS()
 	updateDealNoDS()
@@ -266,16 +266,18 @@ var critRM = function(fieldName){
 var critRLA = function(fieldName){
 	var criteria = { logic: "or", filters: [] }
 	
-	ajaxPost("/databrowser/getcustomerprofiledata", { 
-		filter: { 
-			logic: "or", 
-			filters: [{ field: "applicantdetail.AmountLoan", operator: filters.ddRLARangesVal(), value: filters.inputRLARangeVal() }] 
-		} 
-	}, function(res){
-		_.each(res.data, function(data){
-			criteria.filters.push({ field: fieldName, operator: "eq", value: data.applicantdetail.DealNo })
+	if(filters.ddRLARangesVal() != "")
+		ajaxPost("/databrowser/getcustomerprofiledata", { 
+			filter: { 
+				logic: "or", 
+				filters: [{ field: "applicantdetail.AmountLoan", operator: filters.ddRLARangesVal(), value: filters.inputRLARangeVal() }] 
+			} 
+		}, function(res){
+			_.each(res.data, function(data){
+				criteria.filters.push({ field: fieldName, operator: "eq", value: data.applicantdetail.DealNo })
+			})
 		})
-	})
+
 	return criteria
 }
 
@@ -299,16 +301,17 @@ var critCA = function(fieldName){
 var critIR = function(fieldName){
 	var criteria = { logic: "or", filters: [] }
 	
-	ajaxPost("/databrowser/getcreditscorecarddata", { 
-		filter: { 
-			logic: "or", 
-			filters: [{ field: "FinalScoreDob", operator: filters.ddIRRangesVal(), value: filters.inputIRRangeVal() }] 
-		} 
-	}, function(res){
-		_.each(res.data, function(data){
-			criteria.filters.push({ field: fieldName, operator: "eq", value: data.DealNo })
+	if(filters.ddIRRangesVal() != "")
+		ajaxPost("/databrowser/getcreditscorecarddata", { 
+			filter: { 
+				logic: "or", 
+				filters: [{ field: "FinalScoreDob", operator: filters.ddIRRangesVal(), value: filters.inputIRRangeVal() }] 
+			} 
+		}, function(res){
+			_.each(res.data, function(data){
+				criteria.filters.push({ field: fieldName, operator: "eq", value: data.DealNo })
+			})
 		})
-	})
 	
 	return criteria
 }
@@ -583,6 +586,7 @@ var multiRMDS = getAccountDetailDS("accountsetupdetails.rmname", function(d){
 })
 
 var dddata = [
+	{ text: "Choose Ranges", value: "" },
     { text: "Greater Than", value: "gt" },
     { text: "Greater Than or Equal", value: "gte" },
     { text: "Equal", value: "eq" },

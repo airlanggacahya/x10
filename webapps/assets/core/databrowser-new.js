@@ -609,10 +609,10 @@ var dbgrid = ""
 
 databrowser.GetDataGrid = function(){
 	ajaxPost("/accountdetail/getdatabrowser", { 
-		rating : filters.inputIRRangeVal() != undefined ? filters.inputIRRangeVal() : "", 
-		ratingopr : filters.ddIRRangesVal(),
-		loanamount : filters.inputRLARangeVal() != undefined ? filters.inputRLARangeVal() : "",
-		loanamountopr : filters.ddRLARangesVal(), 
+		rating : filters.ddIRRangesVal() != "" ? filters.inputIRRangeVal() : "", 
+		ratingopr : filters.ddIRRangesVal() != "" ? filters.ddIRRangesVal() : "",
+		loanamount : filters.ddRLARangesVal() != "" ? filters.inputRLARangeVal() : "",
+		loanamountopr : filters.ddRLARangesVal() != "" ? filters.ddRLARangesVal() : "", 
 		city : filters.CityVal(), 
 		product : filters.ProductVal(), 
 		brhead : filters.BRHeadVal(), 

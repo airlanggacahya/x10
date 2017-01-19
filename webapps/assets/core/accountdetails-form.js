@@ -1,5 +1,7 @@
  var adf = {}
 
+adf.loginDateString = ko.observable()
+adf.disable = ko.observable(false)
 // ====== OPTIONS
 adf.FirstAgreementDate = ko.observable("")
 adf.optionRatingMasters = ko.observableArray([]);
@@ -849,6 +851,7 @@ adf.getConfirm = function(){
 		$("#onreset6").prop("disabled", false);
 		$("#onreset7").prop("disabled", false);
 		$("#onreset8").prop("disabled", false);
+		adf.setDisable()
 	}
 
 		var res1 = adf.form.CustomerBussinesMix.B2BGovtIn() + adf.form.CustomerBussinesMix.StockSellIn() + adf.form.CustomerBussinesMix.B2BCorporateIn();
@@ -1132,18 +1135,19 @@ adf.getAccountConfirm = function(){
 		$("#onreset1").prop("disabled", true);
 		adf.form.AccountSetupDetails.Status(1)
 		adf.sectionDisable("#c-1", false)
-		$("#city").prop( "disabled", true);
+		adf.setDisable()
+		// $("#city").prop( "disabled", true);
 		$("#DealNo").prop( "disabled", true);
-		$("#loginDate").prop( "disabled", true);
+		// $("#loginDafte").prop( "disabled", true);
 		swal("Success", "Data Account Set-up Details confirmed", "success");
 	}else{
 		adf.optionSectionAccountConfirm(" Confirm");
 		$("#onreset1").prop("disabled", false);
 		adf.sectionDisable("#c-1", true)
 		adf.form.AccountSetupDetails.Status(0)
-		$("#city").prop( "disabled", true);
+		// $("#city").prop( "disabled", true);
 		$("#DealNo").prop( "disabled", true);
-		($("#loginDate").data("kendoDatePicker")).readonly();
+		// ($("#loginDate").data("kendoDatePicker")).readonly();
 		$('html, body').animate({ scrollTop: $('#c-1').offset().top }, 'slow')
 
 	}
@@ -1532,38 +1536,6 @@ adf.getLoanConfirm = function(){
 
 }
 
-// adf.getPurchaseOrderBackingConfirm = function(){
-// 	if(adf.optionPurchaseOrderBackingConfirm() == " Confirm"){
-// 		adf.optionPurchaseOrderBackingConfirm(" Re Enter");
-// 		adf.form.PurchaseOrderBacking.Status(1);
-// 		adf.sectionDisable("#c-6", false)
-// 		$("#onreset6").prop("disabled", true);
-// 		swal("Success", "Successfully Confirm Purchase Order Backing", "success");
-// 	}else{
-// 		adf.optionPurchaseOrderBackingConfirm(" Confirm");
-// 		adf.sectionDisable("#c-6", true)
-// 		adf.form.PurchaseOrderBacking.Status(0)
-// 		$("#onreset6").prop("disabled", false);
-// 		$('html, body').animate({ scrollTop: $('#c-6').offset().top }, 'slow')
-// 	}
-// 	var url = "/accountdetail/savepurchaseorderbacking"
-// 	var param =adf.getForm()
-
-// 	adf.isLoading(true)
-// 	app.ajaxPost(url, param, function (res) {
-// 		adf.isLoading(false)
-
-// 		if(res.Status == "NOK"){
-// 			swal("Warning", "Please save all first, for new Account Detail data", "warning");
-// 			return;
-// 		}
-// 	}, function () {
-// 		adf.isLoading(false)
-
-// 	});
-
-// }
-
 adf.getBusinessConfirm = function(){
 	var url = "/accountdetail/saveaccountdetail"
 	var res1 = adf.form.CustomerBussinesMix.B2BGovtIn() + adf.form.CustomerBussinesMix.StockSellIn() + adf.form.CustomerBussinesMix.B2BCorporateIn();
@@ -1668,7 +1640,7 @@ adf.getUnfreeze = function(){
 			adf.optionConfirm(true)
 			if(adf.form.Status() == 1){
 				adf.EnableAllfields(false)
-				$("#city").prop( "disabled", true);
+				//$("#city").prop( "disabled", true);
 				$("#DealNo").prop( "disabled", true);
 				$("#onconfirm").prop( "disabled", false);
 				// ($("#loginDate").data("kendoDatePicker")).readonly();
@@ -2265,6 +2237,13 @@ adf.getData = function () {
 					adf.form.BorrowerDetails.CommentsonFinancials([""])
 				}
 			}
+
+			var temp = moment(adf.form.AccountSetupDetails.LoginDate()).format("DD-MMM-YYYY")
+			adf.loginDateString(temp)
+
+			setTimeout(function(){
+				adf.setDisable()
+			}, 100)
 		}, function () {
 			adf.isLoading(false)
 
@@ -2279,33 +2258,9 @@ window.refreshFilter = function () {
 	adf.form.BorrowerDetails.RefrenceCheck([])
 	adf.getRatingMaster(adf.getData)
 	adf.loadRefrenceGrid();
-	// if(adf.PdDate() == ""){
-	// 	adf.PdDate((new Date()).toISOString())
-	// }
 	$('.form-last-confirmation-info').html('');
-	// setTimeout(function(){
-	// 	console.log("--------->>>>1953",adf.PdDate())
-	// 	if(adf.PdDate().indexOf("1970") > -1 || adf.PdDate() == ''){
-	// 		adf.PdDate("")
-	// 		$('#PD').tooltipster('destroy')
-	// 		$('#PD').tooltipster({
-	// 			contentAsHTML: true,
-	// 	    	interactive: true,
-	// 	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span></span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
-	// 		})
-	// 	}else{
-	// 		// adf.PdDate("")
-	// 		console.log(adf.PdDate())
-	// 		$('#PD').tooltipster('destroy')
-	// 		$('#PD').tooltipster({
-	// 			contentAsHTML: true,
-	// 	    	interactive: true,
-	// 	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
-	// 		})
-	// 	}
-	// }, 1000)
-
-
+	
+	// adf.setDisable()	
 }
 adf.initEvents = function () {
 	filter().CustomerSearchVal.subscribe(function () {
@@ -2373,7 +2328,14 @@ adf.getRatingMaster = function (callback) {
 }
 
 adf.initData = function () {
+	// adf.setDisable()
 	adf.getRatingMaster()
+}
+
+adf.setDisable = function(){
+	console.log("sarif")
+	console.log("sarif")
+	$(".disable").prop("disabled", true)
 }
 
 adf.addMoreRealEstatePosition = function (promotor) {
@@ -3150,6 +3112,4 @@ $(function () {
     	interactive: true,
     	content: $("<p class='info'>PD Done By : <span>&nbsp;</span><br>PD Date : <span>&nbsp;</span><br>PD Place : <span>&nbsp;</span><br>Person Met : <span>&nbsp;</span><br>PD Remarks: <span>&nbsp;</span></p>")
 	})
-
-
 })

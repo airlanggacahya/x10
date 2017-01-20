@@ -72,8 +72,10 @@ intrtr.optionDataDPD = ko.observableArray([
 intrtr.showDetails = ko.observable(false);
 
 intrtr.dataTemp = ko.observableArray([]);
-intrtr.dataInternalSnapshot = ko.observableArray([])
-intrtr.dataInternalDealist = ko.observableArray([])
+intrtr.dataInternalSnapshot = ko.observableArray([]);
+intrtr.dataInternalDealist = ko.observableArray([]);
+intrtr.isFreeze = ko.observable();
+intrtr.status = ko.observable();
 
 intrtr.getData = function(){
 	intrtr.optionDataAccountDetail([])
@@ -144,11 +146,24 @@ intrtr.getDataIntRTR = function(dealNo, customerId){
 		Id : id
 	}
 
+	intrtr.dataTemp([])
+	intrtr.dataInternalSnapshot([])
+	intrtr.dataInternalDealist([])
+
 	ajaxPost("/internalrtr/getdatainternalrtr", param, function(res){
 		if (res.Data != null){
-			intrtr.dataTemp(res.Data[0])
-			intrtr.dataInternalSnapshot(res.Data[0].Snapshot)
-			intrtr.dataInternalDealist(res.Data[0].Dealist)
+			intrtr.dataTemp(res.Data[0]);
+			intrtr.dataInternalSnapshot(res.Data[0].Snapshot);
+			intrtr.dataInternalDealist(res.Data[0].Dealist);
+			intrtr.isFreeze(res.Data[0].Isfreeze);
+			intrtr.status(res.Data[0].Status);
+			if(res.Data[0].Isfreeze == true){
+				intrtr.isFreeze(true);
+				$(".btn-confirm").prop("disabled", true);
+			}else{
+				intrtr.isFreeze(false);
+				$(".btn-confirm").prop("disabled", false);
+			}
 		}
 	})
 }
@@ -323,6 +338,9 @@ intrtr.loadGrid = function(){
 			        	field:"TotalLoanAmount",
 			        	title: "Loan Amount",
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+			        	template: function(e){
+			        		return app.formatnum(e.TotalLoanAmount)
+			        	}
 			        },
 
                 ]
@@ -434,18 +452,41 @@ intrtr.loadGrid = function(){
 	// });
 }
 
-intrtr.getConfirmedFreeze = function(status, isfreeze){
+intrtr.getConfirmed = function(status, isfreeze){
 	intrtr.dataTemp().Status = status;
 	intrtr.dataTemp().Isfreeze = isfreeze;
 	ajaxPost("/internalrtr/internalrtrconfirmed", intrtr.dataTemp(), function(res){
 		if(res.IsError != true){
-			if(isfreeze == false){
+			intrtr.status(status)
+			if(status == 1){
 				swal("Data Successfully Confirm", "", "success");
 			}
 		}else{
 			swal(res.Message, "","error");
 		}
 	});
+}
+
+intrtr.getFreeze = function(status, isfreeze){
+	intrtr.dataTemp().Status = status;
+	intrtr.dataTemp().Isfreeze = isfreeze;
+	if(intrtr.status() == 1){
+		ajaxPost("/internalrtr/internalrtrconfirmed", intrtr.dataTemp(), function(res){
+			if(res.IsError != true){
+				if(isfreeze == true){
+					intrtr.isFreeze(true);
+					$(".btn-confirm").prop("disabled", true);
+				}else{
+					intrtr.isFreeze(false);
+					$(".btn-confirm").prop("disabled", false);
+				}
+			}else{
+				swal(res.Message, "","error");
+			}
+		});
+	}else{
+		swal("Please Confirm First", "", "warning");
+	}
 }
 
 

@@ -46,6 +46,10 @@ func (a *DataConfirmController) SaveDataConfirmed(CustomerID string, DealNo stri
 		que = que.Where(dbox.Eq("_id", concate))
 		data := Data.(*AccountDetail)
 		insertdata = insertdata.Set("data", data)
+	case "InternalRTR":
+		que = que.Where(dbox.Eq("_id", concate))
+		data := Data.(*InternalRtr)
+		insertdata = insertdata.Set("data", data)
 	case "BankAnalysisV2":
 		que = que.Where(dbox.Eq("CustomerId", custInt), dbox.Eq("DealNo", DealNo))
 		data := Data.(*BankAnalysisV2)
@@ -125,6 +129,9 @@ func (a *DataConfirmController) GetDataConfirmed(CustomerID string, DealNo strin
 
 	switch TableName {
 	case "AccountDetails":
+		que = que.Where(dbox.Eq("_id", concate))
+		coll = "Account Details Not Confirmed"
+	case "InternalRTR":
 		que = que.Where(dbox.Eq("_id", concate))
 		coll = "Account Details Not Confirmed"
 	case "BankAnalysisV2":

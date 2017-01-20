@@ -278,6 +278,31 @@ function refreshdata(){
         }else {
           data[0].DetailOfPromoters.Biodata[i].MaritalStatus = "Single"
         }
+
+        if(typeof data[0].DetailOfPromoters.Biodata[i].Guarantor === "boolean") {
+          if(data[0].DetailOfPromoters.Biodata[i].Guarantor) {
+            data[0].DetailOfPromoters.Biodata[i].Guarantor = "Yes"
+          } else {
+            data[0].DetailOfPromoters.Biodata[i].Guarantor = "No"
+          }
+        }
+
+        if(typeof data[0].DetailOfPromoters.Biodata[i].Director === "boolean") {
+          if(data[0].DetailOfPromoters.Biodata[i].Director) {
+            data[0].DetailOfPromoters.Biodata[i].Director = "Yes"
+          } else {
+            data[0].DetailOfPromoters.Biodata[i].Director = "No"
+          }
+        }
+
+        if(typeof data[0].DetailOfPromoters.Biodata[i].Promotor === "boolean") {
+          if(data[0].DetailOfPromoters.Biodata[i].Promotor) {
+            data[0].DetailOfPromoters.Biodata[i].Promotor = "Yes"
+          } else {
+            data[0].DetailOfPromoters.Biodata[i].Promotor = "No"
+          }
+        }
+
       })
 
       _.each(data[0].DetailOfPromoters.Biodata, function(row){

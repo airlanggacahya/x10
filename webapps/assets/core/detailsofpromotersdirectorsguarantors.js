@@ -135,8 +135,8 @@ detail.genderList = [
 ]
 
 detail.guarantorList = [
-	{text: "Yes", value: true},
-	{text: "No", value: false},
+	{text: "Yes", value: "Yes"},
+	{text: "No", value: "No"}
 ]
 
 detail.maritalStatusList = [

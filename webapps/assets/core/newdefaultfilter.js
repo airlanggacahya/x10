@@ -110,7 +110,7 @@ var updateDSWithout = function(DSName = ""){
 		updateRMDS()
 	
 	if(DSName != "CA")
-		updateCADS
+		updateCADS()
 }
 
 //--------------------------------------------------------------------

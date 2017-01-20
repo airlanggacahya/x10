@@ -7,6 +7,7 @@ import (
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
+	"strings"
 )
 
 type InternalRtrController struct {
@@ -108,6 +109,15 @@ func (d *InternalRtrController) InternalRtrConfirmed(k *knot.WebContext) interfa
 
 	if err != nil {
 		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	str := strings.Split(payload.Id, "|")
+	id, deal := str[0], str[1]
+
+	if payload.Status == 1 {
+		if err := new(DataConfirmController).SaveDataConfirmed(id, deal, payload.TableName(), payload, true); err != nil {
+			return d.SetResultInfo(true, err.Error(), nil)
+		}
 	}
 
 	return d.SetResultInfo(false, "success", nil)

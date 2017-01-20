@@ -470,6 +470,8 @@ intrtr.getConfirmed = function(status, isfreeze){
 intrtr.getFreeze = function(status, isfreeze){
 	intrtr.dataTemp().Status = status;
 	intrtr.dataTemp().Isfreeze = isfreeze;
+	intrtr.dataTemp().CustomerId = filter().CustomerSearchVal();
+	intrtr.dataTemp().DealNo = filter().DealNumberSearchVal();
 	if(intrtr.status() == 1){
 		ajaxPost("/internalrtr/internalrtrconfirmed", intrtr.dataTemp(), function(res){
 			if(res.IsError != true){

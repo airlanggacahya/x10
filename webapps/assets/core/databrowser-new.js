@@ -349,14 +349,16 @@ databrowser.fullcoll = [
  					if(dt.CA.detailofpromoters.biodata[i].Guarantor == undefined){
  						break;
  					}
-
  					str += "<tr>"
-
- 					if(dt.CA.detailofpromoters.biodata[i].Guarantor){
-	 					str += "<td>Yes</td>"
-	 				}else{
-	 					str += "<td>No</td>"
-	 				}
+ 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
+ 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+ 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
+ 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
+	 						str += "<td>Yes</td>"
+		 				}else{
+		 					str += "<td>No</td>"
+		 				}
+ 					}
  					
  					str+="</tr>"
  				}
@@ -376,12 +378,17 @@ databrowser.fullcoll = [
  					}
 
  					str += "<tr>"
+
+ 					if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'string'){
+ 						str +="<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
+ 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'boolean'){
+	 					if(dt.CA.detailofpromoters.biodata[i].Promotor){
+		 					str += "<td>Yes</td>"
+		 				}else{
+		 					str += "<td>No</td>"
+		 				}
+ 					}				
  					
- 					if(dt.CA.detailofpromoters.biodata[i].Promotor){
-	 					str += "<td>Yes</td>"
-	 				}else{
-	 					str += "<td>No</td>"
-	 				}
 
  					str+="</tr>"
  				}
@@ -401,12 +408,16 @@ databrowser.fullcoll = [
  					}
 
  					str += "<tr>"
- 					
- 					if(dt.CA.detailofpromoters.biodata[i].Director){
-	 					str += "<td>Yes</td>"
-	 				}else{
-	 					str += "<td>No</td>"
-	 				}
+
+ 					if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'string'){
+ 						str +="<td>"+dt.CA.detailofpromoters.biodata[i].Director+"</td>"
+ 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'boolean') {
+ 						if(dt.CA.detailofpromoters.biodata[i].Director){
+	 						str += "<td>Yes</td>"
+		 				}else{
+		 					str += "<td>No</td>"
+		 				}
+ 					}
 
  					str+="</tr>"
  				}

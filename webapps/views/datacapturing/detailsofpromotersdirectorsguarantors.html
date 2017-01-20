@@ -33,33 +33,46 @@
   }
 
   function changeguarantor(e, i){
-    // console.log(e.item.context.innerHTML)
-    // console.log(i)
-    guarantor = false
-    if(e.item.context.innerHTML == "Yes"){
-      guarantor = true
+    guarantor = ""
+    if(e.item.context != undefined) {
+      if(e.item.context.innerHTML === "Yes"){
+        guarantor = "Yes"
+      } else if(e.item.context.innerHTML === "No") {
+        guarantor = "No"
+      }  
     }
+
     detail.biodata()[i].Guarantor = guarantor
   }
 
   function changedirector(e, i){
     // console.log(e.item.context.innerHTML)
     // console.log(i)
-    Director = false
-    if(e.item.context.innerHTML == "Yes"){
-      Director = true
+    Director = ""
+    if(e.item.context != undefined) {
+      if(e.item.context.innerHTML === "Yes"){
+        Director = "Yes"
+      } else if(e.item.context.innerHTML === "No") {
+        Director = "No"
+      }  
     }
+
     detail.biodata()[i].Director = Director
   }
 
   function changepromotor(e, i){
     // console.log(e.item.context.innerHTML)
     // console.log(i)
-    Promotor = false
-    if(e.item.context.innerHTML == "Yes"){
-      Promotor = true
+    Promotor = ""
+    if(e.item.context != undefined) {
+      if(e.item.context.innerHTML === "Yes"){
+        Promotor = "Yes"
+      } else if(e.item.context.innerHTML === "No") {
+        Promotor = "No"
+      }  
     }
-    detail.biodata()[i].Promotor = Promotor
+
+    detail.biodata()[i].Promotor = Promotor 
   }
 
   function changeDateOfBirth(e,i){
@@ -168,7 +181,7 @@
                         </div>
                         <div class="col-sm-8 widthfield">
                           <!-- <input data-bind="value: detail.biodata()[$index()].guarantor, attr: {id: 'guarantor'+ $index()}" type="checkbox" data-off-text="No" data-on-text="Yes" checked="false"> -->
-                          <input type="text" id="Guarantodropdown" class="Guarantor form-control input-sm" data-bind="value: detail.biodata()[$index()].Guarantor"></select>
+                          <input type="text" id="Guarantodropdown" class="ndisable form-control input-sm" data-bind="kendoDropDownList: {value: detail.biodata()[$index()].Guarantor, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changeguarantor(e, $index()) }}"></select>
                         </div>
                       </div>
 
@@ -178,7 +191,7 @@
                         </div>
                         <div class="col-sm-8 widthfield">
                           <!-- <input data-bind="value: detail.biodata()[$index()].guarantor, attr: {id: 'guarantor'+ $index()}" type="checkbox" data-off-text="No" data-on-text="Yes" checked="false"> -->
-                          <input type="text" id="Guarantodropdown" class="Director form-control input-sm" data-bind="value: detail.biodata()[$index()].Director"></select>
+                          <input type="text" id="Guarantodropdown" class="ndisable form-control input-sm" data-bind="kendoDropDownList: {value: detail.biodata()[$index()].Director, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changedirector(e, $index()) }}"></select>
                         </div>
                       </div>
 
@@ -188,7 +201,7 @@
                         </div>
                         <div class="col-sm-8 widthfield">
                           <!-- <input data-bind="value: detail.biodata()[$index()].guarantor, attr: {id: 'guarantor'+ $index()}" type="checkbox" data-off-text="No" data-on-text="Yes" checked="false"> -->
-                          <input type="text" id="Guarantodropdown" class="Promotor form-control input-sm" data-bind="value: detail.biodata()[$index()].Promotor"></select>
+                          <input type="text" id="Guarantodropdown" class="ndisable form-control input-sm" data-bind="kendoDropDownList: {value: detail.biodata()[$index()].Promotor, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changepromotor(e, $index()) }}"></select>
                         </div>
                       </div>
 

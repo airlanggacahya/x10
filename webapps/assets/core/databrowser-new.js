@@ -346,22 +346,28 @@ databrowser.fullcoll = [
  			template : function(dt){
  				var str = "<table class='intable'>";
  				for(var i in dt.CA.detailofpromoters.biodata){
- 					if(dt.CA.detailofpromoters.biodata[i].Guarantor == undefined){
+ 					if(dt.CA.detailofpromoters.biodata[i].Guarantor === null) {
+ 						str += "<tr><td></td></tr>"
+ 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'undefined'){ 						
  						break;
- 					}
- 					str += "<tr>"
- 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
- 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
- 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
- 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
-	 						str += "<td>Yes</td>"
-		 				}else{
-		 					str += "<td>No</td>"
-		 				}
+ 					} else {
+ 						str += "<tr>"				
+ 			
+	 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
+	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
+	 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
+		 						str += "<td>Yes</td>"
+			 				}else{
+			 					str += "<td>No</td>"
+			 				}
+	 					} 
+	 					
+	 					str+="</tr>"
  					}
  					
- 					str+="</tr>"
  				}
+
  				str += "</table>";
  				return str;
  			},
@@ -373,24 +379,26 @@ databrowser.fullcoll = [
  			template : function(dt){
  				var str = "<table class='intable'>";
  				for(var i in dt.CA.detailofpromoters.biodata){
- 					if(dt.CA.detailofpromoters.biodata[i].Promotor == undefined){
+ 					if(dt.CA.detailofpromoters.biodata[i].Promotor === null) {
+ 						str += "<tr><td></td></tr>"
+ 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'undefined'){ 						
  						break;
+ 					} else {
+ 						str += "<tr>"				
+ 			
+	 					if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'string'){
+	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
+	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'boolean'){
+	 						if(dt.CA.detailofpromoters.biodata[i].Promotor){
+		 						str += "<td>Yes</td>"
+			 				}else{
+			 					str += "<td>No</td>"
+			 				}
+	 					} 
+	 					
+	 					str+="</tr>"
  					}
-
- 					str += "<tr>"
-
- 					if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'string'){
- 						str +="<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
- 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'boolean'){
-	 					if(dt.CA.detailofpromoters.biodata[i].Promotor){
-		 					str += "<td>Yes</td>"
-		 				}else{
-		 					str += "<td>No</td>"
-		 				}
- 					}				
  					
-
- 					str+="</tr>"
  				}
  				str += "</table>";
  				return str;
@@ -403,23 +411,26 @@ databrowser.fullcoll = [
  			template : function(dt){
  				var str = "<table class='intable'>";
  				for(var i in dt.CA.detailofpromoters.biodata){
- 					if(dt.CA.detailofpromoters.biodata[i].Director == undefined){
+ 					if(dt.CA.detailofpromoters.biodata[i].Director === null) {
+ 						str += "<tr><td></td></tr>"
+ 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'undefined'){ 						
  						break;
+ 					} else {
+ 						str += "<tr>"				
+ 			
+	 					if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'string'){
+	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
+	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Director === 'boolean'){
+	 						if(dt.CA.detailofpromoters.biodata[i].Director){
+		 						str += "<td>Yes</td>"
+			 				}else{
+			 					str += "<td>No</td>"
+			 				}
+	 					} 
+	 					
+	 					str+="</tr>"
  					}
-
- 					str += "<tr>"
-
- 					if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'string'){
- 						str +="<td>"+dt.CA.detailofpromoters.biodata[i].Director+"</td>"
- 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'boolean') {
- 						if(dt.CA.detailofpromoters.biodata[i].Director){
-	 						str += "<td>Yes</td>"
-		 				}else{
-		 					str += "<td>No</td>"
-		 				}
- 					}
-
- 					str+="</tr>"
+ 					
  				}
  				str += "</table>";
  				return str;

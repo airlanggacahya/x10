@@ -552,8 +552,10 @@ var dddata = [
     { text: "Lower Than or Equal", value: "lte" },
     { text: "Lower Than", value: "lt" }
 ]
-$("#inputRLARange").kendoNumericTextBox();
-$("#inputIRRange").kendoNumericTextBox();
+
+// This is redudant call since we use Knockout-Kendo
+// $("#inputRLARange").kendoNumericTextBox();
+// $("#inputIRRange").kendoNumericTextBox();
 
 var multiCADS = getAccountDetailDS("accountsetupdetails.creditanalyst", function(d){
 	return {

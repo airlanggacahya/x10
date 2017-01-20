@@ -182,7 +182,7 @@ intrtr.loadGrid = function(){
                 		field:"NoActiveLoan",
                 		title: "No. of Active Loans",
                 		width: 100,
-                		attributes: { style: 'background: rgb(238, 238, 238);' },
+                		attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
                 	},
                 	{
 			        	field:"AmountOutstandingAccured",
@@ -218,7 +218,7 @@ intrtr.loadGrid = function(){
 			        	field:"NoOfPaymentDueDate",
 			        	title: "Number of Payment on due date",
 			        	width: 125,
-			        	attributes: { style: 'background: rgb(238, 238, 238)' },
+			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        },
 				],
 			},
@@ -311,16 +311,18 @@ intrtr.loadGrid = function(){
 			        	field:"AgreementDate",
 			        	title: "Deal Approval Date",
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
+			        	template:function(e){ return kendo.toString(new Date(e.AgreementDate), "dd-MMM-yyyy");}
 			        },
 			        {
 			        	field:"DealSanctionTillValidate",
 			        	title: "Deal Validity Date",
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
+			        	template:function(e){ return kendo.toString(new Date(e.DealSanctionTillValidate), "dd-MMM-yyyy");}
 			        },
 			        {
 			        	field:"TotalLoanAmount",
 			        	title: "Loan Amount",
-			        	attributes: { style: 'background: rgb(238, 238, 238)' },
+			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        },
 
                 ]

@@ -16,18 +16,19 @@ type InternalRtr struct {
 }
 
 type DataSnapshotDetails struct {
-	NoActiveLoan             float64 `bson:"NoActiveLoan", json:"NoActiveLoan"`
-	AmountOutstandingAccured float64 `bson:"AmountOutstandingAccured", json:"AmountOutstandingAccured"`
-	TotalAmount              float64 `bson:"TotalAmount", json:"TotalAmount"`
-	NPREarlyClosures         float64 `bson:"NPREarlyClosures", json:"NPREarlyClosures"`
-	Minimum                  float64 `bson:"Minimum", json:"Minimum"`
-	NPRDelays                float64 `bson:"NPRDelays", json:"NPRDelays"`
-	NoOfPaymentDueDate       float64 `bson:"NoOfPaymentDueDate", json:"NoOfPaymentDueDate"`
-	MaxDPDDays               float64 `bson:"MaxDPDDays", json:"MaxDPDDays"`
-	MaxDPDDAmount            float64 `bson:"MaxDPDDAmount", json:"MaxDPDDAmount"`
-	AVGDPDDays               float64 `bson:"AVGDPDDays", json:"AVGDPDDays"`
-	Average                  float64 `bson:"Average", json:"Average"`
-	Maximum                  float64 `bson:"Maximum", json:"Maximum"`
+	NoActiveLoan                float64 `bson:"NoActiveLoan", json:"NoActiveLoan"`
+	AmountOutstandingAccured    float64 `bson:"AmountOutstandingAccured", json:"AmountOutstandingAccured"`
+	AmountOutstandingDelinquent float64 `bson:"AmountOutstandingDelinquent", json:"AmountOutstandingDelinquent"`
+	TotalAmount                 float64 `bson:"TotalAmount", json:"TotalAmount"`
+	NPREarlyClosures            float64 `bson:"NPREarlyClosures", json:"NPREarlyClosures"`
+	Minimum                     float64 `bson:"Minimum", json:"Minimum"`
+	NPRDelays                   float64 `bson:"NPRDelays", json:"NPRDelays"`
+	NoOfPaymentDueDate          float64 `bson:"NoOfPaymentDueDate", json:"NoOfPaymentDueDate"`
+	MaxDPDDays                  float64 `bson:"MaxDPDDays", json:"MaxDPDDays"`
+	MaxDPDDAmount               float64 `bson:"MaxDPDDAmount", json:"MaxDPDDAmount"`
+	AVGDPDDays                  float64 `bson:"AVGDPDDays", json:"AVGDPDDays"`
+	Average                     float64 `bson:"Average", json:"Average"`
+	Maximum                     float64 `bson:"Maximum", json:"Maximum"`
 }
 
 type DataSnapshotDealist struct {

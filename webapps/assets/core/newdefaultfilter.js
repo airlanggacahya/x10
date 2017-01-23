@@ -60,6 +60,7 @@ filters.inputIRRangeVal.subscribe(function(values) {
 })
 
 filters.inputRLARangeValSpinners = ko.observable(false)
+filter.isHide = ko.observable(true)
 
 var refreshFilter = function() {
 	databrowser.GetDataGrid();
@@ -79,6 +80,17 @@ var resetFilter = function(){
 	$("#ddIR").data("kendoDropDownList").value("");
 
 	filters.inputIRRangeVal("")
+}
+
+var showMoreFilter = function(){
+	filter.isHide(false)
+	$("#panel-filter").show()
+
+}
+
+var hideMoreFilter = function(){
+	filter.isHide(true)
+	$("#panel-filter").hide()
 }
 
 var updateDSWithout = function(DSName = ""){

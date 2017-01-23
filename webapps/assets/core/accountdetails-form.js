@@ -2334,8 +2334,26 @@ adf.initData = function () {
 
 adf.setDisable = function(){
 	console.log("sarif")
-	console.log("sarif")
 	$(".disable").prop("disabled", true)
+
+	$(".disable").each(function(i,e){
+      var $ddl = $(e).find("select").getKendoDropDownList();
+
+      if($ddl == undefined)
+      var $ddl = $(e).find("input").getKendoDropDownList();
+
+      var $dtm = $(e).find("input").getKendoDatePicker();
+      var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+      if($ddl != undefined)
+      {
+        $ddl.enable(false);
+      }else if($dtm != undefined){
+        $dtm.enable(false);
+      }else if ($txt != undefined){
+        $txt.enable(false);
+      }
+    });
 }
 
 adf.addMoreRealEstatePosition = function (promotor) {
@@ -2450,6 +2468,7 @@ $("#AD-Container textarea").prop( "disabled", !what );
     $txt.enable(what);
   }
 
+  adf.setDisable()
 });
 
   	for(var i = 0; i< adf.form.PromotorDetails().length; i++){

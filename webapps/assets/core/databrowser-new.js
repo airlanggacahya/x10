@@ -333,11 +333,11 @@ databrowser.fullcoll = [
 
  					if(i==0){
  						str += "<tr>"
- 						str += "<td style='border-bottom:none;' role='gridcell' id='"+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'>more..</button></a>"
+ 						str += "<td class='line' role='gridcell' id='"+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'>more..</button></a>"
  						str+="</tr>"
  					}else{
  						str += "<tr class='hiddentd'>"
- 						str += "<td style='border-bottom:none;' role='gridcell'  id='"+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "</td>"
+ 						str += "<td class='line' role='gridcell'  id='"+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "</td>"
  						str+="</tr>"
  					}
 
@@ -370,9 +370,9 @@ databrowser.fullcoll = [
 	 						str += "<td>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
 	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
 	 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
-		 						str += "<td style='border-bottom: none;'>Yes</td>"
+		 						str += "<td class='line'>Yes</td>"
 			 				}else{
-			 					str += "<td style='border-bottom: none;'>No</td>"
+			 					str += "<td class='line'>No</td>"
 			 				}
 	 					} 
 	 					
@@ -409,9 +409,9 @@ databrowser.fullcoll = [
 	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
 	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'boolean'){
 	 						if(dt.CA.detailofpromoters.biodata[i].Promotor){
-		 						str += "<td style='border-bottom: none;'>"+"Yes</td>"
+		 						str += "<td class='line'>"+"Yes</td>"
 			 				}else{
-			 					str += "<td style='border-bottom: none;'>"+"No</td>"
+			 					str += "<td class='line'>"+"No</td>"
 			 				}
 	 					} 
 	 					
@@ -447,9 +447,9 @@ databrowser.fullcoll = [
 	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
 	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Director === 'boolean'){
 	 						if(dt.CA.detailofpromoters.biodata[i].Director){
-		 						str += "<td style='border-bottom: none;'>Yes</td>"
+		 						str += "<td class='line'>Yes</td>"
 			 				}else{
-			 					str += "<td style='border-bottom: none;'>No</td>"
+			 					str += "<td class='line'>No</td>"
 			 				}
 	 					} 
 	 					
@@ -482,7 +482,7 @@ databrowser.fullcoll = [
  					str += elem
 
  					
- 				str += "<td style='border-bottom: none;'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Details..</a></td>" 
+ 				str += "<td class='line'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Details..</a></td>" 
  					str+="</tr>"
 
  			}
@@ -720,6 +720,7 @@ function showthis(e){
 	if(test.indexOf("more") > -1){
 		$("#"+e).closest("table").parent().parent().find(".hiddentd").show();
 		$("#"+e).find("a").html("hide..")
+		$(".line").css('border-bottom', '')
 	}else{
 		$("#"+e).closest("table").parent().parent().find(".hiddentd").hide();
 		$("#"+e).find("a").html("more..")

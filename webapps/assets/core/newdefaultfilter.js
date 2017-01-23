@@ -1,75 +1,69 @@
 var filters = {}
 filters.CustomerVal = ko.observableArray()
 filters.CustomerVal.subscribe(function(values) {
-	updateDSWithout("Cust")
-	databrowser.GetDataGrid();
+ 	updateDSWithout("Cust")
 })
 
 filters.DealNoVal = ko.observableArray()
 filters.DealNoVal.subscribe(function(values) {
 	updateDSWithout("Dealno")
-	databrowser.GetDataGrid();
 })
 
 filters.CityVal = ko.observableArray()
 filters.CityVal.subscribe(function(values) {
 	updateDSWithout("City")
-	databrowser.GetDataGrid();
 })
 
 filters.ProductVal = ko.observableArray()
 filters.ProductVal.subscribe(function(values) {
 	updateDSWithout("Product")
-	databrowser.GetDataGrid();
 })
 
 filters.BRHeadVal = ko.observableArray()
 filters.BRHeadVal.subscribe(function(values) {
 	updateDSWithout("BRHead")
-	databrowser.GetDataGrid();
 })
 
 filters.SchemeVal = ko.observableArray()
 filters.SchemeVal.subscribe(function(values) {
 	updateDSWithout("Scheme")
-	databrowser.GetDataGrid();
 })
 
 filters.RMVal = ko.observableArray()
 filters.RMVal.subscribe(function(values) {
 	updateDSWithout("RM")
-	databrowser.GetDataGrid();
 })
 
 filters.ddRLARangesVal = ko.observable("")
 filters.ddRLARangesVal.subscribe(function(values) {
 	updateDSWithout()
-	databrowser.GetDataGrid();
 })
 
 filters.inputRLARangeVal = ko.observable()
 filters.inputRLARangeVal.subscribe(function(values) {
 	updateDSWithout()
-	databrowser.GetDataGrid();
 })
 
 filters.CAVal = ko.observableArray()
 filters.CAVal.subscribe(function(values) {
 	updateDSWithout("CA")
-	databrowser.GetDataGrid();
 })
 
 filters.ddIRRangesVal = ko.observable("")
 filters.ddIRRangesVal.subscribe(function(values) {
 	updateDSWithout()
-	databrowser.GetDataGrid();
 })
 
 filters.inputIRRangeVal = ko.observable()
 filters.inputIRRangeVal.subscribe(function(values) {
 	updateDSWithout()
-	databrowser.GetDataGrid();
 })
+
+filters.inputRLARangeValSpinners = ko.observable(false)
+
+var refreshFilter = function() {
+	databrowser.GetDataGrid();
+}
 
 var resetFilter = function(){
 	_.each($(".k-button > .k-select > .k-icon.k-i-close"), function(e) {
@@ -110,7 +104,7 @@ var updateDSWithout = function(DSName = ""){
 		updateRMDS()
 	
 	if(DSName != "CA")
-		updateCADS
+		updateCADS()
 }
 
 //--------------------------------------------------------------------
@@ -546,8 +540,10 @@ var dddata = [
     { text: "Lower Than or Equal", value: "lte" },
     { text: "Lower Than", value: "lt" }
 ]
-$("#inputRLARange").kendoNumericTextBox();
-$("#inputIRRange").kendoNumericTextBox();
+
+// This is redudant call since we use Knockout-Kendo
+// $("#inputRLARange").kendoNumericTextBox();
+// $("#inputIRRange").kendoNumericTextBox();
 
 var multiCADS = getAccountDetailDS("accountsetupdetails.creditanalyst", function(d){
 	return {

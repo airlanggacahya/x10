@@ -331,9 +331,16 @@ databrowser.fullcoll = [
  						break;
  					}
 
- 					str += "<tr>"
- 					str += "<td>" + dt.CA.detailofpromoters.biodata[i].Name + "</td>"
- 					str+="</tr>"
+ 					if(i==0){
+ 						str += "<tr>"
+ 						str += "<td role='gridcell' id='"+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <button onclick='showthis(\""+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'>more..</button></td>"
+ 						str+="</tr>"
+ 					}else{
+ 						str += "<tr class='hiddentd'>"
+ 						str += "<td role='gridcell'  id='"+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "</td>"
+ 						str+="</tr>"
+ 					}
+
  				}
  				str += "</table>";
  				return str;
@@ -346,15 +353,21 @@ databrowser.fullcoll = [
  			template : function(dt){
  				var str = "<table class='intable'>";
  				for(var i in dt.CA.detailofpromoters.biodata){
+ 					var elem = "<tr>";
+
+ 					if(i != 0){
+						elem = "<tr class='hiddentd'>"
+ 					}
+
  					if(dt.CA.detailofpromoters.biodata[i].Guarantor === null) {
- 						str += "<tr><td></td></tr>"
+ 						str += elem+"<td></td></tr>"
  					} else if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'undefined'){ 						
  						break;
  					} else {
- 						str += "<tr>"				
+ 						str += elem				
  			
 	 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
-	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+	 						str += "<td>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
 	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
 	 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
 		 						str += "<td>Yes</td>"
@@ -379,20 +392,26 @@ databrowser.fullcoll = [
  			template : function(dt){
  				var str = "<table class='intable'>";
  				for(var i in dt.CA.detailofpromoters.biodata){
+ 					var elem = "<tr>";
+
+ 					if(i != 0){
+						elem = "<tr class='hiddentd'>"
+ 					}
+
  					if(dt.CA.detailofpromoters.biodata[i].Promotor === null) {
- 						str += "<tr><td></td></tr>"
+ 						str += elem+"<td></td></tr>"
  					} else if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'undefined'){ 						
  						break;
  					} else {
- 						str += "<tr>"				
+ 						str += elem				
  			
 	 					if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'string'){
 	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
 	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'boolean'){
 	 						if(dt.CA.detailofpromoters.biodata[i].Promotor){
-		 						str += "<td>Yes</td>"
+		 						str += "<td>"+"Yes</td>"
 			 				}else{
-			 					str += "<td>No</td>"
+			 					str += "<td>"+"No</td>"
 			 				}
 	 					} 
 	 					
@@ -411,12 +430,18 @@ databrowser.fullcoll = [
  			template : function(dt){
  				var str = "<table class='intable'>";
  				for(var i in dt.CA.detailofpromoters.biodata){
+ 					var elem = "<tr>";
+
+ 					if(i != 0){
+						elem = "<tr class='hiddentd'>"
+ 					}
+
  					if(dt.CA.detailofpromoters.biodata[i].Director === null) {
- 						str += "<tr><td></td></tr>"
+ 						str += elem+"<td></td></tr>"
  					} else if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'undefined'){ 						
  						break;
  					} else {
- 						str += "<tr>"				
+ 						str += elem				
  			
 	 					if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'string'){
 	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
@@ -442,13 +467,24 @@ databrowser.fullcoll = [
  			title : "Details",
  			template : function(dt){ 
  				var str = "<table class='intable'>";
- 					str += "<tr>"
+
+
  				for(var i in dt.CA.detailofpromoters.biodata){
  					if(dt.CA.detailofpromoters.biodata[i].Name == undefined){
  						break;
  					}
+
+ 					var elem = "<tr>";
+
+ 					if(i != 0){
+						elem = "<tr class='hiddentd'>"
+ 					}
+ 					str += elem
+
+ 					
  				str += "<td><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Details..</a></td>" 
  					str+="</tr>"
+
  			}
  			str += "</table>";
  				return str;
@@ -676,3 +712,16 @@ databrowser.normalisasiAD = function(dt){
 $(document).ready(function(){
 	databrowser.GetDataGrid();
 })
+
+function showthis(e){
+	$("#"+e).closest("table").parent().parent().find(".hiddentd").show();
+	var test = $("#"+e).find("button").html();
+
+	if(test.indexOf("more") > -1){
+		$("#"+e).closest("table").parent().parent().find(".hiddentd").show();
+		$("#"+e).find("button").html("hide..")
+	}else{
+		$("#"+e).closest("table").parent().parent().find(".hiddentd").hide();
+		$("#"+e).find("button").html("more..")
+	}
+}

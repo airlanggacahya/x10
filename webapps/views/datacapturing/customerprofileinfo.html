@@ -562,6 +562,25 @@ function EnableAllkendo(param){
       }
     });
   }
+
+  $(".disabledropdown").each(function(i,e){
+      var $ddl = $(e).find("select").getKendoDropDownList();
+
+      if($ddl == undefined)
+      var $ddl = $(e).find("input").getKendoDropDownList();
+
+      var $dtm = $(e).find("input").getKendoDatePicker();
+      var $txt = $(e).find("input").eq(1).getKendoNumericTextBox();
+
+      if($ddl != undefined)
+      {
+        $ddl.enable(false);
+      }else if($dtm != undefined){
+        $dtm.enable(false);
+      }else if ($txt != undefined){
+        $txt.enable(false);
+      }
+    });
 }
 
 function reset(){
@@ -962,7 +981,7 @@ input[disabled]{
 
              <ul class="collapsible" data-collapsible="accordion">
             <li>
-                 <div class="collapsible-noreplace active"><i class="fa fa-list"></i>Details of Promoters/Directors/Guarantors<i class="fa fa-chevron-down pull-right"></i></div>
+                 <div class="collapsible-noreplace active"><i class="fa fa-list"></i>Details of Promoters/Directors/Guarantors/Management<i class="fa fa-chevron-down pull-right"></i></div>
             <div class="collapsible-body row">
               <div class="col-sm-12 btnsave">
                 <span class="pull-right"><button class="btn btn-warning btn-sm" onclick="save()">Save</button></span>

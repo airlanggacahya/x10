@@ -218,13 +218,13 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 
 	valid := comp.GetString("dealCustomerId")
 
-	if stat == 0 && valid != "" { //data baru
+	if stat == 0 && valid != "" {
 		customerDtl := tk.M(comp.Get("customerDtl").(map[string]interface{}))
 		loanDtl := tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
 
 		//================ APPLICANT DETAIL START ================
 		current.ApplicantDetail.CustomerName = customerDtl.GetString("customerName")
-		current.ApplicantDetail.CustomerConstitution = customerDtl.GetString("customerConstitution")
+		current.ApplicantDetail.CustomerConstitution = customerDtl.GetString("customerConstitutionDesc")
 		if customerDtl.GetString("customerDob") != "" {
 			current.ApplicantDetail.DateOfIncorporation = DetectDataType(customerDtl.GetString("customerDob"), "yyyy-MM-dd").(time.Time)
 		}
@@ -315,19 +315,31 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 			if val.GetString("dealCustomerId") == comp.GetString("dealCustomerId") {
 				continue
 			}
-			stkhold := CheckArray(dtl.Get("crDealCustomerStakeholderM"))
+			// stkhold := CheckArray(dtl.Get("crDealCustomerStakeholderM"))
 
 			Bio := BiodataGen{}
 			Bio.Name = dtl.GetString("customerName")
-			Bio.FatherName = dtl.GetString("FatherHusbandName")
+			Bio.FatherName = dtl.GetString("fatherHusbandName")
 			Bio.Gender = dtl.GetString("genderDesc")
 			Bio.DateOfBirth = DetectDataType(dtl.GetString("customerDob"), "yyyy-MM-dd")
 			Bio.MaritalStatus = dtl.GetString("maritalStatusDesc")
+			roletype := strings.ToLower(val.GetString("dealCustomerRoleTypeDesc"))
 
-			if len(stkhold) > 0 {
-				Bio.ShareHoldingPercentage = stkhold[0].GetFloat64("stakeholderPercentage")
-				Bio.Designation = stkhold[0].GetString("stakeholderPosition")
+			if roletype == "guarantor" {
+				if strings.ToLower(val.GetString("dealCustomerTypeDesc")) != "individual" {
+					continue
+				}
+				Bio.Guarantor = "Yes"
+			} else {
+				Bio.Guarantor = "No"
+				Bio.Position = append(Bio.Position, val.GetString("dealCustomerRoleTypeDesc"))
+				// add position
 			}
+
+			// if len(stkhold) > 0 {
+			// 	Bio.ShareHoldingPercentage = stkhold[0].GetFloat64("stakeholderPercentage")
+			// 	Bio.Designation = stkhold[0].GetString("stakeholderPosition")
+			// }
 			Bio.Education = dtl.GetString("eduDetail")
 			Bio.PAN = dtl.GetString("custmerPan")
 
@@ -347,6 +359,43 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 
 			BioS = append(BioS, Bio)
 		}
+
+		//================ PROMOTOR FROM STAKEHOLDER=======================
+		stkhold := CheckArray(customerDtl.Get("crDealCustomerStakeholderM"))
+
+		for _, val := range stkhold {
+			Bio := BiodataGen{}
+			bb, bbs := FindSamePromotor(BioS, val)
+			position := strings.ToLower(val.GetString("stakeholderPositionDesc"))
+			if bb.Name != nil { // promotor exists
+				BioS = bbs
+				Bio = bb
+			} else {
+				Bio.Name = val.GetString("stakeholderName")
+				// Bio.FatherName = val.GetString("FatherHusbandName") -- gak onok
+				// Bio.Gender = val.GetString("genderDesc") -- gak onok
+				Bio.DateOfBirth = DetectDataType(val.GetString("stakeholderDob"), "yyyy-MM-dd")
+				// Bio.MaritalStatus = val.GetString("maritalStatusDesc") -- gak onok
+				// Bio.Education = dtl.GetString("eduDetail") -- gak onok
+				Bio.PAN = val.GetString("stakeholderPan")
+				Bio.Mobile = val.GetString("stakeholderPrimaryPhone")
+				Bio.ShareHoldingPercentage = val.GetFloat64("stakeholderPercentage")
+				Bio.Designation = val.GetString("stakeholderPositionDesc")
+			}
+
+			if position == "promoter" {
+				Bio.Promotor = "Yes"
+			} else if position == "director" {
+				Bio.Director = "Yes"
+			} else {
+				Bio.Position = append(Bio.Position, val.GetString("stakeholderPositionDesc"))
+				//add ke position
+			}
+			BioS = append(BioS, Bio)
+		}
+
+		//================ PROMOTOR FROM STAKEHOLDER END=======================
+
 		current.DetailOfPromoters.Biodata = BioS
 		//================ PROMOTOR END ================
 
@@ -476,7 +525,7 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
 		current.AccountSetupDetails.Product = Ld.GetString("dealProductDesc")
 		current.AccountSetupDetails.Scheme = Ld.GetString("dealSchemeDesc")
-		current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitution")
+		current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitutionDesc")
 	} else {
 		IsConfirmed = true
 	}
@@ -820,4 +869,23 @@ func CleaningXMLText(xml string) string {
 	xml = strings.Replace(xml, "\"", "&quot;", -1)
 	xml = strings.Replace(xml, "'", "&apos;", -1)
 	return xml
+}
+
+func FindSamePromotor(listprom []BiodataGen, prom tk.M) (BiodataGen, []BiodataGen) {
+
+	for idx, val := range listprom {
+		name := prom.GetString("stakeholderName")
+		dob := DetectDataType(prom.GetString("customerDob"), "yyyy-MM-dd")
+		pan := prom.GetString("stakeholderPan")
+
+		if val.Name == name && val.DateOfBirth == dob {
+			listprom = append(listprom[:idx], listprom[idx+1:]...)
+			return val, listprom
+		} else if pan == val.PAN {
+			listprom = append(listprom[:idx], listprom[idx+1:]...)
+			return val, listprom
+		}
+	}
+
+	return BiodataGen{}, listprom
 }

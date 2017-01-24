@@ -64,8 +64,8 @@ filter.isHide = ko.observable(true);
 filters.dataRating = ko.observable('');
 
 var refreshFilter = function() {
-	databrowser.GetDataGrid();
 	rangeIR();
+	databrowser.GetDataGrid();
 }
 
 var resetFilter = function(){

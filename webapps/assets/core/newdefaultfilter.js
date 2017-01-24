@@ -575,10 +575,10 @@ var dddata = [
 
 var irdata = [
 	{text: 'XFL-5', value:'<= 4.5'},
-	{text: 'XFL-4', value:'>= 4.5 < 6'},
-	{text: 'XFL-3', value:'> 6 < 7'},
-	{text: 'XFL-2', value:'> 7 <= 8.5'},
-	{text: 'XFL-1', value:'>= 8.5'},
+	{text: 'XFL-4', value:'> 4.5 < 6'},
+	{text: 'XFL-3', value:'>= 6 < 7'},
+	{text: 'XFL-2', value:'>= 7 <= 8.5'},
+	{text: 'XFL-1', value:'> 8.5'},
 ]
 
 // This is redudant call since we use Knockout-Kendo

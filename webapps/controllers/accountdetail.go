@@ -649,6 +649,9 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
 			filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
 			filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
+		} else {
+			filtersAD = append(filtersAD, dbox.Eq("_id", ""))
+			filtersAD = append(filtersCA, dbox.Eq("_id", ""))
 		}
 	} else if payload.GetString("rating1") != "" && payload.GetString("rating2") == "" {
 		filtersRT := []*dbox.Filter{}
@@ -709,6 +712,9 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
 			filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
 			filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
+		} else {
+			filtersAD = append(filtersAD, dbox.Eq("_id", ""))
+			filtersAD = append(filtersCA, dbox.Eq("_id", ""))
 		}
 
 	}

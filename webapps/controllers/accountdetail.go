@@ -605,8 +605,6 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		} else if opr2 == "eq" {
 			filtersRT = append(filtersRT, dbox.Eq("FinalScoreDob", valrat2))
 		}
-		tk.Println(opr1, "-----OPR")
-		tk.Println(valrat1, "VAL----")
 		csr, e := cn.NewQuery().
 			Where(dbox.And(filtersRT...)).
 			From("CreditScorecard").
@@ -628,8 +626,6 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			return res
 		}
 
-		tk.Println(resultsRT, "----RT")
-
 		customerids := []interface{}{}
 		customeridsstr := []interface{}{}
 		dealnos := []interface{}{}
@@ -641,17 +637,14 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			dealnos = append(dealnos, val.GetString("DealNo"))
 		}
 
-		tk.Println(customerids, "----INT")
-		tk.Println(customeridsstr, "----STR")
-
 		if len(resultsRT) > 0 {
 			filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
 			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
 			filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
 			filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
 		} else {
-			filtersAD = append(filtersAD, dbox.Eq("_id", ""))
-			filtersAD = append(filtersCA, dbox.Eq("_id", ""))
+			filtersAD = append(filtersAD, dbox.Eq("_id", "-1"))
+			filtersCA = append(filtersCA, dbox.Eq("_id", "-1"))
 		}
 	} else if payload.GetString("rating1") != "" && payload.GetString("rating2") == "" {
 		filtersRT := []*dbox.Filter{}
@@ -668,8 +661,6 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		} else if opr1 == "eq" {
 			filtersRT = append(filtersRT, dbox.Eq("FinalScoreDob", valrat1))
 		}
-		tk.Println(opr1, "-----OPR")
-		tk.Println(valrat1, "VAL----")
 		csr, e := cn.NewQuery().
 			Where(dbox.And(filtersRT...)).
 			From("CreditScorecard").
@@ -691,8 +682,6 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			return res
 		}
 
-		tk.Println(resultsRT, "----RT")
-
 		customerids := []interface{}{}
 		customeridsstr := []interface{}{}
 		dealnos := []interface{}{}
@@ -704,17 +693,14 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			dealnos = append(dealnos, val.GetString("DealNo"))
 		}
 
-		tk.Println(customerids, "----INT")
-		tk.Println(customeridsstr, "----STR")
-
 		if len(resultsRT) > 0 {
 			filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
 			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
 			filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
 			filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
 		} else {
-			filtersAD = append(filtersAD, dbox.Eq("_id", ""))
-			filtersAD = append(filtersCA, dbox.Eq("_id", ""))
+			filtersCA = append(filtersAD, dbox.Eq("_id", "-1"))
+			filtersAD = append(filtersCA, dbox.Eq("_id", "-1"))
 		}
 
 	}

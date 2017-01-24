@@ -9,6 +9,7 @@ import (
 	tk "github.com/eaciit/toolkit"
 	// "net/http"
 	// "time"
+	"fmt"
 )
 
 type DataBrowserController struct {
@@ -376,4 +377,47 @@ func (a *DataBrowserController) GetCreditScorecardData(k *knot.WebContext) inter
 	}
 
 	return CreateResult(true, results, "")
+}
+
+func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	conn, err := GetConnection()
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+	defer conn.Close()
+
+	resCust := []tk.M{}
+	qcust, err := conn.NewQuery().From("MasterCustomer").Cursor(nil)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	defer qcust.Close()
+	qcust.Fetch(&resCust, 0, false)
+
+	for _, val := range resCust {
+		tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
+		qprofile, err := conn.NewQuery().
+			From("CustomerProfile").
+			Where(dbox.Eq("_id", fmt.Sprintf("%d|%s", val["customer_id"], val["deal_no"]))).
+			Cursor(nil)
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
+
+		resProfile := []tk.M{}
+		qprofile.Fetch(&resProfile, 0, false)
+
+		if len(resProfile) == 0 {
+			tk.Printfn("Empty")
+			continue
+		}
+
+		tk.Printfn("Not Empty")
+		val["_profile"] = resProfile[0]
+	}
+
+	return CreateResult(true, resCust, "")
 }

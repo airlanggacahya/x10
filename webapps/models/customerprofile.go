@@ -223,6 +223,7 @@ type Biodata struct {
 	Education              string          `bson:"Education"`
 	Designation            string          `bson:"Designation"`
 	PAN                    string          `bson:"PAN"`
+	Position               []string        `bson:"PropertyOwned,omitempty"`
 	Address                string          `bson:"Address"`
 	Landmark               string          `bson:"Landmark"`
 	City                   string          `bson:"City"`

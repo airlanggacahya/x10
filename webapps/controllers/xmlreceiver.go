@@ -196,6 +196,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 }
 
 func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (bool, bool, error) {
+
 	cd, err := CheckOnCP(cid, dealno)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -332,7 +333,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				Bio.Guarantor = "Yes"
 			} else {
 				Bio.Guarantor = "No"
-				Bio.Position = append(Bio.Position, val.GetString("dealCustomerRoleTypeDesc"))
+				Bio.Position = append(Bio.Position, toWordCase(val.GetString("dealCustomerRoleTypeDesc")))
 				// add position
 			}
 
@@ -380,7 +381,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				Bio.PAN = val.GetString("stakeholderPan")
 				Bio.Mobile = val.GetString("stakeholderPrimaryPhone")
 				Bio.ShareHoldingPercentage = val.GetFloat64("stakeholderPercentage")
-				Bio.Designation = val.GetString("stakeholderPositionDesc")
+				Bio.Designation = toWordCase(val.GetString("stakeholderPositionDesc"))
 			}
 
 			if position == "promoter" {
@@ -388,7 +389,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 			} else if position == "director" {
 				Bio.Director = "Yes"
 			} else {
-				Bio.Position = append(Bio.Position, val.GetString("stakeholderPositionDesc"))
+				Bio.Position = append(Bio.Position, toWordCase(val.GetString("stakeholderPositionDesc")))
 				//add ke position
 			}
 			BioS = append(BioS, Bio)
@@ -885,4 +886,12 @@ func FindSamePromotor(listprom []BiodataGen, prom tk.M) (BiodataGen, []BiodataGe
 	}
 
 	return BiodataGen{}, listprom
+}
+
+func toWordCase(word string) string {
+	replace := func(wordx string) string {
+		return strings.Title(wordx)
+	}
+	reg := regexp.MustCompile(`\w+`)
+	return reg.ReplaceAllStringFunc(strings.ToLower(word), replace)
 }

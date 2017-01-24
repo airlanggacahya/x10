@@ -1,4 +1,5 @@
 customerprofile().DetailofPromoters = ko.observable(detail)
+
 var detail = {
 	biodata : ko.observableArray([
 		{

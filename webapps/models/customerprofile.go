@@ -322,6 +322,7 @@ type BiodataGen struct {
 	Education              interface{}     `bson:"Education"`
 	Designation            interface{}     `bson:"Designation"`
 	PAN                    interface{}     `bson:"PAN"`
+	Position               []string        `bson:"Position,omitempty"`
 	Address                interface{}     `bson:"Address"`
 	Landmark               interface{}     `bson:"Landmark"`
 	City                   interface{}     `bson:"City"`

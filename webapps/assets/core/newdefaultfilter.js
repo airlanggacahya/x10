@@ -1,6 +1,7 @@
 var filters = {}
 filters.CustomerVal = ko.observableArray()
 filters.CustomerVal.subscribe(function(values) {
+	console.log("sarif")
  	updateDSWithout("Cust")
 })
 

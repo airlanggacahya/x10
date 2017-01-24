@@ -102,7 +102,7 @@ formatnum =  function(number, decimalPlace) {
 
 function refreshFilter(){
   info.formVisibility(false)
-  refreshdata();
+  refreshdata(getMasterAccountDetails);
   initEvents()
   setTimeout(function(){
     $("input").css("z-index", "0")
@@ -113,12 +113,16 @@ filter().CustomerSearchVal.subscribe(function(val){
   blanked();
 });
 
-function refreshdata(){
+function refreshdata(accountdetailsMaster){
   blanked();
   var param = {CustomerId: filter().CustomerSearchVal(), Dealno: filter().DealNumberSearchVal()}
   var url = "{{BaseUrl}}datacapturing/getcustomerprofiledetail";
   ajaxPost(url, param, function(data) {
     if (data.length > 0) {
+      console.log(typeof callback)
+      if(typeof accountdetailsMaster === "function") {
+        accountdetailsMaster(formatDataPosition)
+      }
       info.formVisibility(true)
       formVisibility(true)
       model.All(data[0]);
@@ -303,16 +307,25 @@ function refreshdata(){
           }
         }
 
+        if(data[0].DetailOfPromoters.Biodata[i].Position === undefined || data[0].DetailOfPromoters.Biodata[i].Position == null) {
+          data[0].DetailOfPromoters.Biodata[i].Position = ko.observable()
+        } else {
+          data[0].DetailOfPromoters.Biodata[i].Position = ko.observable(data[0].DetailOfPromoters.Biodata[i].Position)
+        }
+
       })
 
       _.each(data[0].DetailOfPromoters.Biodata, function(row){
         var temp = moment(row.AnniversaryDate).format("DD-MMM-YYYY")
 
-        if( temp === "01-Jan-1970"){
-          console.log("sarif")
+        if( temp === "01-Jan-1970" || row.AnniversaryDate == ""){
           row.AnniversaryDate = ""
         } else {
-          row.AnniversaryDate = new Date(row.AnniversaryDate).toISOString()
+          try{
+            row.AnniversaryDate = new Date(row.AnniversaryDate).toISOString()
+          }catch(err) {
+            row.AnniversaryDate = ""
+          }
         }
 
         row.DateOfBirth = moment(row.DateOfBirth).format("DD-MMM-YYYY")
@@ -506,6 +519,8 @@ function EnableAllkendo(param){
     $(".ndisable").each(function(i,e){
       var $ddl = $(e).find("select").getKendoDropDownList();
 
+      var $ddm = $(e).find("select").getKendoMultiSelect();
+
       if($ddl == undefined)
       var $ddl = $(e).find("input").getKendoDropDownList();
 
@@ -519,11 +534,15 @@ function EnableAllkendo(param){
         $dtm.enable(true);
       }else if ($txt != undefined){
         $txt.enable(true);
+      }else if ($ddm != undefined) {
+        $ddm.enable(true);
       }
     });
   } else if (customerprofile().Status() === 1) {
     $(".ndisable").each(function(i,e){
       var $ddl = $(e).find("select").getKendoDropDownList();
+
+      var $ddm = $(e).find("select").getKendoMultiSelect();
 
       if($ddl == undefined)
       var $ddl = $(e).find("input").getKendoDropDownList();
@@ -538,6 +557,8 @@ function EnableAllkendo(param){
         $dtm.enable(false);
       }else if ($txt != undefined){
         $txt.enable(false);
+      }else if ($ddm != undefined) {
+        $ddm.enable(false);
       }
     });
   }

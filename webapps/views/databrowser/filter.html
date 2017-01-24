@@ -5,8 +5,8 @@
 </style>
 <div class="col-md-6">
 	<div class="form-group col-sm-12">
-     	<label class="col-sm-3 form-control-label">Customer</label>
-     	<div class="col-sm-9">
+     	<label class="col-sm-2 form-control-label">Customer</label>
+     	<div class="col-sm-10">
      		 <select class="multifield"  id="multiCustomer" 
 		        data-placeholder="Choose Customer"
 		        data-bind="kendoMultiSelect: { 
@@ -23,8 +23,8 @@
 <!-- <div class="clearfix"></div> -->
 <div class="col-md-6">
 	<div class="form-group col-sm-12">
-     	<label class="col-sm-3 form-control-label">Dealno</label>
-     	<div class="col-sm-9">
+     	<label class="col-sm-2 form-control-label">Dealno</label>
+     	<div class="col-sm-10">
 	        <select class="multifield"  id="multiDealno"  
 		        data-placeholder="Choose Deal No"
 		        data-bind="kendoMultiSelect: {
@@ -43,8 +43,8 @@
 	<div class="col-md-6">
 	    <!-- <div class="col-md-6"> -->
 	     <div class="form-group col-sm-12">
-	     	<label class="col-sm-3 form-control-label">City</label>
-	     	<div class="col-sm-9">
+	     	<label class="col-sm-2 form-control-label">City</label>
+	     	<div class="col-sm-10">
 		     	<select class="multifield"  id="multiCity"  
 			        data-placeholder="Choose City"
 			        data-bind="kendoMultiSelect: { 
@@ -60,8 +60,8 @@
 		    <div class="clearfix"></div>
 	    </div>
 	    <div class="form-group col-sm-12">
-	     	<label class="col-sm-3 form-control-label">BR Head</label>
-	     	<div class="col-sm-9">
+	     	<label class="col-sm-2 form-control-label">BR Head</label>
+	     	<div class="col-sm-10">
 		        <select class="multifield"  id="multiBRHead"  
 			        data-placeholder="Choose Branch Head"
 			        data-bind="kendoMultiSelect: { 
@@ -77,8 +77,8 @@
 		    <div class="clearfix"></div>
 	    </div>
 	    <div class="form-group col-sm-12">
-	     	<label class="col-sm-3 form-control-label">RM</label>
-	     	<div class="col-sm-9">
+	     	<label class="col-sm-2 form-control-label">RM</label>
+	     	<div class="col-sm-10">
 		        <select class="multifield"  id="multiRM"  
 			        data-placeholder="Choose RM"
 			        data-bind="kendoMultiSelect: { 
@@ -93,8 +93,8 @@
 		    </div>
 	    </div>
 	    <div class="form-group col-sm-12">
-	     	<label class="col-sm-3 form-control-label">Credit Analyst</label>
-	     	<div class="col-sm-9">
+	     	<label class="col-sm-2 form-control-label">Credit Analyst</label>
+	     	<div class="col-sm-10">
 		        <select class="multifield"  id="multiCA"  
 			        data-placeholder="Choose Credit Analyst"
 			        data-bind="kendoMultiSelect: { 
@@ -111,8 +111,8 @@
 	</div>
 	<div class="col-md-6">
 	    <div class="form-group col-sm-12">
-	     	<label class="col-sm-3 form-control-label">Product</label>
-	     	<div class="col-sm-9">
+	     	<label class="col-sm-2 form-control-label">Product</label>
+	     	<div class="col-sm-10">
 		        <select class="multifield"  id="multiProduct"  
 			        data-placeholder="Choose Product"
 			        data-bind="kendoMultiSelect: { 
@@ -127,8 +127,8 @@
 		    </div>
 	    </div>
 	    <div class="form-group col-sm-12">
-	     	<label class="col-sm-3 form-control-label">Scheme</label>
-	     	<div class="col-sm-9">
+	     	<label class="col-sm-2 form-control-label">Scheme</label>
+	     	<div class="col-sm-10">
 		       <select class="multifield"  id="multiScheme"  
 			        data-placeholder="Choose Scheme"
 			        data-bind="kendoMultiSelect: { 
@@ -143,8 +143,8 @@
 		    </div>
 	    </div>
 	    <div class="form-group col-sm-12">
-	     	<label class="col-sm-3 form-control-label">Requested Loan Amount (Range)</label>
-	     	<div class="col-sm-9">
+	     	<label class="col-sm-2 form-control-label">Requested Loan Amount (Range)</label>
+	     	<div class="col-sm-10">
 	     		<!-- <div class="col-sm-12"> -->
 			        <div class="col-sm-5">
 			        	<select class="multifield"  id="ddRLARanges" 
@@ -158,17 +158,17 @@
 		    </div>
 	    </div>
 	    <div class="form-group col-sm-12">
-	     	<label class="col-sm-3 form-control-label">Internal Rating (Range)</label>
-	     	<div class="col-sm-9">
+	     	<label class="col-sm-2 form-control-label">Internal Rating (Range)</label>
+	     	<div class="col-sm-10">
 	     		<!-- <div class="col-sm-12"> -->
 			        <div class="col-sm-5">
-			        	<select class="multifield"  id="ddRLARanges" 
-					        data-bind="kendoDropDownList: {data: dddata, value: filters.ddRLARangesVal, dataTextField: 'text', dataValueField: 'value'}">
-					    </select>
+			        	<select data-bind="kendoDropDownList: {data: irdata , value: filters.dataRating, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Choose Ranges'}"></select>
 			        </div>
-			        <div class="col-sm-7">
+			        <!-- <div class="col-sm-7">
 			        	<input id="inputIRRange" type="number" data-bind="kendoNumericTextBox: { spinners: false, value: filters.inputIRRangeVal }" />
-			        </div>
+			        </div> -->
+			        <!-- <select data-bind="kendoDropDownList: {data: irdata , value: filters.dataRating, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Choose Ranges'}">
+			        </select> -->
 		        <!-- </div> -->
 		    </div>
 	    </div>

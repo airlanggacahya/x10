@@ -59,11 +59,13 @@ filters.inputIRRangeVal.subscribe(function(values) {
 	updateDSWithout()
 })
 
-filters.inputRLARangeValSpinners = ko.observable(false)
-filter.isHide = ko.observable(true)
+filters.inputRLARangeValSpinners = ko.observable(false);
+filter.isHide = ko.observable(true);
+filters.dataRating = ko.observable('');
 
 var refreshFilter = function() {
 	databrowser.GetDataGrid();
+	rangeIR();
 }
 
 var resetFilter = function(){
@@ -258,8 +260,9 @@ var critCA = function(fieldName){
 }
 
 var critIR = function(fieldName){
+	// alert("masuk")
 	var criteria = { logic: "or", filters: [] }
-	
+	rangeIR();
 	if(filters.ddIRRangesVal() != "")
 		ajaxPost("/databrowser/getcreditscorecarddata", { 
 			filter: { 
@@ -273,6 +276,22 @@ var critIR = function(fieldName){
 		})
 	
 	return criteria
+}
+
+var rangeIR = function(){
+	var arrval = (filters.dataRating()).split(" ", 2)
+	
+	filters.inputIRRangeVal(arrval[1]);
+
+	if(arrval[0] == "<="){
+		filters.ddIRRangesVal("lte");
+	}else if(arrval[0] == "<"){
+		filters.ddIRRangesVal("lt");
+	}else if(arrval[0] == "="){
+		filters.ddIRRangesVal("eq");
+	}else if(arrval[0] == ">"){
+		filters.ddIRRangesVal("gt");
+	}
 }
 
 var updateCustDS = function(){
@@ -551,6 +570,14 @@ var dddata = [
     { text: "Equal", value: "eq" },
     { text: "Lower Than or Equal", value: "lte" },
     { text: "Lower Than", value: "lt" }
+]
+
+var irdata = [
+	{text: 'XFL-5', value:'<= 4.5'},
+	{text: 'XFL-4', value:'< 6'},
+	{text: 'XFL-3', value:'< 7'},
+	{text: 'XFL-2', value:'<= 8.5'},
+	{text: 'XFL-1', value:'> 8.5'},
 ]
 
 // This is redudant call since we use Knockout-Kendo

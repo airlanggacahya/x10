@@ -875,13 +875,10 @@ func FindSamePromotor(listprom []BiodataGen, prom tk.M) (BiodataGen, []BiodataGe
 
 	for idx, val := range listprom {
 		name := prom.GetString("stakeholderName")
-		dob := DetectDataType(prom.GetString("customerDob"), "yyyy-MM-dd")
+		dob := DetectDataType(prom.GetString("stakeholderDob"), "yyyy-MM-dd")
 		pan := prom.GetString("stakeholderPan")
 
-		if val.Name == name && val.DateOfBirth == dob {
-			listprom = append(listprom[:idx], listprom[idx+1:]...)
-			return val, listprom
-		} else if pan == val.PAN {
+		if val.Name == name && val.DateOfBirth == dob && pan == val.PAN {
 			listprom = append(listprom[:idx], listprom[idx+1:]...)
 			return val, listprom
 		}

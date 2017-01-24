@@ -666,20 +666,44 @@ databrowser.GoAddress = function(id,name){
 var dbgrid = ""
 
 databrowser.GetDataGrid = function(){
-	ajaxPost("/accountdetail/getdatabrowser", {
-		customer : filters.CustomerVal(),
-		dealno : filters.DealNoVal(), 
-		rating : filters.ddIRRangesVal() != "" ? filters.inputIRRangeVal() : "", 
-		ratingopr : filters.ddIRRangesVal() != "" ? filters.ddIRRangesVal() : "",
-		loanamount : filters.ddRLARangesVal() != "" ? filters.inputRLARangeVal() : "",
-		loanamountopr : filters.ddRLARangesVal() != "" ? filters.ddRLARangesVal() : "", 
-		city : filters.CityVal(), 
-		product : filters.ProductVal(), 
-		brhead : filters.BRHeadVal(), 
-		scheme : filters.SchemeVal(), 
-		rm : filters.RMVal(), 
-		ca : filters.CAVal()
-	}, function(data){
+	var opr = (filters.dataRating()).split(" ");
+	console.log("------>>>", opr)
+	if(opr.length > 2){
+		var param = {
+			customer : filters.CustomerVal(),
+			dealno : filters.DealNoVal(), 
+			rating1 : opr[1], 
+			ratingopr1 : rangeIR(opr[0]),
+			rating2 : opr[3], 
+			ratingopr2 : rangeIR(opr[2]),
+			loanamount : filters.ddRLARangesVal() != "" ? filters.inputRLARangeVal() : "",
+			loanamountopr : filters.ddRLARangesVal() != "" ? filters.ddRLARangesVal() : "", 
+			city : filters.CityVal(), 
+			product : filters.ProductVal(), 
+			brhead : filters.BRHeadVal(), 
+			scheme : filters.SchemeVal(), 
+			rm : filters.RMVal(), 
+			ca : filters.CAVal()
+		}
+	}else{
+		var param = {
+			customer : filters.CustomerVal(),
+			dealno : filters.DealNoVal(), 
+			rating1 : opr.length != 1 ? opr[1] : "", 
+			ratingopr1 : opr.length != 1 ? rangeIR(opr[0]) : "",
+			rating2 : "", 
+			ratingopr2 : "",
+			loanamount : filters.ddRLARangesVal() != "" ? filters.inputRLARangeVal() : "",
+			loanamountopr : filters.ddRLARangesVal() != "" ? filters.ddRLARangesVal() : "", 
+			city : filters.CityVal(), 
+			product : filters.ProductVal(), 
+			brhead : filters.BRHeadVal(), 
+			scheme : filters.SchemeVal(), 
+			rm : filters.RMVal(), 
+			ca : filters.CAVal()
+		}
+	}
+	ajaxPost("/accountdetail/getdatabrowser", param, function(data){
 		databrowser.normalisasiAD(data.Data);
 		dbgrid = $("#griddb").kendoGrid({
 			 dataSource: {

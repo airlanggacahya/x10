@@ -576,23 +576,35 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 	cn, err := GetConnection()
 	defer cn.Close()
 
-	if payload.GetString("rating") != "" {
+	if payload.GetString("rating1") != "" && payload.GetString("rating2") != "" {
 		filtersRT := []*dbox.Filter{}
-		opr := payload.GetString("ratingopr")
-		valrat := payload.GetFloat64("rating")
-		if opr == "gt" {
-			filtersRT = append(filtersRT, dbox.Gt("FinalScoreDob", valrat))
-		} else if opr == "gte" {
-			filtersRT = append(filtersRT, dbox.Gte("FinalScoreDob", valrat))
-		} else if opr == "lte" {
-			filtersRT = append(filtersRT, dbox.Lte("FinalScoreDob", valrat))
-		} else if opr == "lt" {
-			filtersRT = append(filtersRT, dbox.Lt("FinalScoreDob", valrat))
-		} else if opr == "eq" {
-			filtersRT = append(filtersRT, dbox.Eq("FinalScoreDob", valrat))
+		opr1 := payload.GetString("ratingopr1")
+		opr2 := payload.GetString("ratingopr2")
+		valrat1 := payload.GetFloat64("rating1")
+		valrat2 := payload.GetFloat64("rating2")
+		if opr1 == "gt" {
+			filtersRT = append(filtersRT, dbox.Gt("FinalScoreDob", valrat1))
+		} else if opr1 == "gte" {
+			filtersRT = append(filtersRT, dbox.Gte("FinalScoreDob", valrat1))
+		} else if opr1 == "lte" {
+			filtersRT = append(filtersRT, dbox.Lte("FinalScoreDob", valrat1))
+		} else if opr1 == "lt" {
+			filtersRT = append(filtersRT, dbox.Lt("FinalScoreDob", valrat1))
+		} else if opr1 == "eq" {
+			filtersRT = append(filtersRT, dbox.Eq("FinalScoreDob", valrat1))
 		}
-		tk.Println(opr, "-----OPR")
-		tk.Println(valrat, "VAL----")
+
+		if opr2 == "gt" {
+			filtersRT = append(filtersRT, dbox.Gt("FinalScoreDob", valrat2))
+		} else if opr2 == "gte" {
+			filtersRT = append(filtersRT, dbox.Gte("FinalScoreDob", valrat2))
+		} else if opr2 == "lte" {
+			filtersRT = append(filtersRT, dbox.Lte("FinalScoreDob", valrat2))
+		} else if opr2 == "lt" {
+			filtersRT = append(filtersRT, dbox.Lt("FinalScoreDob", valrat2))
+		} else if opr2 == "eq" {
+			filtersRT = append(filtersRT, dbox.Eq("FinalScoreDob", valrat2))
+		}
 		csr, e := cn.NewQuery().
 			Where(dbox.And(filtersRT...)).
 			From("CreditScorecard").
@@ -614,7 +626,61 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			return res
 		}
 
-		tk.Println(resultsRT, "----RT")
+		customerids := []interface{}{}
+		customeridsstr := []interface{}{}
+		dealnos := []interface{}{}
+
+		for _, val := range resultsRT {
+			customerids = append(customerids, val.GetInt("CustomerId"))
+
+			customeridsstr = append(customeridsstr, val.GetString("CustomerId"))
+			dealnos = append(dealnos, val.GetString("DealNo"))
+		}
+
+		if len(resultsRT) > 0 {
+			filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
+			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
+			filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
+			filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
+		} else {
+			filtersAD = append(filtersAD, dbox.Eq("_id", "-1"))
+			filtersCA = append(filtersCA, dbox.Eq("_id", "-1"))
+		}
+	} else if payload.GetString("rating1") != "" && payload.GetString("rating2") == "" {
+		filtersRT := []*dbox.Filter{}
+		opr1 := payload.GetString("ratingopr1")
+		valrat1 := payload.GetFloat64("rating1")
+		if opr1 == "gt" {
+			filtersRT = append(filtersRT, dbox.Gt("FinalScoreDob", valrat1))
+		} else if opr1 == "gte" {
+			filtersRT = append(filtersRT, dbox.Gte("FinalScoreDob", valrat1))
+		} else if opr1 == "lte" {
+			filtersRT = append(filtersRT, dbox.Lte("FinalScoreDob", valrat1))
+		} else if opr1 == "lt" {
+			filtersRT = append(filtersRT, dbox.Lt("FinalScoreDob", valrat1))
+		} else if opr1 == "eq" {
+			filtersRT = append(filtersRT, dbox.Eq("FinalScoreDob", valrat1))
+		}
+		csr, e := cn.NewQuery().
+			Where(dbox.And(filtersRT...)).
+			From("CreditScorecard").
+			// Order(SORT).
+			// Take(take).
+			// Skip(skip).
+			Cursor(nil)
+		defer csr.Close()
+
+		if e != nil {
+			res.SetError(e)
+			return res
+		}
+
+		resultsRT := []tk.M{}
+		err = csr.Fetch(&resultsRT, 0, false)
+		if err != nil {
+			res.SetError(err)
+			return res
+		}
 
 		customerids := []interface{}{}
 		customeridsstr := []interface{}{}
@@ -627,15 +693,16 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			dealnos = append(dealnos, val.GetString("DealNo"))
 		}
 
-		tk.Println(customerids, "----INT")
-		tk.Println(customeridsstr, "----STR")
-
 		if len(resultsRT) > 0 {
 			filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
 			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
 			filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
 			filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
+		} else {
+			filtersCA = append(filtersAD, dbox.Eq("_id", "-1"))
+			filtersAD = append(filtersCA, dbox.Eq("_id", "-1"))
 		}
+
 	}
 
 	if payload.GetString("loanamount") != "" {

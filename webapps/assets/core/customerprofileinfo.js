@@ -28,6 +28,9 @@ var info = {
 //     });
 // });
 
+positionList = ko.observableArray([])
+selectedPosition = ko.observableArray(["DirectorPromoter"])
+
 info.scroll = function(){
   var elementPosition = $('.btnFixed').offset();
   $(window).scroll(function(){
@@ -58,6 +61,37 @@ info.getReEnter = function(){
 info.getConfirmed = function(){
     info.condConfirmed()
     swal("Successfully Confirmed", "", "success");
+}
+
+var getMasterAccountDetails = function(callback) {
+    var param = {}
+    ajaxPost("/accountdetail/getmasteraccountdetail", {}, function (res){
+        console.log(typeof callback)
+        if(typeof callback === "function" && res.Data != undefined) {
+            callback(res.Data, setPosition)
+        }
+    });
+}
+    
+var setPosition = function(){
+    _.each(detail.biodata(), function(row){
+        row.Position(row.Position())
+    })
+}
+
+var formatDataPosition = function(param, setPosition) {
+    if(param != undefined || param != "") {
+        var position = _.filter(param, function(row){
+            return row.Field === "Position"
+        })
+
+        if(position != undefined && position.length > 0) {
+            positionList(position[0].Items)
+            
+            if(typeof setPosition === "function")
+                setPosition()
+        }
+    }
 }
 
 info.getFreeze = function(){

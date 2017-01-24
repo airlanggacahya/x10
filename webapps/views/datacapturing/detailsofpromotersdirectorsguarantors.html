@@ -230,6 +230,14 @@
                           <input type="text" id="PAN" name="pan" class="form-control input-sm PAN" data-bind="value: detail.biodata()[$index()].PAN" validationMessage="PAN required" required  />
                         </div>
                       </div>
+                      <div class="col-sm-12 form-group">
+                        <div class="col-sm-4 widthlable">
+                          <label for="Acc" class="control-label">Position:</label>
+                        </div>
+                        <div class="col-sm-8 widthfield">
+                          <select id="position" class="ndisable form-control input-sm" data-bind="kendoMultiSelect:{data: positionList, value: detail.biodata()[$index()].Position}" validationMessage="Position required" required  /></select>
+                        </div>
+                      </div>
                     </div>
                     <div class="col-sm-5">
                       <div class="col-sm-12 form-group">

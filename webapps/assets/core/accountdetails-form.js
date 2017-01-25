@@ -2,6 +2,8 @@
 
 var FirstAgreementDateStr = ko.observable("")
 var RecentAgreementDateStr = ko.observable("")
+var IfExistingCustomerStr = ko.observable("")
+
 adf.loginDateString = ko.observable()
 adf.disable = ko.observable(false)
 // ====== OPTIONS
@@ -470,6 +472,9 @@ adf.setForm = function (data) {
 
 	var temp = formatingDate(adf.form.LoanDetails.RecenetAgreementDate())
 	RecentAgreementDateStr(temp) 
+
+	temp = formatingToText(adf.form.LoanDetails.IfExistingCustomer())
+	IfExistingCustomerStr(temp)
 }
 adf.resetForm = function () {
 	ko.mapping.fromJS(adf.templateForm, adf.form)
@@ -2263,7 +2268,6 @@ adf.getData = function () {
 }
 
 formatingDate = function(date) {
-	console.log(date)
 	if(date == "" || date.indexOf("1970-01-01") > -1  || date === undefined) {
 		return ""
 	} else {
@@ -2273,6 +2277,15 @@ formatingDate = function(date) {
 			return ""
 		}
 	}
+}
+
+formatingToText = function(data) {
+	if(typeof data === "boolean") {
+		if(data)
+			return "Yes"
+		else
+			return "No"
+	}	
 }
 
 window.refreshFilter = function () {
@@ -2970,12 +2983,12 @@ adf.loanDetailEnable = function(){
 	}
 
 	if(adf.form.LoanDetails.IfExistingCustomer() == false){
-		$("#IfYesEistingLimitAmount").data("kendoNumericTextBox").enable(false);
-		$("#ExistingRoi").data("kendoNumericTextBox").enable(false);
-		$("#ExistingPf").data("kendoNumericTextBox").enable(false);
-		$("#FirstAgreementDate").data("kendoDatePicker").enable(false);
-		$("#RecenetAgreementDate").data("kendoDatePicker").enable(false);
-		$("#VintageWithX10").data("kendoNumericTextBox").enable(false);
+		//$("#IfYesEistingLimitAmount").data("kendoNumericTextBox").enable(false);
+		//$("#ExistingRoi").data("kendoNumericTextBox").enable(false);
+		//$("#ExistingPf").data("kendoNumericTextBox").enable(false);
+		// $("#FirstAgreementDate").data("kendoDatePicker").enable(false);
+		// $("#RecenetAgreementDate").data("kendoDatePicker").enable(false);
+		// $("#VintageWithX10").data("kendoNumericTextBox").enable(false);
 		// $("#CommercialCibilReport").data("kendoDropDownList").enable(false);
 	}
 

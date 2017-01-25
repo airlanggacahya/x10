@@ -692,7 +692,7 @@ function save1(){
   
   param.NonRefundableProcessingFeesDetails = ko.mapping.toJS(customerprofile().NonRefundableProcessingFeesDetails);
   
-  var dateTemp = ""+param.NonRefundableProcessingFeesDetails.InstrumentDate
+  var dateTemp = kendo.toString(new Date(param.NonRefundableProcessingFeesDetails.InstrumentDate), "dd-MM-yyyy");
   var dateTempLength = dateTemp.split("-")
   if(dateTempLength.length === 1) {
     param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"
@@ -785,7 +785,7 @@ function save(){
   param.ConfirmedDate = customerprofile().ConfirmedDate;
   param.NonRefundableProcessingFeesDetails = ko.mapping.toJS(customerprofile().NonRefundableProcessingFeesDetails);
   
-  var dateTemp = ""+param.NonRefundableProcessingFeesDetails.InstrumentDate
+  var dateTemp = kendo.toString(new Date(param.NonRefundableProcessingFeesDetails.InstrumentDate), "dd-MM-yyyy")
   var dateTempLength = dateTemp.split("-")
   if(dateTempLength.length === 1) {
     param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"

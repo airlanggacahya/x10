@@ -1,62 +1,294 @@
+
 var filters = {}
+
+function fetchAllDS() {
+	$.ajax("/databrowser/getcombineddata", {
+		success: function(body) {
+			filters.MasterDS(body.data);
+		}
+	})
+}
+fetchAllDS()
+
+function applyFilter(target, upstreamFilter, filterFun, mapFun) {
+	var newVal = _.filter(filters.MasterDS(), filterFun)
+	newVal = applyFilterUpstream(upstreamFilter, newVal)
+	newVal = _.map(newVal, mapFun)
+	newVal = _.uniqWith(newVal, _.isEqual)
+
+	target(newVal)
+	// console.log(target())
+}
+
+function createFilterUpstream(source, path) {
+	return function(val) {
+		if (source.length == 0)
+			return true
+		return _.find(source, function (haystack) {
+			return haystack == _.get(val, path)
+		})
+	}
+}
+
+function applyFilterUpstream(level, vals) {
+	if (level == CITY)
+		return vals
+	// Filter City
+	vals = _.filter(vals, createFilterUpstream(filters.CityVal(), CITY))
+
+	if (level == PRODUCT)
+		return vals	
+	// Filter Product
+	vals = _.filter(vals, createFilterUpstream(filters.ProductVal(), PRODUCT))
+
+	if (level == BRHEAD)
+		return vals
+	// Filter Product
+	vals = _.filter(vals, createFilterUpstream(filters.BRHeadVal(), BRHEAD))
+
+	if (level == SCHEME)
+		return vals
+	// Filter Scheme
+	vals = _.filter(vals, createFilterUpstream(filters.SchemeVal(), SCHEME))
+
+	if (level == RM)
+		return vals
+	// Filter RM
+	vals = _.filter(vals, createFilterUpstream(filters.RMVal(), RM))
+
+	if (level == CA)
+		return vals
+	// Filter CA
+	vals = _.filter(vals, createFilterUpstream(filters.CAVal(), CA))
+
+	if (level == CUSTOMER)
+		return vals
+	// Filter Customer
+	vals = _.filter(vals, createFilterUpstream(filters.CustomerVal(), CUSTOMER))
+
+	return vals
+}
+
+const CITY = "_profile.applicantdetail.registeredaddress.CityRegistered"
+const PRODUCT = "_accountdetails.accountsetupdetails.product"
+const BRHEAD = "_accountdetails.accountsetupdetails.brhead"
+const SCHEME = "_accountdetails.accountsetupdetails.scheme"
+const RM = "_accountdetails.accountsetupdetails.rmname"
+const CA = "_accountdetails.accountsetupdetails.creditanalyst"
+const CUSTOMER = "customer_id"
+const DEALNO = "deal_no"
+
+function applyFilterCityDS() {
+	applyFilter(filters.CityDS, CITY, function(val) {
+		var v = _.get(val, CITY)
+		if (typeof(v) == "undefined")
+			return false
+		if (v.length == 0)
+			return false
+		return true
+	}, function (val) {
+		return {
+			text: _.get(val, CITY),
+			value: _.get(val, CITY)
+		}
+	})
+}
+
+function applyFilterProductDS() {
+	applyFilter(filters.ProductDS, PRODUCT,function(val) {
+		var v = _.get(val, PRODUCT)
+		if (typeof(v) == "undefined")
+			return false
+		if (v.length == 0)
+			return false
+		return true
+	}, function (val) {
+		return {
+			text: _.get(val, PRODUCT),
+			value: _.get(val, PRODUCT)
+		}
+	})
+}
+
+function applyFilterBRHeadDS() {
+	applyFilter(filters.BRHeadDS, BRHEAD,function(val) {
+		var v = _.get(val, BRHEAD)
+		if (typeof(v) == "undefined")
+			return false
+		if (v.length == 0)
+			return false
+		return true
+	}, function (val) {
+		return {
+			text: _.get(val, BRHEAD),
+			value: _.get(val, BRHEAD)
+		}
+	})
+}
+
+function applyFilterSchemeDS() {
+	applyFilter(filters.SchemeDS, SCHEME,function(val) {
+		var v = _.get(val, SCHEME)
+		if (typeof(v) == "undefined")
+			return false
+		if (v.length == 0)
+			return false
+		return true
+	}, function (val) {
+		return {
+			text: _.get(val, SCHEME),
+			value: _.get(val, SCHEME)
+		}
+	})
+}
+
+function applyFilterRMDS() {
+	applyFilter(filters.RMDS, "",function(val) {
+		var v = _.get(val, RM)
+		if (typeof(v) == "undefined")
+			return false
+		if (v.length == 0)
+			return false
+		return true
+	}, function (val) {
+		return {
+			text: _.get(val, RM),
+			value: _.get(val, RM)
+		}
+	})
+}
+
+function applyFilterCADS() {
+	applyFilter(filters.CADS, "",function(val) {
+		var v = _.get(val, CA)
+		if (typeof(v) == "undefined")
+			return false
+		if (v.length == 0)
+			return false
+		return true
+	}, function (val) {
+		return {
+			text: _.get(val, CA),
+			value: _.get(val, CA)
+		}
+	})
+}
+
+function applyFilterCustDS() {
+	applyFilter(filters.CustomerDS, CUSTOMER,function (val) {
+		return true
+	}, function (val) {
+		return {
+			text: val.customer_name,
+			value: val.customer_id
+		}
+	})
+}
+
+function applyFilterDealNoDS() {
+	applyFilter(filters.DealNoDS, DEALNO,function(val) {
+		return true
+	}, function (val) {
+		return {
+			text: val.deal_no,
+			value: val.deal_no
+		}
+	})
+}
+
+function reapplyFilter() {
+	applyFilterCityDS()
+	applyFilterProductDS()
+	applyFilterBRHeadDS()
+	applyFilterSchemeDS()
+	applyFilterRMDS()
+	applyFilterCADS()
+	applyFilterCustDS()
+	applyFilterDealNoDS()
+}
+
+filters.MasterDS = ko.observableArray()
+filters.MasterDS.subscribe(function(values) {
+	reapplyFilter();
+})
+
 filters.CustomerVal = ko.observableArray()
 filters.CustomerVal.subscribe(function(values) {
-	console.log("sarif")
+	reapplyFilter()
  	updateDSWithout("Cust")
 })
+filters.CustomerDS = ko.observableArray()
 
 filters.DealNoVal = ko.observableArray()
 filters.DealNoVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout("Dealno")
 })
+filters.DealNoDS = ko.observableArray()
 
 filters.CityVal = ko.observableArray()
 filters.CityVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout("City")
 })
+filters.CityDS = ko.observableArray()
 
 filters.ProductVal = ko.observableArray()
 filters.ProductVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout("Product")
 })
+filters.ProductDS = ko.observableArray()
 
 filters.BRHeadVal = ko.observableArray()
 filters.BRHeadVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout("BRHead")
 })
+filters.BRHeadDS = ko.observableArray()
 
 filters.SchemeVal = ko.observableArray()
 filters.SchemeVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout("Scheme")
 })
+filters.SchemeDS = ko.observableArray()
 
 filters.RMVal = ko.observableArray()
 filters.RMVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout("RM")
 })
+filters.RMDS = ko.observableArray()
 
 filters.ddRLARangesVal = ko.observable("")
 filters.ddRLARangesVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout()
 })
 
 filters.inputRLARangeVal = ko.observable()
 filters.inputRLARangeVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout()
 })
 
 filters.CAVal = ko.observableArray()
 filters.CAVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout("CA")
 })
+filters.CADS = ko.observableArray()
 
 filters.ddIRRangesVal = ko.observable("")
 filters.ddIRRangesVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout()
 })
 
 filters.inputIRRangeVal = ko.observable()
 filters.inputIRRangeVal.subscribe(function(values) {
+	reapplyFilter()
 	updateDSWithout()
 })
 

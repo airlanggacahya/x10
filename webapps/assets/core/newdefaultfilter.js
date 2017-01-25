@@ -330,9 +330,17 @@ var refreshFilter = function() {
 }
 
 var resetFilter = function(){
-	_.each($(".k-button > .k-select > .k-icon.k-i-close"), function(e) {
-		$(e).trigger("click")
-	})
+	// _.each($(".k-button > .k-select > .k-icon.k-i-close"), function(e) {
+	// 	$(e).trigger("click")
+	// })
+	filters.DealNoVal.removeAll()
+	filters.CustomerVal.removeAll()
+	filters.CAVal.removeAll()
+	filters.RMVal.removeAll()
+	filters.SchemeVal.removeAll()
+	filters.BRHeadVal.removeAll()
+	filters.ProductVal.removeAll()
+	filters.CityVal.removeAll()
 
 	filters.ddRLARangesVal("")
 	$("#ddRLARanges").data("kendoDropDownList").value("");

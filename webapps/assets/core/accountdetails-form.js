@@ -425,7 +425,12 @@ adf.getForm = function () {
 
 adf.setForm = function (data) {
 
+	console.log("sarif")
 	// console.log("---------->",data)
+	setTimeout(function(){
+		adf.setDisable()
+	}, 100)
+
 	if(data != null){
 		data.PromotorDetails.forEach(function (d) {
 			d.RealEstatePosition = d.RealEstatePosition.map(function (d) {
@@ -448,8 +453,9 @@ adf.setForm = function (data) {
 	var res = '';
 	$.each(adf.form.VendorDetails(), function(i, dex){
 		res = _.filter(adf.optionLeadDistributors(), function(item){
-			var data = dex.DistributorName();	
-			return item.toLowerCase() == data.toLowerCase();
+			var data = dex.DistributorName();
+			if(typeof data !== "undefined")	
+				return item.toLowerCase() == data.toLowerCase();
 		})
 
 		if (res != undefined){
@@ -2035,6 +2041,9 @@ adf.getData = function () {
 				adf.initFreshForm(customerId, dealNo)
 				adf.reloadStatus(0)
 				adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
+
+				adf.setDisable()
+
 				if(adf.form.Freeze() == true){
 					adf.EnableAllfields(false)
 
@@ -2080,6 +2089,7 @@ adf.getData = function () {
 				}
 			} else {
 				setTimeout(function(){
+					console.log(res)
 					//23/11/2016 set score promotor
 					if(res.Data.Status==0){
 						$.each(res.Data.PromotorDetails, function(i, item){
@@ -2177,6 +2187,8 @@ adf.getData = function () {
 						]);
 					}
 
+					adf.setDisable()
+
 				}, 1000)
 				adf.form.BorrowerDetails.DateBusinessStarted("");
 				adf.form.LoanDetails.IfBackedByPO("");
@@ -2256,10 +2268,6 @@ adf.getData = function () {
 
 			var temp = moment(adf.form.AccountSetupDetails.LoginDate()).format("DD-MMM-YYYY")
 			adf.loginDateString(temp)
-
-			setTimeout(function(){
-				adf.setDisable()
-			}, 100)
 		}, function () {
 			adf.isLoading(false)
 
@@ -2371,6 +2379,7 @@ adf.initData = function () {
 }
 
 adf.setDisable = function(){
+	console.log("jancok")
 	$(".disable").prop("disabled", true)
 
 	$(".disable").each(function(i,e){
@@ -2505,7 +2514,10 @@ $("#AD-Container textarea").prop( "disabled", !what );
     $txt.enable(what);
   }
 
+  $("#AD-Container .disable").prop( "disabled", true );
+  console.log("jancok")
   adf.setDisable()
+  console.log("jancoooooooooooook")
 });
 
   	for(var i = 0; i< adf.form.PromotorDetails().length; i++){

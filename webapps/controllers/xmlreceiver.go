@@ -528,8 +528,8 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		current.AccountSetupDetails.Scheme = toWordCase(Ld.GetString("dealSchemeDesc"))
 		current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitutionDesc")
 
-		current.LoanDetails.RequestedLimitAmount = Ld.GetFloat64("dealAssetCost")
-		current.LoanDetails.ProposedLoanAmount = Ld.GetFloat64("dealLoanAmount") / 100000
+		current.LoanDetails.ProposedLoanAmount = Ld.GetFloat64("dealAssetCost")
+		current.LoanDetails.RequestedLimitAmount = Ld.GetFloat64("dealLoanAmount") / 100000
 		current.LoanDetails.LimitTenor = Ld.GetFloat64("dealTenure")
 		current.LoanDetails.ProposedRateInterest = Ld.GetFloat64("dealFinalRate")
 

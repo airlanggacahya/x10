@@ -2,6 +2,8 @@
 
 var FirstAgreementDateStr = ko.observable("")
 var RecentAgreementDateStr = ko.observable("")
+var IfExistingCustomerStr = ko.observable("")
+
 adf.loginDateString = ko.observable()
 adf.disable = ko.observable(false)
 // ====== OPTIONS
@@ -470,6 +472,11 @@ adf.setForm = function (data) {
 
 	var temp = formatingDate(adf.form.LoanDetails.RecenetAgreementDate())
 	RecentAgreementDateStr(temp) 
+
+	temp = formatingToText(adf.form.LoanDetails.IfExistingCustomer())
+	IfExistingCustomerStr(temp)
+
+	adf.setDisable()
 }
 adf.resetForm = function () {
 	ko.mapping.fromJS(adf.templateForm, adf.form)
@@ -989,12 +996,12 @@ adf.getConfirm = function(){
 				}
 
 				if(adf.form.LoanDetails.IfExistingCustomer() == false ){
-					$("#IfYesEistingLimitAmount").getKendoNumericTextBox().enable(false)
-					$("#ExistingRoi").getKendoNumericTextBox().enable(false)
-					$("#ExistingPf").getKendoNumericTextBox().enable(false)
-					$("#FirstAgreementDate").getKendoDatePicker().enable(false)
-					$("#RecenetAgreementDate").getKendoDatePicker().enable(false)
-					$("#VintageWithX10").getKendoNumericTextBox().enable(false)
+					// $("#IfYesEistingLimitAmount").getKendoNumericTextBox().enable(false)
+					// $("#ExistingRoi").getKendoNumericTextBox().enable(false)
+					// $("#ExistingPf").getKendoNumericTextBox().enable(false)
+					// $("#FirstAgreementDate").getKendoDatePicker().enable(false)
+					// $("#RecenetAgreementDate").getKendoDatePicker().enable(false)
+					// $("#VintageWithX10").getKendoNumericTextBox().enable(false)
 				}
 
 				if(adf.PdDate().toString().indexOf("1970") >-1){
@@ -2263,7 +2270,6 @@ adf.getData = function () {
 }
 
 formatingDate = function(date) {
-	console.log(date)
 	if(date == "" || date.indexOf("1970-01-01") > -1  || date === undefined) {
 		return ""
 	} else {
@@ -2273,6 +2279,15 @@ formatingDate = function(date) {
 			return ""
 		}
 	}
+}
+
+formatingToText = function(data) {
+	if(typeof data === "boolean") {
+		if(data)
+			return "Yes"
+		else
+			return "No"
+	}	
 }
 
 window.refreshFilter = function () {
@@ -2356,7 +2371,6 @@ adf.initData = function () {
 }
 
 adf.setDisable = function(){
-	console.log("sarif")
 	$(".disable").prop("disabled", true)
 
 	$(".disable").each(function(i,e){
@@ -2970,12 +2984,12 @@ adf.loanDetailEnable = function(){
 	}
 
 	if(adf.form.LoanDetails.IfExistingCustomer() == false){
-		$("#IfYesEistingLimitAmount").data("kendoNumericTextBox").enable(false);
-		$("#ExistingRoi").data("kendoNumericTextBox").enable(false);
-		$("#ExistingPf").data("kendoNumericTextBox").enable(false);
-		$("#FirstAgreementDate").data("kendoDatePicker").enable(false);
-		$("#RecenetAgreementDate").data("kendoDatePicker").enable(false);
-		$("#VintageWithX10").data("kendoNumericTextBox").enable(false);
+		//$("#IfYesEistingLimitAmount").data("kendoNumericTextBox").enable(false);
+		//$("#ExistingRoi").data("kendoNumericTextBox").enable(false);
+		//$("#ExistingPf").data("kendoNumericTextBox").enable(false);
+		// $("#FirstAgreementDate").data("kendoDatePicker").enable(false);
+		// $("#RecenetAgreementDate").data("kendoDatePicker").enable(false);
+		// $("#VintageWithX10").data("kendoNumericTextBox").enable(false);
 		// $("#CommercialCibilReport").data("kendoDropDownList").enable(false);
 	}
 

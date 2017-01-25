@@ -1005,7 +1005,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Existing ROI %</label>
 					            	<div class="col-sm-5">
-					            		<input id="ExistingRoi" class="disable form-control input-sm" data-bind="value: ExistingRoi" type="text" style="width: 100%;">
+					            		<input class="disable form-control input-sm" data-bind="value: ExistingRoi" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1093,9 +1093,9 @@ mincibil = ko.observable(0);
 	    		<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Customer Business Mix  <i class="fa fa-chevron-down pull-right"></i></div>
 	    		<div id="companyCibil" class="collapsible-body">
 	    			<div class="panel " id="header-detail">
-			  			<!-- <div class="panel-heading">
+			  			<div class="panel-heading">
 
-					        <div class="panel-body">
+					        <!-- <div class="panel-body">
 								<div class="pull-left">
 					            	<button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('customer')" style="margin-right: inherit;">
 									Save
@@ -1107,8 +1107,8 @@ mincibil = ko.observable(0);
 										Confirm
 									</button>
 				            	</div>
-							</div>
-					    </div> -->
+							</div> -->
+					    </div>
 						<div class="panel-body" data-bind="with: CustomerBussinesMix" id="c-6">
 							<div class="col-sm-6">
 				            	<div class="form-group">
@@ -1151,7 +1151,7 @@ mincibil = ko.observable(0);
 
 					        <div class="panel-body">
 								<div class="pull-left">
-									<!-- <button id="addvendor" class="btn btn-sm btn-success separator" data-bind="visible: (adf.formVisibility() == true )" style="margin-right: inherit;" onclick="adf.addDistributorMix()">Add Vendor</button> -->
+									<button id="addvendor" class="btn btn-sm btn-success separator" data-bind="visible: (adf.formVisibility() == true )" style="margin-right: inherit;" onclick="adf.addDistributorMix()">Add Vendor</button>
 				            	</div>
 							</div>
 					    </div>
@@ -1161,16 +1161,16 @@ mincibil = ko.observable(0);
 					            <div class="col-sm-6">
 					            	<div class="form-group">
 					            		<div class="col-md-6">
-						            	<!-- <span><input class="col-sm-4 mix" data-bind="kendoDropDownList: { value: Label, data: adf.optionLeadDistributors, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 50%;margin-left: -11px;background-color: #fafafa;"/></span><label class="form-label" style="line-height: 14px;"></label> -->
-						            	<span><input class="disable input-sm form-control col-sm-4 mix" data-bind="value: Label" type="text" style="width: 50%;margin-left: -11px;background-color: #fafafa;"/></span><label class="form-label" style="line-height: 14px;"></label>
+						            	<span><input class="col-sm-4 mix" data-bind="kendoDropDownList: { value: Label, data: adf.optionLeadDistributors, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 50%;margin-left: -11px;background-color: #fafafa;"/></span><label class="form-label" style="line-height: 14px;"></label>
+						            	<!-- <span><input class="disable input-sm form-control col-sm-4 mix" data-bind="value: Label" type="text" style="width: 50%;margin-left: -11px;background-color: #fafafa;"/></span><label class="form-label" style="line-height: 14px;"></label> -->
 						            	</div>
 						            	<div class="col-sm-5">
 						            		<div class="col-md-8">
-						            			<input class="disable dist col-sm-4" data-bind="kendoNumericTextBox: { value: Result, format: '#.00 \\%', spinners:false }" type="number" style="width: 100%;">
+						            			<input class="dist col-sm-4" data-bind="kendoNumericTextBox: { value: Result, format: '#.00 \\%', spinners:false }" type="number" style="width: 100%;">
 						            		</div>
-						            		<!-- <div class="col-md-4">
+						            		<div class="col-md-4">
 						            			<button type="button" class="btn btn-sm btn-danger" data-bind="click: adf.removeDistributorMix($index()), attr:{'id' : 'del'+$index()}"><i class="fa fa-trash"></i></button>
-						            		</div> -->
+						            		</div>
 						            	</div>
 						            	<div class="clearfix"></div>
 					            	</div>

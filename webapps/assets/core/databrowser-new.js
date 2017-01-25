@@ -370,11 +370,13 @@ databrowser.loandetailscoll = [
 	headerAttributes: { "class": "sub-bgcolor" },
 	template: function(d){
 		var date =  _.get(d, "AD.LoanDetails.FirstAgreementDate") || _.get(d, "AD.loandetails.firstagreementdate")
+		// console.log("------->>>>",date)
+		// return ''
 		if(date.indexOf("0001-01-01T00:00:00Z") > -1){
 			return ""
 		}
 
-		return kendo.toString(new Date(date), "DD-MMM-YYYY")
+		return kendo.toString(new Date(date), "dd-MMM-yyyy")
 	}
 },
 {
@@ -385,13 +387,13 @@ databrowser.loandetailscoll = [
 	headerTemplate : "Recent Agreement <br/> Date",
 	headerAttributes: { "class": "sub-bgcolor" },
 	template: function(d){
-		console.log("------->>>>",d)
+		// console.log("------->>>>",d)
 		var date =  _.get(d, "AD.LoanDetails.RecenetAgreementDate") || _.get(d, "AD.loandetails.recenetagreementdate")
 		if(date.indexOf("0001-01-01T00:00:00Z") > -1){
 			return ""
 		}
 
-		return kendo.toString(new Date(date), "DD-MMM-YYYY")
+		return kendo.toString(new Date(date), "dd-MMM-yyyy")
 	}
 },
 {
@@ -411,6 +413,7 @@ databrowser.BorrowerDetails = [
 	title : "Borrower Constitution",
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
+	headerTemplate: "Borrower <br/> Constitution"
 }
 ]
 
@@ -457,8 +460,8 @@ databrowser.fullcoll = [
  }
  ,
  {
- 	title : "Details of Promoters/Directors/Guarantors",
- 	headerTemplate : "Details of </br>Promoters/Directors/Guarantors",
+ 	title : "Details of Promoters/Directors/Guarantors/Management",
+ 	headerTemplate : "Details of </br>Promoters/Directors/Guarantors/Management",
  	columns : [
  		{
  			title : "Name",
@@ -620,7 +623,7 @@ databrowser.fullcoll = [
  					str += elem
 
  					
- 				str += "<td class='line'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Details of</a></td>" 
+ 				str += "<td class='line'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Show More</a></td>" 
  					str+="</tr>"
 
  			}

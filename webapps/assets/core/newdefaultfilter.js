@@ -374,7 +374,7 @@ var rangeIR = function(arrval){
 }
 
 var dddata = [
-	{ text: "Choose Ranges", value: "" },
+	// { text: "Choose Ranges", value: "" },
     { text: "Greater Than", value: "gt" },
     { text: "Greater Than or Equal", value: "gte" },
     { text: "Equal", value: "eq" },

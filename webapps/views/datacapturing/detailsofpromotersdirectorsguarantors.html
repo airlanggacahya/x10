@@ -181,7 +181,7 @@
                         </div>
                         <div class="col-sm-8 widthfield">
                           <!-- <input data-bind="value: detail.biodata()[$index()].guarantor, attr: {id: 'guarantor'+ $index()}" type="checkbox" data-off-text="No" data-on-text="Yes" checked="false"> -->
-                          <input type="text" id="Guarantodropdown" class="disabledropdown form-control input-sm" data-bind="kendoDropDownList: {value: detail.biodata()[$index()].Guarantor, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changeguarantor(e, $index()) }}"></select>
+                          <input type="text" id="Guarantodropdown" class="ndisable form-control input-sm" data-bind="kendoDropDownList: {value: detail.biodata()[$index()].Guarantor, data: detail.guarantorList, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changeguarantor(e, $index()) }}"></select>
                         </div>
                       </div>
 
@@ -235,7 +235,7 @@
                           <label for="Acc" class="control-label">Position:</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <select id="position" class="ndisable form-control input-sm" data-bind="kendoMultiSelect:{data: positionList, value: detail.biodata()[$index()].Position}" validationMessage="Position required" required  /></select>
+                          <select id="position" class="ndisable multifield" data-bind="kendoMultiSelect:{data: positionList, value: detail.biodata()[$index()].Position}" validationMessage="Position required" required  /></select>
                         </div>
                       </div>
                     </div>

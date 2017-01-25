@@ -475,6 +475,8 @@ adf.setForm = function (data) {
 
 	temp = formatingToText(adf.form.LoanDetails.IfExistingCustomer())
 	IfExistingCustomerStr(temp)
+
+	adf.setDisable()
 }
 adf.resetForm = function () {
 	ko.mapping.fromJS(adf.templateForm, adf.form)
@@ -994,12 +996,12 @@ adf.getConfirm = function(){
 				}
 
 				if(adf.form.LoanDetails.IfExistingCustomer() == false ){
-					$("#IfYesEistingLimitAmount").getKendoNumericTextBox().enable(false)
-					$("#ExistingRoi").getKendoNumericTextBox().enable(false)
-					$("#ExistingPf").getKendoNumericTextBox().enable(false)
-					$("#FirstAgreementDate").getKendoDatePicker().enable(false)
-					$("#RecenetAgreementDate").getKendoDatePicker().enable(false)
-					$("#VintageWithX10").getKendoNumericTextBox().enable(false)
+					// $("#IfYesEistingLimitAmount").getKendoNumericTextBox().enable(false)
+					// $("#ExistingRoi").getKendoNumericTextBox().enable(false)
+					// $("#ExistingPf").getKendoNumericTextBox().enable(false)
+					// $("#FirstAgreementDate").getKendoDatePicker().enable(false)
+					// $("#RecenetAgreementDate").getKendoDatePicker().enable(false)
+					// $("#VintageWithX10").getKendoNumericTextBox().enable(false)
 				}
 
 				if(adf.PdDate().toString().indexOf("1970") >-1){
@@ -2369,7 +2371,6 @@ adf.initData = function () {
 }
 
 adf.setDisable = function(){
-	console.log("sarif")
 	$(".disable").prop("disabled", true)
 
 	$(".disable").each(function(i,e){

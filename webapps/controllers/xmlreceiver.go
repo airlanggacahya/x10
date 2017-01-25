@@ -524,9 +524,29 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 		current.AccountSetupDetails.LeadDistributor = body.GetString("dealSourceName")
 		current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
-		current.AccountSetupDetails.Product = Ld.GetString("dealProductDesc")
-		current.AccountSetupDetails.Scheme = Ld.GetString("dealSchemeDesc")
+		current.AccountSetupDetails.Product = toWordCase(Ld.GetString("dealProductDesc"))
+		current.AccountSetupDetails.Scheme = toWordCase(Ld.GetString("dealSchemeDesc"))
 		current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitutionDesc")
+
+		current.LoanDetails.RequestedLimitAmount = Ld.GetFloat64("dealAssetCost")
+		current.LoanDetails.ProposedLoanAmount = Ld.GetFloat64("dealLoanAmount") / 100000
+		current.LoanDetails.LimitTenor = Ld.GetFloat64("dealTenure")
+		current.LoanDetails.ProposedRateInterest = Ld.GetFloat64("dealFinalRate")
+
+		exists := false
+
+		if strings.ToLower(body.GetString("dealExistingCustomerDesc")) == "yes" {
+			exists = true
+		}
+
+		current.LoanDetails.IfExistingCustomer = exists
+		// current.LoanDetails.IfYesEistingLimitAmount = Ld.GetFloat64("sanctionedLimit") //waiting
+		current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
+		current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
+		current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
+		current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
+		current.LoanDetails.VintageWithX10 = body.GetFloat64("vinatgeInMonths")
+
 	} else {
 		IsConfirmed = true
 	}
@@ -828,8 +848,8 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 		ar.Set("Maximum", CheckNan(val.GetFloat64("Maximum")))
 
 		arb.Set("DealNo", val.GetString("dealNo"))
-		arb.Set("Product", val.GetString("product"))
-		arb.Set("Scheme", val.GetString("scheme"))
+		arb.Set("Product", toWordCase(val.GetString("product")))
+		arb.Set("Scheme", toWordCase(val.GetString("scheme")))
 		arb.Set("AgreementDate", val.GetString("agreementDate"))
 		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
 		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))

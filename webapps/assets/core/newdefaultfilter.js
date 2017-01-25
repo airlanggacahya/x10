@@ -232,6 +232,26 @@ function applyDisableFilter() {
 	for(var i = 0; i < position.length; i++) {
 		$("#" + target[i]).data("kendoMultiSelect").enable(position[i])
 	}
+
+	// special case for customer and DealNo
+	// we clear loanRange and IrRange
+	// and reset value on them
+	var v = filters.CustomerVal().length || filters.DealNoVal().length
+	if (v) {
+		filters.ddRLARangesVal("")
+		$("#ddRLARanges").data("kendoDropDownList").value("");
+
+		filters.inputRLARangeVal("")
+
+		filters.ddIRRangesVal("")
+		$("#ddIR").data("kendoDropDownList").value("");
+
+		filters.inputIRRangeVal("")
+	}
+
+	$("#ddRLARanges").data("kendoDropDownList").enable(!v)
+	$("#ddIR").data("kendoDropDownList").enable(!v)
+	$("#inputRLARange").data("kendoNumericTextBox").enable(!v)
 }
 
 function reapplyFilter() {
@@ -330,9 +350,17 @@ var refreshFilter = function() {
 }
 
 var resetFilter = function(){
-	_.each($(".k-button > .k-select > .k-icon.k-i-close"), function(e) {
-		$(e).trigger("click")
-	})
+	// _.each($(".k-button > .k-select > .k-icon.k-i-close"), function(e) {
+	// 	$(e).trigger("click")
+	// })
+	filters.DealNoVal.removeAll()
+	filters.CustomerVal.removeAll()
+	filters.CAVal.removeAll()
+	filters.RMVal.removeAll()
+	filters.SchemeVal.removeAll()
+	filters.BRHeadVal.removeAll()
+	filters.ProductVal.removeAll()
+	filters.CityVal.removeAll()
 
 	filters.ddRLARangesVal("")
 	$("#ddRLARanges").data("kendoDropDownList").value("");

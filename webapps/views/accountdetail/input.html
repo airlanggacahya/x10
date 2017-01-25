@@ -20,6 +20,11 @@ mincibil = ko.observable(0);
 <script>document.write('<script src="/static/core/accountdetails-form.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 <style>
+	.disable {
+		background-color: #eee !important;
+    	color: #000 !important;
+    	font-weight: normal !important;
+	}
 	.panel-collapse {
 		padding-top: 10px;
 	}
@@ -851,7 +856,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Proposed Amount of Limit (Rs. Lacs)</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoNumericTextBox: { value: RequestedLimitAmount, format: 'n0', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="loan disable" data-bind="kendoNumericTextBox: { value: RequestedLimitAmount, format: 'n0', spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -860,7 +865,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Limit Tenor (Months)</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoNumericTextBox: { value: LimitTenor, format: 'n0', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="loan disable" data-bind="kendoNumericTextBox: { value: LimitTenor, format: 'n0', spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -979,7 +984,8 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">If Existing Customer </label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoDropDownList: { data: adf.optionYesNo, value: IfExistingCustomer, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Select One' }" type="text" style="width: 100%;">
+					            		<!-- <input class="loan" data-bind="kendoDropDownList: { data: adf.optionYesNo, value: IfExistingCustomer, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Select One' }" type="text" style="width: 100%;"> -->
+					            		<input class="loan disable form-control input-sm" data-bind="value: IfExistingCustomer" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -988,7 +994,8 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">If Yes, Existing Limit Amount (Rs. Lacs)</label>
 					            	<div class="col-sm-5">
-					            		<input id="IfYesEistingLimitAmount" data-bind="kendoNumericTextBox: { value: IfYesEistingLimitAmount, format: 'n0', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
+					            		<!-- <input id="IfYesEistingLimitAmount" data-bind="kendoNumericTextBox: { value: IfYesEistingLimitAmount, format: 'n0', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;"> -->
+					            		<input id="IfYesEistingLimitAmount" class="disable" data-bind="kendoNumericTextBox: { value: IfYesEistingLimitAmount, format: 'n0', spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -998,7 +1005,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Existing ROI %</label>
 					            	<div class="col-sm-5">
-					            		<input id="ExistingRoi" data-bind="kendoNumericTextBox: { value: ExistingRoi, format: '#.00 \\%', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
+					            		<input id="ExistingRoi" class="disable form-control input-sm" data-bind="value: ExistingRoi" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1007,7 +1014,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Existing Processing Fee %</label>
 					            	<div class="col-sm-5">
-					            		<input id="ExistingPf" data-bind="kendoNumericTextBox: { value: ExistingPf, format: '#.00 \\%',  enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
+					            		<input id="ExistingPf" class="disable" data-bind="kendoNumericTextBox: { value: ExistingPf, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1017,7 +1024,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">First Agreement Date</label>
 					            	<div class="col-sm-5">
-					            		<input id="FirstAgreementDate" data-bind="kendoDatePicker: { value: FirstAgreementDate, format: 'dd-MMM-yyyy', enabled: adf.isExistingCustomer }" class="input-sm form-control" style="width: 100%;">
+					            		<input id="FirstAgreementDate" data-bind="value: FirstAgreementDateStr" class="disable form-control input-sm" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1026,7 +1033,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Recent Agreement Date</label>
 					            	<div class="col-sm-5">
-					            		<input id="RecenetAgreementDate" data-bind="kendoDatePicker: { value: RecenetAgreementDate, format: 'dd-MMM-yyyy', enabled: adf.isExistingCustomer }" class="input-sm form-control" style="width: 100%;">
+					            		<input id="RecenetAgreementDate" data-bind="value: RecentAgreementDateStr" class="disable form-control input-sm" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1036,7 +1043,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Vintage with X10 (in months)</label>
 					            	<div class="col-sm-5">
-					            		<input id="VintageWithX10" data-bind="kendoNumericTextBox: { value: VintageWithX10, format: 'n0', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;">
+					            		<input id="VintageWithX10" class="disable form-control input-sm" data-bind="value: VintageWithX10" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1144,93 +1151,26 @@ mincibil = ko.observable(0);
 
 					        <div class="panel-body">
 								<div class="pull-left">
-									<button id="addvendor" class="btn btn-sm btn-success separator" data-bind="visible: (adf.formVisibility() == true )" style="margin-right: inherit;" onclick="adf.addDistributorMix()">Add Vendor</button>
-					            	<!-- <button id="onsave"  data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-save separator" onclick="adf.SavePersection('distributor')" style="margin-right: inherit;">
-										Save
-									</button>
-									<button id="onreset8" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-reset separator" style="margin-right: inherit;" onclick="adf.setDistributorMixReset()">
-										Reset
-									</button>
-									<button id="onconfirm" data-bind="visible: (adf.formVisibility() == true ), text: adf.optionSectionDistributorConfirm, css: (adf.optionSectionDistributorConfirm().toLowerCase() == ' re enter' ? 'btn-reenter' : 'btn-confirm')" class="btn btn-sm separator" style="margin-right: inherit;" onclick="adf.getDistributtorMixConfirm()">
-										Confirm
-									</button> -->
+									<!-- <button id="addvendor" class="btn btn-sm btn-success separator" data-bind="visible: (adf.formVisibility() == true )" style="margin-right: inherit;" onclick="adf.addDistributorMix()">Add Vendor</button> -->
 				            	</div>
 							</div>
 					    </div>
 						<div class="panel-body" data-bind="with: DistributorMix" id="c-7">
-							<!-- <form class="account">
-					            <div class="col-sm-6">
-					            	<div class="form-group">
-						            	<label class="form-label col-sm-6">Iris Computers Limited - in %</label>
-						            	<div class="col-sm-5">
-						            		<input class="dist" data-bind="kendoNumericTextBox: { value: IrisComputersLimitedIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
-						            	</div>
-						            	<div class="clearfix"></div>
-					            	</div>
-					            </div>
-					            <div class="col-sm-6">
-					            	<div class="form-group">
-						            	<label class="form-label col-sm-6">Savex  - in %</label>
-						            	<div class="col-sm-5">
-						            		<input class="dist" data-bind="kendoNumericTextBox: { value: SavexIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
-						            	</div>
-						            	<div class="clearfix"></div>
-					            	</div>
-					            </div>
-
-					            <div class="col-sm-6">
-					            	<div class="form-group">
-						            	<label class="form-label col-sm-6">Rashi - in %</label>
-						            	<div class="col-sm-5">
-						            		<input class="dist" data-bind="kendoNumericTextBox: { value: RashiIn, format: '#.00 \\%',min: 0, max: 100, spinners:false }" type="text" style="width: 100%;">
-						            	</div>
-						            	<div class="clearfix"></div>
-					            	</div>
-					            </div>
-					            <div class="col-sm-6">
-					            	<div class="form-group">
-						            	<label class="form-label col-sm-6">Supertron - in %</label>
-						            	<div class="col-sm-5">
-						            		<input class="dist" data-bind="kendoNumericTextBox: { value: SupertronIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
-						            	</div>
-						            	<div class="clearfix"></div>
-					            	</div>
-					            </div>
-
-					            <div class="col-sm-6">
-					            	<div class="form-group">
-						            	<label class="form-label col-sm-6">Compuage - in %</label>
-						            	<div class="col-sm-5">
-						            		<input class="dist" data-bind="kendoNumericTextBox: { value: CompuageIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
-						            	</div>
-						            	<div class="clearfix"></div>
-					            	</div>
-					            </div>
-					            <div class="col-sm-6">
-					            	<div class="form-group">
-						            	<label class="form-label col-sm-6">Avnet - in %</label>
-						            	<div class="col-sm-5">
-						            		<input class="dist" id="Avnet" name="percentage" data-bind="kendoNumericTextBox: { value: AvnetIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
-						            		<span data-for='percentage' class='k-invalid-msg'></span>
-						            	</div>
-						            	<div class="clearfix"></div>
-					            	</div>
-					            </div>
-				            </form> -->
-				            <div class="clearfix"></div>
+							<div class="clearfix"></div>
 				            <div data-bind="foreach: adf.form.DistributorMix.Data">
 					            <div class="col-sm-6">
 					            	<div class="form-group">
 					            		<div class="col-md-6">
-						            	<span><input class="col-sm-4 mix" data-bind="kendoDropDownList: { value: Label, data: adf.optionLeadDistributors, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 50%;margin-left: -11px;background-color: #fafafa;"/></span><label class="form-label" style="line-height: 14px;"></label>
+						            	<!-- <span><input class="col-sm-4 mix" data-bind="kendoDropDownList: { value: Label, data: adf.optionLeadDistributors, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 50%;margin-left: -11px;background-color: #fafafa;"/></span><label class="form-label" style="line-height: 14px;"></label> -->
+						            	<span><input class="disable input-sm form-control col-sm-4 mix" data-bind="value: Label" type="text" style="width: 50%;margin-left: -11px;background-color: #fafafa;"/></span><label class="form-label" style="line-height: 14px;"></label>
 						            	</div>
 						            	<div class="col-sm-5">
 						            		<div class="col-md-8">
-						            			<input class="dist" class="col-sm-4" data-bind="kendoNumericTextBox: { value: Result, format: '#.00 \\%', spinners:false }" type="number" style="width: 100%;">
+						            			<input class="disable dist col-sm-4" data-bind="kendoNumericTextBox: { value: Result, format: '#.00 \\%', spinners:false }" type="number" style="width: 100%;">
 						            		</div>
-						            		<div class="col-md-4">
+						            		<!-- <div class="col-md-4">
 						            			<button type="button" class="btn btn-sm btn-danger" data-bind="click: adf.removeDistributorMix($index()), attr:{'id' : 'del'+$index()}"><i class="fa fa-trash"></i></button>
-						            		</div>
+						            		</div> -->
 						            	</div>
 						            	<div class="clearfix"></div>
 					            	</div>

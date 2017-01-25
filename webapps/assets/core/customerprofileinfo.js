@@ -208,6 +208,7 @@ info.condReEnter = function(){
     $("#Ownership").prop("disabled", true);
     $("#Ownership").prop("disabled", true);
     $("#Ownership").prop("disabled", true);
+    $("#Designation").prop("disabled", true);
 }
 
 info.condFreeze = function(){

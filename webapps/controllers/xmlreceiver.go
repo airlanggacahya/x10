@@ -511,6 +511,7 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 	Ld := tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
 
 	valid := comp.GetString("dealCustomerId")
+	existdeal := CheckArray(body.Get("existingDealDetails"))
 
 	if stat == 0 && valid != "" {
 		dtl := tk.M(comp.Get("customerDtl").(map[string]interface{}))
@@ -540,7 +541,19 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		}
 
 		current.LoanDetails.IfExistingCustomer = exists
-		// current.LoanDetails.IfYesEistingLimitAmount = Ld.GetFloat64("sanctionedLimit") //waiting
+
+		sanctionedLimit := 0.0
+		currentmax := 0.0
+
+		for _, val := range existdeal {
+			id := val.GetFloat64("dealId")
+			if id > currentmax {
+				currentmax = id
+				sanctionedLimit = val.GetFloat64("sanctionedLimit")
+				tk.Println(val.GetFloat64("sanctionedLimit"))
+			}
+		}
+		current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit
 		current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 		current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
 		current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)

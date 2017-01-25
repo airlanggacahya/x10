@@ -218,7 +218,7 @@
                           <label for="Acc" class="control-label">Designation :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="Designation" class="Designation" name="designation" data-bind="kendoDropDownList: {value:detail.biodata()[$index()].Designation, data: detail.desain, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One', select:function(e){ changedesignation(e, $index()) }}" required>
+                          <input type="text" id="Designation" class="Designation form-control input-sm" name="designation" data-bind="value:detail.biodata()[$index()].Designation" required>
                           <span class="k-invalid-msg" data-for="designation"></span>
                         </div>
                       </div>

@@ -1,5 +1,7 @@
  var adf = {}
 
+var FirstAgreementDateStr = ko.observable("")
+var RecentAgreementDateStr = ko.observable("")
 adf.loginDateString = ko.observable()
 adf.disable = ko.observable(false)
 // ====== OPTIONS
@@ -465,6 +467,9 @@ adf.setForm = function (data) {
 
 	adf.fixMultiSectionCSS()
 	ComputedGO();
+
+	var temp = formatingDate(adf.form.LoanDetails.RecenetAgreementDate())
+	RecentAgreementDateStr(temp) 
 }
 adf.resetForm = function () {
 	ko.mapping.fromJS(adf.templateForm, adf.form)
@@ -979,7 +984,7 @@ adf.getConfirm = function(){
 				// 		if(adf.form.BorrowerDetails.DateBusinessStarted().toString().indexOf("1970") >-1)
 				// 		adf.form.BorrowerDetails.DateBusinessStarted("");
 				if(adf.form.LoanDetails.IfBackedByPO() == false ){
-					$("#BackToBack").getKendoNumericTextBox().enable(false)
+					//$("#BackToBack").getKendoNumericTextBox().enable(false)
 					$("#Expected").getKendoNumericTextBox().enable(false)
 				}
 
@@ -2192,6 +2197,10 @@ adf.getData = function () {
 
 				// console.log(res.Data)
 				adf.FirstAgreementDate(res.Data.LoanDetails.FirstAgreementDate)
+				var temp = formatingDate(adf.FirstAgreementDate())
+
+				console.log(temp)
+				FirstAgreementDateStr(temp)
 				adf.optionTemporaryData(res.Data)
 				adf.setForm(res.Data)
 				// adf.loanDetailEnable()
@@ -2252,6 +2261,20 @@ adf.getData = function () {
 		adf.isLoading(false)
 	})
 }
+
+formatingDate = function(date) {
+	console.log(date)
+	if(date == "" || date.indexOf("1970-01-01") > -1  || date === undefined) {
+		return ""
+	} else {
+		try {
+			return moment(date).format("DD-MMM-YYYY")
+		}catch(err){
+			return ""
+		}
+	}
+}
+
 window.refreshFilter = function () {
 	$(".toaster").html("")
 	adf.FirstAgreementDate("");
@@ -2942,8 +2965,8 @@ adf.loadIfBackedByPO = ko.computed(function(){
 
 adf.loanDetailEnable = function(){
 	if(adf.form.LoanDetails.IfBackedByPO() == false){
-		$("#BackToBack").data("kendoNumericTextBox").enable(false)
-		$("#Expected").data("kendoNumericTextBox").enable(false)
+		//$("#BackToBack").data("kendoNumericTextBox").enable(false)
+		//$("#Expected").data("kendoNumericTextBox").enable(false)
 	}
 
 	if(adf.form.LoanDetails.IfExistingCustomer() == false){

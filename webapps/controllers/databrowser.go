@@ -379,6 +379,46 @@ func (a *DataBrowserController) GetCreditScorecardData(k *knot.WebContext) inter
 	return CreateResult(true, results, "")
 }
 
+func AttachCustomerProfile(conn dbox.IConnection, val tk.M) {
+	tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
+	qprofile, err := conn.NewQuery().
+		From("CustomerProfile").
+		Where(dbox.Eq("_id", fmt.Sprintf("%d|%s", val["customer_id"], val["deal_no"]))).
+		Cursor(nil)
+	if err != nil {
+		return
+	}
+
+	resProfile := []tk.M{}
+	qprofile.Fetch(&resProfile, 0, false)
+
+	if len(resProfile) == 0 {
+		return
+	}
+
+	val["_profile"] = resProfile[0]
+}
+
+func AttachAccountDetail(conn dbox.IConnection, val tk.M) {
+	// tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
+	qprofile, err := conn.NewQuery().
+		From("AccountDetails").
+		Where(dbox.Eq("_id", fmt.Sprintf("%d|%s", val["customer_id"], val["deal_no"]))).
+		Cursor(nil)
+	if err != nil {
+		return
+	}
+
+	resProfile := []tk.M{}
+	qprofile.Fetch(&resProfile, 0, false)
+
+	if len(resProfile) == 0 {
+		return
+	}
+
+	val["_accountdetails"] = resProfile[0]
+}
+
 func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
@@ -398,25 +438,8 @@ func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} 
 	qcust.Fetch(&resCust, 0, false)
 
 	for _, val := range resCust {
-		tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
-		qprofile, err := conn.NewQuery().
-			From("CustomerProfile").
-			Where(dbox.Eq("_id", fmt.Sprintf("%d|%s", val["customer_id"], val["deal_no"]))).
-			Cursor(nil)
-		if err != nil {
-			return CreateResult(false, nil, err.Error())
-		}
-
-		resProfile := []tk.M{}
-		qprofile.Fetch(&resProfile, 0, false)
-
-		if len(resProfile) == 0 {
-			tk.Printfn("Empty")
-			continue
-		}
-
-		tk.Printfn("Not Empty")
-		val["_profile"] = resProfile[0]
+		AttachCustomerProfile(conn, val)
+		AttachAccountDetail(conn, val)
 	}
 
 	return CreateResult(true, resCust, "")

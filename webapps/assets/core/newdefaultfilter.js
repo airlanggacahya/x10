@@ -196,6 +196,44 @@ function applyFilterDealNoDS() {
 	})
 }
 
+function applyDisableFilter() {
+	var input = [
+		filters.ProductVal(),
+		filters.BRHeadVal(),
+		filters.SchemeVal(),
+		filters.RMVal(),
+		filters.CAVal(),
+		filters.CustomerVal(),
+		filters.DealNoVal()
+	]
+	var target = [
+		"multiCity",
+		"multiProduct",
+		"multiBRHead",
+		"multiScheme",
+		"multiRM",
+		"multiCA",
+		"multiCustomer"
+	]
+	var position = []
+
+	for(var i = 0; i < target.length; i++) {
+		position.push(true)
+	}
+
+	for(var i = 0; i < input.length; i++) {
+		if (input[i].length == 0)
+			continue
+		for(var j = 0; j < target.length && j <= i; j++) {
+			position[j] = false
+		}
+	}
+
+	for(var i = 0; i < position.length; i++) {
+		$("#" + target[i]).data("kendoMultiSelect").enable(position[i])
+	}
+}
+
 function reapplyFilter() {
 	applyFilterCityDS()
 	applyFilterProductDS()
@@ -205,6 +243,8 @@ function reapplyFilter() {
 	applyFilterCADS()
 	applyFilterCustDS()
 	applyFilterDealNoDS()
+
+	applyDisableFilter()
 }
 
 filters.MasterDS = ko.observableArray()

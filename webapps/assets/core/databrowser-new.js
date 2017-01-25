@@ -76,12 +76,68 @@ databrowser.applicantdetailcoll = [
 	title : "Address",
 	hidden : true,
 	template : function(dt){
-		return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
+		return "<center><a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Show More</a></center>"
 	},
 	width : 100,
 	headerTemplate : "Address",
 	headerAttributes: { "class": "sub-bgcolor" },
-},
+},{
+	field : "CA.applicantdetail.NatureOfBussiness",
+	title : "Nature of Business",
+	hidden : true,
+	// template : function(dt){
+	// 	return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
+	// },
+	width : 100,
+	headerTemplate : "Nature of <br/> Business",
+	headerAttributes: { "class": "sub-bgcolor" },
+},{
+	field : "CA.applicantdetail.UserGroupCompanies",
+	title : "User Group Companies",
+	hidden : true,
+	// template : function(dt){
+	// 	return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
+	// },
+	width : 200,
+	headerTemplate : "User Group <br/> Companies",
+	headerAttributes: { "class": "sub-bgcolor" },
+},{
+	field : "CA.applicantdetail.YearsInBusiness",
+	title : "No of years in business",
+	hidden : true,
+	attributes:{style: "text-align: right"},
+	// template : function(dt){
+	// 	return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
+	// },
+	width : 100,
+	headerTemplate : "No of years <br/> in business",
+	headerAttributes: { "class": "sub-bgcolor" },
+},{
+	field : "CA.applicantdetail.NoOfEmployees",
+	title : "No of employees",
+	hidden : true,
+	attributes:{style: "text-align: right"},
+	// template : function(dt){
+	// 	return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
+	// },
+	width : 100,
+	headerTemplate : "No of <br/> employees",
+	headerAttributes: { "class": "sub-bgcolor" },
+},{
+	field : "CA.applicantdetail.AmountLoan",
+	title : "Requested loan amount",
+	hidden : true,
+	attributes:{style: "text-align: right"},
+	// template : function(dt){
+	// 	return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
+	// },
+	width : 100,
+	headerTemplate : "Requested <br/> loan amount",
+	headerAttributes: { "class": "sub-bgcolor" },
+	template:function(d){
+		return app.formatnum(d.CA.applicantdetail.AmountLoan)
+	}
+}
 ]
 
 databrowser.nonrefundcoll = [
@@ -129,17 +185,24 @@ databrowser.nonrefundcoll = [
 ]
 
 databrowser.accsetupcoll = [
-{
-	field : "AD.accountsetupdetails.logindate",
-	title : "Login Date",
-	hidden : true,
-	template : function(dt){
-		if(dt.AD.accountsetupdetails.logindate == null || dt.AD.accountsetupdetails.logindate.indexOf("0001") > -1 ||  dt.AD.accountsetupdetails.logindate.indexOf("date") > -1){
-			return "";
-		}
+// {
+// 	field : "AD.accountsetupdetails.logindate",
+// 	title : "Login Date",
+// 	hidden : true,
+// 	template : function(dt){
+// 		if(dt.AD.accountsetupdetails.logindate == null || dt.AD.accountsetupdetails.logindate.indexOf("0001") > -1 ||  dt.AD.accountsetupdetails.logindate.indexOf("date") > -1){
+// 			return "";
+// 		}
 
-		return moment(dt.AD.accountsetupdetails.logindate).format("DD-MMM-YYYY")
-	},
+// 		return moment(dt.AD.accountsetupdetails.logindate).format("DD-MMM-YYYY")
+// 	},
+// 	width : 100,
+// 	headerAttributes: { "class": "sub-bgcolor" },
+// },
+{
+	field : "AD.accountsetupdetails.cityname",
+	title : "City Name",
+	hidden : false,
 	width : 100,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
@@ -179,13 +242,6 @@ databrowser.accsetupcoll = [
 	headerAttributes: { "class": "sub-bgcolor" },
 },
 {
-	field : "AD.accountsetupdetails.cityname",
-	title : "City Name",
-	hidden : false,
-	width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
-},
-{
 	field : "AD.accountsetupdetails.product",
 	title : "Product",
 	hidden : false,
@@ -210,6 +266,7 @@ databrowser.loandetailscoll = [
 	width : 100,
 	headerTemplate : "Requested Loan </br> Amount",
 	headerAttributes: { "class": "sub-bgcolor" },
+	attributes:{style: "text-align: right"},
 },
 {
 	field : "AD.loandetails.limittenor",
@@ -218,6 +275,7 @@ databrowser.loandetailscoll = [
 	width : 100,
 	headerTemplate : "Limit Tenor </br> (Months)",
 	headerAttributes: { "class": "sub-bgcolor" },
+	attributes:{style: "text-align: right"},
 },
 {
 	field : "AD.loandetails.proposedrateinterest",
@@ -226,15 +284,16 @@ databrowser.loandetailscoll = [
 	width : 120,
 	headerTemplate : "Proposed Rate of </br> Interest (ROI) %",
 	headerAttributes: { "class": "sub-bgcolor" },
+	attributes:{style: "text-align: right"},
 },
-{
-	field : "AD.loandetails.interestoutgo",
-	title : "Proposed X10 Interest Outgo in (Rs. Lacs)",
-	hidden : true,
-	width : 130,
-	headerTemplate : "Proposed X10 Interest </br> Outgo in (Rs. Lacs)",
-	headerAttributes: { "class": "sub-bgcolor" },
-},
+// {
+// 	field : "AD.loandetails.interestoutgo",
+// 	title : "Proposed X10 Interest Outgo in (Rs. Lacs)",
+// 	hidden : true,
+// 	width : 130,
+// 	headerTemplate : "Proposed X10 Interest </br> Outgo in (Rs. Lacs)",
+// 	headerAttributes: { "class": "sub-bgcolor" },
+// },
 {
 	field : "AD.loandetails.requestedlimitamount",
 	title : "Proposed Amount of Limit (Rs. Lacs)",
@@ -242,23 +301,24 @@ databrowser.loandetailscoll = [
 	width : 120	,
 	headerTemplate : "Proposed Amount of </br> Limit (Rs. Lacs)",
 	headerAttributes: { "class": "sub-bgcolor" },
+	attributes:{style: "text-align: right"},
 },
-{
-	field : "AD.loandetails.loantenordays",
-	title : "Loan Tenor (Days)",
-	hidden : true,
-	width : 100,
-	headerTemplate : "Loan Tenor </br> (Days)",
-	headerAttributes: { "class": "sub-bgcolor" },
-},
-{
-	field : "AD.loandetails.proposedpfee",
-	title : "Proposed Processing Fee %",
-	hidden : true,
-	width : 130,
-	headerTemplate : "Proposed Processing </br> Fee %",
-	headerAttributes: { "class": "sub-bgcolor" },
-},
+// {
+// 	field : "AD.loandetails.loantenordays",
+// 	title : "Loan Tenor (Days)",
+// 	hidden : true,
+// 	width : 100,
+// 	headerTemplate : "Loan Tenor </br> (Days)",
+// 	headerAttributes: { "class": "sub-bgcolor" },
+// },
+// {
+// 	field : "AD.loandetails.proposedpfee",
+// 	title : "Proposed Processing Fee %",
+// 	hidden : true,
+// 	width : 130,
+// 	headerTemplate : "Proposed Processing </br> Fee %",
+// 	headerAttributes: { "class": "sub-bgcolor" },
+// },
 {
 	field : "AD.loandetails.ifexistingcustomer",
 	title : "Existing Customer",
@@ -274,7 +334,85 @@ databrowser.loandetailscoll = [
 	},
 	headerAttributes: { "class": "sub-bgcolor" },
 },
+{
+	field : "AD.loandetails.ifyeseistinglimitamount",
+	title : "If Yes, Existing Limit Amount",
+	hidden : true,
+	width : 100,
+	headerTemplate : "If Yes, Existing <br/> Limit Amount",
+	headerAttributes: { "class": "sub-bgcolor" },
+	attributes:{style: "text-align: right"},
+},
+{
+	field : "AD.loandetails.existingroi",
+	title : "Existing ROI",
+	hidden : true,
+	width : 100,
+	headerTemplate : "Existing ROI",
+	headerAttributes: { "class": "sub-bgcolor" },
+	attributes:{style: "text-align: right"},
+},
+{
+	field : "AD.loandetails.existingpf",
+	title : "Existing PF",
+	hidden : true,
+	width : 100,
+	headerTemplate : "Existing PF",
+	headerAttributes: { "class": "sub-bgcolor" },
+	attributes:{style: "text-align: right"},
+},
+{
+	field : "AD.loandetails.firstagreementdate",
+	title : "First Agreement Date",
+	hidden : true,
+	width : 100,
+	headerTemplate : "First Agreement <br/> Date",
+	headerAttributes: { "class": "sub-bgcolor" },
+	template: function(d){
+		var date =  _.get(d, "AD.LoanDetails.FirstAgreementDate") || _.get(d, "AD.loandetails.firstagreementdate")
+		if(date.indexOf("0001-01-01T00:00:00Z") > -1){
+			return ""
+		}
+
+		return kendo.toString(new Date(date), "DD-MMM-YYYY")
+	}
+},
+{
+	field : "AD.loandetails.recenetagreementdate",
+	title : "Recent Agreement Date",
+	hidden : true,
+	width : 120,
+	headerTemplate : "Recent Agreement <br/> Date",
+	headerAttributes: { "class": "sub-bgcolor" },
+	template: function(d){
+		console.log("------->>>>",d)
+		var date =  _.get(d, "AD.LoanDetails.RecenetAgreementDate") || _.get(d, "AD.loandetails.recenetagreementdate")
+		if(date.indexOf("0001-01-01T00:00:00Z") > -1){
+			return ""
+		}
+
+		return kendo.toString(new Date(date), "DD-MMM-YYYY")
+	}
+},
+{
+	field : "AD.loandetails.vintagewithx10",
+	title : "Vintage With X10 (in Months)",
+	hidden : true,
+	width : 100,
+	headerTemplate : "Vintage With X10 <br/> (in Months)",
+	headerAttributes: { "class": "sub-bgcolor" },
+	attributes:{style: "text-align: right"},
+},
 ];
+
+databrowser.BorrowerDetails = [
+{
+	field : "AD.borrowerdetails.borrowerconstitution",
+	title : "Borrower Constitution",
+	width : 100,
+	headerAttributes: { "class": "sub-bgcolor" },
+}
+]
 
 databrowser.fullcoll = [
  {
@@ -299,7 +437,7 @@ databrowser.fullcoll = [
  	{
  		title : "Existing Relationship With X10 Financial Services Limited",
  		template :  function(dt){
- 			return "<a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Details..</a>"
+ 			return "<center><a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Show More</a></center>"
  		},
 		width : 120,
 		headerTemplate : "Existing Relationship </br> With X10 Financial<br> Services Limited",
@@ -333,7 +471,7 @@ databrowser.fullcoll = [
 
  					if(i==0){
  						str += "<tr>"
- 						str += "<td class='line' role='gridcell' id='"+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'>more..</button></a>"
+ 						str += "<td class='line' role='gridcell' id='"+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+ dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a></td>"
  						str+="</tr>"
  					}else{
  						str += "<tr class='hiddentd'>"
@@ -482,7 +620,7 @@ databrowser.fullcoll = [
  					str += elem
 
  					
- 				str += "<td class='line'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Details..</a></td>" 
+ 				str += "<td class='line'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Details of</a></td>" 
  					str+="</tr>"
 
  			}
@@ -497,12 +635,27 @@ databrowser.fullcoll = [
 	headerAttributes: { "class": "sub-bgcolor" },
  },
  {
+ 	title : "Details of <br/> Reference",
+	width : 100,
+	template: function(dt){
+		return "<center><a onclick='databrowser.GoReference(\""+ dt.CA._id +"\")'>Show More<a></center>"
+	},
+	headerAttributes: { "class": "sub-bgcolor" },
+ },
+ {
  	title : "Account Set-up Details",
  	columns : databrowser.accsetupcoll,
  	headerTemplate : function(dt){
  		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-forward' aria-hidden='true'></a>"
  	},
 	width : 100,
+	headerAttributes: { "class": "sub-bgcolor" },
+ },
+ {
+ 	title : "Borrower Details",
+	width : 100,
+	columns : databrowser.BorrowerDetails,
+	headerTemplate: "Borrowe Details",
 	headerAttributes: { "class": "sub-bgcolor" },
  },
  {
@@ -524,7 +677,8 @@ databrowser.statusexpand = {
 }
 
 databrowser.expand = function(text){
-	if(text == "applicant"){
+	
+	if (text == "applicant"){
 		if(databrowser.statusexpand[text]){
 			databrowser.fullcoll[1].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-forward' aria-hidden='true'></a>"
@@ -577,7 +731,7 @@ databrowser.expand = function(text){
 		}
 	}else if (text == "accsetup"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[5].headerTemplate = function(dt){
+			databrowser.fullcoll[6].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -587,23 +741,24 @@ databrowser.expand = function(text){
 
 		 	databrowser.accsetupcoll[0].hidden = false;
 		 	databrowser.accsetupcoll[1].hidden = false;
-		 	databrowser.fullcoll[5].columns = databrowser.accsetupcoll;
+		 	databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[5].headerTemplate = function(dt){
+			databrowser.fullcoll[6].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.accsetupcoll){
 		 		databrowser.accsetupcoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[5].columns = databrowser.accsetupcoll;
+		 	databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
 			//open
 		}
+	
 	}else if (text == "loandet"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[6].headerTemplate = function(dt){
+			databrowser.fullcoll[8].headerTemplate = function(dt){
 		 		return "<a id='on1' class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -614,18 +769,18 @@ databrowser.expand = function(text){
 		 	databrowser.loandetailscoll[0].hidden = false;
 		 	databrowser.loandetailscoll[4].hidden = false;
 		 	databrowser.loandetailscoll[7].hidden = false;
-		 	databrowser.fullcoll[6].columns = databrowser.loandetailscoll;
+		 	databrowser.fullcoll[8].columns = databrowser.loandetailscoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[6].headerTemplate = function(dt){
+			databrowser.fullcoll[8].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.loandetailscoll){
 		 		databrowser.loandetailscoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[6].columns = databrowser.loandetailscoll;
+		 	databrowser.fullcoll[8].columns = databrowser.loandetailscoll;
 			//open
 		}
 	}
@@ -663,11 +818,16 @@ databrowser.GoAddress = function(id,name){
 	 window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrollto=Company Address Details")
 }
 
+databrowser.GoReference = function(id){
+	var ids=id.split("|");
+	window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrollto=Details of Reference")
+}
+
 var dbgrid = ""
 
 databrowser.GetDataGrid = function(){
 	var opr = (filters.dataRating()).split(" ");
-	console.log("------>>>", opr)
+	// console.log("------>>>", opr)
 	if(opr.length > 2){
 		var param = {
 			customer : filters.CustomerVal(),
@@ -741,12 +901,12 @@ function showthis(e){
 	$("#"+e).closest("table").parent().parent().find(".hiddentd").show();
 	var test = $("#"+e).find("a").html();
 
-	if(test.indexOf("more") > -1){
+	if(test.indexOf("plus") > -1){
 		$("#"+e).closest("table").parent().parent().find(".hiddentd").show();
-		$("#"+e).find("a").html("hide..")
+		$("#"+e).find("a").html("<i class='fa fa-minus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i>")
 		$(".line").css('border-bottom', '')
 	}else{
 		$("#"+e).closest("table").parent().parent().find(".hiddentd").hide();
-		$("#"+e).find("a").html("more..")
+		$("#"+e).find("a").html("<i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i>")
 	}
 }

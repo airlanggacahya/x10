@@ -3,41 +3,6 @@
 		width: 100%
 	}
 </style>
-<div class="col-md-6">
-	<div class="form-group col-sm-12">
-     	<label class="col-sm-2 form-control-label">Customer</label>
-     	<div class="col-sm-10">
-     		 <select class="multifield"  id="multiCustomer" 
-		        data-placeholder="Choose Customer"
-		        data-bind="kendoMultiSelect: { 
-		        data: multiCustomerDS,
-		        value: filters.CustomerVal,
-		        dataValueField: 'value', 
-		        dataTextField: 'text',
-		        clearButton: true
-		        }">
-	        </select>
-     	</div>  
-    </div>
-</div>
-<!-- <div class="clearfix"></div> -->
-<div class="col-md-6">
-	<div class="form-group col-sm-12">
-     	<label class="col-sm-2 form-control-label">Dealno</label>
-     	<div class="col-sm-10">
-	        <select class="multifield"  id="multiDealno"  
-		        data-placeholder="Choose Deal No"
-		        data-bind="kendoMultiSelect: {
-		        data: multiDealNoDS,
-		        value: filters.DealNoVal,
-		        dataValueField: 'value', 
-		        dataTextField: 'text',
-		        clearButton: true
-		        }">
-	        </select>
-	    </div>
-    </div>
-</div>
 <div class="clearfix"></div>
 <div id="panel-filter" hidden>
 	<div class="col-md-6">
@@ -48,7 +13,7 @@
 		     	<select class="multifield"  id="multiCity"  
 			        data-placeholder="Choose City"
 			        data-bind="kendoMultiSelect: { 
-			        data: multiCityDS,
+			        data: filters.CityDS,
 			        value: filters.CityVal,
 			        dataValueField: 'value', 
 			        dataTextField: 'text',
@@ -65,7 +30,7 @@
 		        <select class="multifield"  id="multiBRHead"  
 			        data-placeholder="Choose Branch Head"
 			        data-bind="kendoMultiSelect: { 
-			        data: multiBRHeadDS,
+			        data: filters.BRHeadDS,
 			        value: filters.BRHeadVal,
 			        dataValueField: 'value', 
 			        dataTextField: 'text',
@@ -82,7 +47,7 @@
 		        <select class="multifield"  id="multiRM"  
 			        data-placeholder="Choose RM"
 			        data-bind="kendoMultiSelect: { 
-			        data: multiRMDS,
+			        data: filters.RMDS,
 			        value: filters.RMVal,
 			        dataValueField: 'value', 
 			        dataTextField: 'text',
@@ -98,7 +63,7 @@
 		        <select class="multifield"  id="multiCA"  
 			        data-placeholder="Choose Credit Analyst"
 			        data-bind="kendoMultiSelect: { 
-			        data: multiCADS,
+			        data: filters.CADS,
 			        value: filters.CAVal,
 			        dataValueField: 'value', 
 			        dataTextField: 'text',
@@ -116,7 +81,7 @@
 		        <select class="multifield"  id="multiProduct"  
 			        data-placeholder="Choose Product"
 			        data-bind="kendoMultiSelect: { 
-			        data: multiProductDS,
+			        data: filters.ProductDS,
 			        value: filters.ProductVal,
 			        dataValueField: 'value', 
 			        dataTextField: 'text',
@@ -132,7 +97,7 @@
 		       <select class="multifield"  id="multiScheme"  
 			        data-placeholder="Choose Scheme"
 			        data-bind="kendoMultiSelect: { 
-			        data: multiSchemeDS,
+			        data: filters.SchemeDS,
 			        value: filters.SchemeVal,
 			        dataValueField: 'value', 
 			        dataTextField: 'text',
@@ -173,6 +138,41 @@
 		    </div>
 	    </div>
 	</div>
+</div>
+<div class="col-md-6">
+	<div class="form-group col-sm-12">
+     	<label class="col-sm-2 form-control-label">Customer</label>
+     	<div class="col-sm-10">
+     		 <select class="multifield"  id="multiCustomer" 
+		        data-placeholder="Choose Customer"
+		        data-bind="kendoMultiSelect: { 
+		        data: filters.CustomerDS,
+		        value: filters.CustomerVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
+		        clearButton: true
+		        }">
+	        </select>
+     	</div>  
+    </div>
+</div>
+<!-- <div class="clearfix"></div> -->
+<div class="col-md-6">
+	<div class="form-group col-sm-12">
+     	<label class="col-sm-2 form-control-label">Dealno</label>
+     	<div class="col-sm-10">
+	        <select class="multifield"  id="multiDealno"  
+		        data-placeholder="Choose Deal No"
+		        data-bind="kendoMultiSelect: {
+		        data: filters.DealNoDS,
+		        value: filters.DealNoVal,
+		        dataValueField: 'value', 
+		        dataTextField: 'text',
+		        clearButton: true
+		        }">
+	        </select>
+	    </div>
+    </div>
 </div>
 
 <script>document.write('<script src="/static/core/newdefaultfilter.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>

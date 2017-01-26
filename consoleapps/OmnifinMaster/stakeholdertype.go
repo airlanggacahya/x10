@@ -1,6 +1,9 @@
 package main
 
-import tk "github.com/eaciit/toolkit"
+import (
+	ct "eaciit/x10/webapps/controllers"
+	tk "github.com/eaciit/toolkit"
+)
 
 // transformScheme save additional information specific for master Scheme
 func transformStakeholderType(in tk.M) tk.M {
@@ -11,7 +14,7 @@ func transformStakeholderType(in tk.M) tk.M {
 		p[key] = val
 	}
 
-	p["name"] = p["description"]
+	p["name"] = ct.ToWordCase(p["description"].(string))
 
 	return p
 }

@@ -94,3 +94,20 @@ func SaveMasterAccountDetail(field string, data interface{}) error {
 
 	return nil
 }
+
+func removeDuplicateStringField(data []tk.M, field string) []tk.M {
+	ret := []tk.M{}
+	sets := make(map[string]bool)
+
+	for _, val := range data {
+		var key = val.GetString(field)
+		if _, found := sets[key]; found {
+			continue
+		}
+
+		sets[key] = true
+		ret = append(ret, val)
+	}
+
+	return ret
+}

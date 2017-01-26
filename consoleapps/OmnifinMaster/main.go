@@ -204,6 +204,12 @@ func main() {
 			"",
 			SaveSupplier,
 		},
+		{
+			"StakeHolderType",
+			"http://103.251.60.132:8085/OmniFinServices/genericOperationWS?wsdl",
+			"fetcheStakeholderType",
+			SaveStakeholderType,
+		},
 		// Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
 		// Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
 		// Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},

@@ -10,6 +10,8 @@ model.Delete= ko.observable('{{.Delete}}');
 model.Process= ko.observable('{{.Process}}');
 model.Edit= ko.observable('{{.Edit}}');
 model.User= ko.observable('{{.Username}}');
+model.Rolename= ko.observable('{{.Rolename}}')
+model.Fullname = ko.observable('{{.Fullname}}');
 </script>
 
 <style>
@@ -433,8 +435,9 @@ function FilterDBRefresh(){
 // }
 
 //when document ready run this script (first load)
+
 $(document).ready(function(){
-   
+
     $("#multiFields").getKendoMultiSelect().value(selected);
     setTimeout(function(){
         buildGridDB();

@@ -198,6 +198,12 @@ func main() {
 			"fetchConstitutionMaster",
 			SaveBorrowerConstitutionList,
 		},
+		{
+			"MasterSupplier",
+			"http://103.251.60.132:8085/OmniFinServices/manufacturerSupplierMasterWS?wsdl",
+			"",
+			SaveSupplier,
+		},
 		// Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
 		// Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
 		// Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},
@@ -264,7 +270,7 @@ func main() {
 				               	<!--Optional:-->
 				               	<userId>CAT</userId>
 				               	<!--Optional:-->
-				               	<userPassword>0775f757de88e601a24c197d68cfb2b7</userPassword>
+				               	<userPassword>44382d31c7fc609d8ff46ad3add2e4a5</userPassword>
 				            </userCredentials>
 			         	</inputParameterWrapper>
 			      	</web:%s>
@@ -274,8 +280,9 @@ func main() {
 		x.InString, err = GetHttpPOSTContentString(u.WSDLAddress, body)
 
 		xmlStringLog := x.InString
-		if len(xmlStringLog) > 10240 {
-			xmlStringLog = xmlStringLog[:10240]
+		// Increase to 8 megs, max MongoDB Doc Size is 16 megs
+		if len(xmlStringLog) > 8388608 {
+			xmlStringLog = xmlStringLog[:8388608]
 		}
 
 		updateLog(log, err, xmlStringLog)
@@ -296,6 +303,10 @@ func main() {
 		//  operationStatus = 1
 		if tk.ToString(masterData["operationMsg"]) != "Operation Compleated Successfully" &&
 			tk.ToInt(masterData["operationStatus"], "Int64") != 1 {
+			// debug
+			if opMsg, hasOpMsg := masterData["operationMsg"]; hasOpMsg {
+				tk.Printfn("Reply: %s", opMsg)
+			}
 			err = errors.New("Operation status is not met")
 
 			updateLog(log, err, xmlStringLog)
@@ -312,6 +323,7 @@ func main() {
 		}
 
 		// run individual save code transformation
+		// we do save to master collection here according to url.SaveHandler
 		if u.SaveHandler != nil {
 			err = u.SaveHandler(masterData)
 		}

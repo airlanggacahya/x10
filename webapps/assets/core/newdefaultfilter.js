@@ -371,6 +371,7 @@ var resetFilter = function(){
 	$("#ddIR").data("kendoDropDownList").value("");
 
 	filters.inputIRRangeVal("")
+	filters.dataRating("")
 }
 
 var showMoreFilter = function(){
@@ -411,6 +412,7 @@ var dddata = [
 ]
 
 var irdata = [
+	// {text: "Select", value: ''},
 	{text: 'XFL-5', value:'<= 4.5'},
 	{text: 'XFL-4', value:'> 4.5 < 6'},
 	{text: 'XFL-3', value:'>= 6 < 7'},

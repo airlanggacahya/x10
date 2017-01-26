@@ -1,0 +1,37 @@
+<script type="text/javascript">
+model.PageTopMenu("{{.TopMenu}}");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+model.Rolename= ko.observable('{{.Rolename}}')
+model.Fullname = ko.observable('{{.Fullname}}');
+mincibil = ko.observable(0);
+</script>
+
+<script>document.write('<script src="/static/core/mastersuplier.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+
+<style type="text/css">
+	.panel-body{
+		margin-top: 6px !important;
+	}
+</style>
+
+<div class="col-md-12 col-sm-12 ez panel-content" style="margin-top: 50px;">
+	<div class="panel">
+		<div class="panel-body">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<button class="btn btn-sm btn-flat btn-primary">Save</button>
+				<div id="suplier"></div>
+			</div>
+			<div class="col-md-3"></div>
+		</div>
+	</div>	
+</div>

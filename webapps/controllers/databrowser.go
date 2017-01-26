@@ -381,7 +381,7 @@ func (a *DataBrowserController) GetCreditScorecardData(k *knot.WebContext) inter
 }
 
 func AttachCustomerProfile(conn dbox.IConnection, val tk.M) {
-	tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
+	// tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
 	qprofile, err := conn.NewQuery().
 		From("CustomerProfile").
 		Where(dbox.Eq("_id", fmt.Sprintf("%d|%s", val["customer_id"], val["deal_no"]))).

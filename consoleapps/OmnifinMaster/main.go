@@ -274,8 +274,9 @@ func main() {
 		x.InString, err = GetHttpPOSTContentString(u.WSDLAddress, body)
 
 		xmlStringLog := x.InString
-		if len(xmlStringLog) > 10240 {
-			xmlStringLog = xmlStringLog[:10240]
+		// Increase to 8 megs, max MongoDB Doc Size is 16 megs
+		if len(xmlStringLog) > 8388608 {
+			xmlStringLog = xmlStringLog[:8388608]
 		}
 
 		updateLog(log, err, xmlStringLog)

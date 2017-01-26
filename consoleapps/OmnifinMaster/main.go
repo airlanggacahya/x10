@@ -296,6 +296,10 @@ func main() {
 		//  operationStatus = 1
 		if tk.ToString(masterData["operationMsg"]) != "Operation Compleated Successfully" &&
 			tk.ToInt(masterData["operationStatus"], "Int64") != 1 {
+			// debug
+			if opMsg, hasOpMsg := masterData["operationMsg"]; hasOpMsg {
+				tk.Printfn("Reply: %s", opMsg)
+			}
 			err = errors.New("Operation status is not met")
 
 			updateLog(log, err, xmlStringLog)
@@ -312,6 +316,7 @@ func main() {
 		}
 
 		// run individual save code transformation
+		// we do save to master collection here according to url.SaveHandler
 		if u.SaveHandler != nil {
 			err = u.SaveHandler(masterData)
 		}

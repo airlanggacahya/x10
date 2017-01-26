@@ -85,8 +85,15 @@ var formatDataPosition = function(param, setPosition) {
             return row.Field === "Position"
         })
 
+        console.log(position)
         if(position != undefined && position.length > 0) {
-            positionList(position[0].Items)
+            var temp = []
+            _.each(position[0].Items, function(row){
+                temp.push(row.name) 
+            })
+
+            console.log(temp)
+            positionList(temp)
             
             if(typeof setPosition === "function")
                 setPosition()

@@ -270,7 +270,7 @@ func main() {
 				               	<!--Optional:-->
 				               	<userId>CAT</userId>
 				               	<!--Optional:-->
-				               	<userPassword>0775f757de88e601a24c197d68cfb2b7</userPassword>
+				               	<userPassword>44382d31c7fc609d8ff46ad3add2e4a5</userPassword>
 				            </userCredentials>
 			         	</inputParameterWrapper>
 			      	</web:%s>

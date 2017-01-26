@@ -8,7 +8,6 @@ import (
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	// "net/http"
-	// "time"
 	"fmt"
 )
 
@@ -33,6 +32,7 @@ func (c *DataBrowserController) Default(k *knot.WebContext) interface{} {
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
@@ -60,6 +60,7 @@ func (c *DataBrowserController) NewDefault(k *knot.WebContext) interface{} {
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
 	}
 
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)

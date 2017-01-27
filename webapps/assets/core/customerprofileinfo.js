@@ -184,6 +184,7 @@ info.condReEnter = function(){
     $(".Guarantor").prop("disabled", true);
     $(".Education").prop("disabled", true);
     // $(".Designation").data("kendoDropDownList").enable(false);
+    $(".Designation").prop("disabled", true);
     $(".PAN").prop("disabled", true);
     $(".Address").prop("disabled", true);
     $(".Landmark").prop("disabled", true);

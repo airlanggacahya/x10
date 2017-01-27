@@ -241,3 +241,7 @@
 body, label, div {
       font-weight: normal !important;
 }
+
+.k-dropdown-wrap.k-state-default{
+  height: 30px !important;
+}

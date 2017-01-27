@@ -201,6 +201,8 @@ ms.removeData2 = function(uid){
 	ajaxPost("/mastersuplier/deletemastersuplier", param, function(res){
 		if(res.isError != true ){
 			swal("Data Successfully Delete", "", "success")
+			ms.getSuplierData()
+			ms.loadGridSuplier()
 		}else{
 			swal(res.Message, "", "error")
 		}

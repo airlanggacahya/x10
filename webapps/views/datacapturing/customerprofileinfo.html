@@ -244,7 +244,7 @@ function refreshdata(accountdetailsMaster){
       // pushaddressfake();
       //data[0].ApplicantDetail.RegisteredAddress = ApplicantDetail.Detail()[0]
       customerprofile().ApplicantDetail(data[0].ApplicantDetail);
-      data[0].NonRefundableProcessingFeesDetails.InstrumentDate = new Date(moment(data[0].NonRefundableProcessingFeesDetails.InstrumentDate).format("DD-MMM-YYYY"));
+      data[0].NonRefundableProcessingFeesDetails.InstrumentDate = validateDateUTCFormat(data[0].NonRefundableProcessingFeesDetails.InstrumentDate, "DD-MMM-YYYY");
 
       customerprofile().FinancialReport(data[0].FinancialReport);
 
@@ -320,22 +320,14 @@ function refreshdata(accountdetailsMaster){
       })
 
       _.each(data[0].DetailOfPromoters.Biodata, function(row){
-        var temp = moment(row.AnniversaryDate).format("DD-MMM-YYYY")
+        row.AnniversaryDate = validateDateUTCFormat(row.AnniversaryDate, "DD-MMM-YYYY");
+        row.DateOfBirth = validateDateUTCFormat(row.DateOfBirth, "DD-MM-YYYY");
 
-        if( temp === "01-Jan-1970" || row.AnniversaryDate == ""){
-          row.AnniversaryDate = ""
-        } else {
-          try{
-            row.AnniversaryDate = new Date(row.AnniversaryDate).toISOString()
-          }catch(err) {
-            row.AnniversaryDate = ""
-          }
-        }
-
-        row.DateOfBirth = moment(row.DateOfBirth).format("DD-MMM-YYYY")
-        if(row.DateOfBirth === "01-Jan-0001") {
-          row.DateOfBirth = ""
-        }
+        // Probably special case
+        // Temporary disable
+        // if(row.DateOfBirth === "01-Jan-0001") {
+        //   row.DateOfBirth = ""
+        // }
       })
 
       detail.biodata(data[0].DetailOfPromoters.Biodata)
@@ -654,6 +646,45 @@ function confirmorverify(status){
   $("#ceedit").hide();
 }
 
+// SHORT FUNCTION TO CONVERT BETWEEN Date
+function validateDateUTC(tgl) {
+  var e = moment(tgl)
+
+  if (!e.isValid())
+    return ""
+
+  // reparse to avoid any timezone from previous parse
+  // this is hackis, fix should be on datetime widget
+  // but at least it working
+  var d = moment.utc(e.format("DD-MMM-YYYY"))
+
+  // we save on afternoon to prevent time rollback
+  d.hour(12)
+  d.minute(0)
+  d.second(0)
+  d.millisecond(0)
+
+  return d
+}
+
+function validateDateUTCISO(tgl) {
+  var d = validateDateUTC(tgl)
+
+  if (d == "")
+    return ""
+
+  return d.toISOString()
+}
+
+function validateDateUTCFormat(tgl, format) {
+  var d = validateDateUTC(tgl)
+  
+  if (d == "")
+    return ""
+  
+  return d.format(format)
+}
+
 function save1(){
   var grid2 = $(".grid2").data("kendoGrid").dataSource.data();
   customerprofile().FinancialReport().DetailsPertainingBanker = []
@@ -692,13 +723,14 @@ function save1(){
   
   param.NonRefundableProcessingFeesDetails = ko.mapping.toJS(customerprofile().NonRefundableProcessingFeesDetails);
   
-  var dateTemp = kendo.toString(new Date(param.NonRefundableProcessingFeesDetails.InstrumentDate), "dd-MM-yyyy");
-  var dateTempLength = dateTemp.split("-")
-  if(dateTempLength.length === 1) {
-    param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"
-  }
+  // var dateTemp = kendo.toString(new Date(param.NonRefundableProcessingFeesDetails.InstrumentDate), "dd-MM-yyyy");
+  // var dateTempLength = dateTemp.split("-")
+  // if(dateTempLength.length === 1) {
+  //   param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"
+  // }
 
-  param.NonRefundableProcessingFeesDetails.InstrumentDate = (new Date(moment(param.NonRefundableProcessingFeesDetails.InstrumentDate))).toISOString();
+  // add checking for empty or invalid date.
+  param.NonRefundableProcessingFeesDetails.InstrumentDate = validateDateUTCISO(param.NonRefundableProcessingFeesDetails.InstrumentDate);
   param.FinancialReport = customerprofile().FinancialReport();
   param.DetailOfPromoters = customerprofile().DetailofPromoters();
   param.ApplicantDetail = customerprofile().ApplicantDetail();
@@ -713,17 +745,9 @@ function save1(){
       detail.biodata()[i].PropertyOwnedkendo()[ii].MarketValue = parseFloat(vv.MarketValue)
     })
     detail.biodata()[i].PropertyOwned = detail.biodata()[i].PropertyOwnedkendo();
-    
-    detail.biodata()[i].AnniversaryDate = new Date(detail.biodata()[i].AnniversaryDate)
-    detail.biodata()[i].AnniversaryDate = new Date(Date.UTC(detail.biodata()[i].AnniversaryDate.getFullYear(), detail.biodata()[i].AnniversaryDate.getMonth(), detail.biodata()[i].AnniversaryDate.getDate(), 0, 0, 0));
 
-    var dateTemp = detail.biodata()[i].DateOfBirth
-    var dateTempLength = dateTemp.split("-")
-    if(dateTempLength.length === 1) {
-      detail.biodata()[i].DateOfBirth = "0001-01-01T00:00:00Z"
-    }
-
-    detail.biodata()[i].DateOfBirth = (new Date(moment(detail.biodata()[i].DateOfBirth))).toISOString();
+    detail.biodata()[i].AnniversaryDate = validateDateUTCISO(detail.biodata()[i].AnniversaryDate);
+    detail.biodata()[i].DateOfBirth = validateDateUTCISO(detail.biodata()[i].DateOfBirth);
   })
 
   param.DetailOfPromoters.Biodata = detail.biodata();
@@ -784,14 +808,7 @@ function save(){
   param.ConfirmedBy = customerprofile().ConfirmedBy;
   param.ConfirmedDate = customerprofile().ConfirmedDate;
   param.NonRefundableProcessingFeesDetails = ko.mapping.toJS(customerprofile().NonRefundableProcessingFeesDetails);
-  
-  var dateTemp = kendo.toString(new Date(param.NonRefundableProcessingFeesDetails.InstrumentDate), "dd-MM-yyyy")
-  var dateTempLength = dateTemp.split("-")
-  if(dateTempLength.length === 1) {
-    param.NonRefundableProcessingFeesDetails.InstrumentDate = "0001-01-01T00:00:00Z"
-  }
-
-  param.NonRefundableProcessingFeesDetails.InstrumentDate = (new Date(moment(param.NonRefundableProcessingFeesDetails.InstrumentDate))).toISOString();
+  param.NonRefundableProcessingFeesDetails.InstrumentDate = validateDateUTCISO(param.NonRefundableProcessingFeesDetails.InstrumentDate)
   param.FinancialReport = customerprofile().FinancialReport();
   param.DetailOfPromoters = customerprofile().DetailofPromoters();
   param.ApplicantDetail = customerprofile().ApplicantDetail();
@@ -807,16 +824,8 @@ function save(){
     })
     detail.biodata()[i].PropertyOwned = detail.biodata()[i].PropertyOwnedkendo();
 
-    detail.biodata()[i].AnniversaryDate = new Date(detail.biodata()[i].AnniversaryDate)
-    detail.biodata()[i].AnniversaryDate = new Date(Date.UTC(detail.biodata()[i].AnniversaryDate.getFullYear(), detail.biodata()[i].AnniversaryDate.getMonth(), detail.biodata()[i].AnniversaryDate.getDate(), 0, 0, 0));
-
-    var dateTemp = detail.biodata()[i].DateOfBirth
-    var dateTempLength = dateTemp.split("-")
-    if(dateTempLength.length === 1) {
-      detail.biodata()[i].DateOfBirth = "0001-01-01T00:00:00Z"
-    }
-
-    detail.biodata()[i].DateOfBirth = (new Date(moment(detail.biodata()[i].DateOfBirth))).toISOString();
+    detail.biodata()[i].AnniversaryDate = validateDateUTCISO(detail.biodata()[i].AnniversaryDate)
+    detail.biodata()[i].DateOfBirth = validateDateUTCISO(detail.biodata()[i].DateOfBirth)
   })
 
   param.DetailOfPromoters.Biodata = detail.biodata();

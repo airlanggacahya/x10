@@ -108,7 +108,7 @@ mincibil = ko.observable(0);
 	}
 
 	.btnFixed{
-		margin-top: -15px;
+		margin-top: -19px;
     	margin-bottom: -11px;
 	}
 </style>
@@ -235,7 +235,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Credit Analyst</label>
 					            	<div class="col-sm-8">
-					            		<input data-bind="value: CreditAnalyst" type="text" placeholder="Enter Credit Analyst" class="acct input-sm form-control" style="width: 100%;">
+					            		<input data-bind="value: CreditAnalyst" type="text" placeholder="Enter Credit Analyst" class="acct input-sm form-control disable" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -856,7 +856,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Proposed Amount of Limit (Rs. Lacs)</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan disable" data-bind="kendoNumericTextBox: { value: RequestedLimitAmount, format: 'n0', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="loan disable form-control input-sm" data-bind="value: RequestedLimitAmount" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -865,7 +865,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Limit Tenor (Months)</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan disable" data-bind="kendoNumericTextBox: { value: LimitTenor, format: 'n0', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="loan disable form-control input-sm" data-bind="value: LimitTenor" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -885,7 +885,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Proposed Rate of Interest (ROI) %</label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoNumericTextBox: { value: ProposedRateInterest, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="loan disable form-control input-sm" data-bind="value: ProposedRateInterest" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -903,7 +903,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Proposed X10 Interest Outgo in (Rs. Lacs)</label>
 					            	<div class="col-sm-5">
-					            		<input type="text" class="form-control input-sm" data-bind="value: InterestOutgo" readonly>
+					            		<input type="text" class="loan disable form-control input-sm" data-bind="value: InterestOutgo" readonly>
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -995,7 +995,7 @@ mincibil = ko.observable(0);
 					            	<label class="form-label col-sm-7">If Yes, Existing Limit Amount (Rs. Lacs)</label>
 					            	<div class="col-sm-5">
 					            		<!-- <input id="IfYesEistingLimitAmount" data-bind="kendoNumericTextBox: { value: IfYesEistingLimitAmount, format: 'n0', enabled: adf.isExistingCustomer, spinners:false }" type="text" style="width: 100%;"> -->
-					            		<input id="IfYesEistingLimitAmount" class="disable" data-bind="kendoNumericTextBox: { value: IfYesEistingLimitAmount, format: 'n0', spinners:false }" type="text" style="width: 100%;">
+					            		<input id="IfYesEistingLimitAmount" class="disable form-control input-sm" data-bind=" value: IfYesEistingLimitAmount" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1014,7 +1014,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Existing Processing Fee %</label>
 					            	<div class="col-sm-5">
-					            		<input id="ExistingPf" class="disable" data-bind="kendoNumericTextBox: { value: ExistingPf, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
+					            		<input id="ExistingPf" class="disable form-control input-sm" data-bind=" value: ExistingPf" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>

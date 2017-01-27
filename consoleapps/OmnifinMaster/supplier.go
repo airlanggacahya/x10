@@ -1,6 +1,7 @@
 package main
 
 import (
+	ct "eaciit/x10/webapps/controllers"
 	"github.com/eaciit/dbox"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
@@ -14,12 +15,28 @@ func transformSupplier(in tk.M) tk.M {
 	// tk.Printfn("%v", in)
 	p := make(tk.M)
 	// copy all elements
-	for key, val := range in {
-		p[key] = val
-	}
+	// for key, val := range in {
+	// 	p[key] = val
+	// }
 
-	p["name"] = in.GetString("dealer_desc")
+	p["name"] = ct.ToWordCase(in.GetString("dealer_desc"))
+	p["useInAD"] = false
 	p["fromOmnifin"] = true
+
+	p["addressLine1"] = in.GetString("address_line1")
+	p["bankAccount"] = in.GetString("bank_account")
+	p["bankBranch_id"] = in.GetString("bank_branch_id")
+	p["bankId"] = in.GetString("bank_id")
+	p["bpType"] = in.GetString("bp_type")
+	p["country"] = in.GetString("country")
+	p["dealerDesc_l"] = in.GetString("dealer_desc_l")
+	p["dealerId"] = in.GetString("dealer_id")
+	p["district"] = in.GetString("district")
+	p["empanelledStatus"] = in.GetString("empanelled_status")
+	p["lastUpdate"] = in.GetString("lastUpdate")
+	p["pincode"] = in.GetString("pincode")
+	p["recStatus"] = in.GetString("rec_status")
+	p["state"] = in.GetString("state")
 
 	return p
 }

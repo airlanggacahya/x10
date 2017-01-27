@@ -4,9 +4,9 @@ intrtr.formVisibility = ko.observable(false)
 
 window.refreshFilter = function () {
 	intrtr.getData();
-	setTimeout(function(){
-		intrtr.loadGrid();
-	}, 500)
+	// setTimeout(function(){
+		// intrtr.loadGrid();
+	// }, 500)
 
 }
 
@@ -151,7 +151,8 @@ intrtr.getDataIntRTR = function(dealNo, customerId){
 	intrtr.dataInternalDealist([])
 
 	ajaxPost("/internalrtr/getdatainternalrtr", param, function(res){
-		if (res.Data != null){
+		intrtr.status(0)
+		if (res.Data != null && res.Data.length > 0 ){
 			intrtr.dataTemp(res.Data[0]);
 			intrtr.dataInternalSnapshot(res.Data[0].Snapshot);
 			intrtr.dataInternalDealist(res.Data[0].Dealist);
@@ -165,6 +166,9 @@ intrtr.getDataIntRTR = function(dealNo, customerId){
 				$(".btn-confirm").prop("disabled", false);
 			}
 		}
+
+		intrtr.loadGrid();
+
 	})
 }
 
@@ -453,13 +457,21 @@ intrtr.loadGrid = function(){
 }
 
 intrtr.getConfirmed = function(status, isfreeze){
+	if(intrtr.dataInternalSnapshot().length == 0 ){
+		swal("Warning", "Data not found","warning")
+		return
+	}
+
+
 	intrtr.dataTemp().Status = status;
 	intrtr.dataTemp().Isfreeze = isfreeze;
 	ajaxPost("/internalrtr/internalrtrconfirmed", intrtr.dataTemp(), function(res){
 		if(res.IsError != true){
 			intrtr.status(status)
 			if(status == 1){
-				swal("Data Successfully Confirm", "", "success");
+				swal("Confirm Data Success", "", "success");
+			}else{
+				swal("Re enter Data Success","","success");
 			}
 		}else{
 			swal(res.Message, "","error");
@@ -468,6 +480,11 @@ intrtr.getConfirmed = function(status, isfreeze){
 }
 
 intrtr.getFreeze = function(status, isfreeze){
+	if(intrtr.dataInternalSnapshot().length == 0 ){
+		swal("Warning", "Data not found","warning")
+		return
+	}
+
 	intrtr.dataTemp().Status = status;
 	intrtr.dataTemp().Isfreeze = isfreeze;
 	intrtr.dataTemp().CustomerId = filter().CustomerSearchVal();
@@ -478,9 +495,11 @@ intrtr.getFreeze = function(status, isfreeze){
 				if(isfreeze == true){
 					intrtr.isFreeze(true);
 					$(".btn-confirm").prop("disabled", true);
+					swal("Freeze Data Success", "", "success");
 				}else{
 					intrtr.isFreeze(false);
 					$(".btn-confirm").prop("disabled", false);
+					swal("Unfreeze Data Success", "", "success");
 				}
 			}else{
 				swal(res.Message, "","error");
@@ -493,9 +512,9 @@ intrtr.getFreeze = function(status, isfreeze){
 
 
 $(function(){
-	setTimeout(function(){
-		intrtr.loadGrid();
-	}, 500)
+	// setTimeout(function(){
+		// intrtr.loadGrid();
+	// }, 500)
 	$('.collapsibleDue').collapsible({
       accordion : true
     });

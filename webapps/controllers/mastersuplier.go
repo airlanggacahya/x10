@@ -5,7 +5,7 @@ import (
 	// . "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
 	"fmt"
-	"github.com/eaciit/dbox"
+	db "github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 )
@@ -61,6 +61,41 @@ func (c *MasterSuplierController) GetMasterSuplier(k *knot.WebContext) interface
 
 }
 
+func (c *MasterSuplierController) DeleteMasterSuplier(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	payload := tk.M{}
+
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	res := []MasterSuplier{}
+	query := tk.M{"where": db.Eq("_id", bson.ObjectIdHex(payload["Id"].(string)))}
+	csr, err := c.Ctx.Find(new(MasterSuplier), query)
+	defer csr.Close()
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	fmt.Println("____________________>>>> masuk sini---", res)
+
+	if len(res) > 0 {
+		fmt.Println("____________________>>>> masuk sini")
+		err = c.Ctx.Delete(&res[0])
+		if err != nil {
+			c.SetResultInfo(true, err.Error(), nil)
+		}
+	}
+
+	return c.SetResultInfo(false, "delete success", nil)
+}
+
 func (c *MasterSuplierController) SaveMasterSuplier(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
@@ -73,38 +108,29 @@ func (c *MasterSuplierController) SaveMasterSuplier(k *knot.WebContext) interfac
 	mp := NewMasterSuplier()
 	results := []MasterSuplier{}
 	for _, o := range payload {
-		query := tk.M{"where": dbox.Eq("_id", bson.ObjectIdHex(o["Id"].(string)))}
-
-		csr, err := c.Ctx.Find(new(MasterSuplier), query)
-		defer csr.Close()
-		if err != nil {
-			return c.SetResultInfo(true, err.Error(), nil)
+		if o["Id"] != "" {
+			mp.Id = bson.ObjectIdHex(o["Id"].(string))
+		} else {
+			mp.Id = bson.NewObjectId()
 		}
 
-		err = csr.Fetch(&results, 0, false)
-		if err != nil {
-			return c.SetResultInfo(true, err.Error(), nil)
-		}
-
-		fmt.Println("-------->>>>>", results[0].Id)
-		mp.Id = bson.ObjectIdHex(o["Id"].(string))
-		mp.AddressLine1 = results[0].AddressLine1
-		mp.BankAccount = results[0].BankAccount
-		mp.BankBranch_id = results[0].BankBranch_id
-		mp.BankId = results[0].BankId
-		mp.BpType = results[0].BpType
-		mp.Country = results[0].Country
-		mp.Name = results[0].Name
-		mp.DealerDesc_1 = results[0].DealerDesc_1
-		mp.DealerId = results[0].DealerId
-		mp.District = results[0].District
-		mp.EmpanelledStatus = results[0].EmpanelledStatus
-		mp.LastUpdate = results[0].LastUpdate
-		mp.Pincode = results[0].RecStatus
-		mp.RecStatus = results[0].RecStatus
-		mp.State = results[0].State
+		mp.AddressLine1 = o["AddressLine1"].(string)
+		mp.BankAccount = o["BankAccount"].(string)
+		mp.BankBranch_id = o["BankBranch_id"].(string)
+		mp.BankId = o["BankId"].(string)
+		mp.BpType = o["BpType"].(string)
+		mp.Country = o["Country"].(string)
+		mp.Name = o["Name"].(string)
+		mp.DealerDesc_1 = o["DealerDesc_1"].(string)
+		mp.DealerId = o["DealerId"].(string)
+		mp.District = o["District"].(string)
+		mp.EmpanelledStatus = o["EmpanelledStatus"].(string)
+		mp.LastUpdate = o["LastUpdate"].(string)
+		mp.Pincode = o["RecStatus"].(string)
+		mp.RecStatus = o["RecStatus"].(string)
+		mp.State = o["State"].(string)
 		mp.UseInAD = o["UseInAD"].(bool)
-		mp.FromOmnifin = results[0].FromOmnifin
+		mp.FromOmnifin = o["FromOmnifin"].(bool)
 
 		save := c.Ctx.Save(mp)
 		if save != nil {

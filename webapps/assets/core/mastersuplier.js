@@ -116,10 +116,12 @@ ms.saveMasterSuplier = function(){
 	});
 	
 	ajaxPost("/mastersuplier/savemastersuplier", ms.suplierDataTemp(), function(res){
-		if(res.Message == "success"){
+		if(res.isError != true){
 			swal("Data Save Successfully", "", "success");
 			ms.getSuplierData()
 			ms.loadGridSuplier()
+		}else{
+			swal(res.Message, "", "error")
 		}
 	});
 
@@ -197,7 +199,11 @@ ms.removeData2 = function(uid){
 	}
 
 	ajaxPost("/mastersuplier/deletemastersuplier", param, function(res){
-
+		if(res.isError != true ){
+			swal("Data Successfully Delete", "", "success")
+		}else{
+			swal(res.Message, "", "error")
+		}
 	})
 
 }

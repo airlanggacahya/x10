@@ -376,13 +376,15 @@ var resetFilter = function(){
 
 var showMoreFilter = function(){
 	filter.isHide(false)
-	$("#panel-filter").show()
+	// $("#panel-filter").show()
+	$(".filterhide").show()
 
 }
 
 var hideMoreFilter = function(){
 	filter.isHide(true)
-	$("#panel-filter").hide()
+	// $("#panel-filter").hide()
+	$(".filterhide").hide()
 }
 
 var rangeIR = function(arrval){

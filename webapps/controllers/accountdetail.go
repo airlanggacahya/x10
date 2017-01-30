@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 
+	"time"
+
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
@@ -722,6 +724,11 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		case "eq":
 			filtersAD = append(filtersAD, dbox.Eq("loandetails.proposedloanamount", valrat))
 		}
+	}
+
+	if logindate, e := time.Parse("2006-01-02", payload.GetString("logindate")); e == nil {
+		filtersAD = append(filtersAD, dbox.Gte("accountsetupdetails.logindate", logindate))
+		filtersAD = append(filtersAD, dbox.Lt("accountsetupdetails.logindate", logindate.AddDate(0, 0, 1)))
 	}
 
 	if len(payload.Get("customer").([]interface{})) > 0 {

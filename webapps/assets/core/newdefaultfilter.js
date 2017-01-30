@@ -344,6 +344,8 @@ filters.inputRLARangeValSpinners = ko.observable(false);
 filter.isHide = ko.observable(true);
 filters.dataRating = ko.observable('');
 
+filters.loginDateVal = ko.observable();
+
 var refreshFilter = function() {
 	// rangeIR();
 	databrowser.GetDataGrid();
@@ -372,6 +374,8 @@ var resetFilter = function(){
 
 	filters.inputIRRangeVal("")
 	filters.dataRating("")
+
+	fitlers.loginDateVal("")
 }
 
 var showMoreFilter = function(){

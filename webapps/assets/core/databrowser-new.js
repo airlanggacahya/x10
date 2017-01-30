@@ -854,7 +854,8 @@ databrowser.GetDataGrid = function(){
 			brhead : filters.BRHeadVal(), 
 			scheme : filters.SchemeVal(), 
 			rm : filters.RMVal(), 
-			ca : filters.CAVal()
+			ca : filters.CAVal(),
+			logindate: filters.loginDateVal
 		}
 	}else{
 		var param = {
@@ -871,7 +872,8 @@ databrowser.GetDataGrid = function(){
 			brhead : filters.BRHeadVal(), 
 			scheme : filters.SchemeVal(), 
 			rm : filters.RMVal(), 
-			ca : filters.CAVal()
+			ca : filters.CAVal(),
+			logindate: filters.loginDateVal
 		}
 	}
 	ajaxPost("/accountdetail/getdatabrowser", param, function(data){

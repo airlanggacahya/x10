@@ -6,10 +6,10 @@
 </style>
 <div class="clearfix"></div>
 <div id="allfilter">
-	<div id="panel-filter" class="lighttext" hidden>
-		<div class="col-md-6">
+	<div id="panel-filter" class="lighttext">
+		<div class="col-md-6" style="padding-bottom:0px">
 		    <!-- <div class="col-md-6"> -->
-		     <div class="form-group col-sm-12">
+		     <div class="form-group col-sm-12 filterhide">
 		     	<label class="col-sm-2 form-control-label">City</label>
 		     	<div class="col-sm-10">
 			     	<select class="multifield"  id="multiCity"  
@@ -26,7 +26,7 @@
 			    </div>
 			    <div class="clearfix"></div>
 		    </div>
-		    <div class="form-group col-sm-12">
+		    <div class="form-group col-sm-12 filterhide">
 		     	<label class="col-sm-2 form-control-label">BR Head</label>
 		     	<div class="col-sm-10">
 			        <select class="multifield"  id="multiBRHead"  
@@ -43,7 +43,7 @@
 			    </div>
 			    <div class="clearfix"></div>
 		    </div>
-		    <div class="form-group col-sm-12">
+		    <div class="form-group col-sm-12 filterhide">
 		     	<label class="col-sm-2 form-control-label">RM</label>
 		     	<div class="col-sm-10">
 			        <select class="multifield"  id="multiRM"  
@@ -59,7 +59,7 @@
 				    </select>
 			    </div>
 		    </div>
-		    <div class="form-group col-sm-12">
+		    <div class="form-group col-sm-12 filterhide">
 		     	<label class="col-sm-2 form-control-label">Credit Analyst</label>
 		     	<div class="col-sm-10">
 			        <select class="multifield"  id="multiCA"  
@@ -75,9 +75,24 @@
 				    </select>
 			    </div>
 		    </div>
+		    <div class="form-group col-sm-12 lighttext filtershow">
+	     	<label class="col-sm-2 form-control-label">Customer</label>
+	     	<div class="col-sm-10">
+	     		 <select class="multifield"  id="multiCustomer" 
+			        data-placeholder="Select Customer"
+			        data-bind="kendoMultiSelect: { 
+			        data: filters.CustomerDS,
+			        value: filters.CustomerVal,
+			        dataValueField: 'value', 
+			        dataTextField: 'text',
+			        clearButton: true
+			        }">
+		        </select>
+	     	</div>  
+	    </div>
 		</div>
 		<div class="col-md-6">
-		    <div class="form-group col-sm-12">
+		    <div class="form-group col-sm-12 filterhide">
 		     	<label class="col-sm-2 form-control-label">Product</label>
 		     	<div class="col-sm-10">
 			        <select class="multifield"  id="multiProduct"  
@@ -93,7 +108,7 @@
 				    </select>
 			    </div>
 		    </div>
-		    <div class="form-group col-sm-12">
+		    <div class="form-group col-sm-12 filterhide">
 		     	<label class="col-sm-2 form-control-label">Scheme</label>
 		     	<div class="col-sm-10">
 			       <select class="multifield"  id="multiScheme"  
@@ -109,26 +124,26 @@
 				    </select>
 			    </div>
 		    </div>
-		    <div class="form-group col-sm-12">
-		     	<label class="col-sm-2 form-control-label">Requested Loan Amount </label>
+		    <div class="form-group col-sm-12 filterhide">
+		     	<label class="col-sm-2 form-control-label paddingrightzero" >Requested Loan Amount </label>
 		     	<div class="col-sm-10">
 		     		<!-- <div class="col-sm-12"> -->
-				        <div class="col-sm-5">
+				        <div class="col-sm-5 paddingleftzero">
 				        	<select class="multifield"  id="ddRLARanges" 
 						        data-bind="kendoDropDownList: {data: dddata, value: filters.ddRLARangesVal, dataTextField: 'text', dataValueField: 'value',optionLabel: 'Select '}">
 						    </select>
 				        </div>
-				        <div class="col-sm-7">
-				        	<input id="inputRLARange" type="number" data-bind="kendoNumericTextBox: { spinners: false, value: filters.inputRLARangeVal }"/>
+				        <div class="col-sm-7 ">
+				        	<input width="100%" id="inputRLARange" type="number" data-bind="kendoNumericTextBox: { spinners: false, value: filters.inputRLARangeVal }"/>
 				        </div>
 			        <!-- </div> -->
 			    </div>
 		    </div>
-		    <div class="form-group col-sm-12">
-		     	<label class="col-sm-2 form-control-label">Internal Rating</label>
+		    <div class="form-group col-sm-12 filterhide">
+		     	<label class="col-sm-2 form-control-label ">Internal Rating</label>
 		     	<div class="col-sm-10">
 		     		<!-- <div class="col-sm-12"> -->
-				        <div class="col-sm-5">
+				        <div class="col-sm-5 paddingleftzero">
 				        	<select id="ddIR" data-bind="kendoDropDownList: {data: irdata , value: filters.dataRating, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select '}"></select>
 				        </div>
 				        <!-- <div class="col-sm-7">
@@ -139,42 +154,22 @@
 			        <!-- </div> -->
 			    </div>
 		    </div>
-		</div>
-	</div>
-	<div class="col-md-6 lighttext">
-		<div class="form-group col-sm-12">
-	     	<label class="col-sm-2 form-control-label">Customer</label>
-	     	<div class="col-sm-10">
-	     		 <select class="multifield"  id="multiCustomer" 
-			        data-placeholder="Select Customer"
-			        data-bind="kendoMultiSelect: { 
-			        data: filters.CustomerDS,
-			        value: filters.CustomerVal,
-			        dataValueField: 'value', 
-			        dataTextField: 'text',
-			        clearButton: true
-			        }">
-		        </select>
-	     	</div>  
-	    </div>
-	</div>
-	<!-- <div class="clearfix"></div> -->
-	<div class="col-md-6 lighttext">
-		<div class="form-group col-sm-12">
-	     	<label class="col-sm-2 form-control-label">Deal No</label>
-	     	<div class="col-sm-10">
-		        <select class="multifield"  id="multiDealno"  
-			        data-placeholder="Select Deal No"
-			        data-bind="kendoMultiSelect: {
-			        data: filters.DealNoDS,
-			        value: filters.DealNoVal,
-			        dataValueField: 'value', 
-			        dataTextField: 'text',
-			        clearButton: true
-			        }">
-		        </select>
+		    <div class="form-group col-sm-12 lighttext filtershow">
+		     	<label class="col-sm-2 form-control-label">Deal No</label>
+		     	<div class="col-sm-10">
+			        <select class="multifield"  id="multiDealno"  
+				        data-placeholder="Select Deal No"
+				        data-bind="kendoMultiSelect: {
+				        data: filters.DealNoDS,
+				        value: filters.DealNoVal,
+				        dataValueField: 'value', 
+				        dataTextField: 'text',
+				        clearButton: true
+				        }">
+			        </select>
+			    </div>
 		    </div>
-	    </div>
+		</div>
 	</div>
 </div>
 

@@ -437,7 +437,7 @@ function FilterDBRefresh(){
 //when document ready run this script (first load)
 
 $(document).ready(function(){
-
+    $(".filtershow").show();
     $("#multiFields").getKendoMultiSelect().value(selected);
     setTimeout(function(){
         buildGridDB();

@@ -907,6 +907,8 @@ databrowser.normalisasiAD = function(dt){
 
 $(document).ready(function(){
 	databrowser.GetDataGrid();
+	$("#panel-filter .filterhide").hide();
+
 })
 
 function showthis(e){

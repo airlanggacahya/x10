@@ -44,7 +44,7 @@ func (c *MasterSuplierController) Default(k *knot.WebContext) interface{} {
 func (c *MasterSuplierController) GetMasterSuplier(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	csr, err := c.Ctx.Find(new(MasterSuplier), nil)
+	csr, err := c.Ctx.Find(new(MasterSuplier), tk.M{}.Set("order", []string{"name"}))
 	defer csr.Close()
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)

@@ -121,7 +121,7 @@ ms.saveMasterSuplier = function(){
 			ms.getSuplierData()
 			ms.loadGridSuplier()
 		}else{
-			swal(res.Message, "", "error")
+			swal("", res.Message, "error")
 		}
 	});
 

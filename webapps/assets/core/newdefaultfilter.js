@@ -375,7 +375,7 @@ var resetFilter = function(){
 	filters.inputIRRangeVal("")
 	filters.dataRating("")
 
-	fitlers.loginDateVal("")
+	filters.loginDateVal("")
 }
 
 var showMoreFilter = function(){

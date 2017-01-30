@@ -117,7 +117,7 @@ ms.saveMasterSuplier = function(){
 	
 	ajaxPost("/mastersuplier/savemastersuplier", ms.suplierDataTemp(), function(res){
 		if(res.IsError != true){
-			swal("Data Save Successfully", "", "success");
+			swal("Data Saved Successfully", "", "success");
 			ms.getSuplierData()
 			ms.loadGridSuplier()
 		}else{
@@ -154,6 +154,12 @@ ms.addMasterSuplier = function(){
 	}
 
 	allData.unshift(data);
+
+	ms.scrollKendoGrid("#suplier", "tr:first")
+}
+
+ms.scrollKendoGrid = function(id, row){
+	$(id+ " div.k-grid-content").scrollTop($(id + " " + row).position().top);
 }
 
 ms.removeData1 = function(d){
@@ -200,7 +206,7 @@ ms.removeData2 = function(uid){
 
 	ajaxPost("/mastersuplier/deletemastersuplier", param, function(res){
 		if(res.IsError != true ){
-			swal("Data Successfully Delete", "", "success")
+			swal("Data Deleted Successfully", "", "success")
 			ms.getSuplierData()
 			ms.loadGridSuplier()
 		}else{

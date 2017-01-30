@@ -471,20 +471,20 @@ intrtr.loadGrid = function(){
 intrtr.dataTopGridScroll = function(){	
 	var colspan = $("#topgrid thead").find("th").length;
 	console.log(colspan);
-	$("#topgrid[data-role='grid'] tbody").html("<tr><td colspan='" + colspan + "'></td></tr>");
+	$("#topgrid[data-role='grid'] tbody").html("<tr><td class='bgwhite' colspan='" + colspan + "'></td></tr>");
     var grid = $("#topgrid").data("kendoGrid");
     grid.thead.closest(".k-grid-header-wrap").scrollLeft(0);
     grid.table.width($("#topgrid thead").width());          
-    $(".k-grid-content").height(2 * kendo.support.scrollbar());
+    $(".k-grid-content").height(3 * kendo.support.scrollbar());
 }
 
 intrtr.dataUnselectScroll = function(){	
 	var colspan2 = $("#unselect thead").find("th").length;
-	$("#unselect[data-role='grid'] tbody").html("<tr><td colspan='" + colspan2 + "'></td></tr>");
+	$("#unselect[data-role='grid'] tbody").html("<tr><td class='bgwhite' colspan='" + colspan2 + "'></td></tr>");
     var grid2 = $("#unselect").data("kendoGrid");
     grid2.thead.closest(".k-grid-header-wrap").scrollLeft(0);
     grid2.table.width($("#topgrid thead").width());          
-    $(".k-grid-content").height(2 * kendo.support.scrollbar());
+    $(".k-grid-content").height(3 * kendo.support.scrollbar());
 }
 
 intrtr.getConfirmed = function(status, isfreeze){

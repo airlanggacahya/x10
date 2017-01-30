@@ -475,7 +475,7 @@ databrowser.fullcoll = [
  					if(i==0){
  						str += "<tr>"
  						// str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a></td>"
- 						str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + "<a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a>&nbsp;"+ dt.CA.detailofpromoters.biodata[i].Name +"</td>"
+ 						str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + "<a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a>&nbsp;&nbsp;&nbsp;"+ dt.CA.detailofpromoters.biodata[i].Name +"</td>"
  						str+="</tr>"
  					}else{
  						str += "<tr class='hiddentd'>"

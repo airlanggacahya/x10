@@ -143,7 +143,7 @@ function applyFilterSchemeDS() {
 }
 
 function applyFilterRMDS() {
-	applyFilter(filters.RMDS, "",function(val) {
+	applyFilter(filters.RMDS, RM,function(val) {
 		var v = _.get(val, RM)
 		if (typeof(v) == "undefined")
 			return false
@@ -159,7 +159,7 @@ function applyFilterRMDS() {
 }
 
 function applyFilterCADS() {
-	applyFilter(filters.CADS, "",function(val) {
+	applyFilter(filters.CADS, CA,function(val) {
 		var v = _.get(val, CA)
 		if (typeof(v) == "undefined")
 			return false

@@ -1,7 +1,7 @@
 var databrowser = {};
 databrowser.applicantdetailcoll = [
  {
- 	title : "Name of the Applicant",
+ 	title : "Applicant",
  	field : "CA.applicantdetail.CustomerName",
 	width : 200,
 	headerAttributes: { "class": "sub-bgcolor" },
@@ -180,7 +180,14 @@ databrowser.nonrefundcoll = [
 	title : "Amount",
 	hidden : false,
 	width : 100,
+	attributes:{style: "text-align: right"},
 	headerAttributes: { "class": "sub-bgcolor" },
+	template:function(dt){
+		if(dt.CA.nonrefundableprocessingfeesdetails.Amount == null){
+			return "";
+		}
+		return app.formatnum(dt.CA.nonrefundableprocessingfeesdetails.Amount)
+	},
 },
 ]
 
@@ -438,12 +445,12 @@ databrowser.fullcoll = [
  	title : "Financial Information",
  	columns : [
  	{
- 		title : "Existing Relationship With X10 Financial Services Limited",
+ 		title : "Existing Relationship Details",
  		template :  function(dt){
  			return "<center><a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Show More</a></center>"
  		},
 		width : 120,
-		headerTemplate : "Existing Relationship </br> With X10 Financial<br> Services Limited",
+		headerTemplate : "Existing Relationship </br>Details",
 	headerAttributes: { "class": "sub-bgcolor" },
  	},
  	],
@@ -878,6 +885,7 @@ databrowser.GetDataGrid = function(){
 			 groupable: true,
 			 scrollable : true,
 			 pageable: true,
+			 height:500,
 			 dataBinding: function(x) {
 			 	setTimeout(function(){
 			 		_.each($(".intable").parent(),function(e){

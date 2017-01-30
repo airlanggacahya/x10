@@ -300,6 +300,7 @@ intrtr.loadGrid = function(){
         		{
         	 	title:"Deal List",
                 headerAttributes: { class: "header-bgcolor" },
+                scrollable:true,
                 columns:[
            //      	{
 			        // 	title: "",
@@ -317,33 +318,39 @@ intrtr.loadGrid = function(){
                 	{
                 		field:"DealNo",
                 		title: "Deal No",
+                		width:150,
                 		attributes: { style: 'background: rgb(238, 238, 238)' },
                 	},
 			        {
 			        	field:"Product",
 			        	title: "Product",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
 			        {
 			        	field:"Scheme",
 			        	title: "Scheme",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
 			        {
 			        	field:"AgreementDate",
 			        	title: "Deal Approval Date",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        	template:function(e){ return kendo.toString(new Date(e.AgreementDate), "dd-MMM-yyyy");}
 			        },
 			        {
 			        	field:"DealSanctionTillValidate",
 			        	title: "Deal Validity Date",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        	template:function(e){ return kendo.toString(new Date(e.DealSanctionTillValidate), "dd-MMM-yyyy");}
 			        },
 			        {
 			        	field:"TotalLoanAmount",
 			        	title: "Loan Amount",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        	template: function(e){
 			        		return app.formatnum(e.TotalLoanAmount)
@@ -467,7 +474,7 @@ intrtr.dataTopGridScroll = function(){
 	$("#topgrid[data-role='grid'] tbody").html("<tr><td colspan='" + colspan + "'></td></tr>");
     var grid = $("#topgrid").data("kendoGrid");
     grid.thead.closest(".k-grid-header-wrap").scrollLeft(0);
-    grid.table.width(2000);          
+    grid.table.width($("#topgrid thead").width());          
     $(".k-grid-content").height(2 * kendo.support.scrollbar());
 }
 
@@ -476,7 +483,7 @@ intrtr.dataUnselectScroll = function(){
 	$("#unselect[data-role='grid'] tbody").html("<tr><td colspan='" + colspan2 + "'></td></tr>");
     var grid2 = $("#unselect").data("kendoGrid");
     grid2.thead.closest(".k-grid-header-wrap").scrollLeft(0);
-    grid2.table.width(2000);          
+    grid2.table.width($("#topgrid thead").width());          
     $(".k-grid-content").height(2 * kendo.support.scrollbar());
 }
 

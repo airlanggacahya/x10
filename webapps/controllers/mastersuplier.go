@@ -7,6 +7,7 @@ import (
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"strings"
 )
 
 type MasterSuplierController struct {
@@ -83,17 +84,32 @@ func (c *MasterSuplierController) DeleteMasterSuplier(k *knot.WebContext) interf
 	}
 
 	if len(res) > 0 {
-		founds := c.CheckADLeadStruct(res[0])
+		founds := c.CheckADLeadStruct1(res)
 
 		if founds == false {
 			err = c.Ctx.Delete(&res[0])
 			if err != nil {
 				c.SetResultInfo(true, err.Error(), nil)
+			} else {
+				csr, err := c.Ctx.Find(new(MasterSuplier), nil)
+				defer csr.Close()
+				if err != nil {
+					return c.SetResultInfo(true, err.Error(), nil)
+				}
+
+				results := []MasterSuplier{}
+				err = csr.Fetch(&results, 0, false)
+
+				if err != nil {
+					panic(err)
+				}
+
+				_, _, _ = c.SaveMasterAccountDetailsStruct(results)
 			}
 
 			return c.SetResultInfo(false, "delete success", nil)
 		} else {
-			return c.SetResultInfo(false, "delete cancel", nil)
+			return c.SetResultInfo(true, "delete cancel", nil)
 		}
 	}
 
@@ -111,8 +127,6 @@ func (c *MasterSuplierController) SaveMasterSuplier(k *knot.WebContext) interfac
 	}
 
 	err, _, status := c.SaveMasterAccountDetails(payload)
-
-	c.WriteLog(status)
 
 	if status == true {
 		mp := NewMasterSuplier()
@@ -181,49 +195,44 @@ func (c *MasterSuplierController) SaveMasterAccountDetails(masterSuplier []tk.M)
 		return err, "error get data", false
 	}
 
-	masterSuplierTemp, founds := c.CheckADLeadTkM(masterSuplier)
-
+	founds := c.CheckADLeadTkM(masterSuplier)
+	c.WriteLog(founds)
 	if founds == false {
+		qinsert := conn.NewQuery().
+			From("MasterAccountDetail").
+			SetConfig("multiexec", true).
+			Save()
 
-		if len(masterSuplierTemp) > 0 {
-			qinsert := conn.NewQuery().
-				From("MasterAccountDetail").
-				SetConfig("multiexec", true).
-				Save()
+		masterAccount := tk.M{}
+		masterAccountItems := []tk.M{}
 
-			masterAccount := tk.M{}
-			masterAccountItems := []tk.M{}
-
-			masterAccount.Set("Field", "LeadDistributors")
-			for _, v := range masterSuplierTemp {
-				if v["UseInAD"] == true {
-					masterAccountItems = append(masterAccountItems, tk.M{"name": v["Name"]})
-				}
+		masterAccount.Set("Field", "LeadDistributors")
+		for _, v := range masterSuplier {
+			if v["UseInAD"] == true {
+				masterAccountItems = append(masterAccountItems, tk.M{"name": v["Name"]})
 			}
+		}
 
-			masterAccount.Set("Items", masterAccountItems)
+		c.WriteLog(masterAccountItems)
+		masterAccount.Set("Items", masterAccountItems)
 
-			dt := masterAccountDetails[0]
-			data := dt.Get("Data").([]interface{})
+		dt := masterAccountDetails[0]
+		data := dt.Get("Data").([]interface{})
 
-			for i, val := range data {
-				v := val.(tk.M)
-				if v.GetString("Field") == "LeadDistributors" {
-					v.Set("Items", masterAccountItems)
-					data[i] = v
-					masterAccountDetails[0].Set("Data", data)
-					break
-				}
+		for i, val := range data {
+			v := val.(tk.M)
+			if v.GetString("Field") == "LeadDistributors" {
+				v.Set("Items", masterAccountItems)
+				data[i] = v
+				masterAccountDetails[0].Set("Data", data)
+				break
 			}
+		}
 
-			insdata := map[string]interface{}{"data": masterAccountDetails[0]}
-			em := qinsert.Exec(insdata)
-			if em != nil {
-				c.WriteLog(em)
-				return em, "save not success", false
-			}
-
-			return err, "save success", true
+		insdata := map[string]interface{}{"data": masterAccountDetails[0]}
+		em := qinsert.Exec(insdata)
+		if em != nil {
+			return em, "save not success", false
 		}
 
 		return err, "save success", true
@@ -232,9 +241,79 @@ func (c *MasterSuplierController) SaveMasterAccountDetails(masterSuplier []tk.M)
 	}
 }
 
-func (c *MasterSuplierController) CheckADLeadTkM(masterSuplier []tk.M) ([]tk.M, bool) {
+func (c *MasterSuplierController) SaveMasterAccountDetailsStruct(masterSuplier []MasterSuplier) (error, string, bool) {
 
-	masterSupplierTemp := []tk.M{}
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return err, "error open connection", false
+	}
+
+	masterAccountDetails := []tk.M{}
+
+	csr, err := conn.NewQuery().
+		From("MasterAccountDetail").
+		Cursor(nil)
+
+	if err != nil {
+		panic(err)
+	} else if csr == nil {
+		panic(csr)
+	}
+
+	defer csr.Close()
+
+	err = csr.Fetch(&masterAccountDetails, 0, false)
+	if err != nil {
+		return err, "error get data", false
+	}
+
+	founds := c.CheckADLeadStruct(masterSuplier)
+
+	if founds == false {
+		qinsert := conn.NewQuery().
+			From("MasterAccountDetail").
+			SetConfig("multiexec", true).
+			Save()
+
+		masterAccount := tk.M{}
+		masterAccountItems := []tk.M{}
+
+		masterAccount.Set("Field", "LeadDistributors")
+		for _, v := range masterSuplier {
+			if v.UseInAD == true {
+				masterAccountItems = append(masterAccountItems, tk.M{"name": v.Name})
+			}
+		}
+
+		masterAccount.Set("Items", masterAccountItems)
+
+		dt := masterAccountDetails[0]
+		data := dt.Get("Data").([]interface{})
+
+		for i, val := range data {
+			v := val.(tk.M)
+			if v.GetString("Field") == "LeadDistributors" {
+				v.Set("Items", masterAccountItems)
+				data[i] = v
+				masterAccountDetails[0].Set("Data", data)
+				break
+			}
+		}
+
+		insdata := map[string]interface{}{"data": masterAccountDetails[0]}
+		em := qinsert.Exec(insdata)
+		if em != nil {
+			return em, "save not success", false
+		}
+
+		return err, "save success", true
+	} else {
+		return nil, "save not success", false
+	}
+}
+
+func (c *MasterSuplierController) CheckADLeadTkM(masterSuplier []tk.M) bool {
 
 	leadDistributors := c.GetAccountDetailLeadDistributors()
 
@@ -242,11 +321,9 @@ func (c *MasterSuplierController) CheckADLeadTkM(masterSuplier []tk.M) ([]tk.M, 
 	for _, v := range leadDistributors {
 		temp := v["_id"].(tk.M)
 		for _, v1 := range masterSuplier {
-			if temp["accountsetupdetails_leaddistributor"] == v1["Name"] && v1["UseInAD"] == false && temp["accountsetupdetails_leaddistributor"] != "" {
+			if strings.ToLower(temp.GetString("accountsetupdetails_leaddistributor")) == strings.ToLower(v1.GetString("Name")) && v1["UseInAD"] == false && temp["accountsetupdetails_leaddistributor"] != "" {
 				founds = true
 				break
-			} else if v1["UseInAD"] == true {
-				masterSupplierTemp = append(masterSupplierTemp, v1)
 			}
 		}
 
@@ -255,19 +332,46 @@ func (c *MasterSuplierController) CheckADLeadTkM(masterSuplier []tk.M) ([]tk.M, 
 		}
 	}
 
-	return masterSupplierTemp, founds
+	return founds
 }
 
-func (c *MasterSuplierController) CheckADLeadStruct(masterSuplierStruct MasterSuplier) bool {
+func (c *MasterSuplierController) CheckADLeadStruct(masterSuplierStruct []MasterSuplier) bool {
 
 	leadDistributors := c.GetAccountDetailLeadDistributors()
 
 	founds := false
 	for _, v := range leadDistributors {
 		temp := v["_id"].(tk.M)
+		for _, v1 := range masterSuplierStruct {
+			if strings.ToLower(temp.GetString("accountsetupdetails_leaddistributor")) == strings.ToLower(v1.Name) && v1.UseInAD == false && temp["accountsetupdetails_leaddistributor"] != "" {
+				founds = true
+				break
+			}
+		}
 
-		if temp["accountsetupdetails_leaddistributor"] == masterSuplierStruct.Name && masterSuplierStruct.UseInAD == false && temp["accountsetupdetails_leaddistributor"] != "" {
-			founds = true
+		if founds == true {
+			break
+		}
+	}
+
+	return founds
+}
+
+func (c *MasterSuplierController) CheckADLeadStruct1(masterSuplierStruct []MasterSuplier) bool {
+
+	leadDistributors := c.GetAccountDetailLeadDistributors()
+
+	founds := false
+	for _, v := range leadDistributors {
+		temp := v["_id"].(tk.M)
+		for _, v1 := range masterSuplierStruct {
+			if strings.ToLower(temp.GetString("accountsetupdetails_leaddistributor")) == strings.ToLower(v1.Name) && v1.UseInAD == true && temp["accountsetupdetails_leaddistributor"] != "" {
+				founds = true
+				break
+			}
+		}
+
+		if founds == true {
 			break
 		}
 	}

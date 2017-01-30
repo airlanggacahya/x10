@@ -470,12 +470,14 @@ intrtr.loadGrid = function(){
 
 intrtr.dataTopGridScroll = function(e){	
 	  if (e.sender.dataSource.view().length === 0) {
+	  	$("#topgrid .k-grid-content.k-auto-scrollable").css("overflow","hidden");
 	  	$("#topgrid .k-grid-header-wrap.k-auto-scrollable").css("overflow","scroll");
 	  }
 }
 
 intrtr.dataUnselectScroll = function(e){	
 	 if (e.sender.dataSource.view().length === 0) {
+	  	$("#unselect .k-grid-content.k-auto-scrollable").css("overflow","hidden");
 	  	$("#unselect .k-grid-header-wrap.k-auto-scrollable").css("overflow","scroll");
 	  }
 }

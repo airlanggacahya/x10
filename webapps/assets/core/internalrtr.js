@@ -519,4 +519,21 @@ $(function(){
       accordion : true
     });
 
+	if(parse("scrolltoinp") != "Not found"){
+	  // var topi = $('input[id="'+parse("scrolltoinp")+'"]:eq(0)').offset();
+	  var topi = $('#'+parse("scrolltoinp")).offset().top;
+    var valueScroll
+    if (topi > 400){
+    	valueScroll = valueScroll - 400
+    }else {
+    	valueScroll = 400;
+    }
+    setTimeout(function() {
+    	$('body').animate({
+      	scrollTop: valueScroll
+  		})
+    }, 5000);
+    
+  }
+
 });

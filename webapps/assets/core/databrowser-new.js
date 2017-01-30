@@ -297,7 +297,7 @@ databrowser.loandetailscoll = [
 {
 	field : "AD.loandetails.requestedlimitamount",
 	title : "Proposed Amount of Limit (Rs. Lacs)",
-	hidden : false,
+	hidden : true,
 	width : 120	,
 	headerTemplate : "Proposed Amount of </br> Limit (Rs. Lacs)",
 	headerAttributes: { "class": "sub-bgcolor" },
@@ -425,252 +425,293 @@ databrowser.fullcoll = [
 	width : 150,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
- {
- 	title : "Applicant Details",
- 	columns : databrowser.applicantdetailcoll,
- 	headerTemplate : function(dt){
- 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-forward' aria-hidden='true'></i></a>"
- 	},
-	width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
- },
- {
- 	title : "Financial Information",
- 	columns : [
- 	{
- 		title : "Existing Relationship With X10 Financial Services Limited",
- 		template :  function(dt){
- 			return "<center><a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Show More</a></center>"
- 		},
-		width : 120,
-		headerTemplate : "Existing Relationship </br> With X10 Financial<br> Services Limited",
-	headerAttributes: { "class": "sub-bgcolor" },
- 	},
- 	],
-	headerAttributes: { "class": "sub-bgcolor" },
- },
- {
- 	title : "Non-Refundable Processing Fee Details",
- 	columns : databrowser.nonrefundcoll,
- 	headerTemplate : function(dt){
- 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br>Fee Details <i class='fa fa-forward' aria-hidden='true'></a>"
- 	},
-	width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
- }
- ,
- {
- 	title : "Details of Promoters/Directors/Guarantors/Management",
- 	headerTemplate : "Details of </br>Promoters/Directors/Guarantors/Management",
- 	columns : [
- 		{
- 			title : "Name",
- 			template : function(dt){
- 				var str = "<table class='intable'>";
- 				for(var i in dt.CA.detailofpromoters.biodata){
- 					if(dt.CA.detailofpromoters.biodata[i].Name == undefined){
- 						break;
- 					}
 
- 					if(i==0){
- 						str += "<tr>"
- 						// str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a></td>"
- 						str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + "<a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a>&nbsp;"+ dt.CA.detailofpromoters.biodata[i].Name +"</td>"
- 						str+="</tr>"
- 					}else{
- 						str += "<tr class='hiddentd'>"
- 						str += "<td class='line' role='gridcell'  id='"+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "</td>"
- 						str+="</tr>"
- 					}
-
- 				}
- 				str += "</table>";
- 				return str;
- 			},
-			width : 150,
+{
 	headerAttributes: { "class": "sub-bgcolor" },
- 		},
- 		{
- 			title : "Guarantor",
- 			template : function(dt){
- 				var str = "<table class='intable'>";
- 				for(var i in dt.CA.detailofpromoters.biodata){
- 					var elem = "<tr>";
+	title: "Customer Application Form",
+	hidden : false,
+	columns: [ 
+	 {
+	 	title : "Applicant Details",
+	 	columns : databrowser.applicantdetailcoll,
+	 	headerTemplate : function(dt){
+	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-forward' aria-hidden='true'></i></a>"
+	 	},
+		width : 100,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 },
+	 {
+	 	title : "Financial Information",
+	 	columns : [
+	 	{
+	 		title : "Existing Relationship With X10 Financial Services Limited",
+	 		template :  function(dt){
+	 			return "<center><a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Show More</a></center>"
+	 		},
+			width : 120,
+			headerTemplate : "Existing Relationship </br> With X10 Financial<br> Services Limited",
+		headerAttributes: { "class": "sub-bgcolor" },
+	 	},
+	 	],
+		headerAttributes: { "class": "sub-bgcolor" },
+	 },
+	 {
+	 	title : "Non-Refundable Processing Fee Details",
+	 	columns : databrowser.nonrefundcoll,
+	 	headerTemplate : function(dt){
+	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br>Fee Details <i class='fa fa-forward' aria-hidden='true'></a>"
+	 	},
+		width : 100,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 }
+	 ,
+	 {
+	 	title : "Details of Promoters/Directors/Guarantors/Management",
+	 	headerTemplate : "Details of </br>Promoters/Directors/Guarantors/Management",
+	 	columns : [
+	 		{
+	 			title : "Name",
+	 			template : function(dt){
+	 				var str = "<table class='intable'>";
+	 				for(var i in dt.CA.detailofpromoters.biodata){
+	 					if(dt.CA.detailofpromoters.biodata[i].Name == undefined){
+	 						break;
+	 					}
 
- 					if(i != 0){
-						elem = "<tr class='hiddentd'>"
- 					}
+	 					if(i==0){
+	 						str += "<tr>"
+	 						// str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a></td>"
+	 						str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + "<a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a>&nbsp;"+ dt.CA.detailofpromoters.biodata[i].Name +"</td>"
+	 						str+="</tr>"
+	 					}else{
+	 						str += "<tr class='hiddentd'>"
+	 						str += "<td class='line' role='gridcell'  id='"+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "</td>"
+	 						str+="</tr>"
+	 					}
 
- 					if(dt.CA.detailofpromoters.biodata[i].Guarantor === null) {
- 						str += elem+"<td></td></tr>"
- 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'undefined'){ 						
- 						break;
- 					} else {
- 						str += elem				
- 			
-	 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
-	 						str += "<td>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
-	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
-	 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
-		 						str += "<td class='line'>Yes</td>"
-			 				}else{
-			 					str += "<td class='line'>No</td>"
-			 				}
-	 					} 
+	 				}
+	 				str += "</table>";
+	 				return str;
+	 			},
+				width : 150,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 		},
+	 		{
+	 			title : "Guarantor",
+	 			template : function(dt){
+	 				var str = "<table class='intable'>";
+	 				for(var i in dt.CA.detailofpromoters.biodata){
+	 					var elem = "<tr>";
+
+	 					if(i != 0){
+							elem = "<tr class='hiddentd'>"
+	 					}
+
+	 					if(dt.CA.detailofpromoters.biodata[i].Guarantor === null) {
+	 						str += elem+"<td></td></tr>"
+	 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'undefined'){ 						
+	 						break;
+	 					} else {
+	 						str += elem				
+	 			
+		 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
+		 						str += "<td>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+		 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
+		 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
+			 						str += "<td class='line'>Yes</td>"
+				 				}else{
+				 					str += "<td class='line'>No</td>"
+				 				}
+		 					} 
+		 					
+		 					str+="</tr>"
+	 					}
 	 					
-	 					str+="</tr>"
- 					}
- 					
- 				}
+	 				}
 
- 				str += "</table>";
- 				return str;
- 			},
-			width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
- 		},
- 		{
- 			title : "Promoter",
- 			template : function(dt){
- 				var str = "<table class='intable'>";
- 				for(var i in dt.CA.detailofpromoters.biodata){
- 					var elem = "<tr>";
+	 				str += "</table>";
+	 				return str;
+	 			},
+				width : 100,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 		},
+	 		{
+	 			title : "Promoter",
+	 			template : function(dt){
+	 				var str = "<table class='intable'>";
+	 				for(var i in dt.CA.detailofpromoters.biodata){
+	 					var elem = "<tr>";
 
- 					if(i != 0){
-						elem = "<tr class='hiddentd'>"
- 					}
+	 					if(i != 0){
+							elem = "<tr class='hiddentd'>"
+	 					}
 
- 					if(dt.CA.detailofpromoters.biodata[i].Promotor === null) {
- 						str += elem+"<td></td></tr>"
- 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'undefined'){ 						
- 						break;
- 					} else {
- 						str += elem				
- 			
-	 					if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'string'){
-	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
-	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'boolean'){
-	 						if(dt.CA.detailofpromoters.biodata[i].Promotor){
-		 						str += "<td class='line'>"+"Yes</td>"
-			 				}else{
-			 					str += "<td class='line'>"+"No</td>"
-			 				}
-	 					} 
+	 					if(dt.CA.detailofpromoters.biodata[i].Promotor === null) {
+	 						str += elem+"<td></td></tr>"
+	 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'undefined'){ 						
+	 						break;
+	 					} else {
+	 						str += elem				
+	 			
+		 					if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'string'){
+		 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
+		 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'boolean'){
+		 						if(dt.CA.detailofpromoters.biodata[i].Promotor){
+			 						str += "<td class='line'>"+"Yes</td>"
+				 				}else{
+				 					str += "<td class='line'>"+"No</td>"
+				 				}
+		 					} 
+		 					
+		 					str+="</tr>"
+	 					}
 	 					
-	 					str+="</tr>"
- 					}
- 					
- 				}
- 				str += "</table>";
- 				return str;
- 			},
-			width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
- 		},
- 		{
- 			title : "Director",
- 			template : function(dt){
- 				var str = "<table class='intable'>";
- 				for(var i in dt.CA.detailofpromoters.biodata){
- 					var elem = "<tr>";
+	 				}
+	 				str += "</table>";
+	 				return str;
+	 			},
+				width : 100,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 		},
+	 		{
+	 			title : "Director",
+	 			template : function(dt){
+	 				var str = "<table class='intable'>";
+	 				for(var i in dt.CA.detailofpromoters.biodata){
+	 					var elem = "<tr>";
 
- 					if(i != 0){
-						elem = "<tr class='hiddentd'>"
- 					}
+	 					if(i != 0){
+							elem = "<tr class='hiddentd'>"
+	 					}
 
- 					if(dt.CA.detailofpromoters.biodata[i].Director === null) {
- 						str += elem+"<td></td></tr>"
- 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'undefined'){ 						
- 						break;
- 					} else {
- 						str += elem				
- 			
-	 					if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'string'){
-	 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
-	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Director === 'boolean'){
-	 						if(dt.CA.detailofpromoters.biodata[i].Director){
-		 						str += "<td class='line'>Yes</td>"
-			 				}else{
-			 					str += "<td class='line'>No</td>"
-			 				}
-	 					} 
+	 					if(dt.CA.detailofpromoters.biodata[i].Director === null) {
+	 						str += elem+"<td></td></tr>"
+	 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'undefined'){ 						
+	 						break;
+	 					} else {
+	 						str += elem				
+	 			
+		 					if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'string'){
+		 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
+		 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Director === 'boolean'){
+		 						if(dt.CA.detailofpromoters.biodata[i].Director){
+			 						str += "<td class='line'>Yes</td>"
+				 				}else{
+				 					str += "<td class='line'>No</td>"
+				 				}
+		 					} 
+		 					
+		 					str+="</tr>"
+	 					}
 	 					
+	 				}
+	 				str += "</table>";
+	 				return str;
+	 			},
+				width : 100,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 		},
+	 		{
+	 			title : "Details",
+	 			template : function(dt){ 
+	 				var str = "<table class='intable'>";
+
+
+	 				for(var i in dt.CA.detailofpromoters.biodata){
+	 					if(dt.CA.detailofpromoters.biodata[i].Name == undefined){
+	 						break;
+	 					}
+
+	 					var elem = "<tr>";
+
+	 					if(i != 0){
+							elem = "<tr class='hiddentd'>"
+	 					}
+	 					str += elem
+
+	 					
+	 				str += "<td class='line'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Show More</a></td>" 
 	 					str+="</tr>"
- 					}
- 					
- 				}
- 				str += "</table>";
- 				return str;
- 			},
-			width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
- 		},
- 		{
- 			title : "Details",
- 			template : function(dt){ 
- 				var str = "<table class='intable'>";
 
-
- 				for(var i in dt.CA.detailofpromoters.biodata){
- 					if(dt.CA.detailofpromoters.biodata[i].Name == undefined){
- 						break;
- 					}
-
- 					var elem = "<tr>";
-
- 					if(i != 0){
-						elem = "<tr class='hiddentd'>"
- 					}
- 					str += elem
-
- 					
- 				str += "<td class='line'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Show More</a></td>" 
- 					str+="</tr>"
-
- 			}
- 			str += "</table>";
- 				return str;
- 			},
-			width : 100,
+	 			}
+	 			str += "</table>";
+	 				return str;
+	 			},
+				width : 100,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 		},
+	 	],
+		width : 100,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 },
+	 {
+	 	title : "Details of <br/> Reference",
+		width : 100,
+		template: function(dt){
+			return "<center><a onclick='databrowser.GoReference(\""+ dt.CA._id +"\")'>Show More<a></center>"
+		},
+		headerAttributes: { "class": "sub-bgcolor" },
+	 },
+ ]
+},
+{
+	title: "Account Details Form",
 	headerAttributes: { "class": "sub-bgcolor" },
- 		},
- 	],
-	width : 100,
+	columns: 	
+	[
+	 {
+	 	title : "Account Set-up Details",
+	 	columns : databrowser.accsetupcoll,
+	 	headerTemplate : function(dt){
+	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-forward' aria-hidden='true'></a>"
+	 	},
+		width : 100,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 },
+	 {
+	 	title : "Borrower Details",
+		width : 100,
+		columns : databrowser.BorrowerDetails,
+		headerTemplate: "Borrower Details",
+		headerAttributes: { "class": "sub-bgcolor" },
+	 },
+	 {
+	 	title : "Loan Details",
+	 	columns : databrowser.loandetailscoll,
+	 	headerTemplate : function(dt){
+	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
+	 	},
+		width : 100,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 }
+	] 
+},
+{
+	title: "Internal RTR Form",
 	headerAttributes: { "class": "sub-bgcolor" },
- },
- {
- 	title : "Details of <br/> Reference",
-	width : 100,
-	template: function(dt){
-		return "<center><a onclick='databrowser.GoReference(\""+ dt.CA._id +"\")'>Show More<a></center>"
-	},
-	headerAttributes: { "class": "sub-bgcolor" },
- },
- {
- 	title : "Account Set-up Details",
- 	columns : databrowser.accsetupcoll,
- 	headerTemplate : function(dt){
- 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-forward' aria-hidden='true'></a>"
- 	},
-	width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
- },
- {
- 	title : "Borrower Details",
-	width : 100,
-	columns : databrowser.BorrowerDetails,
-	headerTemplate: "Borrower Details",
-	headerAttributes: { "class": "sub-bgcolor" },
- },
- {
- 	title : "Loan Details",
- 	columns : databrowser.loandetailscoll,
- 	headerTemplate : function(dt){
- 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
- 	},
-	width : 100,
-	headerAttributes: { "class": "sub-bgcolor" },
- }
+	columns: 	
+	[
+	 {
+	 	title : "Internal RTR Snapshot",
+	 	// columns : databrowser.accsetupcoll,
+	 	template : function(dt){
+    	return "<center><a style='cursor: pointer;' onclick='databrowser.GoInternalRtr(\""+ dt.CA._id +"\",\"snap\")'>Show More</a></center>"
+  	},
+		width : 150,
+		headerAttributes: { "class": "sub-bgcolor" },
+	 },
+	 {
+	 	title : "Deal List",
+		width : 100,
+		template : function(dt){
+    	return "<center><a style='cursor: pointer;' onclick='databrowser.GoInternalRtr(\""+ dt.CA._id +"\",\"deal\")'>Show More</a></center>"
+  	},
+		// columns : databrowser.BorrowerDetails,
+		// headerTemplate: "Borrower Details",
+		headerAttributes: { "class": "sub-bgcolor" },
+	 }
+	] 
+}
 ]
 
 databrowser.statusexpand = {
@@ -683,8 +724,10 @@ databrowser.statusexpand = {
 databrowser.expand = function(text){
 	
 	if (text == "applicant"){
+		// console.log(databrowser.statusexpand[text])
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[1].headerTemplate = function(dt){
+			// databrowser.fullcoll[1].headerTemplate = function(dt){
+			databrowser.fullcoll[1].columns[0].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 		 	for(var i in databrowser.applicantdetailcoll){
@@ -693,23 +736,28 @@ databrowser.expand = function(text){
 
 		 	databrowser.applicantdetailcoll[0].hidden = false;
 		 	databrowser.applicantdetailcoll[1].hidden = false;
-		 	databrowser.fullcoll[1].columns = databrowser.applicantdetailcoll;
+
+		 	// databrowser.fullcoll[1].columns = databrowser.applicantdetailcoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[1].headerTemplate = function(dt){
+			// databrowser.fullcoll[1].headerTemplate = function(dt){
+				databrowser.fullcoll[1].columns[0].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.applicantdetailcoll){
 		 		databrowser.applicantdetailcoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[1].columns = databrowser.applicantdetailcoll;
+
+		 	// databrowser.fullcoll[1].columns = databrowser.applicantdetailcoll;
+
 			//open
 		}
 	}else if (text == "nonrefund"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[3].headerTemplate = function(dt){
+			// databrowser.fullcoll[3].headerTemplate = function(dt){
+			databrowser.fullcoll[1].columns[2].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br> Fee Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -719,23 +767,25 @@ databrowser.expand = function(text){
 
 		 	databrowser.nonrefundcoll[3].hidden = false;
 		 	databrowser.nonrefundcoll[4].hidden = false;
-		 	databrowser.fullcoll[3].columns = databrowser.nonrefundcoll;
+		 	// databrowser.fullcoll[3].columns = databrowser.nonrefundcoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[3].headerTemplate = function(dt){
+			// databrowser.fullcoll[3].headerTemplate = function(dt){
+			databrowser.fullcoll[1].columns[2].headerTemplate = function(dt){
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br> Fee Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.nonrefundcoll){
 		 		databrowser.nonrefundcoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[3].columns = databrowser.nonrefundcoll;
+		 	// databrowser.fullcoll[3].columns = databrowser.nonrefundcoll;
 			//open
 		}
 	}else if (text == "accsetup"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[6].headerTemplate = function(dt){
+			// databrowser.fullcoll[6].headerTemplate = function(dt){
+			databrowser.fullcoll[2].columns[0].headerTemplate = function(dt){	
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -745,24 +795,26 @@ databrowser.expand = function(text){
 
 		 	databrowser.accsetupcoll[0].hidden = false;
 		 	databrowser.accsetupcoll[1].hidden = false;
-		 	databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
+		 	// databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[6].headerTemplate = function(dt){
+			// databrowser.fullcoll[6].headerTemplate = function(dt){
+			databrowser.fullcoll[2].columns[0].headerTemplate = function(dt){	
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.accsetupcoll){
 		 		databrowser.accsetupcoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
+		 	// databrowser.fullcoll[6].columns = databrowser.accsetupcoll;
 			//open
 		}
 	
 	}else if (text == "loandet"){
 		if(databrowser.statusexpand[text]){
-			databrowser.fullcoll[8].headerTemplate = function(dt){
+			// databrowser.fullcoll[8].headerTemplate = function(dt){
+			databrowser.fullcoll[2].columns[2].headerTemplate = function(dt){	
 		 		return "<a id='on1' class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
 		 	}
 
@@ -772,19 +824,20 @@ databrowser.expand = function(text){
 
 		 	databrowser.loandetailscoll[0].hidden = false;
 		 	databrowser.loandetailscoll[4].hidden = false;
-		 	databrowser.loandetailscoll[7].hidden = false;
-		 	databrowser.fullcoll[8].columns = databrowser.loandetailscoll;
+		 	// databrowser.loandetailscoll[7].hidden = false;
+		 	// databrowser.fullcoll[8].columns = databrowser.loandetailscoll;
 
 			//close
 		}else{
-			databrowser.fullcoll[8].headerTemplate = function(dt){
+			// databrowser.fullcoll[8].headerTemplate = function(dt){
+			databrowser.fullcoll[2].columns[2].headerTemplate = function(dt){	
 		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-backward' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.loandetailscoll){
 		 		databrowser.loandetailscoll[i].hidden = false;
 		 	}
-		 	databrowser.fullcoll[8].columns = databrowser.loandetailscoll;
+		 	// databrowser.fullcoll[8].columns = databrowser.loandetailscoll;
 			//open
 		}
 	}
@@ -825,6 +878,12 @@ databrowser.GoAddress = function(id,name){
 databrowser.GoReference = function(id){
 	var ids=id.split("|");
 	window.open("/datacapturing/customerprofileinfo?customerid="+ids[0]+"&dealno="+ids[1]+"&scrollto=Details of Reference")
+}
+
+databrowser.GoInternalRtr = function(id, status){
+	var ids=id.split("|");
+	var idDiv = status == "snap" ? "topgrid" : "unselect";
+	window.open("/rtr/internalrtr?customerid="+ids[0]+"&dealno="+ids[1]+"&scrolltoinp="+idDiv)
 }
 
 var dbgrid = ""

@@ -268,13 +268,19 @@ databrowser.accsetupcoll = [
 
 databrowser.loandetailscoll = [
 {
-	field : "AD.loandetails.proposedloanamount",
+	// field : "AD.loandetails.proposedloanamount",
 	title : "Requested Loan Amount",
 	hidden : false,
 	width : 100,
 	headerTemplate : "Requested Loan </br> Amount",
 	headerAttributes: { "class": "sub-bgcolor" },
 	attributes:{style: "text-align: right"},
+	template : function(dt){
+		if(dt.AD.loandetails.proposedloanamount == undefined)
+		return app.formatnum(dt.AD.loandetails.ProposedLoanAmount)
+		else
+		return app.formatnum(dt.AD.loandetails.proposedloanamount)
+	}
 },
 {
 	field : "AD.loandetails.limittenor",

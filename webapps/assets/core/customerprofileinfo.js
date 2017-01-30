@@ -29,6 +29,8 @@ var info = {
 // });
 
 positionList = ko.observableArray([])
+designationList = ko.observableArray([])
+
 selectedPosition = ko.observableArray(["DirectorPromoter"])
 
 info.scroll = function(){
@@ -66,7 +68,6 @@ info.getConfirmed = function(){
 var getMasterAccountDetails = function(callback) {
     var param = {}
     ajaxPost("/accountdetail/getmasteraccountdetail", {}, function (res){
-        console.log(typeof callback)
         if(typeof callback === "function" && res.Data != undefined) {
             callback(res.Data, setPosition)
         }
@@ -79,25 +80,45 @@ var setPosition = function(){
     })
 }
 
+var setDesignation = function(){
+    _.each(detail.biodata(), function(row){
+        row.Designation(row.Designation())
+    })
+}
+
 var formatDataPosition = function(param, setPosition) {
     if(param != undefined || param != "") {
         var position = _.filter(param, function(row){
             return row.Field === "Position"
         })
 
-        console.log(position)
         if(position != undefined && position.length > 0) {
+            
+            formatDataDesignation(position, setDesignation)
+
             var temp = []
             _.each(position[0].Items, function(row){
                 temp.push(row.name) 
             })
 
-            console.log(temp)
             positionList(temp)
             
             if(typeof setPosition === "function")
                 setPosition()
         }
+    }
+}
+
+var formatDataDesignation = function(data, setDesignation) {
+    var temp = []
+    _.each(data[0].Items, function(row){
+        temp.push(row.code) 
+    })
+
+    designationList(temp)
+
+    if(typeof setDesignation === "function"){
+        setDesignation()
     }
 }
 

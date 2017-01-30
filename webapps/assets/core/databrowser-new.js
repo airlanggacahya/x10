@@ -885,7 +885,7 @@ databrowser.GetDataGrid = function(){
 			 groupable: true,
 			 scrollable : true,
 			 pageable: true,
-			 height:500,
+			 height:450,
 			 dataBinding: function(x) {
 			 	setTimeout(function(){
 			 		_.each($(".intable").parent(),function(e){

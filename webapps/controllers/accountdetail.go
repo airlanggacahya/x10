@@ -5,6 +5,7 @@ import (
 	. "eaciit/x10/webapps/models"
 	"errors"
 	"fmt"
+
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
@@ -708,16 +709,18 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 	if payload.GetString("loanamount") != "" {
 		opr := payload.GetString("loanamountopr")
 		valrat := payload.GetFloat64("loanamount")
-		if opr == "gt" {
-			filtersCA = append(filtersCA, dbox.Gt("applicantdetail.AmountLoan", valrat))
-		} else if opr == "gte" {
-			filtersCA = append(filtersCA, dbox.Gte("applicantdetail.AmountLoan", valrat))
-		} else if opr == "lte" {
-			filtersCA = append(filtersCA, dbox.Lte("applicantdetail.AmountLoan", valrat))
-		} else if opr == "lt" {
-			filtersCA = append(filtersCA, dbox.Lt("applicantdetail.AmountLoan", valrat))
-		} else if opr == "eq" {
-			filtersCA = append(filtersCA, dbox.Eq("applicantdetail.AmountLoan", valrat))
+
+		switch opr {
+		case "gt":
+			filtersAD = append(filtersAD, dbox.Gt("loandetails.proposedloanamount", valrat))
+		case "gte":
+			filtersAD = append(filtersAD, dbox.Gte("loandetails.proposedloanamount", valrat))
+		case "lte":
+			filtersAD = append(filtersAD, dbox.Lte("loandetails.proposedloanamount", valrat))
+		case "lt":
+			filtersAD = append(filtersAD, dbox.Lt("loandetails.proposedloanamount", valrat))
+		case "eq":
+			filtersAD = append(filtersAD, dbox.Eq("loandetails.proposedloanamount", valrat))
 		}
 	}
 

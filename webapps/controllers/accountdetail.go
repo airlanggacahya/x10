@@ -531,48 +531,30 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 	}
 
 	filtersAD := []*dbox.Filter{}
-	var filterAD *dbox.Filter
-	filterAD = new(dbox.Filter)
-
 	filtersCA := []*dbox.Filter{}
-	var filterCA *dbox.Filter
-	filterCA = new(dbox.Filter)
 
-	if len(payload.Get("city").([]interface{})) == 0 {
-		filtersCA = append(filtersCA, dbox.Ne("applicantdetail.registeredaddress.CityRegistered", "!z"))
-		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.cityname", "!z"))
-	} else {
+	if len(payload.Get("city").([]interface{})) > 0 {
 		filtersCA = append(filtersCA, dbox.In("applicantdetail.registeredaddress.CityRegistered", payload.Get("city").([]interface{})...))
 		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.cityname", payload.Get("city").([]interface{})...))
 	}
 
-	if len(payload.Get("product").([]interface{})) == 0 {
-		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.product", "!z"))
-	} else {
+	if len(payload.Get("product").([]interface{})) > 0 {
 		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.product", payload.Get("product").([]interface{})...))
 	}
 
-	if len(payload.Get("brhead").([]interface{})) == 0 {
-		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.brhead", "!z"))
-	} else {
+	if len(payload.Get("brhead").([]interface{})) > 0 {
 		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.brhead", payload.Get("brhead").([]interface{})...))
 	}
 
-	if len(payload.Get("scheme").([]interface{})) == 0 {
-		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.scheme", "!z"))
-	} else {
+	if len(payload.Get("scheme").([]interface{})) > 0 {
 		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.scheme", payload.Get("scheme").([]interface{})...))
 	}
 
-	if len(payload.Get("rm").([]interface{})) == 0 {
-		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.rmname", "!z"))
-	} else {
+	if len(payload.Get("rm").([]interface{})) > 0 {
 		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.rmname", payload.Get("rm").([]interface{})...))
 	}
 
-	if len(payload.Get("ca").([]interface{})) == 0 {
-		filtersAD = append(filtersAD, dbox.Ne("accountsetupdetails.creditanalyst", "!z"))
-	} else {
+	if len(payload.Get("ca").([]interface{})) > 0 {
 		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.creditanalyst", payload.Get("ca").([]interface{})...))
 	}
 
@@ -649,7 +631,7 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			filtersAD = append(filtersAD, dbox.Eq("_id", "-1"))
 			filtersCA = append(filtersCA, dbox.Eq("_id", "-1"))
 		}
-	} else if payload.GetString("rating1") != "" && payload.GetString("rating2") == "" {
+	} else if payload.GetString("rating1") != "" {
 		filtersRT := []*dbox.Filter{}
 		opr1 := payload.GetString("ratingopr1")
 		valrat1 := payload.GetFloat64("rating1")
@@ -671,12 +653,11 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			// Take(take).
 			// Skip(skip).
 			Cursor(nil)
-		defer csr.Close()
-
 		if e != nil {
 			res.SetError(e)
 			return res
 		}
+		defer csr.Close()
 
 		resultsRT := []tk.M{}
 		err = csr.Fetch(&resultsRT, 0, false)
@@ -747,23 +728,25 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		filtersAD = append(filtersAD, dbox.In("dealno", payload.Get("dealno").([]interface{})...))
 	}
 
-	filterAD = dbox.And(filtersAD...)
+	q := cn.NewQuery()
+
+	if len(filtersAD) > 0 {
+		q = q.Where(dbox.And(filtersAD...))
+	}
 
 	//get data grid
 
-	csr, e := cn.NewQuery().
-		Where(filterAD).
+	csr, e := q.
 		From("AccountDetails").
 		// Order(SORT).
 		// Take(take).
 		// Skip(skip).
 		Cursor(nil)
-	defer csr.Close()
-
 	if e != nil {
 		res.SetError(e)
 		return res
 	}
+	defer csr.Close()
 
 	resultsAD := []tk.M{}
 	err = csr.Fetch(&resultsAD, 0, false)
@@ -780,27 +763,28 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		dealnos = append(dealnos, val.GetString("dealno"))
 	}
 
-	if len(payload.Get("product").([]interface{})) > 0 || len(payload.Get("brhead").([]interface{})) > 0 || len(payload.Get("scheme").([]interface{})) > 0 || len(payload.Get("ca").([]interface{})) > 0 || len(payload.Get("rm").([]interface{})) > 0 {
-		if len(resultsAD) > 0 {
-			filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
-			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
-		}
+	if len(filtersAD) > 0 && len(resultsAD) > 0 {
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
 	}
-	filterCA = dbox.And(filtersCA...)
 
-	csr, e = cn.NewQuery().
-		Where(filterCA).
+	q = cn.NewQuery()
+
+	if len(filtersCA) > 0 {
+		q = q.Where(dbox.And(filtersCA...))
+	}
+
+	csr, e = q.
 		From("CustomerProfile").
 		// Order(SORT).
 		// Take(take).
 		// Skip(skip).
 		Cursor(nil)
-	defer csr.Close()
-
 	if e != nil {
 		res.SetError(e)
 		return res
 	}
+	defer csr.Close()
 
 	resultsCA := []tk.M{}
 	err = csr.Fetch(&resultsCA, 0, false)

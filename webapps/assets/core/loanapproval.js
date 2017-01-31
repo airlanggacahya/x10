@@ -487,6 +487,9 @@ var promoterBackground = function(param) {
                 experience: { values: ko.observableArray(), title: "Experience and any other Business (Specify)", style: "left" },
                 guarantor: { values: ko.observableArray(), title: "Personal Guarantee", style: "left" },
                 redflag: { values: ko.observableArray(), title: "RedFlags", style: "left" },
+                city: { values: ko.observableArray(), title: "City", style: "left" },
+                pincode: { values: ko.observableArray(), title: "Pincode", style: "left" },
+                state: { values: ko.observableArray(), title: "State", style: "left" },
             }
         }
 
@@ -499,7 +502,7 @@ var promoterBackground = function(param) {
                     return;
                 }
             })
-
+            // console.log(i,"ww",b);
             t.name.values.push((b.Name != "") ? b.Name : "-");
             t.designation.values.push((b.Designation != "") ? b.designation : "-");
             t.dateOfBirth.values.push(moment(b.DateOfBirth).format("DD-MM-YYYY"));
@@ -514,6 +517,9 @@ var promoterBackground = function(param) {
             t.experience.values.push("-")
             t.guarantor.values.push(b.Guarantor ? "Yes" : "No");
             t.redflag.values.push(redflag != "" ? redflag : "-")
+            t.city.values.push(b.City)
+            t.pincode.values.push(b.Pincode)
+            t.state.values.push(b.State)
 
             if( (i + 1) % settings.size == 0 && i != biodatas.length-1) {
                 data.push(t);

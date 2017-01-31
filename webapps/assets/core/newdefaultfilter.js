@@ -197,6 +197,13 @@ function applyFilterDealNoDS() {
 }
 
 function applyDisableFilter() {
+	/*
+		TEMPORARY DISABLE function
+		ON ROHITA REQUEST
+
+		WILL BE DELETED LATER - 31/01/2017
+	*/
+	/*
 	var input = [
 		filters.ProductVal(),
 		filters.BRHeadVal(),
@@ -252,6 +259,7 @@ function applyDisableFilter() {
 	$("#ddRLARanges").data("kendoDropDownList").enable(!v)
 	$("#ddIR").data("kendoDropDownList").enable(!v)
 	$("#inputRLARange").data("kendoNumericTextBox").enable(!v)
+	*/
 }
 
 function reapplyFilter() {

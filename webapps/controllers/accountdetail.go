@@ -8,7 +8,6 @@ import (
 
 	"time"
 
-	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -622,15 +621,12 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			dealnos = append(dealnos, val.GetString("DealNo"))
 		}
 
-		if len(resultsRT) > 0 {
-			filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
-			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
-			filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
-			filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
-		} else {
-			filtersAD = append(filtersAD, dbox.Eq("_id", "-1"))
-			filtersCA = append(filtersCA, dbox.Eq("_id", "-1"))
-		}
+		// if len(resultsRT) > 0 {
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
+		// filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
+		// filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
+		// }
 	} else if payload.GetString("rating1") != "" {
 		filtersRT := []*dbox.Filter{}
 		opr1 := payload.GetString("ratingopr1")
@@ -677,16 +673,12 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 			dealnos = append(dealnos, val.GetString("DealNo"))
 		}
 
-		if len(resultsRT) > 0 {
-			filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
-			filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
-			filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
-			filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
-		} else {
-			filtersCA = append(filtersAD, dbox.Eq("_id", "-1"))
-			filtersAD = append(filtersCA, dbox.Eq("_id", "-1"))
-		}
-
+		// if len(resultsRT) > 0 {
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
+		// filtersAD = append(filtersAD, dbox.In("customerid", customeridsstr...))
+		// filtersAD = append(filtersAD, dbox.In("dealno", dealnos...))
+		// }
 	}
 
 	if payload.GetString("loanamount") != "" {
@@ -720,11 +712,11 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		arrcust := payload.Get("customer").([]interface{})
 		filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", arrcust...))
 
-		arinter := []interface{}{}
-		for _, val := range arrcust {
-			arinter = append(arinter, interface{}(cast.ToString(val)))
-		}
-		filtersAD = append(filtersAD, dbox.In("customerid", arinter...))
+		// arinter := []interface{}{}
+		// for _, val := range arrcust {
+		// 	arinter = append(arinter, interface{}(cast.ToString(val)))
+		// }
+		// filtersAD = append(filtersAD, dbox.In("customerid", arinter...))
 	}
 
 	if len(payload.Get("dealno").([]interface{})) > 0 {

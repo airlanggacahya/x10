@@ -31,38 +31,38 @@ function createFilterUpstream(source, path) {
 }
 
 function applyFilterUpstream(level, vals) {
-	if (level == CITY)
-		return vals
+	// if (level == CITY)
+	// 	return vals
 	// Filter City
 	vals = _.filter(vals, createFilterUpstream(filters.CityVal(), CITY))
 
-	if (level == PRODUCT)
-		return vals	
+	// if (level == PRODUCT)
+	// 	return vals	
 	// Filter Product
 	vals = _.filter(vals, createFilterUpstream(filters.ProductVal(), PRODUCT))
 
-	if (level == BRHEAD)
-		return vals
+	// if (level == BRHEAD)
+	// 	return vals
 	// Filter Product
 	vals = _.filter(vals, createFilterUpstream(filters.BRHeadVal(), BRHEAD))
 
-	if (level == SCHEME)
-		return vals
+	// if (level == SCHEME)
+	// 	return vals
 	// Filter Scheme
 	vals = _.filter(vals, createFilterUpstream(filters.SchemeVal(), SCHEME))
 
-	if (level == RM)
-		return vals
+	// if (level == RM)
+	// 	return vals
 	// Filter RM
 	vals = _.filter(vals, createFilterUpstream(filters.RMVal(), RM))
 
-	if (level == CA)
-		return vals
+	// if (level == CA)
+	// 	return vals
 	// Filter CA
 	vals = _.filter(vals, createFilterUpstream(filters.CAVal(), CA))
 
-	if (level == CUSTOMER)
-		return vals
+	// if (level == CUSTOMER)
+	// 	return vals
 	// Filter Customer
 	vals = _.filter(vals, createFilterUpstream(filters.CustomerVal(), CUSTOMER))
 
@@ -262,15 +262,30 @@ function applyDisableFilter() {
 	*/
 }
 
-function reapplyFilter() {
-	applyFilterCityDS()
-	applyFilterProductDS()
-	applyFilterBRHeadDS()
-	applyFilterSchemeDS()
-	applyFilterRMDS()
-	applyFilterCADS()
-	applyFilterCustDS()
-	applyFilterDealNoDS()
+function reapplyFilter(without) {
+	if (without != CITY)
+		applyFilterCityDS()
+	
+	if (without != PRODUCT)
+		applyFilterProductDS()
+	
+	if (without != BRHEAD)
+		applyFilterBRHeadDS()
+	
+	if (without != SCHEME)
+		applyFilterSchemeDS()
+	
+	if (without != RM)
+		applyFilterRMDS()
+	
+	if (without != CA)
+		applyFilterCADS()
+	
+	if (without != CUSTOMER)
+		applyFilterCustDS()
+
+	if (without != DEALNO)
+		applyFilterDealNoDS()
 
 	applyDisableFilter()
 }
@@ -282,43 +297,43 @@ filters.MasterDS.subscribe(function(values) {
 
 filters.CustomerVal = ko.observableArray()
 filters.CustomerVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(CUSTOMER)
 })
 filters.CustomerDS = ko.observableArray()
 
 filters.DealNoVal = ko.observableArray()
 filters.DealNoVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(DEALNO)
 })
 filters.DealNoDS = ko.observableArray()
 
 filters.CityVal = ko.observableArray()
 filters.CityVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(CITY)
 })
 filters.CityDS = ko.observableArray()
 
 filters.ProductVal = ko.observableArray()
 filters.ProductVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(PRODUCT)
 })
 filters.ProductDS = ko.observableArray()
 
 filters.BRHeadVal = ko.observableArray()
 filters.BRHeadVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(BRHEAD)
 })
 filters.BRHeadDS = ko.observableArray()
 
 filters.SchemeVal = ko.observableArray()
 filters.SchemeVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(SCHEME)
 })
 filters.SchemeDS = ko.observableArray()
 
 filters.RMVal = ko.observableArray()
 filters.RMVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(RM)
 })
 filters.RMDS = ko.observableArray()
 
@@ -334,7 +349,7 @@ filters.inputRLARangeVal.subscribe(function(values) {
 
 filters.CAVal = ko.observableArray()
 filters.CAVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(CA)
 })
 filters.CADS = ko.observableArray()
 

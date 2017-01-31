@@ -31,40 +31,47 @@ function createFilterUpstream(source, path) {
 }
 
 function applyFilterUpstream(level, vals) {
-	// if (level == CITY)
-	// 	return vals
-	// Filter City
-	vals = _.filter(vals, createFilterUpstream(filters.CityVal(), CITY))
+	if (level != CITY) {
+		// 	return vals
+		// Filter City
+		vals = _.filter(vals, createFilterUpstream(filters.CityVal(), CITY))
+	}
 
-	// if (level == PRODUCT)
-	// 	return vals	
-	// Filter Product
-	vals = _.filter(vals, createFilterUpstream(filters.ProductVal(), PRODUCT))
+	if (level != PRODUCT) {
+		// 	return vals	
+		// Filter Product
+		vals = _.filter(vals, createFilterUpstream(filters.ProductVal(), PRODUCT))
+	}
 
-	// if (level == BRHEAD)
-	// 	return vals
-	// Filter Product
-	vals = _.filter(vals, createFilterUpstream(filters.BRHeadVal(), BRHEAD))
+	if (level != BRHEAD) {
+		// 	return vals
+		// Filter Product
+		vals = _.filter(vals, createFilterUpstream(filters.BRHeadVal(), BRHEAD))
+	}
 
-	// if (level == SCHEME)
-	// 	return vals
-	// Filter Scheme
-	vals = _.filter(vals, createFilterUpstream(filters.SchemeVal(), SCHEME))
+	if (level != SCHEME) {
+		// 	return vals
+		// Filter Scheme
+		vals = _.filter(vals, createFilterUpstream(filters.SchemeVal(), SCHEME))
+	}
 
-	// if (level == RM)
-	// 	return vals
-	// Filter RM
-	vals = _.filter(vals, createFilterUpstream(filters.RMVal(), RM))
+	if (level != RM) {
+		// 	return vals
+		// Filter RM
+		vals = _.filter(vals, createFilterUpstream(filters.RMVal(), RM))
+	}
 
-	// if (level == CA)
-	// 	return vals
-	// Filter CA
-	vals = _.filter(vals, createFilterUpstream(filters.CAVal(), CA))
+	if (level != CA) {
+		// 	return vals
+		// Filter CA
+		vals = _.filter(vals, createFilterUpstream(filters.CAVal(), CA))
+	}
 
-	// if (level == CUSTOMER)
-	// 	return vals
-	// Filter Customer
-	vals = _.filter(vals, createFilterUpstream(filters.CustomerVal(), CUSTOMER))
+	if (level != CUSTOMER) {
+		// 	return vals
+		// Filter Customer
+		vals = _.filter(vals, createFilterUpstream(filters.CustomerVal(), CUSTOMER))
+	}
 
 	return vals
 }
@@ -263,29 +270,29 @@ function applyDisableFilter() {
 }
 
 function reapplyFilter(without) {
-	if (without != CITY)
-		applyFilterCityDS()
+	// if (without != CITY)
+	applyFilterCityDS()
 	
-	if (without != PRODUCT)
-		applyFilterProductDS()
+	// if (without != PRODUCT)
+	applyFilterProductDS()
 	
-	if (without != BRHEAD)
-		applyFilterBRHeadDS()
+	// if (without != BRHEAD)
+	applyFilterBRHeadDS()
 	
-	if (without != SCHEME)
-		applyFilterSchemeDS()
+	// if (without != SCHEME)
+	applyFilterSchemeDS()
 	
-	if (without != RM)
-		applyFilterRMDS()
+	// if (without != RM)
+	applyFilterRMDS()
 	
-	if (without != CA)
-		applyFilterCADS()
+	// if (without != CA)
+	applyFilterCADS()
 	
-	if (without != CUSTOMER)
-		applyFilterCustDS()
+	// if (without != CUSTOMER)
+	applyFilterCustDS()
 
-	if (without != DEALNO)
-		applyFilterDealNoDS()
+	// if (without != DEALNO)
+	applyFilterDealNoDS()
 
 	applyDisableFilter()
 }

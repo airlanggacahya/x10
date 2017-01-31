@@ -47,6 +47,17 @@
     $('#accordion').on('hidden.bs.collapse', toggleChevron);
     $('#accordion').on('shown.bs.collapse', toggleChevron);
 
+    function SecUnsec(container, options){
+      $('<input data-text-field="text" data-value-field="value" data-bind="value:' + options.field + '"/>')
+          .appendTo(container)
+          .kendoDropDownList({
+            dataTextField: 'text',
+            dataValueField: 'val',
+            dataSource: [{text: 'Secure', val: 'Secure'},{text: 'Unsecure', val: 'Unsecure'}],
+            optionLabel: 'Select one',
+          })
+    }
+
     $(document).ready(function(){
             $(".grid1").kendoGrid({
                 // dataSource: {
@@ -78,7 +89,7 @@
                     { field: "Tenure", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Tenure", width: "120px", editor: info.Tenure },
                     { field: "MonthlyInstallment", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Monthly Installment", width: "120px", editor: info.MonthlyInstallment },
                     { field: "OutstandingAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Outstanding Amount", width: "120px", editor: info.Outstanding },
-                    { field: "SecuredUnsecured", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", width: "120px" },
+                    { field: "SecuredUnsecured", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", width: "120px", editor: SecUnsec},
                     { headerAttributes: { "class": "sub-bgcolor" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid1(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
                     ],                
                 editable: {

@@ -236,7 +236,7 @@
           </div>
 
           <div class="form-group col-sm-12">
-            <label for="inputEmail3" class="col-sm-4 form-control-label">Requested Loan Amount (Rs.) :</label>
+            <label for="inputEmail3" class="col-sm-4 form-control-label">Requested Loan Amount <br>(Rs.) : </label>
             <div class="col-sm-8">
               <input type="text" id="AmountLoan" class="form-control input-sm" data-bind="value:customerprofile().ApplicantDetail().AmountLoan"/>
             </div>
@@ -293,7 +293,8 @@
       <div class="row">
         <div class="col-sm-12" data-bind="foreach: ApplicantDetail.Detail">
           <div class="col-sm-4 well well-sm">
-            <h4 data-bind="text:Title"></h4>
+            <img src="/static/img/sign-check.svg" class="pull-right" style="padding-top: 5px;height: 23px;" data-bind="visible: ApplicantDetail.Detail()[$index()].CorrespondeceAddress == 'YES'"><h5 style="font-weight: bold;" data-bind="text:Title"></h5>
+
 
             <!-- <input type="hidden" data-bind="value:Id"> -->
 

@@ -729,7 +729,7 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 
 	if len(payload.Get("dealno").([]interface{})) > 0 {
 		filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", payload.Get("dealno").([]interface{})...))
-		filtersAD = append(filtersAD, dbox.In("dealno", payload.Get("dealno").([]interface{})...))
+		// filtersAD = append(filtersAD, dbox.In("dealno", payload.Get("dealno").([]interface{})...))
 	}
 
 	q := cn.NewQuery()
@@ -739,7 +739,6 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 	}
 
 	//get data grid
-
 	csr, e := q.
 		From("AccountDetails").
 		// Order(SORT).
@@ -767,7 +766,7 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		dealnos = append(dealnos, val.GetString("dealno"))
 	}
 
-	if len(filtersAD) > 0 && len(resultsAD) > 0 {
+	if len(filtersAD) > 0 {
 		filtersCA = append(filtersCA, dbox.In("applicantdetail.CustomerID", customerids...))
 		filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
 	}

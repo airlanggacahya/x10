@@ -48,14 +48,14 @@
     $('#accordion').on('shown.bs.collapse', toggleChevron);
 
     function SecUnsec(container, options){
-      $('<input data-text-field="text" data-value-field="val" data-bind="value:' + options.field + '"/>')
+      $('<input data-bind="value:' + options.field + '"/>')
           .appendTo(container)
           .kendoDropDownList({
-            dataTextField: 'text',
-            dataValueField: 'val',
-            dataSource: [{text: 'Secure', val: 'Secure'},{text: 'Unsecure', val: 'Unsecure'}],
+            // dataTextField: 'text',
+            // dataValueField: 'value',
+            dataSource: ['Secure','Unsecure', 'Partially Secured', 'Others'],
             optionLabel: 'Select one',
-          })
+          });
     }
 
     $(document).ready(function(){

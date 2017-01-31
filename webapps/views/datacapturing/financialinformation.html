@@ -48,7 +48,7 @@
     $('#accordion').on('shown.bs.collapse', toggleChevron);
 
     function SecUnsec(container, options){
-      $('<input data-text-field="text" data-value-field="value" data-bind="value:' + options.field + '"/>')
+      $('<input data-text-field="text" data-value-field="val" data-bind="value:' + options.field + '"/>')
           .appendTo(container)
           .kendoDropDownList({
             dataTextField: 'text',

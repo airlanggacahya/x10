@@ -30,8 +30,16 @@ var info = {
 
 positionList = ko.observableArray([])
 designationList = ko.observableArray([])
-
 selectedPosition = ko.observableArray(["DirectorPromoter"])
+instrumentTypeList = [
+    {text: "Cheque", value: "Cheque"},
+    {text: "Net banking", value: "NetBanking"},
+    {text: "SI", value: "SI"},
+    {text: "Credit / Debit Card", value: "CreditDebitCard"},
+    {text: "ECS", value: "ECS"},
+    {text: "Others", value: "Others"},
+];
+
 
 info.scroll = function(){
   var elementPosition = $('.btnFixed').offset();

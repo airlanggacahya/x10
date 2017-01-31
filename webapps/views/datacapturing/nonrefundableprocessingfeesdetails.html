@@ -20,8 +20,8 @@
           <div class="form-group col-sm-12">
             <label for="inputPassword3" class="col-sm-4 form-control-label">Instrument Type :</label>
             <div class="col-sm-8">
-            <!--   <select class="form-control input-sm" id="d" data-bind="kendoDropDownList:{data: DataTransaction.instrumentTypeList, value: DataTransaction.instrumenttype, optionLabel: 'select One' }"></select> -->
-              <input type="text" id="InstrumentType" class="form-control input-sm" id="d" data-bind="value: customerprofile().NonRefundableProcessingFeesDetails.InstrumentType">
+              <select class="form-control input-sm ndisable" id="InstrumentType" data-bind="kendoDropDownList:{data: instrumentTypeList, value: customerprofile().NonRefundableProcessingFeesDetails.InstrumentType, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One' }"></select>
+              <!-- <input type="text" id="InstrumentType" class="form-control input-sm" id="d" data-bind="value: customerprofile().NonRefundableProcessingFeesDetails.InstrumentType"> -->
             </div>
           </div>
 

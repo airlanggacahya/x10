@@ -293,7 +293,7 @@ intrtr.loadGrid = function(){
 	});
   
 
-
+	$("#unselect").html("");
     $("#unselect").kendoGrid({
         dataSource : data2,
         columns:[
@@ -468,23 +468,18 @@ intrtr.loadGrid = function(){
 	// });
 }
 
-intrtr.dataTopGridScroll = function(){	
-	var colspan = $("#topgrid thead").find("th").length;
-	console.log(colspan);
-	$("#topgrid[data-role='grid'] tbody").html("<tr><td class='bgwhite' colspan='" + colspan + "'></td></tr>");
-    var grid = $("#topgrid").data("kendoGrid");
-    grid.thead.closest(".k-grid-header-wrap").scrollLeft(0);
-    grid.table.width($("#topgrid thead").width());          
-    $(".k-grid-content").height(3 * kendo.support.scrollbar());
+intrtr.dataTopGridScroll = function(e){	
+	  if (e.sender.dataSource.view().length === 0) {
+	  	$("#topgrid .k-grid-content.k-auto-scrollable").css("overflow","hidden");
+	  	$("#topgrid .k-grid-header-wrap.k-auto-scrollable").css("overflow","scroll");
+	  }
 }
 
-intrtr.dataUnselectScroll = function(){	
-	var colspan2 = $("#unselect thead").find("th").length;
-	$("#unselect[data-role='grid'] tbody").html("<tr><td class='bgwhite' colspan='" + colspan2 + "'></td></tr>");
-    var grid2 = $("#unselect").data("kendoGrid");
-    grid2.thead.closest(".k-grid-header-wrap").scrollLeft(0);
-    grid2.table.width($("#topgrid thead").width());          
-    $(".k-grid-content").height(3 * kendo.support.scrollbar());
+intrtr.dataUnselectScroll = function(e){	
+	 if (e.sender.dataSource.view().length === 0) {
+	  	$("#unselect .k-grid-content.k-auto-scrollable").css("overflow","hidden");
+	  	$("#unselect .k-grid-header-wrap.k-auto-scrollable").css("overflow","scroll");
+	  }
 }
 
 intrtr.getConfirmed = function(status, isfreeze){
@@ -549,5 +544,22 @@ $(function(){
 	$('.collapsibleDue').collapsible({
       accordion : true
     });
+
+	if(parse("scrolltoinp") != "Not found"){
+	  // var topi = $('input[id="'+parse("scrolltoinp")+'"]:eq(0)').offset();
+	  var topi = $('#'+parse("scrolltoinp")).offset().top;
+    var valueScroll
+    if (topi > 400){
+    	valueScroll = valueScroll - 400
+    }else {
+    	valueScroll = 400;
+    }
+    setTimeout(function() {
+    	$('body').animate({
+      	scrollTop: valueScroll
+  		})
+    }, 5000);
+    
+  }
 
 });

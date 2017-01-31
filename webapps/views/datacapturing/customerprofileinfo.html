@@ -237,6 +237,8 @@ function refreshdata(accountdetailsMaster){
       if (ApplicantDetail.Detail().length > 0 ){
         ApplicantDetail.Detail([]);
       }
+
+      info.ifEmpty()
       ApplicantDetail.Detail.push(data[0].ApplicantDetail.RegisteredAddress);
       ApplicantDetail.Detail.push(data[0].ApplicantDetail.AddressCorrespondence);
       ApplicantDetail.Detail.push(data[0].ApplicantDetail.SiteWorkAddress);

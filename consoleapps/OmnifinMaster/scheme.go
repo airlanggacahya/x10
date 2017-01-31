@@ -1,10 +1,6 @@
 package main
 
-import (
-	"fmt"
-
-	tk "github.com/eaciit/toolkit"
-)
+import tk "github.com/eaciit/toolkit"
 
 // transformScheme save additional information specific for master Scheme
 func transformScheme(in tk.M) tk.M {
@@ -13,7 +9,7 @@ func transformScheme(in tk.M) tk.M {
 	p.Set("productId", in.GetString("productId"))
 	p.Set("schemeId", in.GetString("schemeId"))
 	p.Set("schemeDesc", in.GetString("schemeDesc"))
-	p.Set("name", fmt.Sprintf("%s - %s", in.GetString("productId"), in.GetString("schemeDesc")))
+	p.Set("name", in.GetString("schemeDesc"))
 
 	return p
 }
@@ -21,6 +17,8 @@ func transformScheme(in tk.M) tk.M {
 // SaveScheme transform remote data master scheme desc into master account detail
 func SaveScheme(data interface{}) error {
 	newScheme := TransformMaster("schemeMasterList", data, transformScheme)
+	// remove duplicate
+	newScheme = removeDuplicateStringField(newScheme, "name")
 	// debug
 	// tk.Printfn("%v", newProduct)
 	err := SaveMasterAccountDetail("Scheme", newScheme)

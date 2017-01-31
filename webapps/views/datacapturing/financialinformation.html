@@ -141,12 +141,62 @@
                     // height: 350,
                     toolbar: ["create"],
                     scrolable : true,
-                    columns: [
-                        { field: "LoanNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Loan No.", format: "{0:c}", width: "120px" },
-                        { field: "TypeOfLoan", headerAttributes: { "class": "sub-bgcolor" }, title: "Type of Loan", width: "120px" },
-                        { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, title: "Loan Amount", format: "{0:n0}", width: "120px" ,   "attributes":{ class:"align-right", style: "text-align: right;"}, },
-                        { field: "Payment", headerAttributes: { "class": "sub-bgcolor" }, title: "Payment", format: "{0:n0}", width: "120px" ,   "attributes":{ class:"align-right", style: "text-align: right;"}, },
-                        ],
+                    columns: [{
+                         field: "LoanNo",
+                         headerAttributes: {
+                             "class": "sub-bgcolor"
+                         },
+                         title: "Loan No.",
+                         format: "{0:c}",
+                         width: "120px"
+                     },
+                     {
+                         field: "TypeOfLoan",
+                         headerAttributes: {
+                             "class": "sub-bgcolor"
+                         },
+                         title: "Type of Loan",
+                         width: "120px"
+                     },
+                     {
+                         field: "LoanAmount",
+                         headerAttributes: {
+                             "class": "sub-bgcolor"
+                         },
+                         title: "Loan Amount (Rs.)",
+                         format: "{0:n0}",
+                         width: "120px",
+                         "attributes": {
+                             class: "align-right",
+                             style: "text-align: right;"
+                         },
+                         template:function(dt){
+                          if(dt.LoanAmount == null){
+                            return "";
+                          }
+                          return app.formatnum(dt.LoanAmount)
+                        },
+                     },
+                     {
+                         field: "Payment",
+                         headerAttributes: {
+                             "class": "sub-bgcolor"
+                         },
+                         title: "Payment (Rs.)",
+                         format: "{0:n0}",
+                         width: "120px",
+                         "attributes": {
+                             class: "align-right",
+                             style: "text-align: right;"
+                         },
+                         template:function(dt){
+                          if(dt.Payment == null){
+                            return "";
+                          }
+                          return app.formatnum(dt.Payment)
+                        },
+                     },
+                 ],
                     editable: "inline",
                 });
         });

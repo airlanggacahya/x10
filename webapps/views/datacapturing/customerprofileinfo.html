@@ -697,13 +697,14 @@ function save1(){
   var grid2 = $(".grid2").data("kendoGrid").dataSource.data();
   customerprofile().FinancialReport().DetailsPertainingBanker = []
   $.each(grid2, function(i, data){
+    console.log(parseInt(moment(data.YearOpening).format("YYYY")))
     customerprofile().FinancialReport().DetailsPertainingBanker.push({
       AcNo : data.AcNo,
       AddressContactNo: data.AddressContactNo,
       NameOfBanks: data.NameOfBanks,
       SrNo: data.SrNo,
       TypeOfAc : (data.TypeOfAc).toString(),
-      YearOpening: parseInt(data.YearOpening)
+      YearOpening: (data.YearOpening != null || data.YearOpening != undefined || data.YearOpening != "" || !isNaN(data.YearOpening))? parseInt(moment(data.YearOpening).format("YYYY")):""
     })
   });
   
@@ -789,7 +790,7 @@ function save(){
       NameOfBanks: data.NameOfBanks,
       SrNo: data.SrNo,
       TypeOfAc : data.TypeOfAc,
-      YearOpening: data.YearOpening
+      YearOpening: (data.YearOpening != null || data.YearOpening != undefined || data.YearOpening != "" || !isNaN(data.YearOpening))? parseInt(moment(data.YearOpening).format("YYYY")):""
     })
   });
   

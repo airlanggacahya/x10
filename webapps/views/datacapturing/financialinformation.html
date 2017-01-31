@@ -218,6 +218,7 @@
                           AddressContactNo:{type: "text", editable: true, nullable: true},
                           AcNo:{type: "text", editable: true, nullable: true},
                           TypeOfAc:{type: "text", editable: true, nullable: true},
+                          YearOpening: {type: "text", editable: true, nullable: true}
                         }
                       }
                     },
@@ -229,7 +230,7 @@
                         { field: "AddressContactNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Address & Contact No.",width: "120px" },
                         { field: "AcNo", headerAttributes: { "class": "sub-bgcolor" }, title: "A/c. No", width: "120px" },
                         { field: "TypeOfAc", headerAttributes: { "class": "sub-bgcolor" }, title: "Type Of A/c", width: "120px"},
-                        { field: "YearOpening", headerAttributes: { "class": "sub-bgcolor" }, title: "Year Of Opening",  width: "120px" },
+                        { field: "YearOpening", headerAttributes: { "class": "sub-bgcolor" }, title: "Year Of Opening",  width: "120px", format : "{0:yyyy}", editor: dateeditor },
                         { headerAttributes: { "class": "sub-bgcolor del" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid2(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
                         ],
                     editable: {
@@ -310,5 +311,29 @@
                     editable: "inline",
                 });
         });
+
+
+//editor
+function dateeditor(container,options){
+    var temp = ""
+    if(options.model.YearOpening == null) {
+      temp = ""
+    } else {
+      temp = new Date(options.model.YearOpening+"-01-01")
+    }
+      
+    options.model.YearOpening = temp
+    
+    $('<input class="dtp" data-bind="value: '+options.field+'">')
+        .appendTo(container);
+
+    $(".dtp").kendoDatePicker({
+      value: temp,
+      start: "decade",
+      depth: "decade",
+      format: "yyyy"  
+    });
+    //$(".dtp").attr("readonly", true);
+}
 
 </script>

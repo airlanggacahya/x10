@@ -140,7 +140,7 @@ type RegisteredAddress struct {
 	AreaOfPlotRegistered              string `bson:"AreaOfPlotRegistered"`
 	BuiltUpAreaRegistered             string `bson:"BuiltUpAreaRegistered"`
 	AddressType                       string `bson:"AddressType,omitempty"`
-	CorrespondeceAddress              string `bson:"CorrespondeceAddress,omitempty"`
+	CorrespondeceAddress              string `bson:"CorrespondeceAddress"`
 }
 
 type AddressCorrespondence struct {
@@ -160,7 +160,7 @@ type AddressCorrespondence struct {
 	LandmarkRegistered                string `bson:"LandmarkRegistered,omitempty"`
 	PincodeRegistered                 string `bson:"PincodeRegistered,omitempty"`
 	AddressType                       string `bson:"AddressType,omitempty"`
-	CorrespondeceAddress              string `bson:"CorrespondeceAddress,omitempty"`
+	CorrespondeceAddress              string `bson:"CorrespondeceAddress"`
 }
 
 type SiteWorkAddress struct {
@@ -180,7 +180,7 @@ type SiteWorkAddress struct {
 	LandmarkRegistered                string `bson:"LandmarkRegistered,omitempty"`
 	PincodeRegistered                 string `bson:"PincodeRegistered,omitempty"`
 	AddressType                       string `bson:"AddressType,omitempty"`
-	CorrespondeceAddress              string `bson:"CorrespondeceAddress,omitempty"`
+	CorrespondeceAddress              string `bson:"CorrespondeceAddress"`
 }
 
 type PreviousLoansDetail struct {
@@ -221,7 +221,7 @@ type Biodata struct {
 	Promotor               interface{}     `bson:"Promotor"`
 	Director               interface{}     `bson:"Director"`
 	Education              string          `bson:"Education"`
-	Designation            string          `bson:"Designation"`
+	Designation            []string        `bson:"Designation"`
 	PAN                    string          `bson:"PAN"`
 	Position               []string        `bson:"Position,omitempty"`
 	Address                string          `bson:"Address"`
@@ -320,7 +320,7 @@ type BiodataGen struct {
 	Promotor               interface{}     `bson:"Promotor"`
 	Director               interface{}     `bson:"Director"`
 	Education              interface{}     `bson:"Education"`
-	Designation            interface{}     `bson:"Designation"`
+	Designation            []string        `bson:"Designation"`
 	PAN                    interface{}     `bson:"PAN"`
 	Position               []string        `bson:"Position,omitempty"`
 	Address                interface{}     `bson:"Address"`
@@ -356,6 +356,7 @@ type RegisteredAddressGen struct {
 	ValueRegistered                   interface{} `bson:"ValueRegistered,omitempty"`
 	LandmarkRegistered                interface{} `bson:"LandmarkRegistered,omitempty"`
 	PincodeRegistered                 interface{} `bson:"PincodeRegistered,omitempty"`
+	CorrespondeceAddress              string      `bson:"CorrespondeceAddress"`
 }
 
 type DetailsPertainingBankerGen struct {

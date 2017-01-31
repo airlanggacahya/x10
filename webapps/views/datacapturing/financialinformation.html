@@ -316,7 +316,8 @@
 //editor
 function dateeditor(container,options){
     var temp = ""
-    if(options.model.YearOpening == null) {
+    console.log(options.model.YearOpening)
+    if(options.model.YearOpening == "") {
       temp = ""
     } else {
       temp = new Date(options.model.YearOpening+"-01-01")
@@ -324,15 +325,14 @@ function dateeditor(container,options){
       
     options.model.YearOpening = temp
     
-    $('<input class="dtp" data-bind="value: '+options.field+'">')
-        .appendTo(container);
-
-    $(".dtp").kendoDatePicker({
-      value: temp,
-      start: "decade",
-      depth: "decade",
-      format: "yyyy"  
-    });
+    $('<input data-bind="value: '+options.field+'">')
+        .appendTo(container)
+        .kendoDatePicker({
+          value: temp,
+          start: "decade",
+          depth: "decade",
+          format: "yyyy"  
+        });
     //$(".dtp").attr("readonly", true);
 }
 

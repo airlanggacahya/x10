@@ -707,7 +707,11 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		}
 	}
 
-	if logindate, e := time.Parse("2006-01-02", payload.GetString("logindate")); e == nil {
+	input := payload.GetString("logindate")
+	if len(input) >= 10 {
+		input = input[:10]
+	}
+	if logindate, e := time.Parse("2006-01-02", input); e == nil {
 		filtersAD = append(filtersAD, dbox.Gte("accountsetupdetails.logindate", logindate))
 		filtersAD = append(filtersAD, dbox.Lt("accountsetupdetails.logindate", logindate.AddDate(0, 0, 1)))
 	}

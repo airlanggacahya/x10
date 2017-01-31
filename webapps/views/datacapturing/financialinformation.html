@@ -10,7 +10,7 @@
     <div class="panel-body">
       <div class="row" style="padding: 25px; margin-top: -40px;">
         <div>
-          <button id="btn1" class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" onclick = "info.addPreviousLoanDetails()">Add <span class="fa fa-plus"></i></button>
+          <button id="btn1" class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" onclick = "info.addPreviousLoanDetails()">Add</button>
         </div>
         <div class="grid1"></div>
       </div>
@@ -21,7 +21,7 @@
     <div class="panel-body">
       <div class="row" style="padding: 25px; margin-top: -40px;">
         <div>
-          <button class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" class="fa fa-plus" onclick="info.addDetailsPertainingtoBankers()">Add <i class="fa fa-plus"></i></button>
+          <button class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" class="fa fa-plus" onclick="info.addDetailsPertainingtoBankers()">Add </button>
         </div>
         <div class="grid2"></div>
       </div>
@@ -71,16 +71,101 @@
                 },
                 toolbar: ["create"],
                 scrolable : true,
-                columns: [
-                    { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", width: "120px" },
-                    { field: "BanksFls", headerAttributes: { "class": "sub-bgcolor" }, title: "Banks/Fls", width: "120px" },
-                    { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Loan Amount", width: "120px",editor: info.LoanAmount, },
-                    { field: "Tenure", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Tenure", width: "120px", editor: info.Tenure },
-                    { field: "MonthlyInstallment", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Monthly Installment", width: "120px", editor: info.MonthlyInstallment },
-                    { field: "OutstandingAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Outstanding Amount", width: "120px", editor: info.Outstanding },
-                    { field: "SecuredUnsecured", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", width: "120px" },
-                    { headerAttributes: { "class": "sub-bgcolor" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid1(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
-                    ],                
+                columns: [{
+                    field: "SrNo",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "Sr. No.",
+                    width: "120px"
+                },
+                {
+                    field: "BanksFls",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "Banks/Fls",
+                    width: "120px"
+                },
+                {
+                    field: "LoanAmount",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Loan Amount (Rs.)",
+                    width: "120px",
+                    editor: info.LoanAmount,
+                    template:function(dt){
+                        if(dt.LoanAmount == null){
+                          return "";
+                        }
+                        return app.formatnum(dt.LoanAmount)
+                      },                  
+                },
+                {
+                    field: "Tenure",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Tenure",
+                    width: "120px",
+                    editor: info.Tenure
+                },
+                {
+                    field: "MonthlyInstallment",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Monthly Installment",
+                    width: "120px",
+                    editor: info.MonthlyInstallment
+                },
+                {
+                    field: "OutstandingAmount",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Outstanding Amount (Rs.)",
+                    width: "120px",
+                    editor: info.Outstanding,
+                    template:function(dt){
+                        if(dt.OutstandingAmount == null){
+                          return "";
+                        }
+                        return app.formatnum(dt.OutstandingAmount)
+                      },                   
+                },
+                {
+                    field: "SecuredUnsecured",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "Secured/Unsecured",
+                    width: "120px"
+                },
+                {
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "",
+                    width: "30px",
+                    template: function(d) {
+                        return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid1(\"" + d.uid + "\")'><i class='fa fa-trash'></i></button></center>"
+                    }
+                },
+            ],               
                 editable: {
                   createAt: "bottom"
                 },

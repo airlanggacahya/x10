@@ -535,7 +535,7 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 
 	if len(payload.Get("city").([]interface{})) > 0 {
 		filtersCA = append(filtersCA, dbox.In("applicantdetail.registeredaddress.CityRegistered", payload.Get("city").([]interface{})...))
-		filtersAD = append(filtersAD, dbox.In("accountsetupdetails.cityname", payload.Get("city").([]interface{})...))
+		// filtersAD = append(filtersAD, dbox.In("accountsetupdetails.cityname", payload.Get("city").([]interface{})...))
 	}
 
 	if len(payload.Get("product").([]interface{})) > 0 {

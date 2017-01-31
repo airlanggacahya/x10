@@ -456,6 +456,7 @@ databrowser.fullcoll = [
  },
  {
  	title : "Financial Information",
+ 	headerTemplate : "Financial<br>Information",
  	columns : [
  	{
  		title : "Existing Relationship Details",
@@ -463,8 +464,8 @@ databrowser.fullcoll = [
  			return "<center><a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Show More</a></center>"
  		},
 		width : 120,
-		headerTemplate : "Existing Relationship </br>Details",
-	headerAttributes: { "class": "sub-bgcolor" },
+		headerTemplate : "Existing<br>Relationship Details",
+		headerAttributes: { "class": "sub-bgcolor" },
  	},
  	],
 	headerAttributes: { "class": "sub-bgcolor" },

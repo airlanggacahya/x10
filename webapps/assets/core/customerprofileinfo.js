@@ -342,6 +342,21 @@ info.addDetailsPertainingtoBankers = function(){
     
 }
 
+info.ifEmpty = function(){
+    var grid1 = $(".grid1").data("kendoGrid").dataSource.data();
+    var grid2 = $(".grid2").data("kendoGrid").dataSource.data();
+    var temp1 = ko.mapping.toJS(info.templateGrid1);
+    var temp2 = ko.mapping.toJS(info.templateGrid2);
+
+    if(grid1.length == 0){
+        grid1.push(temp1);
+    }
+
+    if(grid2.length == 0){
+        grid2.push(temp2)
+    }
+}
+
 // info.addExistingRelationship = function(){
 //     var b = $('.grid3 .k-grid-content').height();
 //     var data = $(".grid3").data("kendoGrid").dataSource.data();

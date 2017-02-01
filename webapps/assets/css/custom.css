@@ -245,3 +245,7 @@ body, label, div {
 .k-dropdown-wrap.k-state-default{
   height: 27px !important;
 }
+
+.k-widget.k-dropdown.k-header.form-control.input-sm {
+	height: 27px !important;
+}

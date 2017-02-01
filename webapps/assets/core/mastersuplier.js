@@ -18,7 +18,20 @@ ms.loadGridSuplier = function(){
 	console.log(ms.suplierData())
 	$("#suplier").html("");
 	$("#suplier").kendoGrid({
-		dataSource: ms.suplierData(),
+		dataSource: {
+			data: ms.suplierData(),
+			schema:{
+				model:{
+					id: "Name",
+					fields: {
+						Name:{editable: true, validation: { required: true }},
+						UseInAD:{editable: false},
+						FromOmnifin:{editable: false},
+					}
+				}
+			},
+		},
+		
 		navigatable: true,
 		scrolable: true,
 		height: 400,
@@ -28,12 +41,7 @@ ms.loadGridSuplier = function(){
 				title: "Name",
 				headerAttributes: {"class" : "sub-bgcolor"},
 				width: 300,
-				template: function(d){
-					if(d.Name == ""){
-						return "<input type='text' id='"+d.uid+"'' style='width: 98%;' />"
-					}
-					return d.Name
-				},
+
 			},
 			{
 				field: "UseInAD",
@@ -72,9 +80,11 @@ ms.loadGridSuplier = function(){
 					}
 					return ""
 				},
-				width: 100,
+				width: 50,
 			},
-		]
+		],
+		editable: true,
+		resizeable: true,
 	});
 }
 

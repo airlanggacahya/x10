@@ -90,6 +90,7 @@ func init() {
 	app.Register(&UatDocumentsController{baseCtrl})
 	app.Register(&CibilCompanyController{baseCtrl})
 	app.Register(&MasterSuplierController{baseCtrl})
+	app.Register(&DealSetUpController{baseCtrl})
 
 	app.Static("static", wd+"assets")
 	app.LayoutTemplate = "_layout.html"

@@ -76,7 +76,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	LogData.Set("xmlstring", string(bs))
 	CreateLog(LogData)
 
-	// TODO: Check and analyze CleaningXMLText function
+	// Source xml is not escaped
 	xmlstr := strings.NewReader(CleaningXMLText(string(bs)))
 
 	// Convert to JSON
@@ -182,9 +182,11 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		Save()
 
 	csc = map[string]interface{}{"data": map[string]interface{}{
-		"CustomerProfile": cp,
-		"AccountDetails":  ad,
-		"InternalRTR":     irtr,
+		"_id":             bson.NewObjectId(),
+		"customerprofile": cp,
+		"accountdetails":  ad,
+		"internalrtr":     irtr,
+		"info":            BuildInfo(),
 	}}
 	err = qAccountSetup.Exec(csc)
 	if err != nil {
@@ -195,6 +197,33 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	LogData.Set("iscomplete", true)
 	CreateLog(LogData)
 	return res
+}
+
+func BuildInfo() tk.M {
+	infoNA := tk.M{
+		"updateTime": time.Now(),
+		"status":     "NA",
+	}
+
+	infoQueue := tk.M{
+		"updateTime": time.Now(),
+		"status":     "In queue",
+	}
+
+	info := tk.M{
+		"myInfo":    infoQueue,
+		"caInfo":    infoNA,
+		"cibilInfo": infoNA,
+		"bsiInfo":   infoNA,
+		"sdbInfo":   infoNA,
+		"adInfo":    infoNA,
+		"baInfo":    infoNA,
+		"ertrInfo":  infoNA,
+		"irtrInfo":  infoNA,
+		"ddInfo":    infoNA,
+	}
+
+	return info
 }
 
 var ErrorStatusNotZero = errors.New("Status Not Zero")

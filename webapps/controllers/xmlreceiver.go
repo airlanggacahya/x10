@@ -187,7 +187,6 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		"accountdetails":  ad,
 		"internalrtr":     irtr,
 		"info":            BuildInfo(),
-		"updateTime":      time.Now(),
 	}}
 	err = qDealSetup.Exec(csc)
 	if err != nil {
@@ -212,16 +211,16 @@ func BuildInfo() tk.M {
 	}
 
 	info := tk.M{
-		"myInfo":    infoQueue,
-		"caInfo":    infoNA,
-		"cibilInfo": infoNA,
-		"bsiInfo":   infoNA,
-		"sbdInfo":   infoNA,
-		"adInfo":    infoNA,
-		"baInfo":    infoNA,
-		"ertrInfo":  infoNA,
-		"irtrInfo":  infoNA,
-		"ddInfo":    infoNA,
+		"myInfo":    []tk.M{infoQueue},
+		"caInfo":    []tk.M{infoNA},
+		"cibilInfo": []tk.M{infoNA},
+		"bsiInfo":   []tk.M{infoNA},
+		"sbdInfo":   []tk.M{infoNA},
+		"adInfo":    []tk.M{infoNA},
+		"baInfo":    []tk.M{infoNA},
+		"ertrInfo":  []tk.M{infoNA},
+		"irtrInfo":  []tk.M{infoNA},
+		"ddInfo":    []tk.M{infoNA},
 	}
 
 	return info

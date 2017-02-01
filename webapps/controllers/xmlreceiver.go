@@ -176,8 +176,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	}
 
 	// Save Account Setup
-	qAccountSetup := conn.NewQuery().
-		From("AccountSetup").
+	qDealSetup := conn.NewQuery().
+		From("DealSetup").
 		SetConfig("multiexec", true).
 		Save()
 
@@ -187,8 +187,9 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		"accountdetails":  ad,
 		"internalrtr":     irtr,
 		"info":            BuildInfo(),
+		"updateTime":      time.Now(),
 	}}
-	err = qAccountSetup.Exec(csc)
+	err = qDealSetup.Exec(csc)
 	if err != nil {
 		fmt.Print(err.Error())
 		return resFail

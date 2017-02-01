@@ -502,7 +502,7 @@ var promoterBackground = function(param) {
                     return;
                 }
             })
-            // console.log(i,"ww",b);
+            console.log(i,"ww",b);
             t.name.values.push((b.Name != "") ? b.Name : "-");
             t.designation.values.push((b.Designation != "") ? b.designation : "-");
             t.dateOfBirth.values.push(moment(b.DateOfBirth).format("DD-MM-YYYY"));

@@ -351,6 +351,7 @@ function refreshdata(accountdetailsMaster){
 
       if(parse("scrollto") != "Not found"){
                var topi = $($("#tab0 div:contains('"+ parse("scrollto") +"')")[$("#tab0 div:contains('"+ parse("scrollto") +"')").length -1]).offset().top;
+
                 $('body').animate({
                   scrollTop: topi - 330
                 })
@@ -358,6 +359,7 @@ function refreshdata(accountdetailsMaster){
 
       if(parse("scrolltoinp") != "Not found"){
                var topi = $('input[id="'+parse("scrolltoinp")+'"]:eq(0)').offset().top;
+               console.log(topi)
                 $('body').animate({
                   scrollTop: topi - 400
                 })

@@ -97,9 +97,11 @@ ms.checkedADSuplier = function(d, uid){
 ms.saveMasterSuplier = function(){
 	ms.suplierDataTemp([])
 	var Data = $('#suplier').data('kendoGrid').dataSource.data();
+	var a = 0;
 	$.each(Data, function(i, item){
+
 		if(Data[i].Name == ""){
-			Data[i].Name = $("#"+item.uid).val();
+			a ++;
 		} 
 		ms.suplierDataTemp.push({
 			Id: item._id,
@@ -125,16 +127,20 @@ ms.saveMasterSuplier = function(){
 			FromOmnifin : item.FromOmnifin
 		});
 	});
+	if(a == 0){
+		ajaxPost("/mastersuplier/savemastersuplier", ms.suplierDataTemp(), function(res){
+			if(res.IsError != true){
+				swal("Data Saved Successfully", "", "success");
+				ms.getSuplierData()
+				ms.loadGridSuplier()
+			}else{
+				swal("", res.Message, "error")
+			}
+		});
+	}else{
+		swal("Name can not be blank", "", "warning");
+	}
 	
-	ajaxPost("/mastersuplier/savemastersuplier", ms.suplierDataTemp(), function(res){
-		if(res.IsError != true){
-			swal("Data Saved Successfully", "", "success");
-			ms.getSuplierData()
-			ms.loadGridSuplier()
-		}else{
-			swal("", res.Message, "error")
-		}
-	});
 
 }
 

@@ -216,7 +216,7 @@ func BuildInfo() tk.M {
 		"caInfo":    infoNA,
 		"cibilInfo": infoNA,
 		"bsiInfo":   infoNA,
-		"sdbInfo":   infoNA,
+		"sbdInfo":   infoNA,
 		"adInfo":    infoNA,
 		"baInfo":    infoNA,
 		"ertrInfo":  infoNA,

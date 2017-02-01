@@ -1,0 +1,56 @@
+<script type="text/javascript">
+model.PageTopMenu("{{.TopMenu}}");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+model.Rolename= ko.observable('{{.Rolename}}')
+model.Fullname = ko.observable('{{.Fullname}}');
+</script>
+
+<script>document.write('<script src="/static/core/dealsetup-top.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script><script src="/static/core/dealsetup-bottom.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+
+<div class="col-md-12 col-sm-12 ez panel-content">
+	<div class="panel" data-bind="with: setup">
+		<div class="panel-body">
+			<div class="col-md-12">
+				<div class="col-md-4">
+					<div class="form-group col-sm-12 filterhide">
+				     	<label class="col-sm-3 form-control-label">Customer Name</label>
+				     	<div class="col-sm-9">
+					 		<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox">
+					    </div>
+					    <div class="clearfix"></div>
+				    </div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group col-sm-12 filterhide">
+				     	<label class="col-sm-3 form-control-label">Deal No</label>
+				     	<div class="col-sm-9">
+					 		<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox">
+					    </div>
+					    <div class="clearfix"></div>
+				    </div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group col-sm-12 filterhide">
+				     	<button class="btn btn-sm btn-primary btn-flat">Refresh</button>
+				     	<button class="btn btn-sm btn-danger btn-flat">Reset</button>
+				    </div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				{{template "top.html"}}
+			</div>
+			<div class="col-md-12">
+				{{template "bottom.html"}}
+			</div>
+		</div>
+	</div>	
+</div>

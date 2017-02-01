@@ -10,7 +10,7 @@
     <div class="panel-body">
       <div class="row" style="padding: 25px; margin-top: -40px;">
         <div>
-          <button id="btn1" class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" onclick = "info.addPreviousLoanDetails()">Add <span class="fa fa-plus"></i></button>
+          <button id="btn1" class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" onclick = "info.addPreviousLoanDetails()">Add</button>
         </div>
         <div class="grid1"></div>
       </div>
@@ -21,7 +21,7 @@
     <div class="panel-body">
       <div class="row" style="padding: 25px; margin-top: -40px;">
         <div>
-          <button class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" class="fa fa-plus" onclick="info.addDetailsPertainingtoBankers()">Add <i class="fa fa-plus"></i></button>
+          <button class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" class="fa fa-plus" onclick="info.addDetailsPertainingtoBankers()">Add </button>
         </div>
         <div class="grid2"></div>
       </div>
@@ -47,6 +47,17 @@
     $('#accordion').on('hidden.bs.collapse', toggleChevron);
     $('#accordion').on('shown.bs.collapse', toggleChevron);
 
+    function SecUnsec(container, options){
+      $('<input data-bind="value:' + options.field + '"/>')
+          .appendTo(container)
+          .kendoDropDownList({
+            // dataTextField: 'text',
+            // dataValueField: 'value',
+            dataSource: ['Secure','Unsecure', 'Partially Secured', 'Others'],
+            optionLabel: 'Select one',
+          });
+    }
+
     $(document).ready(function(){
             $(".grid1").kendoGrid({
                 // dataSource: {
@@ -71,16 +82,115 @@
                 },
                 toolbar: ["create"],
                 scrolable : true,
-                columns: [
-                    { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", width: "120px" },
-                    { field: "BanksFls", headerAttributes: { "class": "sub-bgcolor" }, title: "Banks/Fls", width: "120px" },
-                    { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Loan Amount", width: "120px",editor: info.LoanAmount, },
-                    { field: "Tenure", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Tenure", width: "120px", editor: info.Tenure },
-                    { field: "MonthlyInstallment", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Monthly Installment", width: "120px", editor: info.MonthlyInstallment },
-                    { field: "OutstandingAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Outstanding Amount", width: "120px", editor: info.Outstanding },
-                    { field: "SecuredUnsecured", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", width: "120px" },
-                    { headerAttributes: { "class": "sub-bgcolor" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid1(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
-                    ],                
+// <<<<<<< HEAD
+                columns: [{
+                    field: "SrNo",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "Sr. No.",
+                    width: "120px"
+                },
+                {
+                    field: "BanksFls",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "Banks/Fls",
+                    width: "120px"
+                },
+                {
+                    field: "LoanAmount",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Loan Amount (Rs.)",
+                    width: "120px",
+                    editor: info.LoanAmount,
+                    template:function(dt){
+                        if(dt.LoanAmount == null){
+                          return "";
+                        }
+                        return app.formatnum(dt.LoanAmount)
+                      },                  
+                },
+                {
+                    field: "Tenure",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Tenure",
+                    width: "120px",
+                    editor: info.Tenure
+                },
+                {
+                    field: "MonthlyInstallment",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Monthly Installment",
+                    width: "120px",
+                    editor: info.MonthlyInstallment
+                },
+                {
+                    field: "OutstandingAmount",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Outstanding Amount (Rs.)",
+                    width: "120px",
+                    editor: info.Outstanding,
+                    template:function(dt){
+                        if(dt.OutstandingAmount == null){
+                          return "";
+                        }
+                        return app.formatnum(dt.OutstandingAmount)
+                      },                   
+                },
+                {
+                    field: "SecuredUnsecured",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "Secured/Unsecured",
+                    width: "120px",
+                    editor: SecUnsec
+                },
+                {
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "",
+                    width: "30px",
+                    template: function(d) {
+                        return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid1(\"" + d.uid + "\")'><i class='fa fa-trash'></i></button></center>"
+                    }
+                },
+            ],               
+// =======
+//                 columns: [
+//                     { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", width: "120px" },
+//                     { field: "BanksFls", headerAttributes: { "class": "sub-bgcolor" }, title: "Banks/Fls", width: "120px" },
+//                     { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Loan Amount", width: "120px",editor: info.LoanAmount, },
+//                     { field: "Tenure", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Tenure", width: "120px", editor: info.Tenure },
+//                     { field: "MonthlyInstallment", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Monthly Installment", width: "120px", editor: info.MonthlyInstallment },
+//                     { field: "OutstandingAmount", headerAttributes: { "class": "sub-bgcolor" }, attributes:{ style: 'text-align: right'}, title: "Outstanding Amount", width: "120px", editor: info.Outstanding },
+//                     { field: "SecuredUnsecured", headerAttributes: { "class": "sub-bgcolor" }, title: "Secured/Unsecured", width: "120px", editor: SecUnsec},
+//                     { headerAttributes: { "class": "sub-bgcolor" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid1(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
+//                     ],                
+// >>>>>>> 9501bc06db00648c1fe09058b5692edddc22c66a
                 editable: {
                   createAt: "bottom"
                 },
@@ -108,6 +218,7 @@
                           AddressContactNo:{type: "text", editable: true, nullable: true},
                           AcNo:{type: "text", editable: true, nullable: true},
                           TypeOfAc:{type: "text", editable: true, nullable: true},
+                          YearOpening: {type: "text", editable: true, nullable: true}
                         }
                       }
                     },
@@ -119,7 +230,7 @@
                         { field: "AddressContactNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Address & Contact No.",width: "120px" },
                         { field: "AcNo", headerAttributes: { "class": "sub-bgcolor" }, title: "A/c. No", width: "120px" },
                         { field: "TypeOfAc", headerAttributes: { "class": "sub-bgcolor" }, title: "Type Of A/c", width: "120px"},
-                        { field: "YearOpening", headerAttributes: { "class": "sub-bgcolor" }, title: "Year Of Opening",  width: "120px" },
+                        { field: "YearOpening", headerAttributes: { "class": "sub-bgcolor" }, title: "Year Of Opening",  width: "120px", format : "{0:yyyy}", editor: dateeditor },
                         { headerAttributes: { "class": "sub-bgcolor del" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid2(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
                         ],
                     editable: {
@@ -141,14 +252,88 @@
                     // height: 350,
                     toolbar: ["create"],
                     scrolable : true,
-                    columns: [
-                        { field: "LoanNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Loan No.", format: "{0:c}", width: "120px" },
-                        { field: "TypeOfLoan", headerAttributes: { "class": "sub-bgcolor" }, title: "Type of Loan", width: "120px" },
-                        { field: "LoanAmount", headerAttributes: { "class": "sub-bgcolor" }, title: "Loan Amount", format: "{0:n0}", width: "120px" ,   "attributes":{ class:"align-right", style: "text-align: right;"}, },
-                        { field: "Payment", headerAttributes: { "class": "sub-bgcolor" }, title: "Payment", format: "{0:n0}", width: "120px" ,   "attributes":{ class:"align-right", style: "text-align: right;"}, },
-                        ],
+                    columns: [{
+                         field: "LoanNo",
+                         headerAttributes: {
+                             "class": "sub-bgcolor"
+                         },
+                         title: "Loan No.",
+                         format: "{0:c}",
+                         width: "120px"
+                     },
+                     {
+                         field: "TypeOfLoan",
+                         headerAttributes: {
+                             "class": "sub-bgcolor"
+                         },
+                         title: "Type of Loan",
+                         width: "120px"
+                     },
+                     {
+                         field: "LoanAmount",
+                         headerAttributes: {
+                             "class": "sub-bgcolor"
+                         },
+                         title: "Loan Amount (Rs.)",
+                         format: "{0:n0}",
+                         width: "120px",
+                         "attributes": {
+                             class: "align-right",
+                             style: "text-align: right;"
+                         },
+                         template:function(dt){
+                          if(dt.LoanAmount == null){
+                            return "";
+                          }
+                          return app.formatnum(dt.LoanAmount)
+                        },
+                     },
+                     {
+                         field: "Payment",
+                         headerAttributes: {
+                             "class": "sub-bgcolor"
+                         },
+                         title: "Payment (Rs.)",
+                         format: "{0:n0}",
+                         width: "120px",
+                         "attributes": {
+                             class: "align-right",
+                             style: "text-align: right;"
+                         },
+                         template:function(dt){
+                          if(dt.Payment == null){
+                            return "";
+                          }
+                          return app.formatnum(dt.Payment)
+                        },
+                     },
+                 ],
                     editable: "inline",
                 });
         });
+
+
+//editor
+function dateeditor(container,options){
+    var temp = ""
+    console.log(options.model.YearOpening)
+    if(options.model.YearOpening == "") {
+      temp = ""
+    } else {
+      temp = new Date(options.model.YearOpening+"-01-01")
+    }
+      
+    options.model.YearOpening = temp
+    
+    $('<input data-bind="value: '+options.field+'">')
+        .appendTo(container)
+        .kendoDatePicker({
+          value: temp,
+          start: "decade",
+          depth: "decade",
+          format: "yyyy"  
+        });
+    //$(".dtp").attr("readonly", true);
+}
 
 </script>

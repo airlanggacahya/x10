@@ -119,9 +119,15 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 }
 .k-grid-content {
 	overflow-y: hidden !important;
+  overflow-x: scroll;
 }
+
 .k-grid-header{
 	padding-right: 0px !important;
+}
+.bgwhite {
+  background: #ffffff !important;
+  border: 0 !important;
 }
 
 </style>
@@ -151,19 +157,19 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 						<div id="accountdetail"></div>
 					</div> -->
 					<div class="col-sm-12">
-						<div class="col-md-8">
+						<div class="col-md-6">
 							<div class="form-group">
-								<label class="col-md-2 form-label align-right">Product </label>
-								<div class="col-md-6">
+								<label class="col-md-3 form-label align-right">Product </label>
+								<div class="col-md-9">
 									<input class="input-sm form-control noable" data-bind="value: Product" readonly />
 								</div>
 								<div class="clearfix"></div>
 							</div>
 						</div>
-						<div class="col-md-8">
+						<div class="col-md-6">
 							<div class="form-group">
-								<label class="col-md-2 form-label align-right">Scheme </label>
-								<div class="col-md-6">
+								<label class="col-md-3 form-label align-right">Scheme </label>
+								<div class="col-md-9">
 									<input class="input-sm form-control noable" data-bind="value: Scheme" readonly/>
 								</div>
 

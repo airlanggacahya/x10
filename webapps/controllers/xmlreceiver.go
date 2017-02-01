@@ -290,6 +290,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 					current.ApplicantDetail.RegisteredAddress.PincodeRegistered = ad.GetString("pincode")
 					current.ApplicantDetail.RegisteredAddress.Ownership = ad.GetString("addressDetailDesc")
 					current.ApplicantDetail.RegisteredAddress.NoOfYearsAtAboveAddressRegistered = ad.GetFloat64("noOfYears")
+					current.ApplicantDetail.RegisteredAddress.CorrespondeceAddress = ad.GetString("communicationAddressDesc")
 				} else if strings.Contains(adt, "REI") || strings.Contains(adt, "RES") {
 					current.ApplicantDetail.AddressCorrespondence.AddressRegistered = ad.GetString("addressLine1") + ", " + ad.GetString("addressLine2") + ", " + ad.GetString("addressLine3")
 					current.ApplicantDetail.AddressCorrespondence.PhoneRegistered = ad.GetString("alternatePhone")
@@ -299,6 +300,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 					current.ApplicantDetail.AddressCorrespondence.StateRegistered = ad.GetString("stateDesc")
 					current.ApplicantDetail.AddressCorrespondence.PincodeRegistered = ad.GetString("pincode")
 					current.ApplicantDetail.AddressCorrespondence.Ownership = ad.GetString("addressDetailDesc")
+					current.ApplicantDetail.AddressCorrespondence.CorrespondeceAddress = ad.GetString("communicationAddressDesc")
 				} else if strings.Contains(adt, "OFFICE") {
 					current.ApplicantDetail.SiteWorkAddress.AddressRegistered = ad.GetString("addressLine1") + ", " + ad.GetString("addressLine2") + ", " + ad.GetString("addressLine3")
 					current.ApplicantDetail.SiteWorkAddress.PhoneRegistered = ad.GetString("alternatePhone")
@@ -308,6 +310,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 					current.ApplicantDetail.SiteWorkAddress.StateRegistered = ad.GetString("stateDesc")
 					current.ApplicantDetail.SiteWorkAddress.PincodeRegistered = ad.GetString("pincode")
 					current.ApplicantDetail.SiteWorkAddress.Ownership = ad.GetString("addressDetailDesc")
+					current.ApplicantDetail.SiteWorkAddress.CorrespondeceAddress = ad.GetString("communicationAddressDesc")
 				}
 			}
 			//=============== OFFICE ADDRESS END =========================
@@ -334,6 +337,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 			} else {
 				Bio.Guarantor = "No"
 				Bio.Position = append(Bio.Position, ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
+				Bio.Designation = append(Bio.Designation, val.GetString("dealCustomerRoleType"))
 				// add position
 			}
 
@@ -381,7 +385,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				Bio.PAN = val.GetString("stakeholderPan")
 				Bio.Mobile = val.GetString("stakeholderPrimaryPhone")
 				Bio.ShareHoldingPercentage = val.GetFloat64("stakeholderPercentage")
-				Bio.Designation = ToWordCase(val.GetString("stakeholderPositionDesc"))
+				// Bio.Designation = ToWordCase(val.GetString("stakeholderPositionDesc"))
 			}
 
 			if position == "promoter" {
@@ -390,6 +394,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				Bio.Director = "Yes"
 			} else {
 				Bio.Position = append(Bio.Position, ToWordCase(val.GetString("stakeholderPositionDesc")))
+				Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
 				//add ke position
 			}
 			BioS = append(BioS, Bio)

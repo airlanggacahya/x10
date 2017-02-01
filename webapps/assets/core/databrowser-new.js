@@ -1,7 +1,7 @@
 var databrowser = {};
 databrowser.applicantdetailcoll = [
  {
- 	title : "Name of the Applicant",
+ 	title : "Applicant",
  	field : "CA.applicantdetail.CustomerName",
 	width : 200,
 	headerAttributes: { "class": "sub-bgcolor" },
@@ -123,21 +123,22 @@ databrowser.applicantdetailcoll = [
 	width : 100,
 	headerTemplate : "No of <br/> employees",
 	headerAttributes: { "class": "sub-bgcolor" },
-},{
-	field : "CA.applicantdetail.AmountLoan",
-	title : "Requested loan amount",
-	hidden : true,
-	attributes:{style: "text-align: right"},
-	// template : function(dt){
-	// 	return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
-	// },
-	width : 100,
-	headerTemplate : "Requested <br/> loan amount",
-	headerAttributes: { "class": "sub-bgcolor" },
-	template:function(d){
-		return app.formatnum(d.CA.applicantdetail.AmountLoan)
-	}
-}
+},
+// {
+// 	field : "CA.applicantdetail.AmountLoan",
+// 	title : "Requested loan amount",
+// 	hidden : true,
+// 	attributes:{style: "text-align: right"},
+// 	// template : function(dt){
+// 	// 	return "<a style='cursor: pointer;' onclick='databrowser.GoAddress(\""+ dt.CA._id +"\")'>Details..</a>"
+// 	// },
+// 	width : 100,
+// 	headerTemplate : "Requested <br/> loan amount",
+// 	headerAttributes: { "class": "sub-bgcolor" },
+// 	template:function(d){
+// 		return app.formatnum(d.CA.applicantdetail.AmountLoan)
+// 	}
+// }
 ]
 
 databrowser.nonrefundcoll = [
@@ -180,7 +181,14 @@ databrowser.nonrefundcoll = [
 	title : "Amount",
 	hidden : false,
 	width : 100,
+	attributes:{style: "text-align: right"},
 	headerAttributes: { "class": "sub-bgcolor" },
+	template:function(dt){
+		if(dt.CA.nonrefundableprocessingfeesdetails.Amount == null){
+			return "";
+		}
+		return app.formatnum(dt.CA.nonrefundableprocessingfeesdetails.Amount)
+	},
 },
 ]
 
@@ -260,13 +268,19 @@ databrowser.accsetupcoll = [
 
 databrowser.loandetailscoll = [
 {
-	field : "AD.loandetails.proposedloanamount",
+	// field : "AD.loandetails.proposedloanamount",
 	title : "Requested Loan Amount",
 	hidden : false,
 	width : 100,
 	headerTemplate : "Requested Loan </br> Amount",
 	headerAttributes: { "class": "sub-bgcolor" },
 	attributes:{style: "text-align: right"},
+	template : function(dt){
+		if(dt.AD.loandetails.proposedloanamount == undefined)
+		return app.formatnum(dt.AD.loandetails.ProposedLoanAmount)
+		else
+		return app.formatnum(dt.AD.loandetails.proposedloanamount)
+	}
 },
 {
 	field : "AD.loandetails.limittenor",
@@ -425,109 +439,107 @@ databrowser.fullcoll = [
 	width : 150,
 	headerAttributes: { "class": "sub-bgcolor" },
 },
-
 {
 	headerAttributes: { "class": "sub-bgcolor" },
-	title: "Customer Application Form",
-	hidden : false,
-	columns: [ 
-	 {
-	 	title : "Applicant Details",
-	 	columns : databrowser.applicantdetailcoll,
-	 	headerTemplate : function(dt){
-	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-forward' aria-hidden='true'></i></a>"
-	 	},
-		width : 100,
-		headerAttributes: { "class": "sub-bgcolor" },
-	 },
-	 {
-	 	title : "Financial Information",
-	 	columns : [
-	 	{
-	 		title : "Existing Relationship With X10 Financial Services Limited",
-	 		template :  function(dt){
-	 			return "<center><a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Show More</a></center>"
-	 		},
-			width : 120,
-			headerTemplate : "Existing Relationship </br> With X10 Financial<br> Services Limited",
-		headerAttributes: { "class": "sub-bgcolor" },
-	 	},
-	 	],
-		headerAttributes: { "class": "sub-bgcolor" },
-	 },
-	 {
-	 	title : "Non-Refundable Processing Fee Details",
-	 	columns : databrowser.nonrefundcoll,
-	 	headerTemplate : function(dt){
-	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br>Fee Details <i class='fa fa-forward' aria-hidden='true'></a>"
-	 	},
-		width : 100,
-		headerAttributes: { "class": "sub-bgcolor" },
-	 }
-	 ,
-	 {
-	 	title : "Details of Promoters/Directors/Guarantors/Management",
-	 	headerTemplate : "Details of </br>Promoters/Directors/Guarantors/Management",
-	 	columns : [
-	 		{
-	 			title : "Name",
-	 			template : function(dt){
-	 				var str = "<table class='intable'>";
-	 				for(var i in dt.CA.detailofpromoters.biodata){
-	 					if(dt.CA.detailofpromoters.biodata[i].Name == undefined){
-	 						break;
-	 					}
+ 		title: "Customer Application Form",
+ 		hidden : false,
+ 		columns: [ 
 
-	 					if(i==0){
-	 						str += "<tr>"
-	 						// str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a></td>"
-	 						str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + "<a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a>&nbsp;"+ dt.CA.detailofpromoters.biodata[i].Name +"</td>"
-	 						str+="</tr>"
-	 					}else{
-	 						str += "<tr class='hiddentd'>"
-	 						str += "<td class='line' role='gridcell'  id='"+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "</td>"
-	 						str+="</tr>"
-	 					}
+ {
+ 	title : "Applicant Details",
+ 	columns : databrowser.applicantdetailcoll,
+ 	headerTemplate : function(dt){
+ 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-plus-square-o' aria-hidden='true'></i></a>"
+ 	},
+	width : 100,
+	headerAttributes: { "class": "sub-bgcolor" },
+ },
+ {
+ 	title : "Financial Information",
+ 	headerTemplate : "Financial<br>Information",
+ 	columns : [
+ 	{
+ 		title : "Existing Relationship Details",
+ 		template :  function(dt){
+ 			return "<center><a style='cursor: pointer;' onclick='databrowser.GoExis(\""+ dt.CA._id +"\")'>Show More</a></center>"
+ 		},
+		width : 120,
+		headerTemplate : "Existing<br>Relationship Details",
+		headerAttributes: { "class": "sub-bgcolor" },
+ 	},
+ 	],
+	headerAttributes: { "class": "sub-bgcolor" },
+ },
+ {
+ 	title : "Non-Refundable Processing Fee Details",
+ 	columns : databrowser.nonrefundcoll,
+ 	headerTemplate : function(dt){
+ 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br>Fee Details <i class='fa fa-plus-square-o' aria-hidden='true'></a>"
+ 	},
+	width : 100,
+	headerAttributes: { "class": "sub-bgcolor" },
+ }
+ ,
+ {
+ 	title : "Details of Promoters/Directors/Guarantors/Management",
+ 	headerTemplate : "Details of </br>Promoters/Directors/Guarantors/Management",
+ 	columns : [
+ 		{
+ 			title : "Name",
+ 			template : function(dt){
+ 				var str = "<table class='intable'>";
+ 				for(var i in dt.CA.detailofpromoters.biodata){
+ 					if(dt.CA.detailofpromoters.biodata[i].Name == undefined){
+ 						break;
+ 					}
 
+ 					if(i==0){
+ 						str += "<tr>"
+ 						// str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a></td>"
+ 						str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + "<a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a>&nbsp;&nbsp;&nbsp;"+ dt.CA.detailofpromoters.biodata[i].Name +"</td>"
+ 						str+="</tr>"
+ 					}else{
+ 						str += "<tr class='hiddentd'>"
+ 						str += "<td class='line' role='gridcell'  id='"+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "</td>"
+ 						str+="</tr>"
+ 					}
+
+ 				}
+ 				str += "</table>";
+ 				return str;
+ 			},
+			width : 150,
+	headerAttributes: { "class": "sub-bgcolor" },
+ 		},
+ 		{
+ 			title : "Guarantor",
+ 			template : function(dt){
+ 				var str = "<table class='intable'>";
+ 				for(var i in dt.CA.detailofpromoters.biodata){
+ 					var elem = "<tr>";
+
+ 					if(i != 0){
+						elem = "<tr class='hiddentd'>"
+ 					}
+
+ 					if(dt.CA.detailofpromoters.biodata[i].Guarantor === null) {
+ 						str += elem+"<td></td></tr>"
+ 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'undefined'){ 						
+ 						break;
+ 					} else {
+ 						str += elem				
+ 			
+	 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
+	 						str += "<td>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
+	 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
+		 						str += "<td class='line'>Yes</td>"
+			 				}else{
+			 					str += "<td class='line'>No</td>"
+			 				}
+	 					} 
 	 				}
-	 				str += "</table>";
-	 				return str;
-	 			},
-				width : 150,
-		headerAttributes: { "class": "sub-bgcolor" },
-	 		},
-	 		{
-	 			title : "Guarantor",
-	 			template : function(dt){
-	 				var str = "<table class='intable'>";
-	 				for(var i in dt.CA.detailofpromoters.biodata){
-	 					var elem = "<tr>";
-
-	 					if(i != 0){
-							elem = "<tr class='hiddentd'>"
-	 					}
-
-	 					if(dt.CA.detailofpromoters.biodata[i].Guarantor === null) {
-	 						str += elem+"<td></td></tr>"
-	 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'undefined'){ 						
-	 						break;
-	 					} else {
-	 						str += elem				
-	 			
-		 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
-		 						str += "<td>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
-		 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
-		 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
-			 						str += "<td class='line'>Yes</td>"
-				 				}else{
-				 					str += "<td class='line'>No</td>"
-				 				}
-		 					} 
-		 					
-		 					str+="</tr>"
-	 					}
-	 					
-	 				}
+	 			}
 
 	 				str += "</table>";
 	 				return str;
@@ -663,23 +675,23 @@ databrowser.fullcoll = [
 	 	title : "Account Set-up Details",
 	 	columns : databrowser.accsetupcoll,
 	 	headerTemplate : function(dt){
-	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-forward' aria-hidden='true'></a>"
+	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-plus-square-o' aria-hidden='true'></a>"
 	 	},
 		width : 100,
 		headerAttributes: { "class": "sub-bgcolor" },
 	 },
-	 {
-	 	title : "Borrower Details",
-		width : 100,
-		columns : databrowser.BorrowerDetails,
-		headerTemplate: "Borrower Details",
-		headerAttributes: { "class": "sub-bgcolor" },
-	 },
+	 // {
+	 // 	title : "Borrower Details",
+		// width : 100,
+		// columns : databrowser.BorrowerDetails,
+		// headerTemplate: "Borrower Details",
+		// headerAttributes: { "class": "sub-bgcolor" },
+	 // },
 	 {
 	 	title : "Loan Details",
 	 	columns : databrowser.loandetailscoll,
 	 	headerTemplate : function(dt){
-	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
+	 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-plus-square-o' aria-hidden='true'></a>"
 	 	},
 		width : 100,
 		headerAttributes: { "class": "sub-bgcolor" },
@@ -728,7 +740,7 @@ databrowser.expand = function(text){
 		if(databrowser.statusexpand[text]){
 			// databrowser.fullcoll[1].headerTemplate = function(dt){
 			databrowser.fullcoll[1].columns[0].headerTemplate = function(dt){
-		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-forward' aria-hidden='true'></a>"
+		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-plus-square-o' aria-hidden='true'></a>"
 		 	}
 		 	for(var i in databrowser.applicantdetailcoll){
 		 		databrowser.applicantdetailcoll[i].hidden = true;
@@ -743,7 +755,7 @@ databrowser.expand = function(text){
 		}else{
 			// databrowser.fullcoll[1].headerTemplate = function(dt){
 				databrowser.fullcoll[1].columns[0].headerTemplate = function(dt){
-		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-backward' aria-hidden='true'></a>"
+		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "applicant" +"\")'>Applicant Details <i class='fa fa-minus-square-o' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.applicantdetailcoll){
@@ -758,7 +770,7 @@ databrowser.expand = function(text){
 		if(databrowser.statusexpand[text]){
 			// databrowser.fullcoll[3].headerTemplate = function(dt){
 			databrowser.fullcoll[1].columns[2].headerTemplate = function(dt){
-		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br> Fee Details <i class='fa fa-forward' aria-hidden='true'></a>"
+		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br> Fee Details <i class='fa fa-plus-square-o' aria-hidden='true'></a>"
 		 	}
 
 			for(var i in databrowser.nonrefundcoll){
@@ -773,7 +785,7 @@ databrowser.expand = function(text){
 		}else{
 			// databrowser.fullcoll[3].headerTemplate = function(dt){
 			databrowser.fullcoll[1].columns[2].headerTemplate = function(dt){
-		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br> Fee Details <i class='fa fa-backward' aria-hidden='true'></a>"
+		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "nonrefund" +"\")'>Non-Refundable Processing </br> Fee Details <i class='fa fa-minus-square-o' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.nonrefundcoll){
@@ -786,7 +798,7 @@ databrowser.expand = function(text){
 		if(databrowser.statusexpand[text]){
 			// databrowser.fullcoll[6].headerTemplate = function(dt){
 			databrowser.fullcoll[2].columns[0].headerTemplate = function(dt){	
-		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-forward' aria-hidden='true'></a>"
+		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-plus-square-o' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.accsetupcoll){
@@ -801,7 +813,7 @@ databrowser.expand = function(text){
 		}else{
 			// databrowser.fullcoll[6].headerTemplate = function(dt){
 			databrowser.fullcoll[2].columns[0].headerTemplate = function(dt){	
-		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-backward' aria-hidden='true'></a>"
+		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "accsetup" +"\")'>Account Set-up Details <i class='fa fa-minus-square-o' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.accsetupcoll){
@@ -814,8 +826,8 @@ databrowser.expand = function(text){
 	}else if (text == "loandet"){
 		if(databrowser.statusexpand[text]){
 			// databrowser.fullcoll[8].headerTemplate = function(dt){
-			databrowser.fullcoll[2].columns[2].headerTemplate = function(dt){	
-		 		return "<a id='on1' class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-forward' aria-hidden='true'></a>"
+			databrowser.fullcoll[2].columns[1].headerTemplate = function(dt){	
+		 		return "<a id='on1' class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-plus-square-o' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.loandetailscoll){
@@ -830,8 +842,8 @@ databrowser.expand = function(text){
 			//close
 		}else{
 			// databrowser.fullcoll[8].headerTemplate = function(dt){
-			databrowser.fullcoll[2].columns[2].headerTemplate = function(dt){	
-		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-backward' aria-hidden='true'></a>"
+			databrowser.fullcoll[2].columns[1].headerTemplate = function(dt){	
+		 		return "<a class='grid-select' href='javascript:databrowser.expand(\""+ "loandet" +"\")'>Loan Details <i class='fa fa-minus-square-o' aria-hidden='true'></a>"
 		 	}
 
 		 	for(var i in databrowser.loandetailscoll){
@@ -906,7 +918,8 @@ databrowser.GetDataGrid = function(){
 			brhead : filters.BRHeadVal(), 
 			scheme : filters.SchemeVal(), 
 			rm : filters.RMVal(), 
-			ca : filters.CAVal()
+			ca : filters.CAVal(),
+			logindate: filters.loginDateVal
 		}
 	}else{
 		var param = {
@@ -923,7 +936,8 @@ databrowser.GetDataGrid = function(){
 			brhead : filters.BRHeadVal(), 
 			scheme : filters.SchemeVal(), 
 			rm : filters.RMVal(), 
-			ca : filters.CAVal()
+			ca : filters.CAVal(),
+			logindate: filters.loginDateVal
 		}
 	}
 	ajaxPost("/accountdetail/getdatabrowser", param, function(data){
@@ -937,6 +951,7 @@ databrowser.GetDataGrid = function(){
 			 groupable: true,
 			 scrollable : true,
 			 pageable: true,
+			 height:450,
 			 dataBinding: function(x) {
 			 	setTimeout(function(){
 			 		_.each($(".intable").parent(),function(e){
@@ -958,6 +973,8 @@ databrowser.normalisasiAD = function(dt){
 
 $(document).ready(function(){
 	databrowser.GetDataGrid();
+	$("#panel-filter .filterhide").hide();
+
 })
 
 function showthis(e){

@@ -21,13 +21,13 @@ ms.loadGridSuplier = function(){
 		dataSource: ms.suplierData(),
 		navigatable: true,
 		scrolable: true,
-		height: 300,
+		height: 400,
 		columns : [
 			{
 				field: "Name",
 				title: "Name",
 				headerAttributes: {"class" : "sub-bgcolor"},
-				width: 200,
+				width: 300,
 				template: function(d){
 					if(d.Name == ""){
 						return "<input type='text' id='"+d.uid+"'' style='width: 98%;' />"
@@ -37,7 +37,8 @@ ms.loadGridSuplier = function(){
 			},
 			{
 				field: "UseInAD",
-				title: "Use in AD",
+				title: "Use in Account Details",
+				headerTemplate: "Use in <br/> Account Details",
 				headerAttributes: {"class" : "sub-bgcolor"},
 				template: function(d){
 					if(d.UseInAD == true){
@@ -45,7 +46,7 @@ ms.loadGridSuplier = function(){
 					}
 					return "<center><input type='checkbox' onclick='ms.checkedADSuplier(\""+d._id+"\", \""+d.uid+"\")' id='AD"+ d._id+"' name='AD'><center>"
 				},
-				width: 25,
+				width: 100,
 			},
 			{
 				field: "FromOmnifin",
@@ -57,11 +58,11 @@ ms.loadGridSuplier = function(){
 					}
 					return "<center><input type='checkbox' id='Om"+d._id+"' name='Omnifin' disabled /></center>"
 				},
-				width: 25,
+				width: 100,
 				headerTemplate: "From <br/> Omnifin"
 			},
 			{
-				title: "",
+				title: "Action",
 				headerAttributes: {"class" : "sub-bgcolor"},
 				template: function(d){
 					if(d.FromOmnifin == false && d.Name == ""){
@@ -71,7 +72,7 @@ ms.loadGridSuplier = function(){
 					}
 					return ""
 				},
-				width: 25,
+				width: 100,
 			},
 		]
 	});
@@ -117,11 +118,11 @@ ms.saveMasterSuplier = function(){
 	
 	ajaxPost("/mastersuplier/savemastersuplier", ms.suplierDataTemp(), function(res){
 		if(res.IsError != true){
-			swal("Data Save Successfully", "", "success");
+			swal("Data Saved Successfully", "", "success");
 			ms.getSuplierData()
 			ms.loadGridSuplier()
 		}else{
-			swal(res.Message, "", "error")
+			swal("", res.Message, "error")
 		}
 	});
 
@@ -154,6 +155,12 @@ ms.addMasterSuplier = function(){
 	}
 
 	allData.unshift(data);
+
+	ms.scrollKendoGrid("#suplier", "tr:first")
+}
+
+ms.scrollKendoGrid = function(id, row){
+	$(id+ " div.k-grid-content").scrollTop($(id + " " + row).position().top);
 }
 
 ms.removeData1 = function(d){
@@ -200,7 +207,7 @@ ms.removeData2 = function(uid){
 
 	ajaxPost("/mastersuplier/deletemastersuplier", param, function(res){
 		if(res.IsError != true ){
-			swal("Data Successfully Delete", "", "success")
+			swal("Data Deleted Successfully", "", "success")
 			ms.getSuplierData()
 			ms.loadGridSuplier()
 		}else{

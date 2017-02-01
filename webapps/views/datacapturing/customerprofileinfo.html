@@ -237,6 +237,8 @@ function refreshdata(accountdetailsMaster){
       if (ApplicantDetail.Detail().length > 0 ){
         ApplicantDetail.Detail([]);
       }
+
+      info.ifEmpty()
       ApplicantDetail.Detail.push(data[0].ApplicantDetail.RegisteredAddress);
       ApplicantDetail.Detail.push(data[0].ApplicantDetail.AddressCorrespondence);
       ApplicantDetail.Detail.push(data[0].ApplicantDetail.SiteWorkAddress);
@@ -315,6 +317,12 @@ function refreshdata(accountdetailsMaster){
           data[0].DetailOfPromoters.Biodata[i].Position = ko.observable()
         } else {
           data[0].DetailOfPromoters.Biodata[i].Position = ko.observable(data[0].DetailOfPromoters.Biodata[i].Position)
+        }
+
+        if(data[0].DetailOfPromoters.Biodata[i].Designation === undefined || data[0].DetailOfPromoters.Biodata[i].Designation == null) {
+          data[0].DetailOfPromoters.Biodata[i].Designation = ko.observable()
+        } else {
+          data[0].DetailOfPromoters.Biodata[i].Designation = ko.observable(data[0].DetailOfPromoters.Biodata[i].Designation)
         }
 
       })
@@ -691,13 +699,14 @@ function save1(){
   var grid2 = $(".grid2").data("kendoGrid").dataSource.data();
   customerprofile().FinancialReport().DetailsPertainingBanker = []
   $.each(grid2, function(i, data){
+    console.log(parseInt(moment(data.YearOpening).format("YYYY")))
     customerprofile().FinancialReport().DetailsPertainingBanker.push({
       AcNo : data.AcNo,
       AddressContactNo: data.AddressContactNo,
       NameOfBanks: data.NameOfBanks,
       SrNo: data.SrNo,
       TypeOfAc : (data.TypeOfAc).toString(),
-      YearOpening: parseInt(data.YearOpening)
+      YearOpening: (data.YearOpening != null || data.YearOpening != undefined || data.YearOpening != "" || !isNaN(data.YearOpening))? parseInt(moment(data.YearOpening).format("YYYY")):""
     })
   });
   
@@ -783,7 +792,7 @@ function save(){
       NameOfBanks: data.NameOfBanks,
       SrNo: data.SrNo,
       TypeOfAc : data.TypeOfAc,
-      YearOpening: data.YearOpening
+      YearOpening: (data.YearOpening != null || data.YearOpening != undefined || data.YearOpening != "" || !isNaN(data.YearOpening))? parseInt(moment(data.YearOpening).format("YYYY")):""
     })
   });
   

@@ -44,7 +44,7 @@ func (c *MasterSuplierController) Default(k *knot.WebContext) interface{} {
 func (c *MasterSuplierController) GetMasterSuplier(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	csr, err := c.Ctx.Find(new(MasterSuplier), nil)
+	csr, err := c.Ctx.Find(new(MasterSuplier), tk.M{}.Set("order", []string{"name"}))
 	defer csr.Close()
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
@@ -84,7 +84,7 @@ func (c *MasterSuplierController) DeleteMasterSuplier(k *knot.WebContext) interf
 	}
 
 	if len(res) > 0 {
-		founds := c.CheckADLeadStruct1(res)
+		message, founds := c.CheckADLeadStruct1(res)
 
 		if founds == false {
 			err = c.Ctx.Delete(&res[0])
@@ -109,7 +109,7 @@ func (c *MasterSuplierController) DeleteMasterSuplier(k *knot.WebContext) interf
 
 			return c.SetResultInfo(false, "delete success", nil)
 		} else {
-			return c.SetResultInfo(true, "delete cancel", nil)
+			return c.SetResultInfo(true, message, nil)
 		}
 	}
 
@@ -126,7 +126,7 @@ func (c *MasterSuplierController) SaveMasterSuplier(k *knot.WebContext) interfac
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
-	err, _, status := c.SaveMasterAccountDetails(payload)
+	err, message, status := c.SaveMasterAccountDetails(payload)
 
 	if status == true {
 		mp := NewMasterSuplier()
@@ -164,7 +164,7 @@ func (c *MasterSuplierController) SaveMasterSuplier(k *knot.WebContext) interfac
 
 		return c.SetResultInfo(false, "success", nil)
 	} else {
-		return c.SetResultInfo(true, "cancel save", nil)
+		return c.SetResultInfo(true, message, nil)
 	}
 }
 
@@ -195,8 +195,7 @@ func (c *MasterSuplierController) SaveMasterAccountDetails(masterSuplier []tk.M)
 		return err, "error get data", false
 	}
 
-	founds := c.CheckADLeadTkM(masterSuplier)
-	c.WriteLog(founds)
+	masterSuplierName, founds := c.CheckADLeadTkM(masterSuplier)
 	if founds == false {
 		qinsert := conn.NewQuery().
 			From("MasterAccountDetail").
@@ -213,7 +212,6 @@ func (c *MasterSuplierController) SaveMasterAccountDetails(masterSuplier []tk.M)
 			}
 		}
 
-		c.WriteLog(masterAccountItems)
 		masterAccount.Set("Items", masterAccountItems)
 
 		dt := masterAccountDetails[0]
@@ -237,7 +235,7 @@ func (c *MasterSuplierController) SaveMasterAccountDetails(masterSuplier []tk.M)
 
 		return err, "save success", true
 	} else {
-		return nil, "save not success", false
+		return nil, masterSuplierName + " have been used in Account Details", false
 	}
 }
 
@@ -313,15 +311,18 @@ func (c *MasterSuplierController) SaveMasterAccountDetailsStruct(masterSuplier [
 	}
 }
 
-func (c *MasterSuplierController) CheckADLeadTkM(masterSuplier []tk.M) bool {
+func (c *MasterSuplierController) CheckADLeadTkM(masterSuplier []tk.M) (string, bool) {
 
 	leadDistributors := c.GetAccountDetailLeadDistributors()
 
 	founds := false
+	masterSuplierName := ""
+
 	for _, v := range leadDistributors {
 		temp := v["_id"].(tk.M)
 		for _, v1 := range masterSuplier {
-			if strings.ToLower(temp.GetString("accountsetupdetails_leaddistributor")) == strings.ToLower(v1.GetString("Name")) && v1["UseInAD"] == false && temp["accountsetupdetails_leaddistributor"] != "" {
+			if strings.ToLower(temp.GetString("accountsetupdetails_leaddistributor")) == strings.ToLower(v1.GetString("Name")) && v1.Get("UseInAD").(bool) == false && temp.GetString("accountsetupdetails_leaddistributor") != "" {
+				masterSuplierName = v1.GetString("Name")
 				founds = true
 				break
 			}
@@ -332,7 +333,7 @@ func (c *MasterSuplierController) CheckADLeadTkM(masterSuplier []tk.M) bool {
 		}
 	}
 
-	return founds
+	return masterSuplierName, founds
 }
 
 func (c *MasterSuplierController) CheckADLeadStruct(masterSuplierStruct []MasterSuplier) bool {
@@ -357,16 +358,18 @@ func (c *MasterSuplierController) CheckADLeadStruct(masterSuplierStruct []Master
 	return founds
 }
 
-func (c *MasterSuplierController) CheckADLeadStruct1(masterSuplierStruct []MasterSuplier) bool {
+func (c *MasterSuplierController) CheckADLeadStruct1(masterSuplierStruct []MasterSuplier) (string, bool) {
 
 	leadDistributors := c.GetAccountDetailLeadDistributors()
 
 	founds := false
+	masterSuplierName := ""
 	for _, v := range leadDistributors {
 		temp := v["_id"].(tk.M)
 		for _, v1 := range masterSuplierStruct {
 			if strings.ToLower(temp.GetString("accountsetupdetails_leaddistributor")) == strings.ToLower(v1.Name) && v1.UseInAD == true && temp["accountsetupdetails_leaddistributor"] != "" {
 				founds = true
+				masterSuplierName = v1.Name
 				break
 			}
 		}
@@ -376,7 +379,7 @@ func (c *MasterSuplierController) CheckADLeadStruct1(masterSuplierStruct []Maste
 		}
 	}
 
-	return founds
+	return masterSuplierName + " have been used in Account Details", founds
 }
 
 func (c *MasterSuplierController) GetAccountDetailLeadDistributors() []tk.M {

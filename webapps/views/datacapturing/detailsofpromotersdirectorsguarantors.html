@@ -218,7 +218,8 @@
                           <label for="Acc" class="control-label">Designation :</label>
                         </div>
                         <div class="col-sm-8 widthfield">
-                          <input type="text" id="Designation" class="Designation form-control input-sm" name="designation" data-bind="value:detail.biodata()[$index()].Designation" required>
+                          <!-- <input type="text" id="Designation" class="Designation form-control input-sm" name="designation" data-bind="value:detail.biodata()[$index()].Designation" required> -->
+                          <select id="designation" class="ndisable multifield" data-bind="kendoMultiSelect:{data: designationList, value: detail.biodata()[$index()].Designation}" validationMessage="Position required" required  /></select>
                           <span class="k-invalid-msg" data-for="designation"></span>
                         </div>
                       </div>

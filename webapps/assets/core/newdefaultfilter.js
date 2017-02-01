@@ -31,40 +31,47 @@ function createFilterUpstream(source, path) {
 }
 
 function applyFilterUpstream(level, vals) {
-	if (level == CITY)
-		return vals
-	// Filter City
-	vals = _.filter(vals, createFilterUpstream(filters.CityVal(), CITY))
+	if (level != CITY) {
+		// 	return vals
+		// Filter City
+		vals = _.filter(vals, createFilterUpstream(filters.CityVal(), CITY))
+	}
 
-	if (level == PRODUCT)
-		return vals	
-	// Filter Product
-	vals = _.filter(vals, createFilterUpstream(filters.ProductVal(), PRODUCT))
+	if (level != PRODUCT) {
+		// 	return vals	
+		// Filter Product
+		vals = _.filter(vals, createFilterUpstream(filters.ProductVal(), PRODUCT))
+	}
 
-	if (level == BRHEAD)
-		return vals
-	// Filter Product
-	vals = _.filter(vals, createFilterUpstream(filters.BRHeadVal(), BRHEAD))
+	if (level != BRHEAD) {
+		// 	return vals
+		// Filter Product
+		vals = _.filter(vals, createFilterUpstream(filters.BRHeadVal(), BRHEAD))
+	}
 
-	if (level == SCHEME)
-		return vals
-	// Filter Scheme
-	vals = _.filter(vals, createFilterUpstream(filters.SchemeVal(), SCHEME))
+	if (level != SCHEME) {
+		// 	return vals
+		// Filter Scheme
+		vals = _.filter(vals, createFilterUpstream(filters.SchemeVal(), SCHEME))
+	}
 
-	if (level == RM)
-		return vals
-	// Filter RM
-	vals = _.filter(vals, createFilterUpstream(filters.RMVal(), RM))
+	if (level != RM) {
+		// 	return vals
+		// Filter RM
+		vals = _.filter(vals, createFilterUpstream(filters.RMVal(), RM))
+	}
 
-	if (level == CA)
-		return vals
-	// Filter CA
-	vals = _.filter(vals, createFilterUpstream(filters.CAVal(), CA))
+	if (level != CA) {
+		// 	return vals
+		// Filter CA
+		vals = _.filter(vals, createFilterUpstream(filters.CAVal(), CA))
+	}
 
-	if (level == CUSTOMER)
-		return vals
-	// Filter Customer
-	vals = _.filter(vals, createFilterUpstream(filters.CustomerVal(), CUSTOMER))
+	if (level != CUSTOMER) {
+		// 	return vals
+		// Filter Customer
+		vals = _.filter(vals, createFilterUpstream(filters.CustomerVal(), CUSTOMER))
+	}
 
 	return vals
 }
@@ -143,7 +150,7 @@ function applyFilterSchemeDS() {
 }
 
 function applyFilterRMDS() {
-	applyFilter(filters.RMDS, "",function(val) {
+	applyFilter(filters.RMDS, RM,function(val) {
 		var v = _.get(val, RM)
 		if (typeof(v) == "undefined")
 			return false
@@ -159,7 +166,7 @@ function applyFilterRMDS() {
 }
 
 function applyFilterCADS() {
-	applyFilter(filters.CADS, "",function(val) {
+	applyFilter(filters.CADS, CA,function(val) {
 		var v = _.get(val, CA)
 		if (typeof(v) == "undefined")
 			return false
@@ -197,6 +204,13 @@ function applyFilterDealNoDS() {
 }
 
 function applyDisableFilter() {
+	/*
+		TEMPORARY DISABLE function
+		ON ROHITA REQUEST
+
+		WILL BE DELETED LATER - 31/01/2017
+	*/
+	/*
 	var input = [
 		filters.ProductVal(),
 		filters.BRHeadVal(),
@@ -252,16 +266,32 @@ function applyDisableFilter() {
 	$("#ddRLARanges").data("kendoDropDownList").enable(!v)
 	$("#ddIR").data("kendoDropDownList").enable(!v)
 	$("#inputRLARange").data("kendoNumericTextBox").enable(!v)
+	*/
 }
 
-function reapplyFilter() {
+function reapplyFilter(without) {
+	// if (without != CITY)
 	applyFilterCityDS()
+	
+	// if (without != PRODUCT)
 	applyFilterProductDS()
+	
+	// if (without != BRHEAD)
 	applyFilterBRHeadDS()
+	
+	// if (without != SCHEME)
 	applyFilterSchemeDS()
+	
+	// if (without != RM)
 	applyFilterRMDS()
+	
+	// if (without != CA)
 	applyFilterCADS()
+	
+	// if (without != CUSTOMER)
 	applyFilterCustDS()
+
+	// if (without != DEALNO)
 	applyFilterDealNoDS()
 
 	applyDisableFilter()
@@ -274,43 +304,43 @@ filters.MasterDS.subscribe(function(values) {
 
 filters.CustomerVal = ko.observableArray()
 filters.CustomerVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(CUSTOMER)
 })
 filters.CustomerDS = ko.observableArray()
 
 filters.DealNoVal = ko.observableArray()
 filters.DealNoVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(DEALNO)
 })
 filters.DealNoDS = ko.observableArray()
 
 filters.CityVal = ko.observableArray()
 filters.CityVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(CITY)
 })
 filters.CityDS = ko.observableArray()
 
 filters.ProductVal = ko.observableArray()
 filters.ProductVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(PRODUCT)
 })
 filters.ProductDS = ko.observableArray()
 
 filters.BRHeadVal = ko.observableArray()
 filters.BRHeadVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(BRHEAD)
 })
 filters.BRHeadDS = ko.observableArray()
 
 filters.SchemeVal = ko.observableArray()
 filters.SchemeVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(SCHEME)
 })
 filters.SchemeDS = ko.observableArray()
 
 filters.RMVal = ko.observableArray()
 filters.RMVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(RM)
 })
 filters.RMDS = ko.observableArray()
 
@@ -326,7 +356,7 @@ filters.inputRLARangeVal.subscribe(function(values) {
 
 filters.CAVal = ko.observableArray()
 filters.CAVal.subscribe(function(values) {
-	reapplyFilter()
+	reapplyFilter(CA)
 })
 filters.CADS = ko.observableArray()
 
@@ -343,6 +373,8 @@ filters.inputIRRangeVal.subscribe(function(values) {
 filters.inputRLARangeValSpinners = ko.observable(false);
 filter.isHide = ko.observable(true);
 filters.dataRating = ko.observable('');
+
+filters.loginDateVal = ko.observable();
 
 var refreshFilter = function() {
 	// rangeIR();
@@ -372,17 +404,21 @@ var resetFilter = function(){
 
 	filters.inputIRRangeVal("")
 	filters.dataRating("")
+
+	filters.loginDateVal("")
 }
 
 var showMoreFilter = function(){
 	filter.isHide(false)
-	$("#panel-filter").show()
+	// $("#panel-filter").show()
+	$(".filterhide").show()
 
 }
 
 var hideMoreFilter = function(){
 	filter.isHide(true)
-	$("#panel-filter").hide()
+	// $("#panel-filter").hide()
+	$(".filterhide").hide()
 }
 
 var rangeIR = function(arrval){

@@ -29,7 +29,17 @@ var info = {
 // });
 
 positionList = ko.observableArray([])
+designationList = ko.observableArray([])
 selectedPosition = ko.observableArray(["DirectorPromoter"])
+instrumentTypeList = [
+    {text: "Cheque", value: "Cheque"},
+    {text: "Net banking", value: "NetBanking"},
+    {text: "SI", value: "SI"},
+    {text: "Credit / Debit Card", value: "CreditDebitCard"},
+    {text: "ECS", value: "ECS"},
+    {text: "Others", value: "Others"},
+];
+
 
 info.scroll = function(){
   var elementPosition = $('.btnFixed').offset();
@@ -66,7 +76,6 @@ info.getConfirmed = function(){
 var getMasterAccountDetails = function(callback) {
     var param = {}
     ajaxPost("/accountdetail/getmasteraccountdetail", {}, function (res){
-        console.log(typeof callback)
         if(typeof callback === "function" && res.Data != undefined) {
             callback(res.Data, setPosition)
         }
@@ -79,25 +88,45 @@ var setPosition = function(){
     })
 }
 
+var setDesignation = function(){
+    _.each(detail.biodata(), function(row){
+        row.Designation(row.Designation())
+    })
+}
+
 var formatDataPosition = function(param, setPosition) {
     if(param != undefined || param != "") {
         var position = _.filter(param, function(row){
             return row.Field === "Position"
         })
 
-        console.log(position)
         if(position != undefined && position.length > 0) {
+            
+            formatDataDesignation(position, setDesignation)
+
             var temp = []
             _.each(position[0].Items, function(row){
                 temp.push(row.name) 
             })
 
-            console.log(temp)
             positionList(temp)
             
             if(typeof setPosition === "function")
                 setPosition()
         }
+    }
+}
+
+var formatDataDesignation = function(data, setDesignation) {
+    var temp = []
+    _.each(data[0].Items, function(row){
+        temp.push(row.code) 
+    })
+
+    designationList(temp)
+
+    if(typeof setDesignation === "function"){
+        setDesignation()
     }
 }
 
@@ -311,6 +340,21 @@ info.addDetailsPertainingtoBankers = function(){
         }
     }
     
+}
+
+info.ifEmpty = function(){
+    var grid1 = $(".grid1").data("kendoGrid").dataSource.data();
+    var grid2 = $(".grid2").data("kendoGrid").dataSource.data();
+    var temp1 = ko.mapping.toJS(info.templateGrid1);
+    var temp2 = ko.mapping.toJS(info.templateGrid2);
+
+    if(grid1.length == 0){
+        grid1.push(temp1);
+    }
+
+    if(grid2.length == 0){
+        grid2.push(temp2)
+    }
 }
 
 // info.addExistingRelationship = function(){

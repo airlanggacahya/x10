@@ -287,8 +287,11 @@ intrtr.loadGrid = function(){
 			        },
 				]
 			}
-		]
+		],
+		dataBound: intrtr.dataTopGridScroll  
+
 	});
+  
 
 	$("#unselect").html("");
     $("#unselect").kendoGrid({
@@ -297,6 +300,7 @@ intrtr.loadGrid = function(){
         		{
         	 	title:"Deal List",
                 headerAttributes: { class: "header-bgcolor" },
+                scrollable:true,
                 columns:[
            //      	{
 			        // 	title: "",
@@ -314,33 +318,39 @@ intrtr.loadGrid = function(){
                 	{
                 		field:"DealNo",
                 		title: "Deal No",
+                		width:150,
                 		attributes: { style: 'background: rgb(238, 238, 238)' },
                 	},
 			        {
 			        	field:"Product",
 			        	title: "Product",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
 			        {
 			        	field:"Scheme",
 			        	title: "Scheme",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        },
 			        {
 			        	field:"AgreementDate",
 			        	title: "Deal Approval Date",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        	template:function(e){ return kendo.toString(new Date(e.AgreementDate), "dd-MMM-yyyy");}
 			        },
 			        {
 			        	field:"DealSanctionTillValidate",
 			        	title: "Deal Validity Date",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
 			        	template:function(e){ return kendo.toString(new Date(e.DealSanctionTillValidate), "dd-MMM-yyyy");}
 			        },
 			        {
 			        	field:"TotalLoanAmount",
 			        	title: "Loan Amount",
+			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
 			        	template: function(e){
 			        		return app.formatnum(e.TotalLoanAmount)
@@ -350,7 +360,9 @@ intrtr.loadGrid = function(){
                 ]
 	        }
 
-        ]
+        ],
+        dataBound: intrtr.dataUnselectScroll  
+
     });
 
 	// $("#bottomgrid").html("");
@@ -454,6 +466,20 @@ intrtr.loadGrid = function(){
 	// 		}
 	// 	]
 	// });
+}
+
+intrtr.dataTopGridScroll = function(e){	
+	  if (e.sender.dataSource.view().length === 0) {
+	  	$("#topgrid .k-grid-content.k-auto-scrollable").css("overflow","hidden");
+	  	$("#topgrid .k-grid-header-wrap.k-auto-scrollable").css("overflow","scroll");
+	  }
+}
+
+intrtr.dataUnselectScroll = function(e){	
+	 if (e.sender.dataSource.view().length === 0) {
+	  	$("#unselect .k-grid-content.k-auto-scrollable").css("overflow","hidden");
+	  	$("#unselect .k-grid-header-wrap.k-auto-scrollable").css("overflow","scroll");
+	  }
 }
 
 intrtr.getConfirmed = function(status, isfreeze){

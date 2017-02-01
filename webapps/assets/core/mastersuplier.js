@@ -15,7 +15,7 @@ ms.getSuplierData = function(){
 }
 
 ms.loadGridSuplier = function(){
-	console.log(ms.suplierData())
+	// console.log(ms.suplierData())
 	$("#suplier").html("");
 	$("#suplier").kendoGrid({
 		dataSource: {
@@ -35,6 +35,11 @@ ms.loadGridSuplier = function(){
 		navigatable: true,
 		scrolable: true,
 		height: 400,
+		edit : function(e){
+					if(e.model.FromOmnifin){
+						this.closeCell(); 
+					}
+				},
 		columns : [
 			{
 				field: "Name",
@@ -54,6 +59,7 @@ ms.loadGridSuplier = function(){
 					}
 					return "<center><input type='checkbox' onclick='ms.checkedADSuplier(\""+d._id+"\", \""+d.uid+"\")' id='AD"+ d._id+"' name='AD'><center>"
 				},
+
 				width: 100,
 			},
 			{
@@ -190,7 +196,7 @@ ms.removeData2 = function(uid){
 	ms.suplierDataTemp([]);
 	var index = $('#suplier tr[data-uid="'+uid+'"]').index();
 	var data = $('#suplier').data('kendoGrid').dataSource.data();
-	console.log(data[index]._id)
+	// console.log(data[index]._id)
 	$.each(data, function(i, item){
 		ms.suplierDataTemp.push({
 			Id: item._id,

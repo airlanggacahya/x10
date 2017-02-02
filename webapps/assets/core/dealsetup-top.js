@@ -37,8 +37,9 @@ setup.columnGrid = [
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.myInfo.length
-      count = count > 0 ? count-1 : 0 
-      return dt.Info.myInfo[count].status 
+      // count = count > 0 ? count-1 : 0 
+      count = count > 0 ? count-2 : 0
+      return dt.Info.myInfo[count] == undefined || dt.Info.myInfo[count] == null ? "" : dt.Info.myInfo[count].status
     }
  },
  {
@@ -58,9 +59,9 @@ setup.columnGrid = [
     width : 200,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
-      var count = dt.Info.irtrInfo.length
+      var count = dt.Info.caInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.irtrInfo[count].status 
+      return dt.Info.caInfo[count].status 
     }
  },
  {

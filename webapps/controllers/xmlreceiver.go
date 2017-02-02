@@ -455,13 +455,11 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 		current = cd[0]
 	}
 
-	stat := current.Status
-
 	comp := FindCompany(crList, body.GetString("dealCustomerId"))
 
 	valid := comp.GetString("dealCustomerId")
 
-	if stat == 0 && valid != "" {
+	if valid != "" {
 		customerDtl := comp.Get("customerDtl").(tk.M)
 		loanDtl := body.Get("dealLoanDetails").(tk.M)
 
@@ -651,62 +649,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 		current.ApplicantDetail.CustomerID = DetectDataType(cid, "")
 		current.ApplicantDetail.DealID = DetectDataType(body.GetString("dealId"), "")
 		current.ApplicantDetail.DealNo = dealno
-	} else {
-		IsConfirmed = true
 	}
-	// else if stat == 0 && len(cd) > 0 { //data sudah ada
-
-	// //================ APPLICANT DETAIL START ================
-	// current.ApplicantDetail.CustomerName = comp.CustomerDtl.CustomerName
-	// current.ApplicantDetail.CustomerConstitution = comp.CustomerDtl.CustomerConstitution
-	// current.ApplicantDetail.DateOfIncorporation = DetectDataType(comp.CustomerDtl.CustomerDob, "yyyy-MM-dd").(time.Time)
-	// current.ApplicantDetail.CustomerRegistrationNumber = comp.CustomerDtl.CustomerRegistrationNo
-	// current.ApplicantDetail.CustomerPan = comp.CustomerDtl.CustmerPan
-	// current.ApplicantDetail.NatureOfBussiness = comp.CustomerDtl.CustomerBusinessSegment
-	// current.ApplicantDetail.YearsInBusiness = DetectDataType(comp.CustomerDtl.NoBvYears, "")
-	// // customer.AnnualTurnOver = DetectDataType(val.GetString("turnover"), "yyyy-MM-dd")
-	// current.ApplicantDetail.UserGroupCompanies = comp.CustomerDtl.CustomerGroupDesc
-	// current.ApplicantDetail.AmountLoan = DetectDataType(data.DealLoanDetails.DealLoanAmount, "")
-	// current.ApplicantDetail.RegisteredAddress.AddressRegistered = comp.CustomerDtl.CustomerAddresses.AddressLine1
-	// // customer.RegisteredAddress.ContactPersonRegistered =  DetectDataType(val.GetString("contact_person"), "yyyy-MM-dd")
-	// current.ApplicantDetail.RegisteredAddress.PhoneRegistered = comp.CustomerDtl.CustomerAddresses.PrimaryPhone
-	// current.ApplicantDetail.RegisteredAddress.EmailRegistered = comp.CustomerDtl.CustomerEmail
-	// current.ApplicantDetail.RegisteredAddress.MobileRegistered = comp.CustomerDtl.CustomerAddresses.AlternatePhone
-	// // customer.RegisteredAddress.Ownership = comp.CustomerDtl.CustomerAddresses
-	// current.ApplicantDetail.RegisteredAddress.NoOfYearsAtAboveAddressRegistered = DetectDataType(comp.CustomerDtl.CustomerAddresses.NoOfYears, "")
-	// // customer.RegisteredAddress.CityRegistered = val.GetString("lead_generation_city")
-	// //================ APPLICANT DETAIL END ================
-
-	// //================ PROMOTOR START ======================
-	// BioS := []BiodataGen{}
-
-	// for _, val := range data.CrDealCustomerRoleList {
-	// 	if val.DealCustomerType == "C" {
-	// 		continue
-	// 	}
-	// 	Bio := BiodataGen{}
-	// 	Bio.Name = val.CustomerDtl.CustomerName
-	// 	Bio.FatherName = val.CustomerDtl.FatherHusbandName
-	// 	Bio.Gender = val.CustomerDtl.Gender
-	// 	Bio.DateOfBirth = DetectDataType(val.CustomerDtl.CustomerDob, "yyyy-MM-dd")
-	// 	Bio.MaritalStatus = val.CustomerDtl.MaritalStatus
-	// 	// Bio.AnniversaryDate = DetectDataType(val.GetString("date_of_incorporation"), "yyyy-MM-dd")
-	// 	Bio.Education = val.CustomerDtl.EduDetail
-	// 	Bio.PAN = val.CustomerDtl.CustmerPan
-	// 	Bio.Address = val.CustomerDtl.CustomerAddresses.AddressLine1
-	// 	Bio.City = val.CustomerDtl.CustomerAddresses.AddressLine2 + " " + val.CustomerDtl.CustomerAddresses.AddressLine3
-	// 	// Bio.State = DetectDataType(val.GetString("state"), "yyyy-MM-dd")
-	// 	Bio.Pincode = val.CustomerDtl.CustomerAddresses.Pincode
-	// 	Bio.Phone = val.CustomerDtl.CustomerAddresses.PrimaryPhone
-	// 	Bio.Mobile = val.CustomerDtl.CustomerAddresses.AlternatePhone
-	// 	Bio.NoOfYears = DetectDataType(comp.CustomerDtl.CustomerAddresses.NoOfYears, "")
-	// 	Bio.Email = comp.CustomerDtl.CustomerEmail
-	// 	BioS = append(BioS, Bio)
-	// }
-	// current.DetailOfPromoters.Biodata = BioS
-	// //================ PROMOTOR END ================
-
-	// }
 
 	if !IsConfirmed {
 		conn, err := GetConnection()
@@ -816,7 +759,6 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		IsNew = false
 		current = cd[0]
 	}
-	stat := current.Status
 
 	comp := FindCompany(crList, body.GetString("dealCustomerId"))
 	Ld := body.Get("dealLoanDetails").(tk.M)
@@ -824,7 +766,7 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 	valid := comp.GetString("dealCustomerId")
 	existdeal := CheckArraytkM(body.Get("existingDealDetails"))
 
-	if stat == 0 && valid != "" {
+	if valid != "" {
 		dtl := comp.Get("customerDtl").(tk.M)
 
 		current.Id = cid + "|" + dealno
@@ -871,8 +813,6 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
 		current.LoanDetails.VintageWithX10 = body.GetFloat64("vinatgeInMonths")
 
-	} else {
-		IsConfirmed = true
 	}
 
 	if !IsConfirmed {

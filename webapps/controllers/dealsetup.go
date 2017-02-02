@@ -3,10 +3,11 @@ package controllers
 import (
 	. "eaciit/x10/webapps/connection"
 	"errors"
+	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	// "gopkg.in/mgo.v2/bson"
+	"strings"
 	"time"
-
 	// "github.com/eaciit/dbox"
 	// . "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
@@ -69,6 +70,12 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 
 	cid := payload.GetString("custid")
 	dealno := payload.GetString("dealno")
+
+	err, cou, stat := checkDealSetup(cid, dealno)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
 
 	if dealno != "" && cid != "" {
 		filters = append(filters, dbox.Eq("dealNo", dealno))
@@ -136,12 +143,524 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 		res.SetError(err)
 	}
 
-	err = updateDealSetup(cid, dealno, "all", "Under Process")
+	err = updateDealSetupLatestData(cid, dealno, "all", "Under Process")
+	if err != nil {
+		res.SetError(err)
+	}
+
+	if cou > 0 && stat != "Sent Back to Omnifin" {
+		arr := []string{"AccountDetails", "InternalRTR", "BankAnalysisV2", "CustomerProfile", "RatioInputData", "RepaymentRecords", "StockandDebt", "CibilReport", "CibilReportPromotorFinal", "DueDiligenceInput"}
+		for _, val := range arr {
+			err = changeStatus(cid, dealno, val, 0)
+			if err != nil {
+				res.SetError(err)
+			}
+		}
+	}
+
+	return res
+}
+
+func changeStatus(CustomerID string, DealNo string, TableName string, Status int) error {
+
+	custInt := cast.ToInt(CustomerID, cast.RoundingAuto)
+	concate := CustomerID + "|" + DealNo
+
+	//delete query
+	ctx, e := GetConnection()
+	defer ctx.Close()
+
+	if e != nil {
+		return e
+	}
+	que := ctx.NewQuery().
+		From(TableName).
+		SetConfig("multiexec", true)
+
+	defer que.Close()
+
+	//save query
+	qinsert := ctx.NewQuery().
+		From(TableName).
+		SetConfig("multiexec", true).
+		Save()
+	defer qinsert.Close()
+
+	insertdata := tk.M{}
+
+	switch TableName {
+	case "AccountDetails":
+		que = que.Where(dbox.Eq("_id", concate))
+		me := []AccountDetail{}
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			dt.Status = Status
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+		}
+
+	case "InternalRTR":
+		que = que.Where(dbox.Eq("_id", concate))
+		me := []InternalRtr{}
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			dt.Status = Status
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+		}
+	case "BankAnalysisV2":
+		que = que.Where(dbox.Eq("CustomerId", custInt), dbox.Eq("DealNo", DealNo))
+		me := []BankAnalysisV2{}
+
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			dt.Status = Status
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+		}
+	case "CustomerProfile":
+		que = que.Where(dbox.Eq("_id", concate))
+		me := []CustomerProfiles{}
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			dt.Status = Status
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+		}
+	case "RatioInputData":
+		que = que.Where(dbox.Eq("customerid", concate))
+		me := []RatioInputData{}
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			if Status == 0 {
+				dt.Confirmed = false
+				dt.Frozen = false
+			} else {
+				dt.Confirmed = true
+			}
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+
+		}
+	case "RepaymentRecords":
+		que = que.Where(dbox.Eq("CustomerId", CustomerID), dbox.Eq("DealNo", DealNo))
+		me := []RTRBottom{}
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			dt.Status = Status
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+		}
+	case "StockandDebt":
+		que = que.Where(dbox.Eq("customerid", concate))
+		me := []StockandDebtModel{}
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			if Status == 0 {
+				dt.IsConfirm = false
+				dt.IsFreeze = false
+			} else {
+				dt.IsConfirm = true
+			}
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+		}
+	case "CibilReport":
+		que = que.Where(dbox.Eq("Profile.customerid", custInt), dbox.Eq("Profile.dealno", DealNo))
+		me := []CibilReportModel{}
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			dt.Status = Status
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+		}
+	case "CibilReportPromotorFinal":
+		que = que.Where(dbox.Eq("ConsumerInfo.CustomerId", custInt), dbox.Eq("ConsumerInfo.DealNo", DealNo))
+		me := []ReportData{}
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			dt.StatusCibil = Status
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+		}
+	case "DueDiligenceInput":
+		que = que.Where(dbox.Eq("_id", concate))
+		me := []DueDiligenceInput{}
+		csr, e := que.Cursor(nil)
+		if e != nil {
+			return e
+		}
+
+		defer csr.Close()
+
+		err := csr.Fetch(&me, 0, false)
+		if err != nil {
+			return err
+		}
+
+		for _, dt := range me {
+			dt.Status = Status
+			insertdata = insertdata.Set("data", dt)
+			e = qinsert.Exec(insertdata)
+			if e != nil {
+				return e
+			}
+		}
+	default:
+		return errors.New("Table Name Not Registered")
+	}
+
+	return nil
+}
+
+func (c *DealSetUpController) SendBack(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	payload := tk.M{}
+
+	if err := k.GetPayload(&payload); err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	cid := payload.GetString("custid")
+	dealno := payload.GetString("dealno")
+
+	err, _, _ := checkDealSetup(cid, dealno)
+	if err != nil {
+		message := strings.Replace(err.Error(), "Accept", "Send Back", -1)
+		res.SetError(errors.New(message))
+		return res
+	}
+
+	err = updateDealSetupLatestData(cid, dealno, "ds", "Sent Back to Omnifin")
 	if err != nil {
 		res.SetError(err)
 	}
 
 	return res
+}
+
+func (c *DealSetUpController) CheckData(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+	payload := tk.M{}
+
+	if err := k.GetPayload(&payload); err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	cid := payload.GetString("custid")
+	dealno := payload.GetString("dealno")
+
+	err, cou, _ := checkDealSetup(cid, dealno)
+
+	if err != nil && !strings.Contains(err.Error(), "Accept") {
+		res.SetError(err)
+		return res
+	}
+
+	res.SetData(tk.M{"count": cou})
+
+	return res
+}
+
+func checkDealSetup(cid string, dealno string) (error, int, string) {
+	cn, err := GetConnection()
+	defer cn.Close()
+
+	if err != nil {
+		return err, 0, ""
+	}
+
+	csr, e := cn.NewQuery().
+		Where(dbox.Eq("customerprofile._id", cid+"|"+dealno)).
+		From("DealSetup").
+		Cursor(nil)
+	defer csr.Close()
+
+	if e != nil {
+		return e, 0, ""
+	}
+
+	result := []tk.M{}
+	err = csr.Fetch(&result, 0, false)
+	if err != nil {
+		return err, 0, ""
+	}
+
+	if len(result) > 1 {
+		latest := result[len(result)-2]
+		infos := latest.Get("info").(tk.M)
+		myInfo := infos.Get("myInfo").([]interface{})
+		latestinfo := myInfo[len(myInfo)-1].(tk.M).GetString("status")
+		if latestinfo != "Approved" && latestinfo != "Rejected" && latestinfo != "Cancelled" && latestinfo != "On Hold" && latestinfo != "Sent Back for Analysis" && latestinfo != "Sent Back to Omnifin" {
+			return errors.New("Accept Failed, existing data status is " + latestinfo), 0, ""
+		}
+		return nil, len(result), latestinfo
+	}
+
+	return nil, len(result), ""
+}
+
+func updateDealSetupLatestData(cid string, dealno string, formname string, formstatus string) error {
+
+	cn, err := GetConnection()
+	defer cn.Close()
+
+	if err != nil {
+		return err
+	}
+
+	csr, e := cn.NewQuery().
+		Where(dbox.Eq("customerprofile._id", cid+"|"+dealno)).
+		From("DealSetup").
+		Cursor(nil)
+	defer csr.Close()
+
+	if e != nil {
+		return err
+	}
+
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return err
+	}
+
+	if len(results) == 0 {
+		return errors.New("Data not found")
+	}
+
+	result := results[len(results)-1]
+
+	infos := result.Get("info").(tk.M)
+
+	switch formname {
+	case "ds":
+		myInfos := CheckArraytkM(infos.Get("myInfo"))
+		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("myInfo", myInfos)
+	case "ca":
+		caInfos := CheckArraytkM(infos.Get("caInfo"))
+		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("caInfo", caInfos)
+	case "cibil":
+		cibilInfos := CheckArraytkM(infos.Get("cibilInfo"))
+		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("cibilInfo", cibilInfos)
+	case "bsi":
+		bsiInfos := CheckArraytkM(infos.Get("bsiInfo"))
+		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("bsiInfo", bsiInfos)
+	case "sbd":
+		sbdInfos := CheckArraytkM(infos.Get("sbdInfo"))
+		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("sbdInfo", sbdInfos)
+	case "ad":
+		adInfos := CheckArraytkM(infos.Get("adInfo"))
+		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("adInfo", adInfos)
+	case "ba":
+		baInfos := CheckArraytkM(infos.Get("baInfo"))
+		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("baInfo", baInfos)
+	case "ertr":
+		ertrInfos := CheckArraytkM(infos.Get("ertrInfo"))
+		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("ertrInfo", ertrInfos)
+	case "irtr":
+		irtrInfos := CheckArraytkM(infos.Get("irtrInfo"))
+		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("irtrInfo", irtrInfos)
+	case "dd":
+		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
+		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("ddInfo", ddInfos)
+	case "all":
+		myInfos := CheckArraytkM(infos.Get("myInfo"))
+		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("myInfo", myInfos)
+		caInfos := CheckArraytkM(infos.Get("caInfo"))
+		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("caInfo", caInfos)
+
+		cibilInfos := CheckArraytkM(infos.Get("cibilInfo"))
+		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("cibilInfo", cibilInfos)
+
+		bsiInfos := CheckArraytkM(infos.Get("bsiInfo"))
+		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("bsiInfo", bsiInfos)
+
+		sbdInfos := CheckArraytkM(infos.Get("sbdInfo"))
+		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("sbdInfo", sbdInfos)
+
+		adInfos := CheckArraytkM(infos.Get("adInfo"))
+		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("adInfo", adInfos)
+
+		baInfos := CheckArraytkM(infos.Get("baInfo"))
+		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("baInfo", baInfos)
+
+		ertrInfos := CheckArraytkM(infos.Get("ertrInfo"))
+		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("ertrInfo", ertrInfos)
+
+		irtrInfos := CheckArraytkM(infos.Get("irtrInfo"))
+		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("irtrInfo", irtrInfos)
+
+		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
+		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("ddInfo", ddInfos)
+	}
+
+	result.Set("info", infos)
+
+	qinsert := cn.NewQuery().
+		From("DealSetup").
+		SetConfig("multiexec", true).
+		Save()
+
+	csc := map[string]interface{}{"data": result}
+	err = qinsert.Exec(csc)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
 
 func updateDealSetup(cid string, dealno string, formname string, formstatus string) error {
@@ -163,11 +682,13 @@ func updateDealSetup(cid string, dealno string, formname string, formstatus stri
 		return err
 	}
 
-	result := tk.M{}
-	err = csr.Fetch(&result, 1, false)
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
 	if err != nil {
 		return err
 	}
+
+	result := results[len(results)-1]
 
 	infos := result.Get("info").(tk.M)
 

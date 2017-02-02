@@ -378,20 +378,24 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 	p.LastUpdate = time.Now()
 	p.UpdatedBy = Username
 
-	if p.Status == 1 {
-		custstring := cast.ToString(p.ApplicantDetail.CustomerID)
-		dealstring := cast.ToString(p.ApplicantDetail.DealNo)
-		_ = new(CustomerProfiles).SyncCustomerData(custstring, dealstring)
+	custstring := cast.ToString(p.ApplicantDetail.CustomerID)
+	dealstring := cast.ToString(p.ApplicantDetail.DealNo)
+	// p.Status
+	// 0 - Save / Re-enter
+	// 1 - Confirm / Unfreeze
+	// 2 - Freeze
+	switch p.Status {
+	case 1:
+		new(CustomerProfiles).SyncCustomerData(custstring, dealstring)
 
 		p.ConfirmedBy = Username
 		p.ConfirmedDate = time.Now()
-		if err := new(DataConfirmController).SaveDataConfirmed(cast.ToString(p.ApplicantDetail.CustomerID), p.ApplicantDetail.DealNo.(string), p.TableName(), &p, true); err != nil {
+		if err := new(DataConfirmController).SaveDataConfirmed(custstring, dealstring, p.TableName(), &p, true); err != nil {
 			return err
 		}
 
 		UpdateUnmatchData(p)
-
-	} else if p.Status == 2 {
+	case 2:
 		p.VerifiedBy = Username
 		p.VerifiedDate = time.Now()
 	}
@@ -401,6 +405,15 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 	if e != nil {
 		fmt.Println(e)
 	}
+
+	// Update DealSetup Status
+	statusmap := []string{
+		"Under Process",
+		"Confirmed",
+		"Freeze",
+	}
+	UpdateDealSetup(custstring, dealstring, "ca", statusmap[p.Status])
+
 	return p
 }
 

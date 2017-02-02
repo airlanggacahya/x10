@@ -15,25 +15,38 @@ ms.getSuplierData = function(){
 }
 
 ms.loadGridSuplier = function(){
-	console.log(ms.suplierData())
+	// console.log(ms.suplierData())
 	$("#suplier").html("");
 	$("#suplier").kendoGrid({
-		dataSource: ms.suplierData(),
+		dataSource: {
+			data: ms.suplierData(),
+			schema:{
+				model:{
+					id: "Name",
+					fields: {
+						Name:{editable: true, validation: { required: true }},
+						UseInAD:{editable: false},
+						FromOmnifin:{editable: false},
+					}
+				}
+			},
+		},
+		
 		navigatable: true,
 		scrolable: true,
 		height: 400,
+		edit : function(e){
+					if(e.model.FromOmnifin){
+						this.closeCell(); 
+					}
+				},
 		columns : [
 			{
 				field: "Name",
 				title: "Name",
 				headerAttributes: {"class" : "sub-bgcolor"},
 				width: 300,
-				template: function(d){
-					if(d.Name == ""){
-						return "<input type='text' id='"+d.uid+"'' style='width: 98%;' />"
-					}
-					return d.Name
-				},
+
 			},
 			{
 				field: "UseInAD",
@@ -46,6 +59,7 @@ ms.loadGridSuplier = function(){
 					}
 					return "<center><input type='checkbox' onclick='ms.checkedADSuplier(\""+d._id+"\", \""+d.uid+"\")' id='AD"+ d._id+"' name='AD'><center>"
 				},
+
 				width: 100,
 			},
 			{
@@ -72,9 +86,11 @@ ms.loadGridSuplier = function(){
 					}
 					return ""
 				},
-				width: 100,
+				width: 50,
 			},
-		]
+		],
+		editable: true,
+		resizeable: true,
 	});
 }
 
@@ -87,9 +103,11 @@ ms.checkedADSuplier = function(d, uid){
 ms.saveMasterSuplier = function(){
 	ms.suplierDataTemp([])
 	var Data = $('#suplier').data('kendoGrid').dataSource.data();
+	var a = 0;
 	$.each(Data, function(i, item){
+
 		if(Data[i].Name == ""){
-			Data[i].Name = $("#"+item.uid).val();
+			a ++;
 		} 
 		ms.suplierDataTemp.push({
 			Id: item._id,
@@ -115,16 +133,20 @@ ms.saveMasterSuplier = function(){
 			FromOmnifin : item.FromOmnifin
 		});
 	});
+	if(a == 0){
+		ajaxPost("/mastersuplier/savemastersuplier", ms.suplierDataTemp(), function(res){
+			if(res.IsError != true){
+				swal("Data Saved Successfully", "", "success");
+				ms.getSuplierData()
+				ms.loadGridSuplier()
+			}else{
+				swal("", res.Message, "error")
+			}
+		});
+	}else{
+		swal("Name can not be blank", "", "warning");
+	}
 	
-	ajaxPost("/mastersuplier/savemastersuplier", ms.suplierDataTemp(), function(res){
-		if(res.IsError != true){
-			swal("Data Saved Successfully", "", "success");
-			ms.getSuplierData()
-			ms.loadGridSuplier()
-		}else{
-			swal("", res.Message, "error")
-		}
-	});
 
 }
 
@@ -174,7 +196,7 @@ ms.removeData2 = function(uid){
 	ms.suplierDataTemp([]);
 	var index = $('#suplier tr[data-uid="'+uid+'"]').index();
 	var data = $('#suplier').data('kendoGrid').dataSource.data();
-	console.log(data[index]._id)
+	// console.log(data[index]._id)
 	$.each(data, function(i, item){
 		ms.suplierDataTemp.push({
 			Id: item._id,

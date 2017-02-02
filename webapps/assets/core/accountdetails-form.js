@@ -426,7 +426,7 @@ adf.getForm = function () {
 
 adf.setForm = function (data) {
 
-	console.log("sarif")
+	// console.log("sarif")
 	// console.log("---------->",data)
 	setTimeout(function(){
 		adf.setDisable()
@@ -2141,7 +2141,7 @@ adf.getData = function () {
 				}
 			} else {
 				setTimeout(function(){
-					console.log(res)
+					// console.log(res)
 					//23/11/2016 set score promotor
 					if(res.Data.Status==0){
 						$.each(res.Data.PromotorDetails, function(i, item){
@@ -2272,6 +2272,7 @@ adf.getData = function () {
 				adf.FirstAgreementDate(res.Data.LoanDetails.FirstAgreementDate)
 				var temp = formatingDate(adf.FirstAgreementDate())
 
+				// console.log(temp)
 				FirstAgreementDateStr(temp)
 				adf.optionTemporaryData(res.Data)
 				adf.setForm(res.Data)
@@ -2352,6 +2353,7 @@ formatingToText = function(data) {
 }
 
 window.refreshFilter = function () {
+	adf.loadAccountDetailMaster();
 	$(".toaster").html("")
 	adf.FirstAgreementDate("");
 	adf.form.BorrowerDetails.RefrenceCheck([])
@@ -2432,7 +2434,6 @@ adf.initData = function () {
 }
 
 adf.setDisable = function(){
-	console.log("jancok")
 	$(".disable").prop("disabled", true)
 
 	$(".disable").each(function(i,e){
@@ -2568,9 +2569,7 @@ $("#AD-Container textarea").prop( "disabled", !what );
   }
 
   $("#AD-Container .disable").prop( "disabled", true );
-  console.log("jancok")
   adf.setDisable()
-  console.log("jancoooooooooooook")
 });
 
   	for(var i = 0; i< adf.form.PromotorDetails().length; i++){
@@ -3122,6 +3121,18 @@ function generatemc(){
 }
 
 adf.loadAccountDetailMaster = function(){
+	adf.optionManagements([]);
+	adf.optionRatingMastersCustomerSegment([]);
+	adf.optionBorrowerConstitutionList([]);
+	adf.optionMarketReferences([]);
+	adf.optionSourceList([]);
+	adf.optionEducationalQualificationOfMainPromoters([]);
+	adf.optionResiOwnershipStatus([]);
+	adf.optionOfficeOwnershipStatus([]);
+	adf.dataTypeSecurity([]);
+	adf.optionSchemeList([]);
+	adf.optionExternalRatings([]);
+
 	ajaxPost("/accountdetail/getmasteraccountdetail", {}, function (res) {
 		var master = {}
 		res.Data.forEach(function (each) {
@@ -3216,7 +3227,6 @@ adf.checkVendor = function(){
 }
 
 $(function () {
-	adf.loadAccountDetailMaster()
 	adf.scroll()
 	adf.initEvents()
 	adf.initData()

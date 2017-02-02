@@ -1,0 +1,6 @@
+var setup = {}
+
+
+$(function(){
+	
+}) 

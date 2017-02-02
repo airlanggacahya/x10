@@ -1,0 +1,748 @@
+            <crDealDtl>
+			   <dealApplicationFormNo>SFGS</dealApplicationFormNo>
+               <dealBranch>1</dealBranch>
+			   <dealBranchDesc>HEAD OFFICE</dealBranchDesc>
+               <dealCategory>NA</dealCategory>
+			   <dealCurrentApprovalLevel>1</dealCurrentApprovalLevel>
+               <dealCustomerId>11</dealCustomerId>
+               <dealCustomerType>C</dealCustomerType>
+			   <dealCustomerTypeDesc>CORPORATE</dealCustomerTypeDesc>
+               <dealDate>2016-11-24T00:00:00+05:30</dealDate>
+               <dealEncodedDate>2016-11-24T00:00:00+05:30</dealEncodedDate>
+               <dealExistingCustomer>Y</dealExistingCustomer>
+			   <dealExistingCustomerDesc>YES</dealExistingCustomerDesc>
+               <dealId>275</dealId>
+               <dealInitiationDate>2016-11-24T11:23:39+05:30</dealInitiationDate>
+			   <dealNo>DLHOF00216-170000275</dealNo>
+               <dealPm>POOJA</dealPm>
+			   <dealPmDesc>POOJA</dealPmDesc>
+               <dealRm>ADMIN</dealRm>
+			   <dealRmDesc>ADMIN</dealRmDesc>
+               <dealSourceName>IRIS COMPUTERS LTD</dealSourceName>
+               <dealSourceType>DEALER</dealSourceType>
+               <dealVendorCode>0</dealVendorCode>
+               <makerDate>2016-11-24T11:23:39+05:30</makerDate>
+               <makerId>ADMIN</makerId>
+			   <makerIdDesc>ADMIN</makerIdDesc>
+               <pdStatus>N</pdStatus>
+               <recStatus>P</recStatus>
+			   <recStatusDesc>Pending</recStatusDesc>
+               <refreshFlag>NNNNNNNNNNNNNNN</refreshFlag>
+			   <existingROI>10.00</existingROI>
+			   <existingPf>5435.00</existingPf>
+			   <firstAgreementDate>2016-11-24 12:03:38.0</firstAgreementDate>
+			   <recentAgreementDate>2016-12-30 12:03:38.0</recentAgreementDate>
+			   <vinatgeInMonths>10</vinatgeInMonths>
+			   <!--Zero or more repetitions : crDealCustomerRoleList-->
+               <crDealCustomerRoleList>
+                  <customerDtl>
+                     <customerAddresses>
+                        <addressDetail>O</addressDetail>
+						<addressDetailDesc>Owned</addressDetailDesc>
+                        <addressId>907</addressId>
+                        <addressLine1>100_ADDRESS_LINE1</addressLine1>
+                        <addressLine2>100_ADDRESS_LINE2</addressLine2>
+                        <addressLine3>100_ADDRESS_LINE3</addressLine3>
+                        <addressType>REI</addressType>
+						<addressTypeDesc>RESIDENCE</addressTypeDesc>
+                        <alternatePhone>1000000000</alternatePhone>
+                        <authorDate>2016-11-24 12:03:38.0</authorDate>
+                        <authorId>ADMIN</authorId>
+						<authorIdDec>ADMIN</authorIdDec>
+                        <bpid>710</bpid>
+                        <bptype>CS</bptype>
+                        <communicationAddress>Y</communicationAddress>
+						<communicationAddressDesc>YES</communicationAddressDesc>
+                        <country>1</country>
+						<countryDesc>INDIA</countryDesc>
+                        <district>425</district>
+						<districtDesc>INDORE</districtDesc>
+                        <makerDate>2016-11-24 12:03:38.0</makerDate>
+                        <makerId>ADMIN</makerId>
+						<makerIdDesc>ADMIN</makerIdDesc>
+                        <noOfMonths>0</noOfMonths>
+                        <noOfYears>10</noOfYears>
+                        <pincode>452009</pincode>
+                        <primaryPhone>1000000000</primaryPhone>
+                        <recStatus>A</recStatus>
+						<recStatusDesc>Active</recStatusDesc>
+                        <state>23</state>
+						<stateDesc>MADHYA PRADESH</stateDesc>
+						<landmark>zz</landmark>
+                     </customerAddresses>
+                     <customerBlackList>N</customerBlackList>
+					 <customerBlackListDesc>NO</customerBlackListDesc>
+                     <customerCategory>SI</customerCategory>
+					 <customerCategoryDesc>SYSTEM INTEGRATOR</customerCategoryDesc>
+                     <customerConstitution>SELFEMP</customerConstitution>
+					 <customerConstitutionDesc>SELF EMPLOYED</customerConstitutionDesc>
+                     <customerDob>1978-11-01T00:00:00+05:30</customerDob>
+                     <customerFname>GURPREET</customerFname>
+                     <customerGroupType>N</customerGroupType>
+					 <customerGroupTypeDesc>New</customerGroupTypeDesc>
+                     <customerId>710</customerId>
+                     <customerLname>SINGH</customerLname>
+                     <customerName>GURPREET SINGH</customerName>
+                     <customerType>I</customerType>
+					 <customerTypeDesc>INDIVIDUAL</customerTypeDesc>
+                     <fatherHusbandName>MAHENDER PAL SINGH</fatherHusbandName>
+                     <gender>M</gender>
+					 <genderDesc>MALE</genderDesc>
+                     <maritalStatus>M</maritalStatus>
+					 <maritalStatusDesc>Married</maritalStatusDesc>
+                     <otherRelationshipType>CS</otherRelationshipType>
+					 <otherRelationshipTypeDesc>Customer</otherRelationshipTypeDesc>
+					 <eduDetail>GRAD</eduDetail>
+					 <eduDetailDesc>GRADUATE</eduDetailDesc>
+                  </customerDtl>
+                  <dealCustomerId>710</dealCustomerId>
+                  <dealCustomerRoleId>7925</dealCustomerRoleId>
+                  <dealCustomerRoleType>GUARANTOR</dealCustomerRoleType>
+				  <dealCustomerRoleTypeDesc>GUARANTOR</dealCustomerRoleTypeDesc>
+                  <dealCustomerType>I</dealCustomerType>
+				  <dealCustomerTypeDesc>INDIVIDUAL</dealCustomerTypeDesc>
+                  <dealExistingCustomer>N</dealExistingCustomer>
+				  <dealExistingCustomerDesc>No</dealExistingCustomerDesc>
+                  <dealId>275</dealId>
+                  <makerDate>2016-11-24T00:00:00+05:30</makerDate>
+                  <makerId>ADMIN</makerId>
+				  <makerIdDesc>ADMIN</makerIdDesc>
+                  <status>P</status>
+				  <statusDesc>Pending</statusDesc>
+               </crDealCustomerRoleList>
+               <crDealCustomerRoleList>
+                  <customerDtl>
+                     <crDealCustomerStakeholderM>
+                        <authorDate>2016-01-14T16:25:38+05:30</authorDate>
+                        <authorId>DIVYA</authorId>
+						<authorIdDec>DIVYA</authorIdDec>
+                        <customerId>11</customerId>
+                        <eligibleForComputation>Y</eligibleForComputation>
+						<eligibleForComputationDesc>YES</eligibleForComputationDesc>
+                        <makerDate>2015-04-09T16:51:48+05:30</makerDate>
+                        <makerId>SANIL</makerId>
+						<makerIdDesc>ADMIN</makerIdDesc>
+                        <recStatus>A</recStatus>
+						<recStatusDesc>Active</recStatusDesc>
+                        <stakeholderDob>1973-06-18T00:00:00+05:30</stakeholderDob>
+                        <stakeholderId>6</stakeholderId>
+                        <stakeholderName>GURPREET SINGH</stakeholderName>
+                        <stakeholderPan>AFAPB4062Q</stakeholderPan>
+                        <stakeholderPercentage>50.0000</stakeholderPercentage>
+                        <stakeholderPosition>ED</stakeholderPosition>
+						<stakeholderPositionDesc>EXECUTIVE DIRECTOR</stakeholderPositionDesc>
+                        <stakeholderPrimaryPhone>9811054239</stakeholderPrimaryPhone>
+                        <stakeholderSalutation>MR</stakeholderSalutation>
+                        <stakeholderType>MANAGEMENT</stakeholderType>
+						<stakeholderTypeDesc>MANAGEMENT</stakeholderTypeDesc>
+                     </crDealCustomerStakeholderM>
+                     <crDealCustomerStakeholderM>
+                        <authorDate>2016-01-14T16:25:38+05:30</authorDate>
+                        <authorId>DIVYA</authorId>
+						<authorIdDec>DIVYA</authorIdDec>
+                        <customerId>11</customerId>
+                        <eligibleForComputation>Y</eligibleForComputation>
+						<eligibleForComputationDesc>YES</eligibleForComputationDesc>
+                        <makerDate>2015-04-09T16:53:06+05:30</makerDate>
+                        <makerId>SANIL</makerId>
+						<makerIdDesc>ADMIN</makerIdDesc>
+                        <recStatus>A</recStatus>
+						<recStatusDesc>Active</recStatusDesc>
+                        <stakeholderDob>1974-09-13T00:00:00+05:30</stakeholderDob>
+                        <stakeholderId>7</stakeholderId>
+                        <stakeholderName>PARVINDER KAUR</stakeholderName>
+                        <stakeholderPan>BESPK8614M</stakeholderPan>
+                        <stakeholderPercentage>50.0000</stakeholderPercentage>
+                        <stakeholderPosition>ASSOCIATE</stakeholderPosition>
+						<stakeholderPositionDesc>ASSOCIATE</stakeholderPositionDesc>
+                        <stakeholderPrimaryPhone>9811054239</stakeholderPrimaryPhone>
+                        <stakeholderSalutation>MS</stakeholderSalutation>
+                        <stakeholderType>MANAGEMENT</stakeholderType>
+						<stakeholderTypeDesc>MANAGEMENT</stakeholderTypeDesc>
+                     </crDealCustomerStakeholderM>
+                     <custmerPan>AALCA8950H</custmerPan>
+                     <customerAddresses>
+                        <addressDetail>R</addressDetail>
+						<addressDetailDesc>RENTED</addressDetailDesc>
+                        <addressId>11</addressId>
+                        <addressLine1>11_ADDRESS_LINE1</addressLine1>
+                        <addressLine2>11_ADDRESS_LINE2</addressLine2>
+                        <addressLine3>11_ADDRESS_LINE3</addressLine3>
+                        <addressType>REGOFF</addressType>
+						<addressTypeDesc>REGISTERED OFFICE</addressTypeDesc>
+                        <alternatePhone>1100000000</alternatePhone>
+                        <authorDate>2016-01-14 16:25:38.0</authorDate>
+                        <authorId>DIVYA</authorId>
+						<authorIdDesc>DIVYA</authorIdDesc>
+                        <bpid>11</bpid>
+                        <bptype>CS</bptype>
+                        <communicationAddress>Y</communicationAddress>
+						<communicationAddressDesc>YES</communicationAddressDesc>
+                        <country>1</country>
+						<countryDesc>INDIA</countryDesc>
+                        <district>81</district>
+						<districtDesc>NEW DELHI</districtDesc>
+                        <makerDate>2015-04-09 16:50:09.0</makerDate>
+                        <makerId>SANIL</makerId>
+						<makerIdDesc>SANIL</makerIdDesc>
+                        <noOfMonths>0</noOfMonths>
+                        <noOfYears>2</noOfYears>
+                        <pincode>110015</pincode>
+                        <primaryPhone>1100000000</primaryPhone>
+                        <recStatus>A</recStatus>
+						<recStatusDesc>Active</recStatusDesc>
+                        <state>7</state>
+						<stateDesc>DELHI</stateDesc>
+						<landmark> </landmark>
+                     </customerAddresses>
+                     <customerBlackList>N</customerBlackList>
+					 <customerBlackListDesc>NO</customerBlackListDesc>
+                     <customerBusinessSegment>SME</customerBusinessSegment>
+					 <customerBusinessSegmentDesc>SMALL AND MEDIUM ENTERPRISE</customerBusinessSegmentDesc>
+                     <customerCategory>CORPORATE</customerCategory>
+					 <customerCategoryDesc>CORPORATE</customerCategoryDesc>
+                     <customerConstitution>PRIVATE</customerConstitution>
+					 <customerConstitutionDesc>PRIVATE LIMITED</customerConstitutionDesc>
+                     <customerDob>2013-07-16T00:00:00+05:30</customerDob>
+                     <customerEmail>11@email.com</customerEmail>
+                     <customerFname>11_FName</customerFname>
+                     <customerGroupDesc>ARROW PC NETWORK PRIVATE LIMITED</customerGroupDesc>
+                     <customerGroupId>3</customerGroupId>
+                     <customerGroupType>N</customerGroupType>
+					 <customerGroupTypeDesc>New</customerGroupTypeDesc>	
+                     <customerId>11</customerId>
+                     <customerIndustory>47</customerIndustory>
+					 <customerIndustoryDesc>IT HARDWARE</customerIndustoryDesc>
+                     <customerLname>11_LName</customerLname>
+                     <customerMname>11_MName</customerMname>
+                     <customerName>ARROW PC NETWORK PRIVATE LIMITED</customerName>
+                     <customerRegistrationNo>U72900DL2013PTC255417</customerRegistrationNo>
+                     <customerSubIndustory>234</customerSubIndustory>
+					 <customerSubIndustoryDesc>SERVER & NETWORKING DEVICE</customerSubIndustoryDesc>
+                     <customerType>C</customerType>
+					 <customerTypeDesc>CORPORATE</customerTypeDesc>
+                     <gcdCustomerId>11</gcdCustomerId>
+                     <noBvMonths>0</noBvMonths>
+                     <otherRelationshipType>CS</otherRelationshipType>
+					 <otherRelationshipTypeDesc>Customer</otherRelationshipTypeDesc>
+                     <yearOfEstblishment>2</yearOfEstblishment>
+					 <natureOfBusiness> </natureOfBusiness>
+					 <salesTaxTinNo> </salesTaxTinNo>
+                  </customerDtl>
+                  <dealCustomerId>11</dealCustomerId>
+                  <dealCustomerRoleId>7939</dealCustomerRoleId>
+                  <dealCustomerRoleType>PRAPPL</dealCustomerRoleType>
+				  <dealCustomerRoleTypeDesc>APPLICANT</dealCustomerRoleTypeDesc>
+                  <dealCustomerType>C</dealCustomerType>
+				  <dealCustomerTypeDesc>Corporate</dealCustomerTypeDesc>
+                  <dealExistingCustomer>Y</dealExistingCustomer>
+				  <dealExistingCustomerDesc>YES</dealExistingCustomerDesc>
+                  <dealId>275</dealId>
+                  <makerDate>2016-11-24T00:00:00+05:30</makerDate>
+                  <makerId>ADMIN</makerId>
+				  <makerIdDesc>ADMIN</makerIdDesc>
+                  <status>P</status>
+				  <statusDesc>Pending</statusDesc>
+               </crDealCustomerRoleList>
+			   <!--Zero or more repetitions : crDealRepayschDtl-->
+               <crDealRepayschDtl>
+                  <advFlag>N</advFlag>
+                  <billFlag>N</billFlag>
+                  <dealId>275</dealId>
+                  <dealLoanId>260</dealLoanId>
+                  <excessInt>0.0000</excessInt>
+                  <excessIntRecd>0.0000</excessIntRecd>
+                  <instlAmount>5053333.0000</instlAmount>
+                  <instlAmountRecd>0.0000</instlAmountRecd>
+                  <instlDate>2016-12-18T00:00:00+05:30</instlDate>
+                  <instlNo>1</instlNo>
+                  <intComp>53333.0000</intComp>
+                  <intCompRecd>0.0000</intCompRecd>
+                  <interestRate>16.0000</interestRate>
+                  <otherCharges>0.0000</otherCharges>
+                  <prinComp>5000000.0000</prinComp>
+                  <prinCompRecd>0.0000</prinCompRecd>
+                  <prinOs>0.0000</prinOs>
+                  <recStatus>A</recStatus>
+				  <recStatusDesc>Active</recStatusDesc>
+                  <repayschId>5925</repayschId>
+                  <serviceAmount>0.0000</serviceAmount>
+                  <totalOdAmount>0.0000</totalOdAmount>
+                  <vatAmount>0.0000</vatAmount>
+               </crDealRepayschDtl>
+			   <!--Zero or more repetitions : crNotepadDtl-->
+               <crNotepadDtl>
+                  <followupReqd>N</followupReqd>
+				  <followupReqdDesc>No</followupReqdDesc>
+                  <makerDate>2016-11-24 12:23:02.0</makerDate>
+                  <makerId>ADMIN</makerId>
+				  <makerIdDesc>ADMIN</makerIdDesc>
+                  <notepadCode>ADF</notepadCode>
+				  <notepadCodeDesc>ADVISORY FEE</notepadCodeDesc>
+                  <notepadComments>dcd</notepadComments>
+                  <notepadDate>2016-11-24 00:00:00.0</notepadDate>
+                  <notepadId>118</notepadId>
+                  <txnId>275</txnId>
+                  <txnType>DC</txnType>
+               </crNotepadDtl>
+               <crNotepadDtl>
+                  <followupReqd>N</followupReqd>
+				  <followupReqdDesc>No</followupReqdDesc>
+                  <makerDate>2016-11-24 16:27:48.0</makerDate>
+                  <makerId>ADMIN</makerId>
+				  <makerIdDesc>ADMIN</makerIdDesc>
+                  <meetingLocation>delhi</meetingLocation>
+                  <notepadCode>ADF</notepadCode>
+				  <notepadCodeDesc>ADVISORY FEE</notepadCodeDesc>
+                  <notepadComments>ok</notepadComments>
+                  <notepadDate>2016-11-24 00:00:00.0</notepadDate>
+                  <notepadId>119</notepadId>
+                  <personMet>RUCHI</personMet>
+                  <txnId>275</txnId>
+                  <txnType>DC</txnType>
+               </crNotepadDtl>
+			   <!--Zero or more repetitions : dealCollateralDtl-->
+               <dealCollateralDtl>
+                  <assetCollateralDtl>
+                     <assetCollateralClass>PROPERTY</assetCollateralClass>
+                     <assetCollateralDescription>zz</assetCollateralDescription>
+                     <assetId>2611</assetId>
+                     <assetType>COLLATERAL</assetType>
+                     <propertyAddress>ZZ</propertyAddress>
+                     <propertyOwner>ZZ ZZ</propertyOwner>
+                     <valuationAmount>0.0000</valuationAmount>
+                  </assetCollateralDtl>
+                  <assetId>2611</assetId>
+                  <dealId>275</dealId>
+                  <makerId>ADMIN</makerId>
+				  <makerIdDesc>ADMIN</makerIdDesc>
+                  <recStatus>P</recStatus>
+				  <recStatusDesc>Pending</recStatusDesc>
+               </dealCollateralDtl>
+               <dealLoanDetails>
+                  <dealAdvanceInstl>0</dealAdvanceInstl>
+                  <dealAssetCost>5000000.0000</dealAssetCost>
+                  <dealBaseRate>16.0000000</dealBaseRate>
+                  <dealBaseRateType>BASERATE</dealBaseRateType>
+                  <dealCreditPeriod>0</dealCreditPeriod>
+                  <dealDueDay>18</dealDueDay>
+                  <dealEffRate>16.0000000</dealEffRate>
+                  <dealFinalRate>16.0000000</dealFinalRate>
+                  <dealFlatRate>12.7999200</dealFlatRate>
+                  <dealFloatingFixedPeriod>0</dealFloatingFixedPeriod>
+                  <dealId>275</dealId>
+                  <dealInstallmentMode>R</dealInstallmentMode>
+				  <dealInstallmentModeDesc>ARREAR</dealInstallmentModeDesc>
+                  <dealInstallmentType>G</dealInstallmentType>
+				  <dealInstallmentTypeDesc>Gr. INSTALLMENT</dealInstallmentTypeDesc>
+                  <dealIrr1>15.9999849</dealIrr1>
+                  <dealIrr2>15.9999849</dealIrr2>
+                  <dealLoanAmount>5000000.0000</dealLoanAmount>
+                  <dealLoanId>260</dealLoanId>
+                  <dealLoanPurpose>WC</dealLoanPurpose>
+				  <dealLoanPurposeDesc>WORKING CAPITAL</dealLoanPurposeDesc>
+                  <dealMarginAmount>0.0000</dealMarginAmount>
+                  <dealMarginRate>0.00</dealMarginRate>
+                  <dealMarkup>0E-7</dealMarkup>
+                  <dealNoOfInstallment>1</dealNoOfInstallment>
+                  <dealProduct>INVOICE</dealProduct>
+				  <dealProductDesc>PURCHASE INVOICE FINANCE</dealProductDesc>
+                  <dealProductCategory>SME</dealProductCategory>
+                  <dealProductType>A</dealProductType>
+                  <dealRateMethod>F</dealRateMethod>
+				  <dealRateMethodDesc>Fixed</dealRateMethodDesc>
+                  <dealRateType>E</dealRateType>
+				  <dealRateTypeDesc>Effective Rate</dealRateTypeDesc>
+                  <dealRepaymentFreq>M</dealRepaymentFreq>
+				  <dealRepaymentFreqDesc>MONTHLY</dealRepaymentFreqDesc>	
+                  <dealRepaymentMode>P</dealRepaymentMode>
+				  <dealRepaymentModeDesc>PDC</dealRepaymentModeDesc>
+                  <dealRepaymentType>I</dealRepaymentType>
+				  <dealRepaymentTypeDesc>INSTALLMENT</dealRepaymentTypeDesc>
+                  <dealScheme>2</dealScheme>
+				  <dealSchemeDesc>SYSTEM INTEGRATOR</dealSchemeDesc>
+                  <dealSectorType>NPSL</dealSectorType>
+				  <dealSectorTypeDesc>NPSL (NON PRIORITY SECTOR LENDING)</dealSectorTypeDesc>
+                  <dealTenure>1</dealTenure>
+                  <loanClassification>0</loanClassification>
+                  <loanType>NEW</loanType>
+				  <loanTypeDesc>NEW LOAN</loanTypeDesc>
+                  <makerId>ADMIN</makerId>
+				  <makerIdDesc>ADMIN</makerIdDesc>
+                  <netLtv>100.00</netLtv>
+                  <nextDueDate>2016-12-18T00:00:00+05:30</nextDueDate>
+                  <noOfAsset>1</noOfAsset>
+                  <recStatus>P</recStatus>
+				  <recStatusDesc>PENDING</recStatusDesc>
+                  <tenureInDay>30</tenureInDay>
+               </dealLoanDetails>
+			   <existingDealDetails>
+                  <dealId>4</dealId>
+                  <dealNo>DLHOF00215-160000004</dealNo>
+                  <borrowerId>11</borrowerId>
+                  <borrowerName>11_Name</borrowerName>
+                  <partnerwithX10Since>2015-04-10</partnerwithX10Since>
+                  <sanctionDate>2015-04-10</sanctionDate>
+                  <agreementDate>2015-04-10</agreementDate>
+                  <sanctionedLimit>4000000.0000</sanctionedLimit>
+                  <relationshipManager>USER-DIVYA</relationshipManager>
+                  <email>DIVYA@email.com</email>
+                  <totalLoanAmount>0.0000</totalLoanAmount>
+                  <availableLimit>4000000.0000</availableLimit>
+                  <dealSanctionTillValidate>2016-04-30</dealSanctionTillValidate>
+                  <principleOutstandingAmount>0.0000</principleOutstandingAmount>
+                  <interestOutstandingAmount>0.0000</interestOutstandingAmount>
+                  <productId>INVOICE</productId>
+                  <product>PURCHASE INVOICE FINANCE</product>
+                  <schemeId>2</schemeId>
+                  <scheme>SYSTEM INTEGRATOR</scheme>
+				  <interestRateCharged>18.0000000</interestRateCharged>
+				  <NoOfActiveLoans>0</NoOfActiveLoans>
+				  <AmountOutstandingAccrued>0</AmountOutstandingAccrued>
+				  <AmountOutstandingDelinquent>0</AmountOutstandingDelinquent>
+				  <NoOfPrincipalRepaymentDelays>0</NoOfPrincipalRepaymentDelays>
+				  <NoOfPrincipalRepaymentEarlyClosures>0</NoOfPrincipalRepaymentEarlyClosures>
+				  <NoOfPaymentOnDueDate>0</NoOfPaymentOnDueDate>
+				  <Average>0</Average>
+				  <Maximum>0</Maximum>
+				  <Minimum>0</Minimum>
+				  <MaxDPDInClosedLoanInDays>0</MaxDPDInClosedLoanInDays>
+				  <MaxDPDInClosedLoanInAmount>0</MaxDPDInClosedLoanInAmount>
+                  <distributorDetails>
+                     <dealerName>IRIS COMPUTERS LTD</dealerName>
+                     <distributorWiseSanctionedLimit>4000000.0000</distributorWiseSanctionedLimit>
+                     <distributorWiseUtilizedAmount>0.0000</distributorWiseUtilizedAmount>
+                     <distributorWiseAvailableLimit>4000000.0000</distributorWiseAvailableLimit>
+                     <distributorWisePercent>100.0000</distributorWisePercent>
+                     <distributorId>3</distributorId>
+                  </distributorDetails>
+                  <distributorDetails>
+                     <dealerName>RASHI PERIPHERALS PVT LTD</dealerName>
+                     <distributorWiseSanctionedLimit>2000000.0000</distributorWiseSanctionedLimit>
+                     <distributorWiseUtilizedAmount>0.0000</distributorWiseUtilizedAmount>
+                     <distributorWiseAvailableLimit>2000000.0000</distributorWiseAvailableLimit>
+                     <distributorWisePercent>50.0000</distributorWisePercent>
+                     <distributorId>7</distributorId>
+                  </distributorDetails>
+                  <distributorDetails>
+                     <dealerName>SAVEX TECHNOLOGIES PVT LTD</dealerName>
+                     <distributorWiseSanctionedLimit>2000000.0000</distributorWiseSanctionedLimit>
+                     <distributorWiseUtilizedAmount>0.0000</distributorWiseUtilizedAmount>
+                     <distributorWiseAvailableLimit>2000000.0000</distributorWiseAvailableLimit>
+                     <distributorWisePercent>50.0000</distributorWisePercent>
+                     <distributorId>6</distributorId>
+                  </distributorDetails>
+                  <distributorDetails>
+                     <dealerName>SUPERTRON ELECTRONICS PVT LTD</dealerName>
+                     <distributorWiseSanctionedLimit>2000000.0000</distributorWiseSanctionedLimit>
+                     <distributorWiseUtilizedAmount>0.0000</distributorWiseUtilizedAmount>
+                     <distributorWiseAvailableLimit>2000000.0000</distributorWiseAvailableLimit>
+                     <distributorWisePercent>50.0000</distributorWisePercent>
+                     <distributorId>11</distributorId>
+                  </distributorDetails>
+                  <loanDetails>
+                     <loanAmount>4000000.0000</loanAmount>
+                     <loanDisbursalDate>2015-04-10</loanDisbursalDate>
+                     <loanId>8</loanId>
+                     <loanNo>LNHOF00215-160000008</loanNo>
+                     <status>Close</status>
+                     <loanTenure>3</loanTenure>
+                     <loanMaturityDate>2015-07-09</loanMaturityDate>
+                     <noOfEmiUnpaid>0</noOfEmiUnpaid>
+                     <loanWisePrincipleOutstandingAmount>0.0000</loanWisePrincipleOutstandingAmount>
+                     <loanWiseInterestOutstandingAmount>0.0000</loanWiseInterestOutstandingAmount>
+                     <outstandingAmount>0</outstandingAmount>
+                     <invoiceDetails>
+                        <invoiceNo>N101-22-1503-412</invoiceNo>
+                        <invoiceAmount>10145650.0000</invoiceAmount>
+                        <invoiceDate>2015-03-26</invoiceDate>
+                        <distributorId>3</distributorId>
+                        <distributorName>IRIS COMPUTERS LTD</distributorName>
+                     </invoiceDetails>
+                     <dealLoanRepaymenDetails>
+                        <instlDate>2015-05-09</instlDate>
+                        <nextPrincipleDue>0.0000</nextPrincipleDue>
+                        <nextInterestPaymentDue>0.0000</nextInterestPaymentDue>
+                        <dpdParameter>0</dpdParameter>
+                     </dealLoanRepaymenDetails>
+                     <dealLoanRepaymenDetails>
+                        <instlDate>2015-06-09</instlDate>
+                        <nextPrincipleDue>-61151.0000</nextPrincipleDue>
+                        <nextInterestPaymentDue>61151.0000</nextInterestPaymentDue>
+                        <dpdParameter>0</dpdParameter>
+                     </dealLoanRepaymenDetails>
+                     <dealLoanRepaymenDetails>
+                        <instlDate>2015-07-09</instlDate>
+                        <nextPrincipleDue>4061151.0000</nextPrincipleDue>
+                        <nextInterestPaymentDue>60083.0000</nextInterestPaymentDue>
+                        <dpdParameter>0</dpdParameter>
+                     </dealLoanRepaymenDetails>
+					 <crInstrumentDtl>
+						<instrumentId>9865</instrumentId>
+						<txnType>LIM</txnType>   
+						<txnId>8</txnId>  
+						<bpType>CS</bpType>   
+						<bpId>11</bpId>
+						<instrumentMode>N</instrumentMode>
+						<instrumentModeDesc>NEFT</instrumentModeDesc>
+						<instrumentType>P</instrumentType> 
+						<instrumentTypeDesc>PAYBLE</instrumentTypeDesc> 
+						<pdcFlag>N</pdcFlag> 
+						<pdcInstrumentId> </pdcInstrumentId> 
+						<instrumentNo>NEFT28092016-1</instrumentNo>        
+						<issueingBankId>208</issueingBankId> 
+						<issueingBankIdDesc>KOTAK MAHINDRA BANK LTD.</issueingBankIdDesc> 
+						<issueingBranchId>75966</issueingBranchId> 
+						<issueingBranchIdDesc>JMD REGENT SQUARE MEHRAULI ,GURGAON ROAD GURGAON</issueingBranchIdDesc> 
+						<issuingMicrCode>110485003</issuingMicrCode> 
+						<issuingIfscCode>KKBK0000261</issuingIfscCode> 
+						<issueingBankAccount>4111568657</issueingBankAccount> 
+						<instrumentDate>2016-09-28</instrumentDate> 
+						<instrumentAmount>4900000.0000</instrumentAmount>
+						<receiptAmountNew>  </receiptAmountNew>
+						<tdsAmount>0.0000</tdsAmount>
+						<payTo>SU</payTo>
+						<payToDesc>SUPPLIER</payToDesc>
+						<payeeName>IRIS COMPUTERS LTD</payeeName>         
+						<makerRemarks>PAYMENT TO IRIS</makerRemarks>  
+						<remarks>  </remarks>             
+						<depositBankId>208</depositBankId>
+						<depositBankIdDesc>KOTAK MAHINDRA BANK LTD.</depositBankIdDesc>
+						<depositBranchId>75966</depositBranchId>
+						<depositBranchIdDesc>JMD REGENT SQUARE MEHRAULI ,GURGAON ROAD GURGAON</depositBranchIdDesc>						
+						<depositMicrCode>110485003</depositMicrCode> 
+						<depositIfscCode>KKBK0000261</depositIfscCode>
+						<depositBankAccount>4111568657</depositBankAccount> 
+						<reciptNo>9870/HOF</reciptNo>
+						<allocatedFlag>  </allocatedFlag>
+						<recStatus>R</recStatus>
+						<recStatusDesc>Realized</recStatusDesc>
+						<receivedDate>2016-09-28</receivedDate>
+						<depositedDate>2016-09-28</depositedDate>
+						<realizedDate>2016-09-28</realizedDate>
+						<bounceCount>0</bounceCount>
+						<defaultBranch>1</defaultBranch> 
+						<defaultBranchDesc>HEAD OFFICE</defaultBranchDesc> 
+						<receiptPurpose> </receiptPurpose> 
+						<makerId>OPERATION</makerId>
+						<makerIdDesc>OPERATION</makerIdDesc>
+						<makerDate>2016-09-28 19:14:38</makerDate>         
+						<receivedFrom>  </receivedFrom>
+						<contactNo> </contactNo> 
+					 </crInstrumentDtl>
+                  </loanDetails>
+                  <loanDetails>
+                     <loanAmount>3999328.0000</loanAmount>
+                     <loanDisbursalDate>2015-05-20</loanDisbursalDate>
+                     <loanId>34</loanId>
+                     <loanNo>LNHOF00215-160000034</loanNo>
+                     <status>Close</status>
+                     <loanTenure>3</loanTenure>
+                     <loanMaturityDate>2015-08-20</loanMaturityDate>
+                     <noOfEmiUnpaid>0</noOfEmiUnpaid>
+                     <loanWisePrincipleOutstandingAmount>0.0000</loanWisePrincipleOutstandingAmount>
+                     <loanWiseInterestOutstandingAmount>0.0000</loanWiseInterestOutstandingAmount>
+                     <outstandingAmount>0</outstandingAmount>
+                     <invoiceDetails>
+                        <invoiceNo>N101-22-1504-258</invoiceNo>
+                        <invoiceAmount>7411653.0000</invoiceAmount>
+                        <invoiceDate>2015-04-20</invoiceDate>
+                        <distributorId>3</distributorId>
+                        <distributorName>IRIS COMPUTERS LTD</distributorName>
+                     </invoiceDetails>
+                     <dealLoanRepaymenDetails>
+                        <instlDate>2015-07-20</instlDate>
+                        <nextPrincipleDue>0.0000</nextPrincipleDue>
+                        <nextInterestPaymentDue>59990.0000</nextInterestPaymentDue>
+                        <dpdParameter>0</dpdParameter>
+                     </dealLoanRepaymenDetails>
+                     <dealLoanRepaymenDetails>
+                        <instlDate>2015-08-20</instlDate>
+                        <nextPrincipleDue>3999328.0000</nextPrincipleDue>
+                        <nextInterestPaymentDue>59990.0000</nextInterestPaymentDue>
+                        <dpdParameter>0</dpdParameter>
+                     </dealLoanRepaymenDetails>
+					 <crInstrumentDtl>
+						<instrumentId>9865</instrumentId>
+						<txnType>LIM</txnType>   
+						<txnId>34</txnId>  
+						<bpType>CS</bpType>   
+						<bpId>11</bpId>
+						<instrumentMode>N</instrumentMode>
+						<instrumentModeDesc>NEFT</instrumentModeDesc>
+						<instrumentType>P</instrumentType> 
+						<instrumentTypeDesc>PAYBLE</instrumentTypeDesc> 
+						<pdcFlag>N</pdcFlag> 
+						<pdcInstrumentId> </pdcInstrumentId> 
+						<instrumentNo>NEFT28092016-1</instrumentNo>        
+						<issueingBankId>208</issueingBankId> 
+						<issueingBankIdDesc>KOTAK MAHINDRA BANK LTD.</issueingBankIdDesc> 
+						<issueingBranchId>75966</issueingBranchId> 
+						<issueingBranchIdDesc>JMD REGENT SQUARE MEHRAULI ,GURGAON ROAD GURGAON</issueingBranchIdDesc> 
+						<issuingMicrCode>110485003</issuingMicrCode> 
+						<issuingIfscCode>KKBK0000261</issuingIfscCode> 
+						<issueingBankAccount>4111568657</issueingBankAccount> 
+						<instrumentDate>2016-09-28</instrumentDate> 
+						<instrumentAmount>4900000.0000</instrumentAmount>
+						<receiptAmountNew>  </receiptAmountNew>
+						<tdsAmount>0.0000</tdsAmount>
+						<payTo>SU</payTo>
+						<payToDesc>SUPPLIER</payToDesc>
+						<payeeName>IRIS COMPUTERS LTD</payeeName>         
+						<makerRemarks>PAYMENT TO IRIS</makerRemarks>  
+						<remarks>  </remarks>             
+						<depositBankId>208</depositBankId>
+						<depositBankIdDesc>KOTAK MAHINDRA BANK LTD.</depositBankIdDesc>
+						<depositBranchId>75966</depositBranchId>
+						<depositBranchIdDesc>JMD REGENT SQUARE MEHRAULI ,GURGAON ROAD GURGAON</depositBranchIdDesc>						
+						<depositMicrCode>110485003</depositMicrCode> 
+						<depositIfscCode>KKBK0000261</depositIfscCode>
+						<depositBankAccount>4111568657</depositBankAccount> 
+						<reciptNo>9870/HOF</reciptNo>
+						<allocatedFlag>  </allocatedFlag>
+						<recStatus>R</recStatus>
+						<recStatusDesc>Realized</recStatusDesc>
+						<receivedDate>2016-09-28</receivedDate>
+						<depositedDate>2016-09-28</depositedDate>
+						<realizedDate>2016-09-28</realizedDate>
+						<bounceCount>0</bounceCount>
+						<defaultBranch>1</defaultBranch> 
+						<defaultBranchDesc>HEAD OFFICE</defaultBranchDesc> 
+						<receiptPurpose> </receiptPurpose> 
+						<makerId>OPERATION</makerId>
+						<makerIdDesc>OPERATION</makerIdDesc>
+						<makerDate>2016-09-28 19:14:38</makerDate>         
+						<receivedFrom>  </receivedFrom>
+						<contactNo> </contactNo> 
+					 </crInstrumentDtl>
+                  </loanDetails>
+               </existingDealDetails>
+               <existingDealDetails>
+                  <dealId>175</dealId>
+                  <dealNo>DLDEL00216-170000175</dealNo>
+                  <borrowerId>11</borrowerId>
+                  <borrowerName>11_Name</borrowerName>
+                  <partnerwithX10Since>2015-04-10</partnerwithX10Since>
+                  <sanctionDate>2016-06-23</sanctionDate>
+                  <agreementDate>2016-09-21</agreementDate>
+                  <sanctionedLimit>6000000.0000</sanctionedLimit>
+                  <relationshipManager>USER-DIVYA</relationshipManager>
+                  <email>DIVYA@email.com</email>
+                  <totalLoanAmount>0.0000</totalLoanAmount>
+                  <availableLimit>6000000.0000</availableLimit>
+                  <dealSanctionTillValidate>2017-09-21</dealSanctionTillValidate>
+                  <principleOutstandingAmount>0.0000</principleOutstandingAmount>
+                  <interestOutstandingAmount>0.0000</interestOutstandingAmount>
+                  <productId>INVOICE</productId>
+                  <product>PURCHASE INVOICE FINANCE</product>
+                  <schemeId>2</schemeId>
+                  <scheme>SYSTEM INTEGRATOR</scheme>
+				  <interestRateCharged>17.0000000</interestRateCharged>
+				  <NoOfActiveLoans>0</NoOfActiveLoans>
+				  <AmountOutstandingAccrued>0</AmountOutstandingAccrued>
+				  <AmountOutstandingDelinquent>0</AmountOutstandingDelinquent>
+				  <NoOfPrincipalRepaymentDelays>0</NoOfPrincipalRepaymentDelays>
+				  <NoOfPrincipalRepaymentEarlyClosures>0</NoOfPrincipalRepaymentEarlyClosures>
+				  <NoOfPaymentOnDueDate>0</NoOfPaymentOnDueDate>
+				  <Average>0</Average>
+				  <Maximum>0</Maximum>
+				  <Minimum>0</Minimum>
+				  <MaxDPDInClosedLoanInDays>0</MaxDPDInClosedLoanInDays>
+				  <MaxDPDInClosedLoanInAmount>0</MaxDPDInClosedLoanInAmount>
+                  <distributorDetails>
+                     <dealerName>IRIS COMPUTERS LTD</dealerName>
+                     <distributorWiseSanctionedLimit>6000000.0000</distributorWiseSanctionedLimit>
+                     <distributorWiseUtilizedAmount>0.0000</distributorWiseUtilizedAmount>
+                     <distributorWiseAvailableLimit>6000000.0000</distributorWiseAvailableLimit>
+                     <distributorWisePercent>100.0000</distributorWisePercent>
+                     <distributorId>3</distributorId>
+                  </distributorDetails>
+                  <loanDetails>
+                     <loanAmount>4900000.0000</loanAmount>
+                     <loanDisbursalDate>2016-09-28</loanDisbursalDate>
+                     <loanId>1262</loanId>
+                     <loanNo>LNDEL00216-170001262</loanNo>
+                     <status>Close</status>
+                     <loanTenure>1</loanTenure>
+                     <loanMaturityDate>2016-10-28</loanMaturityDate>
+                     <noOfEmiUnpaid>0</noOfEmiUnpaid>
+                     <loanWisePrincipleOutstandingAmount>0.0000</loanWisePrincipleOutstandingAmount>
+                     <loanWiseInterestOutstandingAmount>0.0000</loanWiseInterestOutstandingAmount>
+                     <outstandingAmount>0</outstandingAmount>
+                     <invoiceDetails>
+                        <invoiceNo>N101-22-1607-327</invoiceNo>
+                        <invoiceAmount>3042159.0000</invoiceAmount>
+                        <invoiceDate>2016-07-24</invoiceDate>
+                        <distributorId>3</distributorId>
+                        <distributorName>IRIS COMPUTERS LTD</distributorName>
+                     </invoiceDetails>
+                     <invoiceDetails>
+                        <invoiceNo>N101-22-1607-099</invoiceNo>
+                        <invoiceAmount>2458180.0000</invoiceAmount>
+                        <invoiceDate>2016-07-08</invoiceDate>
+                        <distributorId>3</distributorId>
+                        <distributorName>IRIS COMPUTERS LTD</distributorName>
+                     </invoiceDetails>
+                     <dealLoanRepaymenDetails>
+                        <instlDate>2016-10-28</instlDate>
+                        <nextPrincipleDue>4900000.0000</nextPrincipleDue>
+                        <nextInterestPaymentDue>0.0000</nextInterestPaymentDue>
+                        <dpdParameter>0</dpdParameter>
+                     </dealLoanRepaymenDetails>
+					 <crInstrumentDtl>
+						<instrumentId>9870</instrumentId>
+						<txnType>LIM</txnType>   
+						<txnId>1262</txnId>  
+						<bpType>CS</bpType>   
+						<bpId>11</bpId>
+						<instrumentMode>N</instrumentMode>
+						<instrumentModeDesc>NEFT</instrumentModeDesc>
+						<instrumentType>P</instrumentType> 
+						<instrumentTypeDesc>PAYBLE</instrumentTypeDesc> 
+						<pdcFlag>N</pdcFlag> 
+						<pdcInstrumentId> </pdcInstrumentId> 
+						<instrumentNo>NEFT28092016-1</instrumentNo>        
+						<issueingBankId>208</issueingBankId> 
+						<issueingBankIdDesc>KOTAK MAHINDRA BANK LTD.</issueingBankIdDesc> 
+						<issueingBranchId>75966</issueingBranchId> 
+						<issueingBranchIdDesc>JMD REGENT SQUARE MEHRAULI ,GURGAON ROAD GURGAON</issueingBranchIdDesc> 
+						<issuingMicrCode>110485003</issuingMicrCode> 
+						<issuingIfscCode>KKBK0000261</issuingIfscCode> 
+						<issueingBankAccount>4111568657</issueingBankAccount> 
+						<instrumentDate>2016-09-28</instrumentDate> 
+						<instrumentAmount>4900000.0000</instrumentAmount>
+						<receiptAmountNew>  </receiptAmountNew>
+						<tdsAmount>0.0000</tdsAmount>
+						<payTo>SU</payTo>
+						<payToDesc>SUPPLIER</payToDesc>
+						<payeeName>IRIS COMPUTERS LTD</payeeName>         
+						<makerRemarks>PAYMENT TO IRIS</makerRemarks>  
+						<remarks>  </remarks>             
+						<depositBankId>208</depositBankId>
+						<depositBankIdDesc>KOTAK MAHINDRA BANK LTD.</depositBankIdDesc>
+						<depositBranchId>75966</depositBranchId>
+						<depositBranchIdDesc>JMD REGENT SQUARE MEHRAULI ,GURGAON ROAD GURGAON</depositBranchIdDesc>						
+						<depositMicrCode>110485003</depositMicrCode> 
+						<depositIfscCode>KKBK0000261</depositIfscCode>
+						<depositBankAccount>4111568657</depositBankAccount> 
+						<reciptNo>9870/HOF</reciptNo>
+						<allocatedFlag>  </allocatedFlag>
+						<recStatus>R</recStatus>
+						<recStatusDesc>Realized</recStatusDesc>
+						<receivedDate>2016-09-28</receivedDate>
+						<depositedDate>2016-09-28</depositedDate>
+						<realizedDate>2016-09-28</realizedDate>
+						<bounceCount>0</bounceCount>
+						<defaultBranch>1</defaultBranch> 
+						<defaultBranchDesc>HEAD OFFICE</defaultBranchDesc> 
+						<receiptPurpose> </receiptPurpose> 
+						<makerId>OPERATION</makerId>
+						<makerIdDesc>OPERATION</makerIdDesc>
+						<makerDate>2016-09-28 19:14:38</makerDate>         
+						<receivedFrom>  </receivedFrom>
+						<contactNo> </contactNo> 
+					 </crInstrumentDtl>
+                  </loanDetails>
+               </existingDealDetails>
+            </crDealDtl>
+            

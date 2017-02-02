@@ -229,7 +229,7 @@
                         { field: "NameOfBanks", headerAttributes: { "class": "sub-bgcolor" }, title: "Name Of the Banks/Fls", width: "120px" },
                         { field: "AddressContactNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Address & Contact No.",width: "120px" },
                         { field: "AcNo", headerAttributes: { "class": "sub-bgcolor" }, title: "A/c. No", width: "120px" },
-                        { field: "TypeOfAc", headerAttributes: { "class": "sub-bgcolor" }, title: "Type Of A/c", width: "120px"},
+                        { field: "TypeOfAc", headerAttributes: { "class": "sub-bgcolor" }, title: "Type Of A/c", width: "120px", editor : typeOfLoanDropDownEditor},
                         { field: "YearOpening", headerAttributes: { "class": "sub-bgcolor" }, title: "Year Of Opening",  width: "120px", format : "{0:yyyy}", editor: dateeditor },
                         { headerAttributes: { "class": "sub-bgcolor del" }, title: "", width: "30px", template:function(d){ return "<center><button class='btn btn-xs btn-flat btn-danger del' onclick='info.removeRowGrid2(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"} },
                         ],
@@ -242,6 +242,20 @@
                       }
                     },
                 });
+
+function typeOfLoanDropDownEditor(container, options) {
+    
+        $('<input data-text-field="Text" data-value-field="Text" data-bind="value:' + options.field + '"/>')
+            .appendTo(container)
+            .kendoDropDownList({
+                filter: "contains",
+                dataTextField: "Text",
+                dataValueField: "Text",
+                dataSource: [{"Value":"Type of Loans","Text":"Type of Loans"},{"Value":"Auto Loan","Text":"Auto Loan"},{"Value":"Bill Discounting","Text":"Bill Discounting"},{"Value":"Business Loan","Text":"Business Loan"},{"Value":"Commercial Vehicle","Text":"Commercial Vehicle"},{"Value":"Currency Loans","Text":"Currency Loans"},{"Value":"Equipment Loan","Text":"Equipment Loan"},{"Value":"Home Loan","Text":"Home Loan"},{"Value":"Letter of Credit","Text":"Letter of Credit"},{"Value":"Loan Against Receivables","Text":"Loan Against Receivables"},{"Value":"Loan Against Securities","Text":"Loan Against Securities"},{"Value":"Mortgage Loan (LAP)","Text":"Mortgage Loan (LAP)"},{"Value":"OD/CC","Text":"OD/CC"},{"Value":"Packing Credit","Text":"Packing Credit"},{"Value":"Personal Loan","Text":"Personal Loan"},{"Value":"Term Loan (EMI)","Text":"Term Loan (EMI)"}],
+                optionLabel: "Select One.."
+            });
+}
+
             $(".grid3").kendoGrid({
                     //dataSource: dataSource,
                     // dataSource: {

@@ -436,7 +436,7 @@ func (c *RatioController) Freeze(k *knot.WebContext) interface{} {
 	deal := strings.Split(payload.CustomerID, "|")[1]
 	// Update DealSetup
 	if rowData.IsFrozen {
-		UpdateDealSetup(cust, deal, "bsi", "Frozen")
+		UpdateDealSetup(cust, deal, "bsi", "Freeze")
 	} else {
 		UpdateDealSetup(cust, deal, "bsi", "Confirmed")
 	}

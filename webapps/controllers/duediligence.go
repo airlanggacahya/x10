@@ -336,6 +336,15 @@ func (c *DueDiligenceController) DueDiligenceFormSaveInput(k *knot.WebContext) i
 		}
 	}
 
+	// Update Deal Setup
+	if payload.Freeze {
+		UpdateDealSetup(payload.CustomerId, payload.DealNo, "dd", "Freeze")
+	} else if payload.Status == 1 {
+		UpdateDealSetup(payload.CustomerId, payload.DealNo, "dd", "Confirmed")
+	} else {
+		UpdateDealSetup(payload.CustomerId, payload.DealNo, "dd", "Under Process")
+	}
+
 	return res
 }
 

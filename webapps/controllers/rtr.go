@@ -4,13 +4,14 @@ import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
+	"strings"
+	"time"
+
 	"github.com/eaciit/cast"
 	db "github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	"strings"
-	"time"
 )
 
 type RtrController struct {
@@ -229,6 +230,16 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 			}
 		}
 	}
+
+	// Browser JS check for grid
+	// Direct array access
+	ar := arr[0]
+	statusmap := []string{
+		"Under Process",
+		"Confirmed",
+		"Freeze",
+	}
+	UpdateDealSetup(ar.CustomerId, ar.DealNo, "ertr", statusmap[ar.Status])
 
 	return CreateResult(true, arr, "")
 }

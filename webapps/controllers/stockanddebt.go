@@ -5,6 +5,8 @@ import (
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"fmt"
+	"strings"
+
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -153,6 +155,14 @@ func (c *DataCapturingController) ConfirmStockAndDebt(k *knot.WebContext) interf
 		return CreateResult(false, nil, "No data found !")
 	}
 
+	cust := strings.Split(result.CustomerId, "|")[0]
+	deal := strings.Split(result.CustomerId, "|")[1]
+	// Update DealSetup
+	if p.Get("IsConfirm").(bool) {
+		UpdateDealSetup(cust, deal, "sbd", "Confirmed")
+	} else {
+		UpdateDealSetup(cust, deal, "sbd", "Under Process")
+	}
 	return result
 }
 
@@ -167,5 +177,13 @@ func (c *DataCapturingController) FreezeStockAndDebt(k *knot.WebContext) interfa
 		return CreateResult(false, nil, "No data found !")
 	}
 
+	cust := strings.Split(result.CustomerId, "|")[0]
+	deal := strings.Split(result.CustomerId, "|")[1]
+	// Update DealSetup
+	if p.Get("IsFreeze").(bool) {
+		UpdateDealSetup(cust, deal, "sbd", "Freeze")
+	} else {
+		UpdateDealSetup(cust, deal, "sbd", "Confirmed")
+	}
 	return result
 }

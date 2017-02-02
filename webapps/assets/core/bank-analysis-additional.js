@@ -224,24 +224,28 @@ var DrawDataBank = function(id){
             swal("Warning",res.message,"warning");
         }else{
             if(typeof res.data.SummaryAll != "undefined") {
-                totalGrid.BS.BSMonthlyCredits(res.data.SummaryAll.BSMonthlyCredits)
-                totalGrid.BS.BSMonthlyDebits(res.data.SummaryAll.BSMonthlyDebits)
-                totalGrid.BS.BSNoOfCredits(res.data.SummaryAll.BSNoOfCredits)
-                totalGrid.BS.BSNoOfDebits(res.data.SummaryAll.BSNoOfDebits)
-                totalGrid.BS.BSOWChequeReturns(res.data.SummaryAll.BSOWChequeReturns)
-                totalGrid.BS.BSIWChequeReturns(res.data.SummaryAll.BSIWChequeReturns)
-                totalGrid.BS.BSIMarginPercent(res.data.SummaryAll.BSIMarginPercent)
-                totalGrid.BS.BSImpMargin(res.data.SummaryAll.BSImpMargin)
-                totalGrid.BS.BSOWReturnPercent(res.data.SummaryAll.BSOWReturnPercent)
-                totalGrid.BS.BSIWReturnPercent(res.data.SummaryAll.BSIWReturnPercent)
-                totalGrid.BS.BSDRCRRatio(res.data.SummaryAll.BSDRCRRatio)
-                totalGrid.BS.ODUtilizationPercent(res.data.SummaryAll.ODUtilizationPercent)
-                totalGrid.OD.ODSactionLimit(res.data.SummaryAll.ODSactionLimit)
-                totalGrid.OD.ODAvgUtilization(res.data.SummaryAll.ODAvgUtilization)
-                totalGrid.OD.ODInterestPaid(res.data.SummaryAll.ODInterestPaid)
-                totalGrid.AML.AMLAvgCredits(res.data.SummaryAll.AMLAvgCredits)
-                totalGrid.AML.AMLAvgDebits(res.data.SummaryAll.AMLAvgDebits)
-                totalGrid.ABB(res.data.SummaryAll.ABB)
+                if(res.data.IsUpdate) {
+                    swal("Warning", "There is an update for IMP Margin, please Re enter to loan changes","warning");
+                } else {
+                    totalGrid.BS.BSMonthlyCredits(res.data.SummaryAll.BSMonthlyCredits)
+                    totalGrid.BS.BSMonthlyDebits(res.data.SummaryAll.BSMonthlyDebits)
+                    totalGrid.BS.BSNoOfCredits(res.data.SummaryAll.BSNoOfCredits)
+                    totalGrid.BS.BSNoOfDebits(res.data.SummaryAll.BSNoOfDebits)
+                    totalGrid.BS.BSOWChequeReturns(res.data.SummaryAll.BSOWChequeReturns)
+                    totalGrid.BS.BSIWChequeReturns(res.data.SummaryAll.BSIWChequeReturns)
+                    totalGrid.BS.BSIMarginPercent(res.data.SummaryAll.BSIMarginPercent)
+                    totalGrid.BS.BSImpMargin(res.data.SummaryAll.BSImpMargin)
+                    totalGrid.BS.BSOWReturnPercent(res.data.SummaryAll.BSOWReturnPercent)
+                    totalGrid.BS.BSIWReturnPercent(res.data.SummaryAll.BSIWReturnPercent)
+                    totalGrid.BS.BSDRCRRatio(res.data.SummaryAll.BSDRCRRatio)
+                    totalGrid.BS.ODUtilizationPercent(res.data.SummaryAll.ODUtilizationPercent)
+                    totalGrid.OD.ODSactionLimit(res.data.SummaryAll.ODSactionLimit)
+                    totalGrid.OD.ODAvgUtilization(res.data.SummaryAll.ODAvgUtilization)
+                    totalGrid.OD.ODInterestPaid(res.data.SummaryAll.ODInterestPaid)
+                    totalGrid.AML.AMLAvgCredits(res.data.SummaryAll.AMLAvgCredits)
+                    totalGrid.AML.AMLAvgDebits(res.data.SummaryAll.AMLAvgDebits)
+                    totalGrid.ABB(res.data.SummaryAll.ABB)
+                }
             }
 
             _.each(res.data.Detail, function(p){
@@ -1824,6 +1828,7 @@ $(document).ready(function(){
                     swal("Successfully Confirmed", "", "success");
                 } else {
                     swal("Please Edit / Enter Data", "", "success");
+                    DrawDataBank(getSearchVal());
                 }
                 statusPage.isConfirmed(!statusPage.isConfirmed())
                 checkStatusPage()

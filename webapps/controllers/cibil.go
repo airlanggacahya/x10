@@ -5,14 +5,15 @@ import (
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type Param struct {
@@ -236,6 +237,14 @@ func (c *DataCapturingController) UpdateFreeze(k *knot.WebContext) interface{} {
 		if em != nil {
 			return CreateResult(false, nil, em.Error())
 		}
+	}
+
+	// Update DealSetup
+	// Only update freeze, otherwise it will create duplicate entry
+	if p["status"].(bool) {
+		UpdateDealSetup(p.GetString("custid"), p.GetString("dealno"), "cibil", "Freeze")
+	} else {
+		UpdateDealSetup(p.GetString("custid"), p.GetString("dealno"), "cibil", "Confirmed")
 	}
 
 	return CreateResult(true, nil, "")
@@ -908,8 +917,9 @@ func (c *DataCapturingController) UpdateConfirmCibil(k *knot.WebContext) interfa
 	_ = csr.Fetch(&cibilDraft, 0, false)
 	csr.Close()
 
+	inputCibilConfirm := p.GetInt("IsConfirm")
 	for idx, cibil := range cibilModel {
-		cibil.IsConfirm = p.GetInt("IsConfirm")
+		cibil.IsConfirm = inputCibilConfirm
 		cibil.AcceptRejectTime = time.Now()
 		if cibil.IsConfirm == 1 && idx == 0 && len(cibilDraft) == 0 {
 			if err := new(DataConfirmController).SaveDataConfirmed(p["CustomerId"].(string), p["DealNo"].(string), "CibilReport", &cibil, true); err != nil {
@@ -922,6 +932,12 @@ func (c *DataCapturingController) UpdateConfirmCibil(k *knot.WebContext) interfa
 			}
 		}
 		c.Ctx.Save(&cibil)
+	}
+	// Update DealSetup
+	if inputCibilConfirm == 0 {
+		UpdateDealSetup(p.GetString("CustomerId"), p.GetString("DealNo"), "cibil", "Under Process")
+	} else {
+		UpdateDealSetup(p.GetString("CustomerId"), p.GetString("DealNo"), "cibil", "Confirmed")
 	}
 
 	return CreateResult(true, nil, "")

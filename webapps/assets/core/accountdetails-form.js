@@ -1,5 +1,6 @@
  var adf = {}
 
+var tempCustomerMargin = ko.observable("")
 var FirstAgreementDateStr = ko.observable("")
 var RecentAgreementDateStr = ko.observable("")
 var IfExistingCustomerStr = ko.observable("")
@@ -418,7 +419,27 @@ adf.getForm = function () {
 	// 	return d.DistributorName != ''
 	// })
 
-	// console.log("----- 345",data)
+	// HACK TO FIX BorrowerDetails DateBusinessStarted
+	// Somehow, after form confirmation, date format transformed to DD-MMM-YYYY
+	// We convert back to UTC ISO Date
+	var businesStart = moment(data.BorrowerDetails.DateBusinessStarted, "DD-MMM-YYYY")
+	if (businesStart.isValid()) {
+		data.BorrowerDetails.DateBusinessStarted = businesStart.format("YYYY-MM-DD") + "T00:00:00.000Z"
+	}
+
+	// HACK TO Fix FirstAgreementDate and RecenetAgreementDate
+	// Sometimes it's Empty
+	if (data.LoanDetails.FirstAgreementDate.length == 0) {
+		data.LoanDetails.FirstAgreementDate = "1970-01-01T00:00:00.000Z"
+	}
+	if (data.LoanDetails.RecenetAgreementDate.length == 0) {
+		data.LoanDetails.RecenetAgreementDate = "1970-01-01T00:00:00.000Z"
+	}
+
+	// HACK TO FIX CustomerMargin
+	// Sometimes it's Empty
+	data.AccountSetupDetails.PdInfo.CustomerMargin =
+		parseFloat(data.AccountSetupDetails.PdInfo.CustomerMargin)
 
 	return data
 }
@@ -545,6 +566,42 @@ adf.LoadPromotorEducation = function(){
 // 	return value
 // }, adf.form.LoanDetails.IfExistingCustomer)
 
+adf.selectAction = function(action) {
+	if(action == "save") {
+		adf.checkPDMargin(adf.save, "Save")
+	} else if(action == "confirm") {
+		adf.checkPDMargin(adf.getConfirm, "Confirm")
+	} else if(action == "freeze") {
+		adf.checkPDMargin(adf.getVerify, "Freeze")
+	}
+}
+adf.checkPDMargin = function(callback, textButton) {
+	console.log(tempCustomerMargin())
+	console.log(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
+
+	if(tempCustomerMargin() != adf.form.AccountSetupDetails.PdInfo.CustomerMargin()) {
+		swal({
+	       title: "",
+	       text: "Your changes will affect IMP Margin in Banking Analysis",
+	       type: 'warning',
+	       showCancelButton: true,
+	       customClass: 'swal-custom',
+	        showCloseButton: true,
+	        confirmButtonText: textButton,
+	        cancelButtonText: "Cancel",
+	        confirmButtonClass: 'btn btn-primary',
+	        cancelButtonClass: 'btn btn-danger',
+	        buttonsStyling: false
+	      }).then(function() {
+	        if(typeof callback == "function"){
+	        	callback()
+	        }
+	      })
+	} else {
+		callback()
+	}
+}
+
 adf.save = function () {
 	generatemc();
 	$('.form-last-confirmation-info').html('');
@@ -650,6 +707,8 @@ adf.save = function () {
 		app.ajaxPost(url, param, function (res) {
 			adf.isLoading(false)
 
+			tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
+
 			if(adf.PdDate().toString().indexOf("1970") >-1){
 				adf.PdDate("")
 			}
@@ -723,6 +782,8 @@ adf.getSaveAccount = function(){
 	adf.isLoading(true)
 	app.ajaxPost(url, param, function (res) {
 		adf.isLoading(false)
+		tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
+
 		var data = ko.mapping.toJS(adf.form)
 		ko.mapping.fromJS(data, adf.Tempform)
 		swal("Success", "Data Account Set-Up Details saved", "success");
@@ -973,6 +1034,7 @@ adf.getConfirm = function(){
 			app.ajaxPost(url, param, function (res) {
 				adf.isLoading(false)
 
+				tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
 				if(adf.CMISNULL())
 				{
 					adf.form.AccountSetupDetails.PdInfo.CustomerMargin("")
@@ -1104,6 +1166,8 @@ adf.getVerify = function(){
 		adf.isLoading(true)
 		app.ajaxPost(url, param, function (res) {
 			adf.isLoading(false)
+			tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
+
 			var data = ko.mapping.toJS(adf.form)
 			ko.mapping.fromJS(data, adf.Tempform)
 			swal("Successfully Freezed", "", "success");
@@ -1176,6 +1240,7 @@ adf.getAccountConfirm = function(){
 	adf.isLoading(true)
 	app.ajaxPost(url, param, function (res) {
 		adf.isLoading(false)
+		tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
 		var data = ko.mapping.toJS(adf.form)
 		ko.mapping.fromJS(data, adf.Tempform)
 
@@ -1199,6 +1264,7 @@ adf.getBorrowerConfirm = function(){
 		adf.isLoading(true)
 		app.ajaxPost(url, param, function (res) {
 			adf.isLoading(false)
+			tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
 		swal("Success", "Data Borrower Details confirmed", "success");
 			// $("#onreset2").prop("disabled", true);
 			var data = ko.mapping.toJS(adf.form)
@@ -1218,6 +1284,7 @@ adf.getBorrowerConfirm = function(){
 		adf.isLoading(true)
 		app.ajaxPost(url, param, function (res) {
 			adf.isLoading(false)
+			tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
 			var data = ko.mapping.toJS(adf.form)
 			ko.mapping.fromJS(data, adf.Tempform)
 			// $("#onreset2").prop("disabled", true);
@@ -1512,6 +1579,7 @@ adf.getDistributorConfirm = function(){
 	adf.isLoading(true)
 	app.ajaxPost(url, param, function (res) {
 		adf.isLoading(false)
+		tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
 		var data = ko.mapping.toJS(adf.form)
 		ko.mapping.fromJS(data, adf.Tempform)
 	}, function () {
@@ -1542,6 +1610,7 @@ adf.getLoanConfirm = function(){
 
 	adf.isLoading(true)
 	app.ajaxPost(url, param, function (res) {
+		tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
 		adf.isLoading(false)
 		var data = ko.mapping.toJS(adf.form)
 		ko.mapping.fromJS(data, adf.Tempform)
@@ -1579,6 +1648,7 @@ adf.getBusinessConfirm = function(){
 		adf.isLoading(true)
 		app.ajaxPost(url, param, function (res) {
 			adf.isLoading(false)
+			tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
 			var data = ko.mapping.toJS(adf.form)
 			ko.mapping.fromJS(data, adf.Tempform)
 			if(res.Status == "NOK"){
@@ -1614,6 +1684,7 @@ adf.getDistributtorMixConfirm = function(){
 	var data = ko.mapping.toJS(adf.form)
 	ko.mapping.fromJS(data, adf.Tempform)
 	app.ajaxPost(url, param, function (res) {
+		tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
 		adf.isLoading(false)
 
 	}, function () {
@@ -1641,6 +1712,7 @@ adf.getUnfreeze = function(){
 	}else{
 		adf.form.Freeze(false);
 		var url = "/accountdetail/saveaccountdetail"
+		tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
 		var param = adf.getForm()
 		// adf.form.AccountSetupDetails.Status(0)
 		adf.isLoading(true)
@@ -2189,6 +2261,8 @@ adf.getData = function () {
 
 					adf.setDisable()
 
+					tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
+					
 				}, 1000)
 				adf.form.BorrowerDetails.DateBusinessStarted("");
 				adf.form.LoanDetails.IfBackedByPO("");

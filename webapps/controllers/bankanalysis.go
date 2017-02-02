@@ -508,8 +508,8 @@ func (c *BankAnalysisController) GetDataBankV2(k *knot.WebContext) interface{} {
 	// cust := strconv.Itoa(t.CustomerId)
 	// rtr, _ := new(RTRBottom).GetByCustomerDeal(cust, t.DealNo)
 
-	allSummary, err := new(BankAnalysis).GenerateAllSummary(fm.CustomerId, fm.DealNo)
-	result := tk.M{}.Set("Detail", res).Set("Summary", ressum).Set("SummaryAll", allSummary).Set("Ratio", ress).Set("AccountDetail", accdet)
+	allSummary, isUpdate, message, err := new(BankAnalysis).GenerateAllSummary(fm.CustomerId, fm.DealNo)
+	result := tk.M{}.Set("Detail", res).Set("Summary", ressum).Set("SummaryAll", allSummary).Set("Ratio", ress).Set("AccountDetail", accdet).Set("IsUpdate", isUpdate).Set("messageImp", message)
 	return CreateResult(true, result, "")
 }
 
@@ -736,6 +736,12 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 		}
 	}
 
+	if param.IsConfirm {
+		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Confirmed")
+	} else {
+		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Under Process")
+	}
+
 	return true
 }
 
@@ -791,6 +797,12 @@ func (c *BankAnalysisController) SetFreeze(k *knot.WebContext) interface{} {
 		if err != nil {
 			return CreateResult(false, nil, err.Error())
 		}
+	}
+
+	if param.IsFreeze {
+		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Freeze")
+	} else {
+		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Confirmed")
 	}
 
 	return true

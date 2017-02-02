@@ -4,10 +4,14 @@ import (
 	. "eaciit/x10/webapps/connection"
 	"errors"
 	"github.com/eaciit/dbox"
-	"github.com/eaciit/knot/knot.v1"
-	tk "github.com/eaciit/toolkit"
 	// "gopkg.in/mgo.v2/bson"
 	"time"
+
+	// "github.com/eaciit/dbox"
+	// . "eaciit/x10/webapps/connection"
+	. "eaciit/x10/webapps/models"
+	"github.com/eaciit/knot/knot.v1"
+	tk "github.com/eaciit/toolkit"
 )
 
 type DealSetUpController struct {
@@ -263,4 +267,21 @@ func updateDealSetup(cid string, dealno string, formname string, formstatus stri
 	}
 
 	return nil
+
+}
+func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	csr, err := c.Ctx.Find(new(DealSetupModel), tk.M{})
+	if err != nil {
+		return c.ErrorResultInfo(err.Error(), nil)
+	}
+	result := make([]DealSetupModel, 0)
+	err = csr.Fetch(&result, 0, false)
+	if err != nil {
+		return c.ErrorResultInfo(err.Error(), nil)
+	}
+	csr.Close()
+
+	return result
 }

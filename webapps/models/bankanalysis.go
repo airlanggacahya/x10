@@ -280,11 +280,13 @@ func (b *BankAnalysis) GetDataV2Confirmed(CustomerId int, DealNo string) ([]Bank
 	return res, ressum, nil
 }
 
-func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*BankAllSummary, bool, error) {
+func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*BankAllSummary, bool, string, error) {
+	ebitda, customerMarginStatus := true, true
+
 	custid, _ := strconv.ParseInt(CustomerId, 10, 64)
 	res, ressum, err := new(BankAnalysis).GetDataV2(int(custid), DealNo)
 	if err != nil {
-		return nil, false, err
+		return nil, false, "", err
 	}
 
 	BSMonthlyCredits := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
@@ -326,12 +328,22 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
 
 		multiplier := customerMargin / 100
+
+		ebitda = false
+		customerMarginStatus = true
+
 		if ebitdaMargin < customerMargin {
 			multiplier = ebitdaMargin
+
+			ebitda = true
+			customerMarginStatus = false
 		}
 
 		if fm.AccountDetails.CMISNULL {
 			multiplier = ebitdaMargin
+
+			ebitda = true
+			customerMarginStatus = false
 		}
 
 		totalCreditMultiplied := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
@@ -355,12 +367,22 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
 		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
 		multiplier := customerMargin / 100
+
+		ebitda = false
+		customerMarginStatus = true
+
 		if ebitdaMargin < customerMargin {
 			multiplier = ebitdaMargin
+
+			ebitda = true
+			customerMarginStatus = false
 		}
 
 		if fm.AccountDetails.CMISNULL {
 			multiplier = ebitdaMargin
+
+			ebitda = true
+			customerMarginStatus = false
 		}
 
 		return multiplier
@@ -553,11 +575,18 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	if !res[0].IsConfirmed {
 		err = b.SaveBankAllSummary(bank, CustomerId, DealNo)
 		if err != nil {
-			return nil, isUpdate, err
+			return nil, isUpdate, "", err
 		}
 	}
 
-	return bank, isUpdate, nil
+	strImpMargin := ""
+	if ebitda == true {
+		strImpMargin = "EBITDA"
+	} else {
+		strImpMargin = "Customer Margin"
+	}
+
+	return bank, isUpdate, strImpMargin, nil
 }
 
 func (b *BankAnalysis) SaveBankAllSummary(bank *BankAllSummary, CustomerId string, DealNo string) error {

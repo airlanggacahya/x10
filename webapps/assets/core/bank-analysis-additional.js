@@ -225,8 +225,7 @@ var DrawDataBank = function(id){
         }else{
             if(typeof res.data.SummaryAll != "undefined") {
                 if(res.data.IsUpdate) {
-                    console.log("sarif")
-                    swal("Warning", "There is an update from other Form, please Re Enter to load changes","warning");
+                    swal("Warning", "There is an update for IMP Margin, please Re enter to loan changes","warning");
                 } else {
                     totalGrid.BS.BSMonthlyCredits(res.data.SummaryAll.BSMonthlyCredits)
                     totalGrid.BS.BSMonthlyDebits(res.data.SummaryAll.BSMonthlyDebits)

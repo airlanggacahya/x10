@@ -736,6 +736,12 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 		}
 	}
 
+	if param.IsConfirm {
+		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Confirmed")
+	} else {
+		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Under Process")
+	}
+
 	return true
 }
 
@@ -791,6 +797,12 @@ func (c *BankAnalysisController) SetFreeze(k *knot.WebContext) interface{} {
 		if err != nil {
 			return CreateResult(false, nil, err.Error())
 		}
+	}
+
+	if param.IsFreeze {
+		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Freeze")
+	} else {
+		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Confirmed")
 	}
 
 	return true

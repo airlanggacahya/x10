@@ -419,7 +419,27 @@ adf.getForm = function () {
 	// 	return d.DistributorName != ''
 	// })
 
-	// console.log("----- 345",data)
+	// HACK TO FIX BorrowerDetails DateBusinessStarted
+	// Somehow, after form confirmation, date format transformed to DD-MMM-YYYY
+	// We convert back to UTC ISO Date
+	var businesStart = moment(data.BorrowerDetails.DateBusinessStarted, "DD-MMM-YYYY")
+	if (businesStart.isValid()) {
+		data.BorrowerDetails.DateBusinessStarted = businesStart.format("YYYY-MM-DD") + "T00:00:00.000Z"
+	}
+
+	// HACK TO Fix FirstAgreementDate and RecenetAgreementDate
+	// Sometimes it's Empty
+	if (data.LoanDetails.FirstAgreementDate.length == 0) {
+		data.LoanDetails.FirstAgreementDate = "1970-01-01T00:00:00.000Z"
+	}
+	if (data.LoanDetails.RecenetAgreementDate.length == 0) {
+		data.LoanDetails.RecenetAgreementDate = "1970-01-01T00:00:00.000Z"
+	}
+
+	// HACK TO FIX CustomerMargin
+	// Sometimes it's Empty
+	data.AccountSetupDetails.PdInfo.CustomerMargin =
+		parseFloat(data.AccountSetupDetails.PdInfo.CustomerMargin)
 
 	return data
 }

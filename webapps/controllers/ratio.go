@@ -3,13 +3,14 @@ package controllers
 import (
 	. "eaciit/x10/webapps/models"
 	"errors"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	"log"
-	"strings"
-	"time"
 )
 
 type RatioController struct {
@@ -430,6 +431,15 @@ func (c *RatioController) Freeze(k *knot.WebContext) interface{} {
 	}
 
 	res.SetData(rowData)
+
+	cust := strings.Split(payload.CustomerID, "|")[0]
+	deal := strings.Split(payload.CustomerID, "|")[1]
+	// Update DealSetup
+	if rowData.IsFrozen {
+		UpdateDealSetup(cust, deal, "bsi", "Freeze")
+	} else {
+		UpdateDealSetup(cust, deal, "bsi", "Confirmed")
+	}
 	return res
 }
 
@@ -463,15 +473,22 @@ func (c *RatioController) Confirm(k *knot.WebContext) interface{} {
 		return res
 	}
 
+	cust := strings.Split(rowData.CustomerID, "|")[0]
+	deal := strings.Split(rowData.CustomerID, "|")[1]
 	if payload.Confirmed {
-		cust := strings.Split(rowData.CustomerID, "|")[0]
-		deal := strings.Split(rowData.CustomerID, "|")[1]
 		if err := new(DataConfirmController).SaveDataConfirmed(cust, deal, rowData.TableName(), rowData, true); err != nil {
 			return err
 		}
 	}
 
 	res.SetData(rowData)
+
+	// Update DealSetup
+	if rowData.Confirmed {
+		UpdateDealSetup(cust, deal, "bsi", "Confirmed")
+	} else {
+		UpdateDealSetup(cust, deal, "bsi", "Under Process")
+	}
 	return res
 }
 

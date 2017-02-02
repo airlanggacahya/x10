@@ -3,6 +3,7 @@ package controllers
 import (
 	. "eaciit/x10/webapps/connection"
 	"errors"
+
 	"github.com/eaciit/dbox"
 	// "gopkg.in/mgo.v2/bson"
 	"time"
@@ -10,6 +11,7 @@ import (
 	// "github.com/eaciit/dbox"
 	// . "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
+
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 )
@@ -136,7 +138,7 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 		res.SetError(err)
 	}
 
-	err = updateDealSetup(cid, dealno, "all", "Under Process")
+	err = UpdateDealSetup(cid, dealno, "all", "Under Process")
 	if err != nil {
 		res.SetError(err)
 	}
@@ -144,7 +146,9 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 	return res
 }
 
-func updateDealSetup(cid string, dealno string, formname string, formstatus string) error {
+var ErrorDataNotFound = errors.New("Data Not Found")
+
+func UpdateDealSetup(cid string, dealno string, formname string, formstatus string) error {
 
 	cn, err := GetConnection()
 	defer cn.Close()
@@ -157,16 +161,38 @@ func updateDealSetup(cid string, dealno string, formname string, formstatus stri
 		Where(dbox.Eq("customerprofile._id", cid+"|"+dealno)).
 		From("DealSetup").
 		Cursor(nil)
-	defer csr.Close()
-
 	if e != nil {
 		return err
 	}
+	defer csr.Close()
 
-	result := tk.M{}
-	err = csr.Fetch(&result, 1, false)
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
 	if err != nil {
 		return err
+	}
+
+	found := false
+	var result tk.M
+
+	// find the last one where status is not In queue
+	for _, val := range results {
+		infos := val.Get("info").(tk.M)
+		myInfos := CheckArraytkM(infos.Get("myInfo"))
+		if len(myInfos) == 0 {
+			continue
+		}
+		myInfo := myInfos[len(myInfos)-1]
+		if myInfo.GetString("status") == "In queue" {
+			continue
+		}
+
+		found = true
+		result = val
+	}
+
+	if !found {
+		return ErrorDataNotFound
 	}
 
 	infos := result.Get("info").(tk.M)

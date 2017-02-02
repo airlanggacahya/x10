@@ -4,10 +4,11 @@ import (
 	. "eaciit/x10/webapps/models"
 	"errors"
 	// "fmt"
+	"strings"
+
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
-	"strings"
 )
 
 type InternalRtrController struct {
@@ -118,6 +119,15 @@ func (d *InternalRtrController) InternalRtrConfirmed(k *knot.WebContext) interfa
 		if err := new(DataConfirmController).SaveDataConfirmed(id, deal, payload.TableName(), payload, true); err != nil {
 			return d.SetResultInfo(true, err.Error(), nil)
 		}
+	}
+
+	// Update DealSetup
+	if payload.Isfreeze {
+		UpdateDealSetup(id, deal, "irtr", "Freeze")
+	} else if payload.Status == 1 {
+		UpdateDealSetup(id, deal, "irtr", "Confirmed")
+	} else {
+		UpdateDealSetup(id, deal, "irtr", "Under Process")
 	}
 
 	return d.SetResultInfo(false, "success", nil)

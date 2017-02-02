@@ -889,3 +889,23 @@ func (c *RatioController) GetFormulaModelData(k *knot.WebContext) interface{} {
 	res.SetData(fm)
 	return res
 }
+
+func (c *RatioController) GetFieldFormulaByAlias(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	result := new(toolkit.Result)
+	param := toolkit.M{}
+	if err := k.GetPayload(&param); err != nil {
+		result.SetError(err)
+
+		return result
+	}
+
+	ratioFormula := NewRatioFormula()
+
+	test, _ := ratioFormula.GetAllFieldByAlias(param.GetString("Alias"))
+
+	result.SetData(test)
+
+	return result
+}

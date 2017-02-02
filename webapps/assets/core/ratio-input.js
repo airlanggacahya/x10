@@ -12,6 +12,13 @@ r.datePicker = ko.observable("");
 r.confirmLabel = ko.observable("Confirm")
 r.IsFrozen = ko.observable(false)
 r.formVisibility = ko.observable(false)
+
+r.indexEbitda = ko.observable(-1)
+r.indexEbitda1 = ko.observable(-1)
+r.valueTempEbitda = ko.observable(-1)
+r.differentEbitda = ko.observable(false)
+
+r.selectedMasterBalanceEbitda = ko.observableArray([])
 r.initEvents = function () {
     filter().CustomerSearchVal.subscribe(function () {
         r.formVisibility(false)
@@ -188,6 +195,41 @@ r.setData = function (data) {
     $('#selectDateProjected').find('input').data('kendoDatePicker').value( r.ProjectedDate() )
 }
 
+r.setDataSelectEbitda = function() {
+    
+    ajaxPost("/ratio/getfieldformulabyalias", {Alias: "EBITDA"}, function (res) {
+        masterBlanaceSelected = {
+            Data : [],
+            Value : []
+        }
+
+        if(res.Data) {
+            _.each(res.Data, function(row){
+                tempMaster =  _.filter(r.masterBalanceSheetInput(), function(row1){
+                    return row1.Alias == row
+                })
+
+                if(tempMaster) {
+                    valueSelected = _.filter(r.data().FormData, function(row1){
+                        var id = row1.FieldId.split("-")
+                        if(id.length > 0) {
+                            return id[1] == tempMaster[0].Id
+                        } 
+                    })
+
+                    masterBlanaceSelected.Data.push(tempMaster)
+
+                    if(valueSelected) {
+                        masterBlanaceSelected.Value.push(valueSelected)
+                    }
+                }
+            })
+
+            r.selectedMasterBalanceEbitda.push(masterBlanaceSelected)
+        }
+    })   
+}
+
 r.refresh = function (callback) {
     if (r.getCustomerId() === false) {
         return
@@ -267,6 +309,7 @@ r.refresh = function (callback) {
 
             r.isEmptyRatioInputData(false)
             r.setData(res.Data)
+            r.setDataSelectEbitda()
             r.isFrozen(res.Data.Frozen)
             r.IsFrozen(res.Data.IsFrozen)
             r.isConfirmed(res.Data.Confirmed)
@@ -292,7 +335,60 @@ r.refresh = function (callback) {
         });
     });
 }
-r.save = function (callback) {
+
+r.selectAction = function(action){
+    if(action === "save") {
+        r.validationEbitda(r.save)
+    } else if(action === "confirm") {
+        r.validationEbitda(r.confirm)
+    }
+}
+r.validationEbitda = function(callback) {
+    var different = false
+    data = r.getData()
+
+    _.each(r.selectedMasterBalanceEbitda()[0].Value, function(row, k){
+        _.each(row, function(row1, k1){
+            temp = _.filter(data.FormData, function(row2){
+                return (moment(row1.Date).format("DD-MM-YYYY") == row2.Date && row1.FieldId == row2.FieldId && row1.Value != row2.Value)
+            })
+
+            if(temp.length > 0) {
+                r.indexEbitda(k)
+                r.indexEbitda1(k1)
+                r.valueTempEbitda(temp[0].Value)
+                r.differentEbitda(true) 
+            }
+        })
+    })
+
+    if(r.differentEbitda() === true || r.differentEbitda() === "true") {
+        swal({
+           title: "",
+           text: "Your changes will affect IMP Margin in Banking Analysis",
+           type: 'warning',
+           showCancelButton: true,
+           customClass: 'swal-custom',
+            showCloseButton: true,
+            confirmButtonText: "Save",
+            cancelButtonText: "Cancel",
+            confirmButtonClass: 'btn btn-primary',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+          }).then(function() {
+            if(typeof callback == "function"){
+                callback(data)
+            }
+          })
+    } else {
+        if(typeof callback == "function"){
+            callback(data)
+        }
+    }
+}
+
+r.save = function (formData, callback) {
+    console.log("sarifff")
     if (r.getCustomerId() === false) {
         return
     }
@@ -304,7 +400,8 @@ r.save = function (callback) {
         Id = r.data().Id
     }
 
-    var param = $.extend(true, { Id: Id }, r.getData());
+    var param = $.extend(true, { Id: Id }, data);
+
     app.ajaxPost("/ratio/saveratioinputdata", param, function (res) {
         if (res.Message != '') {
             r.clear()
@@ -312,6 +409,16 @@ r.save = function (callback) {
             r.isLoading(false)
             return;
         } else if( !(typeof callback === 'function')){
+            if(r.indexEbitda() != -1  && r.indexEbitda1() != -1 && r.valueTempEbitda() != -1) {
+                r.selectedMasterBalanceEbitda()[0].Value[r.indexEbitda()][r.indexEbitda1()].Value = r.valueTempEbitda()
+                console.log(r.selectedMasterBalanceEbitda()[0].Value[r.indexEbitda()][r.indexEbitda1()].Value)
+
+                r.indexEbitda(-1)
+                r.indexEbitda1(-1)
+                r.valueTempEbitda(-1)
+                r.differentEbitda(false)
+            }
+
             swal("Success", "Changes saved", "success");
         }else{
             callback();
@@ -1366,9 +1473,9 @@ r.onFinishedTypingValue = function (o) {
         o.value = 0;
     }
 }
-r.confirm = function () {
+r.confirm = function (formData) {
 
-    r.save(function(){
+    r.save(formData, function(){
 
     if (r.getCustomerId() === false) {
         return
@@ -1404,6 +1511,14 @@ r.confirm = function () {
                     swal("Please Edit / Enter Data", "", "success");
                     r.refresh();
                 }else{
+                    if(r.indexEbitda() != -1  && r.indexEbitda1() != -1 && r.valueTempEbitda() != -1) {
+                        r.selectedMasterBalanceEbitda()[0].Value[r.indexEbitda()][r.indexEbitda1()].Value = r.valueTempEbitda()
+                        r.indexEbitda(-1)
+                        r.indexEbitda1(-1)
+                        r.valueTempEbitda(-1)
+                        r.differentEbitda(false)
+                    }
+
                     swal("Successfully Confirmed", "", "success");
                     r.refresh()
                 }

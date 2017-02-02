@@ -4,6 +4,7 @@ import (
 	. "eaciit/x10/webapps/connection"
 	"eaciit/x10/webapps/helper"
 	"errors"
+	"github.com/eaciit/crowd"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
 	"github.com/eaciit/toolkit"
@@ -59,6 +60,7 @@ func (m *RatioFormula) TableName() string {
 func (m *RatioFormula) IsOperator(c string) bool {
 	return (c == ")" || c == "(" || c == "+" || c == "-" || c == "*" || c == "/")
 }
+
 func (m *RatioFormula) ParseFormula(fm *FormulaModel) error {
 	m.FormulaParsed = ""
 
@@ -570,4 +572,110 @@ func (m *RatioFormula) Calculate() (string, error) {
 	}
 
 	return executedString, nil
+}
+
+/**
+develop by salah
+maaf kalo salah
+*/
+
+func (m *RatioFormula) GetAll() ([]RatioFormula, error) {
+	ratioFormulas := []RatioFormula{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return ratioFormulas, err
+	}
+
+	csr, err := conn.NewQuery().
+		From(new(RatioFormula).TableName()).
+		Cursor(nil)
+	if csr != nil {
+		defer csr.Close()
+	}
+	if err != nil {
+		return ratioFormulas, err
+	}
+
+	err = csr.Fetch(&ratioFormulas, 0, false)
+	if err != nil {
+		return ratioFormulas, err
+	}
+
+	return ratioFormulas, err
+}
+
+func (m *RatioFormula) SearchById(formulaId string, formulas []RatioFormula) []RatioFormula {
+	result := crowd.From(&formulas).Where(func(x interface{}) interface{} {
+		return x.(RatioFormula).Id == formulaId
+	}).Exec().Result.Data().([]RatioFormula)
+
+	return result
+}
+
+func (m *RatioFormula) GetAllFieldByAlias(alias string) (interface{}, error) {
+	fields := []string{}
+
+	ratioFormulas, err := m.GetAll()
+
+	if err != nil {
+		return fields, err
+	}
+
+	fields, err = m.SearchChildFieldFormula(alias, ratioFormulas)
+
+	fields = m.CleanField(fields)
+
+	return fields, err
+}
+
+func (m *RatioFormula) CleanField(fields []string) []string {
+	result := []string{}
+
+	cleanField := crowd.From(&fields).Group(func(x interface{}) interface{} {
+		_, err := strconv.Atoi(x.(string))
+		return (x.(string) != "" && err != nil)
+	}, nil).Exec().Result.Data().([]crowd.KV)
+
+	for _, v := range cleanField {
+
+		if v.Key.(bool) == true {
+			result = v.Value.([]string)
+		}
+	}
+
+	return result
+}
+
+func (m *RatioFormula) SearchChildFieldFormula(formulaID string, formulas []RatioFormula) ([]string, error) {
+	result := []string{}
+
+	regexFormulaParser, err := regexp.Compile(RegexFormulaString)
+	if err != nil {
+		return result, err
+	}
+
+	ratioFormula := m.SearchById(formulaID, formulas)
+
+	if len(ratioFormula) <= 0 {
+		result = append(result, formulaID)
+	} else {
+		parts := regexFormulaParser.FindAllString(ratioFormula[0].Formula, -1)
+
+		for _, v := range parts {
+			if m.IsOperator(v) {
+				continue
+			}
+
+			tempResult, err := m.SearchChildFieldFormula(v, formulas)
+			if err != nil {
+				return result, err
+			}
+
+			result = append(result, tempResult...)
+		}
+	}
+
+	return result, err
 }

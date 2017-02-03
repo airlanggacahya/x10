@@ -16,7 +16,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
 
 <script>document.write('<script src="/static/core/dealsetup-top.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script><script src="/static/core/dealsetup-bottom.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
-<div class="col-md-12 col-sm-12 ez panel-content">
+<div class="col-md-12 col-sm-12 ez panel-content" data-bind="with: setup ">
 	<div class="panel">
 		<div class="panel-body">
 			<div class="col-md-12" data-bind="visible: !(setup.detailIsShow())">
@@ -24,7 +24,8 @@ model.Fullname = ko.observable('{{.Fullname}}');
 					<div class="form-group col-sm-12 filterhide">
 				     	<label class="col-sm-3 form-control-label">Customer Name</label>
 				     	<div class="col-sm-9">
-					 			<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: searchValueCustomerName, event: { change: onChangeSearchCustomerName } ">
+					 			<!-- <input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" onkeypress="setup.onChangeSearchCustomerName()" data-bind="value: searchValueCustomerName, event: { change: onChangeSearchCustomerName } "> -->
+					 			<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: searchValueCustomerName, event:{change: onChangeSearchCustomerName}">
 					    </div>
 					    <div class="clearfix"></div>
 				    </div>
@@ -33,7 +34,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
 					<div class="form-group col-sm-12 filterhide">
 				     	<label class="col-sm-3 form-control-label">Deal No</label>
 				     	<div class="col-sm-9">
-					 			<input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: searchValueDealNo">
+					 			<input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: searchValueDealNo, event:{change: onChangeSearchDealNo}" >
 					    </div>
 					    <div class="clearfix"></div>
 				    </div>

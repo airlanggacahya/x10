@@ -829,3 +829,29 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 
 	return result
 }
+
+func (c *DealSetUpController) GetSelectedDataDealSetup(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	payload := tk.M{}
+
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	res := make([]DealSetupModel, 0)
+	query := tk.M{"where": dbox.Eq("accountdetails.customerid", payload["customerid"])}
+	csr, err := c.Ctx.Find(new(DealSetupModel), query)
+	defer csr.Close()
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	return c.SetResultInfo(false, "success", res)
+}

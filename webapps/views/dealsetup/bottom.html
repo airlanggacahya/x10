@@ -1,1 +1,724 @@
-bottom
+<style type="text/css">
+	ul{
+		padding-left: 0;
+	}
+	input[disabled]{
+	   cursor: default !important;
+	}
+	.form-control[disabled]{
+		background-color: #fafafa;
+	}
+  .SFFB{
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    border-color: #ebebeb;
+    padding: 3px;
+    margin-bottom: 5px;
+  }
+  .k-grid-cancel-changes {
+    margin-right : 10px;
+  }
+  .k-grid-save-changes{
+    margin-right : 10px;
+  }
+  .k-grid-edit-changes{
+    margin-right : 10px;
+  }
+  .banksdata-action{
+    margin-right : 10px;
+    margin-top: -5px;
+  }
+  .k-grid  .k-grid-header  .k-header  .k-link {
+      height: auto;
+  }
+  .headerdatabankgrid{
+    text-align: center;
+  }
+  #toptables1 > div > div.k-grid-content > table > tbody > tr {
+    background-color: #eee;
+  }
+
+  #toptables2 > div > div.k-grid-content > table > tbody > tr {
+    background-color: #eee;
+  }
+
+  #toptables3 > div > div.k-grid-content > table > tbody > tr {
+    background-color: #eee;
+  }
+
+  #toptables4 > div > div.k-grid-content > table > tbody > tr {
+    background-color: #eee;
+  }
+
+   #toptables5 > div > div.k-grid-content > table > tbody > tr {
+    background-color: #eee;
+  }
+   #toptables6 > div > div.k-grid-content > table > tbody > tr {
+    background-color: #eee;
+  }
+
+  button.saveupdate {
+    margin-right:10px;
+  }
+  @media (min-width: 768px){
+    .modal-dialog {
+        width: 1000px;
+        margin: 30px auto;
+    }
+}
+.form-last-confirmation-info {
+  padding-bottom: 10px;
+  text-align: right;
+  font-style: italic;
+  color: #27ae60;
+  margin-right: 20px;
+
+}
+
+.headernfb{
+      background-color: rgba(119, 119, 119, 0.75);
+      color:white;
+      text-align : center;
+}
+
+.headersecfb{
+  background-color: #f5f5f5;
+  color:black;
+  text-align : center;
+}
+.k-grid  .k-grid-header  .k-header {
+    white-space: normal;
+}
+#topgrid
+{
+   min-width: 500px;
+}
+div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
+		background-color: #313d50 !important;
+		color: #fff !important;
+	}
+
+	div.k-grid-header > div > table > thead > tr:nth-child(2) > th {
+		background-color: rgba(128, 149, 176, 1) !important;
+		color: white !important;
+		/*overflow-y: hidden !important;*/
+	}
+.satu{
+	border-top: 1px solid #f1f1f1;
+	padding: 33px
+}
+.k-grid-content {
+	overflow-y: hidden !important;
+  overflow-x: scroll;
+}
+
+.k-grid-header{
+	padding-right: 0px !important;
+}
+.bgwhite {
+  background: #ffffff !important;
+  border: 0 !important;
+}
+
+</style>
+<div class="col-md-12" data-bind="visible: setup.detailIsShow" style="padding-bottom: 15px;
+}">
+		<button class="btn btn-sm btn-flat btn-success">Accept</button>
+		<button class="btn btn-sm btn-flat btn-danger">Sen Back</button>
+		<button class="btn btn-sm btn-flat btn-primary" onclick='setup.getBack()'>Back</button>
+</div>
+<div class="col-md-12">
+	<div class="form-container" data-bind="visible: setup.detailIsShow">
+		<div id="accordion" role="tablist" aria-multiselectable="true">
+			<ul class="collapsibleDeal" data-collapsible="accordion">
+				<li>
+					<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Account Set-up Details <i class="fa fa-chefron-down pull-right"></i></div>
+					<div class="collapsible-body">
+					 	<div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">City Name</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="City Name" class="disable input-sm form-control" style="width: 100%;" data-bind="value: setup.AccounDetails.cityname()">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <!-- <div class="clearfix"></div> -->
+			            <div class="col-sm-6" id="DealNo">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Deal No.</label>
+				            	<div class="col-sm-9">
+				            		<input type="text" placeholder="Choose deal number first" class="input-sm form-control" disabled style="width: 100%;" data-bind='value: setup.AccounDetails.dealno()'>
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">RM Name</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="Enter RM Name" class="input-sm form-control" style="width: 100%;" data-bind="value: setup.AccounDetails.rmname()">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <!-- <div class="clearfix"></div> -->
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Credit Analyst</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="Enter Credit Analyst" class="acct input-sm form-control disable" style="width: 100%;" data-bind="value: setup.AccounDetails.creditanalyst()">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Lead Distributor</label>
+				            	<div class="col-sm-9">
+				            		<input disabled id="acct" type="text" class="acct input-sm form-control" style="width: 100%;" data-bind="value: setup.AccounDetails.leaddistributor()">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <!-- <div class="clearfix"></div> -->
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Product</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" class="acct input-sm form-control" style="width: 100%;" data-bind="value: setup.AccounDetails.product()">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Scheme</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" class="acct input-sm form-control" style="width: 100%;" data-bind="value: setup.AccounDetails.scheme()">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="clearfix"></div>
+					</div>
+				</li>
+				<li data-bind="with: setup.LoanDetails">
+					<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Loan Details <i class="fa fa-chefron-down pull-right"></i></div>
+					<div class="collapsible-body">
+						<div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Requested Loan Amount</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="Requested Loan Amount" class="disable input-sm form-control" style="width: 100%;" data-bind="value: proposedloanamount()">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Proposed ROI</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="Proposed ROI" class="disable input-sm form-control" style="width: 100%;" data-bind="value:proposedrateinterest">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Limit Tenor (Months)</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="Limit Tenor (Months)" class="disable input-sm form-control" style="width: 100%;" data-bind="value:limittenor">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">If Existing Customer</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="If Existing Customer" class="disable input-sm form-control" style="width: 100%;" data-bind="value: ifexistingcustomer">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">If Yes, Existing Limit Amount</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="If Yes, Existing Limit Amount" class="disable input-sm form-control" style="width: 100%;" data-bind="value: ifyeseistinglimitamount">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Existing ROI</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="Existing ROI" class="disable input-sm form-control" style="width: 100%;" data-bind="value: existingroi">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Existing PF</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="Existing PF" class="disable input-sm form-control" style="width: 100%;" data-bind="value: existingpf">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">First Agreement Date</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="First Agreement Date" class="disable input-sm form-control" style="width: 100%;" data-bind="value: firstagreementdate">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Recent Agreement Date</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="Recent Agreement Date" class="disable input-sm form-control" style="width: 100%;" data-bind="value: recenetagreementdate">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			            <div class="col-sm-6">
+			            	<div class="form-group">
+				            	<label class="form-label col-sm-3">Vinatge with X10 (in months)</label>
+				            	<div class="col-sm-9">
+				            		<input disabled type="text" placeholder="City Name" class="disable input-sm form-control" style="width: 100%;" data-bind="value: vintagewithx10">
+				            	</div>
+				            	<div class="clearfix"></div>
+			            	</div>
+			            </div>
+			             <div class="clearfix"></div>
+					</div>
+				</li>
+				<li data-bind="with: setup.applicantdetail">
+					<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Customer Application Details <i class="fa fa-chefron-down pull-right"></i></div>
+					<div class="collapsible-body">
+						<div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">General Details</h5></div>
+						<div class="row">
+					        <div class="col-sm-6">
+					          <div class="form-group col-sm-12">
+					            <label for="inputPassword3" class="col-sm-4 form-label">Name of the Applicant </label>
+					            <div class="col-sm-8">
+					                <input disabled class="form-control input-sm" data-bind="value: CustomerName"/>
+					            </div>
+					          </div>
+
+					          <div class="form-group col-sm-12">
+					            <label for="inputEmail3" class="col-sm-4 form-label">Constitution of the Entity </label>
+					            <div class="col-sm-8">
+					              <input disabled class="form-control input-sm" data-bind="value: CustomerConstitution"/>
+					            </div>
+					          </div>
+
+					          <div class="form-group col-sm-12">
+					            <label for="inputEmail3" class="col-sm-4 form-label">Date of Incorporation </label>
+					            <div class="col-sm-8">
+					              <input disabled class="form-control input-sm" data-bind="value: DateOfIncorporation" />
+					            </div>
+					          </div>
+
+
+					        </div>
+
+					        <div class="col-sm-6">
+					        	<div class="form-group col-sm-12">
+						            <label for="inputEmail3" class="col-sm-4 form-label">Tax Identification Number (TIN) </label>
+						            <div class="col-sm-8">
+						              <input disabled class="form-control input-sm" data-bind="value: TIN"/>
+						            </div>
+					            </div>
+
+								<div class="form-group col-sm-12">
+									<label for="inputEmail3" class="col-sm-4 form-label">Tax Account Number (TAN) </label>
+									<div class="col-sm-8">
+									  <input disabled class="form-control input-sm" data-bind="value: TAN"/>
+									</div>
+								</div>
+								<div class="form-group col-sm-12">
+									<label for="inputEmail3" class="col-sm-4 form-label">PAN Number </label>
+									<div class="col-sm-8">
+									  <input disabled class="form-control input-sm" data-bind="value: CustomerPan"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">Company Background Details</h5></div>
+						<div class="row">
+							<div class="col-sm-6">
+					        	<div class="form-group col-sm-12">
+						            <label for="inputEmail3" class="col-sm-4 form-label">Nature of Business </label>
+						            <div class="col-sm-8">
+						              <input disabled type="number" id="AnnualTurnOver" class="form-control input-sm" validationMessage="Annual Turnover required" required data-bind="value: NatureOfBussiness"/>
+						            </div>
+					            </div>
+
+								<div class="form-group col-sm-12">
+									<label for="inputEmail3" class="col-sm-4 form-label">User Group Companies </label>
+									<div class="col-sm-8">
+									  <input disabled class="form-control input-sm" id="UserGroupCompanies" validationMessage="User Group Companies required" required data-bind="value: UserGroupCompanies" />
+									</div>
+								</div>
+
+								<div class="form-group col-sm-12">
+									<label for="inputEmail3" class="col-sm-4 form-label">No of Years in Business </label>
+									<div class="col-sm-8">
+									  <input disabled class="form-control input-sm" id="UserGroupCompanies" validationMessage="User Group Companies required" required data-bind="value: YearsInBusiness" />
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6">
+						        	<div class="form-group col-sm-12">
+							            <label for="inputEmail3" class="col-sm-4 form-label">No of Employees </label>
+							            <div class="col-sm-8">
+							              <input disabled type="number" id="AnnualTurnOver" class="form-control input-sm" validationMessage="Annual Turnover required" required data-bind="value: NoOfEmployees" />
+							            </div>
+						            </div>
+
+									<div class="form-group col-sm-12">
+										<label for="inputEmail3" class="col-sm-4 form-label">Requested Loan Amount </label>
+										<div class="col-sm-8">
+										  <input disabled class="form-control input-sm" id="UserGroupCompanies" validationMessage="User Group Companies required" required data-bind="value: AmountLoan" />
+										</div>
+									</div>
+								</div>
+						</div>
+						<div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">Company Address Details</h5></div>
+					    <!-- <div class="panel-body"> -->
+					     <div class="row">
+					        <div class="col-sm-12" style="margin-left: 10px;">
+					          <div class="col-sm-4 well well-sm" data-bind="with: registeredaddress">
+					            <!-- <img src="/static/img/sign-check.svg" class="pull-right" style="padding-top: 5px;height: 23px;"> --><h5 style="font-weight: bold;">Registered</h5>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" disabled class="col-sm-4 form-control-label">Address :</label>
+					              <div class="col-sm-8">
+					                <textarea disabled class="Address form-control input-sm" data-bind="value: AddressRegistered"></textarea>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Landmark :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled class="Landmark form-control input-sm" date-bind="value: LandmarkRegistered"/>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3"  class="col-sm-4 form-control-label">City :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="CityRegistered" class="City form-control input-sm" data-bind="value: CityRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Pin Code :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled class="Pincode form-control input-sm" data-bind="value: PincodeRegistered"/>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">State :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled class="State form-control input-sm" data-bind="value: StateRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Tel1 :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="PhoneRegistered" class="Phone form-control input-sm" data-bind="value: PhoneRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Mobile No. :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="MobileRegistered" class="Mobile form-control input-sm" data-bind="value: MobileRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Contact Person :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="ContactPersonRegistered" class="ContactPerson form-control input-sm" data-bind="value: ContactPersonRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Email :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="EmailRegistered" class="Email form-control input-sm" data-bind="value: EmailRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Ownership :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled class="Ownership form-control input-sm" data-bind="value: Ownership" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">No. of years at above address :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="NoOfYearsAtAboveAddressRegistered" class="NoOfYears form-control input-sm" data-bind="value: NoOfYearsAtAboveAddressRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Area of Plot :</label>
+					              <div class="col-sm-8">
+					                <div class="input-group">
+					                  <input type="text" disabled class="form-control input-sm" data-bind="value: AreaOfPlotRegistered" style="z-index: 0;" />
+					                  <span class="input-group-addon" id="basic-addon2">sq. mts</span>
+					                </div>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Built up Area :</label>
+					              <div class="col-sm-8">
+					                <div class="input-group">
+					                  <input type="text" disabled class="form-control input-sm" data-bind="value: BuiltUpAreaRegistered" style="z-index: 0;"/>
+					                  <span class="input-group-addon" id="basic-addon2">sq. mts</span>
+					                </div>
+					              </div>
+					            </div>
+					          </div>
+					          <div class="col-sm-4 well well-sm" data-bind="with: addresscorrespondence">
+					            <!-- <img src="/static/img/sign-check.svg" class="pull-right" style="padding-top: 5px;height: 23px;"> --><h5 style="font-weight: bold;">Residence</h5>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Address :</label>
+					              <div class="col-sm-8">
+					                <textarea disabled class="Address form-control input-sm" data-bind="value: AddressRegistered"></textarea>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Landmark :</label>
+					              <div class="col-sm-8">
+					                <input type="text" class="Landmark form-control input-sm" disabled date-bind="value: LandmarkRegistered"/>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">City :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="CityRegistered" class="City form-control input-sm" data-bind="value: CityRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Pin Code :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled class="Pincode form-control input-sm" data-bind="value: PincodeRegistered"/>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">State :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled class="State form-control input-sm" data-bind="value: StateRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Tel1 :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="PhoneRegistered" class="Phone form-control input-sm" data-bind="value: PhoneRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Mobile No. :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="MobileRegistered" class="Mobile form-control input-sm" data-bind="value: MobileRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Contact Person :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="ContactPersonRegistered" class="ContactPerson form-control input-sm" data-bind="value: ContactPersonRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Email :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled id="EmailRegistered" class="Email form-control input-sm" data-bind="value: EmailRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Ownership :</label>
+					              <div class="col-sm-8">
+					                <input type="text" disabled class="Ownership form-control input-sm" data-bind="value: Ownership" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">No. of years at above address :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="text" id="NoOfYearsAtAboveAddressRegistered" class="NoOfYears form-control input-sm" data-bind="value: NoOfYearsAtAboveAddressRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Area of Plot :</label>
+					              <div class="col-sm-8">
+					                <div class="input-group">
+					                  <input type="number" disabled class="form-control input-sm" data-bind="value: AreaOfPlotRegistered" style="z-index: 0;" />
+					                  <span class="input-group-addon" id="basic-addon2">sq. mts</span>
+					                </div>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Built up Area :</label>
+					              <div class="col-sm-8">
+					                <div class="input-group">
+					                  <input type="number" disabled class="form-control input-sm" data-bind="value: BuiltUpAreaRegistered" style="z-index: 0;"/>
+					                  <span class="input-group-addon" id="basic-addon2">sq. mts</span>
+					                </div>
+					              </div>
+					            </div>
+					          </div>
+					          <div class="col-sm-4 well well-sm" data-bind="with: siteworkaddress">
+					            <!-- <img src="/static/img/sign-check.svg" class="pull-right" style="padding-top: 5px;height: 23px;"> --><h5 style="font-weight: bold;">Site/Work</h5>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Address :</label>
+					              <div class="col-sm-8">
+					                <textarea disabled class="Address form-control input-sm" data-bind="value: AddressRegistered"></textarea>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Landmark :</label>
+					              <div class="col-sm-8">
+					                <input type="text" class="Landmark form-control input-sm" disabled date-bind="value: LandmarkRegistered"/>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">City :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="text" id="CityRegistered" class="City form-control input-sm" data-bind="value: CityRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Pin Code :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="number" class="Pincode form-control input-sm" data-bind="value: PincodeRegistered"/>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">State :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="text" class="State form-control input-sm" data-bind="value: StateRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Tel1 :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="text" id="PhoneRegistered" class="Phone form-control input-sm" data-bind="value: PhoneRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Mobile No. :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="text" id="MobileRegistered" class="Mobile form-control input-sm" data-bind="value: MobileRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Contact Person :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="text" id="ContactPersonRegistered" class="ContactPerson form-control input-sm" data-bind="value: ContactPersonRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Email :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="text" id="EmailRegistered" class="Email form-control input-sm" data-bind="value: EmailRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Ownership :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="text" class="Ownership form-control input-sm" data-bind="value: Ownership" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">No. of years at above address :</label>
+					              <div class="col-sm-8">
+					                <input disabled type="text" id="NoOfYearsAtAboveAddressRegistered" class="NoOfYears form-control input-sm" data-bind="value: NoOfYearsAtAboveAddressRegistered" />
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Area of Plot :</label>
+					              <div class="col-sm-8">
+					                <div class="input-group">
+					                  <input disabled type="number" class="form-control input-sm" data-bind="value: AreaOfPlotRegistered" style="z-index: 0;" />
+					                  <span class="input-group-addon" id="basic-addon2">sq. mts</span>
+					                </div>
+					              </div>
+					            </div>
+
+					            <div class="form-group col-sm-12">
+					              <label for="inputEmail3" class="col-sm-4 form-control-label">Built up Area :</label>
+					              <div class="col-sm-8">
+					                <div class="input-group">
+					                  <input disableds type="number" class="form-control input-sm" data-bind="value: BuiltUpAreaRegistered" style="z-index: 0;"/>
+					                  <span class="input-group-addon" id="basic-addon2">sq. mts</span>
+					                </div>
+					              </div>
+					            </div>
+					          </div>
+					        </div>
+					    </div>
+					    <!-- </div> -->
+					    <div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">Financial Information</h5></div>
+					    <div class="row">
+					    	<div class="col-sm-12" style="margin-left: 9px;">
+					    		<center><h5 class="no-margin" style="font-weight: bold">Existing Relationship With X10 Financial Services Limited</h5></center>
+					    		<div id="grid-ex"></div>
+					    	</div>
+					    </div>
+					</div>
+				</li>
+				<li>
+					<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Internal RTR Details <i class="fa fa-chefron-down pull-right"></i></div>
+					<div class="collapsible-body">
+						<div class="col-sm-12" style="padding-bottom: 15px;">
+							<div id="topgrid"></div>
+						</div>
+						<div class="col-md-12">
+							<div id="unselect"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

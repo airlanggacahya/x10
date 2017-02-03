@@ -1536,7 +1536,13 @@ cibil.eventfreeze = function (){
       swal("Warning","CIBIL Data not found","warning");
       return;
     }
-  cibil.SendFreeze(!r.isFreeze());
+
+    if(!r.isConfirm()) {
+      swal("Warning", "Please Confirm Data First", "warning");
+      return;
+    }
+
+    cibil.SendFreeze(!r.isFreeze());
 }
 
 cibil.eventunfreeze = function(){

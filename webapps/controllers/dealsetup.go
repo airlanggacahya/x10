@@ -7,14 +7,16 @@ import (
 	"github.com/eaciit/dbox"
 	"gopkg.in/mgo.v2/bson"
 	"strings"
+	// "gopkg.in/mgo.v2/bson"
+	// "fmt"
 	"time"
-
 	// "github.com/eaciit/dbox"
 	// . "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
 
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
+	// "regexp"
 )
 
 type DealSetUpController struct {
@@ -817,18 +819,107 @@ func UpdateDealSetup(cid string, dealno string, formname string, formstatus stri
 func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	csr, err := c.Ctx.Find(new(DealSetupModel), tk.M{})
-	if err != nil {
-		return c.ErrorResultInfo(err.Error(), nil)
+	type xsorting struct {
+		Field string
+		Dir   string
 	}
-	result := make([]DealSetupModel, 0)
-	err = csr.Fetch(&result, 0, false)
-	if err != nil {
-		return c.ErrorResultInfo(err.Error(), nil)
-	}
-	csr.Close()
 
-	return result
+	p := struct {
+		Skip               int
+		Take               int
+		Sort               []xsorting
+		SearchCustomerName string
+		SearchDealNo       string
+		Id                 string
+	}{}
+
+	e := k.GetPayload(&p)
+
+	if e != nil {
+		c.WriteLog(e)
+	}
+
+	c.WriteLog(p)
+
+	cn, err := GetConnection()
+	defer cn.Close()
+
+	if err != nil {
+		panic(err)
+	}
+
+	keys := []*dbox.Filter{}
+	if p.SearchCustomerName != "" {
+		keys = append(keys, dbox.Contains("customerprofile.applicantdetail.CustomerName", p.SearchCustomerName))
+	}
+
+	if p.SearchDealNo != "" {
+		keys = append(keys, dbox.Contains("customerprofile.applicantdetail.DealNo", p.SearchDealNo))
+	}
+
+	if p.Id != "" {
+		keys = append(keys, dbox.Eq("customerprofile._id", p.Id))
+	}
+
+	query1 := cn.NewQuery().
+		From("DealSetup").
+		Skip(p.Skip).
+		Take(p.Take)
+
+	if len(keys) > 0 {
+		query1 = query1.Where(dbox.And(keys...))
+	}
+
+	if len(p.Sort) > 0 {
+		var arrsort []string
+		for _, val := range p.Sort {
+			if val.Dir == "desc" {
+				arrsort = append(arrsort, strings.ToLower("-"+p.Sort[0].Field))
+			} else {
+				arrsort = append(arrsort, strings.ToLower(p.Sort[0].Field))
+			}
+		}
+		query1 = query1.Order(arrsort...)
+	}
+
+	// <<<<<<< HEAD
+	// 	res := make([]DealSetupModel, 0)
+	// 	query := tk.M{"where": dbox.Eq("_id", bson.ObjectIdHex(payload["Id"].(string)))}
+	// 	csr, err := c.Ctx.Find(new(DealSetupModel), query)
+	// =======
+	csr, e := query1.Cursor(nil)
+	// >>>>>>> 6d16bbe78b12d6abeeda15175db602a924d68901
+	defer csr.Close()
+
+	if e != nil {
+		panic(e)
+	}
+
+	results1 := make([]DealSetupModel, 0)
+	e = csr.Fetch(&results1, 0, false)
+	// c.WriteLog(results1)
+	if e != nil {
+		return e.Error()
+	}
+	// results2 := results1
+
+	query := tk.M{}.Set("AGGR", "$sum")
+	csr, err = c.Ctx.Find(new(DealSetupModel), query)
+	defer csr.Close()
+	if err != nil {
+		return err.Error()
+	}
+
+	data := struct {
+		Data  []DealSetupModel
+		Total int
+	}{
+		Data:  results1,
+		Total: csr.Count(),
+	}
+
+	return data
+
 }
 
 func (c *DealSetUpController) GetSelectedDataDealSetup(k *knot.WebContext) interface{} {

@@ -1,4 +1,7 @@
 var setup = {}
+setup.searchValueCustomerName = ko.observable('')
+setup.searchValueDealNo = ko.observable('')
+setup.IdCustomerName = ko.observable('')
 
 setup.columnGrid = [
   {
@@ -7,7 +10,7 @@ setup.columnGrid = [
     width : 200,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
-      return '<a onClick="setup.onClickCustomerName(\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.CustomerName+'</a>'
+      return '<a style="cursor: pointer" onClick="setup.onClickCustomerName(\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.CustomerName+'</a>'
     }
  },
  {
@@ -16,13 +19,17 @@ setup.columnGrid = [
     width : 200,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
-     return '<a onClick="setup.onClickDealNo(\''+dt.Id+'\',\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.CustomerName+'</a>'
+// <<<<<<< HEAD
+     return '<a onClick="setup.onClickDealNo(\''+dt.Id+'\',\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.DealNo+'</a>'
+// =======
+//      return '<a style="cursor: pointer" onClick="setup.onClickDealNo(\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.DealNo+'</a>'
+// >>>>>>> 6d16bbe78b12d6abeeda15175db602a924d68901
     }
  },
  {
     title : "Current Status",
     // field : "Info.myInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.myInfo.length
@@ -33,7 +40,7 @@ setup.columnGrid = [
  {
     title : "Previous Status",
     // field : "Info.myInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.myInfo.length
@@ -43,9 +50,9 @@ setup.columnGrid = [
     }
  },
  {
-    title : "Time Stamp of status change",
+    title : "Time Stamp of <br>status change",
     // field : "Info.myInfo[0].updateTime",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.myInfo.length
@@ -56,7 +63,7 @@ setup.columnGrid = [
  {
     title : "CA Form",
     // field : "Info.caInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.caInfo.length
@@ -67,7 +74,7 @@ setup.columnGrid = [
  {
     title : "CIBIL Details",
     // field : "Info.cibilInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.cibilInfo.length
@@ -78,7 +85,7 @@ setup.columnGrid = [
  {
     title : "Balance Sheet Inputs",
     // field : "Info.bsiInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.bsiInfo.length
@@ -88,8 +95,8 @@ setup.columnGrid = [
  },
  {
     title : "Stock & Book Debt",
-    field : "Info.sbdInfo[0].status",
-    width : 200,
+    // field : "Info.sbdInfo[0].status",
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.sbdInfo.length
@@ -100,7 +107,7 @@ setup.columnGrid = [
  {
     title : "Account Details",
     // field : "Info.adInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.adInfo.length
@@ -111,7 +118,7 @@ setup.columnGrid = [
  {
     title : "Banking Analysis",
     // field : "Info.baInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.baInfo.length
@@ -122,7 +129,7 @@ setup.columnGrid = [
  {
     title : "External RTR",
     // field : "Info.ertrInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.ertrInfo.length
@@ -133,7 +140,7 @@ setup.columnGrid = [
  {
     title : "Internal RTR",
     // field : "Info.irtrInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.irtrInfo.length
@@ -144,7 +151,7 @@ setup.columnGrid = [
  {
     title : "Due Diligence",
     // field : "Info.ddInfo[0].status",
-    width : 200,
+    width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.ddInfo.length
@@ -155,37 +162,66 @@ setup.columnGrid = [
 ]
 
 setup.createGrid = function(){
-  ajaxPost("/dealsetup/getalldatadealsetup", {}, function(data){
-    // console.log(data)
-    dbgrid = $("#gridDealSetup").kendoGrid({
-       dataSource: {
-        data : data,
-        pageSize: 10
-       },
-       columns : setup.columnGrid,
-       // groupable: true,
-       scrollable : true,
-       pageable: true,
-       height:450,
-      //  dataBinding: function(x) {
-      //   setTimeout(function(){
-      //     _.each($(".intable").parent(),function(e){
-      //       $(e).css("padding",0)
-      //     })
-      //   },10)
-      // }
-    }).data("kendoGrid");
-  })
+  dbgrid = $("#gridDealSetup").kendoGrid({
+    dataSource: {
+        serverPaging: true,
+        serverSorting: true,
+        transport: {
+          read: {
+            url: "/dealsetup/getalldatadealsetup",
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+          },
+          parameterMap: function(options) {
+            // console.log(options);
+            options.SearchCustomerName = setup.searchValueCustomerName()
+            options.SearchDealNo = setup.searchValueDealNo()
+            options.Id = setup.IdCustomerName()
+            return JSON.stringify(options);
+          }
+        },
+        pageSize: 10,
+        schema: {
+          data: "Data",
+          total: "Total"
+        },
+      },
+      groupable: false,
+      sortable: true,
+      filterable: false,
+      pageable: {
+          refresh: true,
+          pageSizes: true,
+          buttonCount: 5
+        },
+    columns : setup.columnGrid,
+  }).data("kendoGrid");
+
 }
 
+
+setup.onChangeSearchCustomerName = function(){
+  setup.createGrid();
+}
+
+setup.onChangeSearchDealNo = function(){
+  setup.createGrid();
+}
 
 setup.onClickCustomerName = function(id){
-  console.log(id)
+  setup.IdCustomerName(id)
+  if (setup.IdCustomerName() !== ''){
+    setup.createGrid();
+  }
 }
 
-// setup.onClickDealNo = function(id){
-//   console.log(id)
-// }
+setup.resetDealSetup = function(){
+  setup.searchValueCustomerName('')
+  setup.searchValueDealNo('')
+  setup.IdCustomerName('')
+  setup.createGrid(); 
+}
 
 $(function(){
 	setup.createGrid()

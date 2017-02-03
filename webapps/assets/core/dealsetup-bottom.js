@@ -168,7 +168,7 @@ setup.onClickDealNo = function(d, id){
 			setup.deallist(data.InternalRtr.deallist)
 			setup.snapshot(data.InternalRtr.snapshot)
 			setup.loadDetailGrid();
-			setup.loadExGrid()
+			setup.loadExGrid(d)
 		}
 		
 	});
@@ -427,7 +427,21 @@ setup.loadDetailGrid = function(){
 setup.setAccept = function(param){
 	ajaxPost("/dealsetup/accept", param, function(res){
 		console.log(res)
-		swal("Data Sucessfully Accept", "", "success");
+		if(res.Status != "NOK"){
+			swal({
+				title: '',
+				text: "Data Sucessfully Accept",
+				type: 'success',
+				showCancelButton: false,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+			}).then(function () {
+				setup.createGrid()
+				setup.detailIsShow(false)
+			})
+		}else{
+			swal(res.Message, "", "error");
+		}
 	})
 }
 
@@ -440,7 +454,7 @@ setup.getAccept = function(){
 
 	ajaxPost("/dealsetup/checkdata", param, function(res){
 		console.log(res.Data.count)
-		if(res.Data != null){
+		if(res.Status != "NOK"){
 			if(res.Data.count > 1){
 				swal({
 					title: "",
@@ -484,10 +498,9 @@ setup.getSendBack = function(){
 				showCancelButton: false,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
-				confirmButtonText: 'Yes, delete it!'
 			}).then(function () {
-				setup.loadExGrid()
 				setup.detailIsShow(false)
+				setup.createGrid()
 			})
 		}else{
 			swal({

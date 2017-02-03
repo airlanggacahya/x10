@@ -525,11 +525,10 @@ func checkDealSetup(cid string, dealno string) (error, int, string) {
 		myInfo := infos.Get("myInfo").([]interface{})
 		latestinfo := myInfo[len(myInfo)-1].(tk.M).GetString("status")
 		if latestinfo != "Approved" && latestinfo != "Rejected" && latestinfo != "Cancelled" && latestinfo != "On Hold" && latestinfo != "Sent Back for Analysis" && latestinfo != "Sent Back to Omnifin" {
-			return errors.New("Accept Failed, existing data status is " + latestinfo), 0, ""
+			return errors.New("Accept Failed, existing data status is " + latestinfo), len(result), ""
 		}
 		return nil, len(result), latestinfo
 	}
-
 	return nil, len(result), ""
 }
 

@@ -167,7 +167,8 @@ setup.onClickDealNo = function(d, id){
 			setup.financialreport(data.CustomerProfile.financialreport.existingrelationship)
 			setup.deallist(data.InternalRtr.deallist)
 			setup.snapshot(data.InternalRtr.snapshot)
-			setup.loadDetailGrid()
+			setup.loadDetailGrid();
+			setup.loadExGrid()
 		}
 		
 	});

@@ -5,6 +5,7 @@ import (
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -371,6 +372,8 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 	err := k.GetPayload(&p)
 
 	c.WriteLog(err)
+	c.WriteLog(p)
+
 	if err != nil {
 		return p
 	}
@@ -490,4 +493,24 @@ func UpdateUnmatchData(c CustomerProfiles) {
 		}
 	}
 
+}
+
+func (c *DataCapturingController) SaveUploadFile(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	DirLocation := c.UploadPath + "/"
+
+	fileType := k.Request.FormValue("filetype")
+	newName := k.Request.FormValue("filenamephoto") + "." + fileType
+	c.WriteLog(newName)
+	os.RemoveAll(DirLocation + newName)
+	// os.MkdirAll(DirLocation+k.Request.FormValue("filenamephoto"), 0777)
+
+	erro, _ := UploadHandler(k, "fileUpload", DirLocation, newName)
+
+	if erro != nil {
+		return CreateResult(false, nil, "No Images")
+	}
+
+	return CreateResult(true, newName, "Success")
 }

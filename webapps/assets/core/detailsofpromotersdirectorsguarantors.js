@@ -3,31 +3,7 @@ customerprofile().DetailofPromoters = ko.observable(detail)
 var detail = {
 	biodata : ko.observableArray([
 		{
-			// name: "",
-			// gender: ko.observable(""),
-			// datebirth: "",
-			// ismaried: ko.observable(""),
-			// guarantor : ko.observable(""),
-			// anniversarrydate: "",
-			// holdingpercent: "",
-			// education: "",
-			// designation: ko.observable(""),
-			// pan: "",
-			// address: "",
-			// landmark: "",
-			// city: "",
-			// state: "",
-			// pincode: "",
-			// phone: "",
-			// hp: "",
-			// ownership: ko.observable(""),
-			// noyear: "",
-			// valueplot: "",
-			// vehiclesowned: "",
-			// networth: "",
-			// email: "",
-			// date: "",
-			// fotoprofilecustomer: ""
+
 		},
 
 	]),
@@ -92,15 +68,51 @@ detail.addbiodata = function(){
 	});
 }
 
-// detail.addRefrence = function(){
-// 	var reference ={
-// 		name: "",
-// 		address: "",
-// 		contact: "",
-// 		relation: "",
+// detail.saveUpload = function(){
+// 	// if ($('#fotoProfileCustomer').val() !== ""){
+// 	// var imgdata = new FormData();
+// 	// imgdata.append("userid", customerprofile().id);
+// 	// imgdata.append("userfile", $('input[type=file]')[0].files[0]);	
+// 	// if ($('input[type=file]')[0].files[0] != undefined){
+// 	// 	imgdata.append("filetype", ($('input[type=file]')[0].files[0].name).split('.').pop());
+// 	// }else{
+// 	// 	imgdata.append("filetype", '');
+// 	// }
+	
+// 	// var request = new XMLHttpRequest();
+//  //    request.open("POST", 'datacapturing/saveuploadfile');
+//  //    request.send(imgdata);
+// 	// }
+    
+//     for(i=0;i<detail.biodata().length;i++){
+// 		if ($('#imgpromotor'+i).val() !== "") {
+// 			var imgdata = new FormData();
+// 			// imgdata.append("filenamephoto", customerprofile().id+detail.biodata()[i].);
+// 			imgdata.append("userfile", $('input[type=file]')[0].files[0]);	
+// 				if ($('input[type=file]')[0].files[0] != undefined){
+// 					imgdata.append("filetype", ($('input[type=file]')[0].files[0].name).split('.').pop());
+// 				}else{
+// 					imgdata.append("filetype", '');
+// 				}
+// 			// var request = new XMLHttpRequest();
+// 		 //    request.open("POST", '{{BaseUrl}}datacapturing/saveuploadfile');
+// 		 //    request.send(imgdata);
+// 		    $.ajax({
+// 		        url: "datacapturing/saveuploadfile",
+// 		        data: imgdata,
+// 		        contentType: false,
+// 		        dataType: "json",
+// 		        mimeType: 'multipart/form-data',
+// 		        processData: false,
+// 		        type: 'POST',
+// 		        success: function (data) {
+		            
+// 		            console.log("saveoke");
+// 		        }
+// 		    });
+// 		}
 // 	}
 
-// 	detail.detailReference.push(reference);
 // }
 
 function toggleChevron(e) {
@@ -111,17 +123,17 @@ function toggleChevron(e) {
 }
 
 function readURL(input) {
-  if (input.files && input.files[0]) {
-      var reader = new FileReader();
-
-      reader.onload = function (e) {
-          $('#imgCustomerProfile')
-              .attr('src', e.target.result)
-              .width("100%")
-              .height("100%");
-      };
-      reader.readAsDataURL(input.files[0]);
-  }
+		var id = ($(input).attr("id")).split("-")[1]
+		if (input.files && input.files[0]) {
+			  var reader = new FileReader();
+		      reader.onload = function (e) {
+		          $('#imgPhoto'+id)
+		              .attr('src', e.target.result)
+		              .width("100%")
+		              .height("100%");
+		      };
+		      reader.readAsDataURL(input.files[0]);
+		  }
  }
 
 detail.desain = [

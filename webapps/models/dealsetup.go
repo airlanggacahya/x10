@@ -10,7 +10,7 @@ type DealSetupModel struct {
 	Id              bson.ObjectId ` bson:"_id" , json:"_id" `
 	Info            interface{}
 	CustomerProfile interface{}
-	AccountDetail   interface{}
+	AccountDetails  interface{}
 	InternalRtr     interface{}
 }
 

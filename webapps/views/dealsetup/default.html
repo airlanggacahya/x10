@@ -17,9 +17,9 @@ model.Fullname = ko.observable('{{.Fullname}}');
 <script>document.write('<script src="/static/core/dealsetup-top.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script><script src="/static/core/dealsetup-bottom.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 <div class="col-md-12 col-sm-12 ez panel-content">
-	<div class="panel" data-bind="with: setup">
+	<div class="panel">
 		<div class="panel-body">
-			<div class="col-md-12">
+			<div class="col-md-12" data-bind="visible: !(setup.detailIsShow())">
 				<div class="col-md-4">
 					<div class="form-group col-sm-12 filterhide">
 				     	<label class="col-sm-3 form-control-label">Customer Name</label>
@@ -45,7 +45,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
 				    </div>
 				</div>
 			</div>
-			<div class="col-md-12">
+			<div class="col-md-12" data-bind="visible: !(setup.detailIsShow())">
 				{{template "top.html"}}
 			</div>
 			<div class="col-md-12">

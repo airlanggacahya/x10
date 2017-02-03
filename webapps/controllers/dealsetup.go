@@ -887,7 +887,7 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	if e != nil {
 		return e.Error()
 	}
-	results2 := results1
+	// results2 := results1
 
 	query := tk.M{}.Set("AGGR", "$sum")
 	csr, err = c.Ctx.Find(new(DealSetupModel), query)
@@ -900,7 +900,7 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 		Data  []DealSetupModel
 		Total int
 	}{
-		Data:  results2,
+		Data:  results1,
 		Total: csr.Count(),
 	}
 

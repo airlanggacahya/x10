@@ -73,7 +73,7 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 	cid := payload.GetString("custid")
 	dealno := payload.GetString("dealno")
 
-	err, cou, stat := checkDealSetup(cid, dealno)
+	err, cou, _ := checkDealSetup(cid, dealno)
 	if err != nil {
 		res.SetError(err)
 		return res
@@ -150,7 +150,7 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 		res.SetError(err)
 	}
 
-	if cou > 0 && stat != "Sent Back to Omnifin" {
+	if cou > 0 {
 		arr := []string{"AccountDetails", "InternalRTR", "BankAnalysisV2", "CustomerProfile", "RatioInputData", "RepaymentRecords", "StockandDebt", "CibilReport", "CibilReportPromotorFinal", "DueDiligenceInput"}
 		for _, val := range arr {
 			err = changeStatus(cid, dealno, val, 0)

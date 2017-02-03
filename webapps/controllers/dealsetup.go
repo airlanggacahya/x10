@@ -700,8 +700,9 @@ func UpdateDealSetup(cid string, dealno string, formname string, formstatus stri
 		if len(myInfos) == 0 {
 			continue
 		}
-		myInfo := myInfos[len(myInfos)-1]
-		if myInfo.GetString("status") == "In queue" {
+
+		status := myInfos[len(myInfos)-1].GetString("status")
+		if status == "In queue" || status == "Send Back to Omnifin" {
 			continue
 		}
 

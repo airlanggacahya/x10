@@ -65,14 +65,15 @@ func CreateResult(success bool, data interface{}, message string) map[string]int
 	}
 }
 
-func UploadHandler(r *knot.WebContext, filename, dstpath string) (error, string) {
+func UploadHandler(r *knot.WebContext, filename, dstpath string, newnamefile string) (error, string) {
 	file, handler, err := r.Request.FormFile(filename)
 	if err != nil {
 		return err, ""
 	}
 	defer file.Close()
 
-	dstSource := dstpath + toolkit.PathSeparator + handler.Filename
+	dstSource := dstpath + toolkit.PathSeparator + newnamefile
+	fmt.Println(dstSource)
 	f, err := os.OpenFile(dstSource, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return err, ""

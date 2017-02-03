@@ -920,7 +920,7 @@ a:focus, i:focus {
   transform: scaleX(1);
 }*/
 
-#imgCustomerProfile {
+.imgCustomerProfile {
   height: 100%;
   width: 80%;
   cursor: pointer;

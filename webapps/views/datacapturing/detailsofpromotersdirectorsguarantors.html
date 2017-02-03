@@ -110,8 +110,8 @@
 
                   <form id="biodata" class="col-sm-12">
                     <div class="col-sm-2">
-                      <img id="imgCustomerProfile" src="/static/img/no-image.png" />
-                       <input id="input-1" type="file" class="file" name="fotoProfileCustomer" id="fotoProfileCustomer" accept="image/jpeg, image/png" data-bind="value: detail.biodata()[$index()].fotoprofilecustomer" onchange="readURL(this)">
+                      <img class="imgCustomerProfile" data-bind="attr:{'id':'imgPhoto' + $index(),'src':'/static/img/user/'+detail.biodata()[$index()].FilePhoto }"/>
+                       <input type="file" class="file" name="fotoProfileCustomer"  id="fotoProfileCustomer" accept="image/jpeg, image/png" data-bind="value: detail.biodata()[$index()].fotoprofilecustomer,attr:{'id':'imgpromotor-'+ $index()}" onchange="readURL(this)">
                     </div>
                     <div class="col-sm-5">
                       <div class="col-sm-12 form-group">

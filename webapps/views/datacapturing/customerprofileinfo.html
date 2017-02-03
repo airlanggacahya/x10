@@ -123,7 +123,6 @@ function refreshdata(accountdetailsMaster){
   var url = "{{BaseUrl}}datacapturing/getcustomerprofiledetail";
   ajaxPost(url, param, function(data) {
     if (data.length > 0) {
-      console.log(typeof callback)
       if(typeof accountdetailsMaster === "function") {
         accountdetailsMaster(formatDataPosition)
       }
@@ -277,6 +276,13 @@ function refreshdata(accountdetailsMaster){
           data[0].DetailOfPromoters.Biodata[i].PropertyOwnedkendo = ko.observableArray(data[0].DetailOfPromoters.Biodata[i].PropertyOwned)
         }
 
+
+    //     var ids = customerprofile().id.replace("|","");
+    // var newdate = moment(data[0].DetailOfPromoters.Biodata[i].DateOfBirth).format("DDMMMYYYY");
+    // var name = ids + data[0].DetailOfPromoters.Biodata[i].Name + newdate + data[0].DetailOfPromoters.Biodata[i].FatherName;
+    // data[0].DetailOfPromoters.Biodata[i].Src = name+"";
+    // alert();
+
         if(data[0].DetailOfPromoters.Biodata[i].Gender === "M") {
           data[0].DetailOfPromoters.Biodata[i].Gender = "MALE"
         }else {
@@ -331,6 +337,9 @@ function refreshdata(accountdetailsMaster){
         row.AnniversaryDate = validateDateUTCFormat(row.AnniversaryDate, "DD-MMM-YYYY");
         row.DateOfBirth = validateDateUTCFormat(row.DateOfBirth, "DD-MM-YYYY");
 
+        if(row.FilePhoto == "") {
+          row.FilePhoto = "no-image.jpg"
+        } 
         // Probably special case
         // Temporary disable
         // if(row.DateOfBirth === "01-Jan-0001") {
@@ -756,7 +765,7 @@ function save1(){
       detail.biodata()[i].PropertyOwnedkendo()[ii].MarketValue = parseFloat(vv.MarketValue)
     })
     detail.biodata()[i].PropertyOwned = detail.biodata()[i].PropertyOwnedkendo();
-
+   
     detail.biodata()[i].AnniversaryDate = validateDateUTCISO(detail.biodata()[i].AnniversaryDate);
     detail.biodata()[i].DateOfBirth = validateDateUTCISO(detail.biodata()[i].DateOfBirth);
   })
@@ -764,10 +773,13 @@ function save1(){
   param.DetailOfPromoters.Biodata = detail.biodata();
   param.DetailOfPromoters.DetailOfReference = detail.detailReference();
 
+  SaveUploadPhoto();
   var url = "{{BaseUrl}}datacapturing/savecustomerprofiledetail";
   ajaxPost(url, param, function(data) {
     if (data){
+
       swal("Sucessfully Saved", "", "success");
+      // detail.saveUpload(); 
       // if(customerprofile().Status() == 1){
       //   $('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
       //   info.ButtonLogic(1)
@@ -835,6 +847,8 @@ function save(){
     })
     detail.biodata()[i].PropertyOwned = detail.biodata()[i].PropertyOwnedkendo();
 
+
+
     detail.biodata()[i].AnniversaryDate = validateDateUTCISO(detail.biodata()[i].AnniversaryDate)
     detail.biodata()[i].DateOfBirth = validateDateUTCISO(detail.biodata()[i].DateOfBirth)
   })
@@ -876,6 +890,35 @@ function FilterInputAlphabet(event) {
 
   return isNotWanted;
 };
+
+function SaveUploadPhoto() {
+  var ids ;
+  ids = customerprofile().id.replace("|","");
+    for (i = 0; i < detail.biodata().length; i++) {
+        if ($('#imgpromotor-' + i).val() !== "") {
+            var fileType = ""
+            var imgdata = new FormData();
+            var newdate = moment(detail.biodata()[i].DateOfBirth).format("DDMMMYYYY");
+            imgdata.append("filenamephoto", ids + detail.biodata()[i].Name + newdate + detail.biodata()[i].FatherName);
+            // imgdata.append("filenamephoto", detail.biodata()[i].Name);
+            imgdata.append("fileUpload", $('input[type=file]')[i].files[0]);
+            if ($('input[type=file]')[i].files[0] != undefined) {
+                fileType = ($('input[type=file]')[i].files[0].name).split('.').pop()
+                imgdata.append("filetype", (fileType));
+            } else {
+                imgdata.append("filetype", '');
+            }
+            var request = new XMLHttpRequest();
+            request.open("POST", '{{BaseUrl}}datacapturing/saveuploadfile');
+            request.send(imgdata);
+            
+            var fullFileName = ids + detail.biodata()[i].Name + newdate + detail.biodata()[i].FatherName + "." + fileType
+            detail.biodata()[i].FilePhoto = fullFileName
+        }
+    }
+
+}
+
 
 $(document).ready(function(){
   info.initEvents();

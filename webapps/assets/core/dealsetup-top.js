@@ -19,11 +19,7 @@ setup.columnGrid = [
     width : 200,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
-// <<<<<<< HEAD
      return '<a onClick="setup.onClickDealNo(\''+dt.Id+'\',\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.DealNo+'</a>'
-// =======
-//      return '<a style="cursor: pointer" onClick="setup.onClickDealNo(\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.DealNo+'</a>'
-// >>>>>>> 6d16bbe78b12d6abeeda15175db602a924d68901
     }
  },
  {
@@ -188,7 +184,7 @@ setup.createGrid = function(){
         },
       },
       groupable: false,
-      sortable: true,
+      // sortable: true,
       filterable: false,
       pageable: {
           refresh: true,

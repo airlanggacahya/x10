@@ -882,13 +882,7 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 		query1 = query1.Order(arrsort...)
 	}
 
-	// <<<<<<< HEAD
-	// 	res := make([]DealSetupModel, 0)
-	// 	query := tk.M{"where": dbox.Eq("_id", bson.ObjectIdHex(payload["Id"].(string)))}
-	// 	csr, err := c.Ctx.Find(new(DealSetupModel), query)
-	// =======
 	csr, e := query1.Cursor(nil)
-	// >>>>>>> 6d16bbe78b12d6abeeda15175db602a924d68901
 	defer csr.Close()
 
 	if e != nil {

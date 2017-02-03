@@ -24,12 +24,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
 					<div class="form-group col-sm-12 filterhide">
 				     	<label class="col-sm-3 form-control-label">Customer Name</label>
 				     	<div class="col-sm-9">
-<!-- <<<<<<< HEAD
-					 			<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: setup.searchValueCustomerName, event: { change: setup.onChangeSearchCustomerName } ">
-======= -->
-					 			<!-- <input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" onkeypress="setup.onChangeSearchCustomerName()" data-bind="value: searchValueCustomerName, event: { change: onChangeSearchCustomerName } "> -->
 					 			<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: searchValueCustomerName, event:{change: onChangeSearchCustomerName}">
-<!-- >>>>>>> 6d16bbe78b12d6abeeda15175db602a924d68901 -->
 					    </div>
 					    <div class="clearfix"></div>
 				    </div>
@@ -38,11 +33,7 @@ model.Fullname = ko.observable('{{.Fullname}}');
 					<div class="form-group col-sm-12 filterhide">
 				     	<label class="col-sm-3 form-control-label">Deal No</label>
 				     	<div class="col-sm-9">
-<!-- <<<<<<< HEAD
-					 			<input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: setup.searchValueDealNo">
-======= -->
 					 			<input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: searchValueDealNo, event:{change: onChangeSearchDealNo}" >
-<!-- >>>>>>> 6d16bbe78b12d6abeeda15175db602a924d68901 -->
 					    </div>
 					    <div class="clearfix"></div>
 				    </div>

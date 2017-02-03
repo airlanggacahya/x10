@@ -5,8 +5,8 @@ import (
 	"errors"
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
-	"strings"
 	// "gopkg.in/mgo.v2/bson"
+	"strings"
 	// "fmt"
 	"time"
 	// "github.com/eaciit/dbox"
@@ -829,6 +829,7 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 		Sort               []xsorting
 		SearchCustomerName string
 		SearchDealNo       string
+		Id                 string
 	}{}
 
 	e := k.GetPayload(&p)
@@ -836,6 +837,8 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	if e != nil {
 		c.WriteLog(e)
 	}
+
+	c.WriteLog(p)
 
 	cn, err := GetConnection()
 	defer cn.Close()
@@ -851,6 +854,10 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 
 	if p.SearchDealNo != "" {
 		keys = append(keys, dbox.Contains("customerprofile.applicantdetail.DealNo", p.SearchDealNo))
+	}
+
+	if p.Id != "" {
+		keys = append(keys, dbox.Eq("customerprofile._id", p.Id))
 	}
 
 	query1 := cn.NewQuery().
@@ -883,7 +890,7 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 
 	results1 := make([]DealSetupModel, 0)
 	e = csr.Fetch(&results1, 0, false)
-	c.WriteLog(results1)
+	// c.WriteLog(results1)
 	if e != nil {
 		return e.Error()
 	}

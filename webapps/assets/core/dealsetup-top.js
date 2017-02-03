@@ -1,6 +1,7 @@
 var setup = {}
 setup.searchValueCustomerName = ko.observable('')
 setup.searchValueDealNo = ko.observable('')
+setup.IdCustomerName = ko.observable('')
 
 setup.columnGrid = [
   {
@@ -156,30 +157,6 @@ setup.columnGrid = [
  }
 ]
 
-// setup.createGrid = function(){
-//   ajaxPost("/dealsetup/getalldatadealsetup", {}, function(data){
-//     // console.log(data)
-//     dbgrid = $("#gridDealSetup").kendoGrid({
-//        dataSource: {
-//         data : data,
-//         pageSize: 10
-//        },
-//        columns : setup.columnGrid,
-//        // groupable: true,
-//        scrollable : true,
-//        pageable: true,
-//        height:450,
-//       //  dataBinding: function(x) {
-//       //   setTimeout(function(){
-//       //     _.each($(".intable").parent(),function(e){
-//       //       $(e).css("padding",0)
-//       //     })
-//       //   },10)
-//       // }
-//     }).data("kendoGrid");
-//   })
-// }url: "/dealsetup/getalldatadealsetup",
-
 setup.createGrid = function(){
   dbgrid = $("#gridDealSetup").kendoGrid({
     dataSource: {
@@ -196,6 +173,7 @@ setup.createGrid = function(){
             // console.log(options);
             options.SearchCustomerName = setup.searchValueCustomerName()
             options.SearchDealNo = setup.searchValueDealNo()
+            options.Id = setup.IdCustomerName()
             return JSON.stringify(options);
           }
         },
@@ -218,8 +196,6 @@ setup.createGrid = function(){
 
 }
 
-
-
 setup.onChangeSearchCustomerName = function(){
   setup.createGrid();
 }
@@ -228,20 +204,19 @@ setup.onChangeSearchDealNo = function(){
   setup.createGrid();
 }
 
-// setup.searchValueCustomerName.subscribe(function(newValue){
-//   console.log("ww",newValue)
-//   // if (setup.searchValueCustomerName().length > 2 ? setup.searchValueCustomerName() : '' > 2){
-//   //   setup.createGrid();
-//   // }
-// });
-
 setup.onClickCustomerName = function(id){
-  console.log(id)
+  setup.IdCustomerName(id)
+  if (setup.IdCustomerName() !== ''){
+    setup.createGrid();
+  }
 }
 
-// setup.onClickDealNo = function(id){
-//   console.log(id)
-// }
+setup.resetDealSetup = function(){
+  setup.searchValueCustomerName('')
+  setup.searchValueDealNo('')
+  setup.IdCustomerName('')
+  setup.createGrid(); 
+}
 
 $(function(){
 	setup.createGrid()

@@ -119,49 +119,66 @@ setup.financialreport = ko.observableArray([]);
 setup.deallist = ko.observableArray([]);
 setup.snapshot = ko.observableArray([]);
 
-setup.detailIsShow = ko.observable(false)
-setup.onClickDealNo = function(id){
-	var custid = id.split("|")
-	var param = {customerid : custid[0]}
+setup.detailIsShow = ko.observable(false);
+setup.custIdDealNo = ko.observable('')
+setup.onClickDealNo = function(d, id){
+	setup.custIdDealNo(id);
+	var param = {Id : d}
 	ajaxPost("/dealsetup/getselecteddatadealsetup", param, function(res){
-		setup.detailIsShow(true)
-		var data = res.Data[0];
-		setup.AccounDetails.brhead(data.AccountDetails.accountsetupdetails.brhead)
-		setup.AccounDetails.cityname(data.AccountDetails.accountsetupdetails.cityname)
-		setup.AccounDetails.creditanalyst(data.AccountDetails.accountsetupdetails.creditanalyst)
-		setup.AccounDetails.dealno(data.AccountDetails.accountsetupdetails.dealno)
-		setup.AccounDetails.leaddistributor(data.AccountDetails.accountsetupdetails.leaddistributor)
-		setup.AccounDetails.product(data.AccountDetails.accountsetupdetails.product)
-		setup.AccounDetails.rmname(data.AccountDetails.accountsetupdetails.rmname)
-		setup.AccounDetails.scheme(data.AccountDetails.accountsetupdetails.scheme)
+		if((res.Data).length != 0){
+			// console.log(res.Data[0].Info.myInfo)
+			var dt = res.Data[0].Info.myInfo;
+			var index = dt.length -1;
+			if(dt[index].status != "In queue"){
+				$("#accept").prop("disabled", true)
+				$("#sendback").prop("disabled", true)
+			}else{
+				$("#accept").prop("disabled", false)
+				$("#sendback").prop("disabled", false)
+			}
+			setup.detailIsShow(true)
+			var data = res.Data[0];
+			setup.AccounDetails.brhead(data.AccountDetails.accountsetupdetails.brhead)
+			setup.AccounDetails.cityname(data.AccountDetails.accountsetupdetails.cityname)
+			setup.AccounDetails.creditanalyst(data.AccountDetails.accountsetupdetails.creditanalyst)
+			setup.AccounDetails.dealno(data.AccountDetails.accountsetupdetails.dealno)
+			setup.AccounDetails.leaddistributor(data.AccountDetails.accountsetupdetails.leaddistributor)
+			setup.AccounDetails.product(data.AccountDetails.accountsetupdetails.product)
+			setup.AccounDetails.rmname(data.AccountDetails.accountsetupdetails.rmname)
+			setup.AccounDetails.scheme(data.AccountDetails.accountsetupdetails.scheme)
 
-		setup.LoanDetails.proposedloanamount(data.AccountDetails.loandetails.proposedloanamount)
-		setup.LoanDetails.limittenor(data.AccountDetails.loandetails.limittenor)
-		setup.LoanDetails.ifyeseistinglimitamount(data.AccountDetails.loandetails.ifyeseistinglimitamount)
-		setup.LoanDetails.existingpf(data.AccountDetails.loandetails.existingpf)
-		setup.LoanDetails.recenetagreementdate(kendo.toString(new Date(data.AccountDetails.loandetails.recenetagreementdate),"dd-MMM-yyyy"));
-		setup.LoanDetails.proposedrateinterest(data.AccountDetails.loandetails.proposedrateinterest);
-		if(data.AccountDetails.loandetails.ifexistingcustomer != false){
-			setup.LoanDetails.ifexistingcustomer("Yes")
-		}else{
-			setup.LoanDetails.ifexistingcustomer("No")
+			setup.LoanDetails.proposedloanamount(data.AccountDetails.loandetails.proposedloanamount)
+			setup.LoanDetails.limittenor(data.AccountDetails.loandetails.limittenor)
+			setup.LoanDetails.ifyeseistinglimitamount(data.AccountDetails.loandetails.ifyeseistinglimitamount)
+			setup.LoanDetails.existingpf(data.AccountDetails.loandetails.existingpf)
+			setup.LoanDetails.recenetagreementdate(kendo.toString(new Date(data.AccountDetails.loandetails.recenetagreementdate),"dd-MMM-yyyy"));
+			setup.LoanDetails.proposedrateinterest(data.AccountDetails.loandetails.proposedrateinterest);
+			if(data.AccountDetails.loandetails.ifexistingcustomer != false){
+				setup.LoanDetails.ifexistingcustomer("Yes")
+			}else{
+				setup.LoanDetails.ifexistingcustomer("No")
+			}
+			setup.LoanDetails.existingroi(data.AccountDetails.loandetails.existingroi)
+			setup.LoanDetails.firstagreementdate(kendo.toString(new Date(data.AccountDetails.loandetails.proposedloanamount), "dd-MMM-yyyy"));
+			setup.LoanDetails.vintagewithx10(data.AccountDetails.loandetails.vintagewithx10)
+
+			ko.mapping.fromJS(data.CustomerProfile.applicantdetail, setup.applicantdetail)
+			setup.applicantdetail.DateOfIncorporation(kendo.toString(new Date(data.CustomerProfile.applicantdetail.DateOfIncorporation), 'dd-MMM-yyyy'))
+			setup.financialreport(data.CustomerProfile.financialreport.existingrelationship)
+			setup.deallist(data.InternalRtr.deallist)
+			setup.snapshot(data.InternalRtr.snapshot)
+			setup.loadDetailGrid();
+			setup.loadExGrid()
 		}
-		setup.LoanDetails.existingroi(data.AccountDetails.loandetails.existingroi)
-		setup.LoanDetails.firstagreementdate(kendo.toString(new Date(data.AccountDetails.loandetails.proposedloanamount), "dd-MMM-yyyy"));
-		setup.LoanDetails.vintagewithx10(data.AccountDetails.loandetails.vintagewithx10)
-
-		ko.mapping.fromJS(data.CustomerProfile.applicantdetail, setup.applicantdetail)
-		setup.applicantdetail.DateOfIncorporation(kendo.toString(new Date(data.CustomerProfile.applicantdetail.DateOfIncorporation), 'dd-MMM-yyyy'))
-		setup.financialreport(data.CustomerProfile.financialreport.existingrelationship)
-		setup.deallist(data.InternalRtr.deallist)
-		setup.snapshot(data.InternalRtr.snapshot)
-		setup.loadExGrid()
+		
 	});
 
 }
 
 setup.getBack = function(){
 	setup.detailIsShow(false)
+	setup.custIdDealNo('');
+	setup.loadExGrid()
 }
 
 setup.loadExGrid = function(){
@@ -228,7 +245,11 @@ setup.loadExGrid = function(){
         editable: "inline",
     });
 
-    $("#topgrid").html("");
+    
+}
+
+setup.loadDetailGrid = function(){
+	$("#topgrid").html("");
 	$("#topgrid").kendoGrid({
 		dataSource: setup.snapshot(),
 		scrollable:true,
@@ -401,6 +422,86 @@ setup.loadExGrid = function(){
         ],
 
     });
+}
+
+setup.setAccept = function(param){
+	ajaxPost("/dealsetup/accept", param, function(res){
+		console.log(res)
+		swal("Data Sucessfully Accept", "", "success");
+	})
+}
+
+setup.getAccept = function(){
+	var on = setup.custIdDealNo().split("|");
+	var param ={
+		custid : on[0],
+		dealno : on[1]
+	}
+
+	ajaxPost("/dealsetup/checkdata", param, function(res){
+		console.log(res.Data.count)
+		if(res.Data != null){
+			if(res.Data.count > 1){
+				swal({
+					title: "",
+					text: "Deal already exists in CAT, accept new Omnifin Data?",
+					type: "warning",
+					showCancelButton: true,
+					confirmButtonCollor: '#3085d6',
+					cancelButtonColor: '#d33',
+					cancelButtonText: 'No',
+					confirmButtonText: 'Yes',
+					confirmButtonClass: 'btn btn-success',
+					cancelButtonClass: 'btn btn-danger',
+				}).then(function(){
+					setup.setAccept(param)
+				}, function(dismiss){
+					console.log("dismiss")
+				});
+			}else if(res.Data.count == 1){
+				setup.setAccept(param)
+			}
+		}else{
+			swal(res.Message, "", "error");
+		}
+	})
+}
+
+setup.getSendBack = function(){
+	var on = setup.custIdDealNo().split("|");
+	var param ={
+		custid : on[0],
+		dealno : on[1]
+	}
+
+	ajaxPost("/dealsetup/sendback", param, function(res){
+		console.log(res)
+		if(res.Message == "" && res.Status != "NOK"){
+			swal({
+				title: '',
+				text: "Send Back Succesfully",
+				type: 'success',
+				showCancelButton: false,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes, delete it!'
+			}).then(function () {
+				setup.loadExGrid()
+				setup.detailIsShow(false)
+			})
+		}else{
+			swal({
+				title: '',
+				text: res.Message,
+				type: 'error',
+				showCancelButton: false,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+			}).then(function () {
+				setup.detailIsShow(false)
+			})
+		}
+	})
 }
 
 

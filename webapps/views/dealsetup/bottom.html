@@ -2,7 +2,7 @@
 	ul{
 		padding-left: 0;
 	}
-	input[disabled]{
+	textarea[disabled],input[disabled]{
 	   cursor: default !important;
 	}
 	.form-control[disabled]{
@@ -120,11 +120,14 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
   border: 0 !important;
 }
 
+.swal2-confirm{
+	margin-right: 3px;
+}
 </style>
 <div class="col-md-12" data-bind="visible: setup.detailIsShow" style="padding-bottom: 15px;
 }">
-		<button class="btn btn-sm btn-flat btn-success">Accept</button>
-		<button class="btn btn-sm btn-flat btn-danger">Sen Back</button>
+		<button id="accept" class="btn btn-sm btn-flat btn-success" onclick="setup.getAccept()">Accept</button>
+		<button id="sendback" class="btn btn-sm btn-flat btn-danger" onclick="setup.getSendBack()">Send Back</button>
 		<button class="btn btn-sm btn-flat btn-primary" onclick='setup.getBack()'>Back</button>
 </div>
 <div class="col-md-12">
@@ -208,8 +211,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 					<div class="collapsible-body">
 						<div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">Requested Loan Amount</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">Requested Loan Amount</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="Requested Loan Amount" class="disable input-sm form-control" style="width: 100%;" data-bind="value: proposedloanamount()">
 				            	</div>
 				            	<div class="clearfix"></div>
@@ -217,8 +220,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">Proposed ROI</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">Proposed ROI</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="Proposed ROI" class="disable input-sm form-control" style="width: 100%;" data-bind="value:proposedrateinterest">
 				            	</div>
 				            	<div class="clearfix"></div>
@@ -226,8 +229,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">Limit Tenor (Months)</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">Limit Tenor (Months)</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="Limit Tenor (Months)" class="disable input-sm form-control" style="width: 100%;" data-bind="value:limittenor">
 				            	</div>
 				            	<div class="clearfix"></div>
@@ -235,8 +238,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">If Existing Customer</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">If Existing Customer</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="If Existing Customer" class="disable input-sm form-control" style="width: 100%;" data-bind="value: ifexistingcustomer">
 				            	</div>
 				            	<div class="clearfix"></div>
@@ -244,8 +247,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">If Yes, Existing Limit Amount</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">If Yes, Existing Limit Amount</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="If Yes, Existing Limit Amount" class="disable input-sm form-control" style="width: 100%;" data-bind="value: ifyeseistinglimitamount">
 				            	</div>
 				            	<div class="clearfix"></div>
@@ -253,8 +256,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">Existing ROI</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">Existing ROI</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="Existing ROI" class="disable input-sm form-control" style="width: 100%;" data-bind="value: existingroi">
 				            	</div>
 				            	<div class="clearfix"></div>
@@ -262,8 +265,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">Existing PF</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">Existing PF</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="Existing PF" class="disable input-sm form-control" style="width: 100%;" data-bind="value: existingpf">
 				            	</div>
 				            	<div class="clearfix"></div>
@@ -271,8 +274,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">First Agreement Date</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">First Agreement Date</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="First Agreement Date" class="disable input-sm form-control" style="width: 100%;" data-bind="value: firstagreementdate">
 				            	</div>
 				            	<div class="clearfix"></div>
@@ -280,8 +283,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">Recent Agreement Date</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">Recent Agreement Date</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="Recent Agreement Date" class="disable input-sm form-control" style="width: 100%;" data-bind="value: recenetagreementdate">
 				            	</div>
 				            	<div class="clearfix"></div>
@@ -289,8 +292,8 @@ div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 			            </div>
 			            <div class="col-sm-6">
 			            	<div class="form-group">
-				            	<label class="form-label col-sm-3">Vinatge with X10 (in months)</label>
-				            	<div class="col-sm-9">
+				            	<label class="form-label col-sm-4">Vinatge with X10 (in months)</label>
+				            	<div class="col-sm-8">
 				            		<input disabled type="text" placeholder="City Name" class="disable input-sm form-control" style="width: 100%;" data-bind="value: vintagewithx10">
 				            	</div>
 				            	<div class="clearfix"></div>

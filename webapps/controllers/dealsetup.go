@@ -5,8 +5,8 @@ import (
 	"errors"
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
+	"gopkg.in/mgo.v2/bson"
 	"strings"
-	// "gopkg.in/mgo.v2/bson"
 	"time"
 
 	// "github.com/eaciit/dbox"
@@ -841,7 +841,7 @@ func (c *DealSetUpController) GetSelectedDataDealSetup(k *knot.WebContext) inter
 	}
 
 	res := make([]DealSetupModel, 0)
-	query := tk.M{"where": dbox.Eq("accountdetails.customerid", payload["customerid"])}
+	query := tk.M{"where": dbox.Eq("_id", bson.ObjectIdHex(payload["Id"].(string)))}
 	csr, err := c.Ctx.Find(new(DealSetupModel), query)
 	defer csr.Close()
 	if err != nil {

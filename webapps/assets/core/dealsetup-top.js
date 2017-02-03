@@ -1,11 +1,9 @@
 var setup = {}
-setup.searchValueCustomerName = ko.observable('')
-setup.searchValueDealNo = ko.observable('')
 
 setup.columnGrid = [
   {
     title : "Customer Name",
-    // field : "CustomerProfile.applicantdetail.CustomerName",
+    field : "CustomerProfile.applicantdetail.CustomerName",
     width : 200,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -14,11 +12,11 @@ setup.columnGrid = [
  },
  {
     title : "Deal No",
-    // field : "CustomerProfile.applicantdetail.DealNo",
+    field : "CustomerProfile.applicantdetail.DealNo",
     width : 200,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
-     return '<a onClick="setup.onClickDealNo(\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.DealNo+'</a>'
+     return '<a onClick="setup.onClickDealNo(\''+dt.Id+'\',\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.CustomerName+'</a>'
     }
  },
  {
@@ -41,7 +39,7 @@ setup.columnGrid = [
       var count = dt.Info.myInfo.length
       // count = count > 0 ? count-1 : 0 
       count = count > 0 ? count-2 : 0
-      return dt.Info.myInfo[count] == undefined || dt.Info.myInfo[count] == null ? "-" : dt.Info.myInfo[count].status
+      return dt.Info.myInfo[count] == undefined || dt.Info.myInfo[count] == null ? "" : dt.Info.myInfo[count].status
     }
  },
  {
@@ -180,14 +178,6 @@ setup.createGrid = function(){
   })
 }
 
-setup.onChangeSearchCustomerName = function(){
-  // console.log(setup.searchValueCustomerName().length)
-  if (setup.searchValueCustomerName().length > 2){
-    ajaxPost("/dealsetup/getsearchdatadealsetup", setup.searchValueCustomerName(), function(data){
-      console.log(data)
-    })
-  }
-}
 
 setup.onClickCustomerName = function(id){
   console.log(id)

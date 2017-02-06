@@ -794,7 +794,7 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 			tk.Println(val.GetFloat64("sanctionedLimit"))
 		}
 	}
-	current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit
+	current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit / 100000
 	current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 	current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
 	current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
@@ -867,7 +867,7 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 				tk.Println(val.GetFloat64("sanctionedLimit"))
 			}
 		}
-		current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit
+		current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit / 100000
 		current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 		current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
 		current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)

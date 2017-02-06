@@ -45,7 +45,8 @@ type RatioInputData struct {
 	ConfirmedFormData        []*FormData
 	LastConfirm              time.Time
 
-	Frozen   bool
+	//lets disable, redudant
+	//Frozen   bool
 	IsFrozen bool
 }
 

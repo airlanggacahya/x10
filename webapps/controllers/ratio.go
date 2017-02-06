@@ -465,7 +465,7 @@ func (c *RatioController) Confirm(k *knot.WebContext) interface{} {
 	rowData.ConfirmedFormData = rowData.FormData
 
 	rowData.Confirmed = payload.Confirmed
-	rowData.Frozen = payload.Frozen
+	//rowData.Frozen = payload.Frozen
 	rowData.LastConfirm = time.Now()
 
 	if err := c.Ctx.Save(rowData); err != nil {

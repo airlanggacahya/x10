@@ -165,10 +165,38 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 	return res
 }
 
+const timeFormat = "2006-01-02T15:04:05.99Z"
+
+//
+// Enable this to debug / test changeStatus
+// Access with json body such as:
+// {
+// 	"CustomerID": "27",
+// 	"DealNo": "DLBLR00615-160000018",
+// 	"Table": "DueDiligenceInput",
+// 	"Status": 2
+// }
+//
+// func (c *DealSetUpController) Test(k *knot.WebContext) interface{} {
+// 	k.Config.OutputType = knot.OutputJson
+// 	var load struct {
+// 		CustomerID string
+// 		DealNo     string
+// 		Table      string
+// 		Status     int
+// 	}
+//
+// 	k.GetPayload(&load)
+// 	changeStatus(load.CustomerID, load.DealNo, load.Table, load.Status)
+//
+// 	return "OK"
+// }
+
 func changeStatus(CustomerID string, DealNo string, TableName string, Status int) error {
 
 	custInt := cast.ToInt(CustomerID, cast.RoundingAuto)
 	concate := CustomerID + "|" + DealNo
+	curTime := time.Now()
 
 	//delete query
 	ctx, e := GetConnection()
@@ -209,7 +237,23 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
-			dt.Status = Status
+			switch Status {
+			case 0:
+				dt.Status = 0
+				dt.Freeze = false
+				UpdateDealSetup(CustomerID, DealNo, "ad", "Under Process")
+			case 1:
+				dt.Status = 1
+				dt.Freeze = false
+				dt.DateConfirmed = curTime
+				UpdateDealSetup(CustomerID, DealNo, "ad", "Confirmed")
+			case 2:
+				dt.Status = 1
+				dt.Freeze = true
+				dt.DateFreeze = curTime
+				UpdateDealSetup(CustomerID, DealNo, "ad", "Freeze")
+			}
+
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {
@@ -233,7 +277,20 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
-			dt.Status = Status
+			switch Status {
+			case 0:
+				dt.Status = 0
+				dt.Isfreeze = false
+				UpdateDealSetup(CustomerID, DealNo, "irtr", "Under Process")
+			case 1:
+				dt.Status = 1
+				dt.Isfreeze = false
+				UpdateDealSetup(CustomerID, DealNo, "irtr", "Confirmed")
+			case 2:
+				dt.Status = 1
+				dt.Isfreeze = true
+				UpdateDealSetup(CustomerID, DealNo, "irtr", "Freeze")
+			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {
@@ -257,7 +314,25 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
-			dt.Status = Status
+			switch Status {
+			case 0:
+				dt.Status = 0
+				dt.IsConfirmed = false
+				dt.IsFreeze = false
+				UpdateDealSetup(CustomerID, DealNo, "ba", "Under Process")
+			case 1:
+				dt.Status = 1
+				dt.IsConfirmed = true
+				dt.IsFreeze = false
+				dt.DateConfirmed = curTime
+				UpdateDealSetup(CustomerID, DealNo, "ba", "Confirmed")
+			case 2:
+				dt.Status = 1
+				dt.IsConfirmed = true
+				dt.IsFreeze = true
+				dt.DateFreeze = curTime
+				UpdateDealSetup(CustomerID, DealNo, "ba", "Freeze")
+			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {
@@ -281,6 +356,27 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 
 		for _, dt := range me {
 			dt.Status = Status
+
+			// specific code for customer profile handling
+			dt.DateSave = curTime.Format(timeFormat)
+			dt.DateFreeze = curTime.Format(timeFormat)
+			dt.ConfirmedDate = curTime
+			dt.LastUpdate = curTime
+			// Freeze, update verified date
+			if dt.Status == 2 {
+				dt.VerifiedBy = ""
+				dt.VerifiedDate = curTime
+			}
+			// Update DealSetup
+			switch dt.Status {
+			case 2:
+				UpdateDealSetup(CustomerID, DealNo, "ca", "Freeze")
+			case 1:
+				UpdateDealSetup(CustomerID, DealNo, "ca", "Confirmed")
+			case 0:
+				UpdateDealSetup(CustomerID, DealNo, "ca", "Under Process")
+			}
+
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {
@@ -303,11 +399,19 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
-			if Status == 0 {
+			switch Status {
+			case 0:
 				dt.Confirmed = false
-				dt.Frozen = false
-			} else {
+				dt.IsFrozen = false
+				UpdateDealSetup(CustomerID, DealNo, "bsi", "Under Process")
+			case 1:
 				dt.Confirmed = true
+				dt.IsFrozen = false
+				UpdateDealSetup(CustomerID, DealNo, "bsi", "Confirmed")
+			case 2:
+				dt.Confirmed = true
+				dt.IsFrozen = true
+				UpdateDealSetup(CustomerID, DealNo, "bsi", "Freeze")
 			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
@@ -332,7 +436,20 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
+
 			dt.Status = Status
+			dt.DateSave = curTime
+			switch Status {
+			case 0:
+				UpdateDealSetup(CustomerID, DealNo, "ertr", "Under Process")
+			case 1:
+				dt.DateConfirmed = curTime
+				UpdateDealSetup(CustomerID, DealNo, "ertr", "IsConfirm")
+			case 2:
+				dt.DateFreeze = curTime
+				UpdateDealSetup(CustomerID, DealNo, "ertr", "Freeze")
+			}
+
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {
@@ -355,11 +472,19 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
-			if Status == 0 {
+			switch Status {
+			case 0:
 				dt.IsConfirm = false
 				dt.IsFreeze = false
-			} else {
+				UpdateDealSetup(CustomerID, DealNo, "sbd", "Under Process")
+			case 1:
 				dt.IsConfirm = true
+				dt.IsFreeze = false
+				UpdateDealSetup(CustomerID, DealNo, "sbd", "IsConfirm")
+			case 2:
+				dt.IsConfirm = true
+				dt.IsFreeze = true
+				UpdateDealSetup(CustomerID, DealNo, "sbd", "Freeze")
 			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
@@ -383,7 +508,26 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
+
+			// status is not saved in status
+			// but in isconfirm and IsFreeze
+			switch Status {
+			case 0:
+				dt.IsConfirm = 0
+				dt.IsFreeze = false
+				UpdateDealSetup(CustomerID, DealNo, "cibil", "Under Process")
+			case 1:
+				dt.IsConfirm = 1
+				dt.IsFreeze = false
+				UpdateDealSetup(CustomerID, DealNo, "cibil", "Confirmed")
+			case 2:
+				dt.IsConfirm = 1
+				dt.IsFreeze = true
+				UpdateDealSetup(CustomerID, DealNo, "cibil", "Freeze")
+			}
+
 			dt.Status = Status
+
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {
@@ -406,7 +550,16 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
-			dt.StatusCibil = Status
+			// Status cibil is not freezed
+			// Ignore on freezed
+			switch Status {
+			case 0:
+				dt.StatusCibil = 0
+			case 1:
+				dt.StatusCibil = 1
+			case 2:
+				dt.StatusCibil = 1
+			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {
@@ -429,7 +582,23 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
-			dt.Status = Status
+			dt.DateSave = curTime
+			switch Status {
+			case 0:
+				dt.Status = 0
+				dt.Freeze = false
+				UpdateDealSetup(CustomerID, DealNo, "dd", "Under Process")
+			case 1:
+				dt.Status = 1
+				dt.Freeze = false
+				dt.LastConfirmed = curTime
+				UpdateDealSetup(CustomerID, DealNo, "dd", "Confirmed")
+			case 2:
+				dt.Status = 1
+				dt.Freeze = true
+				dt.DateFreeze = curTime
+				UpdateDealSetup(CustomerID, DealNo, "dd", "Freeze")
+			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {

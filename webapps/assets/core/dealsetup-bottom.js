@@ -113,6 +113,44 @@ setup.templateApp = {
 
 }
 
+setup.promotorTemplate = {
+	Address: '',
+	AnniversaryDate: '',
+	CIBILScore: '',
+	City: '',
+	DateOfBirth: '',
+	Designation: '',
+	Director: '',
+	Education: '',
+	Email: '',
+	FatherName: '',
+	Gender: '',
+	Guarantor: '',
+	Landmark: '',
+	MaritalStatus: '',
+	Mobile: '',
+	Name: '',
+	NetWorth: '',
+	NoOfYears: '',
+	Ownership: '',
+	PAN : '',
+	Phone: '',
+	Pincode: '',
+	Position: '',
+	Promotor: '',
+	ShareHoldingPercentage: '',
+	State: '',
+	ValueOfPot: '',
+	VehiclesOwned: '',
+}
+
+setup.refrenceTemplate = {
+	Name: '',
+	Address: '',
+	ContactNo: '',
+	RelationAplicant: '',
+}
+
 setup.applicantdetail = ko.mapping.fromJS(setup.templateApp);
 setup.AccounDetails = ko.mapping.fromJS(setup.templateaccountsetup);
 setup.LoanDetails = ko.mapping.fromJS(setup.templateLoan);
@@ -120,9 +158,11 @@ setup.financialreport = ko.observableArray([]);
 setup.deallist = ko.observableArray([]);
 setup.snapshot = ko.observableArray([]);
 setup.dataCurrentStatus = ko.observableArray([]);
-
+setup.detailofpromoters = ko.observable([]);
+setup.detailOfRefrence = ko.observable([setup.refrenceTemplate]);
 setup.detailIsShow = ko.observable(false);
 setup.custIdDealNo = ko.observable('')
+
 setup.onClickDealNo = function(d, id){
 	setup.custIdDealNo(id);
 	var param = {Id : d}
@@ -168,10 +208,46 @@ setup.onClickDealNo = function(d, id){
 			ko.mapping.fromJS(data.CustomerProfile.applicantdetail, setup.applicantdetail)
 			setup.applicantdetail.DateOfIncorporation(kendo.toString(new Date(data.CustomerProfile.applicantdetail.DateOfIncorporation), 'dd-MMM-yyyy'))
 			setup.financialreport(data.CustomerProfile.financialreport.existingrelationship)
+			console.log(data.CustomerProfile.detailofpromoters.biodata)
+			var promotor = data.CustomerProfile.detailofpromoters.biodata;
+			if(promotor.length > 0){
+				setup.detailofpromoters([]);
+				setup.detailofpromoters(data.CustomerProfile.detailofpromoters.biodata);
+				$.each(promotor, function(i, d){
+				console.log(d.Position)
+					if(d.Designation.length > 0){
+						var str = d.Designation.join(', ');
+						$("#design"+i).val(str);
+						// setup.detailofpromoters()[i].Designation = str;
+					}
+					
+					if(d.Position != undefined){
+						var pos = d.Position.join(', ');
+						$("#position"+i).val(pos)
+						// setup.detailofpromoters()[i].Position = pos
+					}
+
+					$("#promotor"+i).val(kendo.toString(new Date(d.DateOfBirth), "dd-MMM-yyyy"));
+					
+				})
+			}else{
+				setup.detailofpromoters([]);
+				setup.detailofpromoters().push(ko.mapping.toJS(setup.promotorTemplate));
+			}
+			// setup.detailofrefrence().push(ko.mapping.toJS(setup.refrenceTemplate));
+			var ref = data.CustomerProfile.detailofpromoters.detailofreference;
+			if(ref.length > 0){
+				setup.detailOfRefrence([])
+				setup.detailOfRefrence(ref)
+			}else{
+				// alert("masuk sini")
+				setup.detailOfRefrence([])
+				setup.detailOfRefrence([setup.refrenceTemplate])
+			}
 			setup.deallist(data.InternalRtr.deallist)
 			setup.snapshot(data.InternalRtr.snapshot)
 			setup.loadDetailGrid();
-			setup.loadExGrid(d)
+			setup.loadExGrid()
 		}
 		
 	});
@@ -562,5 +638,11 @@ $(function(){
 	$('.collapsibleDeal').collapsible({
       accordion : true
     });
+     
+   // setTimeout(function(){
+   		// console.log(setup.detailofrefrence())
+   // }, 100)
+    
+    setup.detailofpromoters().push(ko.mapping.toJS(setup.promotorTemplate));
     // setup.loadExGrid();
 })

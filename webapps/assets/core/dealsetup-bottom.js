@@ -477,7 +477,7 @@ setup.getAccept = function(){
 				setup.setAccept(param)
 			}
 		}else{
-			swal(res.Message, "", "error");
+			swal("", res.Message, "error");
 		}
 	})
 }

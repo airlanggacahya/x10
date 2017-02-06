@@ -53,7 +53,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.myInfo.length
       count = count > 0 ? count-1 : 0 
-      return kendo.toString(jsonDate(dt.Info.myInfo[count].updateTime), 'dd MMM yyyy h:mm tt')
+      return kendo.toString(jsonDate(dt.Info.myInfo[count].updateTime), 'dd MMM yyyy hh:mm tt')
     }
  },
  {

@@ -19,7 +19,7 @@ setup.columnGrid = [
     width : 200,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
-     return '<a onClick="setup.onClickDealNo(\''+dt.Id+'\',\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.DealNo+'</a>'
+     return '<a style="cursor: pointer" onClick="setup.onClickDealNo(\''+dt.Id+'\',\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.DealNo+'</a>'
     }
  },
  {
@@ -53,7 +53,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.myInfo.length
       count = count > 0 ? count-1 : 0 
-      return kendo.toString(jsonDate(dt.Info.myInfo[count].updateTime), 'dd MMM yyyy')
+      return kendo.toString(jsonDate(dt.Info.myInfo[count].updateTime), 'dd MMM yyyy h:mm tt')
     }
  },
  {

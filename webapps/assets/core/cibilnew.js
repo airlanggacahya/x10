@@ -233,6 +233,11 @@ r.getData = function() {
       r.cibilStatus(1)
       r.cibilStatusDraft(0)
 
+      // Data on backend is not always have IsConfirm and IsFreeze
+      // Try to setup it here to prevent js errors
+      r.reportCibilList()[0].IsConfirm = _.get(r.reportCibilList()[0], "IsConfirm", 0)
+      r.reportCibilList()[0].IsFreeze = _.get(r.reportCibilList()[0], "IsFreeze", 0)
+
       if(r.reportCibilList()[0].IsConfirm == 1) {
         $(".btn-disabled-confirm").prop("disabled", true);
         $(".btn-disabled").prop( "disabled", true );

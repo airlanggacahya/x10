@@ -19,6 +19,7 @@ setup.templateGeneral = {
 
 setup.templateLoan ={
 	proposedloanamount: 0,
+	requestedlimitamount : 0,
 	limittenor: 0,
 	ifyeseistinglimitamount: 0,
 	existingpf: 0,
@@ -148,7 +149,8 @@ setup.onClickDealNo = function(d, id){
 			setup.AccounDetails.rmname(data.AccountDetails.accountsetupdetails.rmname)
 			setup.AccounDetails.scheme(data.AccountDetails.accountsetupdetails.scheme)
 
-			setup.LoanDetails.proposedloanamount(data.AccountDetails.loandetails.proposedloanamount)
+			setup.LoanDetails.proposedloanamount(data.AccountDetails.loandetails.proposedloanamount/100000)
+			setup.LoanDetails.requestedlimitamount(data.AccountDetails.loandetails.requestedlimitamount)
 			setup.LoanDetails.limittenor(data.AccountDetails.loandetails.limittenor)
 			setup.LoanDetails.ifyeseistinglimitamount(data.AccountDetails.loandetails.ifyeseistinglimitamount)
 			setup.LoanDetails.existingpf(data.AccountDetails.loandetails.existingpf)
@@ -160,7 +162,7 @@ setup.onClickDealNo = function(d, id){
 				setup.LoanDetails.ifexistingcustomer("No")
 			}
 			setup.LoanDetails.existingroi(data.AccountDetails.loandetails.existingroi)
-			setup.LoanDetails.firstagreementdate(kendo.toString(new Date(data.AccountDetails.loandetails.proposedloanamount), "dd-MMM-yyyy"));
+			setup.LoanDetails.firstagreementdate(kendo.toString(new Date(data.AccountDetails.loandetails.firstagreementdate), "dd-MMM-yyyy"));
 			setup.LoanDetails.vintagewithx10(data.AccountDetails.loandetails.vintagewithx10)
 
 			ko.mapping.fromJS(data.CustomerProfile.applicantdetail, setup.applicantdetail)

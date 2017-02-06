@@ -239,6 +239,7 @@ type Biodata struct {
 	Email                  string          `bson:"Email"`
 	CIBILScore             float64         `bson:"CIBILScore"`
 	PropertyOwned          []PropertyOwned `bson:"PropertyOwned,omitempty"`
+	FilePhoto              string          `bson:"FilePhoto,omitempty"`
 }
 
 type PropertyOwned struct {
@@ -338,6 +339,7 @@ type BiodataGen struct {
 	Email                  interface{}     `bson:"Email"`
 	CIBILScore             interface{}     `bson:"CIBILScore"`
 	PropertyOwned          []PropertyOwned `bson:"PropertyOwned,omitempty"`
+	FilePhoto              string          `bson:"FilePhoto,omitempty"`
 }
 
 type RegisteredAddressGen struct {

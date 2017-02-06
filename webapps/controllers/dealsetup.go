@@ -5,16 +5,18 @@ import (
 	"errors"
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
+	"gopkg.in/mgo.v2/bson"
 	"strings"
 	// "gopkg.in/mgo.v2/bson"
+	// "fmt"
 	"time"
-
 	// "github.com/eaciit/dbox"
 	// . "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
 
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
+	// "regexp"
 )
 
 type DealSetUpController struct {
@@ -73,7 +75,7 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 	cid := payload.GetString("custid")
 	dealno := payload.GetString("dealno")
 
-	err, cou, stat := checkDealSetup(cid, dealno)
+	err, cou, _ := checkDealSetup(cid, dealno)
 	if err != nil {
 		res.SetError(err)
 		return res
@@ -150,7 +152,7 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 		res.SetError(err)
 	}
 
-	if cou > 0 && stat != "Sent Back to Omnifin" {
+	if cou > 0 {
 		arr := []string{"AccountDetails", "InternalRTR", "BankAnalysisV2", "CustomerProfile", "RatioInputData", "RepaymentRecords", "StockandDebt", "CibilReport", "CibilReportPromotorFinal", "DueDiligenceInput"}
 		for _, val := range arr {
 			err = changeStatus(cid, dealno, val, 0)
@@ -525,11 +527,10 @@ func checkDealSetup(cid string, dealno string) (error, int, string) {
 		myInfo := infos.Get("myInfo").([]interface{})
 		latestinfo := myInfo[len(myInfo)-1].(tk.M).GetString("status")
 		if latestinfo != "Approved" && latestinfo != "Rejected" && latestinfo != "Cancelled" && latestinfo != "On Hold" && latestinfo != "Sent Back for Analysis" && latestinfo != "Sent Back to Omnifin" {
-			return errors.New("Accept Failed, existing data status is " + latestinfo), 0, ""
+			return errors.New("Accept Failed, existing data status is " + latestinfo), len(result), ""
 		}
 		return nil, len(result), latestinfo
 	}
-
 	return nil, len(result), ""
 }
 
@@ -701,8 +702,9 @@ func UpdateDealSetup(cid string, dealno string, formname string, formstatus stri
 		if len(myInfos) == 0 {
 			continue
 		}
-		myInfo := myInfos[len(myInfos)-1]
-		if myInfo.GetString("status") == "In queue" {
+
+		status := myInfos[len(myInfos)-1].GetString("status")
+		if status == "In queue" || status == "Send Back to Omnifin" {
 			continue
 		}
 
@@ -817,18 +819,101 @@ func UpdateDealSetup(cid string, dealno string, formname string, formstatus stri
 func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	csr, err := c.Ctx.Find(new(DealSetupModel), tk.M{})
-	if err != nil {
-		return c.ErrorResultInfo(err.Error(), nil)
+	type xsorting struct {
+		Field string
+		Dir   string
 	}
-	result := make([]DealSetupModel, 0)
-	err = csr.Fetch(&result, 0, false)
-	if err != nil {
-		return c.ErrorResultInfo(err.Error(), nil)
-	}
-	csr.Close()
 
-	return result
+	p := struct {
+		Skip               int
+		Take               int
+		Sort               []xsorting
+		SearchCustomerName string
+		SearchDealNo       string
+		Id                 string
+	}{}
+
+	e := k.GetPayload(&p)
+
+	if e != nil {
+		c.WriteLog(e)
+	}
+
+	c.WriteLog(p)
+
+	cn, err := GetConnection()
+	defer cn.Close()
+
+	if err != nil {
+		panic(err)
+	}
+
+	keys := []*dbox.Filter{}
+	if p.SearchCustomerName != "" {
+		keys = append(keys, dbox.Contains("customerprofile.applicantdetail.CustomerName", p.SearchCustomerName))
+	}
+
+	if p.SearchDealNo != "" {
+		keys = append(keys, dbox.Contains("customerprofile.applicantdetail.DealNo", p.SearchDealNo))
+	}
+
+	if p.Id != "" {
+		keys = append(keys, dbox.Eq("customerprofile._id", p.Id))
+	}
+
+	query1 := cn.NewQuery().
+		From("DealSetup").
+		Skip(p.Skip).
+		Take(p.Take)
+
+	if len(keys) > 0 {
+		query1 = query1.Where(dbox.And(keys...))
+	}
+
+	if len(p.Sort) > 0 {
+		var arrsort []string
+		for _, val := range p.Sort {
+			if val.Dir == "desc" {
+				arrsort = append(arrsort, strings.ToLower("-"+p.Sort[0].Field))
+			} else {
+				arrsort = append(arrsort, strings.ToLower(p.Sort[0].Field))
+			}
+		}
+		query1 = query1.Order(arrsort...)
+	}
+
+	csr, e := query1.Cursor(nil)
+	defer csr.Close()
+
+	if e != nil {
+		panic(e)
+	}
+
+	results1 := make([]DealSetupModel, 0)
+	e = csr.Fetch(&results1, 0, false)
+	// c.WriteLog(results1)
+	if e != nil {
+		return e.Error()
+	}
+	// results2 := results1
+
+	query := tk.M{}.Set("AGGR", "$sum")
+	csr, err = c.Ctx.Find(new(DealSetupModel), query)
+	defer csr.Close()
+	if err != nil {
+		return err.Error()
+	}
+
+	data := struct {
+		Data  []DealSetupModel
+		Total int
+	}{
+		Data:  results1,
+		Total: csr.Count(),
+	}
+
+	return data
+
 }
 
 func (c *DealSetUpController) GetSelectedDataDealSetup(k *knot.WebContext) interface{} {
@@ -842,7 +927,7 @@ func (c *DealSetUpController) GetSelectedDataDealSetup(k *knot.WebContext) inter
 	}
 
 	res := make([]DealSetupModel, 0)
-	query := tk.M{"where": dbox.Eq("accountdetails.customerid", payload["customerid"])}
+	query := tk.M{"where": dbox.Eq("_id", bson.ObjectIdHex(payload["Id"].(string)))}
 	csr, err := c.Ctx.Find(new(DealSetupModel), query)
 	defer csr.Close()
 	if err != nil {

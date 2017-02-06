@@ -132,11 +132,27 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	LogData.Set("dataid", dataid)
 	CreateLog(LogData)
 
+	// Check existing dealsetup
+	found, err := isDealSetupExists(cid, dealno)
+	if err != nil {
+		LogData.Set("error", err.Error())
+		CreateLog(LogData)
+		return resFail
+	}
+
+	// Already in queue
+	if found {
+		LogData.Set("error", "Already In queue")
+		CreateLog(LogData)
+		return resFail
+	}
+
 	// Build Customer Profile
 	cp, err := BuildCustomerProfile(contentbody, crList, cid, dealno)
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
+		return resFail
 	}
 
 	// Build Account Detail
@@ -144,6 +160,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
+		return resFail
 	}
 
 	// Build Internal RTR
@@ -151,6 +168,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error()+" | InternalRTR")
 		CreateLog(LogData)
+		return resFail
 	}
 
 	// Save OmnifinXML
@@ -182,13 +200,14 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		SetConfig("multiexec", true).
 		Save()
 
-	csc = map[string]interface{}{"data": map[string]interface{}{
-		"_id":             bson.NewObjectId(),
-		"customerprofile": cp,
-		"accountdetails":  ad,
-		"internalrtr":     irtr,
-		"info":            BuildInfo(),
-	}}
+	var data DealSetupModel
+	data.Id = bson.NewObjectId()
+	data.Info = BuildInfo()
+	data.CustomerProfile = cp
+	data.AccountDetails = ad
+	data.InternalRtr = irtr
+
+	csc = map[string]interface{}{"data": data}
 	err = qDealSetup.Exec(csc)
 	if err != nil {
 		fmt.Print(err.Error())
@@ -225,6 +244,48 @@ func BuildInfo() tk.M {
 	}
 
 	return info
+}
+
+// isDealSetupExists
+// Check whenever dealsetup with same custid and dealno
+// already exists in database and status is In queue
+func isDealSetupExists(cid string, dealno string) (bool, error) {
+	cn, err := GetConnection()
+	defer cn.Close()
+
+	if err != nil {
+		return false, err
+	}
+
+	csr, e := cn.NewQuery().
+		Where(dbox.Eq("customerprofile._id", cid+"|"+dealno)).
+		From("DealSetup").
+		Cursor(nil)
+	if e != nil {
+		return false, err
+	}
+	defer csr.Close()
+
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return false, err
+	}
+
+	// find the one where status is In queue
+	for _, val := range results {
+		infos := val.Get("info").(tk.M)
+		myInfos := CheckArraytkM(infos.Get("myInfo"))
+		if len(myInfos) == 0 {
+			continue
+		}
+		myInfo := myInfos[len(myInfos)-1]
+		if myInfo.GetString("status") == "In queue" {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
 
 var ErrorStatusNotZero = errors.New("Status Not Zero")

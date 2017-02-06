@@ -371,7 +371,7 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 		ebitda = false
 		customerMarginStatus = true
 
-		if ebitdaMargin < customerMargin {
+		if ebitdaMargin < multiplier {
 			multiplier = ebitdaMargin
 
 			ebitda = true
@@ -568,14 +568,17 @@ func (b *BankAnalysis) GenerateAllSummary(CustomerId string, DealNo string) (*Ba
 	bank.ABB = CheckNan(ABB)
 
 	isUpdate := false
-	if (res[0].BankSummary.BSIMarginPercent != bank.BSIMarginPercent || res[0].BankSummary.BSImpMargin != bank.BSImpMargin) && res[0].IsConfirmed {
-		isUpdate = true
-	}
 
-	if !res[0].IsConfirmed {
-		err = b.SaveBankAllSummary(bank, CustomerId, DealNo)
-		if err != nil {
-			return nil, isUpdate, "", err
+	if len(res) > 0 {
+		if (res[0].BankSummary.BSIMarginPercent != bank.BSIMarginPercent || res[0].BankSummary.BSImpMargin != bank.BSImpMargin) && res[0].IsConfirmed {
+			isUpdate = true
+		}
+
+		if !res[0].IsConfirmed {
+			err = b.SaveBankAllSummary(bank, CustomerId, DealNo)
+			if err != nil {
+				return nil, isUpdate, "", err
+			}
 		}
 	}
 
@@ -690,6 +693,7 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		period := fm.GetLastAuditedYear()
 		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
 		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
+
 		multiplier := customerMargin
 		if ebitdaMargin < customerMargin {
 			multiplier = ebitdaMargin

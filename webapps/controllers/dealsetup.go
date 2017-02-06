@@ -415,7 +415,26 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
+
+			// status is not saved in status
+			// but in isconfirm and IsFreeze
+			switch Status {
+			case 0:
+				dt.IsConfirm = 0
+				dt.IsFreeze = false
+				UpdateDealSetup(CustomerID, DealNo, "cibil", "Under Process")
+			case 1:
+				dt.IsConfirm = 1
+				dt.IsFreeze = false
+				UpdateDealSetup(CustomerID, DealNo, "cibil", "Confirmed")
+			case 2:
+				dt.IsConfirm = 1
+				dt.IsFreeze = true
+				UpdateDealSetup(CustomerID, DealNo, "cibil", "Freeze")
+			}
+
 			dt.Status = Status
+
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {
@@ -438,7 +457,16 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
-			dt.StatusCibil = Status
+			// Status cibil is not freezed
+			// Ignore on freezed
+			switch Status {
+			case 0:
+				dt.StatusCibil = 0
+			case 1:
+				dt.StatusCibil = 1
+			case 2:
+				dt.StatusCibil = 1
+			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {

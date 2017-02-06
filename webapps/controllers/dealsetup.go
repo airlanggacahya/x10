@@ -167,6 +167,31 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 
 const timeFormat = "2006-01-02T15:04:05.99Z"
 
+//
+// Enable this to debug / test changeStatus
+// Access with json body such as:
+// {
+// 	"CustomerID": "27",
+// 	"DealNo": "DLBLR00615-160000018",
+// 	"Table": "DueDiligenceInput",
+// 	"Status": 2
+// }
+//
+// func (c *DealSetUpController) Test(k *knot.WebContext) interface{} {
+// 	k.Config.OutputType = knot.OutputJson
+// 	var load struct {
+// 		CustomerID string
+// 		DealNo     string
+// 		Table      string
+// 		Status     int
+// 	}
+//
+// 	k.GetPayload(&load)
+// 	changeStatus(load.CustomerID, load.DealNo, load.Table, load.Status)
+//
+// 	return "OK"
+// }
+
 func changeStatus(CustomerID string, DealNo string, TableName string, Status int) error {
 
 	custInt := cast.ToInt(CustomerID, cast.RoundingAuto)

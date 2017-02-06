@@ -165,10 +165,13 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 	return res
 }
 
+const timeFormat = "2006-01-02T15:04:05.99Z"
+
 func changeStatus(CustomerID string, DealNo string, TableName string, Status int) error {
 
 	custInt := cast.ToInt(CustomerID, cast.RoundingAuto)
 	concate := CustomerID + "|" + DealNo
+	curTime := time.Now()
 
 	//delete query
 	ctx, e := GetConnection()
@@ -281,6 +284,27 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 
 		for _, dt := range me {
 			dt.Status = Status
+
+			// specific code for customer profile handling
+			dt.DateSave = curTime.Format(timeFormat)
+			dt.DateFreeze = curTime.Format(timeFormat)
+			dt.ConfirmedDate = curTime
+			dt.LastUpdate = curTime
+			// Freeze, update verified date
+			if dt.Status == 2 {
+				dt.VerifiedBy = ""
+				dt.VerifiedDate = curTime
+			}
+			// Update DealSetup
+			switch dt.Status {
+			case 2:
+				UpdateDealSetup(CustomerID, DealNo, "ca", "Freeze")
+			case 1:
+				UpdateDealSetup(CustomerID, DealNo, "ca", "Confirmed")
+			case 0:
+				UpdateDealSetup(CustomerID, DealNo, "ca", "Under Process")
+			}
+
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {

@@ -129,8 +129,8 @@ function readURL(input) {
 		      reader.onload = function (e) {
 		          $('#imgPhoto'+id)
 		              .attr('src', e.target.result)
-		              .width("100%")
-		              .height("100%");
+		              .width("220")
+		              .height("320");
 		      };
 		      reader.readAsDataURL(input.files[0]);
 		  }

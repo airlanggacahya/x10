@@ -16,6 +16,12 @@ model.Fullname = ko.observable('{{.Fullname}}');
 
 <script>document.write('<script src="/static/core/dealsetup-top.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script><script src="/static/core/dealsetup-bottom.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
+<style type="text/css">
+	a{
+		cursor: pointer;
+	}
+</style>
+
 <div class="col-md-12 col-sm-12 ez panel-content" data-bind="with: setup ">
 	<div class="panel">
 		<div class="panel-body">
@@ -53,4 +59,26 @@ model.Fullname = ko.observable('{{.Fullname}}');
 			</div>
 		</div>
 	</div>	
+</div>
+
+<div id="current" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-sm" style="width: 50%;">
+		<!-- <form class="form-add"> -->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">Current Status</h4>
+				</div>
+				<div class="modal-body">
+					<!-- <div class="col-md-12"> -->
+						<div id="currentStatus"></div>
+					<!-- </div> -->
+				</div>
+				<div class="modal-footer">
+					<!-- <button type="button" class="btn btn-sm btn-flat btn-primary" data-dismiss="modal" data-bind="click: adf.onclickDismissModal">Save</button> -->
+					<button type="button" class="btn btn-sm btn-flat btn-danger" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		<!-- </form> -->
+	</div>
 </div>

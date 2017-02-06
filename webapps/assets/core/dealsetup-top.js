@@ -30,7 +30,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.myInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.myInfo[count].status 
+      return "<a onclick='setup.getCurrenStatusDetails(\""+dt.Id+"\")'>"+dt.Info.myInfo[count].status+"</a>" 
     }
  },
  {

@@ -118,6 +118,7 @@ setup.LoanDetails = ko.mapping.fromJS(setup.templateLoan);
 setup.financialreport = ko.observableArray([]);
 setup.deallist = ko.observableArray([]);
 setup.snapshot = ko.observableArray([]);
+setup.dataCurrentStatus = ko.observableArray([]);
 
 setup.detailIsShow = ko.observable(false);
 setup.custIdDealNo = ko.observable('')
@@ -430,7 +431,7 @@ setup.setAccept = function(param){
 		if(res.Status != "NOK"){
 			swal({
 				title: '',
-				text: "Data Sucessfully Accept",
+				text: "Data Sucessfully Accepted",
 				type: 'success',
 				showCancelButton: false,
 				confirmButtonColor: '#3085d6',
@@ -476,7 +477,7 @@ setup.getAccept = function(){
 				setup.setAccept(param)
 			}
 		}else{
-			swal(res.Message, "", "error");
+			swal("", res.Message, "error");
 		}
 	})
 }
@@ -517,6 +518,41 @@ setup.getSendBack = function(){
 	})
 }
 
+setup.getCurrenStatusDetails = function(d){
+	var param = {Id : d}
+	ajaxPost("/dealsetup/getselecteddatadealsetup", param, function(res){
+		if(res.IsError != true){
+			var data = res.Data[0].Info.myInfo;
+			setup.dataCurrentStatus(data)
+			$("#current").modal("show");
+			$("#currentStatus").html("")
+			$("#currentStatus").kendoGrid({
+				dataSource: setup.dataCurrentStatus(),
+				 scrolable : true,
+				 width: 200,
+				 columns:[
+				 	{
+				 		field: "status",
+				 		title: "Status",
+				 		headerAttributes: {"class": "sub-bgcolor"},
+				 	},
+				 	{
+				 		field: "updateTime",
+				 		title: "Update Time",
+				 		headerAttributes: {
+							"class": "sub-bgcolor"
+						},
+						template: function(d){
+							return kendo.toString(new Date(d.updateTime), "dd-MMM-yyyy h:mm:ss tt")
+						}
+					}
+				 ]
+
+			})
+
+		}
+	});
+}
 
 setup.dataForm = ko.mapping.fromJS(toolkit.clone(setup.dataTemplate))
 

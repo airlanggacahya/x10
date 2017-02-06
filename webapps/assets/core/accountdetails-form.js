@@ -568,17 +568,15 @@ adf.LoadPromotorEducation = function(){
 
 adf.selectAction = function(action) {
 	if(action == "save") {
-		adf.checkPDMargin(adf.save, "Save")
+		adf.checkPDMargin(adf.save, "Save", "btn btn-save")
 	} else if(action == "confirm") {
-		adf.checkPDMargin(adf.getConfirm, "Confirm")
+		adf.checkPDMargin(adf.getConfirm, "Confirm", "btn btn-confirm")
 	} else if(action == "freeze") {
-		adf.checkPDMargin(adf.getVerify, "Freeze")
+		adf.checkPDMargin(adf.getVerify, "Freeze", "btn btn-freeze")
 	}
 }
-adf.checkPDMargin = function(callback, textButton) {
-	console.log(tempCustomerMargin())
-	console.log(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
-
+adf.checkPDMargin = function(callback, textButton, classButton) {
+	
 	if(tempCustomerMargin() != adf.form.AccountSetupDetails.PdInfo.CustomerMargin()) {
 		swal({
 	       title: "Warning",
@@ -589,7 +587,7 @@ adf.checkPDMargin = function(callback, textButton) {
 	        showCloseButton: true,
 	        confirmButtonText: textButton,
 	        cancelButtonText: "Cancel",
-	        confirmButtonClass: 'btn btn-primary',
+	        confirmButtonClass: classButton,
 	        cancelButtonClass: 'btn btn-danger',
 	        buttonsStyling: false
 	      }).then(function() {

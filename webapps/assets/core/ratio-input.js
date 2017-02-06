@@ -17,6 +17,7 @@ r.indexEbitda = ko.observable(-1)
 r.indexEbitda1 = ko.observable(-1)
 r.valueTempEbitda = ko.observable(-1)
 r.differentEbitda = ko.observable(false)
+r.btnStyleSwal = ko.observable('')
 
 r.selectedMasterBalanceEbitda = ko.observableArray([])
 r.initEvents = function () {
@@ -209,6 +210,7 @@ r.setDataSelectEbitda = function() {
                     return row1.Alias == row
                 })
 
+                console.log(tempMaster)
                 if(tempMaster) {
                     valueSelected = _.filter(r.data().FormData, function(row1){
                         var id = row1.FieldId.split("-")
@@ -338,29 +340,38 @@ r.refresh = function (callback) {
 
 r.selectAction = function(action){
     if(action === "save") {
-        r.validationEbitda(r.save)
+        r.btnStyleSwal("btn btn-save")
+        r.validationEbitda(r.save, "Save")
     } else if(action === "confirm") {
-        r.validationEbitda(r.confirm)
+        r.btnStyleSwal("btn btn-confirm")
+        r.validationEbitda(r.confirm, "Confirm")
     }
 }
-r.validationEbitda = function(callback) {
+r.validationEbitda = function(callback, textButton) {
     var different = false
     data = r.getData()
 
-    _.each(r.selectedMasterBalanceEbitda()[0].Value, function(row, k){
-        _.each(row, function(row1, k1){
-            temp = _.filter(data.FormData, function(row2){
-                return (moment(row1.Date).format("DD-MM-YYYY") == row2.Date && row1.FieldId == row2.FieldId && row1.Value != row2.Value)
-            })
+    r.indexEbitda(-1)
+    r.indexEbitda1(-1)
+    r.valueTempEbitda(-1)
+    r.differentEbitda(false)
 
-            if(temp.length > 0) {
-                r.indexEbitda(k)
-                r.indexEbitda1(k1)
-                r.valueTempEbitda(temp[0].Value)
-                r.differentEbitda(true) 
-            }
+    if(r.selectedMasterBalanceEbitda().length > 0) {
+        _.each(r.selectedMasterBalanceEbitda()[0].Value, function(row, k){
+            _.each(row, function(row1, k1){
+                temp = _.filter(data.FormData, function(row2){
+                    return (moment(row1.Date).format("DD-MM-YYYY") == row2.Date && row1.FieldId == row2.FieldId && row1.Value != row2.Value)
+                })
+
+                if(temp.length > 0) {
+                    r.indexEbitda(k)
+                    r.indexEbitda1(k1)
+                    r.valueTempEbitda(temp[0].Value)
+                    r.differentEbitda(true) 
+                }
+            })
         })
-    })
+    }
 
     if(r.differentEbitda() === true || r.differentEbitda() === "true") {
         swal({
@@ -370,9 +381,9 @@ r.validationEbitda = function(callback) {
            showCancelButton: true,
            customClass: 'swal-custom',
             showCloseButton: true,
-            confirmButtonText: "Save",
+            confirmButtonText: textButton,
             cancelButtonText: "Cancel",
-            confirmButtonClass: 'btn btn-primary',
+            confirmButtonClass: r.btnStyleSwal(),
             cancelButtonClass: 'btn btn-danger',
             buttonsStyling: false
           }).then(function() {
@@ -380,6 +391,8 @@ r.validationEbitda = function(callback) {
                 callback(data)
             }
           })
+
+          $(".swal2-confirm").css("margin-right", "10px")
     } else {
         if(typeof callback == "function"){
             callback(data)

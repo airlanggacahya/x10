@@ -276,7 +276,25 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 		}
 
 		for _, dt := range me {
-			dt.Status = Status
+			switch Status {
+			case 0:
+				dt.Status = 0
+				dt.IsConfirmed = false
+				dt.IsFreeze = false
+				UpdateDealSetup(CustomerID, DealNo, "ba", "Under Process")
+			case 1:
+				dt.Status = 1
+				dt.IsConfirmed = true
+				dt.IsFreeze = false
+				dt.DateConfirmed = curTime
+				UpdateDealSetup(CustomerID, DealNo, "ba", "Confirmed")
+			case 2:
+				dt.Status = 1
+				dt.IsConfirmed = true
+				dt.IsFreeze = true
+				dt.DateFreeze = curTime
+				UpdateDealSetup(CustomerID, DealNo, "ba", "Freeze")
+			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
 			if e != nil {

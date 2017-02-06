@@ -388,7 +388,6 @@ r.validationEbitda = function(callback) {
 }
 
 r.save = function (formData, callback) {
-    console.log("sarifff")
     if (r.getCustomerId() === false) {
         return
     }
@@ -411,8 +410,7 @@ r.save = function (formData, callback) {
         } else if( !(typeof callback === 'function')){
             if(r.indexEbitda() != -1  && r.indexEbitda1() != -1 && r.valueTempEbitda() != -1) {
                 r.selectedMasterBalanceEbitda()[0].Value[r.indexEbitda()][r.indexEbitda1()].Value = r.valueTempEbitda()
-                console.log(r.selectedMasterBalanceEbitda()[0].Value[r.indexEbitda()][r.indexEbitda1()].Value)
-
+                
                 r.indexEbitda(-1)
                 r.indexEbitda1(-1)
                 r.valueTempEbitda(-1)

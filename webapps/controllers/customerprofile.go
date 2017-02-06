@@ -517,9 +517,12 @@ func (c *DataCapturingController) SaveUploadFile(k *knot.WebContext) interface{}
 	newName := k.Request.FormValue("filenamephoto") + "." + fileType
 	c.WriteLog(newName)
 	os.RemoveAll(DirLocation + newName)
-	// os.MkdirAll(DirLocation+k.Request.FormValue("filenamephoto"), 0777)
 
 	erro, _ := UploadHandler(k, "fileUpload", DirLocation, newName)
+
+	sourcefile := DirLocation + newName
+	destinationfile := DirLocation + newName
+	ResizeImg(220, 320, sourcefile, destinationfile)
 
 	if erro != nil {
 		return CreateResult(false, nil, "No Images")

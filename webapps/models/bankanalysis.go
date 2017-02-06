@@ -647,6 +647,12 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		return x.(Summary).IwCheque
 	}).Exec().Result.Sum
 
+	BSIMarginPercent := 0.0
+	if len(res) > 0 {
+		datacurr := res[0]
+		BSIMarginPercent = datacurr.BankSummary.BSIMarginPercent
+	}
+
 	BSImpMargin := (func() float64 {
 		fm := new(FormulaModel)
 		fm.CustomerId = CustomerId
@@ -655,20 +661,20 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		fm.GetDataBalanceSheet()
 		fm.GetRatioFormula()
 
-		customerMargin := fm.AccountDetails.PDCustomerMargin / 100
+		// customerMargin := fm.AccountDetails.PDCustomerMargin / 100
 
-		period := fm.GetLastAuditedYear()
-		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
-		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
+		// period := fm.GetLastAuditedYear()
+		// rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
+		// ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
 
-		multiplier := customerMargin
-		if ebitdaMargin < customerMargin {
-			multiplier = ebitdaMargin
-		}
+		multiplier := BSIMarginPercent
+		// if ebitdaMargin < customerMargin {
+		// 	multiplier = ebitdaMargin
+		// }
 
-		if fm.AccountDetails.CMISNULL {
-			multiplier = ebitdaMargin
-		}
+		// if fm.AccountDetails.CMISNULL {
+		// 	multiplier = ebitdaMargin
+		// }
 
 		totalCreditMultiplied := crowd.From(&ressum).Sum(func(x interface{}) interface{} {
 			return x.(Summary).TotalCredit * multiplier
@@ -677,30 +683,30 @@ func (b *BankAnalysis) GenerateAllSummaryConfirmed(CustomerId string, DealNo str
 		return totalCreditMultiplied
 	})()
 
-	BSIMarginPercent := (func() float64 {
-		fm := new(FormulaModel)
-		fm.CustomerId = CustomerId
-		fm.DealNo = DealNo
-		fm.GetDataAccountDetails()
-		fm.GetDataBalanceSheet()
-		fm.GetRatioFormula()
+	// BSIMarginPercent := (func() float64 {
+	// 	fm := new(FormulaModel)
+	// 	fm.CustomerId = CustomerId
+	// 	fm.DealNo = DealNo
+	// 	fm.GetDataAccountDetails()
+	// 	fm.GetDataBalanceSheet()
+	// 	fm.GetRatioFormula()
 
-		customerMargin := fm.AccountDetails.PDCustomerMargin / 100
+	// 	customerMargin := fm.AccountDetails.PDCustomerMargin / 100
 
-		period := fm.GetLastAuditedYear()
-		rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
-		ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
-		multiplier := customerMargin
-		if ebitdaMargin < customerMargin {
-			multiplier = ebitdaMargin
-		}
+	// 	period := fm.GetLastAuditedYear()
+	// 	rawEbitdaMargin := new(RatioFormula).GetFormulaValue(fm, "EBITDAMARGIN", period)
+	// 	ebitdaMargin, _ := strconv.ParseFloat(toolkit.Sprintf("%v", rawEbitdaMargin), 64)
+	// 	multiplier := customerMargin
+	// 	if ebitdaMargin < customerMargin {
+	// 		multiplier = ebitdaMargin
+	// 	}
 
-		if fm.AccountDetails.CMISNULL {
-			multiplier = ebitdaMargin
-		}
+	// 	if fm.AccountDetails.CMISNULL {
+	// 		multiplier = ebitdaMargin
+	// 	}
 
-		return multiplier
-	})()
+	// 	return multiplier
+	// })()
 
 	// BSOWReturnPercent := crowd.From(&ressum).Avg(func(x interface{}) interface{} {
 	// 	return x.(Summary).OwReturnPercentage

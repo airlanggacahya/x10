@@ -145,6 +145,10 @@ function checkeditor(container,options){
         $('<label class="grey" data-bind="text:' + options.field + '" >')
         .appendTo(container);
     } else {
+
+        if(options.model[options.field] == 0)
+        options.model[options.field] = ""
+
         $('<input type="number" class="numericTextBox" data-bind="value:' + options.field + '">')
         .appendTo(container);
 
@@ -154,6 +158,9 @@ function checkeditor(container,options){
 }
 
 function numbereditor(container,options){
+     if(options.model[options.field] == 0)
+        options.model[options.field] = ""
+
     $('<input type="number" class="numericTextBox" data-bind="value:' + options.field + '">')
         .appendTo(container);
 
@@ -168,6 +175,9 @@ function emiNumbereditor(container,options){
         $('<label class="grey" data-bind="text:' + options.field + '" >')
         .appendTo(container);
     } else {
+        if(options.model[options.field] == 0)
+        options.model[options.field] = ""
+
         $('<input type="number" class="numericTextBox" data-bind="value:' + options.field + '">')
             .appendTo(container);
 
@@ -262,8 +272,10 @@ function getData(callback){
 
             if(o.IsBankAnalys) {
                 return "<label class='isbankanal' style=\"width:100%;text-align: right; \">" + app.formatnum(o.Amount,2) + "</label>"
-            } else {
-                return "<label style=\"width:100%; text-align: right; \">" + app.formatnum(o.Amount,2) + "</label>"
+            } else if (o.Amount == "" || o.Amount == null) {
+                return "<label style=\"width:100%; text-align: right; \">" + app.formatnum(0,2 ) + "</label>"
+            }else {
+                return "<label style=\"width:100%; text-align: right; \">" + app.formatnum(o.Amount,2 ) + "</label>"
             }
         } },
         { title : "POS (Rs Lacs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "POS", width: 120, editor : checkeditor, attributes: { style: 'background: rgb(238, 238, 238)' }, template : function(o) {
@@ -277,11 +289,19 @@ function getData(callback){
         { title : "EMI (Rs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "EMI", width: 120, editor: emiNumbereditor, template : function(o) {
             if(o.IsBankAnalys) {
                 return "<label class='isbankanal' style=\"width:100%; text-align: right;\">"+app.formatnum(o.EMI)+"</label>"
-            } else {
+            }else if (o.EMI == "" || o.EMI == null) {
+                return "<label style=\"width:100%; text-align: right; \">" + app.formatnum(0,2 ) + "</label>"
+            }else {
                 return "<label style=\"width:100%; text-align: right;\">"+app.formatnum(o.EMI)+"</label>"
             }
         } },
-        { title : "Loan Tenor (month)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanTenor", width: 130, editor: numbereditor, template : "<label style=\"width:100%; text-align: right;\">#:LoanTenor#</label>"  },
+        { title : "Loan Tenor (month)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanTenor", width: 130, editor: numbereditor, template : function(o){ 
+            if (o.LoanTenor == "" || o.LoanTenor == null) {
+                return "<label style=\"width:100%; text-align: right;\">"+ 0 +"</label>" 
+            }
+                return "<label style=\"width:100%; text-align: right;\">"+ o.LoanTenor +"</label>" 
+            } 
+        },
         { title : "Loan Start Date", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanStart", format : "{0:dd/MM/yyyy}", editor: dateeditor,width: 100 , template : "#= moment(LoanStart).format('YY') == '01' || moment(LoanStart).format('YY') == 'Invalid date'? 'dd/mm/yyyy' : moment(LoanStart).format('DD/MM/YYYY') #" },
         { title : "Loan End Date", headerAttributes: { "class": "header-bgcolor wrap" }, field : "LoanEnd" , format : "{0:dd/MM/yyyy}", editor:dateeditor ,width: 100, template : "#= moment(LoanEnd).format('YY') == '01' || moment(LoanEnd).format('YY') == 'Invalid date' ? 'dd/mm/yyyy' : moment(LoanEnd).format('DD/MM/YYYY') #" },
         { title : "No of EMI's Due / Vintage", headerAttributes: { "class": "header-bgcolor wrap" }, field : "EMIDue" , width: 150, template : "<label style=\"width:100%; text-align: right;\">#:EMIDue#</label>", attributes: { style: 'background: rgb(238, 238, 238)' } },

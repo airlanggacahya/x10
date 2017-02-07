@@ -4,16 +4,19 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"github.com/eaciit/dbox"
-	"github.com/eaciit/knot/knot.v1"
-	"github.com/eaciit/toolkit"
-	"golang.org/x/image/draw"
 	"image"
 	"image/jpeg"
 	"image/png"
 	"io"
 	"os"
+	"regexp"
 	"strconv"
+	"strings"
+
+	"github.com/eaciit/dbox"
+	"github.com/eaciit/knot/knot.v1"
+	"github.com/eaciit/toolkit"
+	"golang.org/x/image/draw"
 )
 
 var (
@@ -144,4 +147,12 @@ func ResizeImg(x int, y int, sourcefile string, destinationfile string) {
 			fmt.Println(err.Error())
 		}
 	}
+}
+
+func ToWordCase(word string) string {
+	replace := func(wordx string) string {
+		return strings.Title(wordx)
+	}
+	reg := regexp.MustCompile(`\w+`)
+	return reg.ReplaceAllStringFunc(strings.ToLower(word), replace)
 }

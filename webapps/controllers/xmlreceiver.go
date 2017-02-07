@@ -84,6 +84,44 @@ func checkMasterAccountDetails(master string, field string, value string) (bool,
 	return len(rest) > 0, nil
 }
 
+func checkMasterSupplier(field string, value string) (bool, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	pipe := []tk.M{
+		tk.M{
+			"$match": tk.M{
+				field: value,
+			},
+		},
+	}
+	cur, err := conn.NewQuery().
+		From("MasterSupplier").
+		Command("pipe", pipe).
+		Cursor(nil)
+	if err != nil {
+		return false, err
+	}
+	defer cur.Close()
+
+	rest := []tk.M{}
+	cur.Fetch(&rest, 0, true)
+
+	return len(rest) > 0, nil
+}
+
+func checkMaster(master string, field string, value string) (bool, error) {
+	switch master {
+	case "MasterSupplier":
+		return checkMasterSupplier(field, value)
+	default:
+		return checkMasterAccountDetails(master, field, value)
+	}
+}
+
 var ErrorMasterNotFound = errors.New("Error Master Data Doesn't Match")
 
 func checkMasterData(data DealSetupModel) error {
@@ -92,11 +130,34 @@ func checkMasterData(data DealSetupModel) error {
 	checklist := map[string]string{
 		"Products":                 ad.AccountSetupDetails.Product,
 		"Scheme":                   ad.AccountSetupDetails.Scheme,
-		"LeadDistributors":         ad.AccountSetupDetails.LeadDistributor,
+		"MasterSupplier":           ad.AccountSetupDetails.LeadDistributor,
 		"BorrowerConstitutionList": ad.BorrowerDetails.BorrowerConstitution,
 	}
+	found := true
 	for key, val := range checklist {
-		found, err := checkMasterAccountDetails(key, "name", val)
+		if len(val) == 0 {
+			continue
+		}
+
+		exists, err := checkMaster(key, "name", val)
+		if err != nil {
+			return err
+		}
+		if exists {
+			// tk.Printf("CHECK %s - %s...FOUND", key, val)
+			continue
+		}
+		// tk.Printf("CHECK %s - %s...NOT FOUND", key, val)
+		found = found && exists
+	}
+
+	if found {
+		return nil
+	}
+
+	omni.DoMain()
+	for key, val := range checklist {
+		found, err := checkMaster(key, "name", val)
 		if err != nil {
 			return err
 		}
@@ -104,18 +165,7 @@ func checkMasterData(data DealSetupModel) error {
 			continue
 		}
 
-		omni.DoMain()
-		for key, val := range checklist {
-			found, err := checkMasterAccountDetails(key, "name", val)
-			if err != nil {
-				return err
-			}
-			if found {
-				continue
-			}
-
-			return ErrorMasterNotFound
-		}
+		return ErrorMasterNotFound
 	}
 	return nil
 }

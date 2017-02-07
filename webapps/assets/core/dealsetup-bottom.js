@@ -230,7 +230,7 @@ setup.onClickDealNo = function(d, id){
 					$("#promotor"+i).val(kendo.toString(new Date(d.DateOfBirth), "dd-MMM-yyyy"));
 					
 				})
-			}else{
+			}else{	
 				setup.detailofpromoters([]);
 				setup.detailofpromoters().push(ko.mapping.toJS(setup.promotorTemplate));
 			}
@@ -335,6 +335,7 @@ setup.loadDetailGrid = function(){
 		columns:[
 			{
 				title: "Internal RTR Snapshot",
+				headerAttributes: {"class": "header-bgcolor"},
 				columns:[
 					{
                 		field:"NoActiveLoan",
@@ -382,6 +383,7 @@ setup.loadDetailGrid = function(){
 			},
 			{
 				title: "Utilization",
+				headerAttributes: {"class": "header-bgcolor"},
 				columns:[
 					{
                 		field:"Average",
@@ -405,6 +407,7 @@ setup.loadDetailGrid = function(){
 			},
 			{
 				title: "DPD Track",
+				headerAttributes: {"class": "header-bgcolor"},
 				columns:[
 					{
                 		field:"MaxDPDDays",

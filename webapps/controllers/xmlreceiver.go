@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	omni "eaciit/x10/consoleapps/OmnifinMaster/core"
 	. "eaciit/x10/consoleapps/OmnifinMaster/models"
 	. "eaciit/x10/webapps/connection"
 	hp "eaciit/x10/webapps/helper"
@@ -44,6 +45,102 @@ func xmlToJson(r io.Reader) (*bytes.Buffer, error) {
 
 	return buf, nil
 }
+
+func checkMasterAccountDetails(master string, field string, value string) (bool, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	pipe := []tk.M{
+		tk.M{
+			"$match": tk.M{
+				"Data": tk.M{
+					"$elemMatch": tk.M{
+						"Field": master,
+						"Items": tk.M{
+							"$elemMatch": tk.M{
+								field: value,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	cur, err := conn.NewQuery().
+		From("MasterAccountDetail").
+		Command("pipe", pipe).
+		Cursor(nil)
+	if err != nil {
+		return false, err
+	}
+	defer cur.Close()
+
+	rest := []tk.M{}
+	cur.Fetch(&rest, 0, true)
+
+	return len(rest) > 0, nil
+}
+
+var ErrorMasterNotFound = errors.New("Error Master Data Doesn't Match")
+
+func checkMasterData(data DealSetupModel) error {
+	// list all check
+	ad := data.AccountDetails.(*AccountDetail)
+	checklist := map[string]string{
+		"Products":                 ad.AccountSetupDetails.Product,
+		"Scheme":                   ad.AccountSetupDetails.Scheme,
+		"LeadDistributors":         ad.AccountSetupDetails.LeadDistributor,
+		"BorrowerConstitutionList": ad.BorrowerDetails.BorrowerConstitution,
+	}
+	for key, val := range checklist {
+		found, err := checkMasterAccountDetails(key, "name", val)
+		if err != nil {
+			return err
+		}
+		if found {
+			continue
+		}
+
+		omni.DoMain()
+		for key, val := range checklist {
+			found, err := checkMasterAccountDetails(key, "name", val)
+			if err != nil {
+				return err
+			}
+			if found {
+				continue
+			}
+
+			return ErrorMasterNotFound
+		}
+	}
+	return nil
+}
+
+// Function to test checkMasterAccountDetails
+// func (c *XMLReceiverController) Test(r *knot.WebContext) interface{} {
+// 	r.Config.OutputType = knot.OutputJson
+// 	var p struct {
+// 		Master string
+// 		Field  string
+// 		Value  string
+// 	}
+
+// 	err := r.GetPayload(&p)
+// 	if err != nil {
+// 		return "error" + err.Error()
+// 	}
+
+// 	ret, err := checkMasterAccountDetails(p.Master, p.Field, p.Value)
+// 	if err != nil {
+// 		return "error" + err.Error()
+// 	}
+
+// 	return ret
+// }
 
 func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	r.Config.OutputType = knot.OutputHtml
@@ -195,12 +292,6 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		return resFail
 	}
 
-	// Save Account Setup
-	qDealSetup := conn.NewQuery().
-		From("DealSetup").
-		SetConfig("multiexec", true).
-		Save()
-
 	var data DealSetupModel
 	data.Id = bson.NewObjectId()
 	data.Info = BuildInfo()
@@ -208,6 +299,19 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	data.AccountDetails = ad
 	data.InternalRtr = irtr
 
+	// Check for master data
+	// Keep processing even on data error
+	err = checkMasterData(data)
+	if err != nil {
+		LogData.Set("error", err.Error()+" | InternalRTR")
+		CreateLog(LogData)
+	}
+
+	// Save Account Setup
+	qDealSetup := conn.NewQuery().
+		From("DealSetup").
+		SetConfig("multiexec", true).
+		Save()
 	csc = map[string]interface{}{"data": data}
 	err = qDealSetup.Exec(csc)
 	if err != nil {

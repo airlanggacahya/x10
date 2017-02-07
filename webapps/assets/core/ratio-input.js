@@ -210,8 +210,8 @@ r.setDataSelectEbitda = function() {
                     return row1.Alias == row
                 })
 
-                console.log(tempMaster)
-                if(tempMaster) {
+                // console.log(tempMaster,"--tempmaster")
+                if(tempMaster.length > 0) {
                     valueSelected = _.filter(r.data().FormData, function(row1){
                         var id = row1.FieldId.split("-")
                         if(id.length > 0) {
@@ -339,12 +339,17 @@ r.refresh = function (callback) {
 }
 
 r.selectAction = function(action){
+    data = r.getData()
+
     if(action === "save") {
         r.btnStyleSwal("btn btn-save")
         r.validationEbitda(r.save, "Save")
     } else if(action === "confirm") {
         r.btnStyleSwal("btn btn-confirm")
+        if(r.confirmLabel() == "Confirm")
         r.validationEbitda(r.confirm, "Confirm")
+        else
+        r.confirm(data);
     }
 }
 r.validationEbitda = function(callback, textButton) {
@@ -543,7 +548,7 @@ var test = function(){
 
 r.render = function () {
     var d = new Date();
-    console.log("Date0 : ", d)
+    // console.log("Date0 : ", d)
     $('.form-last-confirmation-info').html('')
 
     var headerWidth = 330
@@ -1401,8 +1406,8 @@ r.render = function () {
     })
     var d = new Date();
     var n2 = d.getTime();
-    console.log("Date2 : ", d)
-    console.log("Long Process / many process", "( ", (n2-n)/1000 , " / ", totalprocess, " )")
+    // console.log("Date2 : ", d)
+    // console.log("Long Process / many process", "( ", (n2-n)/1000 , " / ", totalprocess, " )")
 
     if (r.isEmptyRatioInputData()) {
         $('.cell-date .k-dropdown-wrap .k-input').html('31-03-XXXX')
@@ -1640,7 +1645,7 @@ r.freeze = function (isFrozen) {
 r.endisKendoDropDown = function(what){
     $(".container-select").each(function(i,e){
       var $ddl = $(e).find("select").getKendoDropDownList();
-      console.log($ddl)
+      // console.log($ddl)
       if($ddl == undefined)
         var $ddl = $(e).find("input").getKendoDropDownList();
 
@@ -1806,8 +1811,8 @@ r.prepareselectDateAudited = function(){
 r.prepareselectDateProjected = function(){
     var momonth = ( r.TypeDate() == "Calendar Year" ) ? 11 : 2;
     var momonth2 = ( r.TypeDate() == "Calendar Year" ) ? "Dec" : "Mar";
-    console.log(r.TypeDate(), new Date(2009, momonth, 31))
-    console.log(r.TypeDate(), new Date(2016, momonth, 31))
+    // console.log(r.TypeDate(), new Date(2009, momonth, 31))
+    // console.log(r.TypeDate(), new Date(2016, momonth, 31))
 
     var minYear = moment( r.AuditedDate() , 'DD-MM-YYYY').year() + 2000 + 3;
     var maxYear = moment( r.AuditedDate() , 'DD-MM-YYYY').year() + 2000 + 7;
@@ -1968,7 +1973,7 @@ r.panel_scrollrelocated = function () {
         } else {
             $(this).show();
             $(this).css("width", $('.divright').width());
-            console.log(this);
+            // console.log(this);
             if (!$(this).hasClass('viewscrollfix')) $(this)[0].scrollLeft = $(this).parent().scrollLeft();
             $(this).addClass('viewscrollfix');
         }

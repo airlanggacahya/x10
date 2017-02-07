@@ -536,10 +536,10 @@ r.getData = function () {
     return o
 }
 
-r.jancok = ko.observable();
-var test = function(){
-    r.jancok(this)
-}
+// r.jancok = ko.observable();
+// var test = function(){
+//     r.jancok(this)
+// }
 
 r.render = function () {
     var d = new Date();
@@ -1270,6 +1270,9 @@ r.render = function () {
                         .css("text-align","center")
                         .appendTo($cell)
 
+                        // disabled form
+                        r.disableInputForm()
+
                         try{
                             if(au.Na.toLowerCase() == "na"){
                                 $input.attr('disabled', 'disabled')
@@ -1329,10 +1332,6 @@ r.render = function () {
                         .css("width","100%")
                         .css("text-align","center")
                         .appendTo($cell)
-
-                    // if(au.Na.toLowerCase() == "na"){
-                    //     $input.attr('disabled', 'disabled')
-                    // }
 
                     try{
                         if(au.Na.toLowerCase() == "na"){
@@ -1777,6 +1776,15 @@ r.prepareSelectOption = function(){
 
 }
 
+r.disableInputForm = function(){
+    var value = r.AuditedDate().split('-')
+    if (value[2] == 'null' || r.AuditedDate() == ''){
+        $('.inputmasterform').prop("disabled", true)
+    }else {
+        $('.inputmasterform').prop("disabled", false)
+    }
+}
+
 r.prepareselectDateAudited = function(){
     var momonth = ( r.TypeDate() == "Calendar Year" ) ? 11 : 2;
     var momonth2 = ( r.TypeDate() == "Calendar Year" ) ? "Dec" : "Mar";
@@ -1799,6 +1807,7 @@ r.prepareselectDateAudited = function(){
 
             $("#selectDateProjected").html('');
             r.prepareselectDateProjected();
+            r.disableInputForm();
         }
     })
 }

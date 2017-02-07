@@ -1,137 +1,131 @@
 <style type="text/css">
-	ul{
-		padding-left: 0;
+	ul {
+	    padding-left: 0;
 	}
-	textarea[disabled],input[disabled]{
-	   cursor: default !important;
+	textarea[disabled],
+	input[disabled] {
+	    cursor: default !important;
 	}
-	.form-control[disabled]{
-		background-color: #fafafa;
+	.form-control[disabled] {
+	    background-color: #fafafa;
 	}
-  .SFFB{
-    border-width: 0 1px 1px 1px;
-    border-style: solid;
-    border-color: #ebebeb;
-    padding: 3px;
-    margin-bottom: 5px;
-  }
-  .k-grid-cancel-changes {
-    margin-right : 10px;
-  }
-  .k-grid-save-changes{
-    margin-right : 10px;
-  }
-  .k-grid-edit-changes{
-    margin-right : 10px;
-  }
-  .banksdata-action{
-    margin-right : 10px;
-    margin-top: -5px;
-  }
-  .k-grid  .k-grid-header  .k-header  .k-link {
-      height: auto;
-  }
-  .headerdatabankgrid{
-    text-align: center;
-  }
-  #toptables1 > div > div.k-grid-content > table > tbody > tr {
-    background-color: #eee;
-  }
-
-  #toptables2 > div > div.k-grid-content > table > tbody > tr {
-    background-color: #eee;
-  }
-
-  #toptables3 > div > div.k-grid-content > table > tbody > tr {
-    background-color: #eee;
-  }
-
-  #toptables4 > div > div.k-grid-content > table > tbody > tr {
-    background-color: #eee;
-  }
-
-   #toptables5 > div > div.k-grid-content > table > tbody > tr {
-    background-color: #eee;
-  }
-   #toptables6 > div > div.k-grid-content > table > tbody > tr {
-    background-color: #eee;
-  }
-
-  button.saveupdate {
-    margin-right:10px;
-  }
-  @media (min-width: 768px){
-    .modal-dialog {
-        width: 1000px;
-        margin: 30px auto;
-    }
-}
-.form-last-confirmation-info {
-  padding-bottom: 10px;
-  text-align: right;
-  font-style: italic;
-  color: #27ae60;
-  margin-right: 20px;
-
-}
-
-.headernfb{
-      background-color: rgba(119, 119, 119, 0.75);
-      color:white;
-      text-align : center;
-}
-
-.headersecfb{
-  background-color: #f5f5f5;
-  color:black;
-  text-align : center;
-}
-.k-grid  .k-grid-header  .k-header {
-    white-space: normal;
-}
-#topgrid
-{
-   min-width: 500px;
-}
-/*div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
+	.SFFB {
+	    border-width: 0 1px 1px 1px;
+	    border-style: solid;
+	    border-color: #ebebeb;
+	    padding: 3px;
+	    margin-bottom: 5px;
+	}
+	.k-grid-cancel-changes {
+	    margin-right: 10px;
+	}
+	.k-grid-save-changes {
+	    margin-right: 10px;
+	}
+	.k-grid-edit-changes {
+	    margin-right: 10px;
+	}
+	.banksdata-action {
+	    margin-right: 10px;
+	    margin-top: -5px;
+	}
+	.k-grid .k-grid-header .k-header .k-link {
+	    height: auto;
+	}
+	.headerdatabankgrid {
+	    text-align: center;
+	}
+	#toptables1 > div > div.k-grid-content > table > tbody > tr {
+	    background-color: #eee;
+	}
+	#toptables2 > div > div.k-grid-content > table > tbody > tr {
+	    background-color: #eee;
+	}
+	#toptables3 > div > div.k-grid-content > table > tbody > tr {
+	    background-color: #eee;
+	}
+	#toptables4 > div > div.k-grid-content > table > tbody > tr {
+	    background-color: #eee;
+	}
+	#toptables5 > div > div.k-grid-content > table > tbody > tr {
+	    background-color: #eee;
+	}
+	#toptables6 > div > div.k-grid-content > table > tbody > tr {
+	    background-color: #eee;
+	}
+	button.saveupdate {
+	    margin-right: 10px;
+	}
+	@media (min-width: 768px) {
+	    .modal-dialog {
+	        width: 1000px;
+	        margin: 30px auto;
+	    }
+	}
+	.form-last-confirmation-info {
+	    padding-bottom: 10px;
+	    text-align: right;
+	    font-style: italic;
+	    color: #27ae60;
+	    margin-right: 20px;
+	}
+	.headernfb {
+	    background-color: rgba(119, 119, 119, 0.75);
+	    color: white;
+	    text-align: center;
+	}
+	.headersecfb {
+	    background-color: #f5f5f5;
+	    color: black;
+	    text-align: center;
+	}
+	.k-grid .k-grid-header .k-header {
+	    white-space: normal;
+	}
+	#topgrid {
+	    min-width: 500px;
+	}
+	/*div.k-grid-header > div > table > thead > tr:nth-child(1) > th  {
 		background-color: #313d50 !important;
 		color: #fff !important;
 	}*/
-
+	
 	div.k-grid-header > div > table > thead > tr:nth-child(2) > th {
-		background-color: rgba(128, 149, 176, 1) !important;
-		color: white !important;
-		/*overflow-y: hidden !important;*/
+	    background-color: rgba(128, 149, 176, 1) !important;
+	    color: white !important;
+	    /*overflow-y: hidden !important;*/
 	}
-.satu{
-	border-top: 1px solid #f1f1f1;
-	padding: 33px
-}
-.k-grid-content {
-	overflow-y: hidden !important;
-  overflow-x: scroll;
-}
-
-.k-grid-header{
-	padding-right: 0px !important;
-}
-.bgwhite {
-  background: #ffffff !important;
-  border: 0 !important;
-}
-
-.swal2-confirm{
-	margin-right: 3px;
-}
-/*.panel-body{
+	.satu {
+	    border-top: 1px solid #f1f1f1;
+	    padding: 33px
+	}
+	.k-grid-content {
+	    overflow-y: hidden !important;
+	    overflow-x: scroll;
+	}
+	.k-grid-header {
+	    padding-right: 0px !important;
+	}
+	.bgwhite {
+	    background: #ffffff !important;
+	    border: 0 !important;
+	}
+	.swal2-confirm {
+	    margin-right: 3px;
+	}
+	#backbutton {
+	    text-align: left;
+	}
+	/*.panel-body{
 	margin-top: px !important;
 }*/
 </style>
 <div class="col-md-12" data-bind="visible: setup.detailIsShow" style="padding-bottom: 15px;
 }">
+		<button id="backbutton" class="btn btn-sm btn-flat btn-danger" onclick='setup.getBack()'><i class="fa fa-arrow-left"></i> Back</button>
 		<button id="accept" class="btn btn-sm btn-flat btn-success" onclick="setup.getAccept()">Accept</button>
-		<button id="sendback" class="btn btn-sm btn-flat btn-danger" onclick="setup.getSendBack()">Send Back</button>
-		<button class="btn btn-sm btn-flat btn-primary" onclick='setup.getBack()'>Back</button>
+		<button id="sendback" class="btn btn-sm btn-flat btn-warning" onclick="setup.getSendBack()">Reject</button>
+		
 </div>
 <div class="col-md-12">
 	<div class="form-container" data-bind="visible: setup.detailIsShow">
@@ -879,7 +873,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">Details of Refrence</h5></div>
+						<div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">Details of Reference</h5></div>
 						<div class="row" style="padding: 10px" data-bind="foreach: setup.detailOfRefrence()">
 							<div class="col-sm-6">
 			                    <div class="panel panel-default">

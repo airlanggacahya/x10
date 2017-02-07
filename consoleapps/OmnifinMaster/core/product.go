@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	tk "github.com/eaciit/toolkit"

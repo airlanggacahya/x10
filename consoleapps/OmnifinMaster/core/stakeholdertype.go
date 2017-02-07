@@ -1,11 +1,11 @@
-package main
+package core
 
 import (
-	ct "eaciit/x10/webapps/controllers"
+	hp "eaciit/x10/webapps/helper"
+
 	tk "github.com/eaciit/toolkit"
 )
 
-// transformScheme save additional information specific for master Scheme
 func transformStakeholderType(in tk.M) tk.M {
 	// tk.Printfn("%v", in)
 	p := make(tk.M)
@@ -14,12 +14,12 @@ func transformStakeholderType(in tk.M) tk.M {
 		p[key] = val
 	}
 
-	p["name"] = ct.ToWordCase(p["description"].(string))
+	p["name"] = hp.ToWordCase(p["description"].(string))
 
 	return p
 }
 
-// SaveScheme transform remote data master scheme desc into master account detail
+// SaveStakeholderType transform stakeholder position
 func SaveStakeholderType(data interface{}) error {
 	newStake := TransformMaster("genericMasterList", data, transformStakeholderType)
 	// debug

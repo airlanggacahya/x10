@@ -123,15 +123,19 @@
 .swal2-confirm{
 	margin-right: 3px;
 }
+#backbutton{
+	text-align : left;
+}
 /*.panel-body{
 	margin-top: px !important;
 }*/
 </style>
 <div class="col-md-12" data-bind="visible: setup.detailIsShow" style="padding-bottom: 15px;
 }">
+		<button id="backbutton" class="btn btn-sm btn-flat btn-danger" onclick='setup.getBack()'>Back</button>
 		<button id="accept" class="btn btn-sm btn-flat btn-success" onclick="setup.getAccept()">Accept</button>
-		<button id="sendback" class="btn btn-sm btn-flat btn-danger" onclick="setup.getSendBack()">Send Back</button>
-		<button class="btn btn-sm btn-flat btn-primary" onclick='setup.getBack()'>Back</button>
+		<button id="sendback" class="btn btn-sm btn-flat btn-warning" onclick="setup.getSendBack()">Send Back</button>
+		
 </div>
 <div class="col-md-12">
 	<div class="form-container" data-bind="visible: setup.detailIsShow">
@@ -879,7 +883,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">Details of Refrence</h5></div>
+						<div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">Details of Reference</h5></div>
 						<div class="row" style="padding: 10px" data-bind="foreach: setup.detailOfRefrence()">
 							<div class="col-sm-6">
 			                    <div class="panel panel-default">

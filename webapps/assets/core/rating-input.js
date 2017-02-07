@@ -168,6 +168,20 @@ r.expandfunction = function () {
 	r.render();
 }
 
+r.delzero = function(e){
+			var myval = $(e).val();
+			if(myval==0){
+				$(e).val("");
+			}
+		}
+
+r.checkzero = function(e){
+			var myval = $(e).val();
+			if(myval==""){
+				$(e).val(0);
+			}
+		} 
+
 r.render = function () {
 	if($(".grid").data("kendoTreeList")!=undefined)
 	saveExpanded();
@@ -262,6 +276,8 @@ r.render = function () {
 	    width: 120
 	})
 
+
+
     columnData.forEach(function (e, i) {
 		// ====== THREE COLUMNS
 
@@ -277,7 +293,7 @@ r.render = function () {
 			var value = d.columnData[i].WeightageOfGroupInCreditScore
 			return [
 				'<div class="onright">',
-				'<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
+				'<input onclick="r.delzero(this);" onblur="r.checkzero(this);" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
 				'<span>%</span>',
 				'</div>'
 			].join('')
@@ -296,7 +312,7 @@ r.render = function () {
 			var value = d.columnData[i].WeightageWithinGroup
 			return [
 				'<div class="onright">',
-				'<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.ParentName + '" data-sub-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
+				'<input onclick="r.delzero(this);" onblur="r.checkzero(this);" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.ParentName + '" data-sub-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
 				'<span>%</span>',
 				'</div>'
 			].join('')
@@ -307,13 +323,14 @@ r.render = function () {
 		columnField.headerAttributes = { style: 'vertical-align: middle; text-align: center;', class: 'k-header header-bgcolor' }
 		// columnField.width = 100
 		columnField.attributes = { style: 'position: relative' }
+		
 		columnField.template = function (d) {
 			if (d.Type !== 'Field') {
 				return ''
 			}
 
 			var value = d.columnData[i].Score
-			return '<input data-type="' + d.Type + '" data-rating="' + e.Id + '" data-field-id="' + d.id + '" data-field="' + d.Name + '" data-sub-section="' + d.SubSection + '" data-section="' + d.Section + '" value="' + value + '" style="border: none; background-color: transparent; width: 60%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right onright" />'
+			return '<input onclick="r.delzero(this);" onblur="r.checkzero(this);" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-field-id="' + d.id + '" data-field="' + d.Name + '" data-sub-section="' + d.SubSection + '" data-section="' + d.Section + '" value="' + value + '" style="border: none; background-color: transparent; width: 60%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right onright" />'
 		}
 
 		columns.push(columnField)

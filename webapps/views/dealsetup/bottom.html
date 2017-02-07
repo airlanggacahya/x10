@@ -123,6 +123,9 @@
 .swal2-confirm{
 	margin-right: 3px;
 }
+/*.panel-body{
+	margin-top: px !important;
+}*/
 </style>
 <div class="col-md-12" data-bind="visible: setup.detailIsShow" style="padding-bottom: 15px;
 }">
@@ -314,7 +317,7 @@
 				</li>
 				<li data-bind="with: setup.applicantdetail">
 					<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Customer Application Details <i class="fa fa-chefron-down pull-right"></i></div>
-					<div class="collapsible-body">
+					<div class="collapsible-body" style="margin-bottom: -23px;">
 						<div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">General Details</h5></div>
 						<div class="row">
 					        <div class="col-sm-6">
@@ -660,18 +663,279 @@
 					    		<div id="grid-ex"></div>
 					    	</div>
 					    </div>
+					     <div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">Details of Promoters/Directors/Guarantors/Management</h5></div>
+					    <div>
+						    <div class="row" style="margin-left: 50px;" data-bind="foreach: setup.detailofpromoters()">
+						    	<div class="col-md-12" style="border-bottom: 0.5px solid #ccc;padding : 10px;">
+
+									<form id="biodata" class="col-sm-12">
+										<div class="col-sm-2">
+										  <img class="imgCustomerProfile" src="/static/img/user/no-image.jpg"/>
+										</div>
+										<div class="col-sm-5">
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Name :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">	
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Name" type="text" class="form-control input-sm " />
+										    </div>
+										  </div>
+
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Father’s/Spouse Name :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].FatherName" type="text" class="form-control input-sm" />
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Gender :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Gender" type="text" class="form-control input-sm " />
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Date of Birth :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].DateOfBirth, attr:{'id':'promotor'+$index()}" type="text" id="DateOfBirth" class="DateOfBirth form-control input-sm" />
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Marital Status :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].MaritalStatus" type="text" id="MaritalStatus" class="MaritalStatus form-control input-sm"/>
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Shareholding Percentage :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].ShareHoldingPercentage" type="text" id="Address" name="address" class="form-control input-sm Address" />
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Guarantor :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Guarantor" type="text" id="Address" name="address" class="form-control input-sm Address" />
+										    </div>
+										  </div>
+
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Director :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Director" type="text" id="Address" name="address" class="form-control input-sm Address" />
+										    </div>
+										  </div>
+
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Promotor :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Promotor" type="text" id="Address" name="address" class="form-control input-sm Address" />
+										    </div>
+										  </div>
+
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Educational Qualification :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Education" type="text" id="Education" name="education" class="form-control input-sm Education"/>
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Designation :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Designation, attr:{'id':'design'+$index()}" type="text" id="Address" name="address" class="form-control input-sm Address" />
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">PAN Number:</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].PAN" type="text" id="PAN" name="pan" class="form-control input-sm PAN" />
+										    </div>
+										  </div>
+										</div>
+										<div class="col-sm-5">
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Position:</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Position, attr:{'id':'position'+$index()}" type="text" id="Address" name="address" class="form-control input-sm Address" />
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Residence Address :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Address" type="text" id="Address" name="address" class="form-control input-sm Address" />
+										    </div>
+										  </div>
+
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Landmark :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Landmark" type="text" id="Landmark" name="landmark" class="form-control input-sm Landmark"/>
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">City :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].City" type="text" id="City" name="city" class="form-control input-sm City"/>
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">State :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].State" type="text" id="State" name="state" class="form-control input-sm State"/>
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Pin Code :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Pincode " type="text" id="Pincode" name="pincode" class="form-control input-sm Pincode"/>
+										    </div>
+										  </div>
+
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Tel1 :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Phone" type="text" id="Phone" name="phone" class="form-control input-sm Phone"/>
+										    </div>
+										  </div>
+
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Moblie Number :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Mobile" type="text" id="Mobile" name="hp" class="form-control input-sm Mobile"/>
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Ownership :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Ownership" type="text" id="Ownership" class="Ownership form-control input-sm" />	
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">No. of Years in this Address :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].NoOfYears" type="text" id="NoOfYears" name="noyear" class="form-control input-sm NoOfYears" required  />
+										    </div>
+										  </div>
+										  <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">Market Value :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].ValueOfPot" type="number" id="ValueOfPot" name="valueplot" class="form-control input-sm ValueOfPot"/>
+										    </div>
+										  </div>
+										   <div class="col-sm-12 form-group">
+										    <div class="col-sm-5 widthlable">
+										      <label for="Acc" class="control-label">E-mail :</label>
+										    </div>
+										    <div class="col-sm-7 widthfield">
+										      <input disabled data-bind="value: setup.detailofpromoters()[$index()].Email" type="text" id="email" name="email" class="form-control input-sm Email"/>
+										    </div>
+										  </div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						<div class="panel-heading"><h5 class="no-margin" style="font-weight: bold;">Details of Refrence</h5></div>
+						<div class="row" style="padding: 10px" data-bind="foreach: setup.detailOfRefrence()">
+							<div class="col-sm-6">
+			                    <div class="panel panel-default">
+			                      <div>
+			                        <div class="panel-body">
+			                          <div class="col-sm-12 form-group">
+			                            <div class="col-sm-4 widthlable">
+			                              <label for="Acc" class="control-label">Name :</label>
+			                            </div>
+			                            <div class="col-sm-8 widthfield">
+			                              <input type="text" data-bind="value: Name" id="namedetail" name="Name" class="disabled form-control input-sm"/>
+			                            </div>
+			                          </div>
+			                          <div class="col-sm-12 form-group">
+			                            <div class="col-sm-4 widthlable">
+			                              <label for="Acc" class="control-label">Address :</label>
+			                            </div>
+			                            <div class="col-sm-8 widthfield">
+			                              <input  type="text" id="addressdetail" data-bind="value: Address" name="Address" class="form-control input-sm"/>
+			                            </div>
+			                          </div>
+			                          <div class="col-sm-12 form-group">
+			                            <div class="col-sm-4 widthlable">
+			                              <label for="Acc" class="control-label">Contact no :</label>
+			                            </div>
+			                            <div class="col-sm-8 widthfield">
+			                              <input  type="number" data-bind="value: ContactNo"  name="ContactNo" class="form-control input-sm"/>
+			                            </div>
+			                          </div>
+			                          <div class="col-sm-12 form-group">
+			                            <div class="col-sm-4 widthlable">
+			                              <label for="Acc" class="control-label">Relation of Applicant :</label>
+			                            </div>
+			                            <div class="col-sm-8 widthfield">
+			                              <input  type="text" data-bind="value: RelationAplicant" id="relationdetail" name="RelationAplicant" class="form-control input-sm"/>
+			                            </div>
+			                          </div>
+			                        </div>
+			                      </div>
+			                    </div>
+			                </div>
+						</div>
 					</div>
 				</li>
 				<li>
-					<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Internal RTR Details <i class="fa fa-chefron-down pull-right"></i></div>
-					<div class="collapsible-body">
-						<div class="col-sm-12" style="padding-bottom: 15px;">
-							<div id="topgrid"></div>
+					<!-- <div> -->
+						<div class="collapsible-header header-bgcolor"><i class="fa fa-list"></i>Internal RTR Details <i class="fa fa-chefron-down pull-right"></i></div>
+						<div class="collapsible-body">
+							<div class="col-sm-12" style="padding-bottom: 15px;">
+								<div id="topgrid"></div>
+							</div>
+							<div class="col-md-12">
+								<div id="unselect"></div>
+							</div>
 						</div>
-						<div class="col-md-12">
-							<div id="unselect"></div>
-						</div>
-					</div>
+					<!-- </div> -->
 				</li>
 			</ul>
 		</div>

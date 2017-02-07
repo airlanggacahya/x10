@@ -1,8 +1,7 @@
-package main
+package core
 
 import tk "github.com/eaciit/toolkit"
 
-// transformScheme save additional information specific for master Scheme
 func transformBorrowerConstitutionList(in tk.M) tk.M {
 	p := make(tk.M)
 	// because there is duplication in schemeDesc, we need to save additional data to distinct it
@@ -13,7 +12,7 @@ func transformBorrowerConstitutionList(in tk.M) tk.M {
 	return p
 }
 
-// SaveScheme transform remote data master scheme desc into master account detail
+// SaveBorrowerConstitutionList transform remote data master borrower constitution list
 func SaveBorrowerConstitutionList(data interface{}) error {
 	newScheme := TransformMaster("genericMasterList", data, transformBorrowerConstitutionList)
 	// debug

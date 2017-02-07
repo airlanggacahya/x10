@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"bytes"
+	omni "eaciit/x10/consoleapps/OmnifinMaster/core"
 	. "eaciit/x10/consoleapps/OmnifinMaster/models"
 	. "eaciit/x10/webapps/connection"
+	hp "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"encoding/json"
 	"errors"
@@ -43,6 +45,152 @@ func xmlToJson(r io.Reader) (*bytes.Buffer, error) {
 
 	return buf, nil
 }
+
+func checkMasterAccountDetails(master string, field string, value string) (bool, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	pipe := []tk.M{
+		tk.M{
+			"$match": tk.M{
+				"Data": tk.M{
+					"$elemMatch": tk.M{
+						"Field": master,
+						"Items": tk.M{
+							"$elemMatch": tk.M{
+								field: value,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	cur, err := conn.NewQuery().
+		From("MasterAccountDetail").
+		Command("pipe", pipe).
+		Cursor(nil)
+	if err != nil {
+		return false, err
+	}
+	defer cur.Close()
+
+	rest := []tk.M{}
+	cur.Fetch(&rest, 0, true)
+
+	return len(rest) > 0, nil
+}
+
+func checkMasterSupplier(field string, value string) (bool, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+
+	pipe := []tk.M{
+		tk.M{
+			"$match": tk.M{
+				field: value,
+			},
+		},
+	}
+	cur, err := conn.NewQuery().
+		From("MasterSupplier").
+		Command("pipe", pipe).
+		Cursor(nil)
+	if err != nil {
+		return false, err
+	}
+	defer cur.Close()
+
+	rest := []tk.M{}
+	cur.Fetch(&rest, 0, true)
+
+	return len(rest) > 0, nil
+}
+
+func checkMaster(master string, field string, value string) (bool, error) {
+	switch master {
+	case "MasterSupplier":
+		return checkMasterSupplier(field, value)
+	default:
+		return checkMasterAccountDetails(master, field, value)
+	}
+}
+
+var ErrorMasterNotFound = errors.New("Error Master Data Doesn't Match")
+
+func checkMasterData(data DealSetupModel) error {
+	// list all check
+	ad := data.AccountDetails.(*AccountDetail)
+	checklist := map[string]string{
+		"Products":                 ad.AccountSetupDetails.Product,
+		"Scheme":                   ad.AccountSetupDetails.Scheme,
+		"MasterSupplier":           ad.AccountSetupDetails.LeadDistributor,
+		"BorrowerConstitutionList": ad.BorrowerDetails.BorrowerConstitution,
+	}
+	found := true
+	for key, val := range checklist {
+		if len(val) == 0 {
+			continue
+		}
+
+		exists, err := checkMaster(key, "name", val)
+		if err != nil {
+			return err
+		}
+		if exists {
+			// tk.Printf("CHECK %s - %s...FOUND", key, val)
+			continue
+		}
+		// tk.Printf("CHECK %s - %s...NOT FOUND", key, val)
+		found = found && exists
+	}
+
+	if found {
+		return nil
+	}
+
+	omni.DoMain()
+	for key, val := range checklist {
+		found, err := checkMaster(key, "name", val)
+		if err != nil {
+			return err
+		}
+		if found {
+			continue
+		}
+
+		return ErrorMasterNotFound
+	}
+	return nil
+}
+
+// Function to test checkMasterAccountDetails
+// func (c *XMLReceiverController) Test(r *knot.WebContext) interface{} {
+// 	r.Config.OutputType = knot.OutputJson
+// 	var p struct {
+// 		Master string
+// 		Field  string
+// 		Value  string
+// 	}
+
+// 	err := r.GetPayload(&p)
+// 	if err != nil {
+// 		return "error" + err.Error()
+// 	}
+
+// 	ret, err := checkMasterAccountDetails(p.Master, p.Field, p.Value)
+// 	if err != nil {
+// 		return "error" + err.Error()
+// 	}
+
+// 	return ret
+// }
 
 func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	r.Config.OutputType = knot.OutputHtml
@@ -194,12 +342,6 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		return resFail
 	}
 
-	// Save Account Setup
-	qDealSetup := conn.NewQuery().
-		From("DealSetup").
-		SetConfig("multiexec", true).
-		Save()
-
 	var data DealSetupModel
 	data.Id = bson.NewObjectId()
 	data.Info = BuildInfo()
@@ -207,6 +349,19 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	data.AccountDetails = ad
 	data.InternalRtr = irtr
 
+	// Check for master data
+	// Keep processing even on data error
+	err = checkMasterData(data)
+	if err != nil {
+		LogData.Set("error", err.Error()+" | InternalRTR")
+		CreateLog(LogData)
+	}
+
+	// Save Account Setup
+	qDealSetup := conn.NewQuery().
+		From("DealSetup").
+		SetConfig("multiexec", true).
+		Save()
 	csc = map[string]interface{}{"data": data}
 	err = qDealSetup.Exec(csc)
 	if err != nil {
@@ -421,7 +576,7 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 			Bio.Guarantor = "Yes"
 		} else {
 			Bio.Guarantor = "No"
-			Bio.Position = append(Bio.Position, ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
+			Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
 			Bio.Designation = append(Bio.Designation, val.GetString("dealCustomerRoleType"))
 			// add position
 		}
@@ -478,7 +633,7 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 		} else if position == "director" {
 			Bio.Director = "Yes"
 		} else {
-			Bio.Position = append(Bio.Position, ToWordCase(val.GetString("stakeholderPositionDesc")))
+			Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
 			Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
 			//add ke position
 		}
@@ -637,7 +792,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				Bio.Guarantor = "Yes"
 			} else {
 				Bio.Guarantor = "No"
-				Bio.Position = append(Bio.Position, ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
+				Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
 				Bio.Designation = append(Bio.Designation, val.GetString("dealCustomerRoleType"))
 				// add position
 			}
@@ -694,7 +849,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 			} else if position == "director" {
 				Bio.Director = "Yes"
 			} else {
-				Bio.Position = append(Bio.Position, ToWordCase(val.GetString("stakeholderPositionDesc")))
+				Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
 				Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
 				//add ke position
 			}
@@ -768,10 +923,10 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 
 	current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
 	current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
-	current.AccountSetupDetails.LeadDistributor = ToWordCase(body.GetString("dealSourceName"))
+	current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 	current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
-	current.AccountSetupDetails.Product = ToWordCase(Ld.GetString("dealProductDesc"))
-	current.AccountSetupDetails.Scheme = ToWordCase(Ld.GetString("dealSchemeDesc"))
+	current.AccountSetupDetails.Product = hp.ToWordCase(Ld.GetString("dealProductDesc"))
+	current.AccountSetupDetails.Scheme = hp.ToWordCase(Ld.GetString("dealSchemeDesc"))
 	current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitutionDesc")
 
 	current.LoanDetails.ProposedLoanAmount = Ld.GetFloat64("dealAssetCost")
@@ -837,10 +992,10 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 
 		current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
 		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
-		current.AccountSetupDetails.LeadDistributor = ToWordCase(body.GetString("dealSourceName"))
+		current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 		current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
-		current.AccountSetupDetails.Product = ToWordCase(Ld.GetString("dealProductDesc"))
-		current.AccountSetupDetails.Scheme = ToWordCase(Ld.GetString("dealSchemeDesc"))
+		current.AccountSetupDetails.Product = hp.ToWordCase(Ld.GetString("dealProductDesc"))
+		current.AccountSetupDetails.Scheme = hp.ToWordCase(Ld.GetString("dealSchemeDesc"))
 		current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitutionDesc")
 
 		current.LoanDetails.ProposedLoanAmount = Ld.GetFloat64("dealAssetCost")
@@ -1190,8 +1345,8 @@ func BuildInternalRTR(body tk.M, cid string, dealno string) (tk.M, error) {
 		ar.Set("Maximum", CheckNan(val.GetFloat64("Maximum")))
 
 		arb.Set("DealNo", val.GetString("dealNo"))
-		arb.Set("Product", ToWordCase(val.GetString("product")))
-		arb.Set("Scheme", ToWordCase(val.GetString("scheme")))
+		arb.Set("Product", hp.ToWordCase(val.GetString("product")))
+		arb.Set("Scheme", hp.ToWordCase(val.GetString("scheme")))
 		arb.Set("AgreementDate", val.GetString("agreementDate"))
 		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
 		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))
@@ -1233,8 +1388,8 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 		ar.Set("Maximum", CheckNan(val.GetFloat64("Maximum")))
 
 		arb.Set("DealNo", val.GetString("dealNo"))
-		arb.Set("Product", ToWordCase(val.GetString("product")))
-		arb.Set("Scheme", ToWordCase(val.GetString("scheme")))
+		arb.Set("Product", hp.ToWordCase(val.GetString("product")))
+		arb.Set("Scheme", hp.ToWordCase(val.GetString("scheme")))
 		arb.Set("AgreementDate", val.GetString("agreementDate"))
 		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
 		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))
@@ -1291,12 +1446,4 @@ func FindSamePromotor(listprom []BiodataGen, prom tk.M) (BiodataGen, []BiodataGe
 	}
 
 	return BiodataGen{}, listprom
-}
-
-func ToWordCase(word string) string {
-	replace := func(wordx string) string {
-		return strings.Title(wordx)
-	}
-	reg := regexp.MustCompile(`\w+`)
-	return reg.ReplaceAllStringFunc(strings.ToLower(word), replace)
 }

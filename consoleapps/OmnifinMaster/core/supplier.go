@@ -1,7 +1,8 @@
-package main
+package core
 
 import (
-	ct "eaciit/x10/webapps/controllers"
+	hp "eaciit/x10/webapps/helper"
+
 	"github.com/eaciit/dbox"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
@@ -19,7 +20,7 @@ func transformSupplier(in tk.M) tk.M {
 	// 	p[key] = val
 	// }
 
-	p["name"] = ct.ToWordCase(in.GetString("dealer_desc"))
+	p["name"] = hp.ToWordCase(in.GetString("dealer_desc"))
 	p["useInAD"] = false
 	p["fromOmnifin"] = true
 

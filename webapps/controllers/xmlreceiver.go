@@ -4,6 +4,7 @@ import (
 	"bytes"
 	. "eaciit/x10/consoleapps/OmnifinMaster/models"
 	. "eaciit/x10/webapps/connection"
+	hp "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"encoding/json"
 	"errors"
@@ -421,7 +422,7 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 			Bio.Guarantor = "Yes"
 		} else {
 			Bio.Guarantor = "No"
-			Bio.Position = append(Bio.Position, ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
+			Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
 			Bio.Designation = append(Bio.Designation, val.GetString("dealCustomerRoleType"))
 			// add position
 		}
@@ -478,7 +479,7 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 		} else if position == "director" {
 			Bio.Director = "Yes"
 		} else {
-			Bio.Position = append(Bio.Position, ToWordCase(val.GetString("stakeholderPositionDesc")))
+			Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
 			Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
 			//add ke position
 		}
@@ -637,7 +638,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				Bio.Guarantor = "Yes"
 			} else {
 				Bio.Guarantor = "No"
-				Bio.Position = append(Bio.Position, ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
+				Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
 				Bio.Designation = append(Bio.Designation, val.GetString("dealCustomerRoleType"))
 				// add position
 			}
@@ -694,7 +695,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 			} else if position == "director" {
 				Bio.Director = "Yes"
 			} else {
-				Bio.Position = append(Bio.Position, ToWordCase(val.GetString("stakeholderPositionDesc")))
+				Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
 				Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
 				//add ke position
 			}
@@ -768,10 +769,10 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 
 	current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
 	current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
-	current.AccountSetupDetails.LeadDistributor = ToWordCase(body.GetString("dealSourceName"))
+	current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 	current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
-	current.AccountSetupDetails.Product = ToWordCase(Ld.GetString("dealProductDesc"))
-	current.AccountSetupDetails.Scheme = ToWordCase(Ld.GetString("dealSchemeDesc"))
+	current.AccountSetupDetails.Product = hp.ToWordCase(Ld.GetString("dealProductDesc"))
+	current.AccountSetupDetails.Scheme = hp.ToWordCase(Ld.GetString("dealSchemeDesc"))
 	current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitutionDesc")
 
 	current.LoanDetails.ProposedLoanAmount = Ld.GetFloat64("dealAssetCost")
@@ -837,10 +838,10 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 
 		current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
 		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
-		current.AccountSetupDetails.LeadDistributor = ToWordCase(body.GetString("dealSourceName"))
+		current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 		current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
-		current.AccountSetupDetails.Product = ToWordCase(Ld.GetString("dealProductDesc"))
-		current.AccountSetupDetails.Scheme = ToWordCase(Ld.GetString("dealSchemeDesc"))
+		current.AccountSetupDetails.Product = hp.ToWordCase(Ld.GetString("dealProductDesc"))
+		current.AccountSetupDetails.Scheme = hp.ToWordCase(Ld.GetString("dealSchemeDesc"))
 		current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitutionDesc")
 
 		current.LoanDetails.ProposedLoanAmount = Ld.GetFloat64("dealAssetCost")
@@ -1190,8 +1191,8 @@ func BuildInternalRTR(body tk.M, cid string, dealno string) (tk.M, error) {
 		ar.Set("Maximum", CheckNan(val.GetFloat64("Maximum")))
 
 		arb.Set("DealNo", val.GetString("dealNo"))
-		arb.Set("Product", ToWordCase(val.GetString("product")))
-		arb.Set("Scheme", ToWordCase(val.GetString("scheme")))
+		arb.Set("Product", hp.ToWordCase(val.GetString("product")))
+		arb.Set("Scheme", hp.ToWordCase(val.GetString("scheme")))
 		arb.Set("AgreementDate", val.GetString("agreementDate"))
 		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
 		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))
@@ -1233,8 +1234,8 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 		ar.Set("Maximum", CheckNan(val.GetFloat64("Maximum")))
 
 		arb.Set("DealNo", val.GetString("dealNo"))
-		arb.Set("Product", ToWordCase(val.GetString("product")))
-		arb.Set("Scheme", ToWordCase(val.GetString("scheme")))
+		arb.Set("Product", hp.ToWordCase(val.GetString("product")))
+		arb.Set("Scheme", hp.ToWordCase(val.GetString("scheme")))
 		arb.Set("AgreementDate", val.GetString("agreementDate"))
 		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
 		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))
@@ -1291,12 +1292,4 @@ func FindSamePromotor(listprom []BiodataGen, prom tk.M) (BiodataGen, []BiodataGe
 	}
 
 	return BiodataGen{}, listprom
-}
-
-func ToWordCase(word string) string {
-	replace := func(wordx string) string {
-		return strings.Title(wordx)
-	}
-	reg := regexp.MustCompile(`\w+`)
-	return reg.ReplaceAllStringFunc(strings.ToLower(word), replace)
 }

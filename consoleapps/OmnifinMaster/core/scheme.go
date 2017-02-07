@@ -1,6 +1,10 @@
 package core
 
-import tk "github.com/eaciit/toolkit"
+import (
+	hp "eaciit/x10/webapps/helper"
+
+	tk "github.com/eaciit/toolkit"
+)
 
 // transformScheme save additional information specific for master Scheme
 func transformScheme(in tk.M) tk.M {
@@ -9,7 +13,7 @@ func transformScheme(in tk.M) tk.M {
 	p.Set("productId", in.GetString("productId"))
 	p.Set("schemeId", in.GetString("schemeId"))
 	p.Set("schemeDesc", in.GetString("schemeDesc"))
-	p.Set("name", in.GetString("schemeDesc"))
+	p.Set("name", hp.ToWordCase(in.GetString("schemeDesc")))
 
 	return p
 }

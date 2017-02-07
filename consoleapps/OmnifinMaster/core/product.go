@@ -1,12 +1,14 @@
 package core
 
 import (
+	hp "eaciit/x10/webapps/helper"
+
 	tk "github.com/eaciit/toolkit"
 )
 
 func transformProduct(in tk.M) tk.M {
 	p := make(tk.M)
-	p.Set("name", in.GetString("productDesc"))
+	p.Set("name", hp.ToWordCase(in.GetString("productDesc")))
 
 	return p
 }

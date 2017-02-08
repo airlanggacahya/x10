@@ -627,11 +627,8 @@ function getComments(tayp){
 }
 
 apcom.addRecomendedCondition = function(){
-	// var temp = apcom.formCreditAnalyst.FinalComment.RecommendedCondition();
-	// temp.push("");
 	apcom.formCreditAnalyst.FinalComment.RecommendedCondition.push("");
-	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition([])
-	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition(apcom.RecCondition())
+	apcom.RecCondition.push("");
 	
 }
 
@@ -640,7 +637,12 @@ apcom.removeRecomendedCondition = function(index){
 		return i != index;
 	})
 
+	var rec1 = apcom.RecCondition().filter(function(d, i){
+		return i != index;
+	})
+
 	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(rec);
+	apcom.RecCondition(rec1)
 }
 
 // OtherConditions aka Sanction Conditions

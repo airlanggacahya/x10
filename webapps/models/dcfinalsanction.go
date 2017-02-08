@@ -6,6 +6,7 @@ import (
 	"github.com/eaciit/orm"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 	"time"
 )
 
@@ -25,6 +26,7 @@ type DCFinalSanctionModel struct {
 	OtherConditions  string        `bson:"OtherConditions"`
 	CommitteeRemarks string        `bson:"CommitteeRemarks"`
 	Status           bool          `bson:"Status"`
+	LatestStatus     string        `bson:"LatestStatus,omitempty"`
 }
 
 func NewDCFinalSanctionModel() *DCFinalSanctionModel {

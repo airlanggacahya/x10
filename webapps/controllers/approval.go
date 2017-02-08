@@ -146,6 +146,7 @@ func (c *ApprovalController) GetDCAndCreditAnalys(k *knot.WebContext) interface{
 	modelDC := NewDCFinalSanctionModel()
 	resultDC, err := modelDC.Get(customerId, dealNo)
 	if err != nil {
+		c.WriteLog(err)
 		//return CreateResult(false, nil, err.Error())
 	}
 

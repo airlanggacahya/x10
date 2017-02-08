@@ -46,6 +46,7 @@ apcom.templateSanction ={
 	OtherConditions: "",
 	CommitteeRemarks: "",
 	Status: false,
+	LatestValue : "Awaiting Action"
 }
 apcom.sanction = ko.mapping.fromJS(apcom.templateSanction)
 apcom.accountCommentFinancials = ko.observable('');
@@ -119,6 +120,10 @@ apcom.loadCommentData = function(tayp){
 		    }
 		    
 		    ko.mapping.fromJS(data[1].DCFinalSanction, apcom.sanction);
+
+		    if(apcom.sanction.LatestStatus() === "") {
+		    	apcom.sanction.LatestStatus("Awaiting Action")
+		    }
 
 		    apcom.Date("")
 			apcom.LeftAmount("")

@@ -580,7 +580,7 @@ adf.checkPDMargin = function(callback, textButton, classButton) {
 	if(tempCustomerMargin() != adf.form.AccountSetupDetails.PdInfo.CustomerMargin()) {
 		swal({
 	       title: "Warning",
-	       text: "Your changes will affect IMP Margin in Banking Analysis",
+	       text: "Your changes may affect Imp Margin on Banking Analysis Form",
 	       type: 'warning',
 	       showCancelButton: true,
 	       customClass: 'swal-custom',

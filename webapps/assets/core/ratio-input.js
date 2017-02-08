@@ -381,7 +381,7 @@ r.validationEbitda = function(callback, textButton) {
     if(r.differentEbitda() === true || r.differentEbitda() === "true") {
         swal({
            title: "Warning",
-           text: "Your changes will affect IMP Margin in Banking Analysis",
+           text: "Your changes may affect Imp Margin on Banking Analysis Form",
            type: 'warning',
            showCancelButton: true,
            customClass: 'swal-custom',
@@ -1783,7 +1783,8 @@ r.prepareSelectOption = function(){
 
 r.disableInputForm = function(){
     var value = r.AuditedDate().split('-')
-    if (value[2] == 'null' || r.AuditedDate() == ''){
+    var valuepro = r.ProjectedDate().split('-')
+    if (valuepro[2] == 'null' ||value[2] == 'null' || r.AuditedDate() == '' || r.ProjectedDate() == ''){
         $('.inputmasterform').prop("disabled", true)
     }else {
         $('.inputmasterform').prop("disabled", false)

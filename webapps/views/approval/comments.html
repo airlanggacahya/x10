@@ -174,13 +174,13 @@
 			<div class="form-group col-sm-12 no-padding">
 		    	<label class="col-sm-12 text-left">Recommend Condition</label>
 		    	<div class="col-sm-12">
-		    		<div data-bind="foreach: apcom.formCreditAnalyst.FinalComment.RecommendedCondition">
+		    		<div data-bind="foreach: apcom.RecCondition">
 			    		<div class="col-sm-10">
 			    			<input id="commentcondition" style="width: 100%; margin-left: -9px;margin-bottom: 5px;" data-bind="value: apcom.RecCondition()[$index()]" class="input-sm form-control ca">
 			    		</div>
 			    		<div class="col-sm-2">
-			    			<button type="button" class="btn btn-sm btn-flat btn-success ca" data-bind="click: apcom.addRecomendedCondition(), visible: $index() == 0"><i class="fa fa-plus"></i></button>
-			    			<button type="button" class="btn btn-sm btn-flat btn-danger ca" data-bind="click: apcom.removeRecomendedCondition($index()), visible: $index() > 0"><i class="fa fa-trash"></i></button>
+			    			<button type="button" class="btn btn-sm btn-flat btn-success ca" data-bind="click: apcom.addRecomendedCondition, visible: $index() == 0"><i class="fa fa-plus"></i></button>
+			    			<button type="button" class="btn btn-sm btn-flat btn-danger ca" data-bind="click: apcom.removeRecomendedCondition.bind($data, $index()), visible: $index() > 0"><i class="fa fa-trash"></i></button>
 			    		</div>
 		    		</div>
 		    	</div>

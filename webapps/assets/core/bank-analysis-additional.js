@@ -2346,6 +2346,12 @@ var blankdate = function(val){
 }
 
 var saveDataBank = function(){
+    if($("#bankname").val() == ""){
+        swal("Warning","Please fill bank name first","warning");
+        return;
+    }
+
+
     nfbsanctiondate
     fbsanctiondate
 

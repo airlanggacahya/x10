@@ -381,7 +381,7 @@ r.validationEbitda = function(callback, textButton) {
     if(r.differentEbitda() === true || r.differentEbitda() === "true") {
         swal({
            title: "Warning",
-           text: "Your changes will affect IMP Margin in Banking Analysis",
+           text: "Your changes may affect Imp Margin on Banking Analysis Form",
            type: 'warning',
            showCancelButton: true,
            customClass: 'swal-custom',

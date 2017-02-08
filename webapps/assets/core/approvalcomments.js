@@ -7,8 +7,10 @@ var apcom = {
 	Security: ko.observable(),
 	OtherConditions: ko.observable(),
 	CommitteeRemarks: ko.observable(),
-	RecommendedCondition: ko.observable(),
+	RecommendedCondition: ko.observableArray([]),
+	RecCondition: ko.observableArray([]),
 	Recommendations: ko.observable(),
+	isfreezeCA: ko.observable(false),
 	LeftAmount: ko.observable(),
 	Status: ko.observable(),
 	CaStatus: {
@@ -55,7 +57,7 @@ apcom.tempFinalComment = ko.observableArray([
 apcom.templateFinalComment = {
 	Amount: 0,
 	IsNullAmount: false,
-	RecommendedCondition: '',
+	RecommendedCondition: [],
 	Recommendations: '',
 }
 apcom.templateCreditAnalys = {
@@ -69,6 +71,7 @@ apcom.dataTempRiskMitigants = ko.observableArray([])
 apcom.formCreditAnalyst = ko.mapping.fromJS(apcom.templateCreditAnalys)
 
 apcom.loadCommentData = function(tayp){
+	// alert("masuk sini")
 	apcom.accountCommentFinancials([])
 
 	var param = {
@@ -88,7 +91,12 @@ apcom.loadCommentData = function(tayp){
 
 	ajaxPost("/accountdetail/getaccountdetailconfirmed", param, function(res){
 		var data = res.Data;
-	    apcom.accountCommentFinancials(data.BorrowerDetails.CommentsonFinancials);
+		if(data.BorrowerDetails.CommentsonFinancials != null){
+			apcom.accountCommentFinancials(data.BorrowerDetails.CommentsonFinancials);
+		}else{
+			apcom.accountCommentFinancials([""]);
+		}
+		
 	})
 
 	apcom.dataBasisRecommendation([])
@@ -104,6 +112,12 @@ apcom.loadCommentData = function(tayp){
 	    		apcom.dataTempRiskMitigants(data[0].CreditAnalys.CreditAnalysRisks)
 	    	}
 		    ko.mapping.fromJS(data[0].CreditAnalys, apcom.formCreditAnalyst);
+		    if(data[0].CreditAnalys.FinalComment.RecommendedCondition != null){
+		    	apcom.RecCondition(data[0].CreditAnalys.FinalComment.RecommendedCondition)
+		    }else{
+		    	apcom.RecCondition([""])
+		    }
+		    
 		    ko.mapping.fromJS(data[1].DCFinalSanction, apcom.sanction);
 
 		    apcom.Date("")
@@ -115,7 +129,7 @@ apcom.loadCommentData = function(tayp){
 			apcom.OtherConditions("")
 			apcom.CommitteeRemarks("")
 			apcom.Amount("")
-			apcom.RecommendedCondition("")
+			// apcom.RecommendedCondition([""])
 			apcom.Recommendations("")
 			apcom.Status("")
 			apcom.CaStatus.val("")
@@ -152,6 +166,12 @@ apcom.loadCommentData = function(tayp){
 			apcom.RecommendedCondition(data[0].CreditAnalys.FinalComment.RecommendedCondition)
 			apcom.Recommendations(data[0].CreditAnalys.FinalComment.Recommendations)
 		    apcom.CaStatus.val(data[0].CreditAnalys.Status)
+		    if(apcom.formCreditAnalyst.FinalComment.RecommendedCondition() == null){
+		    	apcom.formCreditAnalyst.FinalComment.RecommendedCondition([""])
+		    }
+		    apcom.isfreezeCA(data[0].CreditAnalys.FinalComment.IsFreeze);
+		    apcom.setFreezeCommentCA(data[0].CreditAnalys.FinalComment.IsFreeze)
+
 	    }
 	    apcom.loadSection();
 	});
@@ -181,7 +201,7 @@ apcom.sendCreditAnalyst = function(a, event){
 	apcom.formCreditAnalyst.DealNo(r.customerId().split('|')[1])
 	apcom.formCreditAnalyst.CustomerId(parseInt(r.customerId().split('|')[0]))
 	var dataGrid = $("#grid1").data("kendoGrid").dataSource.data();
-
+	
 	_.each(dataGrid, function(items){
 		apcom.formCreditAnalyst.CreditAnalysRisks.push(
 			{ Risks: items.Risks, Mitigants: items.Mitigants }
@@ -189,14 +209,27 @@ apcom.sendCreditAnalyst = function(a, event){
 	});
 
 	apcom.formCreditAnalyst.FinalComment.Amount(parseFloat(apcom.Amount()))
-	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(apcom.RecommendedCondition)
+	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition(apcom.RecommendedCondition)
 	apcom.formCreditAnalyst.FinalComment.Recommendations(apcom.Recommendations)
+	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition([])
+	// console.log("--------->>>>", apcom.RecCondition())
+	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition(apcom.RecCondition())
+    // $.each(apcom.RecCondition(), function(i, item){
+    // 	console.log("==========>>>>>", item)
+    // 	apcom.formCreditAnalyst.FinalComment.RecommendedCondition.push(item)
+    // });
 	
 	var param = {
 		Ca: ko.mapping.toJS(apcom.formCreditAnalyst),
 		Status: _.find($(".btn-save.save"), function(btn){
 			return btn == $(event.target)[0]
 		}) != undefined ? apcom.CaStatus.SAVE : apcom.CaStatus.SEND
+	}
+
+	param.Ca.FinalComment.RecommendedCondition = apcom.RecCondition();
+	param.Ca.FinalComment.IsFreeze = true;
+	if(param.Status == apcom.CaStatus.SEND){
+		param.Ca.FinalComment.SendDate = (new Date()).toISOString();
 	}
 	
 	if(r.customerId().split('|')[0] != "" && r.customerId().split('|')[1] != ""){
@@ -208,6 +241,7 @@ apcom.sendCreditAnalyst = function(a, event){
 					swal("Success", "Data Successfully Saved", "success");
 				} else if (param.Status == apcom.CaStatus.SEND) {
 					swal("Success", "Data Successfully Sent", "success");
+					apcom.setFreezeCommentCA(true)
 				}
 			}
 		})
@@ -414,6 +448,8 @@ apcom.loadSection = function(){
 		})
 	}
 
+	var arr = [];
+	var ind = 0;
 	$("#grid1").html("");
 	$("#grid1").kendoGrid({
 		dataSource: {
@@ -475,15 +511,28 @@ apcom.loadSection = function(){
 			headerAttributes: { "class": "sub-bgcolor" }, 
 			width: 30,
 			template: function(d){
+				ind ++;
+				var index = $('#grid1 tr[data-uid="'+d.uid+'"]').index();
+				console.log("----------->>>>", index)
+				if(ind == 1 || index == 0){
+					return [
+					'<center>',
+						'<button class="btn btn-xs btn-primary tooltipster inbtn ca" title="Add" onclick="apcom.addRowRiskMitigants()"><i class="fa fa-plus"></i></button>',
+					'</center>'
+				].join('')
+				}
 				return [
 					'<center>',
-						'<button class="btn btn-xs btn-primary tooltipster inbtn" title="Add" onclick="apcom.addRowRiskMitigants()"><i class="fa fa-plus"></i></button>',
-						'&nbsp;',
-						'<button class="btn btn-xs btn-danger tooltipster inbtn" title="Remove" onclick="apcom.removeRowRiskMitigants(\''+d.uid+'\')"><i class="fa fa-trash"></i></button>',
+						'<button class="btn btn-xs btn-danger tooltipster inbtn ca" title="Remove" onclick="apcom.removeRowRiskMitigants(\''+d.uid+'\')"><i class="fa fa-trash"></i></button>',
 					'</center>'
 				].join('')
 			}
-		}]
+		}], 
+		edit: function(e){
+			if(apcom.isfreezeCA() == true){
+				this.closeCell();
+			}
+		}
 	});
 
 	$("#gridriskconcersnmitigants").html("");
@@ -572,8 +621,39 @@ function getComments(tayp){
 	setTimeout(apcom.loadCommentData(tayp), 200)
 }
 
+apcom.addRecomendedCondition = function(){
+	// var temp = apcom.formCreditAnalyst.FinalComment.RecommendedCondition();
+	// temp.push("");
+	apcom.formCreditAnalyst.FinalComment.RecommendedCondition.push("");
+	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition([])
+	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition(apcom.RecCondition())
+	
+}
+
+apcom.removeRecomendedCondition = function(index){
+	var rec = apcom.formCreditAnalyst.FinalComment.RecommendedCondition().filter(function(d, i){
+		return i != index;
+	})
+
+	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(rec);
+}
+
+apcom.setFreezeCommentCA = function(d){
+	$("#send").prop("disabled", d)
+	$(".ca").prop("disabled", d)
+	setTimeout(function(){
+		$(".inbtn").prop("disabled", d)
+	}, 100);
+}
+
 $(document).ajaxComplete(function(){
 	if(apcom.Date() != undefined && apcom.Date().toString().indexOf("1970") >-1){
 		apcom.Date("")
 	}
+
+	setTimeout(function(){
+		if(countUnconfirm() > 0){
+			$("#send").prop("disabled", true)
+		}
+	},100)
 })

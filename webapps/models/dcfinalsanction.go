@@ -6,7 +6,6 @@ import (
 	"github.com/eaciit/orm"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	"log"
 	"time"
 )
 

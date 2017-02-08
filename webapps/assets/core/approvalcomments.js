@@ -20,6 +20,9 @@ var apcom = {
 	}
 }
 
+apcom.dcsanctiondatestring = ko.observable("")
+apcom.latestStatusStr = ko.observable("")
+
 apcom.dataBasisRecommendation = ko.observableArray([
 	{title: "Date", value: ""},
 	{title: "Amount", value: ""},
@@ -123,6 +126,26 @@ apcom.loadCommentData = function(tayp){
 		    	apcom.sanction.LatestStatus("Awaiting Action")
 		    }
 
+		    if(apcom.ValidateDate(apcom.sanction.Date())) {
+		    	var tempDate = moment(apcom.sanction.Date()).format("DD-MMM-YYYY")
+	    		apcom.dcsanctiondatestring(tempDate)
+		    }
+
+		    apcom.checkLatestStatus()
+
+		    if(apcom.sanction.LatestStatus() === "Awaiting Action") {
+		    	if(apcom.ValidateDate(apcom.formCreditAnalyst.FinalComment.SendDate())) {
+		    		var tempDate = moment(apcom.formCreditAnalyst.FinalComment.SendDate()).format("DD-MMM-YYYY")
+		    		apcom.sanction.Date(apcom.formCreditAnalyst.FinalComment.SendDate())
+		    		apcom.dcsanctiondatestring(tempDate)
+		    	} else {
+		    		apcom.sanction.Date((new Date()).toISOString())
+		    		apcom.dcsanctiondatestring("")
+		    	}
+		    }
+
+		    apcom.latestStatusStr(apcom.sanction.LatestStatus())
+
 		    apcom.Date("")
 			apcom.LeftAmount("")
 			apcom.ROI("")
@@ -180,6 +203,15 @@ apcom.loadCommentData = function(tayp){
 	});
 }
 
+apcom.ValidateDate = function(date){
+	var tempDate = moment(date).format("DD-MMM-YYYY") 
+	if(tempDate === "01-Jan-0001") {
+		return false
+	}
+
+	return true
+}
+
 apcom.Amount.subscribe(function(value){
 	// console.log(value)
 	if(typeof value == "string"){
@@ -198,6 +230,75 @@ apcom.Amount.subscribe(function(value){
 	}
 	
 });
+
+apcom.setParamSanction = function(){
+	apcom.sanction.Date(dcFinalSanctionDate(new Date(apcom.Date())))
+	apcom.sanction.Amount(parseFloat(apcom.LeftAmount()))
+	apcom.sanction.ROI(parseFloat(apcom.ROI()))
+	apcom.sanction.PF(apcom.PF())
+	apcom.sanction.PG(apcom.PG())
+	apcom.sanction.Security(apcom.Security())
+	apcom.sanction.OtherConditions(apcom.OtherConditions())
+	apcom.sanction.CommitteeRemarks(apcom.CommitteeRemarks())
+	apcom.sanction.Status(true)
+	apcom.sanction.CustomerId(parseInt(r.customerId().split('|')[0]))
+	apcom.sanction.DealNo(r.customerId().split('|')[1])
+	var param = ko.mapping.toJS(apcom.sanction)
+
+	return param	
+}
+
+apcom.checkLatestStatus = function(){
+	if(apcom.sanction.LatestStatus() === "Awaiting Action") {
+		$(".checkLatestStatus").prop("disabled", false)
+	} else {
+		$(".checkLatestStatus").prop("disabled", true)
+	} 
+}
+
+apcom.saveSanctionFix = function(param, callback) {
+	if(r.customerId().split('|')[0] != "" && r.customerId().split('|')[1] != ""){
+		ajaxPost("/approval/updatedateandlatestvalue", param, function(res){
+			if(typeof callback === "function"){
+				callback(res)
+			}
+		})
+	}else{
+		swal("Warning", "Select Customer Id and Deal Number First", "warning");
+	}
+}
+
+apcom.checkingAndSaveStatus = function(status) {
+	return function(){
+		param = apcom.setParamSanction()
+		param.Date = (new Date()).toISOString()
+		param.LatestStatus = status
+
+		apcom.saveSanctionFix(param, function(res){
+			if(res.success != true){
+				swal("Error", res.message, "error")
+			}else{
+				var tempDate = (new Date()).toISOString()
+				apcom.sanction.Date(tempDate)
+
+				tempDate = moment(apcom.sanction.Date()).format("DD-MMM-YYYY") 
+				apcom.dcsanctiondatestring(tempDate)
+
+				apcom.sanction.LatestStatus(status)
+				
+				apcom.checkLatestStatus()
+
+				apcom.latestStatusStr(apcom.sanction.LatestStatus())
+				swal("Success", "Data Successfully Sanction", "success");
+			}
+		})
+
+
+		// apcom.sanction.Date
+
+		// console.log(status)
+	}
+}
 
 apcom.sendCreditAnalyst = function(a, event){
 	apcom.formCreditAnalyst.CreditAnalysRisks([]);

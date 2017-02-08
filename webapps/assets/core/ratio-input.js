@@ -1783,7 +1783,8 @@ r.prepareSelectOption = function(){
 
 r.disableInputForm = function(){
     var value = r.AuditedDate().split('-')
-    if (value[2] == 'null' || r.AuditedDate() == ''){
+    var valuepro = r.ProjectedDate().split('-')
+    if (valuepro[2] == 'null' ||value[2] == 'null' || r.AuditedDate() == '' || r.ProjectedDate() == ''){
         $('.inputmasterform').prop("disabled", true)
     }else {
         $('.inputmasterform').prop("disabled", false)

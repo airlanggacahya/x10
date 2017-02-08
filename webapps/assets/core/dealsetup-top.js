@@ -24,7 +24,6 @@ setup.columnGrid = [
  },
  {
     title : "Current Status",
-    // field : "Info.myInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -35,19 +34,16 @@ setup.columnGrid = [
  },
  {
     title : "Previous Status",
-    // field : "Info.myInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.myInfo.length
-      // count = count > 0 ? count-1 : 0 
       count = count > 0 ? count-2 : 0
       return dt.Info.myInfo[count] == undefined || dt.Info.myInfo[count] == null ? "" : dt.Info.myInfo[count].status
     }
  },
  {
     title : "Time Stamp of <br>status change",
-    // field : "Info.myInfo[0].updateTime",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -58,7 +54,6 @@ setup.columnGrid = [
  },
  {
     title : "CA Form",
-    // field : "Info.caInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -69,7 +64,6 @@ setup.columnGrid = [
  },
  {
     title : "CIBIL Details",
-    // field : "Info.cibilInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -80,7 +74,6 @@ setup.columnGrid = [
  },
  {
     title : "Balance Sheet Inputs",
-    // field : "Info.bsiInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -91,7 +84,6 @@ setup.columnGrid = [
  },
  {
     title : "Stock & Book Debt",
-    // field : "Info.sbdInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -102,7 +94,6 @@ setup.columnGrid = [
  },
  {
     title : "Account Details",
-    // field : "Info.adInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -113,7 +104,6 @@ setup.columnGrid = [
  },
  {
     title : "Banking Analysis",
-    // field : "Info.baInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -124,7 +114,6 @@ setup.columnGrid = [
  },
  {
     title : "External RTR",
-    // field : "Info.ertrInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -135,7 +124,6 @@ setup.columnGrid = [
  },
  {
     title : "Internal RTR",
-    // field : "Info.irtrInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
@@ -146,13 +134,32 @@ setup.columnGrid = [
  },
  {
     title : "Due Diligence",
-    // field : "Info.ddInfo[0].status",
     width : 150,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
       var count = dt.Info.ddInfo.length
       count = count > 0 ? count-1 : 0 
       return dt.Info.ddInfo[count].status 
+    }
+ },
+ {
+    title : "Decision Committee",
+    width : 150,
+    headerAttributes: { "class": "sub-bgcolor" },
+    template: function(dt){
+      var count = dt.Info.dcfInfo.length
+      count = count > 0 ? count-1 : 0 
+      return dt.Info.dcfInfo[count].status 
+    }
+ },
+ {
+    title : "Credit Analyst",
+    width : 150,
+    headerAttributes: { "class": "sub-bgcolor" },
+    template: function(dt){
+      var count = dt.Info.cacInfo.length
+      count = count > 0 ? count-1 : 0 
+      return dt.Info.cacInfo[count].status 
     }
  }
 ]

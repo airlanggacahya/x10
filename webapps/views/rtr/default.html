@@ -14,6 +14,26 @@ model.Rolename= ko.observable('{{.Rolename}}')
 model.Fullname = ko.observable('{{.Fullname}}');
 // $('#btnconfirm').hide()
 </script>
+<style type="text/css">
+  /*.margin20 {
+    margin-top: 20px;
+  }*/
+  .form-last-confirmation-info {
+    padding-bottom: 10px;
+    text-align: right;
+    font-style: italic;
+    color: #27ae60;
+    margin-right: 25px;
+  }
+  #btnconfirm{
+    margin-left: 40px;
+  }
+
+  .padd{
+    padding: 20px;
+  }
+
+</style>
 <script>document.write('<script src="/static/core/rtr.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 {{template "filter.html"}}
@@ -43,24 +63,3 @@ model.Fullname = ko.observable('{{.Fullname}}');
   </div>
 </div>
 
-<style type="text/css">
-	/*.margin20 {
-		margin-top: 20px;
-	}*/
-  .form-last-confirmation-info {
-    padding-bottom: 10px;
-    text-align: right;
-    font-style: italic;
-    color: #27ae60;
-    margin-right: 25px;
-  }
-  #btnconfirm{
-    margin-left: 40px;
-  }
-
-  .padd{
-    padding: 20px;
-  }
-
-
-</style>

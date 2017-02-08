@@ -883,7 +883,7 @@ var createBankDetailGridCols = function(isForm){
             field : "CreditNonCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.CreditNonCash == 0){
+                if (d.CreditNonCash == 0 ){
                     return "";
                 }else{
                     return app.formatnum(d.CreditNonCash,2)
@@ -896,7 +896,7 @@ var createBankDetailGridCols = function(isForm){
             field : "CreditCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.CreditCash == 0){
+                if (d.CreditCash == 0 ){
                     return "";
                 }else{
                     return app.formatnum(d.CreditCash,2)
@@ -918,7 +918,7 @@ var createBankDetailGridCols = function(isForm){
             field : "DebitNonCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.DebitNonCash == 0){
+                if (d.DebitNonCash == 0 ){
                     return "";
                 }else{
                     return app.formatnum( d.DebitNonCash,2)
@@ -931,7 +931,7 @@ var createBankDetailGridCols = function(isForm){
             field : "DebitCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.DebitCash == 0){
+                if (d.DebitCash == 0 ){
                     return "";
                 }else{
                     return app.formatnum(d.DebitCash,2)
@@ -951,8 +951,8 @@ var createBankDetailGridCols = function(isForm){
         headerAttributes: { "class": "sub-bgcolor" },
         width : 120,
         template: function(d){
-            if (d.AvgBalon == 0){
-                return "";
+            if (d.AvgBalon == 0 ){
+                    return "";
             }else{
                 return app.formatnum(d.AvgBalon,2)
             }
@@ -972,8 +972,8 @@ var createBankDetailGridCols = function(isForm){
         field : "OdCcLimit",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.OdCcLimit == 0){
-                return "";
+            if (d.OdCcLimit == 0 ){
+                    return "";
             }else{
                 return app.formatnum(d.OdCcLimit,2)
             }
@@ -985,8 +985,8 @@ var createBankDetailGridCols = function(isForm){
         field : "ActualInterestPaid",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.ActualInterestPaid == 0){
-                return "";
+            if (d.ActualInterestPaid == 0 ){
+                    return "";
             }else{
                 return app.formatnum(d.ActualInterestPaid, 2)
             }
@@ -998,8 +998,8 @@ var createBankDetailGridCols = function(isForm){
         field : "NoOfDebit",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.NoOfDebit == 0){
-                return "";
+            if (d.NoOfDebit == 0 ){
+                    return "";
             }else{
                 return d.NoOfDebit
             }
@@ -1011,8 +1011,8 @@ var createBankDetailGridCols = function(isForm){
         field : "NoOfCredit",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.NoOfCredit == 0){
-                return "";
+            if (d.NoOfCredit == 0 ){
+                    return "";
             }else{
                 return d.NoOfCredit
             }
@@ -1024,8 +1024,8 @@ var createBankDetailGridCols = function(isForm){
         field : "OwCheque",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.OwCheque == 0){
-                return "";
+            if (d.OwCheque == 0 ){
+                    return "";
             }else{
                 return app.formatnum(d.OwCheque)
             }
@@ -1037,8 +1037,8 @@ var createBankDetailGridCols = function(isForm){
         field : "IwCheque",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.IwCheque == 0){
-                return "";
+            if (d.IwCheque == 0 ){
+                    return "";
             }else{
                 return app.formatnum(d.IwCheque)
             }
@@ -1063,8 +1063,8 @@ var createBankDetailGridCols = function(isForm){
                 field : "CreditNonCash",
                 headerAttributes: { "class": "sub-bgcolor" },
                 template: function(d){
-                    if (d.CreditNonCash == 0){
-                        return "";
+                    if (d.CreditNonCash == "" || d.CreditNonCash == null){
+                        return 0;
                     }else{
                         return app.formatnum(d.CreditNonCash,2)
                     }
@@ -1076,8 +1076,8 @@ var createBankDetailGridCols = function(isForm){
                 field : "CreditCash",
                 headerAttributes: { "class": "sub-bgcolor" },
                 template: function(d){
-                    if (d.CreditCash == 0){
-                        return "";
+                    if (d.CreditCash == "" || d.CreditCash == null){
+                    return 0;
                     }else{
                         return app.formatnum(d.CreditCash,2)
                     }
@@ -1099,8 +1099,8 @@ var createBankDetailGridCols = function(isForm){
                 field : "DebitNonCash",
                 headerAttributes: { "class": "sub-bgcolor" },
                 template: function(d){
-                    if (d.DebitNonCash == 0){
-                        return "";
+                    if (d.DebitNonCash == "" || d.DebitNonCash == null){
+                    return 0;
                     }else{
                         return app.formatnum(d.DebitNonCash,2)
                     }
@@ -1112,8 +1112,8 @@ var createBankDetailGridCols = function(isForm){
                 field : "DebitCash",
                 headerAttributes: { "class": "sub-bgcolor" },
                 template: function(d){
-                    if (d.DebitCash == 0){
-                        return "";
+                    if (d.DebitCash == "" || d.DebitCash == null){
+                    return 0;
                     }else{
                         return app.formatnum(d.DebitCash,2)
                     }
@@ -1133,8 +1133,8 @@ var createBankDetailGridCols = function(isForm){
             headerAttributes: { "class": "sub-bgcolor" },
             width : 120,
             template: function(d){
-                if (d.AvgBalon == 0){
-                    return "";
+                if (d.AvgBalon == "" || d.AvgBalon == null){
+                    return 0;
                 }else{
                     return app.formatnum(d.AvgBalon,2)
                 }
@@ -1155,8 +1155,8 @@ var createBankDetailGridCols = function(isForm){
             field : "OdCcLimit",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.OdCcLimit == 0){
-                    return "";
+                if (d.OdCcLimit == "" || d.OdCcLimit == null){
+                    return 0;
                 }else{
                     return app.formatnum(d.OdCcLimit,2)
                 }
@@ -1168,8 +1168,8 @@ var createBankDetailGridCols = function(isForm){
             field : "ActualInterestPaid",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.ActualInterestPaid == 0){
-                    return "";
+                if (d.ActualInterestPaid == "" || d.ActualInterestPaid == null){
+                    return 0;
                 }else{
                     return app.formatnum(d.ActualInterestPaid,2)
                 }
@@ -1181,8 +1181,8 @@ var createBankDetailGridCols = function(isForm){
             field : "NoOfDebit",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.NoOfDebit == 0){
-                    return "";
+                if (d.NoOfDebit == "" || d.NoOfDebit == null){
+                    return 0;
                 }else{
                     return d.NoOfDebit
                 }
@@ -1194,8 +1194,8 @@ var createBankDetailGridCols = function(isForm){
             field : "NoOfCredit",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.NoOfCredit == 0){
-                    return "";
+                if (d.NoOfCredit == "" || d.NoOfCredit == null){
+                    return 0;
                 }else{
                     return d.NoOfCredit
                 }
@@ -1207,8 +1207,8 @@ var createBankDetailGridCols = function(isForm){
             field : "OwCheque",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.OwCheque == 0){
-                    return "";
+                if (d.OwCheque == "" || d.OwCheque == null){
+                    return 0;
                 }else{
                     return d.OwCheque
                 }
@@ -1220,8 +1220,8 @@ var createBankDetailGridCols = function(isForm){
             field : "IwCheque",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.IwCheque == 0){
-                    return "";
+                if (d.IwCheque == "" || d.IwCheque == null){
+                    return 0;
                 }else{
                     return d.IwCheque
                 }
@@ -1237,7 +1237,7 @@ var createBankDetailGridCols = function(isForm){
 var createCurrentBankDetailGridCols = function(isForm){
 
     cols = [{
-        title : "Month",
+        title : "Monthoi",
         field : "Month",
         width : 100,
         headerAttributes: { "class": "sub-bgcolor" },
@@ -1250,7 +1250,7 @@ var createCurrentBankDetailGridCols = function(isForm){
             field : "CreditNonCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.CreditNonCash == 0){
+                if (d.CreditNonCash == 0 ){
                     return "";
                 }else{
                     return app.formatnum(d.CreditNonCash,2)
@@ -1263,7 +1263,7 @@ var createCurrentBankDetailGridCols = function(isForm){
             field : "CreditCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.CreditCash == 0){
+                if (d.CreditCash == 0 ){
                     return "";
                 }else{
                     return app.formatnum(d.CreditCash,2)
@@ -1285,7 +1285,7 @@ var createCurrentBankDetailGridCols = function(isForm){
             field : "DebitNonCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.DebitNonCash == 0){
+                if (d.DebitNonCash == 0 ){
                     return "";
                 }else{
                     return app.formatnum(d.DebitNonCash,2)
@@ -1298,7 +1298,7 @@ var createCurrentBankDetailGridCols = function(isForm){
             field : "DebitCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.DebitCash == 0){
+                if (d.DebitCash == 0 ){
                     return "";
                 }else{
                     return app.formatnum(d.DebitCash,2)
@@ -1318,8 +1318,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         headerAttributes: { "class": "sub-bgcolor" },
         width : 120,
         template: function(d){
-            if (d.AvgBalon == 0){
-                return "";
+            if (d.AvgBalon == 0 ){
+                    return "";
             }else{
                 return app.formatnum(d.AvgBalon,2)
             }
@@ -1332,8 +1332,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "NoOfDebit",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.NoOfDebit == 0){
-                return "";
+            if (d.NoOfDebit == 0 ){
+                    return "";
             }else{
                 return d.NoOfDebit
             }
@@ -1345,8 +1345,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "NoOfCredit",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.NoOfCredit == 0){
-                return "";
+            if (d.NoOfCredit == 0 ){
+                    return "";
             }else{
                 return d.NoOfCredit
             }
@@ -1358,8 +1358,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "OwCheque",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.OwCheque == 0){
-                return "";
+            if (d.OwCheque == 0 ){
+                    return "";
             }else{
                 return app.formatnum(d.OwCheque)
             }
@@ -1371,8 +1371,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "IwCheque",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.IwCheque == 0){
-                return "";
+            if (d.IwCheque == 0 ){
+                    return "";
             }else{
                 return app.formatnum(d.IwCheque)
             }
@@ -1397,8 +1397,8 @@ var createCurrentBankDetailGridCols = function(isForm){
             field : "CreditNonCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.CreditNonCash == 0){
-                    return "";
+                if (d.CreditNonCash == "" || d.CreditNonCash == null){
+                    return 0;
                 }else{
                     return app.formatnum(d.CreditNonCash,2)
                 }
@@ -1410,8 +1410,8 @@ var createCurrentBankDetailGridCols = function(isForm){
             field : "CreditCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.CreditCash == 0){
-                    return "";
+                if (d.CreditCash == ""|| d.CreditCash == null){
+                    return 0;
                 }else{
                     return app.formatnum(d.CreditCash,2)
                 }
@@ -1433,8 +1433,8 @@ var createCurrentBankDetailGridCols = function(isForm){
             field : "DebitNonCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.DebitNonCash == 0){
-                    return "";
+                if (d.DebitNonCash == ""|| d.DebitNonCash == null){
+                    return 0;
                 }else{
                     return app.formatnum(d.DebitNonCash,2)
                 }
@@ -1446,8 +1446,8 @@ var createCurrentBankDetailGridCols = function(isForm){
             field : "DebitCash",
             headerAttributes: { "class": "sub-bgcolor" },
             template: function(d){
-                if (d.DebitCash == 0){
-                    return "";
+                if (d.DebitCash == ""|| d.DebitCash == null){
+                    return 0;
                 }else{
                     return app.formatnum(d.DebitCash,2)
                 }
@@ -1463,8 +1463,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         headerAttributes: { "class": "sub-bgcolor" },
         width : 120,
         template: function(d){
-            if (d.AvgBalon == 0){
-                return "";
+            if (d.AvgBalon == ""|| d.AvgBalon == null){
+                    return 0;
             }else{
                 return app.formatnum(d.AvgBalon,2)
             }
@@ -1477,8 +1477,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "NoOfDebit",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.NoOfDebit == 0){
-                return "";
+            if (d.NoOfDebit == ""|| d.NoOfDebit == null){
+                    return 0;
             }else{
                 return d.NoOfDebit
             }
@@ -1490,8 +1490,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "NoOfCredit",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.NoOfCredit == 0){
-                return "";
+            if (d.NoOfCredit == ""|| d.NoOfCredit == null){
+                    return 0;
             }else{
                 return d.NoOfCredit
             }
@@ -1503,8 +1503,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "OwCheque",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.OwCheque == 0){
-                return "";
+            if (d.OwCheque == ""|| d.OwCheque == null){
+                    return 0;
             }else{
                 return app.formatnum(d.OwCheque)
             }
@@ -1516,8 +1516,8 @@ var createCurrentBankDetailGridCols = function(isForm){
         field : "IwCheque",
         headerAttributes: { "class": "sub-bgcolor" },
         template: function(d){
-            if (d.IwCheque == 0){
-                return "";
+            if (d.IwCheque == "" || d.IwCheque == null){
+                    return 0;
             }else{
                 return app.formatnum(d.IwCheque)
             }

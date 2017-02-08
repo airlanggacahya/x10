@@ -209,6 +209,13 @@ func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {
 		return CreateResult(false, nil, err.Error())
 	}
 
+	if datas.Status == 1 {
+		err = updateDealSetupLatestData(strconv.Itoa(datas.Ca.CustomerId), datas.Ca.DealNo, "cac", "Decision Committee Action Awaited")
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
+	}
+
 	return CreateResult(true, result, "")
 }
 

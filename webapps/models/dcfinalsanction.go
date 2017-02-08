@@ -23,7 +23,7 @@ type DCFinalSanctionModel struct {
 	PF               string        `bson:"PF"`
 	PG               string        `bson:"PG"`
 	Security         string        `bson:"Security"`
-	OtherConditions  string        `bson:"OtherConditions"`
+	OtherConditions  []string      `bson:"OtherConditions"`
 	CommitteeRemarks string        `bson:"CommitteeRemarks"`
 	Status           bool          `bson:"Status"`
 	LatestStatus     string        `bson:"LatestStatus,omitempty"`

@@ -680,7 +680,7 @@ function CreateBottomGrid(cust, deal, data, col){
                     $(e.container).find('input[name="POS"]').attr("readonly", true);
                 }
 
-                if (rtr.Freeze() == true) {
+                if (rtr.Freeze() == true && $(".btn-confirm:visible").length == 0) {
                     this.closeCell();
                 }
              },
@@ -751,7 +751,7 @@ function CreateBottomGrid(cust, deal, data, col){
         $('.btn-danger').show()
     }
 
-    $(".k-grid-cancel-changes").attr("class","btn btn-sm btn-reset k-grid-cancel-changes mgright pull-left");
+    $(".k-grid-cancel-changes").attr("class","btn btn-sm btn-danger k-grid-cancel-changes mgright pull-left");
     $(".k-grid-cancel-changes").text("Cancel");
 
     // $(".k-grid-save-changes").attr("class","btn btn-sm .btn-save k-grid-save-changes mgright pull-left");

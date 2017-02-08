@@ -263,5 +263,6 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 		}
 	}
 
+	UpdateDealSetup(cid, dealno, "ds", datas.LatestStatus)
 	return CreateResult(true, result, "")
 }

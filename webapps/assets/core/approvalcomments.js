@@ -627,21 +627,14 @@ function getComments(tayp){
 }
 
 apcom.addRecomendedCondition = function(){
-	apcom.formCreditAnalyst.FinalComment.RecommendedCondition.push("");
 	apcom.RecCondition.push("");
-	
 }
 
 apcom.removeRecomendedCondition = function(index){
-	var rec = apcom.formCreditAnalyst.FinalComment.RecommendedCondition().filter(function(d, i){
-		return i != index;
-	})
-
 	var rec1 = apcom.RecCondition().filter(function(d, i){
 		return i != index;
 	})
 
-	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(rec);
 	apcom.RecCondition(rec1)
 }
 

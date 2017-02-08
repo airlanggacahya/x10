@@ -7,9 +7,10 @@ var apcom = {
 	Security: ko.observable(),
 	OtherConditions: ko.observable(),
 	CommitteeRemarks: ko.observable(),
-	RecommendedCondition: ko.observable([]),
-	RecCondition: ko.observable([]),
+	RecommendedCondition: ko.observableArray([]),
+	RecCondition: ko.observableArray([]),
 	Recommendations: ko.observable(),
+	isfreezeCA: ko.observable(false),
 	LeftAmount: ko.observable(),
 	Status: ko.observable(),
 	CaStatus: {
@@ -168,6 +169,9 @@ apcom.loadCommentData = function(tayp){
 		    if(apcom.formCreditAnalyst.FinalComment.RecommendedCondition() == null){
 		    	apcom.formCreditAnalyst.FinalComment.RecommendedCondition([""])
 		    }
+		    apcom.isfreezeCA(data[0].CreditAnalys.FinalComment.IsFreeze);
+		    apcom.setFreezeCommentCA(data[0].CreditAnalys.FinalComment.IsFreeze)
+
 	    }
 	    apcom.loadSection();
 	});
@@ -234,6 +238,7 @@ apcom.sendCreditAnalyst = function(a, event){
 					swal("Success", "Data Successfully Saved", "success");
 				} else if (param.Status == apcom.CaStatus.SEND) {
 					swal("Success", "Data Successfully Sent", "success");
+					apcom.setFreezeCommentCA(true)
 				}
 			}
 		})
@@ -509,17 +514,22 @@ apcom.loadSection = function(){
 				if(ind == 1 || index == 0){
 					return [
 					'<center>',
-						'<button class="btn btn-xs btn-primary tooltipster inbtn" title="Add" onclick="apcom.addRowRiskMitigants()"><i class="fa fa-plus"></i></button>',
+						'<button class="btn btn-xs btn-primary tooltipster inbtn ca" title="Add" onclick="apcom.addRowRiskMitigants()"><i class="fa fa-plus"></i></button>',
 					'</center>'
 				].join('')
 				}
 				return [
 					'<center>',
-						'<button class="btn btn-xs btn-danger tooltipster inbtn" title="Remove" onclick="apcom.removeRowRiskMitigants(\''+d.uid+'\')"><i class="fa fa-trash"></i></button>',
+						'<button class="btn btn-xs btn-danger tooltipster inbtn ca" title="Remove" onclick="apcom.removeRowRiskMitigants(\''+d.uid+'\')"><i class="fa fa-trash"></i></button>',
 					'</center>'
 				].join('')
 			}
-		}]
+		}], 
+		edit: function(e){
+			if(apcom.isfreezeCA() == true){
+				this.closeCell();
+			}
+		}
 	});
 
 	$("#gridriskconcersnmitigants").html("");
@@ -623,6 +633,14 @@ apcom.removeRecomendedCondition = function(index){
 	})
 
 	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(rec);
+}
+
+apcom.setFreezeCommentCA = function(d){
+	$("#send").prop("disabled", d)
+	$(".ca").prop("disabled", d)
+	setTimeout(function(){
+		$(".inbtn").prop("disabled", d)
+	}, 100);
 }
 
 $(document).ajaxComplete(function(){

@@ -97,8 +97,8 @@
 <div class="col-md-12 content-container" data-bind="with:apcom">
 
 	<div class="col-md-12 form-group">
-    	<button class="btn btn-sm btn-flat btn-save save btn-space pull-left" data-bind="click: apcom.sendCreditAnalyst">Save</button>
-    	<button class="btn btn-sm btn-flat btn-reset btn-space pull-left" data-bind="click: apcom.resetCreditAnalyst">Reset</button>
+    	<button class="btn btn-sm btn-flat btn-save save btn-space pull-left ca" data-bind="click: apcom.sendCreditAnalyst">Save</button>
+    	<button class="btn btn-sm btn-flat btn-reset btn-space pull-left ca" data-bind="click: apcom.resetCreditAnalyst">Reset</button>
     	<!-- <button class="btn btn-sm btn-flat btn-confirm btn-space pull-left">Confirm</button> -->
     	<!-- <button class="btn btn-sm btn-flat btn-reenter btn-space pull-left">Re-Enter</button> -->
 	</div>
@@ -151,8 +151,8 @@
 			    			<input id="commentcondition" style="width: 100%; margin-left: -9px;margin-bottom: 5px;" data-bind="value: apcom.RecCondition()[$index()]" class="input-sm form-control ca">
 			    		</div>
 			    		<div class="col-sm-2">
-			    			<button type="button" class="btn btn-sm btn-flat btn-success" data-bind="click: apcom.addRecomendedCondition(), visible: $index() == 0"><i class="fa fa-plus"></i></button>
-			    			<button type="button" class="btn btn-sm btn-flat btn-danger" data-bind="click: apcom.removeRecomendedCondition($index()), visible: $index() > 0"><i class="fa fa-trash"></i></button>
+			    			<button type="button" class="btn btn-sm btn-flat btn-success ca" data-bind="click: apcom.addRecomendedCondition(), visible: $index() == 0"><i class="fa fa-plus"></i></button>
+			    			<button type="button" class="btn btn-sm btn-flat btn-danger ca" data-bind="click: apcom.removeRecomendedCondition($index()), visible: $index() > 0"><i class="fa fa-trash"></i></button>
 			    		</div>
 		    		</div>
 		    	</div>

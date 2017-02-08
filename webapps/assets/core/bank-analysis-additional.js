@@ -143,12 +143,17 @@ var setdatestt = function(){
 }
 
 var disableSpinner = function(container, options){
+
+    if(options.model[options.field] == 0)
+        options.model[options.field] = ""
+    
     $('<input data-bind="value:' + options.field + '"/>')
     .appendTo(container)
     .kendoNumericTextBox({
         spinners : false,
         min: 0,
     });
+
 }
 var disableInputSpinner = function(id){
     var numeric = $("#"+id).data("kendoNumericTextBox");

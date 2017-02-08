@@ -647,4 +647,10 @@ $(document).ajaxComplete(function(){
 	if(apcom.Date() != undefined && apcom.Date().toString().indexOf("1970") >-1){
 		apcom.Date("")
 	}
+
+	setTimeout(function(){
+		if(countUnconfirm() > 0){
+			$("#send").prop("disabled", true)
+		}
+	},100)
 })

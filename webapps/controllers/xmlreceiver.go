@@ -396,6 +396,8 @@ func BuildInfo() tk.M {
 		"ertrInfo":  []tk.M{infoNA},
 		"irtrInfo":  []tk.M{infoNA},
 		"ddInfo":    []tk.M{infoNA},
+		"dcfInfo":   []tk.M{infoNA},
+		"cacInfo":   []tk.M{infoNA},
 	}
 
 	return info

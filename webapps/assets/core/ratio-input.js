@@ -197,7 +197,7 @@ r.setData = function (data) {
 }
 
 r.setDataSelectEbitda = function() {
-    
+    r.selectedMasterBalanceEbitda([]);
     ajaxPost("/ratio/getfieldformulabyalias", {Alias: "EBITDA"}, function (res) {
         masterBlanaceSelected = {
             Data : [],
@@ -236,6 +236,8 @@ r.refresh = function (callback) {
     if (r.getCustomerId() === false) {
         return
     }
+    
+
     r.isLoading(true)
     r.isEmptyRatioInputData(true)
     r.isFrozen(false)
@@ -341,15 +343,16 @@ r.refresh = function (callback) {
 r.selectAction = function(action){
     data = r.getData()
 
-    if(action === "save") {
+    if (action === "save") {
         r.btnStyleSwal("btn btn-save")
         r.validationEbitda(r.save, "Save")
     } else if(action === "confirm") {
         r.btnStyleSwal("btn btn-confirm")
-        if(r.confirmLabel() == "Confirm")
-        r.validationEbitda(r.confirm, "Confirm")
-        else
-        r.confirm(data);
+        if (r.confirmLabel() == "Confirm"){
+            r.validationEbitda(r.confirm, "Confirm")
+        } else {
+            r.confirm(data);    
+        }
     }
 }
 r.validationEbitda = function(callback, textButton) {
@@ -365,8 +368,13 @@ r.validationEbitda = function(callback, textButton) {
         _.each(r.selectedMasterBalanceEbitda()[0].Value, function(row, k){
             _.each(row, function(row1, k1){
                 temp = _.filter(data.FormData, function(row2){
+
+                    if(moment(row1.Date).format("DD-MM-YYYY") == row2.Date && row1.FieldId == row2.FieldId && row1.Value != row2.Value)
+                console.log(moment(row1.Date).format("DD-MM-YYYY"), row2.Date , row1.FieldId , row2.FieldId , row1.Value , row2.Value)
+
                     return (moment(row1.Date).format("DD-MM-YYYY") == row2.Date && row1.FieldId == row2.FieldId && row1.Value != row2.Value)
                 })
+
 
                 if(temp.length > 0) {
                     r.indexEbitda(k)
@@ -1784,10 +1792,16 @@ r.prepareSelectOption = function(){
 r.disableInputForm = function(){
     var value = r.AuditedDate().split('-')
     var valuepro = r.ProjectedDate().split('-')
-    if (valuepro[2] == 'null' ||value[2] == 'null' || r.AuditedDate() == '' || r.ProjectedDate() == ''){
+    if (valuepro[2] == 'null' ||value[2] == 'null' || r.AuditedDate() == '' || r.ProjectedDate() == '' ){
         $('.inputmasterform').prop("disabled", true)
     }else {
-        $('.inputmasterform').prop("disabled", false)
+        if (r.confirmLabel() == 'Re-Enter'){
+            // console.log(r.statusCustomer(), "masuk save / confirm")
+            $('.inputmasterform').prop("disabled", true)    
+        }else {
+            // console.log(r.statusCustomer(), "tidak masuk save / confirm")
+            $('.inputmasterform').prop("disabled", false)    
+        }
     }
 }
 
@@ -1842,8 +1856,8 @@ r.prepareselectDateProjected = function(){
         change: function(){
             r.ProjectedDate( "31-"+momonth2+"-"+kendo.toString(this.value(), "yyyy") )
             this.value( "31-"+momonth2+"-"+kendo.toString(this.value(), "yyyy") )
-
-            r.isLoading(true)
+            r.disableInputForm();
+            r.isLoading(true)   
 
             //add auditstatus
                 var auditStatus = []

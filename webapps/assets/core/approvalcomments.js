@@ -178,7 +178,12 @@ apcom.loadCommentData = function(tayp){
 		    apcom.PG(data[1].DCFinalSanction.PG);
 		    apcom.Security(data[1].DCFinalSanction.Security);
 
-			apcom.OtherConditions(data[1].DCFinalSanction.OtherConditions);
+			if (!_.isArray(data[1].DCFinalSanction.OtherConditions) ||
+				data[1].DCFinalSanction.OtherConditions.length == 0)
+				apcom.OtherConditions([""])
+			else
+				apcom.OtherConditions(data[1].DCFinalSanction.OtherConditions);
+
 		    apcom.CommitteeRemarks(data[1].DCFinalSanction.CommitteeRemarks);
 		    apcom.Status(data[1].DCFinalSanction.Status)
 
@@ -728,20 +733,15 @@ function getComments(tayp){
 }
 
 apcom.addRecomendedCondition = function(){
-	// var temp = apcom.formCreditAnalyst.FinalComment.RecommendedCondition();
-	// temp.push("");
-	apcom.formCreditAnalyst.FinalComment.RecommendedCondition.push("");
-	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition([])
-	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition(apcom.RecCondition())
-	
+	apcom.RecCondition.push("");
 }
 
 apcom.removeRecomendedCondition = function(index){
-	var rec = apcom.formCreditAnalyst.FinalComment.RecommendedCondition().filter(function(d, i){
+	var rec1 = apcom.RecCondition().filter(function(d, i){
 		return i != index;
 	})
 
-	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(rec);
+	apcom.RecCondition(rec1)
 }
 
 // OtherConditions aka Sanction Conditions

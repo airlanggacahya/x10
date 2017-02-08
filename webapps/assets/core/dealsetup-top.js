@@ -142,26 +142,28 @@ setup.columnGrid = [
       return dt.Info.ddInfo[count].status 
     }
  },
- {
-    title : "Decision Committee",
-    width : 150,
-    headerAttributes: { "class": "sub-bgcolor" },
-    template: function(dt){
-      var count = dt.Info.dcfInfo.length
-      count = count > 0 ? count-1 : 0 
-      return dt.Info.dcfInfo[count].status 
-    }
- },
- {
-    title : "Credit Analyst",
-    width : 150,
-    headerAttributes: { "class": "sub-bgcolor" },
-    template: function(dt){
-      var count = dt.Info.cacInfo.length
-      count = count > 0 ? count-1 : 0 
-      return dt.Info.cacInfo[count].status 
-    }
- }
+ // {
+ //    title : "Decision Committee",
+ //    width : 150,
+ //    hidden : true,
+ //    headerAttributes: { "class": "sub-bgcolor" },
+ //    template: function(dt){
+ //      var count = dt.Info.dcfInfo.length
+ //      count = count > 0 ? count-1 : 0 
+ //      return dt.Info.dcfInfo[count].status 
+ //    }
+ // },
+ // {
+ //    title : "Credit Analyst",
+ //    width : 150,
+ //     hidden : true,
+ //    headerAttributes: { "class": "sub-bgcolor" },
+ //    template: function(dt){
+ //      var count = dt.Info.cacInfo.length
+ //      count = count > 0 ? count-1 : 0 
+ //      return dt.Info.cacInfo[count].status 
+ //    }
+ // }
 ]
 
 setup.createGrid = function(){

@@ -150,7 +150,12 @@ apcom.loadCommentData = function(tayp){
 		    apcom.PG(data[1].DCFinalSanction.PG);
 		    apcom.Security(data[1].DCFinalSanction.Security);
 
-			apcom.OtherConditions(data[1].DCFinalSanction.OtherConditions);
+			if (!_.isArray(data[1].DCFinalSanction.OtherConditions) ||
+				data[1].DCFinalSanction.OtherConditions.length == 0)
+				apcom.OtherConditions([""])
+			else
+				apcom.OtherConditions(data[1].DCFinalSanction.OtherConditions);
+
 		    apcom.CommitteeRemarks(data[1].DCFinalSanction.CommitteeRemarks);
 		    apcom.Status(data[1].DCFinalSanction.Status)
 

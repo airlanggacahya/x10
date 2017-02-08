@@ -4,7 +4,6 @@ var ratioInput = {}; var r = ratioInput;
 r.TypeDate = ko.observable('FY Ending');
 r.AuditedDate = ko.observable('');
 r.ProjectedDate = ko.observable('');
-r.statusCustomer = ko.observable('');
 r.unit = ko.observable('Rs. Lacs')
 r.startDate = ko.observable();
 r.masterBalanceSheetInput =  ko.observableArray([]);
@@ -198,7 +197,7 @@ r.setData = function (data) {
 }
 
 r.setDataSelectEbitda = function() {
-    
+    r.selectedMasterBalanceEbitda([]);
     ajaxPost("/ratio/getfieldformulabyalias", {Alias: "EBITDA"}, function (res) {
         masterBlanaceSelected = {
             Data : [],
@@ -238,9 +237,6 @@ r.refresh = function (callback) {
         return
     }
     
-    if (r.confirmLabel() == "Re-enter"){
-        r.statusCustomer("Re-enter")
-    }
 
     r.isLoading(true)
     r.isEmptyRatioInputData(true)
@@ -350,14 +346,11 @@ r.selectAction = function(action){
     if (action === "save") {
         r.btnStyleSwal("btn btn-save")
         r.validationEbitda(r.save, "Save")
-        r.statusCustomer("save")
     } else if(action === "confirm") {
         r.btnStyleSwal("btn btn-confirm")
         if (r.confirmLabel() == "Confirm"){
             r.validationEbitda(r.confirm, "Confirm")
-            r.statusCustomer("confirm")
         } else {
-            r.statusCustomer("Re-Enter")
             r.confirm(data);    
         }
     }
@@ -375,8 +368,13 @@ r.validationEbitda = function(callback, textButton) {
         _.each(r.selectedMasterBalanceEbitda()[0].Value, function(row, k){
             _.each(row, function(row1, k1){
                 temp = _.filter(data.FormData, function(row2){
+
+                    if(moment(row1.Date).format("DD-MM-YYYY") == row2.Date && row1.FieldId == row2.FieldId && row1.Value != row2.Value)
+                console.log(moment(row1.Date).format("DD-MM-YYYY"), row2.Date , row1.FieldId , row2.FieldId , row1.Value , row2.Value)
+
                     return (moment(row1.Date).format("DD-MM-YYYY") == row2.Date && row1.FieldId == row2.FieldId && row1.Value != row2.Value)
                 })
+
 
                 if(temp.length > 0) {
                     r.indexEbitda(k)
@@ -1797,7 +1795,7 @@ r.disableInputForm = function(){
     if (valuepro[2] == 'null' ||value[2] == 'null' || r.AuditedDate() == '' || r.ProjectedDate() == '' ){
         $('.inputmasterform').prop("disabled", true)
     }else {
-        if (r.statusCustomer() == 'save' || r.statusCustomer() == 'confirm'){
+        if (r.confirmLabel() == 'Re-Enter'){
             // console.log(r.statusCustomer(), "masuk save / confirm")
             $('.inputmasterform').prop("disabled", true)    
         }else {

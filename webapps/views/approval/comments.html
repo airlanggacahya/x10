@@ -89,11 +89,11 @@
 	    	<div class="col-sm-12">
 				<div data-bind="foreach: apcom.OtherConditions">
 					<div class="col-sm-10">
-						<input id="commentconditions" style="width: 100%; margin-left: -9px;margin-bottom: 5px;" data-bind="value: apcom.OtherConditions()[$index()]" class="input-sm form-control ca">
+						<input id="commentconditions" style="width: 100%; margin-left: -9px;margin-bottom: 5px;" data-bind="value: apcom.OtherConditions()[$index()]" class="input-sm form-control">
 					</div>
 					<div class="col-sm-2">
-						<button type="button" class="btn btn-sm btn-flat btn-success ca" data-bind="click: apcom.addOtherCondition, visible: $index() == 0"><i class="fa fa-plus"></i></button>
-						<button type="button" class="btn btn-sm btn-flat btn-danger ca" data-bind="click: apcom.removeOtherCondition.bind($data, $index()), visible: $index() > 0"><i class="fa fa-trash"></i></button>
+						<button type="button" class="btn btn-sm btn-flat btn-success" data-bind="click: apcom.addOtherCondition, visible: $index() == 0"><i class="fa fa-plus"></i></button>
+						<button type="button" class="btn btn-sm btn-flat btn-danger" data-bind="click: apcom.removeOtherCondition.bind($data, $index()), visible: $index() > 0"><i class="fa fa-trash"></i></button>
 					</div>
 				</div>
 	    	</div>

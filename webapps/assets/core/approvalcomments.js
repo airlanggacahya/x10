@@ -5,7 +5,7 @@ var apcom = {
 	PF: ko.observable(),
 	PG: ko.observable(),
 	Security: ko.observable(),
-	OtherConditions: ko.observable(),
+	OtherConditions: ko.observableArray([]),
 	CommitteeRemarks: ko.observable(),
 	RecommendedCondition: ko.observableArray([]),
 	RecCondition: ko.observableArray([]),
@@ -27,7 +27,6 @@ apcom.dataBasisRecommendation = ko.observableArray([
 	{title: "PF", value: ""},
 	{title: "PG", value: ""},
 	{title: "Security", value: ""},
-	{title: "Other Conditions", value: ""},
 	{title: "Committee Remarks", value: ""},
 ])
 
@@ -43,7 +42,6 @@ apcom.templateSanction ={
 	PF: "",
 	PG: "",
 	Security: "",
-	OtherConditions: "",
 	CommitteeRemarks: "",
 	Status: false,
 }
@@ -126,7 +124,6 @@ apcom.loadCommentData = function(tayp){
 			apcom.PF("")
 			apcom.PG("")
 			apcom.Security("")
-			apcom.OtherConditions("")
 			apcom.CommitteeRemarks("")
 			apcom.Amount("")
 			// apcom.RecommendedCondition([""])
@@ -152,7 +149,8 @@ apcom.loadCommentData = function(tayp){
 		    apcom.PF(data[1].DCFinalSanction.PF);
 		    apcom.PG(data[1].DCFinalSanction.PG);
 		    apcom.Security(data[1].DCFinalSanction.Security);
-		    apcom.OtherConditions(data[1].DCFinalSanction.OtherConditions);
+
+			apcom.OtherConditions(data[1].DCFinalSanction.OtherConditions);
 		    apcom.CommitteeRemarks(data[1].DCFinalSanction.CommitteeRemarks);
 		    apcom.Status(data[1].DCFinalSanction.Status)
 
@@ -638,6 +636,18 @@ apcom.removeRecomendedCondition = function(index){
 	})
 
 	apcom.formCreditAnalyst.FinalComment.RecommendedCondition(rec);
+}
+
+// OtherConditions aka Sanction Conditions
+apcom.addOtherCondition = function(){
+	apcom.OtherConditions.push("");
+}
+
+apcom.removeOtherCondition = function(index){
+	var ar = apcom.OtherConditions();
+	ar.splice(index, 1)
+
+	apcom.OtherConditions(ar);
 }
 
 apcom.setFreezeCommentCA = function(d){

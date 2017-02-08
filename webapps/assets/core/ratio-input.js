@@ -4,6 +4,7 @@ var ratioInput = {}; var r = ratioInput;
 r.TypeDate = ko.observable('FY Ending');
 r.AuditedDate = ko.observable('');
 r.ProjectedDate = ko.observable('');
+r.statusCustomer = ko.observable('');
 r.unit = ko.observable('Rs. Lacs')
 r.startDate = ko.observable();
 r.masterBalanceSheetInput =  ko.observableArray([]);
@@ -236,6 +237,11 @@ r.refresh = function (callback) {
     if (r.getCustomerId() === false) {
         return
     }
+    
+    if (r.confirmLabel() == "Re-enter"){
+        r.statusCustomer("Re-enter")
+    }
+
     r.isLoading(true)
     r.isEmptyRatioInputData(true)
     r.isFrozen(false)
@@ -341,15 +347,19 @@ r.refresh = function (callback) {
 r.selectAction = function(action){
     data = r.getData()
 
-    if(action === "save") {
+    if (action === "save") {
         r.btnStyleSwal("btn btn-save")
         r.validationEbitda(r.save, "Save")
+        r.statusCustomer("save")
     } else if(action === "confirm") {
         r.btnStyleSwal("btn btn-confirm")
-        if(r.confirmLabel() == "Confirm")
-        r.validationEbitda(r.confirm, "Confirm")
-        else
-        r.confirm(data);
+        if (r.confirmLabel() == "Confirm"){
+            r.validationEbitda(r.confirm, "Confirm")
+            r.statusCustomer("confirm")
+        } else {
+            r.statusCustomer("Re-Enter")
+            r.confirm(data);    
+        }
     }
 }
 r.validationEbitda = function(callback, textButton) {
@@ -1784,10 +1794,16 @@ r.prepareSelectOption = function(){
 r.disableInputForm = function(){
     var value = r.AuditedDate().split('-')
     var valuepro = r.ProjectedDate().split('-')
-    if (valuepro[2] == 'null' ||value[2] == 'null' || r.AuditedDate() == '' || r.ProjectedDate() == ''){
+    if (valuepro[2] == 'null' ||value[2] == 'null' || r.AuditedDate() == '' || r.ProjectedDate() == '' ){
         $('.inputmasterform').prop("disabled", true)
     }else {
-        $('.inputmasterform').prop("disabled", false)
+        if (r.statusCustomer() == 'save' || r.statusCustomer() == 'confirm'){
+            // console.log(r.statusCustomer(), "masuk save / confirm")
+            $('.inputmasterform').prop("disabled", true)    
+        }else {
+            // console.log(r.statusCustomer(), "tidak masuk save / confirm")
+            $('.inputmasterform').prop("disabled", false)    
+        }
     }
 }
 
@@ -1842,8 +1858,8 @@ r.prepareselectDateProjected = function(){
         change: function(){
             r.ProjectedDate( "31-"+momonth2+"-"+kendo.toString(this.value(), "yyyy") )
             this.value( "31-"+momonth2+"-"+kendo.toString(this.value(), "yyyy") )
-
-            r.isLoading(true)
+            r.disableInputForm();
+            r.isLoading(true)   
 
             //add auditstatus
                 var auditStatus = []

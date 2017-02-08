@@ -4,6 +4,7 @@ var above700 = []
 var beetween600700 = []
 var below600 = []
 var redflags = ko.observableArray([])
+var countUnconfirm = ko.observable(0)
 var totalrealestate = ko.observable()
 r.rootdata = ko.observableArray([])
 r.rootdates = ko.observableArray([])
@@ -172,36 +173,42 @@ r.ratingReferenceTooltip = function(param){
 r.checkValidation = function(data){
   if(data.Data.CP.length==0){
         // Materialize.toast("Customer Profile Data Not Confirmed", 5000);
+        countUnconfirm(countUnconfirm() + 1);
         fixToast("Customer Profile Data Not Confirmed");
 
   }
 
   if(data.Data.BA.length==0){
         // Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
+        countUnconfirm(countUnconfirm() + 1);
         fixToast("Bank Analysis Data Not Confirmed");
 
   }
 
   if(data.Data.CIBIL.length==0){
         // Materialize.toast("CIBIL Data Not Confirmed", 5000);
+        countUnconfirm(countUnconfirm() + 1);
         fixToast("CIBIL Data Not Confirmed");
 
   }
 
   if(data.Data.CIBILPROM.length==0){
         // Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
+        countUnconfirm(countUnconfirm() + 1);
         fixToast("CIBIL Promotor Data Not Confirmed")
 
   }
 
   if(data.Data.AD.length==0){
         // Materialize.toast("Account Details Data Not Confirmed", 5000);
+        countUnconfirm(countUnconfirm() + 1);
         fixToast("Account Details Data Not Confirmed");
 
   }
 
   if(data.Data.RTR.length==0){
         // Materialize.toast("RTR Data Not Confirmed", 5000);
+        countUnconfirm(countUnconfirm() + 1);
         fixToast("RTR Data Not Confirmed");
 
   }
@@ -210,6 +217,7 @@ r.checkValidation = function(data){
 }
 
 refreshFilter = function(){
+  countUnconfirm(0)
   $(".toaster").html("")
   r.initEvents()
   if (r.getCustomerId() === false) {
@@ -320,21 +328,33 @@ refreshFilter = function(){
     startme();
 
     getComments("draft");
-
+    console.log("))))))))))", res)
     if(res.Data.AD.length > 0) {
       loanapproval.marketref(res.Data.AD[0].borrowerdetails.marketreference);
       createreferencecheckgrid(res.Data.AD[0].borrowerdetails.refrencecheck);
       loanapproval.expansionplan(res.Data.AD[0].borrowerdetails.expansionplans);
 
-      if(typeof res.Data.AD[0].borrowerdetails.commentsonfinancials == "string") {
-        loanapproval.commentfinance([""]);
-      } else {
+      if(res.Data.AD[0].borrowerdetails.commentsonfinancials != undefined) {
+        // alert("ini")
         loanapproval.commentfinance(res.Data.AD[0].borrowerdetails.commentsonfinancials);
+        
+      } else {
+        // console.log("))))))))))", res)
+        loanapproval.commentfinance([""]);
+      }
+
+      try{
+        loanapproval.commentfinance(res.Data.AD[0].borrowerdetails.commentsonfinancials);
+      }catch(e){
+        console.log(e)
+        loanapproval.commentfinance([""]);
       }
 
       loanApproval.companyBackgroundData(
         new companyBackground(res.Data.AD[0], res)
       );
+    }else{
+       loanapproval.commentfinance([""]);
     }
   })
 
@@ -347,6 +367,16 @@ refreshFilter = function(){
   loanApproval.ourstandings([]);
   due.getCostumerData();
   due.getData();
+  setTimeout(function(){
+    if(countUnconfirm() > 0){
+      $("#send").prop("disabled",true);
+    }else{
+      $("#send").prop("disabled",false);
+    }
+    // if(apcom.RecommendedCondition().length == 0){
+    //   apcom.RecommendedCondition().push("");
+    // }
+  }, 100)
 }
 
 r.getCustomerId = function () {
@@ -616,6 +646,7 @@ r.getCreditScoreCard = function(param, callback) {
           param.Internalrating = "";
           r.getNormData(param)
           // Materialize.toast("Data Credit Score Card Not Found", 5000);
+          countUnconfirm(countUnconfirm() + 1);
           fixToast("Data Credit Score Card Not Found")
       }
     }
@@ -825,6 +856,7 @@ var getredflag = function(){
             createRedFlags();
              // swal("Warning", "Red Flags Data Not Found", "warning");
              // Materialize.toast("Due Diligence Data Not Confirmed", 5000);
+             countUnconfirm(countUnconfirm() + 1);
              fixToast("Due Diligence Data Not Confirmed")
 
             return
@@ -874,6 +906,7 @@ var getreportdata = function(){
     }else{
          // swal("Warning", "Report Data Not Found", "warning");
           // Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
+          countUnconfirm(countUnconfirm() + 1);
           fixToast("Balance Sheet Data Not Confirmed");
 
         return

@@ -15,9 +15,10 @@ type CreditAnalysRisk struct {
 
 type FinalComment struct {
 	Amount               float64
-	IsNullAmount         bool `bson:"IsNullAmount,omitempty"`
-	RecommendedCondition string
+	IsNullAmount         bool     `bson:"IsNullAmount,omitempty"`
+	RecommendedCondition []string `bson:"recommendedcondition,omitempty"`
 	Recommendations      string
+	IsFreeze             bool `bson:"IsFreeze,omitempty"`
 }
 
 type CreditAnalysModel struct {

@@ -777,6 +777,14 @@ func updateDealSetupLatestData(cid string, dealno string, formname string, forms
 		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
 		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
 		infos.Set("ddInfo", ddInfos)
+	case "dcf":
+		dcfInfos := CheckArraytkM(infos.Get("dcfInfo"))
+		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("dcfInfo", dcfInfos)
+	case "cac":
+		cacInfos := CheckArraytkM(infos.Get("cacInfo"))
+		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("cacInfo", cacInfos)
 	case "all":
 		myInfos := CheckArraytkM(infos.Get("myInfo"))
 		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
@@ -816,6 +824,14 @@ func updateDealSetupLatestData(cid string, dealno string, formname string, forms
 		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
 		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
 		infos.Set("ddInfo", ddInfos)
+
+		dcfInfos := CheckArraytkM(infos.Get("dcfInfo"))
+		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("dcfInfo", dcfInfos)
+
+		cacInfos := CheckArraytkM(infos.Get("cacInfo"))
+		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("cacInfo", cacInfos)
 	}
 
 	result.Set("info", infos)
@@ -928,6 +944,14 @@ func UpdateDealSetup(cid string, dealno string, formname string, formstatus stri
 		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
 		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
 		infos.Set("ddInfo", ddInfos)
+	case "dcf":
+		dcfInfos := CheckArraytkM(infos.Get("dcfInfo"))
+		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("dcfInfo", dcfInfos)
+	case "cac":
+		cacInfos := CheckArraytkM(infos.Get("cacInfo"))
+		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("cacInfo", cacInfos)
 	case "all":
 		myInfos := CheckArraytkM(infos.Get("myInfo"))
 		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
@@ -967,6 +991,14 @@ func UpdateDealSetup(cid string, dealno string, formname string, formstatus stri
 		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
 		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
 		infos.Set("ddInfo", ddInfos)
+
+		dcfInfos := CheckArraytkM(infos.Get("dcfInfo"))
+		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("dcfInfo", dcfInfos)
+
+		cacInfos := CheckArraytkM(infos.Get("cacInfo"))
+		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		infos.Set("cacInfo", cacInfos)
 	}
 
 	result.Set("info", infos)

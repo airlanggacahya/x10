@@ -228,6 +228,9 @@ apcom.sendCreditAnalyst = function(a, event){
 
 	param.Ca.FinalComment.RecommendedCondition = apcom.RecCondition();
 	param.Ca.FinalComment.IsFreeze = true;
+	if(param.Status == apcom.CaStatus.SEND){
+		param.Ca.FinalComment.SendDate = (new Date()).toISOString();
+	}
 	
 	if(r.customerId().split('|')[0] != "" && r.customerId().split('|')[1] != ""){
 		ajaxPost("/approval/savecreditanalys", param , function(res){

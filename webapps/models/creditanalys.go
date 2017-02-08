@@ -6,6 +6,7 @@ import (
 	"github.com/eaciit/orm"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 type CreditAnalysRisk struct {
@@ -18,7 +19,8 @@ type FinalComment struct {
 	IsNullAmount         bool     `bson:"IsNullAmount,omitempty"`
 	RecommendedCondition []string `bson:"recommendedcondition,omitempty"`
 	Recommendations      string
-	IsFreeze             bool `bson:"IsFreeze,omitempty"`
+	IsFreeze             bool      `bson:"IsFreeze,omitempty"`
+	SendDate             time.Time `bson:"SendDate,omitempty"`
 }
 
 type CreditAnalysModel struct {

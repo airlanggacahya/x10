@@ -92,8 +92,8 @@
 						<input id="commentconditions" style="width: 100%; margin-left: -9px;margin-bottom: 5px;" data-bind="value: apcom.OtherConditions()[$index()]" class="input-sm form-control">
 					</div>
 					<div class="col-sm-2">
-						<button type="button" class="btn btn-sm btn-flat btn-success" data-bind="click: apcom.addOtherCondition, visible: $index() == 0"><i class="fa fa-plus"></i></button>
-						<button type="button" class="btn btn-sm btn-flat btn-danger" data-bind="click: apcom.removeOtherCondition.bind($data, $index()), visible: $index() > 0"><i class="fa fa-trash"></i></button>
+						<button type="button" class="btn btn-sm btn-flat btn-success checkLatestStatus" data-bind="click: apcom.addOtherCondition, visible: $index() == 0"><i class="fa fa-plus"></i></button>
+						<button type="button" class="btn btn-sm btn-flat btn-danger checkLatestStatus" data-bind="click: apcom.removeOtherCondition.bind($data, $index()), visible: $index() > 0"><i class="fa fa-trash"></i></button>
 					</div>
 				</div>
 	    	</div>

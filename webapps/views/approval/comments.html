@@ -18,7 +18,7 @@
 
 <div id="content4" data-bind="with:apcom" class="content-container">
 
-	<div class="col-sm-12">
+	<!-- <div class="col-sm-12">
 		<div class="form-group col-sm-6">
 	    	<label class="col-sm-12 text-left">Date</label>
 	    	<div class="col-sm-12">
@@ -27,8 +27,23 @@
 	    		class="input-sm form-control" style="width: 100%; margin-top: 0px; height: 27px;">
 	    	</div>
 		</div>
-	</div>
+	</div> -->
 
+	<div class="col-sm-12">
+		<div class="form-group col-sm-6">
+	    	<label class="col-sm-12 text-left">Status</label>
+	    	<div class="col-sm-12">
+	    		<!-- <input type="text" data-bind="value: " class="input-sm form-control"> -->
+	    		<label style="width: 100%; text-align:left;"><span data-bind="text: apcom.latestStatusStr">awaiting</span></label>
+	    	</div>
+		</div>
+		<div class="form-group col-sm-6">
+	    	<label class="col-sm-12 text-left">Decision Date</label>
+	    	<div class="col-sm-12">
+	    		<label data-bind="text: apcom.dcsanctiondatestring" style="width: 100%; text-align:left;">-</label>
+	    	</div>
+		</div>
+	</div>
 	<div class="col-sm-12">
 		<div class="form-group col-sm-6">
 	    	<label class="col-sm-12 text-left">Amount</label>
@@ -98,8 +113,13 @@
 		<div id="grid2"></div>
 	</div> -->
 	<div class="col-md-12">
-		<button data-bind="click: apcom.saveSanction" class="btn btn-sm btn-flat btn-space btn-confirm sanction">Sanction</button>
-		<button data-bind="click: apcom.saveHold" class="btn btn-sm btn-flat btn-space btn-hold sanction">Hold</button>
+		<!-- <button data-bind="click: apcom.saveSanction" class="btn btn-sm btn-flat btn-space btn-confirm sanction">Sanction</button> -->
+
+		<button data-bind="click: apcom.checkingAndSaveStatus('Approved')" class="btn btn-sm btn-flat btn-space btn-save checkLatestStatus">Approve</button>
+		<button data-bind="click: apcom.checkingAndSaveStatus('Rejected')" class="btn btn-sm btn-flat btn-space btn-hold checkLatestStatus">Reject</button>
+		<button data-bind="click: apcom.checkingAndSaveStatus('Cancelled')" class="btn btn-sm btn-flat btn-space btn-freeze checkLatestStatus">Cancel</button>
+		<button data-bind="click: apcom.checkingAndSaveStatus()" class="btn btn-sm btn-flat btn-space btn-confirm sanction">Hold</button>
+		<button data-bind="click: apcom.checkingAndSaveStatus()" class="btn btn-sm btn-flat btn-space btn-freeze">Send Back for Analys</button>
 	</div>
 </div>
 <div class="col-md-12 content-container" data-bind="with:apcom">

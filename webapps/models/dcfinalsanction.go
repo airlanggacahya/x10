@@ -25,6 +25,7 @@ type DCFinalSanctionModel struct {
 	OtherConditions  []string      `bson:"OtherConditions"`
 	CommitteeRemarks string        `bson:"CommitteeRemarks"`
 	Status           bool          `bson:"Status"`
+	LatestStatus     string        `bson:"LatestStatus,omitempty"`
 }
 
 func NewDCFinalSanctionModel() *DCFinalSanctionModel {

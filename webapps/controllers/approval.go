@@ -214,6 +214,21 @@ func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {
 		if err != nil {
 			return CreateResult(false, nil, err.Error())
 		}
+
+		DC := NewDCFinalSanctionModel()
+
+		DCResult, err := DC.Get(datas.Ca.CustomerId, datas.Ca.DealNo)
+
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
+
+		DCResult.LatestStatus = ""
+
+		err = DC.Update(DCResult)
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
 	}
 
 	return CreateResult(true, result, "")
@@ -259,7 +274,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 
 	arr := []string{"AccountDetails", "InternalRTR", "BankAnalysisV2", "CustomerProfile", "RatioInputData", "RepaymentRecords", "StockandDebt", "CibilReport", "CibilReportPromotorFinal", "DueDiligenceInput"}
 
-	if datas.LatestStatus == "Send Back" {
+	if datas.LatestStatus == "Sent Back" {
 		for _, val := range arr {
 			err = changeStatus(cid, dealno, val, 1)
 			if err != nil {
@@ -290,9 +305,9 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 
 	err = UpdateDealSetup(cid, dealno, "ds", datas.LatestStatus)
 
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
+	// if err != nil {
+	// 	return CreateResult(false, nil, err.Error())
+	// }
 
 	return CreateResult(true, result, "")
 }

@@ -3,7 +3,6 @@ package controllers
 import (
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
-	"fmt"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"strconv"
@@ -221,7 +220,7 @@ func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {
 		DCResult, err := DC.Get(datas.Ca.CustomerId, datas.Ca.DealNo)
 
 		if err != nil {
-			//return CreateResult(false, nil, err.Error())
+			// return CreateResult(false, nil, err.Error())
 		} else {
 			DCResult.LatestStatus = ""
 

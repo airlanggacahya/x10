@@ -98,3 +98,20 @@ func (m *DCFinalSanctionModel) Save(datas DCFinalSanctionModel) (DCFinalSanction
 
 	return datas, err
 }
+
+func (m *DCFinalSanctionModel) Update(datas DCFinalSanctionModel) error {
+
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return em
+	}
+
+	q := cMongo.NewQuery().SetConfig("multiexec", true).From(m.TableName()).Save()
+
+	defer q.Close()
+
+	err := q.Exec(tk.M{"data": datas})
+
+	return err
+}

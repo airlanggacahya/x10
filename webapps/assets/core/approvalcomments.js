@@ -126,14 +126,14 @@ apcom.loadCommentData = function(tayp){
 		    	apcom.sanction.LatestStatus("Awaiting Action")
 		    }
 
-		    if(apcom.ValidateDate(apcom.sanction.Date())) {
+		    if(apcom.ValidateDate(apcom.sanction.Date()) && apcom.sanction.LatestStatus() !== "Awaiting Action" && apcom.sanction.LatestStatus() !== "" ) {
 		    	var tempDate = moment(apcom.sanction.Date()).format("DD-MMM-YYYY")
 	    		apcom.dcsanctiondatestring(tempDate)
 		    }
 
 		    apcom.checkLatestStatus()
 
-		    if(apcom.sanction.LatestStatus() === "Awaiting Action") {
+	    	if(apcom.sanction.LatestStatus() === "Awaiting Action") {
 		    	if(apcom.ValidateDate(apcom.formCreditAnalyst.FinalComment.SendDate())) {
 		    		var tempDate = moment(apcom.formCreditAnalyst.FinalComment.SendDate()).format("DD-MMM-YYYY")
 		    		apcom.sanction.Date(apcom.formCreditAnalyst.FinalComment.SendDate())
@@ -254,7 +254,7 @@ apcom.setParamSanction = function(){
 }
 
 apcom.checkLatestStatus = function(){
-	if(apcom.sanction.LatestStatus() === "Awaiting Action" || apcom.sanction.LatestStatus() === "On Hold" || apcom.sanction.LatestStatus() === "Send Back") {
+	if(apcom.sanction.LatestStatus() === "Awaiting Action" || apcom.sanction.LatestStatus() === "On Hold" || apcom.sanction.LatestStatus() === "Sent Back") {
 		$(".checkLatestStatus").prop("disabled", false)
 	} else {
 		$(".checkLatestStatus").prop("disabled", true)
@@ -293,8 +293,11 @@ apcom.checkingAndSaveStatus = function(status) {
 				
 				apcom.checkLatestStatus()
 
+				if(apcom.sanction.LatestStatus() === "Sent Back") {
+					apcom.setFreezeCommentCA(false)
+				}
 				apcom.latestStatusStr(apcom.sanction.LatestStatus())
-				swal("Success", "Data Successfully Sanction", "success");
+				swal("Success", "Data Successfully " + status, "success");
 			}
 		})
 
@@ -353,6 +356,8 @@ apcom.sendCreditAnalyst = function(a, event){
 				} else if (param.Status == apcom.CaStatus.SEND) {
 					swal("Success", "Data Successfully Sent", "success");
 					apcom.setFreezeCommentCA(true)
+					apcom.sanction.LatestStatus("Awaiting Action")
+					apcom.latestStatusStr(apcom.sanction.LatestStatus())
 					apcom.dcsanctiondatestring(kendo.toString(new Date(param.Ca.FinalComment.SendDate), "dd-MMM-yyyy"));
 				}
 			}

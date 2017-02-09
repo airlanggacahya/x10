@@ -201,6 +201,7 @@ apcom.loadCommentData = function(tayp){
 		    	apcom.formCreditAnalyst.FinalComment.RecommendedCondition([""])
 		    }
 		    apcom.isfreezeCA(data[0].CreditAnalys.FinalComment.IsFreeze);
+		    // alert(data[0].CreditAnalys.FinalComment.IsFreeze)
 		    apcom.setFreezeCommentCA(data[0].CreditAnalys.FinalComment.IsFreeze)
 
 	    }
@@ -295,6 +296,7 @@ apcom.checkingAndSaveStatus = function(status) {
 
 				if(apcom.sanction.LatestStatus() === "Sent Back") {
 					apcom.setFreezeCommentCA(false)
+					apcom.isfreezeCA(false)
 				}
 				apcom.latestStatusStr(apcom.sanction.LatestStatus())
 				swal("Success", "Data Successfully " + status, "success");
@@ -356,6 +358,7 @@ apcom.sendCreditAnalyst = function(a, event){
 				} else if (param.Status == apcom.CaStatus.SEND) {
 					swal("Success", "Data Successfully Sent", "success");
 					apcom.setFreezeCommentCA(true)
+					apcom.isfreezeCA(true)
 					apcom.sanction.LatestStatus("Awaiting Action")
 					apcom.latestStatusStr(apcom.sanction.LatestStatus())
 					apcom.dcsanctiondatestring(kendo.toString(new Date(param.Ca.FinalComment.SendDate), "dd-MMM-yyyy"));

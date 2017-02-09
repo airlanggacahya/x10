@@ -198,7 +198,7 @@ r.setData = function (data) {
 
 r.setDataSelectEbitda = function() {
     r.selectedMasterBalanceEbitda([]);
-    ajaxPost("/ratio/getfieldformulabyalias", {Alias: "EBITDA"}, function (res) {
+    ajaxPost("/ratio/getfieldformulabyalias", {Alias: "EBITDAMARGIN"}, function (res) {
         masterBlanaceSelected = {
             Data : [],
             Value : []

@@ -7,40 +7,6 @@ import (
 	tk "github.com/eaciit/toolkit"
 )
 
-// TransformMaster convert from data remote into specific Items
-// transfunc is responsible for transformating data format between source and desctination
-// It work like array map
-func TransformMaster(parentField string, data interface{}, transfunc func(tk.M) tk.M) []tk.M {
-	var ret []tk.M
-	source := data.(map[string]interface{})[parentField]
-
-	// tk.Printfn("%v", reflect.TypeOf(source))
-	/*
-		The thing is, sometimes we found the type is []interface{},
-		which really is []map[string]interface
-		It's kinda confusing.
-
-		So let's check the type and cast them.
-	*/
-	switch products := source.(type) {
-	default:
-		return ret
-	case []interface{}:
-		for _, product := range products {
-			// tk.Printfn("%v", reflect.TypeOf(product))
-			p := product.(map[string]interface{})
-			ret = append(ret, transfunc(p))
-		}
-	case []map[string]interface{}:
-		for _, product := range products {
-			// tk.Printfn("%v", reflect.TypeOf(product))
-			ret = append(ret, transfunc(product))
-		}
-	}
-
-	return ret
-}
-
 // SaveMasterAccountDetail update Items data in MasterAccountDetail
 // field denote Field Name that wants to be updated
 func SaveMasterAccountDetail(field string, data interface{}) error {
@@ -67,13 +33,14 @@ func SaveMasterAccountDetail(field string, data interface{}) error {
 		return err
 	}
 
-	accData := account.Get("Data")
-	if accData == nil {
-		return errors.New("MasterAccountDetail.Data is nil")
+	// casting to array of interface
+	accData, ok := account.Get("Data").([]interface{})
+	if !ok {
+		return errors.New("Unable to access Data")
 	}
 
-	// casting to array of interface
-	for _, val := range accData.([]interface{}) {
+	found := false
+	for _, val := range accData {
 		v := val.(tk.M)
 		if v.Get("Field") != field {
 			continue
@@ -81,6 +48,12 @@ func SaveMasterAccountDetail(field string, data interface{}) error {
 
 		// found, populate with our data
 		v.Set("Items", data)
+		found = true
+	}
+
+	// not found, create it own field
+	if !found {
+		account.Set("Data", append(accData, tk.M{"Field": field, "Items": data}))
 	}
 
 	qinsert := conn.NewQuery().From("MasterAccountDetail").SetConfig("multiexec", true).Save()

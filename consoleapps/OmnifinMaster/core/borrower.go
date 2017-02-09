@@ -2,26 +2,18 @@ package core
 
 import tk "github.com/eaciit/toolkit"
 
-func transformBorrowerConstitutionList(in tk.M) tk.M {
-	p := make(tk.M)
-	// because there is duplication in schemeDesc, we need to save additional data to distinct it
-	p.Set("code", in.GetString("code"))
-	p.Set("genericKey", in.GetString("genericKey"))
-	p.Set("name", in.GetString("description"))
-
-	return p
-}
-
-// SaveBorrowerConstitutionList transform remote data master borrower constitution list
-func SaveBorrowerConstitutionList(data interface{}) error {
-	newScheme := TransformMaster("genericMasterList", data, transformBorrowerConstitutionList)
-	// debug
-	// tk.Printfn("%v", newScheme)
-	err := SaveMasterAccountDetail("BorrowerConstitutionList", newScheme)
-
-	if err != nil {
-		return err
+func SaveBorrowerConstitutionList(data []GenericMaster) error {
+	newData := []tk.M{}
+	for _, val := range data {
+		p := tk.M{}
+		p.Set("code", val.Code)
+		p.Set("genericKey", val.GenericKey)
+		p.Set("name", val.Description)
+		// tk.Printfn("%v", p)
+		newData = append(newData, p)
 	}
 
-	return nil
+	err := SaveMasterAccountDetail("BorrowerConstitutionList", newData)
+
+	return err
 }

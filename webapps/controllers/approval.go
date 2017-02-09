@@ -220,14 +220,14 @@ func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {
 		DCResult, err := DC.Get(datas.Ca.CustomerId, datas.Ca.DealNo)
 
 		if err != nil {
-			return CreateResult(false, nil, err.Error())
-		}
+			// return CreateResult(false, nil, err.Error())
+		} else {
+			DCResult.LatestStatus = ""
 
-		DCResult.LatestStatus = ""
-
-		err = DC.Update(DCResult)
-		if err != nil {
-			return CreateResult(false, nil, err.Error())
+			err = DC.Update(DCResult)
+			if err != nil {
+				return CreateResult(false, nil, err.Error())
+			}
 		}
 	}
 

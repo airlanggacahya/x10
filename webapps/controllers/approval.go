@@ -288,7 +288,11 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 		}
 	}
 
-	UpdateDealSetup(cid, dealno, "ds", datas.LatestStatus)
+	err = UpdateDealSetup(cid, dealno, "ds", datas.LatestStatus)
+
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
 
 	return CreateResult(true, result, "")
 }

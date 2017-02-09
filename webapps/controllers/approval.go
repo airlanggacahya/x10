@@ -240,6 +240,8 @@ func (c *ApprovalController) SaveDCFinalSanction(k *knot.WebContext) interface{}
 func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
+	credit := NewCreditAnalysModel()
+
 	datas := DCFinalSanctionModel{}
 	err := k.GetPayload(&datas)
 	if err != nil {
@@ -256,13 +258,41 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 	dealno := datas.DealNo
 
 	arr := []string{"AccountDetails", "InternalRTR", "BankAnalysisV2", "CustomerProfile", "RatioInputData", "RepaymentRecords", "StockandDebt", "CibilReport", "CibilReportPromotorFinal", "DueDiligenceInput"}
-	for _, val := range arr {
-		err = changeStatus(cid, dealno, val, 2)
+
+	if datas.LatestStatus == "Send Back" {
+		for _, val := range arr {
+			err = changeStatus(cid, dealno, val, 1)
+			if err != nil {
+				return CreateResult(false, nil, err.Error())
+			}
+		}
+
+		credit.Delete(datas.CustomerId, datas.DealNo, "")
+		creditList, err := credit.Get(datas.CustomerId, datas.DealNo, "Draft")
+
 		if err != nil {
 			return CreateResult(false, nil, err.Error())
 		}
+
+		err = credit.UpdateIsFreezeByStruct(creditList, false, "Draft")
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
+
+	} else {
+		for _, val := range arr {
+			err = changeStatus(cid, dealno, val, 2)
+			if err != nil {
+				return CreateResult(false, nil, err.Error())
+			}
+		}
 	}
 
-	UpdateDealSetup(cid, dealno, "ds", datas.LatestStatus)
+	err = UpdateDealSetup(cid, dealno, "ds", datas.LatestStatus)
+
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
 	return CreateResult(true, result, "")
 }

@@ -254,7 +254,7 @@ apcom.setParamSanction = function(){
 }
 
 apcom.checkLatestStatus = function(){
-	if(apcom.sanction.LatestStatus() === "Awaiting Action") {
+	if(apcom.sanction.LatestStatus() === "Awaiting Action" || apcom.sanction.LatestStatus() === "On Hold" || apcom.sanction.LatestStatus() === "Send Back") {
 		$(".checkLatestStatus").prop("disabled", false)
 	} else {
 		$(".checkLatestStatus").prop("disabled", true)

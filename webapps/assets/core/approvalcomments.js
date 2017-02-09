@@ -353,6 +353,7 @@ apcom.sendCreditAnalyst = function(a, event){
 				} else if (param.Status == apcom.CaStatus.SEND) {
 					swal("Success", "Data Successfully Sent", "success");
 					apcom.setFreezeCommentCA(true)
+					apcom.dcsanctiondatestring(kendo.toString(new Date(param.Ca.FinalComment.SendDate), "dd-MMM-yyyy"));
 				}
 			}
 		})

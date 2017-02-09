@@ -6,6 +6,7 @@ import (
 	"github.com/eaciit/orm"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 	"time"
 )
 
@@ -136,4 +137,76 @@ func (m *CreditAnalysModel) SaveDraft(datas CreditAnalysModel) (CreditAnalysMode
 	err := q.Exec(tk.M{"data": datas})
 
 	return datas, err
+}
+
+func (m *CreditAnalysModel) Delete(customerId int, dealNo string, additionalTableName string) error {
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return em
+	}
+
+	query := []*dbox.Filter{}
+	query = append(query, dbox.Eq("CustomerId", customerId))
+	query = append(query, dbox.Eq("DealNo", dealNo))
+
+	em = cMongo.NewQuery().
+		Where(query...).
+		Delete().
+		From(m.TableName() + additionalTableName).
+		Exec(nil)
+
+	if em != nil {
+		return em
+	}
+
+	return em
+}
+
+func (m *CreditAnalysModel) UpdateByParam(customerId int, dealNo string, additionalTableName string, param tk.M) error {
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return em
+	}
+
+	query := []*dbox.Filter{}
+	query = append(query, dbox.Eq("CustomerId", customerId))
+	query = append(query, dbox.Eq("DealNo", dealNo))
+
+	em = cMongo.NewQuery().
+		Where(query...).
+		Update().
+		From(m.TableName() + additionalTableName).
+		Exec(param)
+
+	if em != nil {
+		return em
+	}
+
+	return em
+}
+
+func (m *CreditAnalysModel) UpdateIsFreezeByStruct(list CreditAnalysModel, status bool, additionalTableName string) error {
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return em
+	}
+
+	qinsert := cMongo.NewQuery().
+		From(m.TableName()+additionalTableName).
+		SetConfig("multiexec", true).
+		Save()
+
+	list.FinalComment.IsFreeze = false
+
+	insdata := map[string]interface{}{"data": list}
+	em = qinsert.Exec(insdata)
+	log.Println(em)
+	if em != nil {
+		return em
+	}
+
+	return nil
 }

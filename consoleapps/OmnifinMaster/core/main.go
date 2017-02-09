@@ -3,36 +3,67 @@ package core
 import (
 	"bytes"
 	. "eaciit/x10/consoleapps/OmnifinMaster/helpers"
-	. "eaciit/x10/consoleapps/OmnifinMaster/models"
-	"encoding/xml"
+	"encoding/json"
 	"errors"
-	"strings"
 	"time"
+
+	"net/http"
+
+	"io"
+
+	"io/ioutil"
 
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
 )
 
 type Url struct {
-	PortName    string
-	WSDLAddress string
-	Operation   string
-	SaveHandler func(interface{}) error
+	Name        string
+	Address     string
+	SaveHandler func(DataResponse) error
 }
 
 //-------------------------
 
-type RespWSDL struct {
-	// XMLName xml.Name `xml:"definitions"`
-	Binding Binding `xml:"binding"`
+type CredentialRequest struct {
+	Id       string `json:"userId"`
+	Password string `json:"userPassword"`
 }
 
-type Binding struct {
-	Operation []Operation `xml:"operation"`
+type SyncParameter struct {
+	LastUpdate     string `json:"lastUpdate"`
+	FetchFull      int    `json:"fetchFull"`
+	LastAcceptedId string `json:"lastAcceptedId"`
 }
 
-type Operation struct {
-	Name string `xml:"name,attr"`
+type DataRequest struct {
+	UserCredentials CredentialRequest `json:"userCredentials"`
+	SyncParameter   SyncParameter     `json:"syncParameter"`
+}
+
+//-------------------------
+
+type EmptyString string
+
+func (s *EmptyString) UnmarshalJSON(b []byte) (err error) {
+	if string(b) == "null" {
+		return nil
+	}
+
+	return json.Unmarshal(b, (*string)(s))
+}
+
+type DataResponse struct {
+	RecordCount        int              `json:"recordCount"`
+	OperationStatus    string           `json:"operationStatus"`
+	OperationMsg       string           `json:"operationMsg"`
+	ResponseDateTime   string           `json:"responseDateTime"`
+	ProductMasterList  []ProductMaster  `json:"productMasterList,omitempty"`
+	SchemeMasterList   []SchemeMaster   `json:"schemeMasterList,omitempty"`
+	SupplierMasterList []SupplierMaster `json:"manufactureSupplier,omitempty"`
+	BranchMasterList   []BranchMaster   `json:"branchMasterList,omitempty"`
+	DistrictMasterList []DistrictMaster `json:"districtMasterList,omitempty"`
+	GenericMasterList  []GenericMaster  `json:"genericMasterList",omitempty`
 }
 
 //-------------------------
@@ -98,7 +129,7 @@ func updateLog(log tk.M, err error, xmlString interface{}) {
 	if err != nil {
 		log.Set("error", err.Error())
 	}
-	log.Set("xmlstring", xmlString)
+	log.Set("json", xmlString)
 	log.Set("iscomplete", err == nil)
 	saveLog(log)
 }
@@ -140,190 +171,126 @@ func saveData(masterData interface{}) (err error) {
 	return nil
 }
 
-func getOperationName(url string) ([]string, error) {
-	xmlString := GetHttpGETContentString(url)
+var ErrorRemoteServer = errors.New("Response is not HTTP 200 OK")
 
-	resp := RespWSDL{}
-	err := xml.Unmarshal([]byte(xmlString), &resp)
+func doRequest(url Url) (io.ReadCloser, error) {
+	buf := new(bytes.Buffer)
+	req := DataRequest{
+		CredentialRequest{
+			Id:       "CAT",
+			Password: "44382d31c7fc609d8ff46ad3add2e4a5",
+		},
+		SyncParameter{
+			LastUpdate:     "",
+			FetchFull:      1,
+			LastAcceptedId: "",
+		},
+	}
+
+	json.NewEncoder(buf).Encode(req)
+	resp, err := http.Post(url.Address, "application/json", buf)
 	if err != nil {
-		tk.Printf("error: %v", err)
 		return nil, err
 	}
 
-	var ret []string
-	for _, op := range resp.Binding.Operation {
-		ret = append(ret, op.Name)
+	if resp.StatusCode != http.StatusOK {
+		return nil, ErrorRemoteServer
 	}
 
-	return ret, nil
-}
-
-func makeFirstLowerCase(s string) string {
-	if len(s) < 2 {
-		return strings.ToLower(s)
-	}
-
-	bts := []byte(s)
-
-	lc := bytes.ToLower([]byte{bts[0]})
-	rest := bts[1:]
-
-	return string(bytes.Join([][]byte{lc, rest}, nil))
+	return resp.Body, nil
 }
 
 func DoMain() {
 	urls := []Url{
-		// Url{"MasterCountry", "http://103.251.60.132:8085/OmniFinServices/countryMasterWS?wsdl"},
-		// Url{"MasterState", "http://103.251.60.132:8085/OmniFinServices/stateMasterWS?wsdl"},
-		// Url{"MasterDistrict", "http://103.251.60.132:8085/OmniFinServices/districtMasterWS?wsdl"},
-		// Url{"MasterTehsil", "http://103.251.60.132:8085/OmniFinServices/tehsilMasterWS?wsdl"},
-		// Url{"MasterPincode", "http://103.251.60.132:8085/OmniFinServices/pincodeMasterWS?wsdl"},
-		// Url{"MasterBank", "http://103.251.60.132:8085/OmniFinServices/bankMasterWS?wsdl"},
-		// Url{"MasterBankBranch", "http://103.251.60.132:8085/OmniFinServices/bankBranchMasterWS?wsdl"},
 		{
-			"MasterProduct",
-			"http://103.251.60.132:8085/OmniFinServices/productMasterWS?wsdl",
-			"",
+			"ProductMaster",
+			"http://103.251.60.132:8085/OmniFinServices/restServices/productMasterService/productMaster",
 			SaveProduct,
 		},
 		{
-			"MasterScheme",
-			"http://103.251.60.132:8085/OmniFinServices/schemeMasterWS?wsdl",
-			"",
+			"SchemeMaster",
+			"http://103.251.60.132:8085/OmniFinServices/restServices/schemeMasterService/schemeMaster",
 			SaveScheme,
 		},
 		{
-			"ConstitutionMaster",
-			"http://103.251.60.132:8085/OmniFinServices/genericOperationWS?wsdl",
-			"fetchConstitutionMaster",
-			SaveBorrowerConstitutionList,
-		},
-		{
-			"MasterSupplier",
-			"http://103.251.60.132:8085/OmniFinServices/manufacturerSupplierMasterWS?wsdl",
-			"",
+			"SupplierMaster",
+			"http://103.251.60.132:8085/OmniFinServices/restServices/manufacturerSupplierMaster/manufacturerSupplier",
 			SaveSupplier,
 		},
 		{
-			"StakeHolderType",
-			"http://103.251.60.132:8085/OmniFinServices/genericOperationWS?wsdl",
-			"fetcheStakeholderType",
-			SaveStakeholderType,
+			"BranchMaster",
+			"http://103.251.60.132:8085/OmniFinServices/restServices/branchMasterService/branchMaster",
+			SaveBranch,
 		},
-		// Url{"MasterDocumentChecklist", "http://103.251.60.132:8085/OmniFinServices/documentChecklistMasterWS?wsdl"},
-		// Url{"MasterDocument", "http://103.251.60.132:8085/OmniFinServices/documentMasterWS?wsdl"},
-		// Url{"MasterChildDocument", "http://103.251.60.132:8085/OmniFinServices/childDocumentMasterWS?wsdl"},
-		// Url{"MasterCharges", "http://103.251.60.132:8085/OmniFinServices/chargesMasterWS?wsdl"},
-		// Url{"MasterBranch", "http://103.251.60.132:8085/OmniFinServices/branchMasterWS?wsdl"},
+		{
+			"DistrictMaster",
+			"http://103.251.60.132:8085/OmniFinServices/restServices/districtMasterServices/districtMaster",
+			SaveDistrict,
+		},
+		{
+			"GenericMaster (Cust Constitution, Designation/Position)",
+			"http://103.251.60.132:8085/OmniFinServices/restServices/genricServices/fetchCombinedGenericData",
+			SaveGeneric,
+		},
 	}
 
 	resetData()
 	for _, u := range urls {
-		tk.Println("")
-		tk.Println("Getting", u.PortName, "content from", u.WSDLAddress)
+		tk.Printfn("Process %s", u.Name)
 
-		log, err := createLog(u.PortName)
+		log, err := createLog(u.Name)
 		if err != nil {
 			tk.Println("Error creating log:", err.Error())
 		}
 
-		x := NewReturnedXML()
-		operationList, err := getOperationName(u.WSDLAddress)
+		fp, err := doRequest(u)
 		if err != nil {
 			updateLog(log, err, "")
-			continue
-		}
-
-		var operationName string
-		if len(u.Operation) == 0 {
-			operationName = operationList[0]
-		} else {
-			for _, op := range operationList {
-				if op == u.Operation {
-					operationName = u.Operation
-					break
-				}
-			}
-		}
-
-		if len(operationName) == 0 {
-			tk.Printfn("Operation Not Found On: %s", u.PortName)
-			continue
-		}
-
-		x.ListTagName = tk.Sprintf(
-			"%sList",
-			makeFirstLowerCase(
-				strings.Replace(
-					strings.Replace(operationName, "fetch", "", 1),
-					"Response", "", 1)))
-
-		body := tk.Sprintf(`<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.omnifin.a3spl.com/">
-			<soapenv:Header/>
-			   	<soapenv:Body>
-			      	<web:%s>
-			        	<!--Optional:-->
-			         	<inputParameterWrapper>
-			            	<!--Optional:-->
-			            	<syncParameter>
-				               	<!--Optional:-->
-				               	<fetchFull>1</fetchFull>
-				               	<!--Optional:-->
-				               	<lastUpdate>?</lastUpdate>
-			            	</syncParameter>
-				            <!--Optional:-->
-				            <userCredentials>
-				               	<!--Optional:-->
-				               	<userId>CAT</userId>
-				               	<!--Optional:-->
-				               	<userPassword>44382d31c7fc609d8ff46ad3add2e4a5</userPassword>
-				            </userCredentials>
-			         	</inputParameterWrapper>
-			      	</web:%s>
-			   	</soapenv:Body>
-			</soapenv:Envelope>`, operationName, operationName)
-
-		x.InString, err = GetHttpPOSTContentString(u.WSDLAddress, body)
-
-		xmlStringLog := x.InString
-		// Increase to 8 megs, max MongoDB Doc Size is 16 megs
-		if len(xmlStringLog) > 8388608 {
-			xmlStringLog = xmlStringLog[:8388608]
-		}
-
-		updateLog(log, err, xmlStringLog)
-		if err != nil {
-			continue
-		}
-
-		// fetch error
-		if err := x.FetchReturnValues(); err != nil {
 			tk.Println(err.Error())
 			continue
 		}
-		masterData := x.GenerateMasterData().(map[string]interface{})
+		defer fp.Close()
+
+		jsonResp, err := ioutil.ReadAll(fp)
+		if err != nil {
+			updateLog(log, err, "")
+			tk.Println(err.Error())
+			continue
+		}
+
+		// Increase to 8 megs, max MongoDB Doc Size is 16 megs
+		if len(jsonResp) > 8388608 {
+			updateLog(log, err, jsonResp[:8388608])
+		} else {
+			updateLog(log, err, jsonResp)
+		}
+
+		// tk.Printfn("%v", string(jsonResp))
+
+		var data DataResponse
+		err = json.Unmarshal(jsonResp, &data)
+		if err != nil {
+			updateLog(log, err, "")
+			tk.Println(err.Error())
+			continue
+		}
 
 		// operation success is either
 		//  operationMsg = Operation Compleated Successfully (NOT TYPO)
 		//  or
 		//  operationStatus = 1
-		if tk.ToString(masterData["operationMsg"]) != "Operation Compleated Successfully" &&
-			tk.ToInt(masterData["operationStatus"], "Int64") != 1 {
-			// debug
-			if opMsg, hasOpMsg := masterData["operationMsg"]; hasOpMsg {
-				tk.Printfn("Reply: %s", opMsg)
-			}
-			err = errors.New("Operation status is not met")
-
-			updateLog(log, err, xmlStringLog)
+		if data.OperationMsg != "Operation Compleated Successfully" &&
+			data.OperationStatus != "1" {
+			err := errors.New("Operation status is not met")
+			updateLog(log, err, jsonResp)
 			tk.Println(err.Error())
 			continue
 		}
 
 		// save to OmnifinMasterData
-		err = saveData(masterData)
+		err = saveData(data)
 		if err != nil {
-			updateLog(log, err, xmlStringLog)
+			updateLog(log, err, jsonResp)
 			tk.Println(err.Error())
 			continue
 		}
@@ -331,15 +298,13 @@ func DoMain() {
 		// run individual save code transformation
 		// we do save to master collection here according to url.SaveHandler
 		if u.SaveHandler != nil {
-			err = u.SaveHandler(masterData)
+			err = u.SaveHandler(data)
 		}
 
 		if err != nil {
-			updateLog(log, err, xmlStringLog)
+			updateLog(log, err, jsonResp)
 			tk.Println(err.Error())
 			continue
 		}
-
-		tk.Println("Saved.")
 	}
 }

@@ -6,23 +6,24 @@ import (
 	tk "github.com/eaciit/toolkit"
 )
 
-func transformProduct(in tk.M) tk.M {
-	p := make(tk.M)
-	p.Set("name", hp.ToWordCase(in.GetString("productDesc")))
-
-	return p
+type ProductMaster struct {
+	ProductId   string `json:"productId"`
+	ProductDesc string `json:"productDesc"`
+	Status      string `json:"status"`
+	Category    string `json:"productCategory"`
+	LastUpdate  string `json:"lastUpdate"`
 }
 
-// SaveProduct transform remote data master product desc into master account detail
-func SaveProduct(data interface{}) error {
-	newProduct := TransformMaster("productMasterList", data, transformProduct)
-	// debug
-	// tk.Printfn("%v", newProduct)
-	err := SaveMasterAccountDetail("Products", newProduct)
-
-	if err != nil {
-		return err
+func SaveProduct(data DataResponse) error {
+	newData := []tk.M{}
+	for _, val := range data.ProductMasterList {
+		p := tk.M{}
+		p.Set("name", hp.ToWordCase(val.ProductDesc))
+		// tk.Printfn("%v", p)
+		newData = append(newData, p)
 	}
 
-	return nil
+	err := SaveMasterAccountDetail("Products", newData)
+
+	return err
 }

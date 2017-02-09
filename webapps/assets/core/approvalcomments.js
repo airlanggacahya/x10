@@ -358,6 +358,7 @@ apcom.sendCreditAnalyst = function(a, event){
 					apcom.setFreezeCommentCA(true)
 					apcom.sanction.LatestStatus("Awaiting Action")
 					apcom.latestStatusStr(apcom.sanction.LatestStatus())
+					apcom.dcsanctiondatestring(kendo.toString(new Date(param.Ca.FinalComment.SendDate), "dd-MMM-yyyy"));
 				}
 			}
 		})

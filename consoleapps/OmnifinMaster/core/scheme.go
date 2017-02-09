@@ -6,30 +6,38 @@ import (
 	tk "github.com/eaciit/toolkit"
 )
 
-// transformScheme save additional information specific for master Scheme
-func transformScheme(in tk.M) tk.M {
-	p := make(tk.M)
-	// because there is duplication in schemeDesc, we need to save additional data to distinct it
-	p.Set("productId", in.GetString("productId"))
-	p.Set("schemeId", in.GetString("schemeId"))
-	p.Set("schemeDesc", in.GetString("schemeDesc"))
-	p.Set("name", hp.ToWordCase(in.GetString("schemeDesc")))
-
-	return p
+type SchemeMaster struct {
+	SchemeId   int     `json:"schemeId"`
+	SchemeDesc string  `json:"schemeDesc"`
+	ProductId  string  `json:"productId"`
+	MinLoan    float64 `json:"minLoanAmount"`
+	MaxLoan    float64 `json:"maxLoanAmount"`
+	MinTenure  float64 `json:"minTenure"`
+	MaxTenure  float64 `json:"maxTenure"`
+	DefTenure  float64 `json:"defTenure"`
+	MinEffRate float64 `json:"minEffRate"`
+	MaxEffRate float64 `json:"maxEffRate"`
+	DefEffRate float64 `json:"defEffRate"`
+	Status     string  `json:"status"`
+	LastUpdate string  `json:"lastUpdate"`
 }
 
-// SaveScheme transform remote data master scheme desc into master account detail
-func SaveScheme(data interface{}) error {
-	newScheme := TransformMaster("schemeMasterList", data, transformScheme)
-	// remove duplicate
-	newScheme = removeDuplicateStringField(newScheme, "name")
-	// debug
-	// tk.Printfn("%v", newProduct)
-	err := SaveMasterAccountDetail("Scheme", newScheme)
-
-	if err != nil {
-		return err
+func SaveScheme(data DataResponse) error {
+	newData := []tk.M{}
+	for _, val := range data.SchemeMasterList {
+		p := tk.M{}
+		p.Set("productId", val.ProductId)
+		p.Set("schemeId", val.SchemeId)
+		p.Set("schemeDesc", val.SchemeDesc)
+		p.Set("name", hp.ToWordCase(val.SchemeDesc))
+		// tk.Printfn("%v", p)
+		newData = append(newData, p)
 	}
 
-	return nil
+	// remove duplicate name
+	newData = removeDuplicateStringField(newData, "name")
+
+	err := SaveMasterAccountDetail("Scheme", newData)
+
+	return err
 }

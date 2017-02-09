@@ -444,7 +444,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 				UpdateDealSetup(CustomerID, DealNo, "ertr", "Under Process")
 			case 1:
 				dt.DateConfirmed = curTime
-				UpdateDealSetup(CustomerID, DealNo, "ertr", "IsConfirm")
+				UpdateDealSetup(CustomerID, DealNo, "ertr", "Confirmed")
 			case 2:
 				dt.DateFreeze = curTime
 				UpdateDealSetup(CustomerID, DealNo, "ertr", "Freeze")
@@ -480,7 +480,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 1:
 				dt.IsConfirm = true
 				dt.IsFreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "sbd", "IsConfirm")
+				UpdateDealSetup(CustomerID, DealNo, "sbd", "Confirmed")
 			case 2:
 				dt.IsConfirm = true
 				dt.IsFreeze = true
@@ -851,7 +851,7 @@ func updateDealSetupLatestData(cid string, dealno string, formname string, forms
 
 }
 
-var ErrorDataNotFound = errors.New("Data Not Found")
+var ErrorDataNotFound = errors.New("Data Deal Setup Not Found")
 
 func UpdateDealSetup(cid string, dealno string, formname string, formstatus string) error {
 

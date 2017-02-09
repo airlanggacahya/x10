@@ -264,7 +264,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 	}
 
 	model := NewDCFinalSanctionModel()
-	result, err := model.Save(datas)
+	err = model.Update(datas)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}
@@ -309,5 +309,5 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 	// 	return CreateResult(false, nil, err.Error())
 	// }
 
-	return CreateResult(true, result, "")
+	return CreateResult(true, nil, "")
 }

@@ -770,8 +770,13 @@ $(document).ajaxComplete(function(){
 	}
 
 	setTimeout(function(){
+		try{
 		if(countUnconfirm() > 0){
 			$("#send").prop("disabled", true)
 		}
+	}catch(e){
+		console.log(e)
+	}
+	
 	},100)
 })

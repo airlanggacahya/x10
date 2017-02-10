@@ -186,7 +186,12 @@ func (c *ApprovalController) GetDCAndCreditAnalysDraft(k *knot.WebContext) inter
 		//return CreateResult(false, nil, err.Error())
 	}
 
-	return []tk.M{{"CreditAnalys": resultCredit}, {"DCFinalSanction": resultDC}}
+	resultCreditFix, err := modelCredit.Get(customerId, dealNo, "")
+	if err != nil {
+		//return CreateResult(false, nil, err.Error())
+	}
+
+	return []tk.M{{"CreditAnalys": resultCredit}, {"DCFinalSanction": resultDC}, {"CreditAnalysFix": resultCreditFix}}
 }
 
 func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {

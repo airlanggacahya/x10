@@ -257,8 +257,7 @@ apcom.setParamSanction = function(){
 }
 
 apcom.checkLatestStatus = function(param){
-	if(param.Id != undefined && param.Id == "") {
-		console.log(param)
+	if(param != undefined && param.Id != undefined && param.Id == "") {
 		$(".checkLatestStatus").prop("disabled", true)
 	} else if(apcom.sanction.LatestStatus() === "Awaiting Action" || apcom.sanction.LatestStatus() === "On Hold" || apcom.sanction.LatestStatus() === "Sent Back") {
 		$(".checkLatestStatus").prop("disabled", false)
@@ -369,6 +368,8 @@ apcom.sendCreditAnalyst = function(a, event){
 					apcom.sanction.LatestStatus("Awaiting Action")
 					apcom.latestStatusStr(apcom.sanction.LatestStatus())
 					apcom.dcsanctiondatestring(kendo.toString(new Date(param.Ca.FinalComment.SendDate), "dd-MMM-yyyy"));
+					
+					apcom.checkLatestStatus()
 				}
 			}
 		})

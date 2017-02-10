@@ -271,6 +271,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 	model := NewDCFinalSanctionModel()
 	err = model.Update(datas)
 	if err != nil {
+		c.WriteLog("sarif")
 		return CreateResult(false, nil, err.Error())
 	}
 

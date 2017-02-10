@@ -371,7 +371,7 @@ apcom.sendCreditAnalyst = function(a, event){
 					apcom.dcsanctiondatestring(kendo.toString(new Date(param.Ca.FinalComment.SendDate), "dd-MMM-yyyy"));
 				}
 
-				refreshFilter();
+				getComments('draft');
 			}
 
 		})
@@ -658,11 +658,11 @@ apcom.loadSection = function(){
 				].join('')
 			}
 		}], 
-		// edit: function(e){
-		// 	if(apcom.isfreezeCA() == true){
-		// 		this.closeCell();
-		// 	}
-		// }
+		edit: function(e){
+			if(apcom.isfreezeCA() == true){
+				this.closeCell();
+			}
+		}
 	});
 
 	$("#gridriskconcersnmitigants").html("");
@@ -777,10 +777,10 @@ apcom.removeOtherCondition = function(index){
 
 apcom.setFreezeCommentCA = function(d){
 	$("#send").prop("disabled", d)
-	// $(".ca").prop("disabled", d)
-	// setTimeout(function(){
-	// 	$(".inbtn").prop("disabled", d)
-	// }, 100);
+	$(".ca").prop("disabled", d)
+	setTimeout(function(){
+		$(".inbtn").prop("disabled", d)
+	}, 100);
 }
 
 $(document).ajaxComplete(function(){

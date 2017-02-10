@@ -371,7 +371,10 @@ apcom.sendCreditAnalyst = function(a, event){
 					
 					apcom.checkLatestStatus()
 				}
+
+				getComments('draft');
 			}
+
 		})
 	}else{
 		swal("Warning", "Select Customer Id and Deal Number First", "warning");
@@ -382,6 +385,7 @@ apcom.sendCreditAnalyst = function(a, event){
 var dcFinalSanctionDate = function(d){
 	var ret = function(param){
 		pelengkap = "T00:00:00.000Z"
+		// console.log(param == undefined ? ("1970-01-01" + pelengkap) : (kendo.toString(param, "yyyy-MM-dd") + pelengkap));
 		return param == undefined ? ("1970-01-01" + pelengkap) : (kendo.toString(param, "yyyy-MM-dd") + pelengkap)
 	}
 
@@ -639,6 +643,8 @@ apcom.loadSection = function(){
 			template: function(d){
 				ind ++;
 				var index = $('#grid1 tr[data-uid="'+d.uid+'"]').index();
+
+				// console.log("----------->>>>", index)
 				if(ind == 1 || index == 0){
 					return [
 					'<center>',
@@ -785,11 +791,13 @@ $(document).ajaxComplete(function(){
 
 	setTimeout(function(){
 		try{
-		if(countUnconfirm() > 0){
-			$("#send").prop("disabled", true)
+			if(countUnconfirm() > 0){
+				$("#send").prop("disabled", true)
+			}
+		}catch(e){
+			console.log(e)
 		}
-	}catch(e){
 	}
 	
-	},100)
+	,100)
 })

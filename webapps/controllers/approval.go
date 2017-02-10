@@ -217,7 +217,8 @@ func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {
 	if datas.Status == 1 {
 		err = updateDealSetupLatestData(strconv.Itoa(datas.Ca.CustomerId), datas.Ca.DealNo, "ds", "Decision Committee Action Awaited")
 		if err != nil {
-			return CreateResult(false, nil, err.Error())
+			c.WriteLog(err.Error())
+			// return CreateResult(false, nil, err.Error())
 		}
 
 		DC := NewDCFinalSanctionModel()

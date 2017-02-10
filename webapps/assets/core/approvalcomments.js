@@ -122,29 +122,31 @@ apcom.loadCommentData = function(tayp){
 		    
 		    ko.mapping.fromJS(data[1].DCFinalSanction, apcom.sanction);
 
-		    if(apcom.sanction.LatestStatus() === "") {
-		    	apcom.sanction.LatestStatus("Awaiting Action")
-		    }
+		    if(tayp === undefined) {
+		    	if(apcom.sanction.LatestStatus() === "") {
+			    	apcom.sanction.LatestStatus("Awaiting Action")
+			    }
 
-		    if(apcom.ValidateDate(apcom.sanction.Date()) && apcom.sanction.LatestStatus() !== "Awaiting Action" && apcom.sanction.LatestStatus() !== "" ) {
-		    	var tempDate = moment(apcom.sanction.Date()).format("DD-MMM-YYYY")
-	    		apcom.dcsanctiondatestring(tempDate)
-		    }
-
-		    apcom.checkLatestStatus()
-
-	    	if(apcom.sanction.LatestStatus() === "Awaiting Action") {
-		    	if(apcom.ValidateDate(apcom.formCreditAnalyst.FinalComment.SendDate())) {
-		    		var tempDate = moment(apcom.formCreditAnalyst.FinalComment.SendDate()).format("DD-MMM-YYYY")
-		    		apcom.sanction.Date(apcom.formCreditAnalyst.FinalComment.SendDate())
+			    if(apcom.ValidateDate(apcom.sanction.Date()) && apcom.sanction.LatestStatus() !== "Awaiting Action" && apcom.sanction.LatestStatus() !== "" ) {
+			    	var tempDate = moment(apcom.sanction.Date()).format("DD-MMM-YYYY")
 		    		apcom.dcsanctiondatestring(tempDate)
-		    	} else {
-		    		apcom.sanction.Date((new Date()).toISOString())
-		    		apcom.dcsanctiondatestring("")
-		    	}
-		    }
+			    }
 
-		    apcom.latestStatusStr(apcom.sanction.LatestStatus())
+			    apcom.checkLatestStatus(res[0].CreditAnalys)
+
+		    	if(apcom.sanction.LatestStatus() === "Awaiting Action") {
+			    	if(apcom.ValidateDate(apcom.formCreditAnalyst.FinalComment.SendDate())) {
+			    		var tempDate = moment(apcom.formCreditAnalyst.FinalComment.SendDate()).format("DD-MMM-YYYY")
+			    		apcom.sanction.Date(apcom.formCreditAnalyst.FinalComment.SendDate())
+			    		apcom.dcsanctiondatestring(tempDate)
+			    	} else {
+			    		apcom.sanction.Date((new Date()).toISOString())
+			    		apcom.dcsanctiondatestring("")
+			    	}
+			    }
+
+			    apcom.latestStatusStr(apcom.sanction.LatestStatus())
+		    }
 
 		    apcom.Date("")
 			apcom.LeftAmount("")
@@ -254,12 +256,17 @@ apcom.setParamSanction = function(){
 	return param	
 }
 
-apcom.checkLatestStatus = function(){
-	if(apcom.sanction.LatestStatus() === "Awaiting Action" || apcom.sanction.LatestStatus() === "On Hold" || apcom.sanction.LatestStatus() === "Sent Back") {
+apcom.checkLatestStatus = function(param){
+	if(param.Id != undefined && param.Id == "") {
+		console.log(param)
+		$(".checkLatestStatus").prop("disabled", true)
+	} else if(apcom.sanction.LatestStatus() === "Awaiting Action" || apcom.sanction.LatestStatus() === "On Hold" || apcom.sanction.LatestStatus() === "Sent Back") {
 		$(".checkLatestStatus").prop("disabled", false)
 	} else {
 		$(".checkLatestStatus").prop("disabled", true)
-	} 
+	}
+
+
 }
 
 apcom.saveSanctionFix = function(param, callback) {
@@ -374,7 +381,6 @@ apcom.sendCreditAnalyst = function(a, event){
 var dcFinalSanctionDate = function(d){
 	var ret = function(param){
 		pelengkap = "T00:00:00.000Z"
-		console.log(param == undefined ? ("1970-01-01" + pelengkap) : (kendo.toString(param, "yyyy-MM-dd") + pelengkap));
 		return param == undefined ? ("1970-01-01" + pelengkap) : (kendo.toString(param, "yyyy-MM-dd") + pelengkap)
 	}
 
@@ -494,7 +500,6 @@ apcom.resetCreditAnalyst = function(){
 		refreshFilter();
 	}, function(dismiss) {
 		if (dismiss === 'cancel') {
-			console.log("dismiss");
 		}
 	});
 }
@@ -633,7 +638,6 @@ apcom.loadSection = function(){
 			template: function(d){
 				ind ++;
 				var index = $('#grid1 tr[data-uid="'+d.uid+'"]').index();
-				console.log("----------->>>>", index)
 				if(ind == 1 || index == 0){
 					return [
 					'<center>',
@@ -784,7 +788,6 @@ $(document).ajaxComplete(function(){
 			$("#send").prop("disabled", true)
 		}
 	}catch(e){
-		console.log(e)
 	}
 	
 	},100)

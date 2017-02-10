@@ -370,7 +370,10 @@ apcom.sendCreditAnalyst = function(a, event){
 					apcom.latestStatusStr(apcom.sanction.LatestStatus())
 					apcom.dcsanctiondatestring(kendo.toString(new Date(param.Ca.FinalComment.SendDate), "dd-MMM-yyyy"));
 				}
+
+				refreshFilter();
 			}
+
 		})
 	}else{
 		swal("Warning", "Select Customer Id and Deal Number First", "warning");
@@ -381,6 +384,7 @@ apcom.sendCreditAnalyst = function(a, event){
 var dcFinalSanctionDate = function(d){
 	var ret = function(param){
 		pelengkap = "T00:00:00.000Z"
+		// console.log(param == undefined ? ("1970-01-01" + pelengkap) : (kendo.toString(param, "yyyy-MM-dd") + pelengkap));
 		return param == undefined ? ("1970-01-01" + pelengkap) : (kendo.toString(param, "yyyy-MM-dd") + pelengkap)
 	}
 
@@ -638,6 +642,8 @@ apcom.loadSection = function(){
 			template: function(d){
 				ind ++;
 				var index = $('#grid1 tr[data-uid="'+d.uid+'"]').index();
+
+				// console.log("----------->>>>", index)
 				if(ind == 1 || index == 0){
 					return [
 					'<center>',
@@ -652,11 +658,11 @@ apcom.loadSection = function(){
 				].join('')
 			}
 		}], 
-		edit: function(e){
-			if(apcom.isfreezeCA() == true){
-				this.closeCell();
-			}
-		}
+		// edit: function(e){
+		// 	if(apcom.isfreezeCA() == true){
+		// 		this.closeCell();
+		// 	}
+		// }
 	});
 
 	$("#gridriskconcersnmitigants").html("");
@@ -771,10 +777,10 @@ apcom.removeOtherCondition = function(index){
 
 apcom.setFreezeCommentCA = function(d){
 	$("#send").prop("disabled", d)
-	$(".ca").prop("disabled", d)
-	setTimeout(function(){
-		$(".inbtn").prop("disabled", d)
-	}, 100);
+	// $(".ca").prop("disabled", d)
+	// setTimeout(function(){
+	// 	$(".inbtn").prop("disabled", d)
+	// }, 100);
 }
 
 $(document).ajaxComplete(function(){
@@ -784,11 +790,13 @@ $(document).ajaxComplete(function(){
 
 	setTimeout(function(){
 		try{
-		if(countUnconfirm() > 0){
-			$("#send").prop("disabled", true)
+			if(countUnconfirm() > 0){
+				$("#send").prop("disabled", true)
+			}
+		}catch(e){
+			console.log(e)
 		}
-	}catch(e){
 	}
 	
-	},100)
+	,100)
 })

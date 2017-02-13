@@ -232,10 +232,11 @@ func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {
 		if err != nil {
 			// return CreateResult(false, nil, err.Error())
 		} else {
-			DCResult.LatestStatus = ""
+			DCResult.LatestStatus = "Awaiting Action"
 
 			err = DC.Update(DCResult)
 			if err != nil {
+				c.WriteLog(err)
 				return CreateResult(false, nil, err.Error())
 			}
 		}

@@ -20,6 +20,8 @@ var apcom = {
 	}
 }
 
+apcom.dataStatus = ko.observableArray(["Awaiting Action", "Approved", "Rejected", "Cancelled", "On Hold", "Sent Back"])
+
 apcom.dcsanctiondatestring = ko.observable("")
 apcom.latestStatusStr = ko.observable("")
 
@@ -123,7 +125,7 @@ apcom.loadCommentData = function(tayp){
 		    ko.mapping.fromJS(data[1].DCFinalSanction, apcom.sanction);
 
 		    if(tayp === undefined) {
-		    	if(apcom.sanction.LatestStatus() === "") {
+		    	if(apcom.sanction.LatestStatus() === "" && apcom.formCreditAnalyst.Id() !== "") {
 			    	apcom.sanction.LatestStatus("Awaiting Action")
 			    }
 
@@ -259,6 +261,8 @@ apcom.setParamSanction = function(){
 apcom.checkLatestStatus = function(param){
 	if(param != undefined && param.Id != undefined && param.Id == "") {
 		$(".checkLatestStatus").prop("disabled", true)
+	} else if(param != undefined && param.Id != undefined && param.Id !== "" && apcom.sanction.LatestStatus() === "") {
+		$(".checkLatestStatus").prop("disabled", false)
 	} else if(apcom.sanction.LatestStatus() === "Awaiting Action" || apcom.sanction.LatestStatus() === "On Hold" || apcom.sanction.LatestStatus() === "Sent Back") {
 		$(".checkLatestStatus").prop("disabled", false)
 	} else {

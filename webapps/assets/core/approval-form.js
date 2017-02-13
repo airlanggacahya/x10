@@ -173,52 +173,159 @@ r.ratingReferenceTooltip = function(param){
 r.checkValidation = function(data){
   if(data.Data.CP.length==0){
         // Materialize.toast("Customer Profile Data Not Confirmed", 5000);
-        countUnconfirm(countUnconfirm() + 1);
-        fixToast("Customer Profile Data Not Confirmed");
+        // countUnconfirm(countUnconfirm() + 1);
+        // fixToast("Customer Profile Data Not Confirmed");
 
   }
 
   if(data.Data.BA.length==0){
         // Materialize.toast("Bank Analysis Data Not Confirmed", 5000);
-        countUnconfirm(countUnconfirm() + 1);
-        fixToast("Bank Analysis Data Not Confirmed");
+        // countUnconfirm(countUnconfirm() + 1);
+        // fixToast("Bank Analysis Data Not Confirmed");
 
   }
 
   if(data.Data.CIBIL.length==0){
         // Materialize.toast("CIBIL Data Not Confirmed", 5000);
-        countUnconfirm(countUnconfirm() + 1);
-        fixToast("CIBIL Data Not Confirmed");
+        // countUnconfirm(countUnconfirm() + 1);
+        // fixToast("CIBIL Data Not Confirmed");
 
   }
 
   if(data.Data.CIBILPROM.length==0){
         // Materialize.toast("CIBIL Promotor Data Not Confirmed", 5000);
-        countUnconfirm(countUnconfirm() + 1);
-        fixToast("CIBIL Promotor Data Not Confirmed")
+        // countUnconfirm(countUnconfirm() + 1);
+        // fixToast("CIBIL Promotor Data Not Confirmed")
 
   }
 
   if(data.Data.AD.length==0){
         // Materialize.toast("Account Details Data Not Confirmed", 5000);
-        countUnconfirm(countUnconfirm() + 1);
-        fixToast("Account Details Data Not Confirmed");
+        // countUnconfirm(countUnconfirm() + 1);
+        // fixToast("Account Details Data Not Confirmed");
 
   }
 
   if(data.Data.RTR.length==0){
         // Materialize.toast("RTR Data Not Confirmed", 5000);
-        countUnconfirm(countUnconfirm() + 1);
-        fixToast("RTR Data Not Confirmed");
+        // countUnconfirm(countUnconfirm() + 1);
+        // fixToast("RTR Data Not Confirmed");
 
   }
 
   $("#toast-container").css("top","30%");
 }
 
+checkConfirmed = function(){
+    var param = {
+        customerID : filter().CustomerSearchVal(),
+        dealNO : filter().DealNumberSearchVal(),
+    }
+
+    ajaxPost("/approval/getcheckconfirm", param, function(res){
+        var data = res.Data
+        if(res.IsError != true){
+          if(data.AcStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("Customer Profile Data Not Confirmed");
+          }else{
+            if(data.AcStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("Customer Profile Data Not ");
+            }
+          }
+
+          if(data.AdStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("Account Details Data Not Confirmed");
+          }else{
+            if (data.AdStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("Account Details Data Not Found");
+            }
+          }
+
+          if(data.BaStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("Bank Analysis Data Not Confirmed");
+          }else{
+            if(data.BaStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("Bank Analysis Data Not Found");
+            }
+          }
+
+          if(data.DueStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("Due Diligence Data Not Confirmed")
+          }else{
+            if(data.DueStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("Due Diligence Data Not Found")
+            }
+          }
+
+          if(data.ScFound == null){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("Data Credit Score Card Not Found")
+          }
+
+          if(data.BscStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("Balance Sheet Data Not Confirmed");
+          }else{
+            if(data.BscStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("Balance Sheet Data Not Found");
+            }
+          }
+
+          if(data.AcStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("Customer Profile Data Not Confirmed");
+          }else{
+            if(data.AcStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("Customer Profile Data Not Found");
+            }
+          }
+
+          if(data.CibPromStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("CIBIL Promotor Data Not Confirmed");
+          }else{
+            if(data.CibPromStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("CIBIL Promotor Data Not Found");
+            }
+          }
+
+          if(data.rtrStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("RTR Data Not Confirmed");
+          }else{
+            if(data.rtrStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("RTR Data Not Found");
+            }
+          }
+
+          if(data.CiStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("CIBIL Data Not Confirmed");
+          }else if(data.CiStatus == -1){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("CIBIL Data Not Confirmed");
+          }
+
+        }
+    })
+}
+
 refreshFilter = function(){
   countUnconfirm(0)
   $(".toaster").html("")
+  checkConfirmed()
   r.initEvents()
   if (r.getCustomerId() === false) {
       return
@@ -646,8 +753,8 @@ r.getCreditScoreCard = function(param, callback) {
           param.Internalrating = "";
           r.getNormData(param)
           // Materialize.toast("Data Credit Score Card Not Found", 5000);
-          countUnconfirm(countUnconfirm() + 1);
-          fixToast("Data Credit Score Card Not Found")
+          // countUnconfirm(countUnconfirm() + 1);
+          // fixToast("Data Credit Score Card Not Found")
       }
     }
 
@@ -856,8 +963,8 @@ var getredflag = function(){
             createRedFlags();
              // swal("Warning", "Red Flags Data Not Found", "warning");
              // Materialize.toast("Due Diligence Data Not Confirmed", 5000);
-             countUnconfirm(countUnconfirm() + 1);
-             fixToast("Due Diligence Data Not Confirmed")
+             // countUnconfirm(countUnconfirm() + 1);
+             // fixToast("Due Diligence Data Not Confirmed")
 
             return
         }
@@ -906,8 +1013,8 @@ var getreportdata = function(){
     }else{
          // swal("Warning", "Report Data Not Found", "warning");
           // Materialize.toast("Balance Sheet Data Not Confirmed", 5000);
-          countUnconfirm(countUnconfirm() + 1);
-          fixToast("Balance Sheet Data Not Confirmed");
+          // countUnconfirm(countUnconfirm() + 1);
+          // fixToast("Balance Sheet Data Not Confirmed");
 
         return
     }

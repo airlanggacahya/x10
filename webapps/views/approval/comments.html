@@ -46,18 +46,20 @@
 	    	</div>
 		</div> -->
 		<div class="form-group col-sm-6">
-	    	<label class="col-sm-6 text-left">Status : </label>
-	    	<div class="col-sm-6">
-	    		<!-- <input type="text" data-bind="value: " class="input-sm form-control"> -->
-	    		<label style="width: 100%;text-align: right;" ><span data-bind="text: apcom.latestStatusStr">awaiting</span></label>
+	    	<label class="col-sm-12 text-left">Status  </label>
+	    	<div class="col-sm-12">
+	    		<input type="text" data-bind="value: apcom.latestStatusStr, enable: false" class="input-sm form-control">
+	    		<!-- <label style="width: 100%;text-align: right;" ><span data-bind="text: apcom.latestStatusStr">awaiting</span></label> -->
 	    	</div>
 		</div>
 		<div class="form-group col-sm-6">
-	    	<label class="col-sm-6 text-left">Decision Date : </label>
-	    	<div class="col-sm-6">
-	    		<label data-bind="text: apcom.dcsanctiondatestring"  style="width: 100%; text-align: right;">-</label>
+	    	<label class="col-sm-12 text-left">Decision Date </label>
+	    	<div class="col-sm-12">
+	    		<input type="text" data-bind="value: apcom.dcsanctiondatestring, enable: false" class="input-sm form-control">
+	    		<!-- <label data-bind="text: "  style="width: 100%; text-align: left;">-</label> -->
 	    	</div>
 		</div>
+
 	</div>
 	<div class="col-sm-12">
 		<div class="form-group col-sm-6">

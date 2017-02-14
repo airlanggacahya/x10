@@ -391,7 +391,6 @@ func (c *ApprovalController) GetCheckConfirm(k *knot.WebContext) interface{} {
 	}
 
 	Sc, er := c.FetchCrediScoreCard(payload["customerID"].(string), payload["dealNO"].(string))
-	// fmt.Println("------------------------->>>>>>>", Sc)
 	if er != nil {
 		result.Set("ScFound", nil)
 	} else {
@@ -403,6 +402,18 @@ func (c *ApprovalController) GetCheckConfirm(k *knot.WebContext) interface{} {
 	}
 
 	custid := payload["customerID"].(string) + "|" + payload["dealNO"].(string)
+
+	sd, er := c.FetchStockAndDebt(custid)
+	if er != nil {
+		result.Set("SdStatus", -1)
+	} else {
+		if sd.IsConfirm == true {
+			result.Set("SdStatus", 1)
+		} else {
+			result.Set("SdStatus", 0)
+		}
+
+	}
 
 	bsc, er := c.FetchBalanceSheet(custid)
 
@@ -440,6 +451,27 @@ func (c *ApprovalController) FetchAccountDetail(customerID string, DealNo string
 	return &results[0], nil
 }
 
+func (c *ApprovalController) FetchStockAndDebt(custid string) (*StockandDebtModel, error) {
+	query := tk.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("customerid", custid)}...)}
+	csr, err := c.Ctx.Find(new(StockandDebtModel), query)
+	defer csr.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]StockandDebtModel, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return nil, err
+	}
+
+	if (len(results)) == 0 {
+		return nil, errors.New("Credit Score Card data not found")
+	}
+
+	return &results[0], nil
+}
+
 func (c *ApprovalController) FetchBalanceSheet(custid string) (*RatioInputData, error) {
 	query := tk.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("customerid", custid)}...)}
 	csr, err := c.Ctx.Find(new(RatioInputData), query)
@@ -460,6 +492,8 @@ func (c *ApprovalController) FetchBalanceSheet(custid string) (*RatioInputData, 
 
 	return &results[0], nil
 }
+
+// var stock tk.M{}
 
 func (c *ApprovalController) FetchCrediScoreCard(customerID string, DealNo string) (interface{}, error) {
 	conn, err := GetConnection()

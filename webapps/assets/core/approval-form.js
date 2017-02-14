@@ -271,6 +271,17 @@ checkConfirmed = function(){
             }
           }
 
+          if(data.SdStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("Stock And Debt Data Not Confirmed");
+          }else{
+            if(data.SdStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("Stock And Debt Data Not Found");
+            }
+          }
+
+
           if(data.AcStatus == 0){
             countUnconfirm(countUnconfirm() + 1);
             fixToast("Customer Profile Data Not Confirmed");

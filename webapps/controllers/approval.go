@@ -5,7 +5,7 @@ import (
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"errors"
-	// "fmt"
+	// "fm	t"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -387,11 +387,7 @@ func (c *ApprovalController) GetCheckConfirm(k *knot.WebContext) interface{} {
 	if er != nil {
 		result.Set("rtrStatus", -1)
 	} else {
-		if rtr.Confirmed == true {
-			result.Set("rtrStatus", 1)
-		} else {
-			result.Set("rtrStatus", 0)
-		}
+		result.Set("rtrStatus", rtr.Status)
 	}
 
 	Sc, er := c.FetchCrediScoreCard(payload["customerID"].(string), payload["dealNO"].(string))

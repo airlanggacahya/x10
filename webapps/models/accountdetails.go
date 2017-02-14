@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	// . "eaciit/x10/webapps/connection"
+	. "eaciit/x10/webapps/connection"
 	"fmt"
 	"github.com/eaciit/crowd"
 	// "github.com/eaciit/dbox"
@@ -505,4 +505,32 @@ func (a *AccountDetail) GetDataForFormulaBuilder(customerId, dealNo string) (Acc
 	}
 
 	return final, acc, nil
+}
+
+func (a *AccountDetail) GetDataByParam() ([]AccountDetail, error) {
+	res := []AccountDetail{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	csr, err := conn.NewQuery().
+		From(new(AccountDetail).TableName()).
+		Cursor(nil)
+	if csr != nil {
+		defer csr.Close()
+	}
+	if err != nil {
+		return res, err
+	}
+
+	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return res, err
+	}
+
+	return res, err
 }

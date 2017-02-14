@@ -1,0 +1,80 @@
+<script type="text/javascript">
+  model.PageTopMenu('{{.TopMenu}}');
+  model.PageId('{{.Menuname}}');
+  model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
+  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+  model.Access = ko.observable('{{.Menuid}}');
+  model.View = ko.observable('{{.View}}');
+  model.Create= ko.observable('{{.Create}}');
+  model.Delete= ko.observable('{{.Delete}}');
+  model.Process= ko.observable('{{.Process}}');
+  model.Edit= ko.observable('{{.Edit}}');
+  model.User= ko.observable('{{.Username}}');
+  model.Rolename= ko.observable('{{.Rolename}}')
+model.Fullname = ko.observable('{{.Fullname}}');
+</script>
+
+<script>document.write('<script type="text/javascript" src="/static/core/reallocation.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+
+<style type="text/css">
+  #allfilter {
+    padding-top: 50px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .lighttext .k-input, .k-multiselect-wrap, .k-textbox>input, input.k-textbox, input.k-textbox:hover, textarea.k-textbox, textarea.k-textbox:hover {
+  color: #676767 !important;
+  }
+  
+  .paddingrightzero {
+    padding-right: 0px;
+  }
+
+  .paddingleftzero {
+    padding-left: 0px;
+  }
+</style>
+<div class="clearfix"></div>
+<div id="allfilter">
+  <div id="panel-filter" class="lighttext">
+    <div class="col-md-6" style="padding-bottom:0px">
+      <div class="form-group col-sm-12 filterhide">
+        <label class="col-sm-2 form-control-label">Deal No</label>
+        <div class="col-sm-10">
+          <select class="multifield"  
+              data-placeholder="Select DealNo"
+              data-bind="kendoMultiSelect: { 
+              data: r.dealNoList,
+              value: r.dealNoSelected,
+              dataValueField: 'value', 
+              dataTextField: 'text',
+              filter: 'contains', 
+              clearButton: false
+              }"> 
+          </select>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+    <div class="col-md-6" style="padding-bottom:0px">
+      <div class="form-group col-sm-12 filterhide">
+        <label class="col-sm-2 form-control-label">Customer</label>
+        <div class="col-sm-10">
+          <select class="multifield"  
+              data-placeholder="Select DealNo"
+              data-bind="kendoMultiSelect: { 
+              data: r.dealNoList,
+              value: r.dealNoSelected,
+              dataValueField: 'value', 
+              dataTextField: 'text',
+              filter: 'contains', 
+              clearButton: false
+              }"> 
+          </select>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+</div>

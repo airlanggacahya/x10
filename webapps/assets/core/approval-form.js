@@ -225,15 +225,6 @@ checkConfirmed = function(){
     ajaxPost("/approval/getcheckconfirm", param, function(res){
         var data = res.Data
         if(res.IsError != true){
-          if(data.AcStatus == 0){
-            countUnconfirm(countUnconfirm() + 1);
-            fixToast("Customer Profile Data Not Confirmed");
-          }else{
-            if(data.AcStatus == -1){
-              countUnconfirm(countUnconfirm() + 1);
-              fixToast("Customer Profile Data Not ");
-            }
-          }
 
           if(data.AdStatus == 0){
             countUnconfirm(countUnconfirm() + 1);

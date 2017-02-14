@@ -403,6 +403,15 @@ func (c *ApprovalController) GetCheckConfirm(k *knot.WebContext) interface{} {
 
 	custid := payload["customerID"].(string) + "|" + payload["dealNO"].(string)
 
+	in, er := c.FetchInternalRTR(custid)
+	if er != nil {
+		result.Set("SdStatus", -1)
+	} else {
+
+		result.Set("intRTRStatus", in.Status)
+
+	}
+
 	sd, er := c.FetchStockAndDebt(custid)
 	if er != nil {
 		result.Set("SdStatus", -1)
@@ -446,6 +455,27 @@ func (c *ApprovalController) FetchAccountDetail(customerID string, DealNo string
 
 	if (len(results)) == 0 {
 		return nil, errors.New("Account Detail data not found")
+	}
+
+	return &results[0], nil
+}
+
+func (c *ApprovalController) FetchInternalRTR(custid string) (*InternalRtr, error) {
+	query := tk.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("_id", custid)}...)}
+	csr, err := c.Ctx.Find(new(InternalRtr), query)
+	defer csr.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]InternalRtr, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return nil, err
+	}
+
+	if (len(results)) == 0 {
+		return nil, errors.New("Internal RTR data not found")
 	}
 
 	return &results[0], nil

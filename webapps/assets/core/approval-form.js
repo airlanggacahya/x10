@@ -261,6 +261,16 @@ checkConfirmed = function(){
             fixToast("Data Credit Score Card Not Found")
           }
 
+          if(data.intRTRStatus == 0){
+            countUnconfirm(countUnconfirm() + 1);
+            fixToast("Internal RTR Data Not Confirmed");
+          }else{
+            if(data.intRTRStatus == -1){
+              countUnconfirm(countUnconfirm() + 1);
+              fixToast("Internal RTR Data Not Found");
+            }
+          }
+
           if(data.BscStatus == 0){
             countUnconfirm(countUnconfirm() + 1);
             fixToast("Balance Sheet Data Not Confirmed");

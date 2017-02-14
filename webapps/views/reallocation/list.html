@@ -1,3 +1,66 @@
 
-<button data-bind="click: page.switchState.bind($data, 'NEW')">Reallocation Deal</button>
-<h1>Reallocation</h1>
+<script>
+    var gridbrowser = {
+        column: [
+            {
+                headerAttributes: { "class": "k-header header-bgcolor" },
+                title : "Customer ID",
+                field : "customerid",
+            },
+            {
+                headerAttributes: { "class": "k-header header-bgcolor" },
+                title : "Deal No",
+                field : "dealno",
+            },
+            {
+                headerAttributes: { "class": "k-header header-bgcolor" },
+                title : "Role",
+                field : "role",
+            },
+            {
+                headerAttributes: { "class": "k-header header-bgcolor" },
+                title : "Reallocate From",
+                field : "fromname",
+            },
+            {
+                headerAttributes: { "class": "k-header header-bgcolor" },
+                title : "Reallocate To",
+                field : "toname",
+            },
+            {
+                headerAttributes: { "class": "k-header header-bgcolor" },
+                title : "Timestamp",
+                field : "timestamp",
+            }
+        ]
+    }
+
+    var source = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: "/reallocation/getreallocationdeal",
+                dataType: "json",
+                type: "POST",
+                contentType: "application/json",
+            },
+            parameterMap: function (data) {
+                return JSON.stringify(data);
+            }
+        }
+    })
+</script>
+<style>
+  .margin-top-0 {
+    margin-top: 0px !important;
+  }
+</style>
+
+<div class="panel ez">
+  <div class="panel-heading">
+    <button class="btn btn-sm btn-success btn-flat" data-bind="click: page.switchState.bind($data, 'NEW')">Reallocation Deal</button>
+  </div>
+  <div class="panel-body margin-top-0">
+    <div data-bind="kendoGrid: { data: source, columns: gridbrowser.column }">
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<script type="text/javascript">
+  model.PageTopMenu('{{.TopMenu}}');
+  model.PageId('{{.Menuname}}');
+  model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
+  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+  model.Access = ko.observable('{{.Menuid}}');
+  model.View = ko.observable('{{.View}}');
+  model.Create= ko.observable('{{.Create}}');
+  model.Delete= ko.observable('{{.Delete}}');
+  model.Process= ko.observable('{{.Process}}');
+  model.Edit= ko.observable('{{.Edit}}')
+  model.User= ko.observable('{{.Username}}');
+  model.Rolename= ko.observable('{{.Rolename}}')
+  model.Fullname = ko.observable('{{.Fullname}}');
+</script>
+
+<div class="clearfix"></div>
+
+<script>
+    var page = {
+        state: ko.observable(""),
+        isState: function(st) {
+            return this.state() == st;
+        },
+        switchState: function(st) {
+            page.state(st)
+        }
+    };
+</script>
+
+<div class="col-md-12 col-sm-12 ez panel-content" style="margin-top: 54px">
+<!-- PLACEHOLDER, PLEACE REPLACE -->
+    <div data-bind="visible: page.isState('')">
+        {{ template "list.html"}}
+    </div>
+    <div data-bind="visible: page.isState('NEW')">
+        {{ template "new.html"}}
+    </div>
+</div>

@@ -1407,7 +1407,7 @@ due.getData = function(){
 		}else{
              if(model.PageId() != "Approval Form"){
                 // Materialize.toast("Due Diligence Data Not Confirmed", 5000);
-                fixToast("Due Diligence Data Not Confirmed");
+                // fixToast("Due Diligence Data Not Confirmed");
                 return;
             }
 

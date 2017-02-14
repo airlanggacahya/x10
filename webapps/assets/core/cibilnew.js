@@ -231,10 +231,15 @@ r.getData = function() {
       r.setData();
 
       r.cibilStatus(1)
-      r.cibilStatusDraft(0)
+       if(data[1].CibilReport.length > 1 || data[1].CibilReport.length ==0) {
+        r.cibilStatusDraft(0)
+      }else{
+        r.cibilStatusDraft(1)
+      }
 
       // Data on backend is not always have IsConfirm and IsFreeze
       // Try to setup it here to prevent js errors
+      try{
       r.reportCibilList()[0].IsConfirm = _.get(r.reportCibilList()[0], "IsConfirm", 0)
       r.reportCibilList()[0].IsFreeze = _.get(r.reportCibilList()[0], "IsFreeze", 0)
 
@@ -287,6 +292,9 @@ r.getData = function() {
           }
         });
       }
+    }catch(e){
+      console.log(e)
+    }
 
       if(data[1].CibilReport.length > 1) {
         r.cibilStatusDraft(data[2].CibilDraft.Status)
@@ -308,13 +316,15 @@ r.getData = function() {
         r.isFreeze = ko.observable(data[1].CibilReport[0].IsFreeze)
         if(data[1].CibilReport[0].IsFreeze == 1) {
           r.FreezeText("Unfreeze")
+          cibil.unfreeze(false,0);
         } else {
           r.FreezeText("Freeze")
+          cibil.unfreeze(true,0);
         }
       }
 
       if(r.reportCibilList().length == 0){
-         r.ConfirmText("Confirm")
+         r.ConfirmText("Confirm");
       }
     }
   })
@@ -526,6 +536,9 @@ r.setData = function() {
     //$(".swa").show()
 
     if(cibil.reportDraft().Status == 0) {
+      setTimeout(function(){
+          cibil.unfreeze(false, 0);
+      },300);
       swal({
         title: "Multiple reports available",
         text: "",
@@ -567,6 +580,10 @@ r.setData = function() {
       $(".swal2-close").bind("click",function(){
           $(".swal-custom").prev().attr("style","height:100%");
       });
+    }else{
+      if(r.reportCibilList()[0].IsConfirm != 1) {
+        cibil.unfreeze(!r.reportCibilList()[0].IsFreeze, 0);
+      }
     }
   } else if(r.reportCibilList().length != 0) {
     $.each(r.reportCibilList()[0].CreditTypeSummary, function(key2, val2){
@@ -611,18 +628,15 @@ r.setData = function() {
 
     r.addDataReport(r.reportCibilList()[0])
     r.setDataCibilDetails(r.reportCibilList()[0])
+  }else{
+    cibil.unfreeze(false, 0);
   }
 
   if(r.reportCibilList().length > 0 ) {
     setRatingForCibil(r.reportCibilList()[0].Rating)
     checkConfirmCibil(r.reportCibilList()[0])
-
-    if(r.reportCibilList()[0].IsConfirm != 1) {
-      cibil.unfreeze(!r.reportCibilList()[0].IsFreeze, 0);
-    }
   }
-  else
-    cibil.unfreeze(true, 0);
+  
 
    $(".tooltipster-prom").tooltipster({
                 trigger: 'hover',
@@ -1371,6 +1385,7 @@ function refreshFilter(){
   backToMain();
   r.getData();
   refreshcomment();
+  $(".toast").html("");
 }
 
 r.checkConfirm = function(){
@@ -1431,7 +1446,7 @@ cibil.unfreeze = function(what, cibil){
   if(cibil == 0) {
 
     //$(".container-all button").prop( "disabled", !what );
-    //$(".btn-disabled1").prop( "disabled", !what );
+    $(".btn-disabled1").prop( "disabled", !what );
 
 
   } else {

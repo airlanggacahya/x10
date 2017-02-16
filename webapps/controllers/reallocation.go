@@ -9,12 +9,34 @@ import (
 	// "time"
 
 	"github.com/eaciit/dbox"
+
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 )
 
 type ReallocationController struct {
 	*BaseController
+}
+
+func (c *ReallocationController) GetReallocationDeal(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	res := []tk.M{}
+	con, err := GetConnection()
+	if err != nil {
+		return res
+	}
+
+	defer con.Close()
+
+	cur, err := con.NewQuery().From("ReallocationDeal").Cursor(nil)
+	if err != nil {
+		return res
+	}
+
+	cur.Fetch(&res, 0, true)
+
+	return res
 }
 
 func (c *ReallocationController) Default(k *knot.WebContext) interface{} {
@@ -81,7 +103,6 @@ func (c *ReallocationController) GetDataByParam(k *knot.WebContext) interface{} 
 
 	filter := c.GenerateParam(param)
 
-	c.WriteLog(len(filter))
 	AD, err := new(AccountDetail).Where(filter)
 
 	if err != nil {

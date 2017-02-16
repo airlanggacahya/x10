@@ -6,7 +6,7 @@ import (
 	. "eaciit/x10/webapps/connection"
 	"fmt"
 	"github.com/eaciit/crowd"
-	// "github.com/eaciit/dbox"
+	"github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
 	"github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
@@ -507,7 +507,7 @@ func (a *AccountDetail) GetDataForFormulaBuilder(customerId, dealNo string) (Acc
 	return final, acc, nil
 }
 
-func (a *AccountDetail) GetDataByParam() ([]AccountDetail, error) {
+func (a *AccountDetail) All() ([]AccountDetail, error) {
 	res := []AccountDetail{}
 
 	conn, err := GetConnection()
@@ -520,6 +520,40 @@ func (a *AccountDetail) GetDataByParam() ([]AccountDetail, error) {
 	csr, err := conn.NewQuery().
 		From(new(AccountDetail).TableName()).
 		Cursor(nil)
+	if csr != nil {
+		defer csr.Close()
+	}
+	if err != nil {
+		return res, err
+	}
+
+	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return res, err
+	}
+
+	return res, err
+}
+
+func (a *AccountDetail) Where(filter []*dbox.Filter) ([]AccountDetail, error) {
+	res := []AccountDetail{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	query := conn.NewQuery().
+		From(new(AccountDetail).TableName())
+
+	if len(filter) > 0 {
+		query = query.Where(filter...)
+	}
+
+	csr, err := query.Cursor(nil)
+
 	if csr != nil {
 		defer csr.Close()
 	}

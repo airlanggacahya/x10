@@ -1,0 +1,116 @@
+
+<!-- PLACEHOLDER, PLEACE REPLACE -->
+<h1>Reallocation Deal</h1>
+
+<script>document.write('<script type="text/javascript" src="/static/core/reallocation.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+
+<style type="text/css">
+  #allfilter {
+    padding-top: 50px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .lighttext .k-input, .k-multiselect-wrap, .k-textbox>input, input.k-textbox, input.k-textbox:hover, textarea.k-textbox, textarea.k-textbox:hover {
+  color: #676767 !important;
+  }
+  
+  .paddingrightzero {
+    padding-right: 0px;
+  }
+
+  .paddingleftzero {
+    padding-left: 0px;
+  }
+</style>
+<div class="clearfix"></div>
+<div id="allfilter">
+  	<div class="col-sm-12">
+	  <div id="panel-filter" class="lighttext">
+	    <div class="col-md-6" style="padding-bottom:0px">
+	      <div class="form-group col-sm-12 filterhide">
+	        <label class="col-sm-2 form-control-label">Deal No</label>
+	        <div class="col-sm-10">
+	          <select class="multifield"  
+	              data-placeholder="Select DealNo"
+	              data-bind="kendoMultiSelect: { 
+	              data: r.dealNoList,
+	              value: r.dealNoSelected,
+	              dataValueField: 'value', 
+	              dataTextField: 'text',
+	              filter: 'contains', 
+	              clearButton: false
+	              }"> 
+	          </select>
+	        </div>
+	        <div class="clearfix"></div>
+	      </div>
+	    </div>
+	    <div class="col-md-6" style="padding-bottom:0px">
+	      <div class="form-group col-sm-12 filterhide">
+	        <label class="col-sm-2 form-control-label">Customer</label>
+	        <div class="col-sm-10">
+	          <select class="multifield"  
+	              data-placeholder="Select Customer"
+	              data-bind="kendoMultiSelect: { 
+	              data: r.customerList,
+	              value: r.customerSelected,
+	              dataValueField: 'value', 
+	              dataTextField: 'text',
+	              filter: 'contains', 
+	              clearButton: false
+	              }"> 
+	          </select>
+	        </div>
+	        <div class="clearfix"></div>
+	      </div>
+	    </div>
+	    <div class="col-md-6" style="padding-bottom:0px">
+	      <div class="form-group col-sm-12 filterhide">
+	        <label class="col-sm-2 form-control-label">RM Name</label>
+	        <div class="col-sm-10">
+	          <select class="multifield"  
+	              data-placeholder="Select RMName"
+	              data-bind="kendoMultiSelect: { 
+	              data: r.rmNameList,
+	              value: r.rmNameSelected,
+	              dataValueField: 'value', 
+	              dataTextField: 'text',
+	              filter: 'contains', 
+	              clearButton: false
+	              }"> 
+	          </select>
+	        </div>
+	        <div class="clearfix"></div>
+	      </div>
+	    </div>
+	    <div class="col-md-6" style="padding-bottom:0px">
+	      <div class="form-group col-sm-12 filterhide">
+	        <label class="col-sm-2 form-control-label">CA Name</label>
+	        <div class="col-sm-10">
+	          <select class="multifield"  
+	              data-placeholder="Select CA Name"
+	              data-bind="kendoMultiSelect: { 
+	              data: r.caNameList,
+	              value: r.caNameSelected,
+	              dataValueField: 'value', 
+	              dataTextField: 'text',
+	              filter: 'contains', 
+	              clearButton: false
+	              }"> 
+	          </select>
+	        </div>
+	        <div class="clearfix"></div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="col-md-12" style="margin-left: 21px; margin-bottom: 12px;">
+		<button  type="button" btn-sm class="btn btn-sm btn-default btn-warning" data-bind="click: r.resetFilter">Reset</button>
+		<button  type="button" btn-sm class="btn btn-sm btn-default btn-primary" data-bind="click: r.refreshFilter">Refresh</button>
+	</div>
+	<div class="col-md-12">
+		<div id="griddb"></div>
+	</div>
+</div>
+

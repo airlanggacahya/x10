@@ -505,13 +505,42 @@ r.setData = function() {
   if(r.reportCibilList().length > 1) {
     if(cibil.reportDraft().Status == 1 || cibil.reportDraft().Status == 2|| cibil.reportDraft().Status == 3|| cibil.reportDraft().Status == -3) {
         $.each(cibil.reportDraft().CreditTypeSummary, function(key2, val2){
-          val2.Doubtful =  app.formatnum(parseInt(val2.Doubtful))
-          val2.Loss =  app.formatnum(parseInt(val2.Loss))
-          val2.Substandard =  app.formatnum(parseInt(val2.Substandard))
-          val2.Standard =  app.formatnum(parseInt(val2.Standard))
-          val2.SpecialMention =  app.formatnum(parseInt(val2.SpecialMention))
-          val2.TotalCurrentBalance =  app.formatnum(parseInt(val2.TotalCurrentBalance))
-
+          if(val2.Doubtful != ""){
+            val2.Doubtful =  app.formatnum(parseInt(val2.Doubtful))
+          }else{
+            val2.Doubtful = "";
+          }
+          
+          if(val2.Loss != ""){
+             val2.Loss =  app.formatnum(parseInt(val2.Loss))
+          }else{
+            val2.Loss = "";
+          }
+         
+          if(val2.Substandard != ""){
+            val2.Substandard =  app.formatnum(parseInt(val2.Substandard))
+          }else{
+            val2.Substandard = "";
+          }
+          
+          if(val2.Standard != ""){
+            val2.Standard =  app.formatnum(parseInt(val2.Standard))
+          }else{
+            val2.Standard = "";
+          }
+          
+          if(val2.SpecialMention != ""){
+            val2.SpecialMention =  app.formatnum(parseInt(val2.SpecialMention))
+          }else{
+            val2.SpecialMention = "";
+          }
+          
+          if(val2.TotalCurrentBalance != ""){
+            val2.TotalCurrentBalance =  app.formatnum(parseInt(val2.TotalCurrentBalance))
+          }else{
+            val2.TotalCurrentBalance = "";
+          }
+        
           cibil.CreditTypeSummary.push(val2);
         });
       r.addDataReport(cibil.reportDraft());
@@ -849,20 +878,61 @@ r.addDataReport = function(data) {
   var totalCur = 0;
 
   for (var i = 0; i<r.CreditTypeSummary().length; i++ ){
-    totalSt += parseInt(r.CreditTypeSummary()[i].Standard.split(",").join("")  );
-    totalCur += parseInt(r.CreditTypeSummary()[i].TotalCurrentBalance.split(",").join(""));
-    r.CreditTypeSummary()[i].Standard =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Standard.split(",").join("")));
-    r.CreditTypeSummary()[i].Substandard =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Substandard.split(",").join("")));
-    r.CreditTypeSummary()[i].Doubtful =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Doubtful.split(",").join("")));
-    r.CreditTypeSummary()[i].Loss =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Loss.split(",").join("")));
-    r.CreditTypeSummary()[i].SpecialMention =  app.formatnum(parseInt(r.CreditTypeSummary()[i].SpecialMention.split(",").join("")));
-    r.CreditTypeSummary()[i].TotalCurrentBalance =  app.formatnum(parseInt(r.CreditTypeSummary()[i].TotalCurrentBalance.split(",").join("")));
+    if(r.CreditTypeSummary()[i].Standard != ""){
+      r.CreditTypeSummary()[i].Standard =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Standard.split(",").join("")));
+      totalSt += parseInt(r.CreditTypeSummary()[i].Standard.split(",").join("")  );
+    }else{
+      r.CreditTypeSummary()[i].Standard = ""
+      totalSt = ""
+    }
+    
+    if(r.CreditTypeSummary()[i].Substandard != ""){
+      r.CreditTypeSummary()[i].Substandard =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Substandard.split(",").join("")));
+    }else{
+      r.CreditTypeSummary()[i].Substandard = ""
+    }
+    
+    if(r.CreditTypeSummary()[i].Doubtful != ""){
+      r.CreditTypeSummary()[i].Doubtful =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Doubtful.split(",").join("")));
+    }else{
+       r.CreditTypeSummary()[i].Doubtful = "";
+    }
+    
+    if(r.CreditTypeSummary()[i].Loss != ""){
+      r.CreditTypeSummary()[i].Loss =  app.formatnum(parseInt(r.CreditTypeSummary()[i].Loss.split(",").join("")));
+    }else{
+      r.CreditTypeSummary()[i].Loss = ""
+    }
+    
+    if(r.CreditTypeSummary()[i].SpecialMention != ""){
+      r.CreditTypeSummary()[i].SpecialMention =  app.formatnum(parseInt(r.CreditTypeSummary()[i].SpecialMention.split(",").join("")));
+    }else{
+      r.CreditTypeSummary()[i].Loss = ""
+    }
+
+    if(r.CreditTypeSummary()[i].TotalCurrentBalance != ""){
+      r.CreditTypeSummary()[i].TotalCurrentBalance =  app.formatnum(parseInt(r.CreditTypeSummary()[i].TotalCurrentBalance.split(",").join("")));
+      totalCur += parseInt(r.CreditTypeSummary()[i].TotalCurrentBalance.split(",").join(""));
+    }else{
+      r.CreditTypeSummary()[i].TotalCurrentBalance = "";
+      totalCur = "";
+    }
+    
   }
 
 
-
-  r.totalStandard(app.formatnum(totalSt));
-  r.totalCurrentBalance(app.formatnum(totalCur));
+  if(totalSt != ""){
+    r.totalStandard(app.formatnum(totalSt));
+  }else{
+    totalSt = ""
+  }
+  
+  if(totalCur != ""){
+    r.totalCurrentBalance(app.formatnum(totalCur));
+  }else{
+    totalCur = "";
+  }
+  
 
   r.creditgrantor(kendo.toString(parseInt(data.ReportSummary.Grantors),"n0"));
   r.creditfacilities(kendo.toString(parseInt(data.ReportSummary.Facilities),"n0"));
@@ -880,29 +950,93 @@ r.addDataReport = function(data) {
   temp = []
 
   _.each(data.DetailReportSummary, function(row){
-    row.CurrentBalanceOtherThanStandard = app.formatnum(parseInt(row.CurrentBalanceOtherThanStandard.split(",").join("")));
-    row.CurrentBalanceStandard = app.formatnum(parseInt(row.CurrentBalanceStandard.split(",").join("")));
-    row.NoOfLawSuits = app.formatnum(parseInt(row.NoOfLawSuits.split(",").join("")));
-    row.NoOfOtherThanStandard = app.formatnum(parseInt(row.NoOfOtherThanStandard.split(",").join("")));
-    row.NoOfStandard = app.formatnum(parseInt(row.NoOfStandard.split(",").join("")));
-    row.NoOfWilfulDefaults = app.formatnum(parseInt(row.NoOfWilfulDefaults.split(",").join("")));
+    if(row.CurrentBalanceOtherThanStandard != ""){
+      row.CurrentBalanceOtherThanStandard = app.formatnum(parseInt(row.CurrentBalanceOtherThanStandard.split(",").join("")));
+    }else{
+      row.CurrentBalanceOtherThanStandard = ""
+    }
+
+    if(row.CurrentBalanceStandard != ""){
+      row.CurrentBalanceStandard = app.formatnum(parseInt(row.CurrentBalanceStandard.split(",").join("")));
+    }else{
+      row.CurrentBalanceStandard = "";
+    }
+    
+    if(row.NoOfLawSuits != ""){
+      row.NoOfLawSuits = app.formatnum(parseInt(row.NoOfLawSuits.split(",").join("")));
+    }else{
+      row.NoOfLawSuits ="";
+    }
+
+    if(row.NoOfOtherThanStandard != ""){
+      row.NoOfOtherThanStandard = app.formatnum(parseInt(row.NoOfOtherThanStandard.split(",").join("")));
+    }else{
+      row.NoOfOtherThanStandard = "";
+    }
+
+    if(row.NoOfStandard != ""){
+      row.NoOfStandard = app.formatnum(parseInt(row.NoOfStandard.split(",").join("")));
+    }else{
+      row.NoOfStandard = "";
+    }
+    
+    if(row.NoOfWilfulDefaults != ""){
+      row.NoOfWilfulDefaults = app.formatnum(parseInt(row.NoOfWilfulDefaults.split(",").join("")));
+    }else{
+      row.NoOfWilfulDefaults = "";
+    }
+    
     
     temp.push(row)
   })
 
   r.detailreportsummary(temp);
 
-  r.threemonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries3Month),"n0"));
-  r.sixmonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries6Month  ),"n0"));
-  r.ninemonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries9Month),"n0"));
-  r.twelvemonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries12Month),"n0"));
-  r.duaempatmonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries24Month),"n0"));
-  r.thanduaempatmonth(kendo.toString(parseInt(data.EnquirySummary.EnquiriesThan24Month),"n0"));
+  if(data.EnquirySummary.Enquiries3Month != ""){
+    r.threemonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries3Month),"n0"));
+  }else{
+    r.threemonth("")
+  }
+  
+  if(data.EnquirySummary.Enquiries6Month != ""){
+    r.sixmonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries6Month  ),"n0"));
+  }else{
+    r.sixmonth("")
+  }
+  
+  if(data.EnquirySummary.Enquiries9Month != ""){
+    r.ninemonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries9Month),"n0"));
+  }else{
+    r.ninemonth("")
+  }
+  
+  if(data.EnquirySummary.Enquiries12Month != ""){
+    r.twelvemonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries12Month),"n0"));
+  }else{
+    r.twelvemonth("")
+  }
+  
+  if(data.EnquirySummary.Enquiries24Month != ""){
+    r.duaempatmonth(kendo.toString(parseInt(data.EnquirySummary.Enquiries24Month),"n0"));
+  }else{
+    r.duaempatmonth("")
+  }
+  
+  if(data.EnquirySummary.EnquiriesThan24Month != ""){
+    r.thanduaempatmonth(kendo.toString(parseInt(data.EnquirySummary.EnquiriesThan24Month),"n0"));
+  }else{
+    r.thanduaempatmonth("")
+  }
+  
   var recent = data.EnquirySummary.MostRecentDate.split(" ").join("")
   recent =  moment(recent).format("DD-MMM-YYYY");
   r.recent(recent)
-
-  r.totalenquiries(kendo.toString(parseInt(data.EnquirySummary.TotalEnquiries),"n0"));
+  if(data.EnquirySummary.TotalEnquiries != ""){
+    r.totalenquiries(kendo.toString(parseInt(data.EnquirySummary.TotalEnquiries),"n0"));
+  }else{
+    r.totalenquiries("")
+  }
+  
 }
 
 var savePromotors = function() {

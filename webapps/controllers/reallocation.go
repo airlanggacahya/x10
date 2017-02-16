@@ -1,9 +1,33 @@
 package controllers
 
-import "github.com/eaciit/knot/knot.v1"
+import (
+	"eaciit/x10/consoleapps/OmnifinMaster/helpers"
+
+	"github.com/eaciit/knot/knot.v1"
+	tk "github.com/eaciit/toolkit"
+)
 
 type ReallocationController struct {
 	*BaseController
+}
+
+func (c *ReallocationController) GetReallocationDeal(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	res := []tk.M{}
+	con, err := helpers.GetConnection()
+	if err != nil {
+		return res
+	}
+
+	cur, err := con.NewQuery().From("ReallocationDeal").Cursor(nil)
+	if err != nil {
+		return res
+	}
+
+	cur.Fetch(&res, 0, true)
+
+	return res
 }
 
 func (c *ReallocationController) Default(k *knot.WebContext) interface{} {

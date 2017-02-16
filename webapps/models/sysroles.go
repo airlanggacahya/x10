@@ -30,6 +30,7 @@ type Detailsmenu struct {
 	Enable   bool
 	Url      string
 	Checkall bool
+	Grant    map[string]bool
 }
 
 func NewSysRolesModel() *SysRolesModel {

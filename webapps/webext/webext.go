@@ -92,6 +92,7 @@ func init() {
 	app.Register(&MasterSuplierController{baseCtrl})
 	app.Register(&DealSetUpController{baseCtrl})
 	app.Register(&ReallocationController{baseCtrl})
+	app.Register(&NewUserController{baseCtrl})
 
 	app.Static("static", wd+"assets")
 	app.LayoutTemplate = "_layout.html"

@@ -22,7 +22,7 @@ func (m *NewUser) TableName() string {
 type NewUser struct {
 	orm.ModelBase     `bson:"-", json:"-"`
 	Id                string `bson:"_id", json:"_id"`
-	ID                string `bson:"_id", json:"id"`
+	ID                string `bson:"id", json:"id"`
 	Userid            string
 	C                 string
 	Username          string

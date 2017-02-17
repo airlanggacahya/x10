@@ -1,10 +1,11 @@
 package controllers
 
 import (
+	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
 	// "github.com/eaciit/dbox"\
-	"fmt"
+	// "fmt"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 )
@@ -84,9 +85,7 @@ func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	payload := NewUser{}
 	k.GetPayload(&payload)
-
-	fmt.Printf("---------------------------------->>> id %s\n", payload.ID)
-
+	payload.Userpassword = helper.GetMD5Hash(payload.Userpassword)
 	err := c.Ctx.Save(&payload)
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)

@@ -192,7 +192,7 @@ ns.saveEdit = function(d){
 		var param =ko.mapping.toJS(data[index]);
 		console.log(param)
 		ajaxPost("/newuser/saveuser", param, function(res){
-			alert("berhasil")
+			ns.LoadGridUser()
 			$("#editUser").modal("hide");
 		})
 	}else{

@@ -21,7 +21,7 @@ ns.LoadGetUser = function(){
 ns.LoadGridUser = function(){
 	$("#gridUser").html("");
 	$("#gridUser").kendoGrid({
-		dataSource: new kendo.data.DataSource({
+		dataSource:{
 			transport: {
 				read: function(o){
 					ajaxPost("/newuser/getuser", {
@@ -45,9 +45,14 @@ ns.LoadGridUser = function(){
 	            total: "Total"
 	        },
 			serverPaging: true,
-	        pageSize: 5,
-		}),
-		pageable: true,
+	        pageSize: 10,
+		},
+		groupable: true,
+		pageable: {
+			refresh: true,
+            pageSizes: true,
+            buttonCount: 10
+		},
 		columns: [
 			{
 				field: "Username",
@@ -55,7 +60,7 @@ ns.LoadGridUser = function(){
 				headerAttributes : {"class":"header-bgcolor"}
 			},
 			{
-				field: "ID",
+				field: "",
 				title: "Unique ID",
 				headerAttributes : {"class":"header-bgcolor"},
 				width: 100
@@ -135,12 +140,7 @@ ns.LoadGridUser = function(){
 				headerAttributes : {"class":"header-bgcolor"},
 				width: 50,
 				template: function(d){
-					console.log(d.Role)
-					if(d.Role != null){
-						return "<center><button class='btn btn-xs btn-flat btn-warning  edituserright' onclick='ns.editUser(\""+d.uid+"\")'><span class='fa fa-edit'></span></button></center>"
-					}
-
-					return ''
+					return "<center><button class='btn btn-xs btn-flat btn-warning  edituserright' onclick='ns.editUser(\""+d.uid+"\")'><span class='fa fa-edit'></span></button></center>"
 					
 				}
 			},

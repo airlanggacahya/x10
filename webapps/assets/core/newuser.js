@@ -1,11 +1,13 @@
 var ns = {}
-ns.Userdata = ko.observableArray([])
-ns.roleList = ko.observableArray([])
-ns.valuerole = ko.observableArray([])
-ns.catStatusList = ko.observableArray(["Enable", "Disable"])
-ns.status = ko.observable("")
-ns.catstatus = ko.observable("")
-ns.uid = ko.observable("")
+ns.Userdata = ko.observableArray([]);
+ns.roleList = ko.observableArray([]);
+ns.valuerole = ko.observableArray([]);
+ns.catStatusList = ko.observableArray(["Enable", "Disable"]);
+ns.status = ko.observable("");
+ns.catstatus = ko.observable("");
+ns.Password = ko.observable("");
+ns.confPassword = ko.observable("");
+ns.uid = ko.observable("");
 
 ns.LoadGetUser = function(){
 	ns.Userdata([])
@@ -153,6 +155,9 @@ ns.editUser = function(d){
 	ns.valuerole([]);
 	ns.status("");
 	ns.catstatus("");
+	ns.Password("");
+	ns.confPassword("");
+	$(".conf").hide()
 	var index = $("#gridUser tr[data-uid='"+d+"']").index();
 	var data = $('#gridUser').data('kendoGrid').dataSource.data();
 	ns.roleList(data[index].Role);
@@ -172,20 +177,32 @@ ns.editUser = function(d){
 }
 
 ns.saveEdit = function(d){
-	var index = $("#gridUser tr[data-uid='"+d+"']").index();
-	var data = $('#gridUser').data('kendoGrid').dataSource.data();
-	data[index].Catrole = ns.valuerole();
-	data[index].Status = ns.status();
-	if($('#StatusFilter').bootstrapSwitch('state') == true){
-		data[index].Catstatus = "Enable";
+	if(ns.Password() == ns.confPassword() && ns.Password() != ""){
+		var index = $("#gridUser tr[data-uid='"+d+"']").index();
+		var data = $('#gridUser').data('kendoGrid').dataSource.data();
+		data[index].Catrole = ns.valuerole();
+		data[index].Status = ns.status();
+		data[index].Userpassword = ns.Password();
+		console.log("------------>>>>>", data[index].Userpassword)
+		if($('#StatusFilter').bootstrapSwitch('state') == true){
+			data[index].Catstatus = "Enable";
+		}else{
+			data[index].Catstatus = "Disable";
+		}
+		var param =ko.mapping.toJS(data[index]);
+		console.log(param)
+		ajaxPost("/newuser/saveuser", param, function(res){
+			alert("berhasil")
+			$("#editUser").modal("hide");
+		})
 	}else{
-		data[index].Catstatus = "Disable";
+		$(".conf").show()
 	}
-	var param =ko.mapping.toJS(data[index]);
-	console.log(param)
-	ajaxPost("/newuser/saveuser", param, function(res){
-		alert("berhasil")
-	})
+	
+}
+
+ns.onPass = function(){
+	$(".conf").hide()
 }
 
 $(function(){

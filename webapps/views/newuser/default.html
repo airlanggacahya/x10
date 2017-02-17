@@ -29,6 +29,13 @@ mincibil = ko.observable(0);
 	.no-padding{
 		padding: 0px !important;
 	}
+	.conf{
+		color: #ff4900;
+		font-size: 9px;
+	}
+	.k-pager-sizes{
+		float: left !important;
+	}
 </style>
 
 <div class="clearfix"></div>
@@ -56,27 +63,39 @@ mincibil = ko.observable(0);
 					<div class="modal-body">
 						<div class="row">
 							<div class="col-sm-12" style="padding: 5px;">
-								<label class="col-sm-2 form-label align-right">CAT Role</label>
-					        	<div class="col-sm-10">
+								<label class="col-sm-3 form-label align-right">CAT Role</label>
+					        	<div class="col-sm-9">
 				        			<select  data-placeholder="Select CAT Role" data-bind='kendoMultiSelect:{data: roleList, value: valuerole}' style="width: 100%;"></select>
 					        	</div>
 							</div>
 							<div class="col-sm-12"  style="padding: 5px;">
-								<label class="col-sm-2 form-label align-right">Status</label>
-					        	<div class="col-sm-10">
+								<label class="col-sm-3 form-label align-right">Status</label>
+					        	<div class="col-sm-9">
 				        			<input data-bind="value: status" class="form-control input-sm"  style="width: 100%;" disabled>
 					        	</div>
 							</div>
 							<div class="col-sm-12"  style="padding: 5px;">
-								<label class="col-sm-2 form-label align-right">Cat Status</label>
-					        	<div class="col-sm-10">
+								<label class="col-sm-3 form-label align-right" >Password</label>
+					        	<div class="col-sm-9">
+				        			<input onkeyup="ns.onPass()" type="password" id="psw" data-bind="value: Password" class="form-control input-sm"  style="width: 100%;"><span class="conf">Not Match Password<span>
+					        	</div>
+							</div>
+							<div class="col-sm-12"  style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Confirm Password</label>
+					        	<div class="col-sm-9">
+				        			<input onkeyup="ns.onPass()" type="password" id="cnf" data-bind="value: confPassword" class="form-control input-sm"  style="width: 100%;"><span class="conf">Not Match Password<span>
+					        	</div>
+							</div>
+							<div class="col-sm-12"  style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Cat Status</label>
+					        	<div class="col-sm-9">
 				        			<input style="margin-left: 5px;" id="StatusFilter" class="switch-mini" type="checkbox"  data-off-text="Disable" data-on-text="Enable">
 					        	</div>
 							</div>
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-sm btn-flat btn-primary" data-dismiss="modal" onclick="ns.saveEdit(ns.uid())">Save</button>
+						<button type="button" class="btn btn-sm btn-flat btn-primary" onclick="ns.saveEdit(ns.uid())">Save</button>
 						<button type="button" class="btn btn-sm btn-flat btn-danger" data-dismiss="modal">Close</button>
 					</div>
 				</div>

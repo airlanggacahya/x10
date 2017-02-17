@@ -179,6 +179,15 @@ ns.editUser = function(d){
 	$(".conf").hide()
 	var index = $("#gridUser tr[data-uid='"+d+"']").index();
 	var data = $('#gridUser').data('kendoGrid').dataSource.data();
+	if(data[index].Catrole == null){
+		ns.valuerole([])
+	}else{
+		setTimeout(function(){
+			ns.valuerole(data[index].Catrole)
+		}, 200)
+		
+		console.log(ns.valuerole())
+	}
 	ajaxPost("/newuser/getsysrole", {}, function(res){
 		var data = res.Data;
 		if(data.length != 0 || data != null){
@@ -194,15 +203,6 @@ ns.editUser = function(d){
 		ns.status("Active");
 	}
 	ns.catstatus(data[index].Catstatus)
-	if(data[index].Catrole == null){
-		ns.valuerole([])
-	}else{
-		setTimeout(function(){
-			ns.valuerole(data[index].Catrole)
-		}, 200)
-		
-		console.log(ns.valuerole())
-	}
 	if(ns.catstatus() == "Enable"){
 		$('#StatusFilter').bootstrapSwitch('state', true);
 	}else{
@@ -229,6 +229,7 @@ ns.saveEdit = function(d){
 		ajaxPost("/newuser/saveuser", param, function(res){
 			ns.LoadGridUser()
 			$("#editUser").modal("hide");
+			swal("", "Save sucessfully", "success");
 		})
 	}else{
 		$(".conf").show()

@@ -52,7 +52,6 @@ ns.LoadGridUser = function(){
 			serverPaging: true,
 	        pageSize: 10,
 		},
-		groupable: true,
 		pageable: {
 			refresh: true,
             pageSizes: true,

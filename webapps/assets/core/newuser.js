@@ -62,7 +62,7 @@ ns.LoadGridUser = function(){
 				headerAttributes : {"class":"header-bgcolor"}
 			},
 			{
-				field: "",
+				field: "Userid",
 				title: "Unique ID",
 				headerAttributes : {"class":"header-bgcolor"},
 				width: 100
@@ -121,20 +121,34 @@ ns.LoadGridUser = function(){
 					}
 					
 
-					return res
+					return "To be assigned"
 				}
 			},
 			{
-				field: "Status",
+				field: "Recstatus",
 				title: "Status",
 				headerAttributes : {"class":"header-bgcolor"},
 				width: 100,
+				template: function(d){
+					if(d.Recstatus == "X"){
+						return "Inactive"
+					}
+
+					return "Active"
+				}
 			},
 			{
 				field: "Catstatus",
 				title: "CAT Status",
 				headerAttributes : {"class":"header-bgcolor"},
 				width: 100,
+				template: function(d){
+					if(d.Catstatus == ""){
+						return "To be assigned"
+					}
+
+					return d.Catstatus
+				}
 			},
 			{
 				field: "",
@@ -160,12 +174,26 @@ ns.editUser = function(d){
 	$(".conf").hide()
 	var index = $("#gridUser tr[data-uid='"+d+"']").index();
 	var data = $('#gridUser').data('kendoGrid').dataSource.data();
-	ns.roleList(data[index].Role);
-	ns.valuerole(data[index].Catrole)
-	ns.status(data[index].Status);
+	ajaxPost("/newuser/getsysrole", {}, function(res){
+		var data = res.Data;
+		if(data.length != 0 || data != null){
+			ns.roleList(data);
+		}
+	});
+	if(data[index].Recstatus == "X"){
+		ns.status("Inactive");
+	}else{
+		ns.status("Active");
+	}
 	ns.catstatus(data[index].Catstatus)
-	if(ns.valuerole() == null){
+	if(data[index].Catrole == null){
 		ns.valuerole([])
+	}else{
+		setTimeout(function(){
+			ns.valuerole(data[index].Catrole)
+		}, 200)
+		
+		console.log(ns.valuerole())
 	}
 	if(ns.catstatus() == "Enable"){
 		$('#StatusFilter').bootstrapSwitch('state', true);
@@ -181,8 +209,7 @@ ns.saveEdit = function(d){
 		var index = $("#gridUser tr[data-uid='"+d+"']").index();
 		var data = $('#gridUser').data('kendoGrid').dataSource.data();
 		data[index].Catrole = ns.valuerole();
-		data[index].Status = ns.status();
-		data[index].Userpassword = ns.Password();
+		data[index].Catpassword = ns.Password();
 		console.log("------------>>>>>", data[index].Userpassword)
 		if($('#StatusFilter').bootstrapSwitch('state') == true){
 			data[index].Catstatus = "Enable";

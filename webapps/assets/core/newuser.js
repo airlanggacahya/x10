@@ -8,6 +8,9 @@ ns.catstatus = ko.observable("");
 ns.Password = ko.observable("");
 ns.confPassword = ko.observable("");
 ns.uid = ko.observable("");
+ns.username = ko.observable("");
+ns.email = ko.observable("");
+ns.uniqueid = ko.observable("");
 
 ns.LoadGetUser = function(){
 	ns.Userdata([])
@@ -165,6 +168,9 @@ ns.LoadGridUser = function(){
 }
 
 ns.editUser = function(d){
+	ns.username("");
+	ns.email("");
+	ns.uniqueid("");
 	ns.roleList([]);
 	ns.valuerole([]);
 	ns.status("");
@@ -180,6 +186,9 @@ ns.editUser = function(d){
 			ns.roleList(data);
 		}
 	});
+	ns.username(data[index].Username);
+	ns.email(data[index].Useremail);
+	ns.uniqueid(data[index].Userid);
 	if(data[index].Recstatus == "X"){
 		ns.status("Inactive");
 	}else{

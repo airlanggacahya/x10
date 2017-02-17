@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/connection"
+	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	// "github.com/eaciit/dbox"\
-	// "fmt"
+	"fmt"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 )
@@ -92,4 +92,30 @@ func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 	}
 
 	return c.SetResultInfo(false, "save success", nil)
+}
+
+func (c NewUserController) GetSysrole(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	csr, err := cn.NewQuery().
+		From("SysRoles").
+		Cursor(nil)
+
+	defer csr.Close()
+
+	res := []tk.M{}
+	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return c.SetResultInfo(true, "data not Found", nil)
+	}
+
+	list := []interface{}{}
+
+	for _, dt := range res {
+		list = append(list, dt["name"])
+	}
+
+	return c.SetResultInfo(false, "success", list)
 }

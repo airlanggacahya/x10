@@ -245,13 +245,53 @@ func (c *SysRolesController) GetMenuEdit(k *knot.WebContext) interface{} {
 
 	if errData != nil {
 		return c.SetResultInfo(true, errData.Error(), nil)
-	} else {
-		retModel.Set("Records", data)
 	}
+
+	retModel.Set("Records", data)
 
 	ret.Data = retModel
 
 	return ret
+}
+
+func defaultDetailsMenu(conn db.IConnection, menuid string) (Detailsmenu, error) {
+	dtl := Detailsmenu{}
+
+	dtl.Checkall = true
+	dtl.Access = true
+	dtl.Approve = true
+	dtl.Create = true
+	dtl.Delete = true
+	dtl.View = true
+	dtl.Edit = true
+	dtl.Process = true
+
+	dtl.Grant = make(map[string]bool)
+
+	dtl.Menuid = menuid
+
+	cur, err := conn.
+		NewQuery().
+		From("TopMenu").
+		Where(db.Eq("_id", menuid)).
+		Cursor(nil)
+	if err != nil {
+		return dtl, err
+	}
+
+	menu := tk.M{}
+	err = cur.Fetch(&menu, 1, true)
+	if err != nil {
+		return dtl, err
+	}
+
+	dtl.Menuname = menu["Title"].(string)
+	dtl.Parent = menu["Parent"].(string)
+	dtl.Url = menu["Url"].(string)
+	dtl.Haschild = menu["haschild"].(bool)
+	dtl.Enable = menu["Enable"].(bool)
+
+	return dtl, nil
 }
 
 func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
@@ -281,57 +321,76 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 	o.Status = oo.Status
 	o.Landing = oo.Landing
 
-	xs := []string{}
+	// helper for parent add
+	menuDone := make(map[string]bool)
+	menuQueue := make(map[string]bool)
 
 	tempMenu := o.Menu
 	for _, det := range oo.Menu {
-		dtl := Detailsmenu{}
-
-		access := det["access"].(bool)
-		parent := det["parent"].(string)
-
-		if access == true && parent != "" {
-			xs = append(xs, parent)
+		dtl, err := defaultDetailsMenu(d.Ctx.Connection, det["menuid"].(string))
+		if err != nil {
+			return d.SetResultInfo(true, err.Error(), nil)
 		}
-		dtl.Url = det["Url"].(string)
-		dtl.Access = det["access"].(bool)
-		dtl.Approve = det["approve"].(bool)
-		dtl.Create = det["create"].(bool)
-		dtl.Delete = det["delete"].(bool)
-		dtl.Edit = det["edit"].(bool)
-		dtl.Enable = det["enable"].(bool)
-		dtl.Haschild = det["haschild"].(bool)
-		dtl.Menuid = det["menuid"].(string)
-		dtl.Menuname = det["menuname"].(string)
-		dtl.Process = det["process"].(bool)
-		dtl.View = det["view"].(bool)
-		dtl.Parent = det["parent"].(string)
-		dtl.Checkall = det["checkall"].(bool)
+
+		var isAccess = false
+		for key, val := range det["grant"].(map[string]interface{}) {
+			dtl.Grant[key] = val.(bool)
+			isAccess = isAccess || dtl.Grant[key]
+		}
+
+		// no access found, skip this menu
+		if !isAccess {
+			continue
+		}
+
+		tempMenu = append(tempMenu, dtl)
+
+		menuDone[dtl.Menuid] = true
+
+		// no parent
+		if len(dtl.Parent) == 0 {
+			continue
+		}
+
+		// parent is already loaded
+		if _, found := menuDone[dtl.Parent]; found {
+			continue
+		}
+
+		// parent is already queued
+		if _, found := menuQueue[dtl.Parent]; found {
+			continue
+		}
+
+		// queue parent
+		menuQueue[dtl.Parent] = true
+	}
+
+	for menuid, _ := range menuQueue {
+		// already loaded
+		if _, found := menuDone[menuid]; found {
+			continue
+		}
+
+		dtl, err := defaultDetailsMenu(d.Ctx.Connection, menuid)
+
+		if err != nil {
+			return d.SetResultInfo(true, err.Error(), nil)
+		}
 
 		tempMenu = append(tempMenu, dtl)
 	}
 
-	d.DistinctArray(&xs)
-
-	for _, dt := range tempMenu {
-		menuid := dt.Menuid
-
-		for _, op := range xs {
-			if menuid == op {
-				dt.Access = true
-			}
-		}
-		o.Menu = append(o.Menu, dt)
-	}
+	o.Menu = append(o.Menu, tempMenu...)
 
 	e := d.Ctx.Save(o)
 	if e != nil {
 		return d.SetResultInfo(true, err.Error(), nil)
-	} else {
-		ret.IsError = false
-		ret.Message = "Saving Data Successfully"
-		ret.Data = ""
 	}
+
+	ret.IsError = false
+	ret.Message = "Saving Data Successfully"
+	ret.Data = ""
 
 	return ret
 }

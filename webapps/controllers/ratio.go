@@ -487,7 +487,7 @@ func (c *RatioController) Confirm(k *knot.WebContext) interface{} {
 	if rowData.Confirmed {
 		UpdateDealSetup(cust, deal, "bsi", "Confirmed")
 	} else {
-		UpdateDealSetup(cust, deal, "bsi", "Under Process")
+		UpdateDealSetup(cust, deal, "bsi", UnderProcess)
 	}
 	return res
 }

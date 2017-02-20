@@ -14,11 +14,29 @@
   model.Fullname = ko.observable('{{.Fullname}}');
 </script>
 
+<script id="template" type="text/x-kendo-template">
+  <a class="btn btn-sm btn-save pull-left" href="\#" onclick="return toolbar_click()">Save</a>
+</script>
+
+<script>document.write('<script type="text/javascript" src="/static/core/reallocation.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+
+<style type="text/css">
+  .modal-lg-custom {
+    width: 90% !important;
+  }
+
+  #griddb > .k-header {
+    background: none;
+    border: none;
+    padding: 0px;
+    margin-bottom: 10px;
+  }
+</style>
 <div class="clearfix"></div>
 
 <script>
     var page = {
-        state: ko.observable("NEW"),
+        state: ko.observable(""),
         isState: function(st) {
             return this.state() == st;
         },
@@ -32,7 +50,10 @@
     <div data-bind="visible: page.isState('')">
         {{ template "list.html"}}
     </div>
-    <div data-bind="visible: page.isState('NEW')">
+    <!-- <div data-bind="visible: page.isState('NEW')">
         {{ template "new.html"}}
+    </div> -->
+    <div>
+        {{ template "modal.html"}}
     </div>
 </div>

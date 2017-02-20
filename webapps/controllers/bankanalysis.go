@@ -739,7 +739,7 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 	if param.IsConfirm {
 		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Confirmed")
 	} else {
-		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", "Under Process")
+		UpdateDealSetup(strconv.Itoa(param.CustomerId), param.DealNo, "ba", UnderProcess)
 	}
 
 	return true

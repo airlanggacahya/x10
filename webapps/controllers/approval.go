@@ -219,7 +219,7 @@ func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {
 	}
 
 	if datas.Status == 1 {
-		err = UpdateDealSetup(strconv.Itoa(datas.Ca.CustomerId), datas.Ca.DealNo, "ds", "Decision Committee Action Awaited")
+		err = UpdateDealSetup(strconv.Itoa(datas.Ca.CustomerId), datas.Ca.DealNo, "ds", SendToDecision)
 		if err != nil {
 			c.WriteLog(err.Error())
 			// return CreateResult(false, nil, err.Error())
@@ -287,6 +287,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 	arr := []string{"AccountDetails", "InternalRTR", "BankAnalysisV2", "CustomerProfile", "RatioInputData", "RepaymentRecords", "StockandDebt", "CibilReport", "CibilReportPromotorFinal", "DueDiligenceInput"}
 
 	if datas.LatestStatus == "Sent Back" {
+		datas.LatestStatus = SendBackAnalysis
 		for _, val := range arr {
 			err = changeStatus(cid, dealno, val, 1)
 			if err != nil {

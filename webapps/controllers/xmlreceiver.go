@@ -205,7 +205,7 @@ func checkMasterData(data DealSetupModel) error {
 // }
 
 func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
-	r.Config.OutputType = knot.OutputHtml
+	r.Config.OutputType = knot.OutputJson
 	LogID := bson.NewObjectId()
 	LogData := tk.M{}
 	LogData.Set("_id", LogID)
@@ -215,22 +215,30 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	LogData.Set("xmltkm", "")
 	LogData.Set("iscomplete", false)
 
-	res := `<return>
-	            <operationMessage>Operation Successful</operationMessage>
-	            <operationStatus>1</operationStatus>
-	         </return>`
+	res := tk.M{}
+	res.Set("OperationMessage", "Operation Successful")
+	res.Set("OperationStatus", "1")
 
-	resFail := `<return>
-	            <operationMessage>@message</operationMessage>
-	            <operationStatus>0</operationStatus>
-	         </return>`
+	resFail := tk.M{}
+	resFail.Set("OperationMessage", "Operation Successful")
+	resFail.Set("OperationStatus", "0")
+
+	// res := `<return>
+	//             <operationMessage>Operation Successful</operationMessage>
+	//             <operationStatus>1</operationStatus>
+	//          </return>`
+
+	// resFail := `<return>
+	//             <operationMessage>@message</operationMessage>
+	//             <operationStatus>0</operationStatus>
+	//          </return>`
 
 	bs, e := ioutil.ReadAll(r.Request.Body)
 	if e != nil {
 		fmt.Errorf("Unable to read body: " + e.Error())
 		LogData.Set("error", e.Error())
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", e.Error(), -1)
+		return resFail.Set("OperationMessage", e.Error())
 	}
 	defer r.Request.Body.Close()
 
@@ -246,7 +254,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Println("Payload Decode Error: " + err.Error() + " .Bytes Data: " + string(bs))
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", err.Error(), -1)
+		return resFail.Set("OperationMessage", err.Error())
 	}
 	// Decode done
 
@@ -273,14 +281,14 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", err.Error(), -1)
+		return resFail.Set("OperationMessage", err.Error())
 	}
 
 	// Reject Data
 	if found && (myStatus == UnderProcess || myStatus == SendBackAnalysis || myStatus == OnHold || myStatus == SendToDecision) {
 		LogData.Set("error", "Deal exists in CAT")
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", "Deal exists in CAT", -1)
+		return resFail.Set("OperationMessage", err.Error())
 	}
 
 	//override existing data
@@ -294,7 +302,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", err.Error(), -1)
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	// Build Account Detail
@@ -302,7 +311,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", err.Error(), -1)
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	// Build Internal RTR
@@ -310,7 +320,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error()+" | InternalRTR")
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", err.Error(), -1)
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	// Save OmnifinXML
@@ -320,7 +331,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Println(err.Error())
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", err.Error(), -1)
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	qinsert := conn.NewQuery().
@@ -333,7 +345,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	err = qinsert.Exec(csc)
 	if err != nil {
 		fmt.Print(err.Error())
-		return strings.Replace(resFail, "@message", err.Error(), -1)
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	var data DealSetupModel
@@ -350,7 +363,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Println(err.Error())
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", err.Error(), -1)
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	// Save Account Setup
@@ -364,7 +378,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Println(err.Error())
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return strings.Replace(resFail, "@message", err.Error(), -1)
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	LogData.Set("iscomplete", true)

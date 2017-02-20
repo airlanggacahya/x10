@@ -2,6 +2,7 @@ package models
 
 import (
 	. "eaciit/x10/webapps/connection"
+
 	"github.com/eaciit/toolkit"
 )
 
@@ -80,6 +81,50 @@ func GetMasterAccountDetail() ([]MasterAccountDetail, error) {
 		item.Items = rows
 
 		res = append(res, item)
+	}
+
+	return res, nil
+}
+
+// GetMasterAccountDetailv2 is a complete data return
+func GetMasterAccountDetailv2() (toolkit.M, error) {
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	csr, err := conn.NewQuery().
+		From("MasterAccountDetail").
+		Cursor(nil)
+	if csr != nil {
+		defer csr.Close()
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	raw := []toolkit.M{}
+	err = csr.Fetch(&raw, 0, false)
+	if err != nil {
+		return nil, err
+	}
+
+	res := toolkit.M{}
+
+	for _, each := range raw[0]["Data"].([]interface{}) {
+		rawValue, _ := toolkit.ToM(each)
+
+		field := rawValue.GetString("Field")
+
+		rows := []toolkit.M{}
+
+		for _, eachItem := range rawValue["Items"].([]interface{}) {
+			item, _ := toolkit.ToM(eachItem)
+			rows = append(rows, item)
+		}
+
+		res[field] = rows
 	}
 
 	return res, nil

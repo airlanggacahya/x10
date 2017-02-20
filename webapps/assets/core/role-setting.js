@@ -15,6 +15,28 @@ var rolesett = {
     dealAllocationOpt : ko.observableArray(["Standard"]),
     dealAllocationEnable : ko.observable(false),
 
+    district : ko.observableArray(""),
+    districtOpt : new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: "/sysroles/getdistrict",
+                dataType: "json"
+            }
+        },
+    }),
+    districtEnable: ko.observable(false),
+
+    branch : ko.observableArray(""),
+    branchOpt: new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: "/sysroles/getbranch",
+                dataType: "json"
+            }
+        },
+    }),
+    branchEnable: ko.observable(false),
+
     landingPage : ko.observable(""),
 
     //var Filter
@@ -38,6 +60,7 @@ var rolesett = {
     adminData: ko.observableArray([])
 };
 
+// Switch dealllocation based on roletype
 rolesett.roleType.subscribe(function (val) {
     switch (val) {
     case "CA":
@@ -50,6 +73,21 @@ rolesett.roleType.subscribe(function (val) {
         rolesett.dealAllocation("Branches");
         rolesett.dealAllocationEnable(true);
         rolesett.dealAllocationOpt(["Branches", "Regions"]);
+        break;
+    }
+})
+
+// Switch Branch and District based on deal Reallocation
+rolesett.dealAllocation.subscribe(function (val) {
+    rolesett.branchEnable(false);
+    rolesett.districtEnable(false);
+
+    switch (val) {
+    case "Branches":
+        rolesett.branchEnable(true);
+        break;
+    case "Regions":
+        rolesett.districtEnable(true);
         break;
     }
 })
@@ -591,6 +629,8 @@ rolesett.templateRole = {
 rolesett.mappingRole = ko.mapping.fromJS(rolesett.templateRole);
 
 rolesett.ClearField = function(){
+    rolesett.branch([]);
+    rolesett.district([]);
     rolesett.roleName("");
     rolesett.roleType("CA");
     // rolesett.dealAllocation("Standard");
@@ -645,6 +685,8 @@ rolesett.SaveData = function(){
     param.status = $('#Status').bootstrapSwitch('state');
     param.landing = rolesett.landingPage();
     param.menu = backMapping();
+    param.district = rolesett.district();
+    param.branch = rolesett.branch();
 
     console.log(param);
 
@@ -736,6 +778,9 @@ rolesett.EditData = function(IdRole){
             rolesett._privToGrid(privilegesToNewRole(Records.Menu));
             rolesett.landingPage(Records.Landing);
             $('#Status').bootstrapSwitch('state',Records.Status);
+            rolesett.branch(Records.Branch);
+            rolesett.district(Records.District);
+            rolesett.dealAllocation(Records.Dealallocation);
 
             // old access layout setup
 

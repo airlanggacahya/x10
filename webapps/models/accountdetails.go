@@ -130,8 +130,10 @@ type AccountSetupDetails struct {
 	LoginDate       time.Time
 	DealNo          string
 	RmName          string
+	RmNameId        string `bson:"RmNameId,omitempty"`
 	BrHead          string
 	CreditAnalyst   string
+	CreditAnalystId string `bson:"CreditAnalystId,omitempty"`
 	LeadDistributor string
 	Product         string
 	Scheme          string

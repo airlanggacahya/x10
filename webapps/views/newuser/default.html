@@ -63,15 +63,21 @@ mincibil = ko.observable(0);
 					<div class="modal-body">
 						<div class="row">
 							<div class="col-sm-12" style="padding: 5px;">
-								<label class="col-sm-3 form-label align-right">CAT Role</label>
+								<label class="col-sm-3 form-label align-right">Username</label>
 					        	<div class="col-sm-9">
-				        			<select  data-placeholder="Select CAT Role" data-bind='kendoMultiSelect:{data: roleList, value: valuerole}' style="width: 100%;"></select>
+				        			<input data-bind="value: username" class="form-control input-sm"  style="width: 100%;" disabled>
 					        	</div>
 							</div>
-							<div class="col-sm-12"  style="padding: 5px;">
-								<label class="col-sm-3 form-label align-right">Status</label>
+							<div class="col-sm-12" style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Unique ID</label>
 					        	<div class="col-sm-9">
-				        			<input data-bind="value: status" class="form-control input-sm"  style="width: 100%;" disabled>
+				        			<input data-bind="value: uniqueid" class="form-control input-sm"  style="width: 100%;" disabled>
+					        	</div>
+							</div>
+							<div class="col-sm-12" style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Email</label>
+					        	<div class="col-sm-9">
+				        			<input data-bind="value: email" class="form-control input-sm"  style="width: 100%;" disabled>
 					        	</div>
 							</div>
 							<div class="col-sm-12"  style="padding: 5px;">
@@ -86,6 +92,19 @@ mincibil = ko.observable(0);
 				        			<input onkeyup="ns.onPass()" type="password" id="cnf" data-bind="value: confPassword" class="form-control input-sm"  style="width: 100%;"><span class="conf">Not Match Password<span>
 					        	</div>
 							</div>
+							<div class="col-sm-12" style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">CAT Role</label>
+					        	<div class="col-sm-9">
+				        			<select  data-placeholder="Select CAT Role" data-bind='kendoMultiSelect:{data: roleList, value: valuerole}' style="width: 100%;"></select>
+					        	</div>
+							</div>
+							<div class="col-sm-12"  style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Status</label>
+					        	<div class="col-sm-9">
+				        			<input data-bind="value: status" class="form-control input-sm"  style="width: 100%;" disabled>
+					        	</div>
+							</div>
+							
 							<div class="col-sm-12"  style="padding: 5px;">
 								<label class="col-sm-3 form-label align-right">Cat Status</label>
 					        	<div class="col-sm-9">

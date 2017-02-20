@@ -48,9 +48,10 @@ type NewUser struct {
 	Branchaccesslist  []Branchaccesslist
 	Role              []string `bson:"role,omitempty"`
 	Catrole           []string `bson:"catrole,omitempty"`
-	Status            string   `bson:"status,omitempty"`
-	Catstatus         string   `bson:"catstatus,omitempty"`
-	Autherdate        string
+	// Status            string   `bson:"status,omitempty"`
+	Catstatus   string `bson:"catstatus,omitempty"`
+	Catpassword string `bson:"catpassword,omitempty"`
+	Autherdate  string
 }
 
 type Branchaccesslist struct {

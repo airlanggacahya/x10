@@ -9,7 +9,10 @@ var rolesett = {
     //var field 
     Id : ko.observable(""),
     roleName : ko.observable(""),
-    page : ko.observable(""),
+    roleType : ko.observable(""),
+    dealAllocation : ko.observable(""),
+    dealAllocationOpt : ko.observableArray(["Standard", "Branches", "Regions"]),
+    landingPage : ko.observable(""),
 
     //var Filter
     filterRole : ko.observableArray([]),
@@ -19,19 +22,535 @@ var rolesett = {
 
     //var Landing Page
     listPage : ko.observableArray([]),
+
+    //var grid
+    dashboardData: ko.observableArray([]),
+    dealSetupData: ko.observableArray([]),
+    webFormsData: ko.observableArray([]),
+    dataMasterData: ko.observableArray([]),
+    helpData: ko.observableArray([]),
+    decisionCommitteData: ko.observableArray([]),
+    caCommitteData: ko.observableArray([])
 };
+
+function checkboxField(field) {
+        return '<input type="checkbox" ' +
+            'data-switch-no-init ' +
+            'id="#=menuid#_' + field + '"' +
+            'onclick="clickRole(\'#=menuid#\', \'' + field + '\')" ' +
+            '#= ' + field + ' ? checked="checked" : "" # />'
+}
+
+function clickRole(menuid, path) {
+    var output = backMapping();
+    _.each(output, function(it) {
+        if (it.menuid != menuid)
+            return
+
+        // toggle
+        console.log(it)
+        _.set(it, path, !_.get(it, path, false))
+    })
+
+    rolesett._privToGrid(privilegesToNewRole(output))
+}
+
+var dashboardMapping = [
+    {
+        "name": "Dashboard",
+        "menuid": "20168521323",
+        "grant": ["all", "view"]
+    }
+]
+
+var dealSetupMapping = [
+    {
+        "name": "Deal Setup",
+        "menuid": "201721163449",
+        "grant": ["all", "view", "accept", "reject"]
+    }
+]
+
+var webFormGrant = ["all", "view", "edit", "confirm", "reenter", "freeze", "unfreeze"]
+var webFormMapping = [
+    {
+        "name": "Customer Application",
+        "menuid": "2016812144329",
+        "grant": webFormGrant
+    },
+    {
+        "name": "Cibil Details",
+        "menuid": "2016815163422",
+        "grant": webFormGrant
+    },
+    {
+        "name": "Balance Sheet Input",
+        "menuid": "2016818132431",
+        "grant": webFormGrant
+    },
+    {
+        "name": "Stock & Book Dept",
+        "menuid": "2016825141921",
+        "grant": webFormGrant
+    },
+    {
+        "name": "Account Details",
+        "menuid": "201682514915",
+        "grant": webFormGrant
+    },
+    {
+        "name": "Banking Analysis",
+        "menuid": "2016822104419",
+        "grant": webFormGrant
+    },
+    {
+        "name": "External Repayment Details",
+        "menuid": "201682214167",
+        "grant": webFormGrant
+    },
+    {
+        "name": "Internal Repayment Details",
+        "menuid": "201682613422",
+        "grant": webFormGrant
+    },
+    {
+        "name": "Due Diligence Form",
+        "menuid": "2016826124919",
+        "grant": webFormGrant
+    }
+]
+
+var dataMasterGrant = ["all", "view", "edit", "create", "delete"]
+var dataMasterMapping = [
+    {
+        "name": "Balance Sheet Input Master",
+        "menuid": "2016819135634",
+        "grant": dataMasterGrant
+    },
+    {
+        "name": "Formula Master",
+        "menuid": "2016826135622",
+        "grant": dataMasterGrant
+    },
+    {
+        "name": "Due Diligence Form Master",
+        "menuid": "2016923185829",
+        "grant": dataMasterGrant
+    },
+    {
+        "name": "Key Norms Master",
+        "menuid": "2016926142839",
+        "grant": dataMasterGrant
+    },
+    {
+        "name": "Standards Master",
+        "menuid": "2016102614510",
+        "grant": dataMasterGrant
+    },
+    {
+        "name": "User Master",
+        "menuid": "2016825144254",
+        "grant": dataMasterGrant
+    },
+    {
+        "name": "Ratings Model Master",
+        "menuid": "2016825145014",
+        "grant": dataMasterGrant
+    },
+    {
+        "name": "Distributors Master",
+        "menuid": "2017126111916",
+        "grant": dataMasterGrant
+    }
+]
+
+var helpGrant = ["all", "view"]
+var helpMapping = [
+    {
+        "name": "Formula Glossary",
+        "menuid": "2016118163140",
+        "grant": helpGrant
+    },
+    {
+        "name": "Forms, Reports & Masters Logic",
+        "menuid": "2016119141528",
+        "grant": helpGrant
+    },
+    {
+        "name": "UAT Documents",
+        "menuid": "20161128103041",
+        "grant": helpGrant
+    }
+]
+
+var decisionCommitteGrant = ["all", "dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
+var decisionCommitteMapping = [
+    {
+        "name": "Decision Committe",
+        "menuid": "2016825142718",
+        "grant": decisionCommitteGrant
+    }
+]
+
+var caCommitteGrant = ["all", "ca_save", "ca_send_dc"]
+var caCommitteMapping = [
+    {
+        "name": "CA Committe",
+        "menuid": "2016825142718",
+        "grant": caCommitteGrant
+    }
+]
+
+function processMapping(input, maps) {
+    var ret = [];
+    _.each(maps, function(component) {
+        var newcomponent = {};
+        newcomponent.submodule = component.name
+        newcomponent.menuid = component.menuid
+        newcomponent.grant = {}
+        // find matching menu
+        var found = _.find(input, function(it) {
+            var menuid = _.get(it, "Menuid", undefined) || _.get(it, "menuid", undefined)
+
+            if (typeof(menuid) == "undefined")
+                console.log("ERROR!")
+
+            if (menuid != component.menuid)
+                return false;
+
+            newcomponent.grant = _.get(it, 'Grant', undefined) || _.get(it, "grant", {})
+            if (newcomponent.grant == null)
+                newcomponent.grant = {}
+            return true;
+        })
+
+        // set default false
+        _.each(component.grant, function (name) {
+            newcomponent.grant[name] = _.get(newcomponent.grant, name, false)
+        })
+
+        ret.push(newcomponent)
+    })
+
+    return ret;
+}
+
+function backMapping() {
+    var lists = [
+        rolesett.dashboardData,
+        rolesett.dealSetupData,
+        rolesett.webFormsData,
+        rolesett.decisionCommitteData,
+        rolesett.caCommitteData,
+        rolesett.dataMasterData,
+        rolesett.helpData
+    ]
+
+    var ret = []
+    _.each(lists, function(val) {
+        var input = val()
+
+        _.each(input, function(val2) {
+
+            var idx = _.findIndex(ret, function(val) {
+                return val2.menuid == val.menuid;
+            })
+
+            if (idx != -1) {
+                ret[idx].grant = _.merge(ret[idx].grant, val2.grant)
+                return
+            }
+
+            ret.push(val2);
+        })
+    })
+
+    return ret
+}
+
+function privilegesToNewRole(input) {
+    var mapped = {};
+    mapped["Dashboard"] = processMapping(input, dashboardMapping)
+    mapped["Deal Setup"] = processMapping(input, dealSetupMapping)
+    mapped["Web Forms"] = processMapping(input, webFormMapping)
+    mapped["Data Master"] = processMapping(input, dataMasterMapping)
+    mapped["Help"] = processMapping(input, helpMapping)
+    mapped["DecisionCommitte"] = processMapping(input, decisionCommitteMapping)
+    mapped["CaCommitte"] = processMapping(input, caCommitteMapping)
+    
+    return mapped;
+}
+
+var DashboardObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.view",
+            title: "View",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.view')
+        },
+    ]
+}
+
+var DealSetupObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.view",
+            title: "View",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.view')
+        },
+        {
+            field: "grant.accept",
+            title: "Accept",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.accept')
+        },
+        {
+            field: "grant.reject",
+            title: "Reject",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.reject')
+        }
+    ]
+}
+
+var WebFormsObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.view",
+            title: "View",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.view')
+        },
+        {
+            field: "grant.edit",
+            title: "Edit & Save",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.edit')
+        },
+        {
+            field: "grant.confirm",
+            title: "Confirm",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.confirm')
+        },
+        {
+            field: "grant.reenter",
+            title: "Re-Enter",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.reenter')
+        },
+        {
+            field: "grant.freeze",
+            title: "Freeze",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.freeze')
+        },
+        {
+            field: "grant.unfreeze",
+            title: "Unfreeze",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.unfreeze')
+        }
+    ]
+}
+
+var DataMasterObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.view",
+            title: "View",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.view')
+        },
+        {
+            field: "grant.edit",
+            title: "Edit & Save",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.edit')
+        },
+        {
+            field: "grant.create",
+            title: "Create",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.create')
+        },
+        {
+            field: "grant.delete",
+            title: "Delete",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.delete')
+        }
+    ]
+}
+
+var decisionCommitteObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.dc_approve",
+            title: "Approve",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.dc_approve')
+        },
+        {
+            field: "grant.dc_reject",
+            title: "Reject",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.dc_reject')
+        },
+        {
+            field: "grant.dc_cancel",
+            title: "Cancel",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.dc_cancel')
+        },
+        {
+            field: "grant.dc_hold",
+            title: "Hold",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.dc_hold')
+        },
+        {
+            field: "grant.dc_send_back",
+            title: "Send back",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.dc_send_back')
+        }
+    ]
+}
+
+var caCommitteObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.ca_save",
+            title: "Save",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.ca_save')
+        },
+        {
+            field: "grant.ca_send_dc",
+            title: "Send DC",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.ca_send_dc')
+        }
+    ]
+}
+// Cibil Editor
+
+// Help
+var HelpObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.view",
+            title: "View",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.view')
+        }
+    ]
+}
 
 rolesett.templateRole = {
     name: "",
+    type: "",
+    dealallocation: "",
     status: false,
     menu: [],
-    landing: "",
+    landing: ""
 };
 rolesett.mappingRole = ko.mapping.fromJS(rolesett.templateRole);
 
 rolesett.ClearField = function(){
     rolesett.roleName("");
+    rolesett.roleType("CA");
+    rolesett.dealAllocation("Standard");
     $('#Status').bootstrapSwitch('state',true);
+    rolesett._privToGrid(privilegesToNewRole([]))
+    rolesett.landingPage("");
 }
 
 rolesett.Search = function(){
@@ -47,8 +566,8 @@ rolesett.Reset = function(){
 }
 
 rolesett.AddNew = function(){
-    var landing = $("#role").data("kendoDropDownList");
-    landing.value("");
+    // var landing = $("#role").data("kendoDropDownList");
+    // landing.value("");
     $("#roleModal").modal("show");
     $("#nav-dex").css('z-index', '0');
     $("#roleModal").modal({
@@ -68,43 +587,49 @@ rolesett.AddNew = function(){
     rolesett.ClearField();
     rolesett.edit(true);
     rolesett.getTopMenu();
+    rolesett.Id("");
 }
 
 rolesett.SaveData = function(){
-    var displayedData = $("#MasterGridMenu").data().kendoTreeList.dataSource.view();
-    rolesett.mappingRole.name(rolesett.roleName());
-    rolesett.mappingRole.status($('#Status').bootstrapSwitch('state'));
-    rolesett.mappingRole.landing($('#role').val());
-    
-    rolesett.mappingRole.menu([]);
-    for (var i in displayedData){
-        if (displayedData[i].Id != undefined){
-            var Access = $("#check-Access-"+displayedData[i].Id).is(":checked");
-            // if (Access != false){
-                rolesett.mappingRole.menu.push({
-                    "menuid" : displayedData[i].Id,
-                    "menuname" : displayedData[i].Title,
-                    "haschild" : displayedData[i].Haschild,
-                    "enable" : displayedData[i].Enable,
-                    "parent" : displayedData[i].parentId,
-                    "checkall" : $("#check-all-new"+displayedData[i].Id).is(":checked"),
-                    "access" : $("#check-Access-"+displayedData[i].Id).is(":checked"),
-                    "view" : $("#check-View-"+displayedData[i].Id).is(":checked"),
-                    "create" : $("#check-Create-"+displayedData[i].Id).is(":checked"),
-                    "approve" : $("#check-Approve-"+displayedData[i].Id).is(":checked"),
-                    "delete" : $("#check-Delete-"+displayedData[i].Id).is(":checked"),
-                    "process" : $("#check-Process-"+displayedData[i].Id).is(":checked"),
-                    "edit" : $("#check-Edit-"+displayedData[i].Id).is(":checked"),
-                    "Url": displayedData[i].Url
-                });
-            // }
-        }
+    // var displayedData = $("#MasterGridMenu").data().kendoTreeList.dataSource.view();
+    var param = {};
+    param.id = rolesett.Id();
+    param.name = rolesett.roleName();
+    param.type = rolesett.roleType();
+    param.dealallocation = rolesett.dealAllocation();
+    param.status = $('#Status').bootstrapSwitch('state');
+    param.landing = rolesett.landingPage();
+    param.menu = backMapping();
+
+    console.log(param);
+
+    // for (var i in displayedData){
+    //     if (displayedData[i].Id != undefined){
+    //         var Access = $("#check-Access-"+displayedData[i].Id).is(":checked");
+    //         // if (Access != false){
+    //             rolesett.mappingRole.menu.push({
+    //                 "menuid" : displayedData[i].Id,
+    //                 "menuname" : displayedData[i].Title,
+    //                 "haschild" : displayedData[i].Haschild,
+    //                 "enable" : displayedData[i].Enable,
+    //                 "parent" : displayedData[i].parentId,
+    //                 "checkall" : $("#check-all-new"+displayedData[i].Id).is(":checked"),
+    //                 "access" : $("#check-Access-"+displayedData[i].Id).is(":checked"),
+    //                 "view" : $("#check-View-"+displayedData[i].Id).is(":checked"),
+    //                 "create" : $("#check-Create-"+displayedData[i].Id).is(":checked"),
+    //                 "approve" : $("#check-Approve-"+displayedData[i].Id).is(":checked"),
+    //                 "delete" : $("#check-Delete-"+displayedData[i].Id).is(":checked"),
+    //                 "process" : $("#check-Process-"+displayedData[i].Id).is(":checked"),
+    //                 "edit" : $("#check-Edit-"+displayedData[i].Id).is(":checked"),
+    //                 "Url": displayedData[i].Url
+    //             });
+    //         // }
+    //     }
 
 
-    }
-    
+    // }
 
-    var param =  ko.mapping.toJS(rolesett.mappingRole);
+    // var param =  ko.mapping.toJS(rolesett.mappingRole);
     var url = "/sysroles/savedata";
     var validator = $("#AddRole").data("kendoValidator");
     if(validator==undefined){
@@ -127,105 +652,70 @@ rolesett.SaveData = function(){
     }
 }
 
-rolesett.UpdateData = function(){
-    var displayedData = $("#MasterGridMenu").data().kendoTreeList.dataSource.view();
-    rolesett.mappingRole.name(rolesett.roleName());
-    rolesett.mappingRole.status($('#Status').bootstrapSwitch('state'));
-    rolesett.mappingRole.landing($('#role').val());
-    
-    rolesett.mappingRole.menu([]);
-    for (var i in displayedData){
-        if (displayedData[i].Id != undefined){
-            var Access = $("#check-Access-"+displayedData[i].Id).is(":checked");
-            // if (Access != false){
-                rolesett.mappingRole.menu.push({
-                    "menuid" : displayedData[i].Id,
-                    "menuname" : displayedData[i].Title,
-                    "haschild" : displayedData[i].Haschild,
-                    "enable" : displayedData[i].Enable,
-                    "parent" : displayedData[i].parentId,
-                    "checkall" : $("#check-all-new"+displayedData[i].Id).is(":checked"),
-                    "access" : $("#check-Access-"+displayedData[i].Id).is(":checked"),
-                    "view" : $("#check-View-"+displayedData[i].Id).is(":checked"),
-                    "create" : $("#check-Create-"+displayedData[i].Id).is(":checked"),
-                    "approve" : $("#check-Approve-"+displayedData[i].Id).is(":checked"),
-                    "delete" : $("#check-Delete-"+displayedData[i].Id).is(":checked"),
-                    "process" : $("#check-Process-"+displayedData[i].Id).is(":checked"),
-                    "edit" : $("#check-Edit-"+displayedData[i].Id).is(":checked"),
-                    "Url": displayedData[i].Url
-                });
-            // }
-        }
-    }
-
-    var param =  ko.mapping.toJS(rolesett.mappingRole);
-    param.Id = rolesett.Id();
-    var url = "/sysroles/savedata";
-    var validator = $("#AddRole").data("kendoValidator");
-    if(validator==undefined){
-       validator= $("#AddRole").kendoValidator().data("kendoValidator");
-    }
-    if (validator.validate()) {
-        ajaxPost(url, param, function(res){
-            if(res.IsError != true){
-                rolesett.Cancel();
-                rolesett.Reset();
-                $("#nav-dex").css('z-index', 'none');
-                swal("Success!", res.Message, "success");
-                location.reload();
-            }else{
-                return swal("Error!", res.Message, "error");
-            }
-        });
-    }
+rolesett._privToGrid = function(priv) {
+    rolesett.dashboardData(priv["Dashboard"]);
+    rolesett.dealSetupData(priv["Deal Setup"]);
+    rolesett.webFormsData(priv["Web Forms"]);
+    rolesett.dataMasterData(priv["Data Master"]);
+    rolesett.helpData(priv["Help"]);
+    rolesett.decisionCommitteData(priv["DecisionCommitte"]);
+    rolesett.caCommitteData(priv["CaCommitte"]);
 }
 
 rolesett.EditData = function(IdRole){
+
+    // Old Data
     var url = "/sysroles/getmenuedit";
     var param = {
             Id : IdRole
         }
         ajaxPost(url, param, function(res){
-            if(res.IsError != true){
-                rolesett.disableRolename(false);
-                $("#roleModal").modal("show");
-                $("#nav-dex").css('z-index', '0');
-                $("#roleModal").modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-                rolesett.titleModel("Update Roles");
-                rolesett.edit(true);
-                var Records = res.Data.Records[0];
-                rolesett.Id(Records.Id);
-                rolesett.roleName(Records.Name);
-                var landing = $("#role").data("kendoDropDownList");
-                landing.value(Records.Landing);
-                $('#Status').bootstrapSwitch('state',Records.Status);
-                var dataMenu = res.Data.Records[0].Menu;
-                var newRecords = [];
-                for (var d in dataMenu){
-                    newRecords.push({
-                        "Access": dataMenu[d].Access,
-                        "Approve": dataMenu[d].Approve,
-                        "Checkall": dataMenu[d].Checkall,
-                        "Create": dataMenu[d].Create,
-                        "Delete": dataMenu[d].Delete,
-                        "Edit": dataMenu[d].Edit,
-                        "Enable": dataMenu[d].Enable,
-                        "Haschild": dataMenu[d].Haschild,
-                        "Id": dataMenu[d].Menuid,
-                        "Title": dataMenu[d].Menuname,
-                        "Parent": dataMenu[d].Parent,
-                        "Process": dataMenu[d].Process,
-                        "Url": dataMenu[d].Url,
-                        "View": dataMenu[d].View,
-                    });
-                }
-                rolesett.GetDataMenu(newRecords);
-            }else{
+            if(!(res.IsError != true)){
                 return swal("Error!", res.Message, "error");
             }
+            rolesett.disableRolename(false);
+            $("#roleModal").modal("show");
+            $("#nav-dex").css('z-index', '0');
+            $("#roleModal").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+            rolesett.titleModel("Update Roles");
+            rolesett.edit(true);
+            var Records = res.Data.Records[0];
+            // FILL UP FORM
+            rolesett.Id(Records.Id);
+            rolesett.roleName(Records.Name);
+            rolesett.roleType(_.get(Records, 'Records.Type', 'Custom'));
+            rolesett._privToGrid(privilegesToNewRole(Records.Menu));
+            rolesett.landingPage(Records.Landing);
+            $('#Status').bootstrapSwitch('state',Records.Status);
+
+            // old access layout setup
+
+            // var landing = $("#role").data("kendoDropDownList");
+            // landing.value(Records.Landing);
+            var dataMenu = res.Data.Records[0].Menu;
+            var newRecords = [];
+            for (var d in dataMenu){
+                newRecords.push({
+                    "Access": dataMenu[d].Access,
+                    "Approve": dataMenu[d].Approve,
+                    "Checkall": dataMenu[d].Checkall,
+                    "Create": dataMenu[d].Create,
+                    "Delete": dataMenu[d].Delete,
+                    "Edit": dataMenu[d].Edit,
+                    "Enable": dataMenu[d].Enable,
+                    "Haschild": dataMenu[d].Haschild,
+                    "Id": dataMenu[d].Menuid,
+                    "Title": dataMenu[d].Menuname,
+                    "Parent": dataMenu[d].Parent,
+                    "Process": dataMenu[d].Process,
+                    "Url": dataMenu[d].Url,
+                    "View": dataMenu[d].View,
+                });
+            }
+            rolesett.GetDataMenu(newRecords);
     }); 
 }
 

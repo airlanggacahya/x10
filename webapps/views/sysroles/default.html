@@ -307,6 +307,8 @@ model.Fullname= ko.observable('{{.Fullname}}');
                                     <li class="panel">
                                       <div class="row">
                                         <div class="col-sm-12">
+                                          <div id="AdminGrid" data-bind="kendoGrid: {data: rolesett.adminData, columns: AdminObj.columns}">
+                                          </div>
                                         </div>
                                       </div>
                                     </li>

@@ -33,7 +33,8 @@ var rolesett = {
     dataMasterData: ko.observableArray([]),
     helpData: ko.observableArray([]),
     decisionCommitteData: ko.observableArray([]),
-    caCommitteData: ko.observableArray([])
+    caCommitteData: ko.observableArray([]),
+    adminData: ko.observableArray([])
 };
 
 rolesett.roleType.subscribe(function (val) {
@@ -242,12 +243,46 @@ var caCommitteMapping = [
     }
 ]
 
+var adminGrant = ["view", "edit", "create", "delete"]
+var adminMapping = [
+    {
+        "name": "User",
+        "menuid": "201685212148",
+        "grant": adminGrant
+    },
+    {
+        "name": "Role",
+        "menuid": "20168521215",
+        "grant": adminGrant
+    },
+    {
+        "name": "Menu",
+        "menuid": "201685212251",
+        "grant": adminGrant
+    },
+    {
+        "name": "Reallocation Master",
+        "menuid": "2017214122614",
+        "grant": adminGrant
+    },
+    {
+        "name": "New User",
+        "menuid": "201721611052",
+        "grant": adminGrant
+    },
+    {
+        "name": "Data Browser",
+        "menuid": "201711316158",
+        "grant": adminGrant
+    }
+]
+
 function processMapping(input, maps) {
     var ret = [];
     _.each(maps, function(component) {
         var newcomponent = {};
         newcomponent.submodule = component.name
-        newcomponent.submodule_path = component.name.replace(/ /g, '_').toLowerCase()
+        newcomponent.submodule_path = component.name.replace(/[^A-Za-z0-9]/g, '_').toLowerCase()
         newcomponent.menuid = component.menuid
         newcomponent.grant = {}
         // find matching menu
@@ -289,7 +324,8 @@ function backMapping() {
         rolesett.decisionCommitteData,
         rolesett.caCommitteData,
         rolesett.dataMasterData,
-        rolesett.helpData
+        rolesett.helpData,
+        rolesett.adminData
     ]
 
     var ret = []
@@ -323,6 +359,7 @@ function privilegesToNewRole(input) {
     mapped["Help"] = processMapping(input, helpMapping)
     mapped["DecisionCommitte"] = processMapping(input, decisionCommitteMapping)
     mapped["CaCommitte"] = processMapping(input, caCommitteMapping)
+    mapped["Admin"] = processMapping(input, adminMapping)
     
     return mapped;
 }
@@ -580,6 +617,48 @@ var HelpObj = {
     ]
 }
 
+// Admin
+var AdminObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.view",
+            title: "View",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.view')
+        },
+        {
+            field: "grant.edit",
+            title: "Edit & Save",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.edit')
+        },
+        {
+            field: "grant.create",
+            title: "Create",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.create')
+        },
+        {
+            field: "grant.delete",
+            title: "Delete",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.delete')
+        }
+    ]
+}
+
 rolesett.templateRole = {
     name: "",
     type: "",
@@ -706,6 +785,7 @@ rolesett._privToGrid = function(priv) {
     rolesett.helpData(priv["Help"]);
     rolesett.decisionCommitteData(priv["DecisionCommitte"]);
     rolesett.caCommitteData(priv["CaCommitte"]);
+    rolesett.adminData(priv["Admin"]);
 }
 
 rolesett.EditData = function(IdRole){

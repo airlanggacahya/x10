@@ -269,6 +269,23 @@ model.Fullname= ko.observable('{{.Fullname}}');
                           </ul>
                           <ul class="collapsible" data-collapsible="accordion">
                             <li>
+                              <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Cibil Editor<i class="fa fa-chevron-down pull-right"></i></div>
+                              <div class="collapsible-body row">
+                                  <ul class="collapsible" data-collapsible="accordion">
+                                    <li class="panel">
+                                      <div class="row">
+                                        <div class="col-sm-12">
+                                          <div id="CibilGrid" data-bind="kendoGrid: {data: rolesett.cibilData, columns: CibilObj.columns}">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </li>
+                          </ul>
+                          <ul class="collapsible" data-collapsible="accordion">
+                            <li>
                               <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Data Viewing<i class="fa fa-chevron-down pull-right"></i></div>
                               <div class="collapsible-body row">
                                   <ul class="collapsible" data-collapsible="accordion">

@@ -31,6 +31,7 @@ var rolesett = {
     dealSetupData: ko.observableArray([]),
     webFormsData: ko.observableArray([]),
     dataMasterData: ko.observableArray([]),
+    cibilData: ko.observableArray([]),
     helpData: ko.observableArray([]),
     decisionCommitteData: ko.observableArray([]),
     caCommitteData: ko.observableArray([]),
@@ -206,6 +207,21 @@ var dataMasterMapping = [
     }
 ]
 
+
+var cibilGrant = ["view", "edit", "create", "delete"]
+var cibilMapping = [
+    {
+        "name": "Edit Individual CIBIL Details",
+        "menuid": "20161114144633",
+        "grant": cibilGrant
+    },
+    {
+        "name": "Edit Company CIBIL Details",
+        "menuid": "20161219145538",
+        "grant": cibilGrant
+    }
+]
+
 var helpGrant = ["view"]
 var helpMapping = [
     {
@@ -323,6 +339,7 @@ function backMapping() {
         rolesett.webFormsData,
         rolesett.decisionCommitteData,
         rolesett.caCommitteData,
+        rolesett.cibilData,
         rolesett.dataMasterData,
         rolesett.helpData,
         rolesett.adminData
@@ -355,6 +372,7 @@ function privilegesToNewRole(input) {
     mapped["Dashboard"] = processMapping(input, dashboardMapping)
     mapped["Deal Setup"] = processMapping(input, dealSetupMapping)
     mapped["Web Forms"] = processMapping(input, webFormMapping)
+    mapped["Cibil Editor"] = processMapping(input, cibilMapping)
     mapped["Data Master"] = processMapping(input, dataMasterMapping)
     mapped["Help"] = processMapping(input, helpMapping)
     mapped["DecisionCommitte"] = processMapping(input, decisionCommitteMapping)
@@ -592,6 +610,46 @@ var caCommitteObj = {
     ]
 }
 // Cibil Editor
+var CibilObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.view",
+            title: "View",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.view')
+        },
+        {
+            field: "grant.edit",
+            title: "Edit & Save",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.edit')
+        },
+        {
+            field: "grant.create",
+            title: "Create",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.create')
+        },
+        {
+            field: "grant.delete",
+            title: "Delete",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.delete')
+        }
+    ]
+}
 
 // Help
 var HelpObj = {
@@ -781,6 +839,7 @@ rolesett._privToGrid = function(priv) {
     rolesett.dashboardData(priv["Dashboard"]);
     rolesett.dealSetupData(priv["Deal Setup"]);
     rolesett.webFormsData(priv["Web Forms"]);
+    rolesett.cibilData(priv["Cibil Editor"]);
     rolesett.dataMasterData(priv["Data Master"]);
     rolesett.helpData(priv["Help"]);
     rolesett.decisionCommitteData(priv["DecisionCommitte"]);

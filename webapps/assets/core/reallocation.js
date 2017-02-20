@@ -5,6 +5,8 @@ r = {}
 r.visibleFilter = ko.observable(true)
 
 r.masterUserList = ko.observableArray()
+r.masterCustomerList = ko.observableArray()
+
 r.allCaName = ko.observableArray()
 r.allRmName = ko.observableArray()
 r.tempForCAOrRM = ko.observableArray()
@@ -25,10 +27,77 @@ r.caNameSelected = ko.observableArray()
 r.allocateRoleList = ko.observableArray(["CA", "RM"])
 r.allocateRoleSelected = ko.observable("CA")
 
-r.getData = function(){
+r.tempDataGrid = ko.observableArray()
+
+var gridbrowser = {
+    column: [
+        {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            title : "Customer Name",
+            field : "CustomerName",
+        },
+        {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            title : "Deal No",
+            field : "DealNo",
+        },
+        {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            title : "Role",
+            field : "Role",
+        },
+        {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            title : "Reallocate From",
+            field : "FromName",
+        },
+        {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            title : "Reallocate To",
+            field : "ToName",
+        },
+        {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            title : "Reason",
+            field : "Reason",
+        },
+        {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            title : "Timestamp",
+            field : "Timestamp",
+            template : function(o) {
+                return "<label>"+moment(o).format("DD-MMM-YYYY")+"</label>"
+            }
+        },
+        {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            title : "Action",
+            template : function(o) {
+                console.log(o.DealNo)
+                console.log("<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"')\">Edit</button>")
+                return "<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"')\">Edit</button>"
+            }
+        }
+    ]
+}
+
+var source = ko.observableArray([])
+
+r.getDataAllocate = function() {
+	ajaxPost("/reallocation/getreallocationdeal",{}, function(res){
+		source(res)		 
+    });
+}
+
+r.getData = function(getAllocate){
 	$.ajax("/reallocation/getdata", {
 		success: function(body) {
+			if(typeof getAllocate === "function") {
+				getAllocate()
+			}
+
 			r.masterUserList(body.Data.MasterUser)
+			r.masterCustomerList(body.Data.MasterCustomer)
 
 			r.renderFilter(body.Data)
 			
@@ -44,7 +113,8 @@ r.renderFilter = function(data) {
 	r.renderDealNo(r.dealNoList, data.AccountDetails)
 	r.renderRMName(r.rmNameList, data.AccountDetails)
 	r.renderCAName(r.caNameList, data.AccountDetails)
-	r.renderCustomer(r.customerList, data.MasterUser, data.AccountDetails)
+	r.renderCompany(r.customerList, data.MasterCustomer, data.AccountDetails)
+	// r.renderCustomer()
 }
 
 r.refreshFilter = function() {
@@ -52,26 +122,19 @@ r.refreshFilter = function() {
 	param.DealNo = r.dealNoSelected()
 	param.Customer = r.customerSelected()
 	param.CaName = r.caNameSelected()
-	param.RMName = r.rmNameSelected()
-
-	var filter = false
-
-	if(param.DealNo.length > 0 || param.Customer.length > 0 || param.CaName.length > 0 || param.RMName.length > 0) {
-		filter = true
-	} 
+	param.RMName = r.rmNameSelected() 
+	
+	r.tempDataGrid([])
 
 	ajaxPost("/reallocation/getdatabyparam",param, function(res){
-		r.dataGrid([])
-		if(filter === true) {
-			r.renderKendoGrid(r.normalisasiDataGrid, res.Data)
-		}
+		r.tempDataGrid(res.Data)
 
 		if(param.DealNo.length === 0) {
 			r.renderDealNo(r.dealNoList, res.Data)
 		}
 
 		if(param.Customer.length === 0) {
-			r.renderCustomer(r.customerList, r.masterUserList(), res.Data)	
+			r.renderCompany(r.customerList, r.masterCustomerList(), res.Data)	
 		}
 
 		if(param.CaName.length === 0) {
@@ -82,6 +145,10 @@ r.refreshFilter = function() {
 			r.renderRMName(r.rmNameList, res.Data)	
 		} 
     });
+}
+
+r.drawGrid = function(){
+	r.renderKendoGrid(r.normalisasiDataGrid, r.tempDataGrid())
 }
 
 r.resetFilter = function() {
@@ -141,75 +208,6 @@ r.renderKendoGrid = function(normalisasi, data) {
 	if(typeof normalisasi === "function") {
 		data = normalisasi(data)
 		r.dataGrid(data)
-
-		// colconfig = [
-		// 	{
-		// 		field : "CustomerId",
-		// 		title : "Customer Id",
-		// 		hidden : true,
-		// 		width : 150,
-		// 		headerAttributes: { "class": "sub-bgcolor" },
-		// 	},
-		// 	{
-		// 		field : "RMCASelection",
-		// 		title : "Reallocate Role",
-		// 		hidden : false,
-		// 		width : 150,
-		// 		headerAttributes: { "class": "sub-bgcolor" },
-		// 		template : function(o) {
-		// 			console.log(o.AccountSetupDetails.RmName)
-		// 			param = {}
-		// 			param.Id = o.Id
-		// 			param.RmName = o.AccountSetupDetails.RmName
-		// 			param.CaName = o.AccountSetupDetails.CreditAnalyst
-
-		// 			return "<select onChange=test('"+o.Id+"', '"+o.AccountSetupDetails.RmName+"', '"+o.AccountSetupDetails.CreditAnalyst+"')><option>select one</option><option>CA</option><option>RM</option></select>"
-		// 		}
-		// 	},
-		// 	{
-		// 		field : "DealNo",
-		// 		title : "Deal No",
-		// 		hidden : false,
-		// 		width : 150,
-		// 		headerAttributes: { "class": "sub-bgcolor" },
-		// 		template : function(o) {
-		// 			console.log(o)
-		// 			return "<label id='"+o.Id+"'></label>"
-		// 		}
-		// 	},
-		// 	 {
-		// 		field : "AccountSetupDetails.RmName",
-		// 		title : "RM Name",
-		// 		hidden : false,
-		// 		width : 150,
-		// 		headerAttributes: { "class": "sub-bgcolor" },
-		// 	},
-		// 	{
-		// 		field : "AccountSetupDetails.CreditAnalyst",
-		// 		title : "CA Name",
-		// 		hidden : false,
-		// 		width : 150,
-		// 		headerAttributes: { "class": "sub-bgcolor" },
-		// 	}
-		// ]
-
-		// $("#griddb").kendoGrid({
-		// 	 dataSource: {
-		// 	 	data : data
-		// 	 },
-		// 	 columns : colconfig,
-		// 	 editable: true,
-		// 	 toolbar: [{ template: kendo.template($("#template").html()) }],
-		// 	 scrollable : true,
-		// 	 height:450,
-		// 	 dataBinding: function(x) {
-		// 	 	setTimeout(function(){
-		// 	 		_.each($(".intable").parent(),function(e){
-		// 				$(e).css("padding",0)
-		// 			})
-		// 	 	},10)
-		// 	}
-		// }).data("kendoGrid");
 	}
 }
 
@@ -252,10 +250,11 @@ r.validateDataGrid = function(data) {
 r.normalisasiDataGrid = function(data) {
 	_.each(data, function(row){
 
-		user = r.findCustomerById(row.CustomerId)
+		custId = parseInt(row.CustomerId)
+		user = r.findCompanyById(custId)
 
 		if(user !== undefined && user.length > 0) {
-			row.CustomerName = user[0].username
+			row.CustomerName = user[0].customer_name
 		} else {
 			row.CustomerName = ""
 		}
@@ -309,6 +308,24 @@ r.renderCAName = function(target, data) {
 	})
 }
 
+r.renderCompany = function(target, user, account) {
+	r.buildFilter(target, account, function(val){
+		custId = parseInt(val.CustomerId)
+
+		userResult = r.findCompanyById(custId)
+
+		textName = ""
+		if(userResult.length > 0 && userResult[0].customer_name !== undefined) {
+			textName = userResult[0].customer_name
+		}
+
+		return {
+			text : textName,
+			value : val.CustomerId
+		}		
+	})
+}
+
 r.renderCustomer = function(target, user, account) {
 	r.buildFilter(target, account, function(val){
 
@@ -346,12 +363,20 @@ r.findCustomerById = function(zone){
 	})	
 
 	return user
-} 
+}
 
 r.findCustomerByName = function(name) {
 	var user = _.filter(r.masterUserList(), function(row){
 		return name === row.username
 	})
+
+	return user
+}
+	
+r.findCompanyById = function(zone){
+	var user = _.filter(r.masterCustomerList(), function(row){
+		return zone === row.customer_id
+	})	
 
 	return user
 }
@@ -361,6 +386,24 @@ r.showModal = function(selector) {
 		r.visibleFilter(true)
 		$(selector).modal('show')
 	}
+}
+
+var allocationTimeOut = setTimeout(function(){
+}, 500)
+
+var findAllocationByParam = function() {
+	clearTimeout(allocationTimeOut)
+
+	param = {}
+	param.Search = $("#filter").val()
+	
+	allocationTimeOut = setTimeout(function(){
+		ajaxPost("/reallocation/searchbyparam", param, function(res){
+			console.log(res)
+			source([])
+			source(res) 
+	    });
+	}, 500)
 }
 
 //editor
@@ -381,5 +424,8 @@ carmEditor = function(container, options) {
 }
 
 $(document).ready(function(){
-	r.getData()
+	r.getData(r.getDataAllocate)
+	$("#filter").keyup(function(){
+		findAllocationByParam()  
+	})
 })

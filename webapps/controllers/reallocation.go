@@ -18,7 +18,8 @@ type ReallocationController struct {
 func (c *ReallocationController) GetReallocationDeal(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	res := []tk.M{}
+	res := []ReallocationDeal{}
+
 	con, err := GetConnection()
 	if err != nil {
 		return res
@@ -63,6 +64,25 @@ func (c *ReallocationController) Default(k *knot.WebContext) interface{} {
 	return DataAccess
 }
 
+func (c *ReallocationController) SearchByParam(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	param := tk.M{}
+
+	err := k.GetPayload(&param)
+	if err != nil {
+		panic(err)
+	}
+
+	reallo, err := new(ReallocationDeal).SearchByParam(param)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return reallo
+}
+
 func (c *ReallocationController) GetData(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
@@ -81,7 +101,10 @@ func (c *ReallocationController) GetData(k *knot.WebContext) interface{} {
 	users, _ := GetAllUser()
 	result.Set("MasterUser", users)
 
+	customer, _ := GetAllCustomer()
+	result.Set("MasterCustomer", customer)
 	res.SetData(result)
+
 	return res
 }
 
@@ -194,6 +217,26 @@ func GetAllUser() (interface{}, error) {
 	defer conn.Close()
 
 	qcust, err := conn.NewQuery().From("MasterUser").Cursor(nil)
+	if err != nil {
+		return resCust, err
+	}
+
+	defer qcust.Close()
+	qcust.Fetch(&resCust, 0, false)
+
+	return resCust, err
+}
+
+func GetAllCustomer() (interface{}, error) {
+	resCust := []tk.M{}
+
+	conn, err := GetConnection()
+	if err != nil {
+		return resCust, err
+	}
+	defer conn.Close()
+
+	qcust, err := conn.NewQuery().From("MasterCustomer").Cursor(nil)
 	if err != nil {
 		return resCust, err
 	}

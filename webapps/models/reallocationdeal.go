@@ -23,11 +23,56 @@ type ReallocationDeal struct {
 	ToName        string        `bson:"ToName,omitempty"`
 	ToId          string        `bson:"ToId,omitempty"`
 	Role          string        `bson:"Role,omitempty"`
+	Reason        string        `bson:"Reason,omitempty"`
 	TimeStamp     time.Time     `bson:"TimeStamp,omitempty"`
 }
 
 func (m *ReallocationDeal) TableName() string {
 	return "ReallocationDeal"
+}
+
+func (m *ReallocationDeal) SearchByParam(param tk.M) ([]ReallocationDeal, error) {
+	searchText := param.GetString("Search")
+
+	reallocation := []ReallocationDeal{}
+
+	cMongo, em := GetConnection()
+	if em != nil {
+		return reallocation, em
+	}
+
+	defer cMongo.Close()
+
+	filter := []*dbox.Filter{}
+
+	filter = append(filter, dbox.Contains("CustomerName", searchText))
+	filter = append(filter, dbox.Contains("DealNo", searchText))
+	filter = append(filter, dbox.Contains("FromName", searchText))
+	filter = append(filter, dbox.Contains("ToName", searchText))
+	filter = append(filter, dbox.Contains("Role", searchText))
+
+	query := []*dbox.Filter{}
+
+	query = append(query, dbox.Or(filter...))
+
+	queryBuilder := cMongo.NewQuery().
+		From(new(ReallocationDeal).TableName())
+
+	if searchText != "" {
+		queryBuilder.Where(query...)
+	}
+
+	csr, err := queryBuilder.Cursor(nil)
+
+	if err != nil {
+		return reallocation, err
+	} else if csr != nil {
+		defer csr.Close()
+	}
+
+	csr.Fetch(&reallocation, 0, true)
+
+	return reallocation, err
 }
 
 func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
@@ -83,6 +128,7 @@ func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 		allocate.ToName = v.GetString("ToText")
 		allocate.ToId = v.GetString("ToId")
 		allocate.Role = v.GetString("Role")
+		allocate.Reason = v.GetString("Reason")
 		allocate.TimeStamp = time.Now()
 
 		insdata := map[string]interface{}{"data": allocate}

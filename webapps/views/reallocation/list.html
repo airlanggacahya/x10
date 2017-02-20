@@ -4,33 +4,45 @@
         column: [
             {
                 headerAttributes: { "class": "k-header header-bgcolor" },
-                title : "Customer ID",
-                field : "customerid",
+                title : "Customer Name",
+                field : "CustomerName",
             },
             {
                 headerAttributes: { "class": "k-header header-bgcolor" },
                 title : "Deal No",
-                field : "dealno",
+                field : "DealNo",
             },
             {
                 headerAttributes: { "class": "k-header header-bgcolor" },
                 title : "Role",
-                field : "role",
+                field : "Role",
             },
             {
                 headerAttributes: { "class": "k-header header-bgcolor" },
                 title : "Reallocate From",
-                field : "fromname",
+                field : "FromName",
             },
             {
                 headerAttributes: { "class": "k-header header-bgcolor" },
                 title : "Reallocate To",
-                field : "toname",
+                field : "ToName",
             },
             {
                 headerAttributes: { "class": "k-header header-bgcolor" },
                 title : "Timestamp",
-                field : "timestamp",
+                field : "Timestamp",
+                template : function(o) {
+                    return "<label>"+moment(o).format("DD-MMM-YYYY")+"</label>"
+                }
+            },
+            {
+                headerAttributes: { "class": "k-header header-bgcolor" },
+                title : "Action",
+                template : function(o) {
+                    console.log(o.DealNo)
+                    console.log("<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"')\">Edit</button>")
+                    return "<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"')\">Edit</button>"
+                }
             }
         ]
     }
@@ -57,7 +69,7 @@
 
 <div class="panel ez">
   <div class="panel-heading">
-    <button class="btn btn-sm btn-success btn-flat" data-bind="click: page.switchState.bind($data, 'NEW')">Reallocation Deal</button>
+    <button class="btn btn-sm btn-success btn-flat" data-bind="click: r.showModal('.modal-reallocation')">Reallocation Deal</button>
   </div>
   <div class="panel-body margin-top-0">
     <div data-bind="kendoGrid: { data: source, columns: gridbrowser.column }">

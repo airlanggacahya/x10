@@ -451,6 +451,7 @@ function checkConfirmedOrNot(statusnow, confirmedval, verifyval, res, emptydata,
 }
 
 function fixToast(message){
+    $(".toaster").html("");
     $.toaster('', message, 'warning');
     $(".alert-warning").css("background-color", "#F26419").css("border-color", "#F26419").css("color", "#fff");
     $(".alert").css("margin-bottom","5px")

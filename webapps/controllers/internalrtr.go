@@ -127,7 +127,7 @@ func (d *InternalRtrController) InternalRtrConfirmed(k *knot.WebContext) interfa
 	} else if payload.Status == 1 {
 		UpdateDealSetup(id, deal, "irtr", "Confirmed")
 	} else {
-		UpdateDealSetup(id, deal, "irtr", "Under Process")
+		UpdateDealSetup(id, deal, "irtr", UnderProcess)
 	}
 
 	return d.SetResultInfo(false, "success", nil)

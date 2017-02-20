@@ -935,7 +935,7 @@ func (c *DataCapturingController) UpdateConfirmCibil(k *knot.WebContext) interfa
 	}
 	// Update DealSetup
 	if inputCibilConfirm == 0 {
-		UpdateDealSetup(p.GetString("CustomerId"), p.GetString("DealNo"), "cibil", "Under Process")
+		UpdateDealSetup(p.GetString("CustomerId"), p.GetString("DealNo"), "cibil", UnderProcess)
 	} else {
 		UpdateDealSetup(p.GetString("CustomerId"), p.GetString("DealNo"), "cibil", "Confirmed")
 	}

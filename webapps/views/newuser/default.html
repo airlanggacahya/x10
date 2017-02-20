@@ -24,7 +24,7 @@ mincibil = ko.observable(0);
 		overflow-y: hidden;
 	}
 	#gridUser{
-		width: 75%;
+		width: 100%;
 	}
 	.no-padding{
 		padding: 0px !important;
@@ -35,6 +35,22 @@ mincibil = ko.observable(0);
 	}
 	.k-pager-sizes{
 		float: left !important;
+	}
+	/*.k-link{
+		color: white !important;
+	}*/
+	.k-operator-hidden{
+		display: none;
+	}
+	.k-button.k-primary{
+		color: white;
+	}
+	.k-sprite, .k-icon{
+		background-image: url(/static/kendoui/styles/Uniform/sprite_3.png) !important;
+	}
+
+	.k-button{
+		border: 1px solid #e0e0e0 !important;
 	}
 </style>
 
@@ -114,8 +130,8 @@ mincibil = ko.observable(0);
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-sm btn-flat btn-primary" onclick="ns.saveEdit(ns.uid())">Save</button>
 						<button type="button" class="btn btn-sm btn-flat btn-danger" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-sm btn-flat btn-primary" onclick="ns.saveEdit(ns.uid())">Save</button>
 					</div>
 				</div>
 			<!-- </form> -->

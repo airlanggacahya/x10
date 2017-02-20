@@ -161,7 +161,7 @@ func (c *DataCapturingController) ConfirmStockAndDebt(k *knot.WebContext) interf
 	if p.Get("IsConfirm").(bool) {
 		UpdateDealSetup(cust, deal, "sbd", "Confirmed")
 	} else {
-		UpdateDealSetup(cust, deal, "sbd", "Under Process")
+		UpdateDealSetup(cust, deal, "sbd", UnderProcess)
 	}
 	return result
 }

@@ -10,8 +10,11 @@ var rolesett = {
     Id : ko.observable(""),
     roleName : ko.observable(""),
     roleType : ko.observable(""),
-    dealAllocation : ko.observable(""),
-    dealAllocationOpt : ko.observableArray(["Standard", "Branches", "Regions"]),
+
+    dealAllocation : ko.observable("Standard"),
+    dealAllocationOpt : ko.observableArray(["Standard"]),
+    dealAllocationEnable : ko.observable(false),
+
     landingPage : ko.observable(""),
 
     //var Filter
@@ -28,28 +31,68 @@ var rolesett = {
     dealSetupData: ko.observableArray([]),
     webFormsData: ko.observableArray([]),
     dataMasterData: ko.observableArray([]),
+    cibilData: ko.observableArray([]),
     helpData: ko.observableArray([]),
     decisionCommitteData: ko.observableArray([]),
-    caCommitteData: ko.observableArray([])
+    caCommitteData: ko.observableArray([]),
+    adminData: ko.observableArray([])
 };
+
+rolesett.roleType.subscribe(function (val) {
+    switch (val) {
+    case "CA":
+    case "RM":
+        rolesett.dealAllocation("Standard");
+        rolesett.dealAllocationEnable(false);
+        rolesett.dealAllocationOpt(["Standard"]);
+        break;
+    default:
+        rolesett.dealAllocation("Branches");
+        rolesett.dealAllocationEnable(true);
+        rolesett.dealAllocationOpt(["Branches", "Regions"]);
+        break;
+    }
+})
 
 function checkboxField(field) {
         return '<input type="checkbox" ' +
             'data-switch-no-init ' +
             'id="#=menuid#_' + field + '"' +
-            'onclick="clickRole(\'#=menuid#\', \'' + field + '\')" ' +
+            'class="role_#=submodule_path#_#=menuid# ' + field + '"' +
+            'onclick="clickRole(\'#=submodule_path#\', \'#=menuid#\', \'' + field + '\')" ' +
+            'data-path="' + field + '"' +
             '#= ' + field + ' ? checked="checked" : "" # />'
 }
 
-function clickRole(menuid, path) {
+function clickRole(submodule_path, menuid, path) {
     var output = backMapping();
+    // if (path == 'grant.all') {
+    //     $('.role_' + submodule_path + '_' + menuid + '_' + path.repl)
+    //         .not('.role_' + submodule_path + '_' + menuid + '_grant\.all')
+    //         .each(function (checkbtn) {
+    //             console.log(checkbtn)
+    //         })
+    // }
+
     _.each(output, function(it) {
         if (it.menuid != menuid)
             return
 
         // toggle
-        console.log(it)
-        _.set(it, path, !_.get(it, path, false))
+        var sel = '.role_' + submodule_path + '_' + menuid
+        var path_sel = sel + '.' + path.replace(/\./g, '\\.')
+        var newVal = $(path_sel).is(":checked")
+        _.set(it, path, newVal)
+
+        // enable all if grant all selected
+        if (path == 'grant.all') {
+            $(sel)
+                .not('.grant\\.all')
+                .each(function (key, val) {
+                    _.set(it, $(val).data("path"), newVal)
+                })
+            return
+        }
     })
 
     rolesett._privToGrid(privilegesToNewRole(output))
@@ -71,7 +114,7 @@ var dealSetupMapping = [
     }
 ]
 
-var webFormGrant = ["all", "view", "edit", "confirm", "reenter", "freeze", "unfreeze"]
+var webFormGrant = ["view", "edit", "confirm", "reenter", "freeze", "unfreeze"]
 var webFormMapping = [
     {
         "name": "Customer Application",
@@ -120,7 +163,7 @@ var webFormMapping = [
     }
 ]
 
-var dataMasterGrant = ["all", "view", "edit", "create", "delete"]
+var dataMasterGrant = ["view", "edit", "create", "delete"]
 var dataMasterMapping = [
     {
         "name": "Balance Sheet Input Master",
@@ -164,7 +207,22 @@ var dataMasterMapping = [
     }
 ]
 
-var helpGrant = ["all", "view"]
+
+var cibilGrant = ["view", "edit", "create", "delete"]
+var cibilMapping = [
+    {
+        "name": "Edit Individual CIBIL Details",
+        "menuid": "20161114144633",
+        "grant": cibilGrant
+    },
+    {
+        "name": "Edit Company CIBIL Details",
+        "menuid": "20161219145538",
+        "grant": cibilGrant
+    }
+]
+
+var helpGrant = ["view"]
 var helpMapping = [
     {
         "name": "Formula Glossary",
@@ -183,7 +241,7 @@ var helpMapping = [
     }
 ]
 
-var decisionCommitteGrant = ["all", "dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
+var decisionCommitteGrant = ["dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
 var decisionCommitteMapping = [
     {
         "name": "Decision Committe",
@@ -192,7 +250,7 @@ var decisionCommitteMapping = [
     }
 ]
 
-var caCommitteGrant = ["all", "ca_save", "ca_send_dc"]
+var caCommitteGrant = ["ca_save", "ca_send_dc"]
 var caCommitteMapping = [
     {
         "name": "CA Committe",
@@ -201,15 +259,51 @@ var caCommitteMapping = [
     }
 ]
 
+var adminGrant = ["view", "edit", "create", "delete"]
+var adminMapping = [
+    {
+        "name": "User",
+        "menuid": "201685212148",
+        "grant": adminGrant
+    },
+    {
+        "name": "Role",
+        "menuid": "20168521215",
+        "grant": adminGrant
+    },
+    {
+        "name": "Menu",
+        "menuid": "201685212251",
+        "grant": adminGrant
+    },
+    {
+        "name": "Reallocation Master",
+        "menuid": "2017214122614",
+        "grant": adminGrant
+    },
+    {
+        "name": "New User",
+        "menuid": "201721611052",
+        "grant": adminGrant
+    },
+    {
+        "name": "Data Browser",
+        "menuid": "201711316158",
+        "grant": adminGrant
+    }
+]
+
 function processMapping(input, maps) {
     var ret = [];
     _.each(maps, function(component) {
         var newcomponent = {};
         newcomponent.submodule = component.name
+        newcomponent.submodule_path = component.name.replace(/[^A-Za-z0-9]/g, '_').toLowerCase()
         newcomponent.menuid = component.menuid
         newcomponent.grant = {}
         // find matching menu
-        var found = _.find(input, function(it) {
+        var grant = {}
+        _.find(input, function(it) {
             var menuid = _.get(it, "Menuid", undefined) || _.get(it, "menuid", undefined)
 
             if (typeof(menuid) == "undefined")
@@ -218,17 +312,20 @@ function processMapping(input, maps) {
             if (menuid != component.menuid)
                 return false;
 
-            newcomponent.grant = _.get(it, 'Grant', undefined) || _.get(it, "grant", {})
-            if (newcomponent.grant == null)
-                newcomponent.grant = {}
+            grant = _.get(it, 'Grant', undefined) || _.get(it, "grant", {})
             return true;
         })
 
-        // set default false
+        var all_check = true
+        // set default false, collect all var
         _.each(component.grant, function (name) {
-            newcomponent.grant[name] = _.get(newcomponent.grant, name, false)
+            newcomponent.grant[name] = _.get(grant, name, false)
+            all_check = all_check && newcomponent.grant[name]
         })
 
+        newcomponent.grant["all"] = all_check
+
+        // console.log(newcomponent)
         ret.push(newcomponent)
     })
 
@@ -242,8 +339,10 @@ function backMapping() {
         rolesett.webFormsData,
         rolesett.decisionCommitteData,
         rolesett.caCommitteData,
+        rolesett.cibilData,
         rolesett.dataMasterData,
-        rolesett.helpData
+        rolesett.helpData,
+        rolesett.adminData
     ]
 
     var ret = []
@@ -273,10 +372,12 @@ function privilegesToNewRole(input) {
     mapped["Dashboard"] = processMapping(input, dashboardMapping)
     mapped["Deal Setup"] = processMapping(input, dealSetupMapping)
     mapped["Web Forms"] = processMapping(input, webFormMapping)
+    mapped["Cibil Editor"] = processMapping(input, cibilMapping)
     mapped["Data Master"] = processMapping(input, dataMasterMapping)
     mapped["Help"] = processMapping(input, helpMapping)
     mapped["DecisionCommitte"] = processMapping(input, decisionCommitteMapping)
     mapped["CaCommitte"] = processMapping(input, caCommitteMapping)
+    mapped["Admin"] = processMapping(input, adminMapping)
     
     return mapped;
 }
@@ -509,6 +610,46 @@ var caCommitteObj = {
     ]
 }
 // Cibil Editor
+var CibilObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.view",
+            title: "View",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.view')
+        },
+        {
+            field: "grant.edit",
+            title: "Edit & Save",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.edit')
+        },
+        {
+            field: "grant.create",
+            title: "Create",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.create')
+        },
+        {
+            field: "grant.delete",
+            title: "Delete",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.delete')
+        }
+    ]
+}
 
 // Help
 var HelpObj = {
@@ -534,6 +675,48 @@ var HelpObj = {
     ]
 }
 
+// Admin
+var AdminObj = {
+    columns: [
+        {
+            field: "submodule",
+            title: "Submodule",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            width: 200
+        },
+        {
+            field: "grant.all",
+            title: "All",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.all')
+        },
+        {
+            field: "grant.view",
+            title: "View",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.view')
+        },
+        {
+            field: "grant.edit",
+            title: "Edit & Save",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.edit')
+        },
+        {
+            field: "grant.create",
+            title: "Create",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.create')
+        },
+        {
+            field: "grant.delete",
+            title: "Delete",
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField('grant.delete')
+        }
+    ]
+}
+
 rolesett.templateRole = {
     name: "",
     type: "",
@@ -547,7 +730,7 @@ rolesett.mappingRole = ko.mapping.fromJS(rolesett.templateRole);
 rolesett.ClearField = function(){
     rolesett.roleName("");
     rolesett.roleType("CA");
-    rolesett.dealAllocation("Standard");
+    // rolesett.dealAllocation("Standard");
     $('#Status').bootstrapSwitch('state',true);
     rolesett._privToGrid(privilegesToNewRole([]))
     rolesett.landingPage("");
@@ -656,10 +839,12 @@ rolesett._privToGrid = function(priv) {
     rolesett.dashboardData(priv["Dashboard"]);
     rolesett.dealSetupData(priv["Deal Setup"]);
     rolesett.webFormsData(priv["Web Forms"]);
+    rolesett.cibilData(priv["Cibil Editor"]);
     rolesett.dataMasterData(priv["Data Master"]);
     rolesett.helpData(priv["Help"]);
     rolesett.decisionCommitteData(priv["DecisionCommitte"]);
     rolesett.caCommitteData(priv["CaCommitte"]);
+    rolesett.adminData(priv["Admin"]);
 }
 
 rolesett.EditData = function(IdRole){

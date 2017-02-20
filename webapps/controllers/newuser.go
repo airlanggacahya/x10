@@ -54,8 +54,6 @@ func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 
 	csr, err := cn.NewQuery().
 		From("MasterUser").
-		Skip(payload.GetInt("skip")).
-		Take(payload.GetInt("take")).
 		Cursor(nil)
 
 	defer csr.Close()
@@ -76,7 +74,6 @@ func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 	}
 
 	result.Set("data", res)
-	result.Set("total", csr.Count())
 
 	return c.SetResultInfo(false, "success", result)
 }
@@ -85,7 +82,9 @@ func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	payload := NewUser{}
 	k.GetPayload(&payload)
-	payload.Userpassword = helper.GetMD5Hash(payload.Userpassword)
+	if payload.Catpassword != "" {
+		payload.Catpassword = helper.GetMD5Hash(payload.Catpassword)
+	}
 	err := c.Ctx.Save(&payload)
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)

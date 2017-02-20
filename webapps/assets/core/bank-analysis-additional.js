@@ -151,10 +151,25 @@ var disableSpinner = function(container, options){
     .appendTo(container)
     .kendoNumericTextBox({
         spinners : false,
+        min: 0,
+    });
+
+}
+
+var disableSpinnerAll = function(container, options){
+
+    if(options.model[options.field] == 0)
+        options.model[options.field] = ""
+    
+    $('<input data-bind="value:' + options.field + '"/>')
+    .appendTo(container)
+    .kendoNumericTextBox({
+        spinners : false,
         // min: 0,
     });
 
 }
+
 var disableInputSpinner = function(id){
     var numeric = $("#"+id).data("kendoNumericTextBox");
     numeric.wrapper
@@ -1082,7 +1097,7 @@ var createBankDetailGridCols = function(isForm){
                         return app.formatnum(d.CreditCash,2)
                     }
                 },
-                editor: disableSpinner,
+                editor: disableSpinnerAll,
                 attributes:{ "style": "text-align:right" },
             },
             // {
@@ -1118,7 +1133,7 @@ var createBankDetailGridCols = function(isForm){
                         return app.formatnum(d.DebitCash,2)
                     }
                 },
-                editor: disableSpinner,
+                editor: disableSpinnerAll,
                 attributes:{ "style": "text-align:right" },
             },
             // {
@@ -1139,7 +1154,7 @@ var createBankDetailGridCols = function(isForm){
                     return app.formatnum(d.AvgBalon,2)
                 }
             },
-            editor: disableSpinner,
+            editor: disableSpinnerAll,
             attributes:{ "style": "text-align:right" },
         },
         // {
@@ -1161,7 +1176,7 @@ var createBankDetailGridCols = function(isForm){
                     return app.formatnum(d.OdCcLimit,2)
                 }
             },
-            editor: disableSpinner,
+            editor: disableSpinnerAll,
             attributes:{ "style": "text-align:right" },
         }, {
             title : "Actual Interest paid (Rs. Lacs)",
@@ -1416,7 +1431,7 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.CreditCash,2)
                 }
             },
-            editor: disableSpinner,
+            editor: disableSpinnerAll,
             attributes:{ "style": "text-align:right" },
         },
         // {
@@ -1452,7 +1467,7 @@ var createCurrentBankDetailGridCols = function(isForm){
                     return app.formatnum(d.DebitCash,2)
                 }
             },
-            editor: disableSpinner,
+            editor: disableSpinnerAll,
             attributes:{ "style": "text-align:right" },
         },
 
@@ -1469,7 +1484,7 @@ var createCurrentBankDetailGridCols = function(isForm){
                 return app.formatnum(d.AvgBalon,2)
             }
         },
-        editor: disableSpinner,
+        editor: disableSpinnerAll,
         attributes:{ "style": "text-align:right" },
     },
       {

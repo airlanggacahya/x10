@@ -235,7 +235,7 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 	// Direct array access
 	ar := arr[0]
 	statusmap := []string{
-		"Under Process",
+		UnderProcess,
 		"Confirmed",
 		"Freeze",
 	}

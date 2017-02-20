@@ -30,6 +30,18 @@ type XMLReceiverController struct {
 	*BaseController
 }
 
+var (
+	Inque            = "In queue"
+	UnderProcess     = "Under Process"
+	SendBackOmnifin  = "Sent back to Omnifin"
+	SendBackAnalysis = "Sent Back for Analysis"
+	SendToDecision   = "Sent to Decision Committee"
+	OnHold           = "On Hold"
+	Approve          = "Approved"
+	Reject           = "Rejected"
+	Cancel           = "Cancelled"
+)
+
 func xmlToJson(r io.Reader) (*bytes.Buffer, error) {
 	root := &Node{}
 	err := NewDecoder(r).Decode(root)
@@ -193,7 +205,7 @@ func checkMasterData(data DealSetupModel) error {
 // }
 
 func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
-	r.Config.OutputType = knot.OutputHtml
+	r.Config.OutputType = knot.OutputJson
 	LogID := bson.NewObjectId()
 	LogData := tk.M{}
 	LogData.Set("_id", LogID)
@@ -203,22 +215,30 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	LogData.Set("xmltkm", "")
 	LogData.Set("iscomplete", false)
 
-	res := `<return>
-	            <operationMessage>Operation Successful</operationMessage>
-	            <operationStatus>1</operationStatus>
-	         </return>`
+	res := tk.M{}
+	res.Set("OperationMessage", "Operation Successful")
+	res.Set("OperationStatus", "1")
 
-	resFail := `<return>
-	            <operationMessage>Operation Failed</operationMessage>
-	            <operationStatus>0</operationStatus>
-	         </return>`
+	resFail := tk.M{}
+	resFail.Set("OperationMessage", "Operation Failed")
+	resFail.Set("OperationStatus", "0")
+
+	// res := `<return>
+	//             <operationMessage>Operation Successful</operationMessage>
+	//             <operationStatus>1</operationStatus>
+	//          </return>`
+
+	// resFail := `<return>
+	//             <operationMessage>@message</operationMessage>
+	//             <operationStatus>0</operationStatus>
+	//          </return>`
 
 	bs, e := ioutil.ReadAll(r.Request.Body)
 	if e != nil {
 		fmt.Errorf("Unable to read body: " + e.Error())
 		LogData.Set("error", e.Error())
 		CreateLog(LogData)
-		return resFail
+		return resFail.Set("OperationMessage", e.Error())
 	}
 	defer r.Request.Body.Close()
 
@@ -227,25 +247,18 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 
 	content := tk.M{}
 	err := json.Unmarshal(bs, &content)
-	LogData.Set("xmltkm", content)
-	CreateLog(LogData)
+	// LogData.Set("xmltkm", content)
+	// CreateLog(LogData)
 
 	if err != nil {
 		fmt.Println("Payload Decode Error: " + err.Error() + " .Bytes Data: " + string(bs))
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail
+		return resFail.Set("OperationMessage", err.Error())
 	}
 	// Decode done
 
-	//
-	// out, err := json.Marshal(content)
-	// if err != nil {
-	// 	return resFail
-	// }
-	// tk.Println(string(out))
-	//
-	contentbody := tk.M(content.Get("crDealDtl").(map[string]interface{}))
+	contentbody := content //tk.M(content.Get("crDealDtl").(map[string]interface{}))
 	crList := []tk.M{}
 	crL := contentbody.Get("crDealCustomerRoleList").([]interface{})
 
@@ -253,26 +266,35 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		crList = append(crList, tk.M(varL.(map[string]interface{})))
 	}
 
-	cid := contentbody.GetString("dealCustomerId")
+	cid := cast.ToString(contentbody.GetInt("dealCustomerId"))
 	dealno := contentbody.GetString("dealNo")
 	dataid := cid + "|" + dealno
 
 	LogData.Set("dataid", dataid)
 	CreateLog(LogData)
 
+	globalId := bson.NewObjectId()
+	globalInfo := BuildInfo()
+
 	// Check existing dealsetup
-	found, err := isDealSetupExists(cid, dealno)
+	found, myStatus, infos, curId, err := isDealSetupExists(cid, dealno)
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail
+		return resFail.Set("OperationMessage", err.Error())
 	}
 
-	// Already in queue
-	if found {
-		LogData.Set("error", "Already In queue")
+	// Reject Data
+	if found && (myStatus == UnderProcess || myStatus == SendBackAnalysis || myStatus == OnHold || myStatus == SendToDecision) {
+		LogData.Set("error", "Deal exists in CAT")
 		CreateLog(LogData)
-		return resFail
+		return resFail.Set("OperationMessage", err.Error())
+	}
+
+	//override existing data
+	if found && (myStatus == SendBackOmnifin || myStatus == Inque) {
+		globalId = curId
+		globalInfo = MergeInfo(infos)
 	}
 
 	// Build Customer Profile
@@ -280,7 +302,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	// Build Account Detail
@@ -288,7 +311,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	// Build Internal RTR
@@ -296,7 +320,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error()+" | InternalRTR")
 		CreateLog(LogData)
-		return resFail
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	// Save OmnifinXML
@@ -306,7 +331,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Println(err.Error())
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	qinsert := conn.NewQuery().
@@ -314,17 +340,18 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		SetConfig("multiexec", true).
 		Save()
 
-	contentbody.Set("_id", bson.NewObjectId())
+	contentbody.Set("_id", globalId) //bson.NewObjectId())
 	csc := map[string]interface{}{"data": contentbody}
 	err = qinsert.Exec(csc)
 	if err != nil {
 		fmt.Print(err.Error())
-		return resFail
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	var data DealSetupModel
-	data.Id = bson.NewObjectId()
-	data.Info = BuildInfo()
+	data.Id = globalId     //bson.NewObjectId()
+	data.Info = globalInfo //BuildInfo()
 	data.CustomerProfile = cp
 	data.AccountDetails = ad
 	data.InternalRtr = irtr
@@ -333,8 +360,11 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	// Keep processing even on data error
 	err = checkMasterData(data)
 	if err != nil {
-		LogData.Set("error", err.Error()+" | InternalRTR")
+		fmt.Println(err.Error())
+		LogData.Set("error", err.Error())
 		CreateLog(LogData)
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	// Save Account Setup
@@ -345,8 +375,11 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	csc = map[string]interface{}{"data": data}
 	err = qDealSetup.Exec(csc)
 	if err != nil {
-		fmt.Print(err.Error())
-		return resFail
+		fmt.Println(err.Error())
+		LogData.Set("error", err.Error())
+		CreateLog(LogData)
+		return resFail.Set("OperationMessage", err.Error())
+
 	}
 
 	LogData.Set("iscomplete", true)
@@ -362,7 +395,7 @@ func BuildInfo() tk.M {
 
 	infoQueue := tk.M{
 		"updateTime": time.Now(),
-		"status":     "In queue",
+		"status":     Inque,
 	}
 
 	info := tk.M{
@@ -383,15 +416,99 @@ func BuildInfo() tk.M {
 	return info
 }
 
+func MergeInfo(infos tk.M) tk.M {
+	infoNA := tk.M{
+		"updateTime": time.Now(),
+		"status":     "NA",
+	}
+
+	infoQueue := tk.M{
+		"updateTime": time.Now(),
+		"status":     Inque,
+	}
+
+	info := tk.M{}
+
+	caInfo := CheckArraytkM(infos.Get("caInfo"))
+	cacInfo := CheckArraytkM(infos.Get("cacInfo"))
+	sbdInfo := CheckArraytkM(infos.Get("sbdInfo"))
+	ertrInfo := CheckArraytkM(infos.Get("ertrInfo"))
+	cibilInfo := CheckArraytkM(infos.Get("cibilInfo"))
+	adInfo := CheckArraytkM(infos.Get("adInfo"))
+	myInfos := CheckArraytkM(infos.Get("myInfo"))
+	bsiInfo := CheckArraytkM(infos.Get("bsiInfo"))
+	irtrInfo := CheckArraytkM(infos.Get("irtrInfo"))
+	ddInfo := CheckArraytkM(infos.Get("ddInfo"))
+	baInfo := CheckArraytkM(infos.Get("baInfo"))
+	dcfInfo := CheckArraytkM(infos.Get("dcfInfo"))
+	idx := len(myInfos) - 1
+	myInfo := myInfos[len(myInfos)-1]
+	myStatus := myInfo.GetString("status")
+
+	if myStatus != Inque {
+		caInfo = append(caInfo, infoNA)
+		cacInfo = append(cacInfo, infoNA)
+		sbdInfo = append(sbdInfo, infoNA)
+		ertrInfo = append(ertrInfo, infoNA)
+		cibilInfo = append(cibilInfo, infoNA)
+		adInfo = append(adInfo, infoNA)
+		myInfos = append(myInfos, infoQueue)
+		bsiInfo = append(bsiInfo, infoNA)
+		irtrInfo = append(irtrInfo, infoNA)
+		ddInfo = append(ddInfo, infoNA)
+		baInfo = append(baInfo, infoNA)
+		dcfInfo = append(dcfInfo, infoNA)
+
+		info = tk.M{
+			"myInfo":    myInfos,
+			"caInfo":    caInfo,
+			"cibilInfo": cibilInfo,
+			"bsiInfo":   bsiInfo,
+			"sbdInfo":   sbdInfo,
+			"adInfo":    adInfo,
+			"baInfo":    baInfo,
+			"ertrInfo":  ertrInfo,
+			"irtrInfo":  irtrInfo,
+			"ddInfo":    ddInfo,
+			"dcfInfo":   dcfInfo,
+			"cacInfo":   cacInfo,
+		}
+	} else {
+		myInfos = append(myInfos[:idx], myInfos[idx+1:]...)
+		myInfos = append(myInfos, infoQueue)
+
+		info = tk.M{
+			"myInfo":    myInfos,
+			"caInfo":    caInfo,
+			"cibilInfo": cibilInfo,
+			"bsiInfo":   bsiInfo,
+			"sbdInfo":   sbdInfo,
+			"adInfo":    adInfo,
+			"baInfo":    baInfo,
+			"ertrInfo":  ertrInfo,
+			"irtrInfo":  irtrInfo,
+			"ddInfo":    ddInfo,
+			"dcfInfo":   dcfInfo,
+			"cacInfo":   cacInfo,
+		}
+	}
+
+	return info
+}
+
 // isDealSetupExists
 // Check whenever dealsetup with same custid and dealno
 // already exists in database and status is In queue
-func isDealSetupExists(cid string, dealno string) (bool, error) {
+func isDealSetupExists(cid string, dealno string) (bool, string, tk.M, bson.ObjectId, error) {
 	cn, err := GetConnection()
 	defer cn.Close()
 
+	resinfo := tk.M{}
+
+	id := bson.NewObjectId()
+
 	if err != nil {
-		return false, err
+		return false, "", resinfo, id, err
 	}
 
 	csr, e := cn.NewQuery().
@@ -399,17 +516,17 @@ func isDealSetupExists(cid string, dealno string) (bool, error) {
 		From("DealSetup").
 		Cursor(nil)
 	if e != nil {
-		return false, err
+		return false, "", resinfo, id, err
 	}
 	defer csr.Close()
 
 	results := []tk.M{}
 	err = csr.Fetch(&results, 0, false)
 	if err != nil {
-		return false, err
+		return false, "", resinfo, id, err
 	}
 
-	// find the one where status is In queue
+	// return base on logic in excel
 	for _, val := range results {
 		infos := val.Get("info").(tk.M)
 		myInfos := CheckArraytkM(infos.Get("myInfo"))
@@ -417,12 +534,20 @@ func isDealSetupExists(cid string, dealno string) (bool, error) {
 			continue
 		}
 		myInfo := myInfos[len(myInfos)-1]
-		if myInfo.GetString("status") == "In queue" {
-			return true, nil
+		myStatus := myInfo.GetString("status")
+
+		if len(results) == 1 && (myStatus == Approve || myStatus == Reject || myStatus == Cancel) {
+			return true, myStatus, infos, val.Get("_id").(bson.ObjectId), nil
+		}
+
+		tk.Println(myStatus, "M<M<M<M<M<-----")
+
+		if myStatus == Inque || myStatus == UnderProcess || myStatus == SendBackOmnifin || myStatus == SendBackAnalysis || myStatus == OnHold || myStatus == SendToDecision {
+			return true, myStatus, infos, val.Get("_id").(bson.ObjectId), nil
 		}
 	}
 
-	return false, nil
+	return false, "", resinfo, id, nil
 }
 
 var ErrorStatusNotZero = errors.New("Status Not Zero")
@@ -443,8 +568,8 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 	}
 
 	customerDtl := tk.M(comp.Get("customerDtl").(map[string]interface{}))
-	loanDtl := tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
-
+	loanDtls := CheckArray(body.Get("dealLoanDetails"))
+	loanDtl := tk.M{}
 	//================ APPLICANT DETAIL START ================
 	current.ApplicantDetail.CustomerName = customerDtl.GetString("customerName")
 	current.ApplicantDetail.CustomerConstitution = customerDtl.GetString("customerConstitutionDesc")
@@ -458,12 +583,17 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 	current.ApplicantDetail.YearsInBusiness = DetectDataType(customerDtl.GetString("yearOfEstblishment"), "")
 	current.ApplicantDetail.NoOfEmployees = DetectDataType(customerDtl.GetString("noOfEmployees"), "")
 	current.ApplicantDetail.UserGroupCompanies = customerDtl.GetString("customerGroupDesc")
-	current.ApplicantDetail.AmountLoan = DetectDataType(loanDtl.GetString("dealLoanAmount"), "")
+	if len(loanDtls) > 0 {
+		loanDtl = tk.M(loanDtls[0])
+		current.ApplicantDetail.AmountLoan = DetectDataType(loanDtl.GetString("dealLoanAmount"), "")
+	} else {
+		return nil, errors.New("Can't found Loan Details")
+	}
 	//================ APPLICANT DETAIL END ================
 
 	//================ EXISTING LOAN START =================
 	exist := CheckArray(body.Get("existingDealDetails"))
-	Ld := tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
+	Ld := loanDtl //tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
 
 	current.FinancialReport.ExistingRelationship = []ExistingRelationshipGen{}
 	if len(exist) > 0 {
@@ -659,8 +789,8 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 
 	if valid != "" {
 		customerDtl := comp.Get("customerDtl").(tk.M)
-		loanDtl := body.Get("dealLoanDetails").(tk.M)
-
+		loanDtls := CheckArray(body.Get("dealLoanDetails"))
+		loanDtl := tk.M{}
 		//================ APPLICANT DETAIL START ================
 		current.ApplicantDetail.CustomerName = customerDtl.GetString("customerName")
 		current.ApplicantDetail.CustomerConstitution = customerDtl.GetString("customerConstitutionDesc")
@@ -674,12 +804,17 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 		current.ApplicantDetail.YearsInBusiness = DetectDataType(customerDtl.GetString("yearOfEstblishment"), "")
 		current.ApplicantDetail.NoOfEmployees = DetectDataType(customerDtl.GetString("noOfEmployees"), "")
 		current.ApplicantDetail.UserGroupCompanies = customerDtl.GetString("customerGroupDesc")
-		current.ApplicantDetail.AmountLoan = DetectDataType(loanDtl.GetString("dealLoanAmount"), "")
+		if len(loanDtls) > 0 {
+			loanDtl = tk.M(loanDtls[0])
+			current.ApplicantDetail.AmountLoan = DetectDataType(loanDtl.GetString("dealLoanAmount"), "")
+		} else {
+			return false, false, errors.New("Can't found Loan Details")
+		}
 		//================ APPLICANT DETAIL END ================
 
 		//================ EXISTING LOAN START =================
 		exist := CheckArraytkM(body.Get("existingDealDetails"))
-		Ld := body.Get("dealLoanDetails").(tk.M)
+		Ld := loanDtl //body.Get("dealLoanDetails").(tk.M)
 
 		current.FinancialReport.ExistingRelationship = []ExistingRelationshipGen{}
 		if len(exist) > 0 {
@@ -883,8 +1018,13 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 	stat := current.Status
 
 	comp := FindCompany(crList, body.GetString("dealCustomerId"))
-	Ld := tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
-
+	Lds := CheckArray(body.Get("dealLoanDetails"))
+	Ld := tk.M{}
+	if len(Lds) > 0 {
+		Ld = Lds[0] //tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
+	} else {
+		return nil, errors.New("Can't found Loan Details")
+	}
 	valid := comp.GetString("dealCustomerId")
 	existdeal := CheckArray(body.Get("existingDealDetails"))
 
@@ -903,7 +1043,7 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 	current.DealNo = dealno
 	current.AccountSetupDetails.DealNo = dealno
 
-	current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+	// current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
 	current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 	current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 	current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
@@ -928,14 +1068,14 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 		if id > currentmax {
 			currentmax = id
 			sanctionedLimit = val.GetFloat64("sanctionedLimit")
-			tk.Println(val.GetFloat64("sanctionedLimit"))
+			// tk.Println(val.GetFloat64("sanctionedLimit"))
 		}
 	}
 	current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit / 100000
 	current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 	current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
-	current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
-	current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
+	// current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
+	// current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
 	current.LoanDetails.VintageWithX10 = body.GetFloat64("vinatgeInMonths")
 
 	return &current, nil
@@ -959,7 +1099,13 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 	}
 
 	comp := FindCompany(crList, body.GetString("dealCustomerId"))
-	Ld := body.Get("dealLoanDetails").(tk.M)
+	Lds := CheckArray(body.Get("dealLoanDetails"))
+	Ld := tk.M{}
+	if len(Lds) > 0 {
+		Ld = Lds[0] //tk.M(body.Get("dealLoanDetails").(map[string]interface{}))
+	} else {
+		return false, false, errors.New("Can't found Loan Details")
+	}
 
 	valid := comp.GetString("dealCustomerId")
 	existdeal := CheckArraytkM(body.Get("existingDealDetails"))
@@ -972,7 +1118,7 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		current.DealNo = dealno
 		current.AccountSetupDetails.DealNo = dealno
 
-		current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+		// current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
 		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 		current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 		current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
@@ -1001,14 +1147,14 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 			if id > currentmax {
 				currentmax = id
 				sanctionedLimit = val.GetFloat64("sanctionedLimit")
-				tk.Println(val.GetFloat64("sanctionedLimit"))
+				// tk.Println(val.GetFloat64("sanctionedLimit"))
 			}
 		}
 		current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit / 100000
 		current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 		current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
-		current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
-		current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
+		// current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
+		// current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
 		current.LoanDetails.VintageWithX10 = body.GetFloat64("vinatgeInMonths")
 
 	}
@@ -1270,11 +1416,19 @@ func SaveMaster(cid string, dealno string, cname string) error {
 }
 
 func CheckArray(dt interface{}) []tk.M {
+	if fmt.Sprintf("%v", reflect.TypeOf(dt)) == "toolkit.M" {
+		return []tk.M{dt.(tk.M)}
+	}
+
 	if fmt.Sprintf("%v", reflect.TypeOf(dt)) == "[]interface {}" {
 		arr := dt.([]interface{})
 		arrf := []tk.M{}
 		for _, vf := range arr {
-			arrf = append(arrf, tk.M(vf.(map[string]interface{})))
+			if fmt.Sprintf("%v", reflect.TypeOf(vf)) == "toolkit.M" {
+				arrf = append(arrf, vf.(tk.M))
+			} else {
+				arrf = append(arrf, tk.M(vf.(map[string]interface{})))
+			}
 		}
 		return arrf
 	}
@@ -1318,7 +1472,7 @@ func BuildInternalRTR(body tk.M, cid string, dealno string) (tk.M, error) {
 		ar.Set("TotalAmount", val.GetFloat64("AmountOutstandingAccrued")+val.GetFloat64("AmountOutstandingDelinquent"))
 		ar.Set("NPRDelays", val.GetFloat64("NoOfPrincipalRepaymentDelays"))
 		ar.Set("NPREarlyClosures", val.GetFloat64("NoOfPrincipalRepaymentEarlyClosures"))
-		ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
+		// ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
 		ar.Set("MaxDPDDays", val.GetFloat64("MaxDPDInClosedLoanInDays"))
 		ar.Set("MaxDPDDAmount", val.GetFloat64("NoOfActiveLoans"))
 		ar.Set("AVGDPDDays", CheckNan(val.GetFloat64("MaxDPDInClosedLoanInDays")/val.GetFloat64("NoOfActiveLoans")))
@@ -1330,7 +1484,7 @@ func BuildInternalRTR(body tk.M, cid string, dealno string) (tk.M, error) {
 		arb.Set("Product", hp.ToWordCase(val.GetString("product")))
 		arb.Set("Scheme", hp.ToWordCase(val.GetString("scheme")))
 		arb.Set("AgreementDate", val.GetString("agreementDate"))
-		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
+		// arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
 		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))
 		arb.Set("ProductId", val.GetString("productId"))
 		arb.Set("SchemeId", val.GetString("schemeId"))
@@ -1361,7 +1515,7 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 		ar.Set("TotalAmount", val.GetFloat64("AmountOutstandingAccrued")+val.GetFloat64("AmountOutstandingDelinquent"))
 		ar.Set("NPRDelays", val.GetFloat64("NoOfPrincipalRepaymentDelays"))
 		ar.Set("NPREarlyClosures", val.GetFloat64("NoOfPrincipalRepaymentEarlyClosures"))
-		ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
+		// ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
 		ar.Set("MaxDPDDays", val.GetFloat64("MaxDPDInClosedLoanInDays"))
 		ar.Set("MaxDPDDAmount", val.GetFloat64("NoOfActiveLoans"))
 		ar.Set("AVGDPDDays", CheckNan(val.GetFloat64("MaxDPDInClosedLoanInDays")/val.GetFloat64("NoOfActiveLoans")))
@@ -1372,8 +1526,8 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 		arb.Set("DealNo", val.GetString("dealNo"))
 		arb.Set("Product", hp.ToWordCase(val.GetString("product")))
 		arb.Set("Scheme", hp.ToWordCase(val.GetString("scheme")))
-		arb.Set("AgreementDate", val.GetString("agreementDate"))
-		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
+		// arb.Set("AgreementDate", val.GetString("agreementDate"))
+		// arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
 		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))
 		arb.Set("ProductId", val.GetString("productId"))
 		arb.Set("SchemeId", val.GetString("schemeId"))

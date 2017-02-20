@@ -82,15 +82,20 @@ ns.LoadGridUser = function(){
 				title: "Role",
 				headerAttributes : {"class":"header-bgcolor"},
 				attributes:{"class": "no-padding"},
-				filterable: false,
 				template: function(d){
 					var res = '';
 					try{
 						if((d.Role).length != 0 && d.Role != null){
-							res += "<table role='grid'>"
+							var last = (d.Role).length - 1;
+							res += "<table role='grid' id='tab1'>"
 							$.each(d.Role, function(i, item){
 								res += "<tr>"
-								res += "<td class='line' role='gridcell'>"+item+"</td>"
+								if(i == last){
+									res += "<td class='line1' role='gridcell' style='height: 20px;border-bottom: hidden;'>"+item+"</td>"
+								}else{
+									res += "<td class='line1' role='gridcell' style='height: 20px;'>"+item+"</td>"
+								}
+								
 								res += "</tr>"
 							})
 							res += "</table>"
@@ -116,11 +121,16 @@ ns.LoadGridUser = function(){
 					try{
 						if(d.Catrole != null){
 							var rest = (d.Catrole).split("|")
-							console.log(rest)
+							var last = rest.length - 1;
 							res += "<table role='grid'>"
 							$.each(rest, function(i, item){
 								res += "<tr>"
-								res += "<td class='line' role='gridcell' style='height: 20px;'>"+item+"</td>"
+								if(i == last){
+									res += "<td class='line' role='gridcell' style='height: 20px;border-bottom: hidden;'>"+item+"</td>"
+								}else{
+									res += "<td class='line' role='gridcell' style='height: 20px;'>"+item+"</td>"
+								}
+								
 								res += "</tr>"
 							})
 							res += "</table>"
@@ -145,11 +155,6 @@ ns.LoadGridUser = function(){
 				title: "CAT Status",
 				headerAttributes : {"class":"header-bgcolor"},
 				width: 100,
-				filterable: {
-                                cell: {
-                                    showOperators: false
-                                }
-                            },
 				template: function(d){
 					if(d.Catstatus == ""){
 						return "To be assigned"
@@ -189,10 +194,8 @@ ns.editUser = function(d){
 		ns.valuerole([])
 	}else{
 		setTimeout(function(){
-			ns.valuerole(data[index].Catrole)
-		}, 200)
-		
-		console.log(ns.valuerole())
+			ns.valuerole((data[index].Catrole).split("|"))
+		}, 250)
 	}
 	ajaxPost("/newuser/getsysrole", {}, function(res){
 		var data = res.Data;
@@ -255,4 +258,5 @@ $(function(){
 	// ns.LoadGridUser()
 	ns.LoadGetUser();
 	$("#gridUser").css("overflow", "hidden")
+	
 });

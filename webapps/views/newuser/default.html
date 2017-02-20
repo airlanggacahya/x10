@@ -42,6 +42,9 @@ mincibil = ko.observable(0);
 	.k-operator-hidden{
 		display: none;
 	}
+	.k-button.k-primary{
+		color: white;
+	}
 </style>
 
 <div class="clearfix"></div>
@@ -120,8 +123,8 @@ mincibil = ko.observable(0);
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-sm btn-flat btn-primary" onclick="ns.saveEdit(ns.uid())">Save</button>
 						<button type="button" class="btn btn-sm btn-flat btn-danger" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-sm btn-flat btn-primary" onclick="ns.saveEdit(ns.uid())">Save</button>
 					</div>
 				</div>
 			<!-- </form> -->

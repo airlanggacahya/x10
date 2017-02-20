@@ -35,6 +35,8 @@ ns.LoadGetUser = function(){
 				if(temp.Catrole != null){
 
 					temp.Catrole = temp.Catrole.join("|")
+				}else{
+					temp.Catrole = "To be assigned";
 				}
 
 				if(temp.Role != null){
@@ -240,7 +242,9 @@ ns.saveEdit = function(d){
 			data[index].Role = (data[index].Role).split("|");
 		}
 		data[index].Catrole = ns.valuerole();
-		data[index].Catpassword = ns.Password();
+		if(ns.Password() != ""){
+			data[index].Catpassword = ns.Password();
+		}
 		if(data[index].Catstatus == "To be assigned"){
 			data[index].Catstatus = ""
 		}

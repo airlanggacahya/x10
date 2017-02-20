@@ -15,6 +15,28 @@ var rolesett = {
     dealAllocationOpt : ko.observableArray(["Standard"]),
     dealAllocationEnable : ko.observable(false),
 
+    district : ko.observableArray(""),
+    districtOpt : new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: "/sysroles/getdistrict",
+                dataType: "json"
+            }
+        },
+    }),
+    districtEnable: ko.observable(false),
+
+    branch : ko.observableArray(""),
+    branchOpt: new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: "/sysroles/getbranch",
+                dataType: "json"
+            }
+        },
+    }),
+    branchEnable: ko.observable(false),
+
     landingPage : ko.observable(""),
 
     //var Filter
@@ -38,6 +60,7 @@ var rolesett = {
     adminData: ko.observableArray([])
 };
 
+// Switch dealllocation based on roletype
 rolesett.roleType.subscribe(function (val) {
     switch (val) {
     case "CA":
@@ -54,25 +77,33 @@ rolesett.roleType.subscribe(function (val) {
     }
 })
 
+// Switch Branch and District based on deal Reallocation
+rolesett.dealAllocation.subscribe(function (val) {
+    rolesett.branchEnable(false);
+    rolesett.districtEnable(false);
+
+    switch (val) {
+    case "Branches":
+        rolesett.branchEnable(true);
+        break;
+    case "Regions":
+        rolesett.districtEnable(true);
+        break;
+    }
+})
+
 function checkboxField(field) {
-        return '<input type="checkbox" ' +
-            'data-switch-no-init ' +
-            'id="#=menuid#_' + field + '"' +
-            'class="role_#=submodule_path#_#=menuid# ' + field + '"' +
-            'onclick="clickRole(\'#=submodule_path#\', \'#=menuid#\', \'' + field + '\')" ' +
-            'data-path="' + field + '"' +
-            '#= ' + field + ' ? checked="checked" : "" # />'
+    return '<input type="checkbox" ' +
+        'data-switch-no-init ' +
+        'id="#=menuid#_' + field + '"' +
+        'class="role_#=submodule_path#_#=menuid# ' + field + '"' +
+        'onclick="clickRole(\'#=submodule_path#\', \'#=menuid#\', \'' + field + '\')" ' +
+        'data-path="' + field + '"' +
+        '#= ' + field + ' ? checked="checked" : "" # />'
 }
 
 function clickRole(submodule_path, menuid, path) {
     var output = backMapping();
-    // if (path == 'grant.all') {
-    //     $('.role_' + submodule_path + '_' + menuid + '_' + path.repl)
-    //         .not('.role_' + submodule_path + '_' + menuid + '_grant\.all')
-    //         .each(function (checkbtn) {
-    //             console.log(checkbtn)
-    //         })
-    // }
 
     _.each(output, function(it) {
         if (it.menuid != menuid)
@@ -207,7 +238,6 @@ var dataMasterMapping = [
     }
 ]
 
-
 var cibilGrant = ["view", "edit", "create", "delete"]
 var cibilMapping = [
     {
@@ -241,21 +271,19 @@ var helpMapping = [
     }
 ]
 
-var decisionCommitteGrant = ["dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
 var decisionCommitteMapping = [
     {
         "name": "Decision Committe",
         "menuid": "2016825142718",
-        "grant": decisionCommitteGrant
+        "grant": ["dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
     }
 ]
 
-var caCommitteGrant = ["ca_save", "ca_send_dc"]
 var caCommitteMapping = [
     {
         "name": "CA Committe",
         "menuid": "2016825142718",
-        "grant": caCommitteGrant
+        "grant": ["ca_save", "ca_send_dc"]
     }
 ]
 
@@ -382,340 +410,213 @@ function privilegesToNewRole(input) {
     return mapped;
 }
 
-var DashboardObj = {
-    columns: [
+function completeColumn(init) {
+    var ret = [
         {
             field: "submodule",
             title: "Submodule",
             headerAttributes: {class: 'k-header header-bgcolor'},
             width: 200
-        },
-        {
-            field: "grant.all",
-            title: "All",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.all')
-        },
-        {
-            field: "grant.view",
-            title: "View",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.view')
-        },
-    ]
-}
-
-var DealSetupObj = {
-    columns: [
-        {
-            field: "submodule",
-            title: "Submodule",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            width: 200
-        },
-        {
-            field: "grant.all",
-            title: "All",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.all')
-        },
-        {
-            field: "grant.view",
-            title: "View",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.view')
-        },
-        {
-            field: "grant.accept",
-            title: "Accept",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.accept')
-        },
-        {
-            field: "grant.reject",
-            title: "Reject",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.reject')
         }
     ]
+
+    ret.push.apply(ret, _.map(init, function(val, key) {
+        return {
+            field: val.field,
+            title: val.title,
+            headerAttributes: {class: 'k-header header-bgcolor'},
+            template: checkboxField(val.field)
+        }
+    }))
+
+    return ret
 }
 
-var WebFormsObj = {
-    columns: [
-        {
-            field: "submodule",
-            title: "Submodule",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            width: 200
-        },
-        {
-            field: "grant.all",
-            title: "All",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.all')
-        },
-        {
-            field: "grant.view",
-            title: "View",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.view')
-        },
-        {
-            field: "grant.edit",
-            title: "Edit & Save",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.edit')
-        },
-        {
-            field: "grant.confirm",
-            title: "Confirm",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.confirm')
-        },
-        {
-            field: "grant.reenter",
-            title: "Re-Enter",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.reenter')
-        },
-        {
-            field: "grant.freeze",
-            title: "Freeze",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.freeze')
-        },
-        {
-            field: "grant.unfreeze",
-            title: "Unfreeze",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.unfreeze')
-        }
-    ]
-}
+var DashboardCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
+    }
+])
 
-var DataMasterObj = {
-    columns: [
-        {
-            field: "submodule",
-            title: "Submodule",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            width: 200
-        },
-        {
-            field: "grant.all",
-            title: "All",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.all')
-        },
-        {
-            field: "grant.view",
-            title: "View",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.view')
-        },
-        {
-            field: "grant.edit",
-            title: "Edit & Save",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.edit')
-        },
-        {
-            field: "grant.create",
-            title: "Create",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.create')
-        },
-        {
-            field: "grant.delete",
-            title: "Delete",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.delete')
-        }
-    ]
-}
+var DealSetupCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
+    },
+    {
+        field: "grant.accept",
+        title: "Accept"
+    },
+    {
+        field: "grant.reject",
+        title: "Reject"
+    }
+])
 
-var decisionCommitteObj = {
-    columns: [
-        {
-            field: "submodule",
-            title: "Submodule",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            width: 200
-        },
-        {
-            field: "grant.all",
-            title: "All",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.all')
-        },
-        {
-            field: "grant.dc_approve",
-            title: "Approve",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.dc_approve')
-        },
-        {
-            field: "grant.dc_reject",
-            title: "Reject",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.dc_reject')
-        },
-        {
-            field: "grant.dc_cancel",
-            title: "Cancel",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.dc_cancel')
-        },
-        {
-            field: "grant.dc_hold",
-            title: "Hold",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.dc_hold')
-        },
-        {
-            field: "grant.dc_send_back",
-            title: "Send back",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.dc_send_back')
-        }
-    ]
-}
+var WebFormsCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
+    },
+    {
+        field: "grant.edit",
+        title: "Edit & Save"
+    },
+    {
+        field: "grant.confirm",
+        title: "Confirm"
+    },
+    {
+        field: "grant.reenter",
+        title: "Re-Enter"
+    },
+    {
+        field: "grant.freeze",
+        title: "Freeze"
+    },
+    {
+        field: "grant.unfreeze",
+        title: "Unfreeze"
+    }
+])
 
-var caCommitteObj = {
-    columns: [
-        {
-            field: "submodule",
-            title: "Submodule",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            width: 200
-        },
-        {
-            field: "grant.all",
-            title: "All",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.all')
-        },
-        {
-            field: "grant.ca_save",
-            title: "Save",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.ca_save')
-        },
-        {
-            field: "grant.ca_send_dc",
-            title: "Send DC",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.ca_send_dc')
-        }
-    ]
-}
+var DataMasterCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
+    },
+    {
+        field: "grant.edit",
+        title: "Edit & Save"
+    },
+    {
+        field: "grant.create",
+        title: "Create"
+    },
+    {
+        field: "grant.delete",
+        title: "Delete"
+    }
+])
+
+var decisionCommitteCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.dc_approve",
+        title: "Approve"
+    },
+    {
+        field: "grant.dc_reject",
+        title: "Reject"
+    },
+    {
+        field: "grant.dc_cancel",
+        title: "Cancel"
+    },
+    {
+        field: "grant.dc_hold",
+        title: "Hold"
+    },
+    {
+        field: "grant.dc_send_back",
+        title: "Send back"
+    }
+])
+
+var caCommitteCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.ca_save",
+        title: "Save"
+    },
+    {
+        field: "grant.ca_send_dc",
+        title: "Send DC"
+    }
+])
+
 // Cibil Editor
-var CibilObj = {
-    columns: [
-        {
-            field: "submodule",
-            title: "Submodule",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            width: 200
-        },
-        {
-            field: "grant.all",
-            title: "All",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.all')
-        },
-        {
-            field: "grant.view",
-            title: "View",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.view')
-        },
-        {
-            field: "grant.edit",
-            title: "Edit & Save",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.edit')
-        },
-        {
-            field: "grant.create",
-            title: "Create",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.create')
-        },
-        {
-            field: "grant.delete",
-            title: "Delete",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.delete')
-        }
-    ]
-}
+var CibilCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
+    },
+    {
+        field: "grant.edit",
+        title: "Edit & Save"
+    },
+    {
+        field: "grant.create",
+        title: "Create"
+    },
+    {
+        field: "grant.delete",
+        title: "Delete"
+    }
+])
 
 // Help
-var HelpObj = {
-    columns: [
-        {
-            field: "submodule",
-            title: "Submodule",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            width: 200
-        },
-        {
-            field: "grant.all",
-            title: "All",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.all')
-        },
-        {
-            field: "grant.view",
-            title: "View",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.view')
-        }
-    ]
-}
+var HelpCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
+    }
+])
 
 // Admin
-var AdminObj = {
-    columns: [
-        {
-            field: "submodule",
-            title: "Submodule",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            width: 200
-        },
-        {
-            field: "grant.all",
-            title: "All",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.all')
-        },
-        {
-            field: "grant.view",
-            title: "View",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.view')
-        },
-        {
-            field: "grant.edit",
-            title: "Edit & Save",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.edit')
-        },
-        {
-            field: "grant.create",
-            title: "Create",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.create')
-        },
-        {
-            field: "grant.delete",
-            title: "Delete",
-            headerAttributes: {class: 'k-header header-bgcolor'},
-            template: checkboxField('grant.delete')
-        }
-    ]
-}
+var AdminCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
+    },
+    {
+        field: "grant.edit",
+        title: "Edit & Save"
+    },
+    {
+        field: "grant.create",
+        title: "Create"
+    },
+    {
+        field: "grant.delete",
+        title: "Delete"
+    }
+])
 
 rolesett.templateRole = {
     name: "",
@@ -728,6 +629,8 @@ rolesett.templateRole = {
 rolesett.mappingRole = ko.mapping.fromJS(rolesett.templateRole);
 
 rolesett.ClearField = function(){
+    rolesett.branch([]);
+    rolesett.district([]);
     rolesett.roleName("");
     rolesett.roleType("CA");
     // rolesett.dealAllocation("Standard");
@@ -741,7 +644,6 @@ rolesett.Search = function(){
 }
 
 rolesett.Reset = function(){
-    
     var multiSelect = $('#filterRole').data("kendoMultiSelect");
     multiSelect.value([]);
     $('#filterStatus').bootstrapSwitch('state', true);
@@ -783,6 +685,8 @@ rolesett.SaveData = function(){
     param.status = $('#Status').bootstrapSwitch('state');
     param.landing = rolesett.landingPage();
     param.menu = backMapping();
+    param.district = rolesett.district();
+    param.branch = rolesett.branch();
 
     console.log(param);
 
@@ -848,7 +752,6 @@ rolesett._privToGrid = function(priv) {
 }
 
 rolesett.EditData = function(IdRole){
-
     // Old Data
     var url = "/sysroles/getmenuedit";
     var param = {
@@ -875,6 +778,9 @@ rolesett.EditData = function(IdRole){
             rolesett._privToGrid(privilegesToNewRole(Records.Menu));
             rolesett.landingPage(Records.Landing);
             $('#Status').bootstrapSwitch('state',Records.Status);
+            rolesett.branch(Records.Branch);
+            rolesett.district(Records.District);
+            rolesett.dealAllocation(Records.Dealallocation);
 
             // old access layout setup
 

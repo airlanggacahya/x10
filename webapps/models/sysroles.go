@@ -7,12 +7,15 @@ import (
 )
 
 type SysRolesModel struct {
-	orm.ModelBase `bson:"-",json:"-"`
-	Id            bson.ObjectId ` bson:"_id" , json:"_id" `
-	Name          string
-	Menu          []Detailsmenu
-	Status        bool
-	Landing       string
+	orm.ModelBase  `bson:"-",json:"-"`
+	Id             bson.ObjectId ` bson:"_id" , json:"_id" `
+	Name           string
+	Menu           []Detailsmenu
+	Status         bool
+	Landing        string
+	Branch         []string
+	District       []string
+	Dealallocation string
 }
 
 type Detailsmenu struct {

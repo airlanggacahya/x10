@@ -297,11 +297,14 @@ func defaultDetailsMenu(conn db.IConnection, menuid string) (Detailsmenu, error)
 func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 	r.Config.OutputType = knot.OutputJson
 	oo := struct {
-		Id      string
-		Name    string
-		Status  bool
-		Landing string
-		Menu    []tk.M
+		Id             string
+		Name           string
+		Status         bool
+		Landing        string
+		Menu           []tk.M
+		Branch         []string
+		District       []string
+		Dealallocation string
 	}{}
 	ret := ResultInfo{}
 	o := NewSysRolesModel()
@@ -320,6 +323,9 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 	o.Name = oo.Name
 	o.Status = oo.Status
 	o.Landing = oo.Landing
+	o.Branch = oo.Branch
+	o.District = oo.District
+	o.Dealallocation = oo.Dealallocation
 
 	// helper for parent add
 	menuDone := make(map[string]bool)
@@ -431,4 +437,44 @@ func (d *SysRolesController) GetLandingPage(r *knot.WebContext) interface{} {
 	}
 
 	return page
+}
+
+func (d *SysRolesController) GetBranch(r *knot.WebContext) interface{} {
+	r.Config.OutputType = knot.OutputJson
+	r.Config.NoLog = true
+
+	acc, err := GetMasterAccountDetailv2()
+	if err != nil {
+		tk.Println(err.Error())
+	}
+
+	for key, val := range acc {
+		if key != "Branch" {
+			continue
+		}
+
+		return val
+	}
+
+	return nil
+}
+
+func (d *SysRolesController) GetDistrict(r *knot.WebContext) interface{} {
+	r.Config.OutputType = knot.OutputJson
+	r.Config.NoLog = true
+
+	acc, err := GetMasterAccountDetailv2()
+	if err != nil {
+		tk.Println(err.Error())
+	}
+
+	for key, val := range acc {
+		if key != "District" {
+			continue
+		}
+
+		return val
+	}
+
+	return nil
 }

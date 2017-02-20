@@ -23,8 +23,14 @@ ns.LoadGetUser = function(){
 			$.each(ns.Userdata(), function(i, temp){
 				if(temp.Recstatus == "X"){
 					temp.Recstatus = "Inactive";
-				}else{
+				}else if(temp.Recstatus == "A"){
 					temp.Recstatus = "Active";
+				}else{
+					temp.Recstatus = "To be assigned";
+				}
+
+				if(temp.Catstatus == ""){
+					temp.Catstatus = "To be assigned"
 				}
 				if(temp.Catrole != null){
 
@@ -66,26 +72,26 @@ ns.LoadGridUser = function(){
 			{
 				field: "Username",
 				title: "Name",
-				headerAttributes : {"class":"header-bgcolor"},
+				headerAttributes : {"class":"sub-bgcolor"},
 				
 			},
 			{
 				field: "Userid",
 				title: "Unique ID",
-				headerAttributes : {"class":"header-bgcolor"},
+				headerAttributes : {"class":"sub-bgcolor"},
 				width: 100,
 				
 			},
 			{
 				field: "Useremail",
 				title: "Email ID",
-				headerAttributes : {"class":"header-bgcolor"},
+				headerAttributes : {"class":"sub-bgcolor"},
 				
 			},
 			{
 				field: "Role",
 				title: "Role",
-				headerAttributes : {"class":"header-bgcolor"},
+				headerAttributes : {"class":"sub-bgcolor"},
 				attributes:{"class": "no-padding"},
 				template: function(d){
 					var res = '';
@@ -118,7 +124,7 @@ ns.LoadGridUser = function(){
 			{
 				field: "Catrole",
 				title: "CAT Role",
-				headerAttributes : {"class":"header-bgcolor"},
+				headerAttributes : {"class":"sub-bgcolor"},
 				attributes:{"class": "no-padding"},
 				// filterable: false,
 				template: function(d){
@@ -147,32 +153,31 @@ ns.LoadGridUser = function(){
 					}
 					
 
-					return "To be assigned"
+					return "&nbsp To be assigned"
 				}
 			},
 			{
 				field: "Recstatus",
 				title: "Status",
-				headerAttributes : {"class":"header-bgcolor"},
+				headerAttributes : {"class":"sub-bgcolor"},
 				width: 100,
+				filterable:{
+					multi: true,
+				}
 			},
 			{
 				field: "Catstatus",
 				title: "CAT Status",
-				headerAttributes : {"class":"header-bgcolor"},
+				headerAttributes : {"class":"sub-bgcolor"},
 				width: 100,
-				template: function(d){
-					if(d.Catstatus == ""){
-						return "To be assigned"
-					}
-
-					return d.Catstatus
+				filterable: {
+					multi: true,
 				}
 			},
 			{
 				field: "",
 				title: "Action",
-				headerAttributes : {"class":"header-bgcolor"},
+				headerAttributes : {"class":"sub-bgcolor"},
 				width: 50,
 				template: function(d){
 					return "<center><button class='btn btn-xs btn-flat btn-warning  edituserright' onclick='ns.editUser(\""+d.uid+"\")'><span class='fa fa-edit'></span></button></center>"
@@ -228,15 +233,20 @@ ns.editUser = function(d){
 }
 
 ns.saveEdit = function(d){
-	if(ns.Password() == ns.confPassword() && ns.Password() != ""){
+	if(ns.Password() == ns.confPassword()){
 		var index = $("#gridUser tr[data-uid='"+d+"']").index();
 		var data = $('#gridUser').data('kendoGrid').dataSource.data();
-		data[index].Role = (data[index].Role).split("|");
+		if(data[index].Role != null){
+			data[index].Role = (data[index].Role).split("|");
+		}
 		data[index].Catrole = ns.valuerole();
 		data[index].Catpassword = ns.Password();
+		if(data[index].Catstatus == "To be assigned"){
+			data[index].Catstatus = ""
+		}
 		if(data[index].Recstatus == "Inactive"){
 			data[index].Recstatus = "X"
-		}else{
+		}else if(data[index].Recstatus == "Active"){
 			data[index].Recstatus = "A"
 		}
 		if($('#StatusFilter').bootstrapSwitch('state') == true){

@@ -30,7 +30,8 @@ model.Fullname = ko.observable('{{.Fullname}}');
 					<div class="form-group col-sm-12 filterhide">
 				     	<label class="col-sm-3 form-control-label margin-top5px">Customer Name</label>
 				     	<div class="col-sm-9">
-					 			<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: searchValueCustomerName, event:{change: onChangeSearchCustomerName}">
+					 		<!-- 	<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: searchValueCustomerName, event:{change: onChangeSearchCustomerName}"> -->
+					 		<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: searchValueCustomerName">
 					    </div>
 					    <div class="clearfix"></div>
 				    </div>
@@ -39,7 +40,8 @@ model.Fullname = ko.observable('{{.Fullname}}');
 					<div class="form-group col-sm-12 filterhide">
 				     	<label class="col-sm-3 form-control-label margin-top5px">Deal No</label>
 				     	<div class="col-sm-9">
-					 			<input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: searchValueDealNo, event:{change: onChangeSearchDealNo}" >
+					 <!-- 			<input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: searchValueDealNo, event:{change: onChangeSearchDealNo}" > -->
+					 <input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: searchValueDealNo" >
 					    </div>
 					    <div class="clearfix"></div>
 				    </div>

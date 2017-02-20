@@ -193,8 +193,8 @@ setup.createGrid = function(){
         },
       },
       groupable: false,
-      // sortable: true,
-      filterable: false,
+      sortable: true,
+      filterable: true,
       pageable: {
           refresh: true,
           pageSizes: true,

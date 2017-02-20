@@ -2,6 +2,7 @@ var ns = {}
 ns.Userdata = ko.observableArray([]);
 ns.roleList = ko.observableArray([]);
 ns.valuerole = ko.observableArray([]);
+ns.param = ko.observableArray([]);
 ns.catStatusList = ko.observableArray(["Enable", "Disable"]);
 ns.status = ko.observable("");
 ns.catstatus = ko.observable("");
@@ -15,9 +16,29 @@ ns.uniqueid = ko.observable("");
 ns.LoadGetUser = function(){
 	ns.Userdata([])
 	ajaxPost("/newuser/getuser", {}, function(res){
-		var data = res.Data;
+		var data = res.Data.data;
 		if(data.length != 0){
 			ns.Userdata(data)
+			ns.param(data)
+			$.each(ns.Userdata(), function(i, temp){
+				if(temp.Recstatus == "X"){
+					temp.Recstatus = "Inactive";
+				}else{
+					temp.Recstatus = "Active";
+				}
+				if(temp.Catrole != null){
+
+					temp.Catrole = temp.Catrole.join("|")
+				}
+
+				if(temp.Role != null){
+
+					temp.Role = temp.Role.join("|");
+				}
+				
+
+
+			})
 			ns.LoadGridUser()
 		}
 	})
@@ -26,53 +47,40 @@ ns.LoadGetUser = function(){
 ns.LoadGridUser = function(){
 	$("#gridUser").html("");
 	$("#gridUser").kendoGrid({
-		dataSource:{
-			transport: {
-				read: function(o){
-					ajaxPost("/newuser/getuser", {
-						page: o.data.page,
-	               		pageSize: o.data.pageSize,
-	               		skip: o.data.skip,
-	               		take: o.data.take
-					}, function(res){
-						o.success(res);
-					})
-				}
-			},
+		// dataSource: ns.Userdata(),
+		dataSource: {
+			data:  ns.Userdata(),
 			schema: {
-	        	parse: function(data){
-	        		return {
-	        			Data: data.Data.data,
-	        			Total: data.Data.total
-	        		}
-	        	},
-	            data: "Data",
-	            total: "Total"
-	        },
-			serverPaging: true,
-	        pageSize: 10,
+				model: {Username: "Username"}
+			},
+			pageSize: 10,
 		},
+
+		filterable: true,
 		pageable: {
 			refresh: true,
-            pageSizes: true,
-            buttonCount: 10
-		},
+			pageSizes: true,
+			buttonCount: 10
+        },
 		columns: [
 			{
 				field: "Username",
 				title: "Name",
-				headerAttributes : {"class":"header-bgcolor"}
+				headerAttributes : {"class":"header-bgcolor"},
+				
 			},
 			{
 				field: "Userid",
 				title: "Unique ID",
 				headerAttributes : {"class":"header-bgcolor"},
-				width: 100
+				width: 100,
+				
 			},
 			{
 				field: "Useremail",
 				title: "Email ID",
-				headerAttributes : {"class":"header-bgcolor"}
+				headerAttributes : {"class":"header-bgcolor"},
+				
 			},
 			{
 				field: "Role",
@@ -83,10 +91,17 @@ ns.LoadGridUser = function(){
 					var res = '';
 					try{
 						if((d.Role).length != 0 && d.Role != null){
-							res += "<table role='grid'>"
-							$.each(d.Role, function(i, item){
+							var rest = (d.Role).split("|")
+							var last = rest.length - 1;
+							res += "<table role='grid' id='tab1'>"
+							$.each(rest, function(i, item){
 								res += "<tr>"
-								res += "<td class='line' role='gridcell'>"+item+"</td>"
+								if(i == last){
+									res += "<td class='line1' role='gridcell' style='height: 20px;border-bottom: hidden;'>"+item+"</td>"
+								}else{
+									res += "<td class='line1' role='gridcell' style='height: 20px;'>"+item+"</td>"
+								}
+								
 								res += "</tr>"
 							})
 							res += "</table>"
@@ -105,14 +120,23 @@ ns.LoadGridUser = function(){
 				title: "CAT Role",
 				headerAttributes : {"class":"header-bgcolor"},
 				attributes:{"class": "no-padding"},
+				// filterable: false,
 				template: function(d){
+
 					var res = '';
 					try{
-						if((d.Catrole).length != 0 && d.Catrole != null){
+						if(d.Catrole != null){
+							var rest = (d.Catrole).split("|")
+							var last = rest.length - 1;
 							res += "<table role='grid'>"
-							$.each(d.Catrole, function(i, item){
+							$.each(rest, function(i, item){
 								res += "<tr>"
-								res += "<td class='line' role='gridcell'>"+item+"</td>"
+								if(i == last){
+									res += "<td class='line' role='gridcell' style='height: 20px;border-bottom: hidden;'>"+item+"</td>"
+								}else{
+									res += "<td class='line' role='gridcell' style='height: 20px;'>"+item+"</td>"
+								}
+								
 								res += "</tr>"
 							})
 							res += "</table>"
@@ -131,13 +155,6 @@ ns.LoadGridUser = function(){
 				title: "Status",
 				headerAttributes : {"class":"header-bgcolor"},
 				width: 100,
-				template: function(d){
-					if(d.Recstatus == "X"){
-						return "Inactive"
-					}
-
-					return "Active"
-				}
 			},
 			{
 				field: "Catstatus",
@@ -183,10 +200,8 @@ ns.editUser = function(d){
 		ns.valuerole([])
 	}else{
 		setTimeout(function(){
-			ns.valuerole(data[index].Catrole)
-		}, 200)
-		
-		console.log(ns.valuerole())
+			ns.valuerole((data[index].Catrole).split("|"))
+		}, 250)
 	}
 	ajaxPost("/newuser/getsysrole", {}, function(res){
 		var data = res.Data;
@@ -216,9 +231,14 @@ ns.saveEdit = function(d){
 	if(ns.Password() == ns.confPassword() && ns.Password() != ""){
 		var index = $("#gridUser tr[data-uid='"+d+"']").index();
 		var data = $('#gridUser').data('kendoGrid').dataSource.data();
+		data[index].Role = (data[index].Role).split("|");
 		data[index].Catrole = ns.valuerole();
 		data[index].Catpassword = ns.Password();
-		console.log("------------>>>>>", data[index].Userpassword)
+		if(data[index].Recstatus == "Inactive"){
+			data[index].Recstatus = "X"
+		}else{
+			data[index].Recstatus = "A"
+		}
 		if($('#StatusFilter').bootstrapSwitch('state') == true){
 			data[index].Catstatus = "Enable";
 		}else{
@@ -227,7 +247,7 @@ ns.saveEdit = function(d){
 		var param =ko.mapping.toJS(data[index]);
 		console.log(param)
 		ajaxPost("/newuser/saveuser", param, function(res){
-			ns.LoadGridUser()
+			ns.LoadGetUser()
 			$("#editUser").modal("hide");
 			swal("", "Save sucessfully", "success");
 		})
@@ -242,6 +262,8 @@ ns.onPass = function(){
 }
 
 $(function(){
-	ns.LoadGridUser()
+	// ns.LoadGridUser()
+	ns.LoadGetUser();
 	$("#gridUser").css("overflow", "hidden")
+	
 });

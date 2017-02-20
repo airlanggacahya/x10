@@ -24,7 +24,7 @@ type NewUser struct {
 	Id                string `bson:"_id", json:"_id"`
 	ID                string `bson:"id", json:"id"`
 	Userid            string
-	C                 string
+	Userempid         string
 	Username          string
 	Useremail         string
 	Userphone1        string

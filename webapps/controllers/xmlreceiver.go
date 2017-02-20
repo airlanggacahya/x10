@@ -220,7 +220,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	res.Set("OperationStatus", "1")
 
 	resFail := tk.M{}
-	resFail.Set("OperationMessage", "Operation Successful")
+	resFail.Set("OperationMessage", "Operation Failed")
 	resFail.Set("OperationStatus", "0")
 
 	// res := `<return>

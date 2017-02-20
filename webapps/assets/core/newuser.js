@@ -2,6 +2,7 @@ var ns = {}
 ns.Userdata = ko.observableArray([]);
 ns.roleList = ko.observableArray([]);
 ns.valuerole = ko.observableArray([]);
+ns.param = ko.observableArray([]);
 ns.catStatusList = ko.observableArray(["Enable", "Disable"]);
 ns.status = ko.observable("");
 ns.catstatus = ko.observable("");
@@ -15,9 +16,17 @@ ns.uniqueid = ko.observable("");
 ns.LoadGetUser = function(){
 	ns.Userdata([])
 	ajaxPost("/newuser/getuser", {}, function(res){
-		var data = res.Data;
+		var data = res.Data.data;
 		if(data.length != 0){
 			ns.Userdata(data)
+			ns.param(data)
+			$.each(ns.Userdata(), function(i, temp){
+				if(temp.Recstatus == "X"){
+					temp.Recstatus = "Inactive";
+				}else{
+					temp.Recstatus = "Active";
+				}
+			})
 			ns.LoadGridUser()
 		}
 	})
@@ -26,59 +35,47 @@ ns.LoadGetUser = function(){
 ns.LoadGridUser = function(){
 	$("#gridUser").html("");
 	$("#gridUser").kendoGrid({
-		dataSource:{
-			transport: {
-				read: function(o){
-					ajaxPost("/newuser/getuser", {
-						page: o.data.page,
-	               		pageSize: o.data.pageSize,
-	               		skip: o.data.skip,
-	               		take: o.data.take
-					}, function(res){
-						o.success(res);
-					})
-				}
-			},
+		// dataSource: ns.Userdata(),
+		dataSource: {
+			data:  ns.Userdata(),
 			schema: {
-	        	parse: function(data){
-	        		return {
-	        			Data: data.Data.data,
-	        			Total: data.Data.total
-	        		}
-	        	},
-	            data: "Data",
-	            total: "Total"
-	        },
-			serverPaging: true,
-	        pageSize: 10,
+				model: {Username: "Username"}
+			},
+			pageSize: 10,
 		},
+
+		filterable: true,
 		pageable: {
 			refresh: true,
-            pageSizes: true,
-            buttonCount: 10
-		},
+			pageSizes: true,
+			buttonCount: 10
+        },
 		columns: [
 			{
 				field: "Username",
 				title: "Name",
-				headerAttributes : {"class":"header-bgcolor"}
+				headerAttributes : {"class":"header-bgcolor"},
+				
 			},
 			{
 				field: "Userid",
 				title: "Unique ID",
 				headerAttributes : {"class":"header-bgcolor"},
-				width: 100
+				width: 100,
+				
 			},
 			{
 				field: "Useremail",
 				title: "Email ID",
-				headerAttributes : {"class":"header-bgcolor"}
+				headerAttributes : {"class":"header-bgcolor"},
+				
 			},
 			{
 				field: "Role",
 				title: "Role",
 				headerAttributes : {"class":"header-bgcolor"},
 				attributes:{"class": "no-padding"},
+				filterable: false,
 				template: function(d){
 					var res = '';
 					try{
@@ -105,6 +102,7 @@ ns.LoadGridUser = function(){
 				title: "CAT Role",
 				headerAttributes : {"class":"header-bgcolor"},
 				attributes:{"class": "no-padding"},
+				filterable: false,
 				template: function(d){
 					var res = '';
 					try{
@@ -112,7 +110,7 @@ ns.LoadGridUser = function(){
 							res += "<table role='grid'>"
 							$.each(d.Catrole, function(i, item){
 								res += "<tr>"
-								res += "<td class='line' role='gridcell'>"+item+"</td>"
+								res += "<td class='line' role='gridcell' style='height: 20px;'>"+item+"</td>"
 								res += "</tr>"
 							})
 							res += "</table>"
@@ -131,19 +129,17 @@ ns.LoadGridUser = function(){
 				title: "Status",
 				headerAttributes : {"class":"header-bgcolor"},
 				width: 100,
-				template: function(d){
-					if(d.Recstatus == "X"){
-						return "Inactive"
-					}
-
-					return "Active"
-				}
 			},
 			{
 				field: "Catstatus",
 				title: "CAT Status",
 				headerAttributes : {"class":"header-bgcolor"},
 				width: 100,
+				filterable: {
+                                cell: {
+                                    showOperators: false
+                                }
+                            },
 				template: function(d){
 					if(d.Catstatus == ""){
 						return "To be assigned"
@@ -218,7 +214,11 @@ ns.saveEdit = function(d){
 		var data = $('#gridUser').data('kendoGrid').dataSource.data();
 		data[index].Catrole = ns.valuerole();
 		data[index].Catpassword = ns.Password();
-		console.log("------------>>>>>", data[index].Userpassword)
+		if(data[index].Recstatus == "Inactive"){
+			data[index].Recstatus = "X"
+		}else{
+			data[index].Recstatus = "A"
+		}
 		if($('#StatusFilter').bootstrapSwitch('state') == true){
 			data[index].Catstatus = "Enable";
 		}else{
@@ -227,7 +227,7 @@ ns.saveEdit = function(d){
 		var param =ko.mapping.toJS(data[index]);
 		console.log(param)
 		ajaxPost("/newuser/saveuser", param, function(res){
-			ns.LoadGridUser()
+			ns.LoadGetUser()
 			$("#editUser").modal("hide");
 			swal("", "Save sucessfully", "success");
 		})
@@ -242,6 +242,7 @@ ns.onPass = function(){
 }
 
 $(function(){
-	ns.LoadGridUser()
+	// ns.LoadGridUser()
+	ns.LoadGetUser();
 	$("#gridUser").css("overflow", "hidden")
 });

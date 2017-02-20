@@ -342,7 +342,7 @@ func (c *DueDiligenceController) DueDiligenceFormSaveInput(k *knot.WebContext) i
 	} else if payload.Status == 1 {
 		UpdateDealSetup(payload.CustomerId, payload.DealNo, "dd", "Confirmed")
 	} else {
-		UpdateDealSetup(payload.CustomerId, payload.DealNo, "dd", "Under Process")
+		UpdateDealSetup(payload.CustomerId, payload.DealNo, "dd", UnderProcess)
 	}
 
 	return res

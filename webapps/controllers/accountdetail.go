@@ -265,7 +265,7 @@ func (c *AccountDetailController) SaveAccountDetail(k *knot.WebContext) interfac
 	} else if payload.Status == 1 {
 		UpdateDealSetup(payload.CustomerId, payload.DealNo, "ad", "Confirmed")
 	} else {
-		UpdateDealSetup(payload.CustomerId, payload.DealNo, "ad", "Under Process")
+		UpdateDealSetup(payload.CustomerId, payload.DealNo, "ad", UnderProcess)
 	}
 
 	return res

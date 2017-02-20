@@ -75,15 +75,24 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 	cid := payload.GetString("custid")
 	dealno := payload.GetString("dealno")
 
-	err, cou, _ := checkDealSetup(cid, dealno)
+	err, cou, infos, curId, latestObj := checkDealSetup(cid, dealno)
 	if err != nil {
 		res.SetError(err)
 		return res
 	}
 
+	//if data existbefore
+	if cou > 1 {
+		err = BlendDealSetup(curId, latestObj, infos)
+		if err != nil {
+			res.SetError(err)
+			return res
+		}
+	}
+
 	if dealno != "" && cid != "" {
 		filters = append(filters, dbox.Eq("dealNo", dealno))
-		filters = append(filters, dbox.Eq("dealCustomerId", cid))
+		filters = append(filters, dbox.Eq("dealCustomerId", cast.ToInt(cid, cast.RoundingAuto)))
 	} else {
 		res.SetError(errors.New("Parameter Invalid"))
 		return res
@@ -147,18 +156,22 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 		res.SetError(err)
 	}
 
-	err = updateDealSetupLatestData(cid, dealno, "all", "Under Process")
-	if err != nil {
-		res.SetError(err)
-	}
-
-	if cou > 0 {
+	if cou > 1 {
 		arr := []string{"AccountDetails", "InternalRTR", "BankAnalysisV2", "CustomerProfile", "RatioInputData", "RepaymentRecords", "StockandDebt", "CibilReport", "CibilReportPromotorFinal", "DueDiligenceInput"}
 		for _, val := range arr {
 			err = changeStatus(cid, dealno, val, 0)
 			if err != nil {
 				res.SetError(err)
 			}
+		}
+		err := updateDealSetupLatestData(cid, dealno, "ds", UnderProcess)
+		if err != nil {
+			res.SetError(err)
+		}
+	} else {
+		err = updateDealSetupLatestData(cid, dealno, "all", UnderProcess)
+		if err != nil {
+			res.SetError(err)
 		}
 	}
 
@@ -191,6 +204,40 @@ const timeFormat = "2006-01-02T15:04:05.99Z"
 //
 // 	return "OK"
 // }
+
+func BlendDealSetup(Id bson.ObjectId, inqueObj tk.M, infos tk.M) error {
+	//delete query
+	ctx, e := GetConnection()
+	defer ctx.Close()
+
+	e = ctx.NewQuery().
+		Delete().
+		From("DealSetup").
+		Where(dbox.Eq("_id", Id)).
+		Exec(nil)
+	if e != nil {
+		return e
+	}
+	tk.Println(Id, "OLD ID ===============")
+	tk.Println(inqueObj.GetString("_id"), "NEW ID ===============")
+	tk.Println(infos, "INFOS ===============")
+	inqueObj.Set("info", infos)
+
+	qinsert := ctx.NewQuery().
+		From("DealSetup").
+		SetConfig("multiexec", true).
+		Save()
+	defer qinsert.Close()
+
+	insertdata := tk.M{}
+	insertdata = insertdata.Set("data", inqueObj)
+	e = qinsert.Exec(insertdata)
+	if e != nil {
+		return e
+	}
+
+	return nil
+}
 
 func changeStatus(CustomerID string, DealNo string, TableName string, Status int) error {
 
@@ -241,7 +288,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.Status = 0
 				dt.Freeze = false
-				UpdateDealSetup(CustomerID, DealNo, "ad", "Under Process")
+				UpdateDealSetup(CustomerID, DealNo, "ad", UnderProcess)
 			case 1:
 				dt.Status = 1
 				dt.Freeze = false
@@ -281,7 +328,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.Status = 0
 				dt.Isfreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "irtr", "Under Process")
+				UpdateDealSetup(CustomerID, DealNo, "irtr", UnderProcess)
 			case 1:
 				dt.Status = 1
 				dt.Isfreeze = false
@@ -319,7 +366,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 				dt.Status = 0
 				dt.IsConfirmed = false
 				dt.IsFreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "ba", "Under Process")
+				UpdateDealSetup(CustomerID, DealNo, "ba", UnderProcess)
 			case 1:
 				dt.Status = 1
 				dt.IsConfirmed = true
@@ -374,7 +421,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 1:
 				UpdateDealSetup(CustomerID, DealNo, "ca", "Confirmed")
 			case 0:
-				UpdateDealSetup(CustomerID, DealNo, "ca", "Under Process")
+				UpdateDealSetup(CustomerID, DealNo, "ca", UnderProcess)
 			}
 
 			insertdata = insertdata.Set("data", dt)
@@ -403,7 +450,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.Confirmed = false
 				dt.IsFrozen = false
-				UpdateDealSetup(CustomerID, DealNo, "bsi", "Under Process")
+				UpdateDealSetup(CustomerID, DealNo, "bsi", UnderProcess)
 			case 1:
 				dt.Confirmed = true
 				dt.IsFrozen = false
@@ -441,7 +488,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			dt.DateSave = curTime
 			switch Status {
 			case 0:
-				UpdateDealSetup(CustomerID, DealNo, "ertr", "Under Process")
+				UpdateDealSetup(CustomerID, DealNo, "ertr", UnderProcess)
 			case 1:
 				dt.DateConfirmed = curTime
 				UpdateDealSetup(CustomerID, DealNo, "ertr", "Confirmed")
@@ -476,7 +523,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.IsConfirm = false
 				dt.IsFreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "sbd", "Under Process")
+				UpdateDealSetup(CustomerID, DealNo, "sbd", UnderProcess)
 			case 1:
 				dt.IsConfirm = true
 				dt.IsFreeze = false
@@ -515,7 +562,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.IsConfirm = 0
 				dt.IsFreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "cibil", "Under Process")
+				UpdateDealSetup(CustomerID, DealNo, "cibil", UnderProcess)
 			case 1:
 				dt.IsConfirm = 1
 				dt.IsFreeze = false
@@ -587,7 +634,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.Status = 0
 				dt.Freeze = false
-				UpdateDealSetup(CustomerID, DealNo, "dd", "Under Process")
+				UpdateDealSetup(CustomerID, DealNo, "dd", UnderProcess)
 			case 1:
 				dt.Status = 1
 				dt.Freeze = false
@@ -626,14 +673,14 @@ func (c *DealSetUpController) SendBack(k *knot.WebContext) interface{} {
 	cid := payload.GetString("custid")
 	dealno := payload.GetString("dealno")
 
-	err, _, _ := checkDealSetup(cid, dealno)
-	if err != nil {
-		message := strings.Replace(err.Error(), "Accept", "Send Back", -1)
-		res.SetError(errors.New(message))
-		return res
-	}
+	// err, _, _ := checkDealSetup(cid, dealno)
+	// if err != nil {
+	// 	message := strings.Replace(err.Error(), "Accept", "Send Back", -1)
+	// 	res.SetError(errors.New(message))
+	// 	return res
+	// }
 
-	err = updateDealSetupLatestData(cid, dealno, "ds", "Sent Back to Omnifin")
+	err := updateDealSetupLatestData(cid, dealno, "ds", SendBackOmnifin)
 	if err != nil {
 		res.SetError(err)
 	}
@@ -654,7 +701,7 @@ func (c *DealSetUpController) CheckData(k *knot.WebContext) interface{} {
 	cid := payload.GetString("custid")
 	dealno := payload.GetString("dealno")
 
-	err, cou, _ := checkDealSetup(cid, dealno)
+	err, cou, _, _, _ := checkDealSetup(cid, dealno)
 
 	if err != nil && !strings.Contains(err.Error(), "Accept") {
 		res.SetError(err)
@@ -666,12 +713,14 @@ func (c *DealSetUpController) CheckData(k *knot.WebContext) interface{} {
 	return res
 }
 
-func checkDealSetup(cid string, dealno string) (error, int, string) {
+func checkDealSetup(cid string, dealno string) (error, int, tk.M, bson.ObjectId, tk.M) {
 	cn, err := GetConnection()
 	defer cn.Close()
 
+	id := bson.NewObjectId()
+
 	if err != nil {
-		return err, 0, ""
+		return err, 0, tk.M{}, id, tk.M{}
 	}
 
 	csr, e := cn.NewQuery().
@@ -681,26 +730,26 @@ func checkDealSetup(cid string, dealno string) (error, int, string) {
 	defer csr.Close()
 
 	if e != nil {
-		return e, 0, ""
+		return e, 0, tk.M{}, id, tk.M{}
 	}
 
 	result := []tk.M{}
 	err = csr.Fetch(&result, 0, false)
 	if err != nil {
-		return err, 0, ""
+		return err, 0, tk.M{}, id, tk.M{}
 	}
 
 	if len(result) > 1 {
 		latest := result[len(result)-2]
+		inque := result[len(result)-1]
 		infos := latest.Get("info").(tk.M)
-		myInfo := infos.Get("myInfo").([]interface{})
-		latestinfo := myInfo[len(myInfo)-1].(tk.M).GetString("status")
-		if latestinfo != "Approved" && latestinfo != "Rejected" && latestinfo != "Cancelled" && latestinfo != "On Hold" && latestinfo != "Sent Back for Analysis" && latestinfo != "Sent Back to Omnifin" {
-			return errors.New("Accept Failed, existing data status is " + latestinfo), len(result), ""
-		}
-		return nil, len(result), latestinfo
+		// myInfo := infos.Get("myInfo").([]interface{})
+		// latestinfo := myInfo[len(myInfo)-1].(tk.M).GetString("status")
+		// if latestinfo == Approve || latestinfo == Reject || latestinfo == Cancel {
+		return nil, len(result), infos, latest.Get("_id").(bson.ObjectId), inque
+		// }
 	}
-	return nil, len(result), ""
+	return nil, len(result), tk.M{}, id, tk.M{}
 }
 
 func updateDealSetupLatestData(cid string, dealno string, formname string, formstatus string) error {
@@ -889,7 +938,7 @@ func UpdateDealSetup(cid string, dealno string, formname string, formstatus stri
 		}
 
 		status := myInfos[len(myInfos)-1].GetString("status")
-		if status == "In queue" || status == "Send Back to Omnifin" {
+		if status == Inque || status == SendBackOmnifin {
 			continue
 		}
 

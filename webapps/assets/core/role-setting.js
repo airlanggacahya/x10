@@ -10,8 +10,11 @@ var rolesett = {
     Id : ko.observable(""),
     roleName : ko.observable(""),
     roleType : ko.observable(""),
-    dealAllocation : ko.observable(""),
-    dealAllocationOpt : ko.observableArray(["Standard", "Branches", "Regions"]),
+
+    dealAllocation : ko.observable("Standard"),
+    dealAllocationOpt : ko.observableArray(["Standard"]),
+    dealAllocationEnable : ko.observable(false),
+
     landingPage : ko.observable(""),
 
     //var Filter
@@ -32,6 +35,22 @@ var rolesett = {
     decisionCommitteData: ko.observableArray([]),
     caCommitteData: ko.observableArray([])
 };
+
+rolesett.roleType.subscribe(function (val) {
+    switch (val) {
+    case "CA":
+    case "RM":
+        rolesett.dealAllocation("Standard");
+        rolesett.dealAllocationEnable(false);
+        rolesett.dealAllocationOpt(["Standard"]);
+        break;
+    default:
+        rolesett.dealAllocation("Branches");
+        rolesett.dealAllocationEnable(true);
+        rolesett.dealAllocationOpt(["Branches", "Regions"]);
+        break;
+    }
+})
 
 function checkboxField(field) {
         return '<input type="checkbox" ' +
@@ -574,7 +593,7 @@ rolesett.mappingRole = ko.mapping.fromJS(rolesett.templateRole);
 rolesett.ClearField = function(){
     rolesett.roleName("");
     rolesett.roleType("CA");
-    rolesett.dealAllocation("Standard");
+    // rolesett.dealAllocation("Standard");
     $('#Status').bootstrapSwitch('state',true);
     rolesett._privToGrid(privilegesToNewRole([]))
     rolesett.landingPage("");

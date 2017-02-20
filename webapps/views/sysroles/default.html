@@ -161,7 +161,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
                       <div class="form-group">
                         <label for="dealAllocation" class="col-sm-3 form-control-label">Deal Allocation<span class="mandatory">*</span></label>
                         <div class="col-sm-8">
-                          <select class="form-control input-sm" name="dealAllocation" id="dealAllocation" data-bind="options: dealAllocationOpt, value: dealAllocation">
+                          <select class="form-control input-sm" name="dealAllocation" id="dealAllocation" data-bind="options: dealAllocationOpt, value: dealAllocation, enable: dealAllocationEnable">
                           </select>
                         </div>
                       </div>

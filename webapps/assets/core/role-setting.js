@@ -37,19 +37,41 @@ function checkboxField(field) {
         return '<input type="checkbox" ' +
             'data-switch-no-init ' +
             'id="#=menuid#_' + field + '"' +
-            'onclick="clickRole(\'#=menuid#\', \'' + field + '\')" ' +
+            'class="role_#=submodule_path#_#=menuid# ' + field + '"' +
+            'onclick="clickRole(\'#=submodule_path#\', \'#=menuid#\', \'' + field + '\')" ' +
+            'data-path="' + field + '"' +
             '#= ' + field + ' ? checked="checked" : "" # />'
 }
 
-function clickRole(menuid, path) {
+function clickRole(submodule_path, menuid, path) {
     var output = backMapping();
+    // if (path == 'grant.all') {
+    //     $('.role_' + submodule_path + '_' + menuid + '_' + path.repl)
+    //         .not('.role_' + submodule_path + '_' + menuid + '_grant\.all')
+    //         .each(function (checkbtn) {
+    //             console.log(checkbtn)
+    //         })
+    // }
+
     _.each(output, function(it) {
         if (it.menuid != menuid)
             return
 
         // toggle
-        console.log(it)
-        _.set(it, path, !_.get(it, path, false))
+        var sel = '.role_' + submodule_path + '_' + menuid
+        var path_sel = sel + '.' + path.replace(/\./g, '\\.')
+        var newVal = $(path_sel).is(":checked")
+        _.set(it, path, newVal)
+
+        // enable all if grant all selected
+        if (path == 'grant.all') {
+            $(sel)
+                .not('.grant\\.all')
+                .each(function (key, val) {
+                    _.set(it, $(val).data("path"), newVal)
+                })
+            return
+        }
     })
 
     rolesett._privToGrid(privilegesToNewRole(output))
@@ -71,7 +93,7 @@ var dealSetupMapping = [
     }
 ]
 
-var webFormGrant = ["all", "view", "edit", "confirm", "reenter", "freeze", "unfreeze"]
+var webFormGrant = ["view", "edit", "confirm", "reenter", "freeze", "unfreeze"]
 var webFormMapping = [
     {
         "name": "Customer Application",
@@ -120,7 +142,7 @@ var webFormMapping = [
     }
 ]
 
-var dataMasterGrant = ["all", "view", "edit", "create", "delete"]
+var dataMasterGrant = ["view", "edit", "create", "delete"]
 var dataMasterMapping = [
     {
         "name": "Balance Sheet Input Master",
@@ -164,7 +186,7 @@ var dataMasterMapping = [
     }
 ]
 
-var helpGrant = ["all", "view"]
+var helpGrant = ["view"]
 var helpMapping = [
     {
         "name": "Formula Glossary",
@@ -183,7 +205,7 @@ var helpMapping = [
     }
 ]
 
-var decisionCommitteGrant = ["all", "dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
+var decisionCommitteGrant = ["dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
 var decisionCommitteMapping = [
     {
         "name": "Decision Committe",
@@ -192,7 +214,7 @@ var decisionCommitteMapping = [
     }
 ]
 
-var caCommitteGrant = ["all", "ca_save", "ca_send_dc"]
+var caCommitteGrant = ["ca_save", "ca_send_dc"]
 var caCommitteMapping = [
     {
         "name": "CA Committe",
@@ -206,10 +228,12 @@ function processMapping(input, maps) {
     _.each(maps, function(component) {
         var newcomponent = {};
         newcomponent.submodule = component.name
+        newcomponent.submodule_path = component.name.replace(/ /g, '_').toLowerCase()
         newcomponent.menuid = component.menuid
         newcomponent.grant = {}
         // find matching menu
-        var found = _.find(input, function(it) {
+        var grant = {}
+        _.find(input, function(it) {
             var menuid = _.get(it, "Menuid", undefined) || _.get(it, "menuid", undefined)
 
             if (typeof(menuid) == "undefined")
@@ -218,17 +242,20 @@ function processMapping(input, maps) {
             if (menuid != component.menuid)
                 return false;
 
-            newcomponent.grant = _.get(it, 'Grant', undefined) || _.get(it, "grant", {})
-            if (newcomponent.grant == null)
-                newcomponent.grant = {}
+            grant = _.get(it, 'Grant', undefined) || _.get(it, "grant", {})
             return true;
         })
 
-        // set default false
+        var all_check = true
+        // set default false, collect all var
         _.each(component.grant, function (name) {
-            newcomponent.grant[name] = _.get(newcomponent.grant, name, false)
+            newcomponent.grant[name] = _.get(grant, name, false)
+            all_check = all_check && newcomponent.grant[name]
         })
 
+        newcomponent.grant["all"] = all_check
+
+        // console.log(newcomponent)
         ret.push(newcomponent)
     })
 

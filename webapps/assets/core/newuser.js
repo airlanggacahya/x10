@@ -26,6 +26,13 @@ ns.LoadGetUser = function(){
 				}else{
 					temp.Recstatus = "Active";
 				}
+				if(temp.Catrole != null){
+
+					temp.Catrole = temp.Catrole.join("|")
+				}
+				
+
+
 			})
 			ns.LoadGridUser()
 		}
@@ -102,13 +109,16 @@ ns.LoadGridUser = function(){
 				title: "CAT Role",
 				headerAttributes : {"class":"header-bgcolor"},
 				attributes:{"class": "no-padding"},
-				filterable: false,
+				// filterable: false,
 				template: function(d){
+
 					var res = '';
 					try{
-						if((d.Catrole).length != 0 && d.Catrole != null){
+						if(d.Catrole != null){
+							var rest = (d.Catrole).split("|")
+							console.log(rest)
 							res += "<table role='grid'>"
-							$.each(d.Catrole, function(i, item){
+							$.each(rest, function(i, item){
 								res += "<tr>"
 								res += "<td class='line' role='gridcell' style='height: 20px;'>"+item+"</td>"
 								res += "</tr>"

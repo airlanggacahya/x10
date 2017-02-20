@@ -242,9 +242,7 @@ ns.saveEdit = function(d){
 			data[index].Role = (data[index].Role).split("|");
 		}
 		data[index].Catrole = ns.valuerole();
-		if(ns.Password() != ""){
-			data[index].Catpassword = ns.Password();
-		}
+		data[index].Catpassword = ns.Password();
 		if(data[index].Catstatus == "To be assigned"){
 			data[index].Catstatus = ""
 		}

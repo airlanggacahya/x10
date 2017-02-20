@@ -4,8 +4,7 @@ import (
 	. "eaciit/x10/webapps/connection"
 	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
-	// "github.com/eaciit/dbox"\
-	// "fmt"
+	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 )
@@ -82,15 +81,40 @@ func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	payload := NewUser{}
 	k.GetPayload(&payload)
-	if payload.Catpassword != "" {
-		payload.Catpassword = helper.GetMD5Hash(payload.Catpassword)
-	}
-	err := c.Ctx.Save(&payload)
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	query := []*dbox.Filter{}
+	query = append(query, dbox.Eq("_id", payload.Id))
+	csr, err := cn.NewQuery().
+		Where(dbox.And(query...)).
+		From("MasterUser").
+		Cursor(nil)
+
+	defer csr.Close()
+
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
-	return c.SetResultInfo(false, "save success", nil)
+	res := []NewUser{}
+	// result := tk.M{}
+	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+	k.GetPayload(&payload)
+	if payload.Catpassword != "" {
+		payload.Catpassword = helper.GetMD5Hash(payload.Catpassword)
+	} else {
+		payload.Catpassword = res[0].Catpassword
+	}
+	err = c.Ctx.Save(&payload)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	return c.SetResultInfo(false, "save success", res)
 }
 
 func (c NewUserController) GetSysrole(k *knot.WebContext) interface{} {

@@ -30,6 +30,11 @@ ns.LoadGetUser = function(){
 
 					temp.Catrole = temp.Catrole.join("|")
 				}
+
+				if(temp.Role != null){
+
+					temp.Role = temp.Role.join("|");
+				}
 				
 
 
@@ -86,9 +91,10 @@ ns.LoadGridUser = function(){
 					var res = '';
 					try{
 						if((d.Role).length != 0 && d.Role != null){
-							var last = (d.Role).length - 1;
+							var rest = (d.Role).split("|")
+							var last = rest.length - 1;
 							res += "<table role='grid' id='tab1'>"
-							$.each(d.Role, function(i, item){
+							$.each(rest, function(i, item){
 								res += "<tr>"
 								if(i == last){
 									res += "<td class='line1' role='gridcell' style='height: 20px;border-bottom: hidden;'>"+item+"</td>"
@@ -225,6 +231,7 @@ ns.saveEdit = function(d){
 	if(ns.Password() == ns.confPassword() && ns.Password() != ""){
 		var index = $("#gridUser tr[data-uid='"+d+"']").index();
 		var data = $('#gridUser').data('kendoGrid').dataSource.data();
+		data[index].Role = (data[index].Role).split("|");
 		data[index].Catrole = ns.valuerole();
 		data[index].Catpassword = ns.Password();
 		if(data[index].Recstatus == "Inactive"){

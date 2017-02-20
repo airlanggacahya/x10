@@ -151,7 +151,7 @@ var disableSpinner = function(container, options){
     .appendTo(container)
     .kendoNumericTextBox({
         spinners : false,
-        min: 0,
+        // min: 0,
     });
 
 }
@@ -1408,7 +1408,7 @@ var createCurrentBankDetailGridCols = function(isForm){
         }, {
             title : "Cash",
             field : "CreditCash",
-            headerAttributes: { "class": "sub-bgcolor" },
+            headerAttributes: { "class": "sub-bgcolor"  },
             template: function(d){
                 if (d.CreditCash == ""|| d.CreditCash == null){
                     return 0;

@@ -1,0 +1,124 @@
+<script type="text/javascript">
+model.PageTopMenu("{{.TopMenu}}");
+model.PageId('{{.Menuname}}');
+model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "", "", ""));
+model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
+model.Access = ko.observable('{{.Menuid}}');
+model.View = ko.observable('{{.View}}');
+model.Create= ko.observable('{{.Create}}');
+model.Delete= ko.observable('{{.Delete}}');
+model.Process= ko.observable('{{.Process}}');
+model.Edit= ko.observable('{{.Edit}}')
+model.User= ko.observable('{{.Username}}');
+model.Rolename= ko.observable('{{.Rolename}}')
+model.Fullname = ko.observable('{{.Fullname}}');
+mincibil = ko.observable(0);
+</script>
+
+<style type="text/css">
+	.k-grid-header {
+	    padding-right: 0px !important;
+	}
+	.k-grid-content
+	{
+		overflow-y: hidden;
+	}
+	#gridUser{
+		width: 75%;
+	}
+	.no-padding{
+		padding: 0px !important;
+	}
+	.conf{
+		color: #ff4900;
+		font-size: 9px;
+	}
+	.k-pager-sizes{
+		float: left !important;
+	}
+</style>
+
+<div class="clearfix"></div>
+
+<script>document.write('<script src="/static/core/newuser.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+
+<div class="col-md-12 col-sm-12 ez panel-content" data-bind="with: ns ">
+	<div class="panel">
+		<div class="panel-body">
+			<div class="col-md-12">
+				<center><div id="gridUser"></div></center>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="editUser" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-sm" style="width: 35%;">
+			<!-- <form class="form-add"> -->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title">Edit </h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-12" style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Username</label>
+					        	<div class="col-sm-9">
+				        			<input data-bind="value: username" class="form-control input-sm"  style="width: 100%;" disabled>
+					        	</div>
+							</div>
+							<div class="col-sm-12" style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Unique ID</label>
+					        	<div class="col-sm-9">
+				        			<input data-bind="value: uniqueid" class="form-control input-sm"  style="width: 100%;" disabled>
+					        	</div>
+							</div>
+							<div class="col-sm-12" style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Email</label>
+					        	<div class="col-sm-9">
+				        			<input data-bind="value: email" class="form-control input-sm"  style="width: 100%;" disabled>
+					        	</div>
+							</div>
+							<div class="col-sm-12"  style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right" >Password</label>
+					        	<div class="col-sm-9">
+				        			<input onkeyup="ns.onPass()" type="password" id="psw" data-bind="value: Password" class="form-control input-sm"  style="width: 100%;"><span class="conf">Not Match Password<span>
+					        	</div>
+							</div>
+							<div class="col-sm-12"  style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Confirm Password</label>
+					        	<div class="col-sm-9">
+				        			<input onkeyup="ns.onPass()" type="password" id="cnf" data-bind="value: confPassword" class="form-control input-sm"  style="width: 100%;"><span class="conf">Not Match Password<span>
+					        	</div>
+							</div>
+							<div class="col-sm-12" style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">CAT Role</label>
+					        	<div class="col-sm-9">
+				        			<select  data-placeholder="Select CAT Role" data-bind='kendoMultiSelect:{data: roleList, value: valuerole}' style="width: 100%;"></select>
+					        	</div>
+							</div>
+							<div class="col-sm-12"  style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Status</label>
+					        	<div class="col-sm-9">
+				        			<input data-bind="value: status" class="form-control input-sm"  style="width: 100%;" disabled>
+					        	</div>
+							</div>
+							
+							<div class="col-sm-12"  style="padding: 5px;">
+								<label class="col-sm-3 form-label align-right">Cat Status</label>
+					        	<div class="col-sm-9">
+				        			<input style="margin-left: 5px;" id="StatusFilter" class="switch-mini" type="checkbox"  data-off-text="Disable" data-on-text="Enable">
+					        	</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-sm btn-flat btn-primary" onclick="ns.saveEdit(ns.uid())">Save</button>
+						<button type="button" class="btn btn-sm btn-flat btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			<!-- </form> -->
+		</div>
+	</div>
+</div>

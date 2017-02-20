@@ -70,6 +70,10 @@ model.Fullname= ko.observable('{{.Fullname}}');
     padding-right: 0px !important;
   }
 
+  .collapsible-body {
+    padding-top: 0px;
+  }
+
 </style>
 <div  data-bind="with:rolesett">
     <div class="col-md-9 col-sm-9 ez panel-content" style="margin-top: 54px;">
@@ -139,9 +143,26 @@ model.Fullname= ko.observable('{{.Fullname}}');
                 <div class="modal-body">
                     <form class="form-horizontal" id ="AddRole">
                       <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 form-control-label">Role Name<span class="mandatory">*</span></label>
+                        <label for="roleType" class="col-sm-3 form-control-label">Role Type<span class="mandatory">*</span></label>
+                        <div class="col-sm-8">
+                          <select class="form-control input-sm" name="roleType" id="roleType" validationMessage="Role Type Required" required data-bind="value: roleType">
+                              <option>CA</option>
+                              <option>RM</option>
+                              <option>Custom</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="roleName" class="col-sm-3 form-control-label">Role Name<span class="mandatory">*</span></label>
                         <div class="col-sm-8">
                           <input type="text" class="form-control input-sm" name="roleName" id="roleName" validationMessage="Role Name required" required data-bind="value:roleName, enable:disableRolename"/>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="dealAllocation" class="col-sm-3 form-control-label">Deal Allocation<span class="mandatory">*</span></label>
+                        <div class="col-sm-8">
+                          <select class="form-control input-sm" name="dealAllocation" id="dealAllocation" data-bind="options: dealAllocationOpt, value: dealAllocation">
+                          </select>
                         </div>
                       </div>
                       <div class="form-group">
@@ -153,10 +174,149 @@ model.Fullname= ko.observable('{{.Fullname}}');
                       <div class="form-group">
                         <label for="inputPassword3" class="col-sm-3 form-control-label">Landing Page</label>
                         <div class="col-sm-8">
-                          <input type="text" name="page" id="role" data-bind="kendoDropDownList: {data:listPage, dataTextField: 'text', dataValueField: 'value', optionLabel: 'select landing page'}"  />
+                          <input type="text" name="page" id="role" data-bind="kendoDropDownList: {data:listPage, dataTextField: 'text', dataValueField: 'value', optionLabel: 'select landing page', value: rolesett.landingPage}"  />
                         </div>
                       </div>
                       <div class="form-group">
+                        <div class="col-md-12">
+                          <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                              <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Dashboard<i class="fa fa-chevron-down pull-right"></i></div>
+                              <div class="collapsible-body row">
+                                  <ul class="collapsible" data-collapsible="accordion">
+                                    <li class="panel">
+                                      <div class="row">
+                                        <div class="col-sm-12">
+                                          <div id="DashboardGrid" data-bind="kendoGrid: {data: rolesett.dashboardData, columns: DashboardObj.columns}">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </li>
+                          </ul>
+                          <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                              <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Deal Setup<i class="fa fa-chevron-down pull-right"></i></div>
+                              <div class="collapsible-body row">
+                                  <ul class="collapsible" data-collapsible="accordion">
+                                    <li class="panel">
+                                      <div class="row">
+                                        <div class="col-sm-12">
+                                          <div id="DealSetupGrid" data-bind="kendoGrid: {data: rolesett.dealSetupData, columns: DealSetupObj.columns}">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </li>
+                          </ul>
+                          <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                              <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Web Forms<i class="fa fa-chevron-down pull-right"></i></div>
+                              <div class="collapsible-body row">
+                                  <ul class="collapsible" data-collapsible="accordion">
+                                    <li class="panel">
+                                      <div class="row">
+                                        <div class="col-sm-12">
+                                          <div id="WebFormsGrid" data-bind="kendoGrid: {data: rolesett.webFormsData, columns: WebFormsObj.columns}">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </li>
+                          </ul>
+                          <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                              <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Decisioning Form<i class="fa fa-chevron-down pull-right"></i></div>
+                              <div class="collapsible-body row">
+                                  <ul class="collapsible" data-collapsible="accordion">
+                                    <li class="panel">
+                                      <div class="row">
+                                        <div class="col-sm-12">
+                                          <div id="DecisionCommitteCGrid" data-bind="kendoGrid: {data: rolesett.decisionCommitteData, columns: decisionCommitteObj.columns}">
+                                          </div>
+                                          <br>
+                                          <div id="CACommitteGrid" data-bind="kendoGrid: {data: rolesett.caCommitteData, columns: caCommitteObj.columns}">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </li>
+                          </ul>
+                          <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                              <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Data Masters<i class="fa fa-chevron-down pull-right"></i></div>
+                              <div class="collapsible-body row">
+                                  <ul class="collapsible" data-collapsible="accordion">
+                                    <li class="panel">
+                                      <div class="row">
+                                        <div class="col-sm-12">
+                                          <div id="DataMasterGrid" data-bind="kendoGrid: {data: rolesett.dataMasterData, columns: DataMasterObj.columns}">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </li>
+                          </ul>
+                          <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                              <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Data Viewing<i class="fa fa-chevron-down pull-right"></i></div>
+                              <div class="collapsible-body row">
+                                  <ul class="collapsible" data-collapsible="accordion">
+                                    <li class="panel">
+                                      <div class="row">
+                                        <div class="col-sm-12">
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </li>
+                          </ul>
+                          <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                              <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Help<i class="fa fa-chevron-down pull-right"></i></div>
+                              <div class="collapsible-body row">
+                                  <ul class="collapsible" data-collapsible="accordion">
+                                    <li class="panel">
+                                      <div class="row">
+                                        <div class="col-sm-12">
+                                          <div id="HelpGrid" data-bind="kendoGrid: {data: rolesett.helpData, columns: HelpObj.columns}">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </li>
+                          </ul>
+                          <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                              <div class="collapsible-header header-bgcolor new-role"><i class="fa fa-list"></i>Admin<i class="fa fa-chevron-down pull-right"></i></div>
+                              <div class="collapsible-body row">
+                                  <ul class="collapsible" data-collapsible="accordion">
+                                    <li class="panel">
+                                      <div class="row">
+                                        <div class="col-sm-12">
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="form-group" style="display: none" id="MasterGridWrapper">
                         <div class="col-md-12">
                             <div id="MasterGridMenu"></div>
                         </div>
@@ -166,7 +326,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-default btn-flat" data-dismiss="modal" data-bind="click:Cancel"><i class="fa fa-times"></i> Close</button>
-                    <button type="button" class="btn btn-sm btn-primary btn-flat" data-bind="click:(edit() != true)? SaveData : UpdateData"><i class="fa fa-floppy-o"></i> Save</button>
+                    <button type="button" class="btn btn-sm btn-primary btn-flat" data-bind="click: SaveData"><i class="fa fa-floppy-o"></i> Save</button>
                 </div>
             </div>
         </div>

@@ -61,7 +61,7 @@ func (c *ReallocationController) Default(k *knot.WebContext) interface{} {
 
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 
-	k.Config.IncludeFiles = []string{"shared/loading.html", "reallocation/list.html", "reallocation/new.html"}
+	k.Config.IncludeFiles = []string{"shared/loading.html", "reallocation/list.html", "reallocation/new.html", "reallocation/modal.html"}
 
 	return DataAccess
 }
@@ -102,6 +102,32 @@ func (c *ReallocationController) GetDataByParam(k *knot.WebContext) interface{} 
 	}
 
 	filter := c.GenerateParam(param)
+
+	AD, err := new(AccountDetail).Where(filter)
+
+	if err != nil {
+		res.SetError(err)
+	}
+
+	res.SetData(AD)
+
+	return res
+}
+
+func (c *ReallocationController) GetDataByDealNo(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	param := tk.M{}
+
+	err := k.GetPayload(&param)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	filter := []*dbox.Filter{}
+	filter = append(filter, dbox.Eq("dealno", param.GetString("DealNo")))
 
 	AD, err := new(AccountDetail).Where(filter)
 
@@ -170,7 +196,7 @@ func GetAllUser() (interface{}, error) {
 	}
 	defer conn.Close()
 
-	qcust, err := conn.NewQuery().From("MasterCustomer").Cursor(nil)
+	qcust, err := conn.NewQuery().From("MasterUser").Cursor(nil)
 	if err != nil {
 		return resCust, err
 	}
@@ -179,4 +205,28 @@ func GetAllUser() (interface{}, error) {
 	qcust.Fetch(&resCust, 0, false)
 
 	return resCust, err
+}
+
+func (c *ReallocationController) UpdateReallocationRole(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	param := []tk.M{}
+
+	err := k.GetPayload(&param)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	allocate := new(ReallocationDeal)
+	err = allocate.UpdateReallocationRole(param)
+
+	if err != nil {
+		panic(err)
+	}
+
+	res.SetData(param)
+
+	return res
 }

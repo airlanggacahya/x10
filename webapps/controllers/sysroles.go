@@ -306,6 +306,7 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		District       []string
 		Dealallocation string
 		Dealvalue      string
+		Roletype       string
 	}{}
 	ret := ResultInfo{}
 	o := NewSysRolesModel()
@@ -328,6 +329,7 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 	o.District = oo.District
 	o.Dealallocation = oo.Dealallocation
 	o.Dealvalue = oo.Dealvalue
+	o.Roletype = oo.Roletype
 
 	// Set landing from LandingId
 	landing, err := defaultDetailsMenu(d.Ctx.Connection, o.LandingId)

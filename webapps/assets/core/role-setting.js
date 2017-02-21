@@ -800,11 +800,9 @@ rolesett.DeleteRole = function(id) {
 }
 
 rolesett.SaveData = function(){
-    // var displayedData = $("#MasterGridMenu").data().kendoTreeList.dataSource.view();
     var param = {};
     param.id = rolesett.Id();
     param.name = rolesett.roleName();
-    param.type = rolesett.roleType();
     param.dealallocation = rolesett.dealAllocation();
     param.status = $('#Status').bootstrapSwitch('state');
     param.landing = rolesett.landingPage();
@@ -812,6 +810,7 @@ rolesett.SaveData = function(){
     param.district = rolesett.district();
     param.branch = rolesett.branch();
     param.dealvalue = rolesett.dealValue();
+    param.roletype = rolesett.roleType();
 
     // for (var i in displayedData){
     //     if (displayedData[i].Id != undefined){
@@ -898,7 +897,7 @@ rolesett.EditData = function(IdRole){
             // FILL UP FORM
             rolesett.Id(Records.Id);
             rolesett.roleName(Records.Name);
-            rolesett.roleType(_.get(Records, 'Records.Type', 'Custom'));
+            rolesett.roleType(_.get(Records, 'Roletype', 'Custom'));
             rolesett._privToGrid(privilegesToNewRole(Records.Menu));
             rolesett.landingPage(Records.LandingId);
             $('#Status').bootstrapSwitch('state',Records.Status);

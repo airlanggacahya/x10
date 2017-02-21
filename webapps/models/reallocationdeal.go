@@ -120,7 +120,13 @@ func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 		}
 
 		allocate := new(ReallocationDeal)
-		allocate.Id = bson.NewObjectId()
+
+		if v.GetString("ReallocateId") != "" {
+			allocate.Id = bson.ObjectIdHex(v.GetString("ReallocateId"))
+		} else {
+			allocate.Id = bson.NewObjectId()
+		}
+
 		allocate.CustomerName = v.GetString("CustomerName")
 		allocate.DealNo = v.GetString("DealNo")
 		allocate.FromName = v.GetString("FromText")
@@ -139,4 +145,38 @@ func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 	}
 
 	return nil
+}
+
+func (m *ReallocationDeal) Where(filter []*dbox.Filter) ([]ReallocationDeal, error) {
+	res := []ReallocationDeal{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	query := conn.NewQuery().
+		From(new(ReallocationDeal).TableName())
+
+	if len(filter) > 0 {
+		query = query.Where(filter...)
+	}
+
+	csr, err := query.Cursor(nil)
+
+	if csr != nil {
+		defer csr.Close()
+	}
+	if err != nil {
+		return res, err
+	}
+
+	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return res, err
+	}
+
+	return res, err
 }

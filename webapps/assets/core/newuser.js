@@ -12,6 +12,7 @@ ns.uid = ko.observable("");
 ns.username = ko.observable("");
 ns.email = ko.observable("");
 ns.uniqueid = ko.observable("");
+ns.role = ko.observable("");
 
 ns.LoadGetUser = function(){
 	ns.Userdata([])
@@ -44,7 +45,6 @@ ns.LoadGetUser = function(){
 					temp.Role = temp.Role.join("|");
 				}
 				
-
 
 			})
 			ns.LoadGridUser()
@@ -200,6 +200,7 @@ ns.editUser = function(d){
 	ns.catstatus("");
 	ns.Password("");
 	ns.confPassword("");
+	ns.confPassword([]);
 	$(".conf").hide()
 	var index = $("#gridUser tr[data-uid='"+d+"']").index();
 	var data = $('#gridUser').data('kendoGrid').dataSource.data();
@@ -219,6 +220,8 @@ ns.editUser = function(d){
 	ns.username(data[index].Username);
 	ns.email(data[index].Useremail);
 	ns.uniqueid(data[index].Userid);
+	console.log(data[index].Role)
+	// ns.role(data[index].Role)
 	if(data[index].Recstatus == "X"){
 		ns.status("Inactive");
 	}else{

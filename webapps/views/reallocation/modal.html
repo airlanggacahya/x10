@@ -1,133 +1,140 @@
+
+
 <div class="modal fade modal-reallocation" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg modal-lg-custom" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Reallocation Deal</h4>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-12" data-bind="visible : r.visibleFilter">
+   <div class="modal-dialog modal-lg modal-lg-custom" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Reallocation Deal</h4>
+         </div>
+         <div class="modal-body">
             <div class="row">
-              <div class="col-md-12">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="col-sm-3 form-control-label">CA Name</label>
-                    <div class="col-sm-9">
-                      <select class="multifield"  
-                          data-placeholder="Select CA Name"
-                          data-bind="kendoMultiSelect: { 
-                          data: r.caNameList,
-                          value: r.caNameSelected,
-                          dataValueField: 'value', 
-                          dataTextField: 'text',
-                          filter: 'contains', 
-                          clearButton: false
-                          }"> 
-                      </select>
-                    </div>
-                    <div class="clearfix"></div>
+               <div class="col-md-12" data-bind="visible : r.visibleFilter">
+                  <div class="row">
+                     <div class="col-md-12">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label class="col-sm-3 form-control-label">CA Name</label>
+                              <div class="col-sm-9">
+                                 <select class="multifield"  
+                                    data-placeholder="Select CA Name"
+                                    data-bind="kendoMultiSelect: { 
+                                    data: r.caNameList,
+                                    value: r.caNameSelected,
+                                    dataValueField: 'value', 
+                                    dataTextField: 'text',
+                                    filter: 'contains', 
+                                    clearButton: false
+                                    }"> 
+                                 </select>
+                              </div>
+                              <div class="clearfix"></div>
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label class="col-sm-3 form-control-label">RM Name</label>
+                              <div class="col-sm-9">
+                                 <select class="multifield"  
+                                    data-placeholder="Select RMName"
+                                    data-bind="kendoMultiSelect: { 
+                                    data: r.rmNameList,
+                                    value: r.rmNameSelected,
+                                    dataValueField: 'value', 
+                                    dataTextField: 'text',
+                                    filter: 'contains', 
+                                    clearButton: false
+                                    }"> 
+                                 </select>
+                              </div>
+                              <div class="clearfix"></div>
+                           </div>
+                        </div>
+                     </div>
                   </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="col-sm-3 form-control-label">RM Name</label>
-                    <div class="col-sm-9">
-                      <select class="multifield"  
-                          data-placeholder="Select RMName"
-                          data-bind="kendoMultiSelect: { 
-                          data: r.rmNameList,
-                          value: r.rmNameSelected,
-                          dataValueField: 'value', 
-                          dataTextField: 'text',
-                          filter: 'contains', 
-                          clearButton: false
-                          }"> 
-                      </select>
-                    </div>
-                    <div class="clearfix"></div>
+                  <div class="row">
+                     <div class="col-md-12">
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label class="col-sm-3 form-control-label">Deal No</label>
+                              <div class="col-sm-9">
+                                 <select class="multifield"  
+                                    data-placeholder="Select DealNo"
+                                    data-bind="kendoMultiSelect: { 
+                                    data: r.dealNoList,
+                                    value: r.dealNoSelected,
+                                    dataValueField: 'value', 
+                                    dataTextField: 'text',
+                                    filter: 'contains', 
+                                    clearButton: false
+                                    }"> 
+                                 </select>
+                              </div>
+                              <div class="clearfix"></div>
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                              <label class="col-sm-3 form-control-label">Customer</label>
+                              <div class="col-sm-9">
+                                 <select class="multifield"  
+                                    data-placeholder="Select Customer"
+                                    data-bind="kendoMultiSelect: { 
+                                    data: r.customerList,
+                                    value: r.customerSelected,
+                                    dataValueField: 'value', 
+                                    dataTextField: 'text',
+                                    filter: 'contains', 
+                                    clearButton: false
+                                    }"> 
+                                 </select>
+                              </div>
+                              <div class="clearfix"></div>
+                           </div>
+                        </div>
+                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="col-sm-3 form-control-label">Deal No</label>
-                      <div class="col-sm-9">
-                        <select class="multifield"  
-                            data-placeholder="Select DealNo"
-                            data-bind="kendoMultiSelect: { 
-                            data: r.dealNoList,
-                            value: r.dealNoSelected,
-                            dataValueField: 'value', 
-                            dataTextField: 'text',
-                            filter: 'contains', 
-                            clearButton: false
-                            }"> 
-                        </select>
-                      </div>
-                      <div class="clearfix"></div>
-                  </div>  
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="col-sm-3 form-control-label">Customer</label>
-                    <div class="col-sm-9">
-                      <select class="multifield"  
-                          data-placeholder="Select Customer"
-                          data-bind="kendoMultiSelect: { 
-                          data: r.customerList,
-                          value: r.customerSelected,
-                          dataValueField: 'value', 
-                          dataTextField: 'text',
-                          filter: 'contains', 
-                          clearButton: false
-                          }"> 
-                      </select>
-                    </div>
-                    <div class="clearfix"></div>
+               </div>
+               <div class="col-md-12" data-bind="visible : r.visibleFilter">
+                  <div style="margin-bottom: 10px;">
+                     <button  type="button" btn-sm class="btn btn-sm btn-default btn-warning" data-bind="click: r.resetFilter">Reset</button>
+                     <button  type="button" btn-sm class="btn btn-sm btn-default btn-primary" data-bind="click: r.drawGrid">Refresh</button>    
                   </div>
-                </div>
-              </div>
+               </div>
+               <div class="col-md-12">
+                  <div id="griddb" style="border: none;" class="k-grid k-widget" >
+                     <!-- <table role="grid" class="table table-bordered "> -->
+                     <div class="k-grid-header">
+                        <div class="k-grid-header-wrap">
+                           <table role="grid" width="100%">
+                              <thead role="rowgroup">
+                                 <tr role="row" >
+                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Deal No</th>
+                                    <th style="width:20%" scope="col" role="columnheader" class="k-header header-bgcolor">Customer Name</th>
+                                    <th style="width:20%" scope="col" role="columnheader" class="k-header header-bgcolor">Reallocate Role</th>
+                                    <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">From</th>
+                                    <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">To</th>
+                                    <th style="width:20%" scope="col" role="columnheader" class="k-header header-bgcolor">Reason</th>
+                                 </tr>
+                              </thead>
+                              <tbody role="rowgroup" data-bind="foreach: r.dataGrid">
+                                 <tr role="row">
+                                    <td role="gridcell"><label data-bind="text: DealNo"></label></td>
+                                    <td role="gridcell"><label data-bind="text: CustomerName"></label></td>
+                                      <td><input data-bind="enable : !r.modeEdit() , kendoDropDownList: {data: r.allocateRoleList, change: test($data, $index()), optionLabel: 'Select One'}, attr: {id:('select'+$index())}"></td>
+                                    <td role="gridcell"><label data-bind="attr: {id: ('from'+$index())}"></label><input type="hidden" data-bind="attr: {id: ('fromid'+$index())}"></td>
+                                    <td role="gridcell"><input data-bind="kendoDropDownList: {data: r.tempForCAOrRM, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One'}, attr: {id:('to'+$index())}"></td>
+                                    <td role="gridcell"><textarea data-bind="attr: {id: ('reason'+$index())}" class="form-control input-sm"></textarea></td>
+                                 </tr>
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
             </div>
-          </div>
-          <div class="col-md-12" data-bind="visible : r.visibleFilter">
-            <div style="margin-bottom: 10px;">
-              <button  type="button" btn-sm class="btn btn-sm btn-default btn-warning" data-bind="click: r.resetFilter">Reset</button>
-              <button  type="button" btn-sm class="btn btn-sm btn-default btn-primary" data-bind="click: r.drawGrid">Refresh</button>    
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div id="griddb" style="border: none;">
-              <table class="table table-bordered">
-                <thead>
-                  <th class="k-header header-bgcolor">Deal No</th>
-                  <th class="k-header header-bgcolor">Customer Name</th>
-                  <th class="k-header header-bgcolor">Reallocate Role</th>
-                  <th class="k-header header-bgcolor">From</th>
-                  <th class="k-header header-bgcolor">To</th>
-                  <th class="k-header header-bgcolor">Reason</th>
-                </thead>
-                <tbody data-bind="foreach: r.dataGrid">
-                  <tr>
-                    <td><label data-bind="text: DealNo"></label></td>
-                    <td><label data-bind="text: CustomerName"></label></td>
-                    <td><input data-bind="enable : !r.modeEdit() , kendoDropDownList: {data: r.allocateRoleList, change: test($data, $index()), optionLabel: 'Select One'}, attr: {id:('select'+$index())}"></td>
-                    <td><label data-bind="attr: {id: ('from'+$index())}"></label><input type="hidden" data-bind="attr: {id: ('fromid'+$index())}"></td>
-                    <td><input data-bind="kendoDropDownList: {data: r.tempForCAOrRM, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One'}, attr: {id:('to'+$index())}"></td>
-                    <td><textarea data-bind="attr: {id: ('reason'+$index())}" class="form-control input-sm"></textarea></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-          
-        
-      </div>
-          <div class="modal-footer">
+         </div>
+         <div class="modal-footer">
             <button type="button" class="btn btn-sm btn-flat btn-danger" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-sm btn-flat btn-primary" data-bind="click: r.save">Save</button>
           </div>

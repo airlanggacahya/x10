@@ -57,6 +57,7 @@ type Previlege struct {
 	Menuname string
 	Username string
 	TopMenu  string
+	Grant    map[string]bool
 	Rolename interface{}
 	Fullname interface{}
 }
@@ -104,6 +105,7 @@ func (b *BaseController) AccessMenu(k *knot.WebContext) []tk.M {
 					obj.Set("Username", k.Session("username").(string))
 					obj.Set("Rolename", accesMenu[0].Name)
 					obj.Set("Fullname", k.Session("fullname").(string))
+					obj.Set("Grant", o.Grant)
 					access = append(access, obj)
 					return access
 				}

@@ -36,12 +36,12 @@ func (c *LoginController) Do(k *knot.WebContext) interface{} {
 		c.WriteLog(err)
 		message = "Backend Error " + err.Error()
 	}
-	q := tk.M{}.Set("where", db.Eq("username", formData.UserName))
-	cur, err := c.Ctx.Find(new(SysUserModel), q)
+	q := tk.M{}.Set("where", db.Eq("userid", formData.UserName))
+	cur, err := c.Ctx.Find(new(NewUser), q)
 	if err != nil {
 		return tk.M{}.Set("Valid", false).Set("Message", err.Error())
 	}
-	res := make([]SysUserModel, 0)
+	res := make([]NewUser, 0)
 	resroles := make([]SysRolesModel, 0)
 	resurl := []tk.M{}
 	//	defer c.Ctx.Close()
@@ -52,11 +52,16 @@ func (c *LoginController) Do(k *knot.WebContext) interface{} {
 	}
 	if len(res) > 0 {
 		resUser := res[0]
-		if helper.GetMD5Hash(formData.Password) == resUser.Password {
-			if resUser.Enable == true {
+		if helper.GetMD5Hash(formData.Password) == resUser.Catpassword {
+			if resUser.Catstatus == "Enable" {
+				wh := []*db.Filter{}
+
+				for _, valx := range resUser.Catrole {
+					wh = append(wh, db.Eq("name", valx))
+				}
 
 				//resroles := make([]SysRolesModel, 0)
-				crsR, errR := c.Ctx.Find(new(SysRolesModel), tk.M{}.Set("where", db.Eq("name", resUser.Roles)))
+				crsR, errR := c.Ctx.Find(new(SysRolesModel), tk.M{}.Set("where", db.Or(wh...)))
 				if errR != nil {
 					return c.SetResultInfo(true, errR.Error(), nil)
 				}
@@ -66,9 +71,9 @@ func (c *LoginController) Do(k *knot.WebContext) interface{} {
 				}
 				defer crsR.Close()
 
-				k.SetSession("userid", resUser.Id.Hex())
-				k.SetSession("username", resUser.Username)
-				k.SetSession("fullname", resUser.Fullname)
+				k.SetSession("userid", resUser.Id)
+				k.SetSession("username", resUser.Userid)
+				k.SetSession("fullname", resUser.Username)
 				k.SetSession("usermodel", resUser)
 				k.SetSession("roles", resroles)
 				k.SetSession("rolesid", resroles[0].Id.Hex())

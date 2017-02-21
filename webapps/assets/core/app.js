@@ -629,3 +629,11 @@ app.masterCIBIL = [
     { alias: 'SelectRating', name: 'CIBIL - Select Rating' },
     { alias: 'MinScore', name: 'CIBIL - Min Score' },
 ]
+
+app.stringMapToJSON = function(map){
+    if(map == "map[]")
+        return {}
+
+    var str = map.replace("map[","{\"").replace("]","}").split(" ").join(",\"").split(":").join("\":")
+    return JSON.parse(str)
+}

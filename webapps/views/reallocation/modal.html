@@ -114,7 +114,7 @@
                   <tr>
                     <td><label data-bind="text: DealNo"></label></td>
                     <td><label data-bind="text: CustomerName"></label></td>
-                    <td><input data-bind="kendoDropDownList: {data: r.allocateRoleList, change: test($data, $index()), optionLabel: 'Select One'}, attr: {id:('select'+$index())}"></td>
+                    <td><input data-bind="enable : !r.modeEdit() , kendoDropDownList: {data: r.allocateRoleList, change: test($data, $index()), optionLabel: 'Select One'}, attr: {id:('select'+$index())}"></td>
                     <td><label data-bind="attr: {id: ('from'+$index())}"></label><input type="hidden" data-bind="attr: {id: ('fromid'+$index())}"></td>
                     <td><input data-bind="kendoDropDownList: {data: r.tempForCAOrRM, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select One'}, attr: {id:('to'+$index())}"></td>
                     <td><textarea data-bind="attr: {id: ('reason'+$index())}" class="form-control input-sm"></textarea></td>

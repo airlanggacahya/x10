@@ -167,7 +167,8 @@ r.save = function() {
 				
 				r.getDataAllocate()
 
-				$('.modal-reallocation').modal('hide')		 
+				$('.modal-reallocation').modal('hide')	
+				r.modeEdit(false)	 
 		    });			
 		}
 		r.paramSave([])
@@ -242,12 +243,17 @@ r.validateDataGrid = function(data) {
 
 		if(allocateSelect === "" || toSelect === "" || reason === "") {
 			validate = false
+			swal("Warning","Please fill all fields","warning");
 			break
 		} else {
-			validate = true
 			var ADFormat =  {}
 			ADFormat.Id = data[i].Id
+			
+			if(r.modeEdit())
 			ADFormat.ReallocateId = r.allocationId()
+			else
+			ADFormat.ReallocateId = ""
+
 			ADFormat.CustomerName = data[i].CustomerName
 			ADFormat.DealNo = data[i].DealNo
 			ADFormat.Role = allocateSelect
@@ -262,10 +268,17 @@ r.validateDataGrid = function(data) {
 			}
 
 			ADFormat.Reason = reason
-
-			r.paramSave.push(ADFormat)
+			if(r.validateUniqueData(ADFormat.Role,ADFormat.DealNo) || r.modeEdit()){
+				r.paramSave.push(ADFormat)
+			}else{
+				swal("Warning","Deal Number " + ADFormat.DealNo +" with " +ADFormat.Role+" Role re-allocation done before, please edit from the main grid.","warning")
+				validate = false
+				break
+			}
 		}
+		validate = true
 	}
+
 
 	return validate
 }
@@ -404,10 +417,25 @@ r.findCompanyById = function(zone){
 	return user
 }
 
+r.validateUniqueData = function(Role, DealNo){
+	var dt  = _.filter(source(),function(x){
+		return x.DealNo == DealNo && x.Role == Role
+	});
+
+	if(dt.length > 0){
+		return false
+	}
+
+	return true
+}
+
 r.showModal = function(selector) {
 	return function(){
 		r.visibleFilter(true)
 		$(selector).modal('show')
+		r.modeEdit(false)
+		r.dataGrid([])
+		r.resetFilter()
 	}
 }
 

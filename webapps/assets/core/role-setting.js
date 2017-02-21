@@ -799,7 +799,28 @@ rolesett.DeleteRole = function(id) {
     });
 }
 
+function swalErr(msg) {
+    swal("Error!", msg, "error");
+
+    return false;
+}
+
+rolesett.ValidateData = function() {
+    if (rolesett.roleName().length == 0)
+        return swalErr("Role Name must be filled")
+
+    // rolesett.dealAllocation();
+    
+    if (rolesett.landingPage().length == 0 || _.findIndex(rolesett.listPage(), {"menuid": rolesett.landingPage()}) == -1)
+        return swalErr("Landing Page must be filled")
+    
+    return true
+}
+
 rolesett.SaveData = function(){
+    if (!rolesett.ValidateData())
+        return
+
     var param = {};
     param.id = rolesett.Id();
     param.name = rolesett.roleName();

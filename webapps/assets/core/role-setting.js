@@ -15,7 +15,7 @@ var rolesett = {
     dealAllocationOpt : ko.observableArray(["Standard"]),
     dealAllocationEnable : ko.observable(false),
 
-    district : ko.observableArray(""),
+    district : ko.observableArray([]),
     districtOpt : new kendo.data.DataSource({
         transport: {
             read: {
@@ -26,7 +26,7 @@ var rolesett = {
     }),
     districtEnable: ko.observable(false),
 
-    branch : ko.observableArray(""),
+    branch : ko.observableArray([]),
     branchOpt: new kendo.data.DataSource({
         transport: {
             read: {
@@ -36,6 +36,16 @@ var rolesett = {
         },
     }),
     branchEnable: ko.observable(false),
+
+    dealValue: ko.observable(""),
+    dealValueOpt: new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: "/sysroles/getdealvalue",
+                dataType: "json"
+            }
+        },
+    }),
 
     landingPage : ko.observable(""),
 
@@ -48,17 +58,55 @@ var rolesett = {
     //var Landing Page
     listPage : ko.observableArray([]),
 
-    //var grid
+    // var grid
     dashboardData: ko.observableArray([]),
     dealSetupData: ko.observableArray([]),
     webFormsData: ko.observableArray([]),
     dataMasterData: ko.observableArray([]),
+    dataViewingData: ko.observableArray([]),
     cibilData: ko.observableArray([]),
     helpData: ko.observableArray([]),
     decisionCommitteData: ko.observableArray([]),
     caCommitteData: ko.observableArray([]),
-    adminData: ko.observableArray([])
+    adminData: ko.observableArray([]),
+
+    // all data abose will be collected here
+    grantAccessNotifier: ko.observableArray([])
 };
+
+// Data grantAccessNotifier notifier
+function notifGrantChanges(value) {
+    rolesett.grantAccessNotifier(backMapping())
+}
+
+rolesett.dashboardData.subscribe(notifGrantChanges);
+rolesett.dealSetupData.subscribe(notifGrantChanges);
+rolesett.webFormsData.subscribe(notifGrantChanges);
+rolesett.dataMasterData.subscribe(notifGrantChanges);
+rolesett.dataViewingData.subscribe(notifGrantChanges);
+rolesett.cibilData.subscribe(notifGrantChanges);
+rolesett.helpData.subscribe(notifGrantChanges);
+rolesett.decisionCommitteData.subscribe(notifGrantChanges);
+rolesett.caCommitteData.subscribe(notifGrantChanges);
+rolesett.adminData.subscribe(notifGrantChanges);
+
+// Populate landing page from list of datagrid
+rolesett.grantAccessNotifier.subscribe(function (val) {
+    var page = []
+
+    _.each(val, function(val) {
+        var found = _.find(val.grant, function (val) { return val === true})
+        if (!found)
+            return
+
+        page.push({
+            title: val.submodule,
+            menuid: val.menuid
+        })
+    })
+
+    rolesett.listPage(page)
+})
 
 // Switch dealllocation based on roletype
 rolesett.roleType.subscribe(function (val) {
@@ -91,6 +139,8 @@ rolesett.dealAllocation.subscribe(function (val) {
         break;
     }
 })
+
+// Inform on page access changes
 
 function checkboxField(field) {
     return '<input type="checkbox" ' +
@@ -238,6 +288,35 @@ var dataMasterMapping = [
     }
 ]
 
+var dataViewingGrant = ["view", "download", "email"]
+var dataViewingMapping = [
+    {
+        "name": "Financial Snapshot",
+        "menuid": "2016104124327",
+        "grant": dataViewingGrant
+    },
+    {
+        "name": "Credit Score Card",
+        "menuid": "2016830201030",
+        "grant": dataViewingGrant
+    },
+    {
+        "name": "Detailed Financials Report",
+        "menuid": "201682593414",
+        "grant": dataViewingGrant
+    },
+    {
+        "name": "Loan Approval Report",
+        "menuid": "201691515422",
+        "grant": dataViewingGrant
+    },
+    {
+        "name": "Key Financials Report",
+        "menuid": "2016825143634",
+        "grant": dataViewingGrant
+    }
+]
+
 var cibilGrant = ["view", "edit", "create", "delete"]
 var cibilMapping = [
     {
@@ -360,6 +439,7 @@ function processMapping(input, maps) {
     return ret;
 }
 
+// Map back from individual data grid into one array of menuid and grant
 function backMapping() {
     var lists = [
         rolesett.dashboardData,
@@ -367,6 +447,7 @@ function backMapping() {
         rolesett.webFormsData,
         rolesett.decisionCommitteData,
         rolesett.caCommitteData,
+        rolesett.dataViewingData,
         rolesett.cibilData,
         rolesett.dataMasterData,
         rolesett.helpData,
@@ -395,6 +476,7 @@ function backMapping() {
     return ret
 }
 
+// Split from menuid grant into individual datagrid data
 function privilegesToNewRole(input) {
     var mapped = {};
     mapped["Dashboard"] = processMapping(input, dashboardMapping)
@@ -406,10 +488,12 @@ function privilegesToNewRole(input) {
     mapped["DecisionCommitte"] = processMapping(input, decisionCommitteMapping)
     mapped["CaCommitte"] = processMapping(input, caCommitteMapping)
     mapped["Admin"] = processMapping(input, adminMapping)
+    mapped["Data Viewing"] = processMapping(input, dataViewingMapping)
     
     return mapped;
 }
 
+// Create column and complete it with checkbox and header
 function completeColumn(init) {
     var ret = [
         {
@@ -432,6 +516,7 @@ function completeColumn(init) {
     return ret
 }
 
+// List of datagrid column
 var DashboardCol = completeColumn([
     {
         field: "grant.all",
@@ -513,6 +598,25 @@ var DataMasterCol = completeColumn([
     {
         field: "grant.delete",
         title: "Delete"
+    }
+])
+
+var DataViewingCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
+    },
+    {
+        field: "grant.download",
+        title: "Download"
+    },
+    {
+        field: "grant.email",
+        title: "Email"
     }
 ])
 
@@ -675,6 +779,26 @@ rolesett.AddNew = function(){
     rolesett.Id("");
 }
 
+rolesett.DeleteRole = function(id) {
+    swal({
+        title: "Are you sure?",
+        text: "Role will be deleted.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!"
+    }).then(function() {
+        ajaxPost("/sysroles/removerole", { "id": id }, function(res) {
+            if(res.IsError != true){
+                $('#MasterGridRole').data('kendoGrid').dataSource.read();
+                $('#MasterGridRole').data('kendoGrid').refresh();
+            }else{
+                return swal("Error!", res.Message, "error");
+            }
+        });
+    });
+}
+
 rolesett.SaveData = function(){
     // var displayedData = $("#MasterGridMenu").data().kendoTreeList.dataSource.view();
     var param = {};
@@ -687,8 +811,7 @@ rolesett.SaveData = function(){
     param.menu = backMapping();
     param.district = rolesett.district();
     param.branch = rolesett.branch();
-
-    console.log(param);
+    param.dealvalue = rolesett.dealValue();
 
     // for (var i in displayedData){
     //     if (displayedData[i].Id != undefined){
@@ -745,6 +868,7 @@ rolesett._privToGrid = function(priv) {
     rolesett.webFormsData(priv["Web Forms"]);
     rolesett.cibilData(priv["Cibil Editor"]);
     rolesett.dataMasterData(priv["Data Master"]);
+    rolesett.dataViewingData(priv["Data Viewing"]);
     rolesett.helpData(priv["Help"]);
     rolesett.decisionCommitteData(priv["DecisionCommitte"]);
     rolesett.caCommitteData(priv["CaCommitte"]);
@@ -776,11 +900,12 @@ rolesett.EditData = function(IdRole){
             rolesett.roleName(Records.Name);
             rolesett.roleType(_.get(Records, 'Records.Type', 'Custom'));
             rolesett._privToGrid(privilegesToNewRole(Records.Menu));
-            rolesett.landingPage(Records.Landing);
+            rolesett.landingPage(Records.LandingId);
             $('#Status').bootstrapSwitch('state',Records.Status);
             rolesett.branch(Records.Branch);
             rolesett.district(Records.District);
             rolesett.dealAllocation(Records.Dealallocation);
+            rolesett.dealValue(Records.Dealvalue);
 
             // old access layout setup
 
@@ -821,9 +946,6 @@ rolesett.filterRole.subscribe(function(value){
   }
 });
 
-var userid = model.User();
-var gc = new GridColumn('role_master', userid, 'MasterGridRole');
-
 rolesett.GetDataRole = function(){
     rolesett.loading(false);
     var param =  {
@@ -835,59 +957,50 @@ rolesett.GetDataRole = function(){
     $("#MasterGridRole").html("");
     $("#MasterGridRole").kendoGrid({
             dataSource: {
-                    transport: {
-                        read: {
-                            url: url,
-                            data: param,
-                            dataType: "json",
-                            type: "POST",
-                            contentType: "application/json",
-                        },
-                        parameterMap: function(data) {                                 
-                           return JSON.stringify(data);                                 
-                        },
+                transport: {
+                    read: {
+                        url: url,
+                        data: param,
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json",
                     },
-                    schema: {
-                        data: function(data) {
-                            gc.Init();
-                            rolesett.loading(false);
-                            if (data.Data.Count == 0) {
-                                return dataSource;
-                            } else {
-                                return data.Data.Records;
-                            }
-                        },
-                        total: function(data){
-                            if (data.Data.Count == 0) {
-                                return 0;
-                            } else {
-                                return data.Data.Records.length;
-                            }
-                        },
+                    parameterMap: function(data) {                                 
+                        return JSON.stringify(data);                                 
+                    }
+                },
+                schema: {
+                    data: function(data) {
+                        rolesett.loading(false);
+                        if (data.Data.Count == 0) {
+                            return dataSource;
+                        } else {
+                            return data.Data.Records;
+                        }
                     },
-                    pageSize: 15,
-                    serverPaging: true,
-                    serverSorting: true,
+                    total: function(data){
+                        if (data.Data.Count == 0) {
+                            return 0;
+                        } else {
+                            return data.Data.Records.length;
+                        }
+                    },
                 },
-                resizable: true,
-                sortable: true,
-                pageable: {
-                    refresh: true,
-                    pageSizes: true,
-                    buttonCount: 5
-                },
-                columnMenu: false,
-                  columnHide: function(e) {
-                    gc.RemoveColumn(e.column.field);
-                  },
-                  columnShow: function(e) {
-                    gc.AddColumn(e.column.field);
-                  },
+                pageSize: 15,
+                serverPaging: true,
+                serverSorting: true,
+            },
+            resizable: true,
+            sortable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
             columns: [
                 {
                     field:"Name",
                     title:"Role Name",
-                    // width:150,
                     headerAttributes: {class: 'k-header header-bgcolor'},
                     template: "#if(model.Edit() != 'false'){#<a class='grid-select' id='ls' href='javascript:rolesett.EditData(\"#: Id #\")'>#: Name #</a>#}else{#<div>#: Name #</div>#}#"
 
@@ -895,10 +1008,15 @@ rolesett.GetDataRole = function(){
                 {
                     field:"Status",
                     title:"Status",
+                    headerAttributes: {class: 'k-header header-bgcolor'}
+                },
+                {
+                    title: "Action",
                     headerAttributes: {class: 'k-header header-bgcolor'},
-                    // width:50
-
-                }]
+                    width: 50,
+                    template: "<center><button class='btn btn-xs btn-flat btn-danger' onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button></center>"
+                }
+            ]
     });
 }
 
@@ -1233,25 +1351,8 @@ rolesett.panel_relocated = function(){
   }
 }
 
-rolesett.getLandingPage = function(){
-    var param = {
-    }
-    var url = "/sysroles/getlandingpage";
-    rolesett.listPage([]);
-    ajaxPost(url, param, function(res){
-        var dataPage = Enumerable.From(res).OrderBy("$.Title").ToArray();
-        for (var u in dataPage){
-            rolesett.listPage.push({
-                "text" : dataPage[u].Title,
-                "value" : dataPage[u].Title,
-            });
-        }
-    });
-}
-
 $(document).ready(function (){ 
     $('#filterStatus').bootstrapSwitch('state',true)
     rolesett.getRole();
     rolesett.GetDataRole();
-    rolesett.getLandingPage();
 });

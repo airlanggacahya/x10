@@ -125,7 +125,7 @@ func checkMasterSupplier(field string, value string) (bool, error) {
 	return len(rest) > 0, nil
 }
 
-func checkMaster(master string, field string, value string) (bool, error) {
+func CheckMaster(master string, field string, value string) (bool, error) {
 	switch master {
 	case "MasterSupplier":
 		return checkMasterSupplier(field, value)
@@ -151,7 +151,7 @@ func checkMasterData(data DealSetupModel) error {
 			continue
 		}
 
-		exists, err := checkMaster(key, "name", val)
+		exists, err := CheckMaster(key, "name", val)
 		if err != nil {
 			return err
 		}
@@ -169,7 +169,7 @@ func checkMasterData(data DealSetupModel) error {
 
 	omni.DoMain()
 	for key, val := range checklist {
-		found, err := checkMaster(key, "name", val)
+		found, err := CheckMaster(key, "name", val)
 		if err != nil {
 			return err
 		}

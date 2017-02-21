@@ -305,6 +305,7 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		Branch         []string
 		District       []string
 		Dealallocation string
+		Dealvalue      string
 	}{}
 	ret := ResultInfo{}
 	o := NewSysRolesModel()
@@ -322,10 +323,17 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 
 	o.Name = oo.Name
 	o.Status = oo.Status
-	o.Landing = oo.Landing
+	o.LandingId = oo.Landing
 	o.Branch = oo.Branch
 	o.District = oo.District
 	o.Dealallocation = oo.Dealallocation
+	o.Dealvalue = oo.Dealvalue
+
+	// Set landing from LandingId
+	landing, err := defaultDetailsMenu(d.Ctx.Connection, o.LandingId)
+	if err == nil {
+		o.Landing = landing.Menuname
+	}
 
 	// helper for parent add
 	menuDone := make(map[string]bool)
@@ -477,4 +485,59 @@ func (d *SysRolesController) GetDistrict(r *knot.WebContext) interface{} {
 	}
 
 	return nil
+}
+
+func (d *SysRolesController) GetDealValue(r *knot.WebContext) interface{} {
+	r.Config.OutputType = knot.OutputJson
+	r.Config.NoLog = true
+
+	ret := []tk.M{}
+
+	cur, err := d.Ctx.Connection.
+		NewQuery().
+		From("DealValueMaster").
+		Cursor(nil)
+
+	if err != nil {
+		tk.Println(err.Error())
+		return ret
+	}
+
+	cur.Fetch(&ret, 0, true)
+
+	return ret
+}
+
+func (d *SysRolesController) RemoveRole(r *knot.WebContext) interface{} {
+	r.Config.OutputType = knot.OutputJson
+	r.Config.NoLog = true
+
+	payload := struct {
+		Id string
+	}{}
+
+	err := r.GetPayload(&payload)
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	ret := ResultInfo{}
+
+	q := d.Ctx.Connection.
+		NewQuery().
+		From("SysRoles").
+		Where(db.Eq("_id", bson.ObjectIdHex(payload.Id))).
+		Delete()
+	defer q.Close()
+
+	err = q.Exec(nil)
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	ret.IsError = false
+	ret.Message = "Delete Role Successfully"
+	ret.Data = ""
+
+	return ret
 }

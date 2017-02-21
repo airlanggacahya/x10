@@ -3,6 +3,8 @@
 
 r = {}
 r.visibleFilter = ko.observable(true)
+r.modeEdit = ko.observable(false)
+r.allocationId = ko.observable("")
 
 r.masterUserList = ko.observableArray()
 r.masterCustomerList = ko.observableArray()
@@ -73,9 +75,7 @@ var gridbrowser = {
             headerAttributes: { "class": "k-header header-bgcolor" },
             title : "Action",
             template : function(o) {
-                console.log(o.DealNo)
-                console.log("<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"')\">Edit</button>")
-                return "<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"')\">Edit</button>"
+                return "<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"', '"+o.Id+"')\">Edit</button>"
             }
         }
     ]
@@ -165,7 +165,10 @@ r.save = function() {
 			ajaxPost("/reallocation/updatereallocationrole", r.paramSave(), function(res){
 				r.paramSave([])
 				
-				console.log(res) 
+				r.getDataAllocate()
+
+				$('.modal-reallocation').modal('hide')	
+				r.modeEdit(false)	 
 		    });			
 		}
 		r.paramSave([])
@@ -175,12 +178,32 @@ r.save = function() {
 	}
 }
 
-r.edit = function(dealno) {
+r.edit = function(dealno,  id) {
+	r.modeEdit(true)
+
 	var param = {}
 	param.DealNo = dealno
+	param.Id = id
+
+	r.allocationId(id)
 
 	ajaxPost("/reallocation/getdatabydealno", param, function(res){
-		r.renderKendoGrid(r.normalisasiDataGrid, res.Data)
+		r.renderKendoGrid(r.normalisasiDataGrid, res.Data.AccountDetails)
+		
+		reallocation = res.Data.AllocationDeal[0]
+
+		var dropdownlistRole = $("#select0").data("kendoDropDownList");
+		var dropdownlistTo = $("#to0").data("kendoDropDownList");
+
+		dropdownlistRole.value(reallocation.Role);
+		dropdownlistRole.trigger("change");
+
+		setTimeout(function(){
+			dropdownlistTo.value(reallocation.ToName);	
+		}, 500)
+		
+		$("#reason0").val(reallocation.Reason)
+		
 		$('.modal-reallocation').modal('show')
 		r.visibleFilter(false)
 	});
@@ -220,11 +243,17 @@ r.validateDataGrid = function(data) {
 
 		if(allocateSelect === "" || toSelect === "" || reason === "") {
 			validate = false
+			swal("Warning","Please fill all fields","warning");
 			break
 		} else {
-			validate = true
 			var ADFormat =  {}
 			ADFormat.Id = data[i].Id
+			
+			if(r.modeEdit())
+			ADFormat.ReallocateId = r.allocationId()
+			else
+			ADFormat.ReallocateId = ""
+
 			ADFormat.CustomerName = data[i].CustomerName
 			ADFormat.DealNo = data[i].DealNo
 			ADFormat.Role = allocateSelect
@@ -239,10 +268,17 @@ r.validateDataGrid = function(data) {
 			}
 
 			ADFormat.Reason = reason
-
-			r.paramSave.push(ADFormat)
+			if(r.validateUniqueData(ADFormat.Role,ADFormat.DealNo) || r.modeEdit()){
+				r.paramSave.push(ADFormat)
+			}else{
+				swal("Warning","Deal Number " + ADFormat.DealNo +" with " +ADFormat.Role+" Role re-allocation done before, please edit from the main grid.","warning")
+				validate = false
+				break
+			}
 		}
+		validate = true
 	}
+
 
 	return validate
 }
@@ -381,10 +417,25 @@ r.findCompanyById = function(zone){
 	return user
 }
 
+r.validateUniqueData = function(Role, DealNo){
+	var dt  = _.filter(source(),function(x){
+		return x.DealNo == DealNo && x.Role == Role
+	});
+
+	if(dt.length > 0){
+		return false
+	}
+
+	return true
+}
+
 r.showModal = function(selector) {
 	return function(){
 		r.visibleFilter(true)
 		$(selector).modal('show')
+		r.modeEdit(false)
+		r.dataGrid([])
+		r.resetFilter()
 	}
 }
 

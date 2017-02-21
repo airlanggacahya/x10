@@ -13,9 +13,11 @@ type SysRolesModel struct {
 	Menu           []Detailsmenu
 	Status         bool
 	Landing        string
+	LandingId      string
 	Branch         []string
 	District       []string
 	Dealallocation string
+	Dealvalue      string
 }
 
 type Detailsmenu struct {

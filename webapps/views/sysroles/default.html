@@ -180,6 +180,13 @@ model.Fullname= ko.observable('{{.Fullname}}');
                         </div>
                       </div>
                       <div class="form-group">
+                        <label for="dealValue" class="col-sm-3 form-control-label">Proposed Amount Range<span class="mandatory">*</span></label>
+                        <div class="col-sm-8">
+                          <select name="dealValue" id="dealValue" data-bind="kendoDropDownList: { data: rolesett.dealValueOpt, value: rolesett.dealValue, dataTextField: 'name', dataValueField: '_id'}">
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
                         <label for="inputPassword3" class="col-sm-3 form-control-label">Status</label>
                         <div class="col-sm-8">
                           <input id="Status" class="switch-mini" type="checkbox"  data-off-text="inactive" data-on-text="active" checked>
@@ -188,7 +195,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
                       <div class="form-group">
                         <label for="inputPassword3" class="col-sm-3 form-control-label">Landing Page</label>
                         <div class="col-sm-8">
-                          <input type="text" name="page" id="role" data-bind="kendoDropDownList: {data:listPage, dataTextField: 'text', dataValueField: 'value', optionLabel: 'select landing page', value: rolesett.landingPage}"  />
+                          <input type="text" name="page" id="role" data-bind="kendoDropDownList: {data: listPage, dataTextField: 'title', dataValueField: 'menuid', optionLabel: 'select landing page', value: rolesett.landingPage}"  />
                         </div>
                       </div>
                       <div class="form-group">
@@ -306,6 +313,8 @@ model.Fullname= ko.observable('{{.Fullname}}');
                                     <li class="panel">
                                       <div class="row">
                                         <div class="col-sm-12">
+                                          <div id="DataViewingGrid" data-bind="kendoGrid: {data: rolesett.dataViewingData, columns: DataViewingCol}">
+                                          </div>
                                         </div>
                                       </div>
                                     </li>

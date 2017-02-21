@@ -108,7 +108,11 @@ func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 						dd, _ := strconv.Atoi(ndp)
 						// tk.Println("----------------------------->>>>>>", dp)
 						if nres.Userdepartment == dd {
-							res[idx].Role = append(nres.Role, name)
+							// res[idx].Role = res[idx].Role[:0]
+							if res[idx].Role == nil {
+								res[idx].Role = append(nres.Role, name)
+							}
+
 						}
 
 					}
@@ -124,6 +128,7 @@ func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	payload := NewUser{}
+	k.GetPayload(&payload)
 	cn, _ := GetConnection()
 	defer cn.Close()
 
@@ -142,15 +147,19 @@ func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 
 	res := []NewUser{}
 	// result := tk.M{}
+	tk.Println("---------------------------", payload.Role)
 	err = csr.Fetch(&res, 0, false)
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
-	k.GetPayload(&payload)
 	if payload.Catpassword != "" {
 		payload.Catpassword = helper.GetMD5Hash(payload.Catpassword)
 	} else {
-		payload.Catpassword = res[0].Catpassword
+		if res[0].Catpassword == "" {
+			payload.Catpassword = ""
+		} else {
+			payload.Catpassword = res[0].Catpassword
+		}
 	}
 	err = c.Ctx.Save(&payload)
 	if err != nil {

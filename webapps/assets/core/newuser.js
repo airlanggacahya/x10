@@ -200,6 +200,7 @@ ns.editUser = function(d){
 	ns.catstatus("");
 	ns.Password("");
 	ns.confPassword("");
+	ns.confPassword([]);
 	$(".conf").hide()
 	var index = $("#gridUser tr[data-uid='"+d+"']").index();
 	var data = $('#gridUser').data('kendoGrid').dataSource.data();
@@ -219,7 +220,8 @@ ns.editUser = function(d){
 	ns.username(data[index].Username);
 	ns.email(data[index].Useremail);
 	ns.uniqueid(data[index].Userid);
-	ns.role(data[index].Role)
+	console.log(data[index].Role)
+	// ns.role(data[index].Role)
 	if(data[index].Recstatus == "X"){
 		ns.status("Inactive");
 	}else{

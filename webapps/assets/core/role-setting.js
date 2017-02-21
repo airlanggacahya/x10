@@ -779,6 +779,26 @@ rolesett.AddNew = function(){
     rolesett.Id("");
 }
 
+rolesett.DeleteRole = function(id) {
+    swal({
+        title: "Are you sure?",
+        text: "Role will be deleted.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!"
+    }).then(function() {
+        ajaxPost("/sysroles/removerole", { "id": id }, function(res) {
+            if(res.IsError != true){
+                $('#MasterGridRole').data('kendoGrid').dataSource.read();
+                $('#MasterGridRole').data('kendoGrid').refresh();
+            }else{
+                return swal("Error!", res.Message, "error");
+            }
+        });
+    });
+}
+
 rolesett.SaveData = function(){
     // var displayedData = $("#MasterGridMenu").data().kendoTreeList.dataSource.view();
     var param = {};
@@ -926,9 +946,6 @@ rolesett.filterRole.subscribe(function(value){
   }
 });
 
-var userid = model.User();
-var gc = new GridColumn('role_master', userid, 'MasterGridRole');
-
 rolesett.GetDataRole = function(){
     rolesett.loading(false);
     var param =  {
@@ -940,59 +957,50 @@ rolesett.GetDataRole = function(){
     $("#MasterGridRole").html("");
     $("#MasterGridRole").kendoGrid({
             dataSource: {
-                    transport: {
-                        read: {
-                            url: url,
-                            data: param,
-                            dataType: "json",
-                            type: "POST",
-                            contentType: "application/json",
-                        },
-                        parameterMap: function(data) {                                 
-                           return JSON.stringify(data);                                 
-                        },
+                transport: {
+                    read: {
+                        url: url,
+                        data: param,
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json",
                     },
-                    schema: {
-                        data: function(data) {
-                            gc.Init();
-                            rolesett.loading(false);
-                            if (data.Data.Count == 0) {
-                                return dataSource;
-                            } else {
-                                return data.Data.Records;
-                            }
-                        },
-                        total: function(data){
-                            if (data.Data.Count == 0) {
-                                return 0;
-                            } else {
-                                return data.Data.Records.length;
-                            }
-                        },
+                    parameterMap: function(data) {                                 
+                        return JSON.stringify(data);                                 
+                    }
+                },
+                schema: {
+                    data: function(data) {
+                        rolesett.loading(false);
+                        if (data.Data.Count == 0) {
+                            return dataSource;
+                        } else {
+                            return data.Data.Records;
+                        }
                     },
-                    pageSize: 15,
-                    serverPaging: true,
-                    serverSorting: true,
+                    total: function(data){
+                        if (data.Data.Count == 0) {
+                            return 0;
+                        } else {
+                            return data.Data.Records.length;
+                        }
+                    },
                 },
-                resizable: true,
-                sortable: true,
-                pageable: {
-                    refresh: true,
-                    pageSizes: true,
-                    buttonCount: 5
-                },
-                columnMenu: false,
-                  columnHide: function(e) {
-                    gc.RemoveColumn(e.column.field);
-                  },
-                  columnShow: function(e) {
-                    gc.AddColumn(e.column.field);
-                  },
+                pageSize: 15,
+                serverPaging: true,
+                serverSorting: true,
+            },
+            resizable: true,
+            sortable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
             columns: [
                 {
                     field:"Name",
                     title:"Role Name",
-                    // width:150,
                     headerAttributes: {class: 'k-header header-bgcolor'},
                     template: "#if(model.Edit() != 'false'){#<a class='grid-select' id='ls' href='javascript:rolesett.EditData(\"#: Id #\")'>#: Name #</a>#}else{#<div>#: Name #</div>#}#"
 
@@ -1000,10 +1008,15 @@ rolesett.GetDataRole = function(){
                 {
                     field:"Status",
                     title:"Status",
+                    headerAttributes: {class: 'k-header header-bgcolor'}
+                },
+                {
+                    title: "Action",
                     headerAttributes: {class: 'k-header header-bgcolor'},
-                    // width:50
-
-                }]
+                    width: 50,
+                    template: "<center><button class='btn btn-xs btn-flat btn-danger' onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button></center>"
+                }
+            ]
     });
 }
 

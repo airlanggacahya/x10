@@ -507,3 +507,37 @@ func (d *SysRolesController) GetDealValue(r *knot.WebContext) interface{} {
 
 	return ret
 }
+
+func (d *SysRolesController) RemoveRole(r *knot.WebContext) interface{} {
+	r.Config.OutputType = knot.OutputJson
+	r.Config.NoLog = true
+
+	payload := struct {
+		Id string
+	}{}
+
+	err := r.GetPayload(&payload)
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	ret := ResultInfo{}
+
+	q := d.Ctx.Connection.
+		NewQuery().
+		From("SysRoles").
+		Where(db.Eq("_id", bson.ObjectIdHex(payload.Id))).
+		Delete()
+	defer q.Close()
+
+	err = q.Exec(nil)
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	ret.IsError = false
+	ret.Message = "Delete Role Successfully"
+	ret.Data = ""
+
+	return ret
+}

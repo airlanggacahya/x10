@@ -134,3 +134,38 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade modal-logs" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg modal-lg-custom" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12" data-bind="visible : r.visibleFilter">
+              <table class="table table-bordered">
+                <thead>
+                  <th class="k-header header-bgcolor">Role</th>
+                  <th class="k-header header-bgcolor">Reallocate From</th>
+                  <th class="k-header header-bgcolor">Reallocate To</th>
+                  <th class="k-header header-bgcolor">Reason</th>
+                  <th class="k-header header-bgcolor">Timestamp</th>
+                </thead>
+                <tbody data-bind="foreach: r.logsList">
+                  <tr>
+                    <td><label data-bind="text: Role"></label></td>
+                    <td><label data-bind="text: FromName"></label></td>
+                    <td><label data-bind="text: ToName"></label></td>
+                    <td><label data-bind="text: Reason"></label></td>
+                    <td><label data-bind="text: TimeStamp"></label></td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+        </div>
+          
+        
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

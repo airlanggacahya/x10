@@ -2,11 +2,15 @@ package omnifin
 
 import (
 	"bytes"
+	"eaciit/x10/webapps/controllers"
 	"encoding/json"
 	"errors"
+	"github.com/eaciit/cast"
+	tk "github.com/eaciit/toolkit"
 	"io"
 	"net/http"
 
+	"eaciit/x10/consoleapps/OmnifinMaster/core"
 	"eaciit/x10/consoleapps/OmnifinMaster/helpers"
 )
 
@@ -163,8 +167,60 @@ func PullMasterUser() (*MasterUserResponse, error) {
 	return &payload, nil
 }
 
+func PullDepartment() (*core.DataResponse, error) {
+	fp, err := DoRequest("http://103.251.60.132:8085/OmniFinServices/restServices/deparmentMasterService/deparmentMaster")
+	if err != nil {
+		return nil, err
+	}
+	defer fp.Close()
+
+	payload := core.DataResponse{}
+	err = json.NewDecoder(fp).Decode(&payload)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &payload, nil
+}
+
+func SaveDepartment(data *core.DataResponse) error {
+	newData := []tk.M{}
+	for _, val := range data.DepartmentMasterList {
+		p := tk.M{}
+		p.Set("name", val.DepartmentDescription)
+		p.Set("departmentId", cast.ToString(val.DepartmentId))
+		p.Set("recStatus", val.RecStatus)
+		// tk.Printfn("%v", p)
+		newData = append(newData, p)
+	}
+
+	err := core.SaveMasterAccountDetail("Departments", newData)
+
+	return err
+}
+
+func ProcessDepartment() error {
+	list, err := PullDepartment()
+	if err != nil {
+		return err
+	}
+
+	err = SaveDepartment(list)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func ProcessMasterUser() error {
 	list, err := PullMasterUser()
+	if err != nil {
+		return err
+	}
+
+	err = checkMasterDepartment(list)
 	if err != nil {
 		return err
 	}
@@ -174,5 +230,54 @@ func ProcessMasterUser() error {
 		return err
 	}
 
+	return nil
+}
+
+func checkMasterDepartment(data *MasterUserResponse) error {
+	// list all check
+	for _, valx := range data.UserMasterList {
+		ad := valx
+		checklist := map[string]string{
+			"Departments": cast.ToString(ad.UserDepartment),
+		}
+		found := true
+		for key, val := range checklist {
+			if len(val) == 0 {
+				continue
+			}
+
+			exists, err := controllers.CheckMaster(key, "departmentId", val)
+			if err != nil {
+				return err
+			}
+			if exists {
+				// tk.Printf("CHECK %s - %s...FOUND", key, val)
+				continue
+			}
+			// tk.Printf("CHECK %s - %s...NOT FOUND", key, val)
+			found = found && exists
+		}
+
+		if found {
+			continue
+		}
+
+		err := ProcessDepartment()
+		tk.Println("========= Pull Department Data =========")
+		if err != nil {
+			return err
+		}
+		for key, val := range checklist {
+			found, err := controllers.CheckMaster(key, "departmentId", val)
+			if err != nil {
+				return err
+			}
+			if found {
+				continue
+			}
+			tk.Printf("======== Departement Not Found (%v) ========", cast.ToString(ad.UserDepartment))
+			return errors.New("Departements Master Not Found")
+		}
+	}
 	return nil
 }

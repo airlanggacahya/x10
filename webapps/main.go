@@ -40,10 +40,10 @@ func startTimer() {
 	if dura > 0 {
 		tk.Printfn("Fetch master user every %d secs", dura)
 		timer.Add(time.Duration(dura)*time.Second, func() {
-			tk.Println("Update MasterUser")
+			tk.Println("========== Update MasterUser ==========")
 			err := omnifin.ProcessMasterUser()
 			if err != nil {
-				tk.Printfn("%s", err)
+				tk.Printfn("======== ERROR %s ========", err)
 			}
 		})
 	} else {

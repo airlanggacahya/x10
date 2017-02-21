@@ -54,16 +54,17 @@ func (s *EmptyString) UnmarshalJSON(b []byte) (err error) {
 }
 
 type DataResponse struct {
-	RecordCount        int              `json:"recordCount"`
-	OperationStatus    string           `json:"operationStatus"`
-	OperationMsg       string           `json:"operationMsg"`
-	ResponseDateTime   string           `json:"responseDateTime"`
-	ProductMasterList  []ProductMaster  `json:"productMasterList,omitempty"`
-	SchemeMasterList   []SchemeMaster   `json:"schemeMasterList,omitempty"`
-	SupplierMasterList []SupplierMaster `json:"manufactureSupplier,omitempty"`
-	BranchMasterList   []BranchMaster   `json:"branchMasterList,omitempty"`
-	DistrictMasterList []DistrictMaster `json:"districtMasterList,omitempty"`
-	GenericMasterList  []GenericMaster  `json:"genericMasterList",omitempty`
+	RecordCount          int                `json:"recordCount"`
+	OperationStatus      string             `json:"operationStatus"`
+	OperationMsg         string             `json:"operationMsg"`
+	ResponseDateTime     string             `json:"responseDateTime"`
+	ProductMasterList    []ProductMaster    `json:"productMasterList,omitempty"`
+	SchemeMasterList     []SchemeMaster     `json:"schemeMasterList,omitempty"`
+	SupplierMasterList   []SupplierMaster   `json:"manufactureSupplier,omitempty"`
+	BranchMasterList     []BranchMaster     `json:"branchMasterList,omitempty"`
+	DistrictMasterList   []DistrictMaster   `json:"districtMasterList,omitempty"`
+	GenericMasterList    []GenericMaster    `json:"genericMasterList",omitempty`
+	DepartmentMasterList []DepartmentMaster `json:"comDepartmentMList",omitempty`
 }
 
 //-------------------------

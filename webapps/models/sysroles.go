@@ -18,6 +18,7 @@ type SysRolesModel struct {
 	District       []string
 	Dealallocation string
 	Dealvalue      string
+	Roletype       string
 }
 
 type Detailsmenu struct {

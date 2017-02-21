@@ -25,6 +25,17 @@ type ReallocationDeal struct {
 	Role          string        `bson:"Role,omitempty"`
 	Reason        string        `bson:"Reason,omitempty"`
 	TimeStamp     time.Time     `bson:"TimeStamp,omitempty"`
+	Logs          []LogReallocationDeal
+}
+
+type LogReallocationDeal struct {
+	FromName  string    `bson:"FromName,omitempty"`
+	FromId    string    `bson:"FromId,omitempty"`
+	ToName    string    `bson:"ToName,omitempty"`
+	ToId      string    `bson:"ToId,omitempty"`
+	Role      string    `bson:"Role,omitempty"`
+	Reason    string    `bson:"Reason,omitempty"`
+	TimeStamp time.Time `bson:"TimeStamp,omitempty"`
 }
 
 func (m *ReallocationDeal) TableName() string {
@@ -120,9 +131,26 @@ func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 		}
 
 		allocate := new(ReallocationDeal)
+		logDeal := LogReallocationDeal{}
 
 		if v.GetString("ReallocateId") != "" {
-			allocate.Id = bson.ObjectIdHex(v.GetString("ReallocateId"))
+			filter := []*dbox.Filter{}
+
+			id := bson.ObjectIdHex(v.GetString("ReallocateId"))
+			filter = append(filter, dbox.Eq("_id", id))
+
+			csr, err := cMongo.NewQuery().
+				From(m.TableName()).
+				Where(filter...).
+				Cursor(nil)
+
+			if err != nil {
+				panic(err)
+			} else if csr != nil {
+				defer csr.Close()
+			}
+
+			csr.Fetch(&allocate, 1, true)
 		} else {
 			allocate.Id = bson.NewObjectId()
 		}
@@ -136,6 +164,18 @@ func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 		allocate.Role = v.GetString("Role")
 		allocate.Reason = v.GetString("Reason")
 		allocate.TimeStamp = time.Now()
+
+		logDeal.FromName = allocate.FromName
+		logDeal.FromId = allocate.FromId
+		logDeal.ToName = allocate.ToName
+		logDeal.ToId = allocate.ToId
+		logDeal.Role = allocate.Role
+		logDeal.Reason = allocate.Reason
+		logDeal.TimeStamp = allocate.TimeStamp
+
+		if v.GetString("LogSave") == "true" {
+			allocate.Logs = append(allocate.Logs, logDeal)
+		}
 
 		insdata := map[string]interface{}{"data": allocate}
 		em = qinsertAllow.Exec(insdata)

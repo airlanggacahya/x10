@@ -160,7 +160,6 @@ func (c *ReallocationController) GetDataByDealNo(k *knot.WebContext) interface{}
 
 	result.Set("AccountDetails", AD)
 
-	c.WriteLog(param.GetString("Id"))
 	filter = append(filter[0:0], dbox.Eq("_id", bson.ObjectIdHex(param.GetString("Id"))))
 	Allocate, err := new(ReallocationDeal).Where(filter)
 

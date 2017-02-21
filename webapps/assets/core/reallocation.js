@@ -4,6 +4,11 @@
 r = {}
 r.visibleFilter = ko.observable(true)
 r.modeEdit = ko.observable(false)
+r.tempDataAllocate = ko.observableArray([{ToName: "-1", Reason: "-1"}])
+r.logsList = ko.observableArray([])
+
+r.modeChange = ko.observable(false)
+
 r.allocationId = ko.observable("")
 
 r.masterUserList = ko.observableArray()
@@ -57,6 +62,9 @@ var gridbrowser = {
             headerAttributes: { "class": "k-header header-bgcolor" },
             title : "Reallocate To",
             field : "ToName",
+            template : function(o) {
+            	return "<a href=# onClick=r.showModalLogs(\""+o.Id+"\")>"+o.ToName+"</a>"
+            }
         },
         {
             headerAttributes: { "class": "k-header header-bgcolor" },
@@ -85,7 +93,12 @@ var source = ko.observableArray([])
 
 r.getDataAllocate = function() {
 	ajaxPost("/reallocation/getreallocationdeal",{}, function(res){
-		source(res)		 
+		source(res)
+		_.each(source(), function(row){
+			_.each(row.Logs, function(row1){
+				row1.TimeStamp = moment(row.TimeStamp).format("DD-MMM-YYYY h:mm:ss a")
+			})
+		})		 
     });
 }
 
@@ -187,6 +200,8 @@ r.edit = function(dealno,  id) {
 
 	r.allocationId(id)
 
+	r.tempDataAllocate([{ToName: "-1", Reason: "-1"}])
+
 	ajaxPost("/reallocation/getdatabydealno", param, function(res){
 		r.renderKendoGrid(r.normalisasiDataGrid, res.Data.AccountDetails)
 		
@@ -206,6 +221,8 @@ r.edit = function(dealno,  id) {
 		
 		$('.modal-reallocation').modal('show')
 		r.visibleFilter(false)
+
+		r.tempDataAllocate([{ToName: reallocation.ToName, Reason: reallocation.Reason}])
 	});
 }
 
@@ -269,6 +286,12 @@ r.validateDataGrid = function(data) {
 
 			ADFormat.Reason = reason
 			if(r.validateUniqueData(ADFormat.Role,ADFormat.DealNo) || r.modeEdit()){
+				if(r.tempDataAllocate()[0].ToName === ADFormat.ToText && r.tempDataAllocate()[0].Reason === ADFormat.Reason) {
+					ADFormat.LogSave = "false"
+				} else {
+					ADFormat.LogSave = "true"
+				}
+
 				r.paramSave.push(ADFormat)
 			}else{
 				swal("Warning","Deal Number " + ADFormat.DealNo +" with " +ADFormat.Role+" Role re-allocation done before, please edit from the main grid.","warning")
@@ -439,6 +462,22 @@ r.showModal = function(selector) {
 	}
 }
 
+r.showModalLogs = function(id) {
+	reallocate = _.filter(source(), function(row){
+		return row.Id === id
+	})
+
+	r.logsList([])
+
+	if(reallocate.length > 0 && reallocate[0].Logs !== null) {
+		r.logsList(reallocate[0].Logs)
+	}
+
+	$(".modal-logs").modal('show')
+	
+	return false
+} 
+
 var allocationTimeOut = setTimeout(function(){
 }, 500)
 
@@ -450,9 +489,13 @@ var findAllocationByParam = function() {
 	
 	allocationTimeOut = setTimeout(function(){
 		ajaxPost("/reallocation/searchbyparam", param, function(res){
-			console.log(res)
 			source([])
 			source(res) 
+			_.each(source(), function(row){
+				_.each(row.Logs, function(row1){
+					row1.TimeStamp = moment(row.TimeStamp).format("DD-MMM-YYYY h:mm:ss a")
+				})
+			})
 	    });
 	}, 500)
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type ReallocationController struct {
@@ -138,6 +139,8 @@ func (c *ReallocationController) GetDataByDealNo(k *knot.WebContext) interface{}
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
+	result := tk.M{}
+
 	param := tk.M{}
 
 	err := k.GetPayload(&param)
@@ -155,7 +158,19 @@ func (c *ReallocationController) GetDataByDealNo(k *knot.WebContext) interface{}
 		res.SetError(err)
 	}
 
-	res.SetData(AD)
+	result.Set("AccountDetails", AD)
+
+	c.WriteLog(param.GetString("Id"))
+	filter = append(filter[0:0], dbox.Eq("_id", bson.ObjectIdHex(param.GetString("Id"))))
+	Allocate, err := new(ReallocationDeal).Where(filter)
+
+	if err != nil {
+		res.SetError(err)
+	}
+
+	result.Set("AllocationDeal", Allocate)
+
+	res.SetData(result)
 
 	return res
 }

@@ -812,26 +812,19 @@ rolesett.SaveData = function(){
     param.dealvalue = rolesett.dealValue();
     param.roletype = rolesett.roleType();
 
-    var url = "/sysroles/savedata";
-    var validator = $("#AddRole").data("kendoValidator");
-    if(validator==undefined){
-       validator= $("#AddRole").kendoValidator().data("kendoValidator");
-    }
     // rolesett.Cancel();
     // rolesett.Reset();
-    if (validator.validate()) {
-        ajaxPost(url, param, function(res){
-            if(res.IsError != true){
-                rolesett.Cancel();
-                rolesett.Reset();
-                $("#nav-dex").css('z-index', 'none');
-                swal("Success!", res.Message, "success");
-                location.reload();
-            }else{
-                return swal("Error!", res.Message, "error");
-            }
-        });
-    }
+    ajaxPost("/sysroles/savedata", param, function(res){
+        if(res.IsError != true){
+            rolesett.Cancel();
+            rolesett.Reset();
+            $("#nav-dex").css('z-index', 'none');
+            swal("Success!", res.Message, "success");
+            location.reload();
+        }else{
+            return swal("Error!", res.Message, "error");
+        }
+    });
 }
 
 rolesett._privToGrid = function(priv) {

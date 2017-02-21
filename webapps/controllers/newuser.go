@@ -4,9 +4,11 @@ import (
 	. "eaciit/x10/webapps/connection"
 	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
+	// "fmt"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
+	"strconv"
 )
 
 type NewUserController struct {
@@ -61,9 +63,25 @@ func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
+	role, err := cn.NewQuery().
+		From("MasterAccountDetail").
+		Cursor(nil)
+
+	defer role.Close()
+
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
 	res := []NewUser{}
 	result := tk.M{}
 	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	rl := []tk.M{}
+	err = role.Fetch(&rl, 0, false)
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
@@ -72,6 +90,32 @@ func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 		return c.SetResultInfo(true, "data not found", nil)
 	}
 
+	if len(rl) == 0 {
+		return c.SetResultInfo(true, "data not found", nil)
+	}
+
+	for _, val := range rl {
+		for _, dt := range val["Data"].([]interface{}) {
+			newdt, _ := tk.ToM(dt)
+			it := newdt.GetString("Field")
+			if it == "Departments" {
+				for _, itm := range newdt["Items"].([]interface{}) {
+					dp, _ := tk.ToM(itm)
+					ndp := dp.GetString("departmentId")
+					name := dp.GetString("name")
+					// tk.Println("----------------------------->>>>>>", ndp)
+					for idx, nres := range res {
+						dd, _ := strconv.Atoi(ndp)
+						// tk.Println("----------------------------->>>>>>", dp)
+						if nres.Userdepartment == dd {
+							res[idx].Role = append(nres.Role, name)
+						}
+
+					}
+				}
+			}
+		}
+	}
 	result.Set("data", res)
 
 	return c.SetResultInfo(false, "success", result)
@@ -80,7 +124,6 @@ func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	payload := NewUser{}
-	k.GetPayload(&payload)
 	cn, _ := GetConnection()
 	defer cn.Close()
 

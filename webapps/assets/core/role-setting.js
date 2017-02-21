@@ -53,6 +53,7 @@ var rolesett = {
     dealSetupData: ko.observableArray([]),
     webFormsData: ko.observableArray([]),
     dataMasterData: ko.observableArray([]),
+    dataViewingData: ko.observableArray([]),
     cibilData: ko.observableArray([]),
     helpData: ko.observableArray([]),
     decisionCommitteData: ko.observableArray([]),
@@ -238,6 +239,35 @@ var dataMasterMapping = [
     }
 ]
 
+var dataViewingGrant = ["view", "download", "email"]
+var dataViewingMapping = [
+    {
+        "name": "Financial Snapshot",
+        "menuid": "2016104124327",
+        "grant": dataViewingGrant
+    },
+    {
+        "name": "Credit Score Card",
+        "menuid": "2016830201030",
+        "grant": dataViewingGrant
+    },
+    {
+        "name": "Detailed Financials Report",
+        "menuid": "201682593414",
+        "grant": dataViewingGrant
+    },
+    {
+        "name": "Loan Approval Report",
+        "menuid": "201691515422",
+        "grant": dataViewingGrant
+    },
+    {
+        "name": "Key Financials Report",
+        "menuid": "2016825143634",
+        "grant": dataViewingGrant
+    }
+]
+
 var cibilGrant = ["view", "edit", "create", "delete"]
 var cibilMapping = [
     {
@@ -367,6 +397,7 @@ function backMapping() {
         rolesett.webFormsData,
         rolesett.decisionCommitteData,
         rolesett.caCommitteData,
+        rolesett.dataViewingData,
         rolesett.cibilData,
         rolesett.dataMasterData,
         rolesett.helpData,
@@ -406,6 +437,7 @@ function privilegesToNewRole(input) {
     mapped["DecisionCommitte"] = processMapping(input, decisionCommitteMapping)
     mapped["CaCommitte"] = processMapping(input, caCommitteMapping)
     mapped["Admin"] = processMapping(input, adminMapping)
+    mapped["Data Viewing"] = processMapping(input, dataViewingMapping)
     
     return mapped;
 }
@@ -513,6 +545,25 @@ var DataMasterCol = completeColumn([
     {
         field: "grant.delete",
         title: "Delete"
+    }
+])
+
+var DataViewingCol = completeColumn([
+    {
+        field: "grant.all",
+        title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
+    },
+    {
+        field: "grant.download",
+        title: "Download"
+    },
+    {
+        field: "grant.email",
+        title: "Email"
     }
 ])
 
@@ -745,6 +796,7 @@ rolesett._privToGrid = function(priv) {
     rolesett.webFormsData(priv["Web Forms"]);
     rolesett.cibilData(priv["Cibil Editor"]);
     rolesett.dataMasterData(priv["Data Master"]);
+    rolesett.dataViewingData(priv["Data Viewing"]);
     rolesett.helpData(priv["Help"]);
     rolesett.decisionCommitteData(priv["DecisionCommitte"]);
     rolesett.caCommitteData(priv["CaCommitte"]);

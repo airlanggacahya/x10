@@ -35,6 +35,8 @@ ns.LoadGetUser = function(){
 				if(temp.Catrole != null){
 
 					temp.Catrole = temp.Catrole.join("|")
+				}else{
+					temp.Catrole = "To be assigned";
 				}
 
 				if(temp.Role != null){

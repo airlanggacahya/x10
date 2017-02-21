@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Reallocation Modal</h4>
+        <h4 class="modal-title">Reallocation Deal</h4>
       </div>
       <div class="modal-body">
         <div class="row">
@@ -103,12 +103,12 @@
             <div id="griddb" style="border: none;">
               <table class="table table-bordered">
                 <thead>
-                  <th class="sub-bgcolor">Deal No</th>
-                  <th class="sub-bgcolor">Customer Name</th>
-                  <th class="sub-bgcolor">Reallocate Role</th>
-                  <th class="sub-bgcolor">From</th>
-                  <th class="sub-bgcolor">To</th>
-                  <th class="sub-bgcolor">Reason</th>
+                  <th class="k-header header-bgcolor">Deal No</th>
+                  <th class="k-header header-bgcolor">Customer Name</th>
+                  <th class="k-header header-bgcolor">Reallocate Role</th>
+                  <th class="k-header header-bgcolor">From</th>
+                  <th class="k-header header-bgcolor">To</th>
+                  <th class="k-header header-bgcolor">Reason</th>
                 </thead>
                 <tbody data-bind="foreach: r.dataGrid">
                   <tr>
@@ -123,22 +123,14 @@
               </table>
             </div>
           </div>
-          <div class="col-md-12">
-            <div class="col-md-5">
-            </div>
-            <div class="col-md-2">
-              <button  type="button" btn-sm class="btn btn-sm btn-default btn-save" data-bind="click: r.save">Save</button>
-            </div>
-            <div class="col-md-5">
-            </div>
-          </div>
         </div>
           
         
       </div>
-      <div class="modal-footer">
-        
-      </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-flat btn-danger" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-sm btn-flat btn-primary" data-bind="click: r.save">Save</button>
+          </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

@@ -74,26 +74,26 @@ ns.LoadGridUser = function(){
 			{
 				field: "Username",
 				title: "Name",
-				headerAttributes : {"class":"sub-bgcolor"},
+				headerAttributes : {"class":"k-header header-bgcolor"},
 				
 			},
 			{
 				field: "Userid",
 				title: "Unique ID",
-				headerAttributes : {"class":"sub-bgcolor"},
+				headerAttributes : {"class":"k-header header-bgcolor"},
 				width: 100,
 				
 			},
 			{
 				field: "Useremail",
 				title: "Email ID",
-				headerAttributes : {"class":"sub-bgcolor"},
+				headerAttributes : {"class":"k-header header-bgcolor"},
 				
 			},
 			{
 				field: "Role",
 				title: "Role",
-				headerAttributes : {"class":"sub-bgcolor"},
+				headerAttributes : {"class":"k-header header-bgcolor"},
 				attributes:{"class": "no-padding"},
 				template: function(d){
 					var res = '';
@@ -126,7 +126,7 @@ ns.LoadGridUser = function(){
 			{
 				field: "Catrole",
 				title: "CAT Role",
-				headerAttributes : {"class":"sub-bgcolor"},
+				headerAttributes : {"class":"k-header header-bgcolor"},
 				attributes:{"class": "no-padding"},
 				// filterable: false,
 				template: function(d){
@@ -161,7 +161,7 @@ ns.LoadGridUser = function(){
 			{
 				field: "Recstatus",
 				title: "Status",
-				headerAttributes : {"class":"sub-bgcolor"},
+				headerAttributes : {"class":"k-header header-bgcolor"},
 				width: 100,
 				filterable:{
 					multi: true,
@@ -170,7 +170,7 @@ ns.LoadGridUser = function(){
 			{
 				field: "Catstatus",
 				title: "CAT Status",
-				headerAttributes : {"class":"sub-bgcolor"},
+				headerAttributes : {"class":"k-header header-bgcolor"},
 				width: 100,
 				filterable: {
 					multi: true,
@@ -179,7 +179,7 @@ ns.LoadGridUser = function(){
 			{
 				field: "",
 				title: "Action",
-				headerAttributes : {"class":"sub-bgcolor"},
+				headerAttributes : {"class":"k-header header-bgcolor"},
 				width: 50,
 				template: function(d){
 					return "<center><button class='btn btn-xs btn-flat btn-warning  edituserright' onclick='ns.editUser(\""+d.uid+"\")'><span class='fa fa-edit'></span></button></center>"

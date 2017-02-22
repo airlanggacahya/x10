@@ -604,7 +604,9 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 				ex.LoanNo = valx.GetString("loanNo")
 				ex.TypeOfLoan = Ld.GetString("loanTypeDesc")
 				ex.LoanAmount = valx.GetInt("loanAmount")
-				ex.Payment = tk.M(valx.Get("crInstrumentDtl").(map[string]interface{})).GetString("instrumentAmount")
+				if len(CheckArray(valx.Get("crInstrumentDtl"))) > 0 {
+					ex.Payment = CheckArray(valx.Get("crInstrumentDtl"))[0].GetFloat64("instrumentAmount")
+				}
 				current.FinancialReport.ExistingRelationship = append(current.FinancialReport.ExistingRelationship, ex)
 			}
 		}
@@ -744,11 +746,12 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 			Bio.Promotor = "Yes"
 		} else if position == "director" {
 			Bio.Director = "Yes"
-		} else {
-			Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
-			Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
-			//add ke position
 		}
+
+		Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
+		Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
+		//add ke position
+
 		BioS = append(BioS, Bio)
 	}
 
@@ -825,7 +828,10 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 					ex.LoanNo = valx.GetString("loanNo")
 					ex.TypeOfLoan = Ld.GetString("loanTypeDesc")
 					ex.LoanAmount = valx.GetInt("loanAmount")
-					ex.Payment = valx.Get("crInstrumentDtl").(tk.M).GetString("instrumentAmount")
+					if len(CheckArray(valx.Get("crInstrumentDtl"))) > 0 {
+						ex.Payment = CheckArray(valx.Get("crInstrumentDtl"))[0].GetFloat64("instrumentAmount")
+					}
+					// ex.Payment = valx.Get("crInstrumentDtl").(tk.M).GetString("instrumentAmount")
 					current.FinancialReport.ExistingRelationship = append(current.FinancialReport.ExistingRelationship, ex)
 				}
 			}
@@ -965,11 +971,12 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				Bio.Promotor = "Yes"
 			} else if position == "director" {
 				Bio.Director = "Yes"
-			} else {
-				Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
-				Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
-				//add ke position
 			}
+
+			Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
+			Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
+			//add ke position
+
 			BioS = append(BioS, Bio)
 		}
 
@@ -1043,10 +1050,12 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 	current.DealNo = dealno
 	current.AccountSetupDetails.DealNo = dealno
 
-	// current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+	current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
 	current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
+	current.AccountSetupDetails.RmNameId = body.GetString("dealRm")
 	current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 	current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
+	current.AccountSetupDetails.CreditAnalystId = body.GetString("makerId")
 	current.AccountSetupDetails.Product = hp.ToWordCase(Ld.GetString("dealProductDesc"))
 	current.AccountSetupDetails.Scheme = hp.ToWordCase(Ld.GetString("dealSchemeDesc"))
 	current.BorrowerDetails.BorrowerConstitution = dtl.GetString("customerConstitutionDesc")
@@ -1074,8 +1083,8 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 	current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit / 100000
 	current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 	current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
-	// current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
-	// current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
+	current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
+	current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
 	current.LoanDetails.VintageWithX10 = body.GetFloat64("vinatgeInMonths")
 
 	return &current, nil
@@ -1118,7 +1127,7 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		current.DealNo = dealno
 		current.AccountSetupDetails.DealNo = dealno
 
-		// current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+		current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
 		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 		current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 		current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
@@ -1153,8 +1162,8 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit / 100000
 		current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 		current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
-		// current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
-		// current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
+		current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
+		current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
 		current.LoanDetails.VintageWithX10 = body.GetFloat64("vinatgeInMonths")
 
 	}
@@ -1472,7 +1481,7 @@ func BuildInternalRTR(body tk.M, cid string, dealno string) (tk.M, error) {
 		ar.Set("TotalAmount", val.GetFloat64("AmountOutstandingAccrued")+val.GetFloat64("AmountOutstandingDelinquent"))
 		ar.Set("NPRDelays", val.GetFloat64("NoOfPrincipalRepaymentDelays"))
 		ar.Set("NPREarlyClosures", val.GetFloat64("NoOfPrincipalRepaymentEarlyClosures"))
-		// ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
+		ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
 		ar.Set("MaxDPDDays", val.GetFloat64("MaxDPDInClosedLoanInDays"))
 		ar.Set("MaxDPDDAmount", val.GetFloat64("NoOfActiveLoans"))
 		ar.Set("AVGDPDDays", CheckNan(val.GetFloat64("MaxDPDInClosedLoanInDays")/val.GetFloat64("NoOfActiveLoans")))
@@ -1484,7 +1493,7 @@ func BuildInternalRTR(body tk.M, cid string, dealno string) (tk.M, error) {
 		arb.Set("Product", hp.ToWordCase(val.GetString("product")))
 		arb.Set("Scheme", hp.ToWordCase(val.GetString("scheme")))
 		arb.Set("AgreementDate", val.GetString("agreementDate"))
-		// arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
+		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
 		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))
 		arb.Set("ProductId", val.GetString("productId"))
 		arb.Set("SchemeId", val.GetString("schemeId"))
@@ -1515,7 +1524,7 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 		ar.Set("TotalAmount", val.GetFloat64("AmountOutstandingAccrued")+val.GetFloat64("AmountOutstandingDelinquent"))
 		ar.Set("NPRDelays", val.GetFloat64("NoOfPrincipalRepaymentDelays"))
 		ar.Set("NPREarlyClosures", val.GetFloat64("NoOfPrincipalRepaymentEarlyClosures"))
-		// ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
+		ar.Set("NoOfPaymentDueDate", val.GetFloat64("NoOfPaymentOnDueDate"))
 		ar.Set("MaxDPDDays", val.GetFloat64("MaxDPDInClosedLoanInDays"))
 		ar.Set("MaxDPDDAmount", val.GetFloat64("NoOfActiveLoans"))
 		ar.Set("AVGDPDDays", CheckNan(val.GetFloat64("MaxDPDInClosedLoanInDays")/val.GetFloat64("NoOfActiveLoans")))
@@ -1526,8 +1535,8 @@ func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
 		arb.Set("DealNo", val.GetString("dealNo"))
 		arb.Set("Product", hp.ToWordCase(val.GetString("product")))
 		arb.Set("Scheme", hp.ToWordCase(val.GetString("scheme")))
-		// arb.Set("AgreementDate", val.GetString("agreementDate"))
-		// arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
+		arb.Set("AgreementDate", val.GetString("agreementDate"))
+		arb.Set("DealSanctionTillValidate", val.GetString("dealSanctionTillValidate"))
 		arb.Set("TotalLoanAmount", CheckNan(val.GetFloat64("sanctionedLimit")))
 		arb.Set("ProductId", val.GetString("productId"))
 		arb.Set("SchemeId", val.GetString("schemeId"))

@@ -202,6 +202,7 @@ ns.editUser = function(d){
 	ns.confPassword("");
 	ns.confPassword([]);
 	$(".conf").hide()
+	ns.param([])
 	ajaxPost("/newuser/getuseredit", {Id: d}, function(res){
 		var data = res.Data.data[0];
 		ns.param(data)
@@ -214,10 +215,8 @@ ns.editUser = function(d){
 		ns.username(ns.param().Username);
 		ns.email(ns.param().Useremail);
 		ns.uniqueid(ns.param().Userid);
-		console.log(ns.param().Role)
 		ns.role(ns.param().Role)
-		console.log(ns.param().Recstatus )
-		if(ns.param().Recstatus == "Inactive"){
+		if(ns.param().Recstatus == "X"){
 			ns.status("Inactive");
 		}else{
 			ns.status("Active");
@@ -230,7 +229,11 @@ ns.editUser = function(d){
 		}
 		ns.uid(d);
 		$("#editUser").modal("show");
-		if(ns.status() === "Inactive" && ns.catstatus() === "To be assigned"){
+		setTimeout(function(){
+			ns.valuerole(ns.param().Catrole);
+		}, 200)
+		
+		if(ns.status() === "Inactive" && ns.catstatus() === ""){
 			$("[name='catstatus']").bootstrapSwitch('disabled',true);
 		}else if(ns.status() === "Inactive" && ns.catstatus() === "Disable"){
 			$("[name='catstatus']").bootstrapSwitch('disabled',true);
@@ -240,7 +243,7 @@ ns.editUser = function(d){
 			$("[name='catstatus']").bootstrapSwitch('disabled',false);
 		}if(ns.status() === "Active" && ns.catstatus() === "Enable"){	
 			$("[name='catstatus']").bootstrapSwitch('disabled',false);
-		}else if(ns.status() === "Active" && ns.catstatus() === "To be assigned"){
+		}else if(ns.status() === "Active" && ns.catstatus() === ""){
 			$("[name='catstatus']").bootstrapSwitch('disabled',false);
 		}
 	})

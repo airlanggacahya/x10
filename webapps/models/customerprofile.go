@@ -203,10 +203,10 @@ type DetailsPertainingBanker struct {
 }
 
 type ExistingRelationship struct {
-	LoanNo     string `bson:"LoanNo"`
-	TypeOfLoan string `bson:"TypeOfLoan"`
-	LoanAmount int    `bson:"LoanAmount"`
-	Payment    string `bson:"Payment"`
+	LoanNo     string  `bson:"LoanNo"`
+	TypeOfLoan string  `bson:"TypeOfLoan"`
+	LoanAmount int     `bson:"LoanAmount"`
+	Payment    float64 `bson:"Payment"`
 }
 
 type Biodata struct {

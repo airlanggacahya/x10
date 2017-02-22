@@ -459,9 +459,8 @@ function backMapping() {
         var input = val()
 
         _.each(input, function(val2) {
-
-            var idx = _.findIndex(ret, function(val) {
-                return val2.menuid == val.menuid;
+            var idx = _.findIndex(ret, function(val3) {
+                return val2.menuid == val3.menuid;
             })
 
             if (idx != -1) {
@@ -469,7 +468,9 @@ function backMapping() {
                 return
             }
 
-            ret.push(val2);
+            // prevent next manipulation to changes this one
+            // clone it
+            ret.push(_.cloneDeep(val2));
         })
     })
 

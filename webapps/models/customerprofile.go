@@ -5,7 +5,7 @@ import (
 	// "gopkg.in/mgo.v2/bson"
 	. "eaciit/x10/webapps/connection"
 	"github.com/eaciit/cast"
-	// tk "github.com/eaciit/toolkit"
+	tk "github.com/eaciit/toolkit"
 	"time"
 )
 
@@ -203,10 +203,10 @@ type DetailsPertainingBanker struct {
 }
 
 type ExistingRelationship struct {
-	LoanNo     string  `bson:"LoanNo"`
-	TypeOfLoan string  `bson:"TypeOfLoan"`
-	LoanAmount int     `bson:"LoanAmount"`
-	Payment    float64 `bson:"Payment"`
+	LoanNo     string `bson:"LoanNo"`
+	TypeOfLoan string `bson:"TypeOfLoan"`
+	LoanAmount int    `bson:"LoanAmount"`
+	Payment    []tk.M `bson:"Payment"`
 }
 
 type Biodata struct {

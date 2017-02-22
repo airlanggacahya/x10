@@ -605,7 +605,7 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 				ex.TypeOfLoan = Ld.GetString("loanTypeDesc")
 				ex.LoanAmount = valx.GetInt("loanAmount")
 				if len(CheckArray(valx.Get("crInstrumentDtl"))) > 0 {
-					ex.Payment = CheckArray(valx.Get("crInstrumentDtl"))[0].GetFloat64("instrumentAmount")
+					ex.Payment = CheckArray(valx.Get("crInstrumentDtl"))
 				}
 				current.FinancialReport.ExistingRelationship = append(current.FinancialReport.ExistingRelationship, ex)
 			}
@@ -829,7 +829,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 					ex.TypeOfLoan = Ld.GetString("loanTypeDesc")
 					ex.LoanAmount = valx.GetInt("loanAmount")
 					if len(CheckArray(valx.Get("crInstrumentDtl"))) > 0 {
-						ex.Payment = CheckArray(valx.Get("crInstrumentDtl"))[0].GetFloat64("instrumentAmount")
+						ex.Payment = CheckArray(valx.Get("crInstrumentDtl"))
 					}
 					// ex.Payment = valx.Get("crInstrumentDtl").(tk.M).GetString("instrumentAmount")
 					current.FinancialReport.ExistingRelationship = append(current.FinancialReport.ExistingRelationship, ex)

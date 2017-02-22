@@ -108,32 +108,38 @@ filter().CustomerSearchVal.subscribe(function(value){
 
 <script type="text/javascript">
 
+
 function showFilter(show) {
+  $(document).unbind("scroll");
+  $(".app-title").removeAttr('css');
   $(".jf-tbl")[show ? 'show' : 'hide']()
   $("#replacedfilter")[show ? 'hide' : 'show']()
   if (show) {
-    if($("#menubackup .jf-tbl").length == 0){
+    // if($("#menubackup .jf-tbl").length == 0){
       $(".jf-tbl").appendTo("#filtercontainer");
       $("#filtercontainer").appendTo("#menubackup");
-    }
-      $(".app-title").css("margin-bottom",150);
+    // }
+    $(".app-title").css("margin-bottom",150);
   } else {
-    if($("#menubackup #replacedfilter").length == 0){
+    // if($("#menubackup #replacedfilter").length == 0){
       $("#replacedfilter").appendTo("#filtercontainer");
-      $("#filtercontainer").appendTo("#menubackup");
-    }
-      $(".app-title").css("margin-bottom",120);
+      $("#filtercontainer").appendTo("#menubackup");      
+    // }
+    $(".app-title").css("margin-bottom",120);
   }
 
-   if($("#menubackup #filtercontainer").length > 0){
-        $("#filtercontainer").show();
-      }
 
+  if($("#menubackup #filtercontainer").length > 0){
+    $("#filtercontainer").show();
+  }
+  setTimeout(function () {
+  $(document).scroll(function(e){
+  if(filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" && filter().DealNumberSearchVal()!="Deal No" ){
+    showFilter(false);
+  } 
+ });
+}, 0);
 }
-
-$("#replacedfilter").click(function(e){
-  showFilter(true);
-})
 
 function getFilterText() {
   return "Customer: " + filter().CustomerSearchText() + " | Deal No: " + filter().DealNumberSearchVal();
@@ -259,6 +265,7 @@ $(document).ready(function(){
     }
 
   },2000);
+
 });
 
 function parse(val) {
@@ -288,6 +295,10 @@ function parse(val) {
 //     }
 // })
 
+
+
+
+
 $("body").click(function(e){  
   var check = $(e.toElement).closest("#filtercontainer");
   if((check.length==0 && !$(e.toElement).is("li"))&& filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" ){
@@ -295,10 +306,15 @@ $("body").click(function(e){
   }
 });
 
-$(document).scroll(function(e){  
+
+$(document).scroll(function(e){
   if(filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" && filter().DealNumberSearchVal()!="Deal No" ){
     showFilter(false);
-  }
+  } 
+});
+
+$("#replacedfilter").click(function(e){
+  showFilter(true);
 });
 
 $(".filter-button").click(function(event) { 

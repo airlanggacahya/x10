@@ -316,12 +316,6 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		return d.SetResultInfo(true, err.Error(), nil)
 	}
 
-	if oo.Id != "" {
-		o.Id = bson.ObjectIdHex(oo.Id)
-	} else {
-		o.Id = bson.NewObjectId()
-	}
-
 	o.Name = oo.Name
 	o.Status = oo.Status
 	o.LandingId = oo.Landing
@@ -360,7 +354,6 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		}
 
 		tempMenu = append(tempMenu, dtl)
-
 		menuDone[dtl.Menuid] = true
 
 		// no parent
@@ -399,8 +392,28 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 
 	o.Menu = append(o.Menu, tempMenu...)
 
-	e := d.Ctx.Save(o)
-	if e != nil {
+	if oo.Id != "" {
+		o.Id = bson.ObjectIdHex(oo.Id)
+
+		cur, err := d.Ctx.Connection.
+			NewQuery().
+			From("SysRoles").
+			Where(db.Eq("_id", o.Id)).
+			Cursor(nil)
+		if err != nil {
+			return d.SetResultInfo(true, err.Error(), nil)
+		}
+		current := NewSysRolesModel()
+		cur.Fetch(&current, 1, true)
+
+		o.Deletable = current.Deletable
+	} else {
+		o.Id = bson.NewObjectId()
+		o.Deletable = true
+	}
+
+	err = d.Ctx.Save(o)
+	if err != nil {
 		return d.SetResultInfo(true, err.Error(), nil)
 	}
 
@@ -528,7 +541,7 @@ func (d *SysRolesController) RemoveRole(r *knot.WebContext) interface{} {
 	q := d.Ctx.Connection.
 		NewQuery().
 		From("SysRoles").
-		Where(db.Eq("_id", bson.ObjectIdHex(payload.Id))).
+		Where(db.Eq("_id", bson.ObjectIdHex(payload.Id)), db.Eq("deletable", true)).
 		Delete()
 	defer q.Close()
 

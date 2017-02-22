@@ -222,15 +222,17 @@ ns.editUser = function(d){
 			ns.status("Active");
 		}
 		ns.catstatus(ns.param().Catstatus)	
-		if(ns.catstatus() == "Enable"){
-			$('#StatusFilter').bootstrapSwitch('state', true);
-		}else{
-			$('#StatusFilter').bootstrapSwitch('state', false);
-		}
 		ns.uid(d);
 		$("#editUser").modal("show");
 		setTimeout(function(){
 			ns.valuerole(ns.param().Catrole);
+			if(ns.catstatus() == "Enable"){
+				$('#StatusFilter').bootstrapSwitch('state', true);
+			}else if(ns.catstatus() == "Disable"){
+				$('#StatusFilter').bootstrapSwitch('state', false);
+			}else if(ns.catstatus() == ""){
+				$('#StatusFilter').bootstrapSwitch('state', false);
+			}
 		}, 200)
 		
 		if(ns.status() === "Inactive" && ns.catstatus() === ""){

@@ -799,12 +799,31 @@ rolesett.DeleteRole = function(id) {
     });
 }
 
+function swalErr(msg) {
+    swal("Error!", msg, "error");
+
+    return false;
+}
+
+rolesett.ValidateData = function() {
+    if (rolesett.roleName().length == 0)
+        return swalErr("Role Name must be filled")
+
+    // rolesett.dealAllocation();
+    
+    if (rolesett.landingPage().length == 0 || _.findIndex(rolesett.listPage(), {"menuid": rolesett.landingPage()}) == -1)
+        return swalErr("Landing Page must be filled")
+    
+    return true
+}
+
 rolesett.SaveData = function(){
-    // var displayedData = $("#MasterGridMenu").data().kendoTreeList.dataSource.view();
+    if (!rolesett.ValidateData())
+        return
+
     var param = {};
     param.id = rolesett.Id();
     param.name = rolesett.roleName();
-    param.type = rolesett.roleType();
     param.dealallocation = rolesett.dealAllocation();
     param.status = $('#Status').bootstrapSwitch('state');
     param.landing = rolesett.landingPage();
@@ -812,54 +831,21 @@ rolesett.SaveData = function(){
     param.district = rolesett.district();
     param.branch = rolesett.branch();
     param.dealvalue = rolesett.dealValue();
+    param.roletype = rolesett.roleType();
 
-    // for (var i in displayedData){
-    //     if (displayedData[i].Id != undefined){
-    //         var Access = $("#check-Access-"+displayedData[i].Id).is(":checked");
-    //         // if (Access != false){
-    //             rolesett.mappingRole.menu.push({
-    //                 "menuid" : displayedData[i].Id,
-    //                 "menuname" : displayedData[i].Title,
-    //                 "haschild" : displayedData[i].Haschild,
-    //                 "enable" : displayedData[i].Enable,
-    //                 "parent" : displayedData[i].parentId,
-    //                 "checkall" : $("#check-all-new"+displayedData[i].Id).is(":checked"),
-    //                 "access" : $("#check-Access-"+displayedData[i].Id).is(":checked"),
-    //                 "view" : $("#check-View-"+displayedData[i].Id).is(":checked"),
-    //                 "create" : $("#check-Create-"+displayedData[i].Id).is(":checked"),
-    //                 "approve" : $("#check-Approve-"+displayedData[i].Id).is(":checked"),
-    //                 "delete" : $("#check-Delete-"+displayedData[i].Id).is(":checked"),
-    //                 "process" : $("#check-Process-"+displayedData[i].Id).is(":checked"),
-    //                 "edit" : $("#check-Edit-"+displayedData[i].Id).is(":checked"),
-    //                 "Url": displayedData[i].Url
-    //             });
-    //         // }
-    //     }
-
-
-    // }
-
-    // var param =  ko.mapping.toJS(rolesett.mappingRole);
-    var url = "/sysroles/savedata";
-    var validator = $("#AddRole").data("kendoValidator");
-    if(validator==undefined){
-       validator= $("#AddRole").kendoValidator().data("kendoValidator");
-    }
     // rolesett.Cancel();
     // rolesett.Reset();
-    if (validator.validate()) {
-        ajaxPost(url, param, function(res){
-            if(res.IsError != true){
-                rolesett.Cancel();
-                rolesett.Reset();
-                $("#nav-dex").css('z-index', 'none');
-                swal("Success!", res.Message, "success");
-                location.reload();
-            }else{
-                return swal("Error!", res.Message, "error");
-            }
-        });
-    }
+    ajaxPost("/sysroles/savedata", param, function(res){
+        if(res.IsError != true){
+            rolesett.Cancel();
+            rolesett.Reset();
+            $("#nav-dex").css('z-index', 'none');
+            swal("Success!", res.Message, "success");
+            location.reload();
+        }else{
+            return swal("Error!", res.Message, "error");
+        }
+    });
 }
 
 rolesett._privToGrid = function(priv) {
@@ -898,7 +884,7 @@ rolesett.EditData = function(IdRole){
             // FILL UP FORM
             rolesett.Id(Records.Id);
             rolesett.roleName(Records.Name);
-            rolesett.roleType(_.get(Records, 'Records.Type', 'Custom'));
+            rolesett.roleType(_.get(Records, 'Roletype', 'Custom'));
             rolesett._privToGrid(privilegesToNewRole(Records.Menu));
             rolesett.landingPage(Records.LandingId);
             $('#Status').bootstrapSwitch('state',Records.Status);
@@ -931,7 +917,7 @@ rolesett.EditData = function(IdRole){
                     "View": dataMenu[d].View,
                 });
             }
-            rolesett.GetDataMenu(newRecords);
+            // rolesett.GetDataMenu(newRecords);
     }); 
 }
 
@@ -1027,7 +1013,7 @@ rolesett.getTopMenu = function(){
     ajaxPost(url, param, function(res){
         if(res.IsError != true){
             var dataMenu = res.Data.Records;
-            console.log(dataMenu)
+            // console.log(dataMenu)
             var newRecords = [];
             for (var d in dataMenu){
                 newRecords.push({
@@ -1066,224 +1052,10 @@ rolesett.getTopMenu = function(){
                 });
             }
 
-            rolesett.GetDataMenu(newRecords);
+            // rolesett.GetDataMenu(newRecords);
         }else{
             return swal("Error!", res.Message, "error");
         }
-    });
-}
-
-rolesett.GetDataMenu = function(e){
-    var myData = new kendo.data.TreeListDataSource({
-        data: e,
-        schema: {
-            model: {
-                id: "Id",
-                parentId: "Parent",
-                fields: {
-                    _id: { field: "_id", type: "string" },
-                    titleFolder: { field: "titleFolder", type: "string" },
-                    parentId: { field: "Parent", type: "string" }
-                },
-                expanded: true
-            }
-        }
-    });
-    
-    if ($("#MasterGridMenu").data("kendoTreeList") !== undefined) {
-      $("#MasterGridMenu").data("kendoTreeList").setDataSource(myData);
-      return;
-    }
-
-    $("#MasterGridMenu").kendoTreeList({
-         dataSource: myData,
-         height: 400,
-         columns: [
-            { 
-                field: "Title",
-                title:"Title", 
-                width: 200 
-            },
-            { 
-                field:"Checkall",
-                title:"Check All", 
-                width: 50,
-                attributes:{"class": "align-center"},
-                template: "#if(parentId != '' || Haschild == false){#<input id='check-all-new#:Id#' class='rolecheck-value-check-all' type='checkbox' onclick='rolesett.Checkall(#:Id#)' #: Checkall==true ? 'checked' : '' #/>#}#"
-            },
-            {
-                field:"Access",
-                title:"Access",
-                width:50,
-                attributes: {"class": "align-center"},
-                template:"#if(parentId != '' || Haschild == false){#<input id='check-Access-#:Id #' class='rolecheck-value-Access' onclick='rolesett.unCheck(#:Id#)' type='checkbox' #: Access==true ? 'checked' : '' #/>#}#"              
-            },
-            {
-                field:"Create",
-                title:"Create",
-                width:50,
-                attributes: {"class": "align-center"},
-                template:"#if(parentId != '' || Haschild == false){#<input id='check-Create-#:Id #' class='rolecheck-value-Create' onclick='rolesett.unCheck(#:Id#)' type='checkbox' #: Create==true ? 'checked' : '' #/>#}#"              
-            },
-            {
-                field:"Edit",
-                title:"Edit",
-                width:50,
-                attributes: {"class": "align-center"},
-                template:"#if(parentId != '' || Haschild == false){#<input id='check-Edit-#:Id #' class='rolecheck-value-Edit' onclick='rolesett.unCheck(#:Id#)' type='checkbox' #: Edit==true ? 'checked' : '' #/>#}#"  
-            },
-            {
-                field:"Delete",
-                title:"Delete",
-                width:50,
-                attributes: {"class": "align-center"},
-                template:"#if(parentId != '' || Haschild == false){#<input id='check-Delete-#:Id #' class='rolecheck-value-Delete' onclick='rolesett.unCheck(#:Id#)' type='checkbox' #: Delete==true ? 'checked' : '' #/>#}#"
-            },
-            {
-                field:"View",
-                title:"View",
-                width:50,
-                attributes: {"class": "align-center"},
-                template:"#if(parentId != '' || Haschild == false){#<input id='check-View-#:Id #' class='rolecheck-value-View' onclick='rolesett.unCheck(#:Id#)' type='checkbox' #: View==true ? 'checked' : '' #/>#}#"
-            },
-            {
-                field:"Approve",
-                title:"Approve",
-                width:50,
-                attributes: {"class": "align-center"},
-                template:"#if(parentId != '' || Haschild == false){#<input id='check-Approve-#:Id #' class='rolecheck-value-Approve' onclick='rolesett.unCheck(#:Id#)' type='checkbox' #: Approve==true ? 'checked' : '' #/>#}#"
-            },
-            {
-                field:"Process",
-                title:"Process",
-                width:50,
-                attributes: {"class": "align-center"},
-                template:"#if(parentId != '' || Haschild == false){#<input id='check-Process-#:Id #' class='rolecheck-value-Process' onclick='rolesett.unCheck(#:Id#)' type='checkbox' #: Process==true ? 'checked' : '' #/>#}#"
-            }
-         ],
-
-    });  
-}
-
-// rolesett.GetUpdateDataMenu = function(e){
-//     var myData = new kendo.data.TreeListDataSource({
-//         data: e,
-//         schema: {
-//             model: {
-//                 id: "Menuid",
-//                 parentId: "Parent",
-//                 fields: {
-//                     _id: { field: "_id", type: "string" },
-//                     titleFolder: { field: "titleFolder", type: "string" },
-//                     parentId: { field: "Parent", type: "string" }
-//                 },
-//                 expanded: true
-//             }
-//         }
-//     });
-
-//     if ($("#MasterUpdateGridMenu").data("kendoTreeList") !== undefined) {
-//       $("#MasterUpdateGridMenu").data("kendoTreeList").setDataSource(myData);
-//       return;
-//     }
-
-//     $("#MasterUpdateGridMenu").kendoTreeList({
-//          dataSource: myData,
-//          height: 400,
-//          columns: [
-//             { 
-//                 field: "Menuname",
-//                 title:"Title", 
-//                 width: 200 
-//             },
-//             { 
-//                 title:"Check All", 
-//                 width: 50,
-//                 attributes:{"class": "align-center"},
-//                 template: "#if(parentId != '' || Haschild == false){#<input id='check-all-new#:Menuid#' class='rolecheck-value-check-all' type='checkbox' onclick='rolesett.Checkall(#:Menuid#)'/>#}#"
-//             },
-//             {
-//                 field:"Access",
-//                 title:"Access",
-//                 width:50,
-//                 attributes: {"class": "align-center"},
-//                 template:"#if(parentId != '' || Haschild == false){#<input id='check-Access-#:Menuid#' class='rolecheck-value-Access' onclick='rolesett.unCheck(#:Menuid#)' type='checkbox' #: Access==true ? 'checked' : '' #/>#}#"              
-//             },
-//             {
-//                 field:"Create",
-//                 title:"Create",
-//                 width:50,
-//                 attributes: {"class": "align-center"},
-//                 template:"#if(parentId != '' || Haschild == false){#<input id='check-Create-#:Menuid #' class='rolecheck-value-Create' onclick='rolesett.unCheck(#:Menuid#)' type='checkbox' #: Create==true ? 'checked' : '' #/>#}#"              
-//             },
-//             {
-//                 field:"Edit",
-//                 title:"Edit",
-//                 width:50,
-//                 attributes: {"class": "align-center"},
-//                 template:"#if(parentId != '' || Haschild == false){#<input id='check-Edit-#:Menuid #' class='rolecheck-value-Edit' onclick='rolesett.unCheck(#:Menuid#)' type='checkbox' #: Edit==true ? 'checked' : '' #/>#}#"  
-//             },
-//             {
-//                 field:"Delete",
-//                 title:"Delete",
-//                 width:50,
-//                 attributes: {"class": "align-center"},
-//                 template:"#if(parentId != '' || Haschild == false){#<input id='check-Delete-#:Menuid #' class='rolecheck-value-Delete'  onclick='rolesett.unCheck(#:Menuid#)' type='checkbox' #: Delete==true ? 'checked' : '' #/>#}#"
-//             },
-//             {
-//                 field:"View",
-//                 title:"View",
-//                 width:50,
-//                 attributes: {"class": "align-center"},
-//                 template:"#if(parentId != '' || Haschild == false){#<input id='check-View-#:Menuid #' class='rolecheck-value-View' onclick='rolesett.unCheck(#:Menuid#)' type='checkbox' #: View==true ? 'checked' : '' #/>#}#"
-//             },
-//             {
-//                 field:"Approve",
-//                 title:"Approve",
-//                 width:50,
-//                 attributes: {"class": "align-center"},
-//                 template:"#if(parentId != '' || Haschild == false){#<input id='check-Approve-#:Menuid #' class='rolecheck-value-Approve' onclick='rolesett.unCheck(#:Menuid#)' type='checkbox' #: Approve==true ? 'checked' : '' #/>#}#"
-//             },
-//             {
-//                 field:"Process",
-//                 title:"Process",
-//                 width:50,
-//                 attributes: {"class": "align-center"},
-//                 template:"#if(parentId != '' || Haschild == false){#<input id='check-Process-#:Menuid #' class='rolecheck-value-Process' onclick='rolesett.unCheck(#:Menuid#)' type='checkbox' #: Process==true ? 'checked' : '' #/>#}#"
-//             }
-//          ],
-
-//     });  
-// }
-
-rolesett.unCheck = function(Menuid){
-    if(!$("#check-Access-"+Menuid).prop('checked') || !$("#check-Create-"+Menuid).prop('checked') || !$("#check-Edit-"+Menuid).prop('checked') || !$("#check-Delete-"+Menuid).prop('checked') || !$("#check-View-"+Menuid).prop('checked') || !$("#check-Approve-"+Menuid).prop('checked') || !$("#check-Process-"+Menuid).prop('checked')){
-        $('#check-all'+Menuid).prop('checked', false);
-        $('#check-all-new'+Menuid).prop('checked', false);
-    }else if($("#check-Access-"+Menuid).prop('checked') == true && $("#check-Create-"+Menuid).prop('checked')== true && $("#check-Edit-"+Menuid).prop('checked') == true && $("#check-Delete-"+Menuid).prop('checked') == true && $("#check-View-"+Menuid).prop('checked') == true && $("#check-Approve-"+Menuid).prop('checked') == true && $("#check-Process-"+Menuid).prop('checked') == true){
-        $('#check-all'+Menuid).prop('checked', true);
-        $('#check-all-new'+Menuid).prop('checked', true); 
-    }
-}
-
-rolesett.Checkall = function(Menuid){
-    $('#check-all'+Menuid).change(function(){
-        $("#check-Access-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Create-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Edit-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Delete-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-View-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Approve-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Process-"+Menuid).prop('checked', $(this).prop('checked'));
-    });
-    $('#check-all-new'+Menuid).change(function(){
-        $("#check-Access-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Create-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Edit-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Delete-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-View-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Approve-"+Menuid).prop('checked', $(this).prop('checked'));
-        $("#check-Process-"+Menuid).prop('checked', $(this).prop('checked'));
     });
 }
 

@@ -221,7 +221,7 @@ ns.editUser = function(d){
 	ns.email(data[index].Useremail);
 	ns.uniqueid(data[index].Userid);
 	console.log(data[index].Role)
-	// ns.role(data[index].Role)
+	ns.role(data[index].Role)
 	if(data[index].Recstatus == "X"){
 		ns.status("Inactive");
 	}else{

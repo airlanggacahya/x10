@@ -225,6 +225,10 @@ ns.editUser = function(d){
 		ns.uid(d);
 		$("#editUser").modal("show");
 		setTimeout(function(){
+			$("[name='catstatus']").bootstrapSwitch('disabled',false);
+			$('#StatusFilter').bootstrapSwitch('state', false);
+
+
 			ns.valuerole(ns.param().Catrole);
 			if(ns.catstatus() == "Enable"){
 				$('#StatusFilter').bootstrapSwitch('state', true);
@@ -233,21 +237,23 @@ ns.editUser = function(d){
 			}else if(ns.catstatus() == ""){
 				$('#StatusFilter').bootstrapSwitch('state', false);
 			}
+
+			if(ns.status() === "Inactive" && ns.catstatus() === ""){
+			$("[name='catstatus']").bootstrapSwitch('disabled',true);
+			}else if(ns.status() === "Inactive" && ns.catstatus() === "Disable"){
+				$("[name='catstatus']").bootstrapSwitch('disabled',true);
+			}else if(ns.status() === "Inactive" && ns.catstatus() === "Enable"){	
+				$("[name='catstatus']").bootstrapSwitch('disabled',false);
+			}else if(ns.status() === "Active" && ns.catstatus() === "Disable"){
+				$("[name='catstatus']").bootstrapSwitch('disabled',false);
+			}if(ns.status() === "Active" && ns.catstatus() === "Enable"){	
+				$("[name='catstatus']").bootstrapSwitch('disabled',false);
+			}else if(ns.status() === "Active" && ns.catstatus() === ""){
+				$("[name='catstatus']").bootstrapSwitch('disabled',false);
+			}
 		}, 200)
 		
-		if(ns.status() === "Inactive" && ns.catstatus() === ""){
-			$("[name='catstatus']").bootstrapSwitch('disabled',true);
-		}else if(ns.status() === "Inactive" && ns.catstatus() === "Disable"){
-			$("[name='catstatus']").bootstrapSwitch('disabled',true);
-		}else if(ns.status() === "Inactive" && ns.catstatus() === "Enable"){	
-			$("[name='catstatus']").bootstrapSwitch('disabled',false);
-		}else if(ns.status() === "Active" && ns.catstatus() === "Disable"){
-			$("[name='catstatus']").bootstrapSwitch('disabled',false);
-		}if(ns.status() === "Active" && ns.catstatus() === "Enable"){	
-			$("[name='catstatus']").bootstrapSwitch('disabled',false);
-		}else if(ns.status() === "Active" && ns.catstatus() === ""){
-			$("[name='catstatus']").bootstrapSwitch('disabled',false);
-		}
+		
 	})
 	
 }

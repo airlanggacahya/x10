@@ -47,13 +47,98 @@ func (c *NewUserController) Default(k *knot.WebContext) interface{} {
 func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	payload := tk.M{}
+	payload := NewUser{}
 	k.GetPayload(&payload)
 
 	cn, _ := GetConnection()
 	defer cn.Close()
 
 	csr, err := cn.NewQuery().
+		From("MasterUser").
+		Order("-lastUpdateDate").
+		Cursor(nil)
+
+	defer csr.Close()
+
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	role, err := cn.NewQuery().
+		From("MasterAccountDetail").
+		Cursor(nil)
+
+	defer role.Close()
+
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	res := []NewUser{}
+	result := tk.M{}
+	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	rl := []tk.M{}
+	err = role.Fetch(&rl, 0, false)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	if len(res) == 0 {
+		return c.SetResultInfo(true, "data not found", nil)
+	}
+
+	if len(rl) == 0 {
+		return c.SetResultInfo(true, "data not found", nil)
+	}
+
+	for _, val := range rl {
+		for _, dt := range val["Data"].([]interface{}) {
+			newdt, _ := tk.ToM(dt)
+			it := newdt.GetString("Field")
+			if it == "Departments" {
+				for _, itm := range newdt["Items"].([]interface{}) {
+					dp, _ := tk.ToM(itm)
+					ndp := dp.GetString("departmentId")
+					name := dp.GetString("name")
+					// tk.Println("----------------------------->>>>>>", ndp)
+					for idx, nres := range res {
+						dd, _ := strconv.Atoi(ndp)
+						// tk.Println("----------------------------->>>>>>", dp)
+						if nres.Userdepartment == dd {
+							// res[idx].Role = res[idx].Role[:0]
+							if res[idx].Role == nil {
+								res[idx].Role = append(nres.Role, name)
+							}
+
+						}
+
+					}
+				}
+			}
+		}
+	}
+	result.Set("data", res)
+
+	return c.SetResultInfo(false, "success", result)
+}
+
+func (c NewUserController) GetUserEdit(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	payload := NewUser{}
+	k.GetPayload(&payload)
+
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	query := []*dbox.Filter{}
+	query = append(query, dbox.Eq("_id", payload.Id))
+	csr, err := cn.NewQuery().
+		Where(dbox.And(query...)).
 		From("MasterUser").
 		Order("-lastUpdateDate").
 		Cursor(nil)

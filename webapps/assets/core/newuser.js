@@ -3,6 +3,7 @@ ns.Userdata = ko.observableArray([]);
 ns.roleList = ko.observableArray([]);
 ns.valuerole = ko.observableArray([]);
 ns.param = ko.observableArray([]);
+ns.param = ko.observableArray([]);
 ns.catStatusList = ko.observableArray(["Enable", "Disable"]);
 ns.status = ko.observable("");
 ns.catstatus = ko.observable("");
@@ -20,7 +21,6 @@ ns.LoadGetUser = function(){
 		var data = res.Data.data;
 		if(data.length != 0){
 			ns.Userdata(data)
-			ns.param(data)
 			$.each(ns.Userdata(), function(i, temp){
 				if(temp.Recstatus == "X"){
 					temp.Recstatus = "Inactive";
@@ -182,7 +182,7 @@ ns.LoadGridUser = function(){
 				headerAttributes : {"class":"k-header header-bgcolor"},
 				width: 50,
 				template: function(d){
-					return "<center><button class='btn btn-xs btn-flat btn-warning  edituserright' onclick='ns.editUser(\""+d.uid+"\")'><span class='fa fa-edit'></span></button></center>"
+					return "<center><button class='btn btn-xs btn-flat btn-warning  edituserright' onclick='ns.editUser(\""+d.Id+"\")'><span class='fa fa-edit'></span></button></center>"
 					
 				}
 			},
@@ -202,85 +202,79 @@ ns.editUser = function(d){
 	ns.confPassword("");
 	ns.confPassword([]);
 	$(".conf").hide()
-	var index = $("#gridUser tr[data-uid='"+d+"']").index();
-	var data = $('#gridUser').data('kendoGrid').dataSource.data();
-	if(data[index].Catrole == null){
-		ns.valuerole([])
-	}else{
-		setTimeout(function(){
-			ns.valuerole((data[index].Catrole).split("|"))
-		}, 250)
-	}
-	ajaxPost("/newuser/getsysrole", {}, function(res){
-		var data = res.Data;
-		if(data.length != 0 || data != null){
-			ns.roleList(data);
+	ajaxPost("/newuser/getuseredit", {Id: d}, function(res){
+		var data = res.Data.data[0];
+		ns.param(data)
+		ajaxPost("/newuser/getsysrole", {}, function(res){
+			var data = res.Data;
+			if(data.length != 0 || data != null){
+				ns.roleList(data);
+			}
+		});
+		ns.username(ns.param().Username);
+		ns.email(ns.param().Useremail);
+		ns.uniqueid(ns.param().Userid);
+		console.log(ns.param().Role)
+		ns.role(ns.param().Role)
+		console.log(ns.param().Recstatus )
+		if(ns.param().Recstatus == "Inactive"){
+			ns.status("Inactive");
+		}else{
+			ns.status("Active");
 		}
-	});
-	ns.username(data[index].Username);
-	ns.email(data[index].Useremail);
-	ns.uniqueid(data[index].Userid);
-	console.log(data[index].Role)
-	ns.role(data[index].Role)
-	console.log(data[index].Recstatus )
-	if(data[index].Recstatus == "Inactive"){
-		ns.status("Inactive");
-	}else{
-		ns.status("Active");
-	}
-	ns.catstatus(data[index].Catstatus)	
-	if(ns.catstatus() == "Enable"){
-		$('#StatusFilter').bootstrapSwitch('state', true);
-	}else{
-		$('#StatusFilter').bootstrapSwitch('state', false);
-	}
-	ns.uid(d);
-	$("#editUser").modal("show");
-	if(ns.status() === "Inactive" && ns.catstatus() === "To be assigned"){
-		$("[name='catstatus']").bootstrapSwitch('disabled',true);
-	}else if(ns.status() === "Inactive" && ns.catstatus() === "Disable"){
-		$("[name='catstatus']").bootstrapSwitch('disabled',true);
-	}else if(ns.status() === "Inactive" && ns.catstatus() === "Enable"){
-		$("[name='catstatus']").bootstrapSwitch('disabled',false);
-	}else if(ns.status() === "Active" && ns.catstatus() === "Disable"){
-		$("[name='catstatus']").bootstrapSwitch('disabled',false);
-	}if(ns.status() === "Active" && ns.catstatus() === "Enable"){	
-		$("[name='catstatus']").bootstrapSwitch('disabled',false);
-	}else if(ns.status() === "Active" && ns.catstatus() === "To be assigned"){
-		$("[name='catstatus']").bootstrapSwitch('disabled',false);
-	}
+		ns.catstatus(ns.param().Catstatus)	
+		if(ns.catstatus() == "Enable"){
+			$('#StatusFilter').bootstrapSwitch('state', true);
+		}else{
+			$('#StatusFilter').bootstrapSwitch('state', false);
+		}
+		ns.uid(d);
+		$("#editUser").modal("show");
+		if(ns.status() === "Inactive" && ns.catstatus() === "To be assigned"){
+			$("[name='catstatus']").bootstrapSwitch('disabled',true);
+		}else if(ns.status() === "Inactive" && ns.catstatus() === "Disable"){
+			$("[name='catstatus']").bootstrapSwitch('disabled',true);
+		}else if(ns.status() === "Inactive" && ns.catstatus() === "Enable"){	
+			$("[name='catstatus']").bootstrapSwitch('disabled',false);
+		}else if(ns.status() === "Active" && ns.catstatus() === "Disable"){
+			$("[name='catstatus']").bootstrapSwitch('disabled',false);
+		}if(ns.status() === "Active" && ns.catstatus() === "Enable"){	
+			$("[name='catstatus']").bootstrapSwitch('disabled',false);
+		}else if(ns.status() === "Active" && ns.catstatus() === "To be assigned"){
+			$("[name='catstatus']").bootstrapSwitch('disabled',false);
+		}
+	})
+	
 }
 
 ns.saveEdit = function(d){
 	if(ns.Password() == ns.confPassword()){
 		var index = $("#gridUser tr[data-uid='"+d+"']").index();
 		var data = $('#gridUser').data('kendoGrid').dataSource.data();
-		if(data[index].Role != null){
-			data[index].Role = (data[index].Role).split("|");
+		// if(ns.param().Role != null){
+		// 	ns.param().Role = (ns.param().Role).split("|");
+		// }
+		ns.param().Catrole = ns.valuerole();
+		ns.param().Catpassword = ns.Password();
+		if(ns.param().Catstatus == "To be assigned"){
+			ns.param().Catstatus = ""
 		}
-		data[index].Catrole = ns.valuerole();
-		data[index].Catpassword = ns.Password();
-		if(data[index].Catstatus == "To be assigned"){
-			data[index].Catstatus = ""
-		}
-		if(data[index].Recstatus == "Inactive"){
-			data[index].Recstatus = "X"
-		}else if(data[index].Recstatus == "Active"){
-			data[index].Recstatus = "A"
+		if(ns.param().Recstatus == "Inactive"){
+			ns.param().Recstatus = "X"
+		}else if(ns.param().Recstatus == "Active"){
+			ns.param().Recstatus = "A"
 		}
 		if($('#StatusFilter').bootstrapSwitch('state') == true){
-			data[index].Catstatus = "Enable";
+			ns.param().Catstatus = "Enable";
 		}else{
-			data[index].Catstatus = "Disable";
+			ns.param().Catstatus = "Disable";
 		}
 
-		if(data[index].Catstatus == "To be assigned"){
-			data[index].Catstatus = "";
+		if(ns.param().Catstatus == "To be assigned"){
+			ns.param().Catstatus = "";
 		}
-		data[index].LastUpdateDate = (new Date()).toISOString();
-		var param =ko.mapping.toJS(data[index]);
-		console.log(param)
-		ajaxPost("/newuser/saveuser", param, function(res){
+		ns.param().LastUpdateDate = (new Date()).toISOString();
+		ajaxPost("/newuser/saveuser", ns.param(), function(res){
 			ns.LoadGetUser()
 			$("#editUser").modal("hide");
 			swal("", "Save sucessfully", "success");

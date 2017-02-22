@@ -1,6 +1,8 @@
 package models
 
 import (
+	. "eaciit/x10/webapps/connection"
+	"github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
 	"gopkg.in/mgo.v2/bson"
 	"time"
@@ -64,4 +66,38 @@ type Branchaccesslist struct {
 	Autherid   string
 	Recstatus  string
 	Autherdate string
+}
+
+func (m *NewUser) Where(filter []*dbox.Filter) ([]NewUser, error) {
+	res := []NewUser{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	query := conn.NewQuery().
+		From(new(NewUser).TableName())
+
+	if len(filter) > 0 {
+		query = query.Where(filter...)
+	}
+
+	csr, err := query.Cursor(nil)
+
+	if csr != nil {
+		defer csr.Close()
+	}
+	if err != nil {
+		return res, err
+	}
+
+	err = csr.Fetch(&res, 0, false)
+	if err != nil {
+		return res, err
+	}
+
+	return res, err
 }

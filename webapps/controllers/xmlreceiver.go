@@ -288,7 +288,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if found && (myStatus == UnderProcess || myStatus == SendBackAnalysis || myStatus == OnHold || myStatus == SendToDecision) {
 		LogData.Set("error", "Deal exists in CAT")
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("OperationMessage", "Deal exists in CAT")
 	}
 
 	//override existing data
@@ -540,7 +540,7 @@ func isDealSetupExists(cid string, dealno string) (bool, string, tk.M, bson.Obje
 			return true, myStatus, infos, val.Get("_id").(bson.ObjectId), nil
 		}
 
-		tk.Println(myStatus, "M<M<M<M<M<-----")
+		// tk.Println(myStatus, "M<M<M<M<M<-----")
 
 		if myStatus == Inque || myStatus == UnderProcess || myStatus == SendBackOmnifin || myStatus == SendBackAnalysis || myStatus == OnHold || myStatus == SendToDecision {
 			return true, myStatus, infos, val.Get("_id").(bson.ObjectId), nil

@@ -236,11 +236,25 @@ ns.editUser = function(d){
 	}
 	ns.uid(d);
 	$("#editUser").modal("show");
-	if(data[index].Recstatus == "Inactive" && data[index].Catstatus == "To be assigned" ||  data[index].Catstatus == "Disable"){
-		setTimeout(function(){
+	if(ns.status() === "Inactive" && ns.catstatus() === "To be assigned"){
+		alert("masuk1")
+		// setTimeout(function(){
 			$("[name='catstatus']").bootstrapSwitch('disabled',true);
-		}, 200)
-	}else if(data[index].Recstatus == "Active" && data[index].Catstatus == "To be assigned" ||  data[index].Catstatus == "Disable"){
+		// }, 200)
+	}else if(ns.status() === "Inactive" && ns.catstatus() === "Disable"){
+		alert("masuk2")	
+		$("[name='catstatus']").bootstrapSwitch('disabled',true);
+	}else if(ns.status() === "Inactive" && ns.catstatus() === "Enable"){
+		alert("masuk6")	
+		$("[name='catstatus']").bootstrapSwitch('disabled',false);
+	}else if(ns.status() === "Active" && ns.catstatus() === "Disable"){
+		alert("masuk3")	
+		$("[name='catstatus']").bootstrapSwitch('disabled',false);
+	}if(ns.status() === "Active" && ns.catstatus() === "Enable"){
+		alert("masuk4")	
+		$("[name='catstatus']").bootstrapSwitch('disabled',false);
+	}else if(ns.status() === "Active" && ns.catstatus() === "To be assigned"){
+		alert("masuk5")	
 		$("[name='catstatus']").bootstrapSwitch('disabled',false);
 	}
 }
@@ -266,6 +280,10 @@ ns.saveEdit = function(d){
 			data[index].Catstatus = "Enable";
 		}else{
 			data[index].Catstatus = "Disable";
+		}
+
+		if(data[index].Catstatus == "To be assigned"){
+			data[index].Catstatus = "";
 		}
 		data[index].LastUpdateDate = (new Date()).toISOString();
 		var param =ko.mapping.toJS(data[index]);

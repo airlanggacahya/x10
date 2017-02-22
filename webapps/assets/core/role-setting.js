@@ -1000,7 +1000,7 @@ rolesett.GetDataRole = function(){
                     title: "Action",
                     headerAttributes: {class: 'k-header header-bgcolor'},
                     width: 50,
-                    template: "<center><button class='btn btn-xs btn-flat btn-danger' onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button></center>"
+                    template: "<center><button class='btn btn-xs btn-flat btn-danger' #if(!Deletable) {# disabled='disabled' #}# onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button></center>"
                 }
             ]
     });

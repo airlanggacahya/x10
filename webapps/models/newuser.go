@@ -5,6 +5,7 @@ import (
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 func NewUserModel() *NewUser {
@@ -51,9 +52,10 @@ type NewUser struct {
 	Role              []string `bson:"role,omitempty"`
 	Catrole           []string `bson:"catrole,omitempty"`
 	// Status            string   `bson:"status,omitempty"`
-	Catstatus   string `bson:"catstatus,omitempty"`
-	Catpassword string `bson:"catpassword,omitempty"`
-	Autherdate  string
+	Catstatus      string `bson:"catstatus,omitempty"`
+	Catpassword    string `bson:"catpassword,omitempty"`
+	Autherdate     string
+	LastUpdateDate time.Time `bson:"lastUpdateDate,omitempty"`
 }
 
 type Branchaccesslist struct {

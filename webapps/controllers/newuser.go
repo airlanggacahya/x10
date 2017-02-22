@@ -55,6 +55,7 @@ func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 
 	csr, err := cn.NewQuery().
 		From("MasterUser").
+		Order("-lastUpdateDate").
 		Cursor(nil)
 
 	defer csr.Close()

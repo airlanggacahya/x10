@@ -19,6 +19,7 @@ type SysRolesModel struct {
 	Dealallocation string
 	Dealvalue      string
 	Roletype       string
+	Deletable      bool
 }
 
 type Detailsmenu struct {

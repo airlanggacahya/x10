@@ -237,24 +237,16 @@ ns.editUser = function(d){
 	ns.uid(d);
 	$("#editUser").modal("show");
 	if(ns.status() === "Inactive" && ns.catstatus() === "To be assigned"){
-		alert("masuk1")
-		// setTimeout(function(){
-			$("[name='catstatus']").bootstrapSwitch('disabled',true);
-		// }, 200)
+		$("[name='catstatus']").bootstrapSwitch('disabled',true);
 	}else if(ns.status() === "Inactive" && ns.catstatus() === "Disable"){
-		alert("masuk2")	
 		$("[name='catstatus']").bootstrapSwitch('disabled',true);
 	}else if(ns.status() === "Inactive" && ns.catstatus() === "Enable"){
-		alert("masuk6")	
 		$("[name='catstatus']").bootstrapSwitch('disabled',false);
 	}else if(ns.status() === "Active" && ns.catstatus() === "Disable"){
-		alert("masuk3")	
 		$("[name='catstatus']").bootstrapSwitch('disabled',false);
-	}if(ns.status() === "Active" && ns.catstatus() === "Enable"){
-		alert("masuk4")	
+	}if(ns.status() === "Active" && ns.catstatus() === "Enable"){	
 		$("[name='catstatus']").bootstrapSwitch('disabled',false);
 	}else if(ns.status() === "Active" && ns.catstatus() === "To be assigned"){
-		alert("masuk5")	
 		$("[name='catstatus']").bootstrapSwitch('disabled',false);
 	}
 }

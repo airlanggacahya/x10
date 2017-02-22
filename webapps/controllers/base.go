@@ -62,6 +62,27 @@ type Previlege struct {
 	Fullname interface{}
 }
 
+func NewPrevilege(accessList []tk.M) Previlege {
+	DataAccess := Previlege{}
+	for _, o := range accessList {
+		DataAccess.Create = o["Create"].(bool)
+		DataAccess.View = o["View"].(bool)
+		DataAccess.Delete = o["Delete"].(bool)
+		DataAccess.Process = o["Process"].(bool)
+		DataAccess.Delete = o["Delete"].(bool)
+		DataAccess.Edit = o["Edit"].(bool)
+		DataAccess.Menuid = o["Menuid"].(string)
+		DataAccess.Menuname = o["Menuname"].(string)
+		DataAccess.Approve = o["Approve"].(bool)
+		DataAccess.Username = o["Username"].(string)
+		DataAccess.Rolename = o["Rolename"].(string)
+		DataAccess.Fullname = o["Fullname"].(string)
+		DataAccess.Grant = o["Grant"].(map[string]bool)
+	}
+
+	return DataAccess
+}
+
 func (b *BaseController) LoadBase(k *knot.WebContext) []tk.M {
 	k.Config.NoLog = true
 	if k.Session("userid") == nil {

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/eaciit/cast"
+	"github.com/eaciit/dbox"
 	// "github.com/eaciit/orm"
 	tk "github.com/eaciit/toolkit"
 	"io"
@@ -67,14 +68,14 @@ func PushMasterUser(list []UserMaster) error {
 	}
 	defer con.Close()
 
-	err = con.NewQuery().
-		Delete().
-		From("MasterUser").
-		SetConfig("multiexec", true).
-		Exec(nil)
-	if err != nil {
-		return err
-	}
+	// err = con.NewQuery().
+	// 	Delete().
+	// 	From("MasterUser").
+	// 	SetConfig("multiexec", true).
+	// 	Exec(nil)
+	// if err != nil {
+	// 	return err
+	// }
 
 	qinsert := con.NewQuery().
 		From("MasterUser").
@@ -83,9 +84,64 @@ func PushMasterUser(list []UserMaster) error {
 
 	// Convert userid to _id
 	for _, i := range list {
-		i.ID = i.UserId
-		// fmt.Printf("%s\n", i.UserId)
-		csc := map[string]interface{}{"data": i}
+		filter := []*dbox.Filter{}
+		filter = append(filter, dbox.Eq("_id", i.UserId))
+
+		userfix := NewUser{}
+
+		user := []NewUser{}
+
+		user, err = new(NewUser).Where(filter)
+		if err != nil {
+			panic(err)
+		}
+
+		if len(user) > 0 {
+			userfix = user[0]
+		}
+
+		userfix.ID = i.UserId
+		userfix.Userid = i.UserId
+		userfix.Userempid = i.UserEmpId
+		userfix.Username = i.UserName
+		userfix.Useremail = i.UserEmail
+		userfix.Userphone1 = i.UserPhone1
+		userfix.Userphone2 = string(i.UserPhone2)
+		userfix.Userdepartment = i.UserDepartment
+		userfix.Userpassword = i.UserPassword
+		userfix.Accountstatus = i.AccountStatus
+		userfix.Branchaccess = i.BranchAccess
+		userfix.Makerid = i.MakerId
+		userfix.Makerdate = i.MakerDate
+		userfix.Autherid = i.AutherId
+		userfix.Authordate = i.AuthorDate
+		userfix.Validitydate = i.ValidityDate
+		userfix.Operationtype = string(i.OperationType)
+		userfix.Recstatus = i.RecStatus
+		userfix.Securityquestion1 = i.SecurityQuestion1
+		userfix.Securityanswer1 = i.SecurityAnswer1
+		userfix.Securityquestion2 = i.SecurityQuestion2
+		userfix.Securityanswer2 = i.SecurityAnswer2
+		userfix.Userdefbranch = i.UserDefBranch
+		userfix.Autherdate = i.AutherDate
+
+		brancescur := []Branchaccesslist{}
+		for _, v := range i.BranchAccessList {
+			brancestembe := Branchaccesslist{}
+			brancestembe.Id = v.Id
+			brancestembe.Branchid = v.BranchId
+			brancestembe.Makerid = v.MakerId
+			brancestembe.Makerdate = v.MakerDate
+			brancestembe.Autherid = string(v.AutherId)
+			brancestembe.Recstatus = v.RecStatus
+			brancestembe.Autherdate = string(v.AutherDate)
+
+			brancescur = append(brancescur, brancestembe)
+		}
+
+		userfix.Branchaccesslist = brancescur
+
+		csc := map[string]interface{}{"data": userfix}
 		err = qinsert.Exec(csc)
 		if err != nil {
 			return err

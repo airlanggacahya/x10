@@ -70,7 +70,7 @@
 				</div>
 				<div class="controls">
 					<div class="col-md-4">
-						<button class="btn btn-sm btn-success" data-bind="click: frp.exportPDF">
+						<button class="btn btn-sm btn-success" data-bind="click: frp.exportPDF, visible: model.IsGranted('download')">
              	<i class="fa fa-file-pdf-o"></i>&nbsp; Export PDF
             </button>
 					</div>

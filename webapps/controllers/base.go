@@ -101,39 +101,79 @@ func (b *BaseController) IsAuthenticate(k *knot.WebContext) {
 	return
 }
 
+func fetchRole(userid string) []SysRolesModel {
+	roles := make([]SysRolesModel, 0)
+	con, err := GetConnection()
+	if err != nil {
+		return roles
+	}
+	defer con.Close()
+
+	cur, err := con.NewQuery().From("MasterUser").
+		Where(db.Eq("userid", userid)).
+		Cursor(nil)
+	if err != nil {
+		return roles
+	}
+
+	user := NewUser{}
+	err = cur.Fetch(&user, 1, true)
+	if err != nil {
+		return roles
+	}
+
+	wh := []*db.Filter{}
+	for _, valx := range user.Catrole {
+		wh = append(wh, db.Eq("name", valx))
+	}
+
+	cur, err = con.NewQuery().
+		From("SysRoles").
+		Where(db.Or(wh...)).
+		Cursor(nil)
+	if err != nil {
+		return roles
+	}
+	err = cur.Fetch(&roles, 0, true)
+	if err != nil {
+		return roles
+	}
+
+	return roles
+}
+
 func (b *BaseController) AccessMenu(k *knot.WebContext) []tk.M {
 	url := k.Request.URL.String()
 	if strings.Index(url, "?") > -1 {
 		url = url[:strings.Index(url, "?")]
-		//		tk.Println("URL_PARSED,", url)
 	}
-	sessionRoles := k.Session("roles")
-	access := []tk.M{}
-	if sessionRoles != nil {
-		accesMenu := sessionRoles.([]SysRolesModel)
-		if len(accesMenu) > 0 {
-			for _, o := range accesMenu[0].Menu {
-				if o.Url == url {
-					obj := tk.M{}
-					obj.Set("View", o.View)
-					obj.Set("Create", o.Create)
-					obj.Set("Approve", o.Approve)
-					obj.Set("Delete", o.Delete)
-					obj.Set("Process", o.Process)
-					obj.Set("Edit", o.Edit)
-					obj.Set("Menuid", o.Menuid)
-					obj.Set("Menuname", o.Menuname)
-					obj.Set("Username", k.Session("username").(string))
-					obj.Set("Rolename", accesMenu[0].Name)
-					obj.Set("Fullname", k.Session("fullname").(string))
-					obj.Set("Grant", o.Grant)
-					access = append(access, obj)
-					return access
-				}
 
-			}
+	access := []tk.M{}
+	accesMenu := fetchRole(k.Session("username").(string))
+	if len(accesMenu) == 0 {
+		return access
+	}
+
+	for _, o := range accesMenu[0].Menu {
+		if o.Url == url {
+			obj := tk.M{}
+			obj.Set("View", o.View)
+			obj.Set("Create", o.Create)
+			obj.Set("Approve", o.Approve)
+			obj.Set("Delete", o.Delete)
+			obj.Set("Process", o.Process)
+			obj.Set("Edit", o.Edit)
+			obj.Set("Menuid", o.Menuid)
+			obj.Set("Menuname", o.Menuname)
+			obj.Set("Username", k.Session("username").(string))
+			obj.Set("Rolename", accesMenu[0].Name)
+			obj.Set("Fullname", k.Session("fullname").(string))
+			obj.Set("Grant", o.Grant)
+			access = append(access, obj)
+			return access
 		}
 	}
+
 	return access
 }
 

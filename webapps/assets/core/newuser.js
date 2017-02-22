@@ -222,12 +222,13 @@ ns.editUser = function(d){
 	ns.uniqueid(data[index].Userid);
 	console.log(data[index].Role)
 	ns.role(data[index].Role)
-	if(data[index].Recstatus == "X"){
+	console.log(data[index].Recstatus )
+	if(data[index].Recstatus == "Inactive"){
 		ns.status("Inactive");
 	}else{
 		ns.status("Active");
 	}
-	ns.catstatus(data[index].Catstatus)
+	ns.catstatus(data[index].Catstatus)	
 	if(ns.catstatus() == "Enable"){
 		$('#StatusFilter').bootstrapSwitch('state', true);
 	}else{
@@ -235,6 +236,13 @@ ns.editUser = function(d){
 	}
 	ns.uid(d);
 	$("#editUser").modal("show");
+	if(data[index].Recstatus == "Inactive" && data[index].Catstatus == "To be assigned" ||  data[index].Catstatus == "Disable"){
+		setTimeout(function(){
+			$("[name='catstatus']").bootstrapSwitch('disabled',true);
+		}, 200)
+	}else if(data[index].Recstatus == "Active" && data[index].Catstatus == "To be assigned" ||  data[index].Catstatus == "Disable"){
+		$("[name='catstatus']").bootstrapSwitch('disabled',false);
+	}
 }
 
 ns.saveEdit = function(d){
@@ -259,6 +267,7 @@ ns.saveEdit = function(d){
 		}else{
 			data[index].Catstatus = "Disable";
 		}
+		data[index].LastUpdateDate = (new Date()).toISOString();
 		var param =ko.mapping.toJS(data[index]);
 		console.log(param)
 		ajaxPost("/newuser/saveuser", param, function(res){

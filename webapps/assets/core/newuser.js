@@ -182,8 +182,11 @@ ns.LoadGridUser = function(){
 				headerAttributes : {"class":"k-header header-bgcolor"},
 				width: 50,
 				template: function(d){
-					return "<center><button class='btn btn-xs btn-flat btn-warning  edituserright' onclick='ns.editUser(\""+d.Id+"\")'><span class='fa fa-edit'></span></button></center>"
+					if(model.IsGranted("edit") == true){
+						return "<center><button class='btn btn-xs btn-flat btn-warning  edituserright' onclick='ns.editUser(\""+d.Id+"\")'><span class='fa fa-edit'></span></button></center>";
+					}
 					
+					return "";
 				}
 			},
 		],

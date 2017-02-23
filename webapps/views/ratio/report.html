@@ -1,17 +1,5 @@
-<script type="text/javascript">
-model.PageTopMenu("{{.TopMenu}}");
-model.PageId('{{.Menuname}}');
-model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "", "", ""));
-model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
-model.Access = ko.observable('{{.Menuid}}');
-model.View = ko.observable('{{.View}}');
-model.Create= ko.observable('{{.Create}}');
-model.Delete= ko.observable('{{.Delete}}');
-model.Process= ko.observable('{{.Process}}');
-model.Edit= ko.observable('{{.Edit}}')
-model.User= ko.observable('{{.Username}}');
-model.Fullname= ko.observable('{{.Fullname}}');
-</script>
+{{template "dataaccess.html" .}}
+
 <!--
 	"PROFIT & LOSS ACCOUNT"
 	"BALANCE SHEET"
@@ -107,7 +95,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
 				  				<li class="borderon"><a href="javascript:r.render('CASH FLOW STATEMENT');">CASH FLOW STATEMENT</a></li>
 				  			</ul>
 				  		</nav>
-			  			<button class="btn btn-flat btn-sm btn-success" id="xls" onclick="r.exportExcel(filter().CustomerSearchText()+' - '+filter().DealNumberSearchVal())">Export to Excel</button>
+			  			<button class="btn btn-flat btn-sm btn-success" id="xls" onclick="r.exportExcel(filter().CustomerSearchText()+' - '+filter().DealNumberSearchVal())" data-bind="visible: model.IsGranted('download')">Export to Excel</button>
 		  			</div>
 					<div class="clearfix"></div>
 					<div class="form-container" style="padding-top: 10px;">

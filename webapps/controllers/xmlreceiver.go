@@ -216,12 +216,12 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	LogData.Set("iscomplete", false)
 
 	res := tk.M{}
-	res.Set("OperationMessage", "Operation Successful")
-	res.Set("OperationStatus", "1")
+	res.Set("operationMessage", "Operation Successful")
+	res.Set("operationStatus", "1")
 
 	resFail := tk.M{}
-	resFail.Set("OperationMessage", "Operation Failed")
-	resFail.Set("OperationStatus", "0")
+	resFail.Set("operationMessage", "Operation Failed")
+	resFail.Set("operationStatus", "0")
 
 	// res := `<return>
 	//             <operationMessage>Operation Successful</operationMessage>
@@ -238,7 +238,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Errorf("Unable to read body: " + e.Error())
 		LogData.Set("error", e.Error())
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", e.Error())
+		return resFail.Set("operationMessage", e.Error())
 	}
 	defer r.Request.Body.Close()
 
@@ -254,7 +254,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Println("Payload Decode Error: " + err.Error() + " .Bytes Data: " + string(bs))
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("operationMessage", err.Error())
 	}
 	// Decode done
 
@@ -281,14 +281,14 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("operationMessage", err.Error())
 	}
 
 	// Reject Data
 	if found && (myStatus == UnderProcess || myStatus == SendBackAnalysis || myStatus == OnHold || myStatus == SendToDecision) {
 		LogData.Set("error", "Deal exists in CAT")
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", "Deal exists in CAT")
+		return resFail.Set("operationMessage", "Deal exists in CAT")
 	}
 
 	//override existing data
@@ -302,7 +302,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("operationMessage", err.Error())
 
 	}
 
@@ -311,7 +311,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("operationMessage", err.Error())
 
 	}
 
@@ -320,7 +320,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	if err != nil {
 		LogData.Set("error", err.Error()+" | InternalRTR")
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("operationMessage", err.Error())
 
 	}
 
@@ -331,7 +331,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Println(err.Error())
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("operationMessage", err.Error())
 
 	}
 
@@ -345,7 +345,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	err = qinsert.Exec(csc)
 	if err != nil {
 		fmt.Print(err.Error())
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("operationMessage", err.Error())
 
 	}
 
@@ -363,7 +363,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Println(err.Error())
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("operationMessage", err.Error())
 
 	}
 
@@ -378,7 +378,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 		fmt.Println(err.Error())
 		LogData.Set("error", err.Error())
 		CreateLog(LogData)
-		return resFail.Set("OperationMessage", err.Error())
+		return resFail.Set("operationMessage", err.Error())
 
 	}
 
@@ -1050,7 +1050,11 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 	current.DealNo = dealno
 	current.AccountSetupDetails.DealNo = dealno
 
-	current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+	current.AccountSetupDetails.CityName = body.GetString("dealBranchDesc")
+	current.AccountSetupDetails.CityNameId = cast.ToString(body.GetInt("dealBranch"))
+	if body.GetString("dealInitiationDate") != "" {
+		current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+	}
 	current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 	current.AccountSetupDetails.RmNameId = body.GetString("dealRm")
 	current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
@@ -1083,8 +1087,12 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 	current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit / 100000
 	current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 	current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
-	current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
-	current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
+	if body.GetString("firstAgreementDate") != "" {
+		current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreemedtDate"), "yyyy-MM-dd").(time.Time)
+	}
+	if body.GetString("recentAgreementDate") != "" {
+		current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
+	}
 	current.LoanDetails.VintageWithX10 = body.GetFloat64("vinatgeInMonths")
 
 	return &current, nil
@@ -1127,7 +1135,11 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		current.DealNo = dealno
 		current.AccountSetupDetails.DealNo = dealno
 
-		current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+		current.AccountSetupDetails.CityName = body.GetString("dealBranchDesc")
+		current.AccountSetupDetails.CityNameId = cast.ToString(body.GetInt("dealBranch"))
+		if body.GetString("dealInitiationDate") != "" {
+			current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+		}
 		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 		current.AccountSetupDetails.RmNameId = body.GetString("dealRm")
 		current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
@@ -1164,8 +1176,13 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		current.LoanDetails.IfYesEistingLimitAmount = sanctionedLimit / 100000
 		current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 		current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
-		current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
-		current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
+		if body.GetString("firstAgreementDate") != "" {
+			current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
+		}
+
+		if body.GetString("recentAgreementDate") != "" {
+			current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)
+		}
 		current.LoanDetails.VintageWithX10 = body.GetFloat64("vinatgeInMonths")
 
 	}

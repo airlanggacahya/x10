@@ -127,6 +127,7 @@ type AccountDetail struct {
 
 type AccountSetupDetails struct {
 	CityName        string
+	CityNameId      string
 	LoginDate       time.Time
 	DealNo          string
 	RmName          string

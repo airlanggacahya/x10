@@ -4,19 +4,19 @@ import (
 	. "eaciit/x10/webapps/connection"
 	_ "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
-	"encoding/json"
 
 	"fmt"
-	db "github.com/eaciit/dbox"
-	"github.com/eaciit/knot/knot.v1"
-	"github.com/eaciit/orm"
-	tk "github.com/eaciit/toolkit"
 	"log"
 	"math"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	db "github.com/eaciit/dbox"
+	"github.com/eaciit/knot/knot.v1"
+	"github.com/eaciit/orm"
+	tk "github.com/eaciit/toolkit"
 )
 
 type IBaseController interface {
@@ -58,47 +58,40 @@ type Previlege struct {
 	Menuname     string
 	Username     string
 	TopMenu      string
-	Grant        string
+	Grant        map[string]bool
 	Rolename     interface{}
 	Fullname     interface{}
-	CustomerList string
+	CustomerList []tk.M
 }
 
-func NewPrevilege(accessList []tk.M) Previlege {
+func (c *BaseController) NewPrevilege(k *knot.WebContext) Previlege {
 	DataAccess := Previlege{}
+
+	DataAccess.CustomerList = c.LoadCustomerList(k)
+
+	accessList := c.LoadBase(k)
 	for _, o := range accessList {
-		DataAccess.Create = o["Create"].(bool)
-		DataAccess.View = o["View"].(bool)
-		DataAccess.Delete = o["Delete"].(bool)
-		DataAccess.Process = o["Process"].(bool)
-		DataAccess.Delete = o["Delete"].(bool)
-		DataAccess.Edit = o["Edit"].(bool)
 		DataAccess.Menuid = o["Menuid"].(string)
 		DataAccess.Menuname = o["Menuname"].(string)
-		DataAccess.Approve = o["Approve"].(bool)
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Rolename = o["Rolename"].(string)
 		DataAccess.Fullname = o["Fullname"].(string)
-		jsonString, err := json.Marshal(o["Grant"].(map[string]bool))
-		if err != nil {
-			tk.Println(err)
-		}
-		DataAccess.Grant = string(jsonString)
+		DataAccess.Grant = o["Grant"].(map[string]bool)
+		DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+
+		return DataAccess
 	}
 
+	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 	return DataAccess
 }
 
-func (b *BaseController) LoadCustomerList(k *knot.WebContext) string {
+func (b *BaseController) LoadCustomerList(k *knot.WebContext) []tk.M {
 	if k.Session("CustomerProfileData") == nil {
-		return ""
+		return []tk.M{}
 	}
 
-	jsonString, err := json.Marshal(k.Session("CustomerProfileData").([]tk.M))
-	if err != nil {
-		tk.Println(err)
-	}
-	return string(jsonString)
+	return k.Session("CustomerProfileData").([]tk.M)
 }
 
 func (b *BaseController) LoadBase(k *knot.WebContext) []tk.M {
@@ -167,28 +160,28 @@ func (b *BaseController) AccessMenu(k *knot.WebContext) []tk.M {
 	}
 
 	access := []tk.M{}
-	accesMenu := fetchRole(k.Session("username").(string))
-	if len(accesMenu) == 0 {
+	roles := fetchRole(k.Session("username").(string))
+	if len(roles) == 0 {
 		return access
 	}
 
-	for _, o := range accesMenu[0].Menu {
+	// merge all role menu
+	accessMenu := []Detailsmenu{}
+	for _, r := range roles {
+		accessMenu = append(accessMenu, r.Menu...)
+	}
+
+	// find matching url
+	for _, o := range accessMenu {
 		if o.Url == url {
 			obj := tk.M{}
-			obj.Set("View", o.View)
-			obj.Set("Create", o.Create)
-			obj.Set("Approve", o.Approve)
-			obj.Set("Delete", o.Delete)
-			obj.Set("Process", o.Process)
-			obj.Set("Edit", o.Edit)
 			obj.Set("Menuid", o.Menuid)
 			obj.Set("Menuname", o.Menuname)
 			obj.Set("Username", k.Session("username").(string))
-			obj.Set("Rolename", accesMenu[0].Name)
+			obj.Set("Rolename", roles[0].Name)
 			obj.Set("Fullname", k.Session("fullname").(string))
 			obj.Set("Grant", o.Grant)
 			access = append(access, obj)
-			return access
 		}
 	}
 

@@ -15,12 +15,9 @@ type LoanApprovalController struct {
 }
 
 func (c *LoanApprovalController) Default(k *knot.WebContext) interface{} {
-	access := c.LoadBase(k)
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
-	DataAccess := NewPrevilege(access)
-	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
-	DataAccess.CustomerList = c.LoadCustomerList(k)
+	DataAccess := c.NewPrevilege(k)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{
@@ -50,11 +47,9 @@ func (c *LoanApprovalController) Default(k *knot.WebContext) interface{} {
 }
 
 func (c *LoanApprovalController) SampleChart(k *knot.WebContext) interface{} {
-	access := c.LoadBase(k)
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
-	DataAccess := NewPrevilege(access)
-	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+	DataAccess := c.NewPrevilege(k)
 
 	k.Config.IncludeFiles = []string{
 		"shared/dataaccess.html",

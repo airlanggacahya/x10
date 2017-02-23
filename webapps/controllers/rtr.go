@@ -19,12 +19,9 @@ type RtrController struct {
 }
 
 func (c *RtrController) Default(k *knot.WebContext) interface{} {
-	access := c.LoadBase(k)
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
-	DataAccess := NewPrevilege(access)
-	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
-	DataAccess.CustomerList = c.LoadCustomerList(k)
+	DataAccess := c.NewPrevilege(k)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{

@@ -1585,7 +1585,8 @@ uplV2.codeRgb = function (idtd) {
   var rgb = $("#calendar").find('table').find('tbody').find("td[id=Date" + idtd + "]").css('background-color');
   var Day = moment(new Date(uplV2.TradeDate())).format("dddd MMMYYYY").split(" ")[0];
   // console.log(rgb);
-  if (model.Approve() == "true") {
+  //if (model.Approve() == "true") {
+  if (true) {
     uplV2.btnUpload(false);
     uplV2.btnLock(false);
     uplV2.btnUnlock(true);
@@ -1609,7 +1610,7 @@ uplV2.codeRgb = function (idtd) {
         uplV2.btnCheckSettlementPrice(false);
         uplV2.btnProcestradingFile(false);
         uplV2.btnPreprocess(true);
-      } else if (rgb == "rgb(179, 175, 173)" && (model.Edit() == "true" || model.Create() == "true")) {
+      } else if (rgb == "rgb(179, 175, 173)" && (model.IsGranted("edit") == "true" || model.IsGranted("create") == "true")) {
 
         // Brown
         if (model.Process != false) {
@@ -1628,7 +1629,7 @@ uplV2.codeRgb = function (idtd) {
         uplV2.btnCheckSettlementPrice(false);
         uplV2.btnProcestradingFile(true);
         uplV2.btnPreprocess(false);
-      } else if (model.Edit() == "true" || model.Create() == "true") {
+      } else if (model.IsGranted("edit") == "true" || model.IsGranted("create") == "true") {
         uplV2.btnUpload(true);
         uplV2.btnLock(false);
         uplV2.btnUnlock(false);

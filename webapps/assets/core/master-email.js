@@ -179,7 +179,7 @@ email.getDataGridEmail = function(){
                     field:"Email",
                     title:"Email",
                     width:100,
-                    template: "#if(model.Edit() != 'false'){#<a class='grid-select' href='javascript:email.EditformTitle(\"#: Id #\")'>#: Email #</a>#}else{#<div>#: Email #</div>#}#"
+                    template: "#if(model.IsGranted('edit')){#<a class='grid-select' href='javascript:email.EditformTitle(\"#: Id #\")'>#: Email #</a>#}else{#<div>#: Email #</div>#}#"
 
                 },{
                     field:"FirstName",

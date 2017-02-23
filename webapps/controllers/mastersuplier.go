@@ -3,11 +3,12 @@ package controllers
 import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
+	"strings"
+
 	db "github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	"strings"
 )
 
 type MasterSuplierController struct {
@@ -18,25 +19,15 @@ func (c *MasterSuplierController) Default(k *knot.WebContext) interface{} {
 	access := c.LoadBase(k)
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
-	DataAccess := Previlege{}
-
-	for _, o := range access {
-		DataAccess.Create = o["Create"].(bool)
-		DataAccess.View = o["View"].(bool)
-		DataAccess.Delete = o["Delete"].(bool)
-		DataAccess.Process = o["Process"].(bool)
-		DataAccess.Delete = o["Delete"].(bool)
-		DataAccess.Edit = o["Edit"].(bool)
-		DataAccess.Menuid = o["Menuid"].(string)
-		DataAccess.Menuname = o["Menuname"].(string)
-		DataAccess.Approve = o["Approve"].(bool)
-		DataAccess.Username = o["Username"].(string)
-	}
-
+	DataAccess := NewPrevilege(access)
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.OutputType = knot.OutputTemplate
-	k.Config.IncludeFiles = []string{"shared/loading.html"}
+	k.Config.IncludeFiles = []string{
+		"shared/dataaccess.html",
+		"shared/loading.html",
+	}
 
 	return DataAccess
 }

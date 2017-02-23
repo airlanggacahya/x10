@@ -2340,6 +2340,7 @@ adf.getData = function () {
 
 			var temp = moment(adf.form.AccountSetupDetails.LoginDate()).format("DD-MMM-YYYY")
 			adf.loginDateString(temp)
+			ADAccess();
 		}, function () {
 			adf.isLoading(false)
 
@@ -2347,6 +2348,29 @@ adf.getData = function () {
 	}, function () {
 		adf.isLoading(false)
 	})
+}
+
+var ADAccess = function(){
+  if(!model.IsGranted("confirm")){
+    $(".btn-confirm").remove();
+  }
+
+   if(!model.IsGranted("edit")){
+    $(".btn-save").remove();
+  }
+
+   if(!model.IsGranted("reenter")){
+    $(".btn-reenter").remove();
+  }
+
+
+   if(!model.IsGranted("freeze")){
+    $(".btn-freeze").remove();
+  }
+
+  if(!model.IsGranted("unfreeze")){
+    $(".btn-unfreeze").remove();
+  }
 }
 
 formatingDate = function(date) {

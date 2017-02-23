@@ -1,17 +1,7 @@
+{{template "dataaccess.html" .}}
+
 <script type="text/javascript">
-setTimeout(function () { window.enableAutoHideLoaderForTheFirstTime = false }, 500)
-model.PageTopMenu("{{.TopMenu}}");
-model.PageId('{{.Menuname}}');
-model.BreadCrumbs.push(new BreadCrumb("Data Masters", "Data Masters", "#", "", ""));
-model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
-model.Access = ko.observable('{{.Menuid}}');
-model.View = ko.observable('{{.View}}');
-model.Create= ko.observable('{{.Create}}');
-model.Delete= ko.observable('{{.Delete}}');
-model.Process= ko.observable('{{.Process}}');
-model.Edit= ko.observable('{{.Edit}}')
-model.User= ko.observable('{{.Username}}');
-model.Fullname= ko.observable('{{.Fullname}}');
+	setTimeout(function () { window.enableAutoHideLoaderForTheFirstTime = false }, 500)
 </script>
 
 <script>document.write('<script src="/static/core/rating-input.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
@@ -92,7 +82,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
 		<div class="panel ez">
 			<div class="panel-body">
 				<div class="filter col-md-12 no-padding hardcore align-right">
-					<button class="btn btn-sm btn-confirm" data-bind="click: r.newRatingModel">New Rating Model</button>
+					<button class="btn btn-sm btn-confirm" data-bind="click: r.newRatingModel, visible: model.IsGranted('create')">New Rating Model</button>
 					<button class="btn btn-sm btn-freeze" data-bind="click: r.refreshMain">Refresh</button>
 				</div>
 				<div class="clearfix"></div>
@@ -110,9 +100,9 @@ model.Fullname= ko.observable('{{.Fullname}}');
 			<div class="panel-body">
 				<div class="filter col-md-12 no-padding hardcore align-right">
 					<button class="btn btn-sm btn-reset" data-bind="click: r.backToMain"><i class="fa fa-arrow-left"></i> Back</button>
-					<button class="btn btn-sm btn-add" data-bind="click: r.showFormAdd">Add New</button>
+					<button class="btn btn-sm btn-add" data-bind="click: r.showFormAdd, visible: model.IsGranted('edit')">Add New</button>
 					<button class="btn btn-sm btn-freeze" data-bind="click: r.refresh">Refresh</button>
-					<button class="btn btn-sm btn-save" data-bind="click: r.save">Save Changes</button>
+					<button class="btn btn-sm btn-save" data-bind="click: r.save, visible: model.IsGranted('edit')">Save Changes</button>
 					<button class="btn btn-sm btn-confirm" data-bind="click: r.expandfunction">Expand/Collapse all</button>
 					<!-- <a class="btn btn-sm btn-primary" target="_blank" href="/ratio/input">
 						<i class="fa fa-eye"></i> View Result

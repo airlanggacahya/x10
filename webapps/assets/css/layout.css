@@ -16,6 +16,7 @@ body {
 *:after {
   box-sizing: inherit;
 }
+.no-grant { display: none!important }
 
 a:focus, i:focus {
   outline: none;

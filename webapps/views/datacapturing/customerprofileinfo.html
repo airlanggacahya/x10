@@ -381,10 +381,34 @@ function refreshdata(accountdetailsMaster){
     }else{
       blanked();
     }
-
+    CustomerProfileAccess();
   }, undefined);
 }
 
+
+var CustomerProfileAccess = function(){
+  if(!model.IsGranted("confirm")){
+    $("#cf").remove();
+  }
+
+   if(!model.IsGranted("edit")){
+    $("#edit").remove();
+    $("#save").remove();
+  }
+
+   if(!model.IsGranted("reenter")){
+    $("#re").remove();
+  }
+
+
+   if(!model.IsGranted("freeze")){
+    $("#vf").remove();
+  }
+
+  if(!model.IsGranted("unfreeze")){
+    $("#uvf").remove();
+  }
+}
 // function detailPayment(e){
 //   var param = {CustomerId: filter().CustomerSearchVal(), Dealno: filter().DealNumberSearchVal()}
 //   ajaxPost("/datacapturing/getcustomerprofiledetail", param, function(res) {
@@ -1111,7 +1135,7 @@ input[disabled]{
 
 
 {{template "filter.html"}}
-<div data-bind="with: info, visible: (formVisibility() == true)" style="display: none">
+<div data-bind="with: info, visible: (formVisibility() == true && model.IsGranted('view'))" style="display: none">
   <div class="col-sm-12 col-sm-12 ez panel-content" data-bind="visible: (formVisibility() == true)">
       <div class="panel ez no-padding hardcore">
         <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->

@@ -177,7 +177,11 @@ r.render = function () {
           info += " data-section='" + d.Section + "' data-sub-section='" + d.SubSection + "' data-field='" + d.Name + "'"
         }
 
-        return "<input type='checkbox' " + info + " onchange='r.setVisibility(this, \"" + d.id + "\", \"" + d.Type + "\", \"" + d.Name + "\", \"" + d.ParentName + "\")' />";
+        var chkbx = model.IsGranted('edit') ? 
+          "<input type='checkbox' " + info + " onchange='r.setVisibility(this, \"" + d.id + "\", \"" + d.Type + "\", \"" + d.Name + "\", \"" + d.ParentName + "\")' />" :
+          "<input type='checkbox' disabled " + info + " onchange='r.setVisibility(this, \"" + d.id + "\", \"" + d.Type + "\", \"" + d.Name + "\", \"" + d.ParentName + "\")' />";
+        
+        return chkbx
       }
     }, {
       headerAttributes: { "class": "k-header header-bgcolor" },
@@ -187,13 +191,13 @@ r.render = function () {
         }
 
         return [
-          "<button class='btn btn-xs btn-primary tooltipster' title='Move up' data-direction='up' onclick=\"r.moveTo(this, '" + d.id + "')\"><i class='fa fa-arrow-up'></i></button>",
-          "<button class='btn btn-xs btn-success tooltipster' title='Move down' data-direction='down' onclick=\"r.moveTo(this, '" + d.id + "')\"><i class='fa fa-arrow-down'></i></button>",
+          model.IsGranted('edit') ? "<button class='btn btn-xs btn-primary tooltipster' title='Move up' data-direction='up' onclick=\"r.moveTo(this, '" + d.id + "')\"><i class='fa fa-arrow-up'></i></button>" : '',
+          model.IsGranted('edit') ? "<button class='btn btn-xs btn-success tooltipster' title='Move down' data-direction='down' onclick=\"r.moveTo(this, '" + d.id + "')\"><i class='fa fa-arrow-down'></i></button>" : '',
           "&nbsp;",
           "<button class='btn btn-xs btn-warning tooltipster' title='Show History' onclick=\"r.getFilledFields(this, '" + d.id + "')\"><i class='fa fa-history'></i></button>",
           "&nbsp;",
-          "<button class='btn btn-xs btn-primary tooltipster' title='Edit' onclick=\"r.edit(this, '" + d.id + "')\"><i class='fa fa-edit'></i></button>",
-          "<button class='btn btn-xs btn-danger tooltipster' title='Remove' onclick=\"r.remove(this, '" + d.id + "')\"><i class='fa fa-trash'></i></button>",
+          model.IsGranted('edit') ? "<button class='btn btn-xs btn-primary tooltipster' title='Edit' onclick=\"r.edit(this, '" + d.id + "')\"><i class='fa fa-edit'></i></button>" : '',
+          model.IsGranted('delete') ? "<button class='btn btn-xs btn-danger tooltipster' title='Remove' onclick=\"r.remove(this, '" + d.id + "')\"><i class='fa fa-trash'></i></button>" : '',
         ].join('&nbsp;')
       }, attributes: { class: 'align-center' }, width: 170
     }],

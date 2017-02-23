@@ -335,7 +335,12 @@ formula.render = function () {
 			}
 
 			var isChecked = (d.ShowInLoanApprovalReport) ? 'checked="checked"' : ''
-			return '<input type="checkbox" ' + isChecked + ' onchange="formula.toggleCheckbox(this, \'ShowInLoanApprovalReport\', \'' + d.Id + '\')" />'
+
+			var chkbx = model.IsGranted('edit') ?
+				'<input type="checkbox" ' + isChecked + ' onchange="formula.toggleCheckbox(this, \'ShowInLoanApprovalReport\', \'' + d.Id + '\')" />' :
+				''
+			
+			return chkbx
 		}, attributes: { style: 'text-align: center;' }, headerAttributes: { class: "k-header header-bgcolor" } },
 		{ headerTemplate: 'Show in<br />Loan Approval Screen', template: function (d) {
 			if(!d.editable){
@@ -343,7 +348,12 @@ formula.render = function () {
 			}
 
 			var isChecked = (d.ShowInLoanApprovalScreen) ? 'checked="checked"' : ''
-			return '<input type="checkbox" ' + isChecked + ' onchange="formula.toggleCheckbox(this, \'ShowInLoanApprovalScreen\', \'' + d.Id + '\')" />'
+			
+			var chkbx = model.IsGranted('edit') ? 
+				'<input type="checkbox" ' + isChecked + ' onchange="formula.toggleCheckbox(this, \'ShowInLoanApprovalScreen\', \'' + d.Id + '\')" />' :
+				''
+
+			return chkbx
 		}, attributes: { style: 'text-align: center;' }, headerAttributes: { class: "k-header header-bgcolor" } },
 		{ headerAttributes: { class: "k-header header-bgcolor" }, attributes: { style: 'text-align: center;' }, template: function (d) {
 			if(!d.editable){
@@ -351,11 +361,11 @@ formula.render = function () {
 			}
 
 			return [
-				'<button class="btn btn-xs btn-primary btn-up tooltipster" title="Move up" onclick="formula.move(\'up\', \'' + d.Id + '\')"><i class="fa fa-arrow-up"></i></button>',
-				'<button class="btn btn-xs btn-success btn-down tooltipster" title="Move down" onclick="formula.move(\'down\', \'' + d.Id + '\')"><i class="fa fa-arrow-down"></i></button>',
+				model.IsGranted('edit') ? '<button class="btn btn-xs btn-primary btn-up tooltipster" title="Move up" onclick="formula.move(\'up\', \'' + d.Id + '\')"><i class="fa fa-arrow-up"></i></button>' : '',
+				model.IsGranted('edit') ? '<button class="btn btn-xs btn-success btn-down tooltipster" title="Move down" onclick="formula.move(\'down\', \'' + d.Id + '\')"><i class="fa fa-arrow-down"></i></button>' : '',
 				'&nbsp;',
-				'<button class="btn btn-xs btn-primary tooltipster" title="Edit formula" onclick="formula.editFinancial(\'' + d.Id + '\')"><i class="fa fa-edit"></i></button>',
-				'<button class="btn btn-xs btn-danger tooltipster" title="Delete formula" onclick="formula.deleteFinancial(\'' + d.Id + '\')"><i class="fa fa-trash"></i></button>',
+				model.IsGranted('edit') ? '<button class="btn btn-xs btn-primary tooltipster" title="Edit formula" onclick="formula.editFinancial(\'' + d.Id + '\')"><i class="fa fa-edit"></i></button>' : '',
+				model.IsGranted('delete') ? '<button class="btn btn-xs btn-danger tooltipster" title="Delete formula" onclick="formula.deleteFinancial(\'' + d.Id + '\')"><i class="fa fa-trash"></i></button>' : ''
 			].join(' ')
 		}, width: 140 }
 	]

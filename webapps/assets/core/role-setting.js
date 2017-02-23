@@ -174,6 +174,24 @@ function clickRole(submodule_path, menuid, path) {
                 })
             return
         }
+
+        // disable all if view grant unchecked
+        if (!newVal && path == 'grant.view') {
+            $(sel)
+                .not('.grant\\.all')
+                .each(function (key, val) {
+                    _.set(it, $(val).data("path"), newVal)
+                })
+            return
+        }
+
+        // enable view if any grant selected
+        if (newVal) {
+            $(sel + '.grant\\.view')
+                .each(function (key, val) {
+                    _.set(it, $(val).data("path"), newVal)
+                })
+        }
     })
 
     rolesett._privToGrid(privilegesToNewRole(output))
@@ -354,7 +372,7 @@ var decisionCommitteMapping = [
     {
         "name": "Decision Committe",
         "menuid": "2016825142718",
-        "grant": ["dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
+        "grant": ["view", "dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
     }
 ]
 
@@ -362,7 +380,7 @@ var caCommitteMapping = [
     {
         "name": "CA Committe",
         "menuid": "2016825142718",
-        "grant": ["ca_save", "ca_send_dc"]
+        "grant": ["view", "ca_save", "ca_send_dc"]
     }
 ]
 
@@ -627,6 +645,10 @@ var decisionCommitteCol = completeColumn([
         title: "All"
     },
     {
+        field: "grant.view",
+        title: "View"
+    },
+    {
         field: "grant.dc_approve",
         title: "Approve"
     },
@@ -652,6 +674,10 @@ var caCommitteCol = completeColumn([
     {
         field: "grant.all",
         title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
     },
     {
         field: "grant.ca_save",

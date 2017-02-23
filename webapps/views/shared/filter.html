@@ -2,12 +2,12 @@
 filter().CustomerSearchText = ko.observable("");
 filter().CustomerSearchVal.subscribe(function(value){
   filter().DealNumberSearchList([]);
-  var arr = _.filter(filter().CustomerSearchAll(),function(x){ return x.customer_id == value })
+  var arr = _.filter(model.CustomerList(),function(x){ return x.applicantdetail.CustomerID == value })
   for(var i in arr){
-    filter().DealNumberSearchList.push(arr[i].deal_no)
+    filter().DealNumberSearchList.push(arr[i].applicantdetail.DealNo)
   }
   if (arr.length == 1 ){
-    filter().DealNumberSearchVal(arr[0].deal_no);
+    filter().DealNumberSearchVal(arr[0].applicantdetail.DealNo);
     setTimeout(function(){
       $("#role").getKendoDropDownList().value(filter().DealNumberSearchVal());
     },500);
@@ -67,7 +67,7 @@ filter().CustomerSearchVal.subscribe(function(value){
     <div class="jf-tbl col-md-8" style="display: none;">
       <!-- <div class="pull-left"><span class="filter-label">Customer:</span></div> -->
       <!-- <div class="col-sm-4 pull-left"> -->
-        <select class="filter-select filter-font pull-left" name="page" id="customer" data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Choose Customer', filter:'contains'}" ></select>
+        <select class="filter-select filter-font pull-left" name="page" id="customer" data-bind="kendoDropDownList: {data:model.CustomerList(), value:filter().CustomerSearchVal, dataValueField: 'applicantdetail.CustomerID', dataTextField: 'FullName', optionLabel: 'Choose Customer', filter:'contains'}" ></select>
       <!-- </div> -->
       <!-- <div class="pull-left"><span class="filter-label" style="margin-left: 13px">Deal No:</span></div> -->
       <!-- <div class="col-sm-4 pull-left"> -->

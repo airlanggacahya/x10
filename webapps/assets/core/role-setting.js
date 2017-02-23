@@ -354,7 +354,7 @@ var decisionCommitteMapping = [
     {
         "name": "Decision Committe",
         "menuid": "2016825142718",
-        "grant": ["dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
+        "grant": ["view", "dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
     }
 ]
 
@@ -362,7 +362,7 @@ var caCommitteMapping = [
     {
         "name": "CA Committe",
         "menuid": "2016825142718",
-        "grant": ["ca_save", "ca_send_dc"]
+        "grant": ["view", "ca_save", "ca_send_dc"]
     }
 ]
 
@@ -627,6 +627,10 @@ var decisionCommitteCol = completeColumn([
         title: "All"
     },
     {
+        field: "grant.view",
+        title: "View"
+    },
+    {
         field: "grant.dc_approve",
         title: "Approve"
     },
@@ -652,6 +656,10 @@ var caCommitteCol = completeColumn([
     {
         field: "grant.all",
         title: "All"
+    },
+    {
+        field: "grant.view",
+        title: "View"
     },
     {
         field: "grant.ca_save",

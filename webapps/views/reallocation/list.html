@@ -9,7 +9,7 @@
   <div class="panel-heading">
     <div class="row">
         <div class="col-md-6">
-            <button class="btn btn-sm btn-success btn-flat" data-bind="click: r.showModal('.modal-reallocation')">Create Reallocation Deal</button>
+            <button class="btn btn-sm btn-success btn-flat" data-bind="click: r.showModal('.modal-reallocation'), visible:(model.IsGranted('create') == true)">Create Reallocation Deal</button>
         </div>
         <div class="col-md-6 pull-right">
             <label class="col-sm-2 form-label">Search</label>

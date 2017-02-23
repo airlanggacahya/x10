@@ -288,7 +288,7 @@ r.render = function () {
 		columnSection.template = function (d) {
 			var disabled = ""
 			// need edit grant
-			if (!model.IsGranted('edit'))
+			if (!model.IsGranted('edit') && !r.newRatingMode())
 				disabled = "disabled"
 
 			if (d.Type !== 'Section') {
@@ -312,7 +312,7 @@ r.render = function () {
 		columnSubSection.template = function (d) {
 			var disabled = ""
 			// need edit grant
-			if (!model.IsGranted('edit'))
+			if (!model.IsGranted('edit') && !r.newRatingMode())
 				disabled = "disabled"
 
 			if (d.Type !== 'Sub Section') {
@@ -337,7 +337,7 @@ r.render = function () {
 		columnField.template = function (d) {
 			var disabled = ""
 			// need edit grant
-			if (!model.IsGranted('edit'))
+			if (!model.IsGranted('edit') && !r.newRatingMode())
 				disabled = "disabled"
 
 			if (d.Type !== 'Field') {
@@ -359,6 +359,11 @@ r.render = function () {
 		headerAttributes: { class: 'k-header header-bgcolor' },
     	headerTemplate: '<center>Use in<br>Rating Model</center>',
     	template: function (d) {
+			var disabled = ""
+			// need edit grant
+			if (!model.IsGranted('edit') && !r.newRatingMode())
+				disabled = "disabled"
+
     		// console.log(d)
     		var info = '';
 
@@ -382,7 +387,7 @@ r.render = function () {
           })
 
       		info += " data-section='" + d.Name + "'"
-      		return "<input data-type='Section checkbox' data-rating='" + e.Id + "' type='checkbox' " + info + " onchange='r.setVisibility(this, \"" + d.id + "\", \"" + d.Type + "\", \"" + d.Name + "\", \"" + d.ParentName + "\")' />";
+      		return "<input data-type='Section checkbox' " + disabled + " data-rating='" + e.Id + "' type='checkbox' " + info + " onchange='r.setVisibility(this, \"" + d.id + "\", \"" + d.Type + "\", \"" + d.Name + "\", \"" + d.ParentName + "\")' />";
       	} else if (d.Type == 'Sub Section') {
       		$.each(r.data()[0].ParametersData, function(i,v){
             if(v.ParametersGroup == d.ParentName && v.Parameters == d.Name && v.Use){
@@ -391,7 +396,7 @@ r.render = function () {
           })
 
       		info += " data-section='" + d.ParentName + "' data-sub-section='" + d.Name + "'"
-      		return "<input data-type='Sub Section checkbox' data-rating='" + e.Id + "' type='checkbox' " + info + " onchange='r.setVisibility(this, \"" + d.id + "\", \"" + d.Type + "\", \"" + d.Name + "\", \"" + d.ParentName + "\")' />";
+      		return "<input data-type='Sub Section checkbox' " + disabled + " data-rating='" + e.Id + "' type='checkbox' " + info + " onchange='r.setVisibility(this, \"" + d.id + "\", \"" + d.Type + "\", \"" + d.Name + "\", \"" + d.ParentName + "\")' />";
       	}
     		// if (d.Type == 'Section') {
 	    	// 	return [
@@ -425,7 +430,7 @@ r.render = function () {
 		headerAttributes: { class: 'k-header header-bgcolor' },
     	template: function (d) {
 			// need edit grant
-			if (!model.IsGranted('edit'))
+			if (!model.IsGranted('edit') && !r.newRatingMode())
 				return ""
 
     		if (d.Type == 'Section') {
@@ -846,7 +851,7 @@ r.renderMain = function (data) {
 			template: function (d) {
 				return [
 					'<button class="btn btn-xs btn-confirm" onclick="r.openRating(\'' + d.Id + '\')"><i class="fa fa-eye"></i> Open</button>',
-					model.IsGranted('delete') ? '<button class="btn btn-xs btn-reset" onclick="r.deleteRating(\'' + d.Id + '\')"><i class="fa fa-trash"></i> Delete</button>' : '',
+					model.IsGranted('delete') || r.newRatingMode() ? '<button class="btn btn-xs btn-reset" onclick="r.deleteRating(\'' + d.Id + '\')"><i class="fa fa-trash"></i> Delete</button>' : '',
 				].join('&nbsp;')
 			}
 		}]

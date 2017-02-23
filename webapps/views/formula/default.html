@@ -1,18 +1,5 @@
 
-<script type="text/javascript">
-model.PageTopMenu("{{.TopMenu}}");
-model.PageId('{{.Menuname}}');
-model.BreadCrumbs.push(new BreadCrumb("Data Masters", "Data Masters", "", "", ""));
-model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
-model.Access = ko.observable('{{.Menuid}}');
-model.View = ko.observable('{{.View}}');
-model.Create= ko.observable('{{.Create}}');
-model.Delete= ko.observable('{{.Delete}}');
-model.Process= ko.observable('{{.Process}}');
-model.Edit= ko.observable('{{.Edit}}');
-model.User= ko.observable('{{.Username}}');
-model.Fullname= ko.observable('{{.Fullname}}');
-</script>
+{{template "dataaccess.html" .}}
 
 <script src="/static/jquery.tokeninput/jquery.tokeninput.js"></script>
 <link rel="stylesheet" href="/static/jquery.tokeninput/token-input.css">
@@ -123,7 +110,7 @@ model.Fullname= ko.observable('{{.Fullname}}');
 		        	</div>
 				</div>
 				<div class="controls" style="text-align: right;">
-					<button class="btn btn-sm btn-primary" data-bind="click: formula.showModalFinancial">Add New</button>
+					<button class="btn btn-sm btn-primary" data-bind="click: formula.showModalFinancial, visible: model.IsGranted('create')">Add New</button>
 					<button class="btn btn-sm btn-primary" data-bind="click: formula.refresh">Refresh</button>
 					<button class="btn btn-sm btn-warning" onclick="formula.exportExcel('.grid', 'Formula')">Export to Excel</button>
 					<!-- <button id="onreset" data-bind="visible: (adf.formVisibility() == true )" class="btn btn-sm btn-primary separator" style="margin-right: inherit;" onclick="adf.getReset()">

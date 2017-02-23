@@ -1,17 +1,4 @@
-<script type="text/javascript">
-model.PageTopMenu("{{.TopMenu}}");
-model.PageId('{{.Menuname}}');
-model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "#", "", ""));
-model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
-model.Access = ko.observable('{{.Menuid}}');
-model.View = ko.observable('{{.View}}');
-model.Create= ko.observable('{{.Create}}');
-model.Delete= ko.observable('{{.Delete}}');
-model.Process= ko.observable('{{.Process}}');
-model.Edit= ko.observable('{{.Edit}}')
-model.User= ko.observable('{{.Username}}');
-model.Fullname= ko.observable('{{.Fullname}}');
-</script>
+{{template "dataaccess.html" .}}
 
 <script>document.write('<script src="/static/core/ratio-master.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
@@ -44,8 +31,8 @@ model.Fullname= ko.observable('{{.Fullname}}');
 		<div class="panel ez">
 			<div class="panel-body">
 				<div class="filter col-md-12 no-padding hardcore align-right">
-					<button class="btn btn-sm btn-add" data-bind="click: r.showFormAdd">Add New</button>
-					<button class="btn btn-sm btn-save" data-bind="click: r.save">Save Changes</button>
+					<button class="btn btn-sm btn-add" data-bind="click: r.showFormAdd, visible: model.IsGranted('create')">Add New</button>
+					<button class="btn btn-sm btn-save" data-bind="click: r.save, visible: model.IsGranted('edit')">Save Changes</button>
 					<button class="btn btn-sm btn-freeze" data-bind="click: r.refresh">Refresh</button>
 					<a class="btn btn-sm btn-confirm" target="_blank" href="/ratio/input">View Result</a>
 				</div>

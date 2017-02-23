@@ -21,6 +21,29 @@
 
 </style>
 <script>document.write('<script src="/static/core/rtr.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+<script>
+  $(function() {
+    if (!model.IsGranted('edit')) {
+      $('.grant-button.action-save').addClass('no-grant')
+    }
+
+    if (!model.IsGranted('confirm')) {
+      $('.grant-button.action-confirm').addClass('no-grant')
+    }
+    
+    if (!model.IsGranted('reenter')) {
+      $('.grant-button.action-reenter').addClass('no-grant')
+    }
+
+    if (!model.IsGranted('freeze')) {
+      $('.grant-button.action-freeze').addClass('no-grant')
+    }
+
+    if (!model.IsGranted('unfreeze')) {
+      $('.grant-button.action-unfreeze').addClass('no-grant')
+    }
+  })
+</script>
 
 {{template "filter.html"}}
 <div>
@@ -33,13 +56,15 @@
         <div class="panel-body" style="margin-top: -37px;">
             <div class="panel-body" id="buttonsection">
             <!-- <div class="panel-nav-button pull-left"> -->
-                <button class="btn btn-sm btn-save" onclick="onsave()">Save</button>
+                <button class="btn btn-sm btn-save grant-button action-save" onclick="onsave()">Save</button>
                 <!-- <button class="btn btn-sm btn-reset">Reset</button> -->
-                <button class="btn btn-sm btn-confirm" onclick="confirm()">Confirm</button>
-                <button class="btn btn-sm btn-reenter" onclick="onreenter()">Re-Enter</button>
-                <button class="btn btn-sm btn-freeze" onclick="onFreeze()">Freeze</button>
-                <button class="btn btn-sm btn-unfreeze" onclick="onUnfreeze()">Unfreeze</button>
-                <span class="form-last-confirmation-info pull-right"></span>
+                <button class="btn btn-sm btn-confirm grant-button action-confirm" onclick="confirm()" >Confirm</button>
+                <button class="btn btn-sm btn-reenter grant-button action-reenter" onclick="onreenter()" >Re-Enter</button>
+                <button class="btn btn-sm btn-freeze grant-button action-freeze" onclick="onFreeze()" >Freeze</button>
+                <button class="btn btn-sm btn-unfreeze grant-button action-unfreeze" onclick="onUnfreeze()" >Unfreeze</button>
+                <div class="clearfix">
+                  <span class="form-last-confirmation-info pull-right"></span>
+                </div>
               <!-- </div> -->
             </div>
         		{{template "topgrid.html"}}

@@ -1,16 +1,4 @@
-<script type="text/javascript">
-model.PageTopMenu("{{.TopMenu}}");
-model.PageId('{{.Menuname}}');
-model.BreadCrumbs.push(new BreadCrumb("Data Masters", "Data Masters", "#", "", ""));
-model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
-model.Access = ko.observable('{{.Menuid}}');
-model.View = ko.observable('{{.View}}');
-model.Create= ko.observable('{{.Create}}');
-model.Delete= ko.observable('{{.Delete}}');
-model.Process= ko.observable('{{.Process}}');
-model.Edit= ko.observable('{{.Edit}}')
-model.User= ko.observable('{{.Username}}');
-</script>
+{{template "dataaccess.html" .}}
 
 <script>document.write('<script src="/static/core/ratio-formula.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 

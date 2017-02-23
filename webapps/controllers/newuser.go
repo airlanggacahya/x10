@@ -5,10 +5,11 @@ import (
 	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	// "fmt"
+	"strconv"
+
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
-	"strconv"
 )
 
 type NewUserController struct {
@@ -16,12 +17,9 @@ type NewUserController struct {
 }
 
 func (c *NewUserController) Default(k *knot.WebContext) interface{} {
-	access := c.LoadBase(k)
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
-	DataAccess := NewPrevilege(access)
-	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
-	DataAccess.CustomerList = c.LoadCustomerList(k)
+	DataAccess := c.NewPrevilege(k)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{

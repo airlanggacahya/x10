@@ -4,11 +4,12 @@ import (
 	. "eaciit/x10/webapps/models"
 	//"encoding/json"
 	// "fmt"
+	"time"
+
 	db "github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	"time"
 )
 
 type MenuSettingController struct {
@@ -16,12 +17,9 @@ type MenuSettingController struct {
 }
 
 func (c *MenuSettingController) Default(k *knot.WebContext) interface{} {
-	access := c.LoadBase(k)
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
-	DataAccess := NewPrevilege(access)
-	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
-	DataAccess.CustomerList = c.LoadCustomerList(k)
+	DataAccess := c.NewPrevilege(k)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{

@@ -20,15 +20,20 @@ import (
 )
 
 func (c *DataCapturingController) CustomerProfileInfo(k *knot.WebContext) interface{} {
-	access := c.LoadBase(k)
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
-	DataAccess := NewPrevilege(access)
-	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
-	DataAccess.CustomerList = c.LoadCustomerList(k)
+	DataAccess := c.NewPrevilege(k)
 
 	k.Config.OutputType = knot.OutputTemplate
-	k.Config.IncludeFiles = []string{"shared/dataaccess.html", "shared/filter.html", "datacapturing/detailforapplicant.html", "datacapturing/financialinformation.html", "datacapturing/nonrefundableprocessingfeesdetails.html", "datacapturing/detailsofpromotersdirectorsguarantors.html", "shared/loading.html"}
+	k.Config.IncludeFiles = []string{
+		"shared/dataaccess.html",
+		"shared/filter.html",
+		"datacapturing/detailforapplicant.html",
+		"datacapturing/financialinformation.html",
+		"datacapturing/nonrefundableprocessingfeesdetails.html",
+		"datacapturing/detailsofpromotersdirectorsguarantors.html",
+		"shared/loading.html",
+	}
 
 	return DataAccess
 }

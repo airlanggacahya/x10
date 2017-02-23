@@ -5,6 +5,7 @@ import (
 	// . "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"errors"
+
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -19,12 +20,10 @@ type CreditScoreCardController struct {
 }
 
 func (c *CreditScoreCardController) Default(k *knot.WebContext) interface{} {
-	access := c.LoadBase(k)
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
-	DataAccess := NewPrevilege(access)
-	DataAccess.CustomerList = c.LoadCustomerList(k)
-	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+	DataAccess := c.NewPrevilege(k)
+
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{
 		"shared/dataaccess.html",
@@ -37,12 +36,10 @@ func (c *CreditScoreCardController) Default(k *knot.WebContext) interface{} {
 }
 
 func (c *CreditScoreCardController) New(k *knot.WebContext) interface{} {
-	access := c.LoadBase(k)
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
-	DataAccess := NewPrevilege(access)
-	DataAccess.CustomerList = c.LoadCustomerList(k)
-	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+	DataAccess := c.NewPrevilege(k)
+
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{
 		"shared/dataaccess.html",

@@ -449,7 +449,15 @@ function getData(callback){
         col.push({ title : "Yearly Repayment (Rs Lacs)", headerAttributes: { "class": "header-bgcolor wrap" }, field : "YearlyRepayment", width: 160, template : "<label style=\"width:100%; text-align: right;\">#:app.formatnum(YearlyRepayment,2)#</label>", attributes: { style: 'background: rgb(238, 238, 238)' }})
 
 
-        col.push({ headerAttributes: { "class": "header-bgcolor wrap" }, template : "<button type='button' btn-sm='' class='btn btn-sm btn-danger del tooltipster' title='Delete' onclick='DeleteData(\"#: Id #\");'> <span class='glyphicon glyphicon-trash'></span>&nbsp; </button>", width: 50 })
+        col.push({
+            headerAttributes: { "class": "header-bgcolor wrap" },
+            template : function() {
+                if (!model.AnyGranted('edit', 'confirm'))
+                    return ""
+                return "<button type='button' btn-sm='' class='btn btn-sm btn-danger del tooltipster' title='Delete' onclick='DeleteData(\"#: Id #\");'> <span class='glyphicon glyphicon-trash'></span>&nbsp; </button>"
+            },
+            width: 50
+        })
 
         NewestData(datagrid);
 
@@ -635,26 +643,26 @@ function CreateBottomGrid(cust, deal, data, col){
                                     fields: {
                                         Id: { editable: false, nullable: true },
                                         SNo: { editable: false, nullable: true },
-                                        Bank: { validation: {  } },
-                                        TypeOfLoan: { validation: {  } },
-                                        BSLStatus: { validation: {  } },
-                                        LoanStatus: { validation: {  } },
-                                        Amount: { type: "number"},
-                                        POS: {editable: false, type: "number"},
-                                        EMI: { type: "number", validation: {  min: 1} },
-                                        LoanTenor: { type: "number", validation: {  min: 1} },
-                                        LoanStart: { defaultValue: null ,type: "date", validation: { } },
-                                        LoanEnd: { defaultValue: null,type: "date", validation: { } },
+                                        Bank: { editable: model.AnyGranted('edit', 'confirm'), validation: {  } },
+                                        TypeOfLoan: { editable: model.AnyGranted('edit', 'confirm'), validation: {  } },
+                                        BSLStatus: { editable: model.AnyGranted('edit', 'confirm'), validation: {  } },
+                                        LoanStatus: { editable: model.AnyGranted('edit', 'confirm'), validation: {  } },
+                                        Amount: { editable: model.AnyGranted('edit', 'confirm'), type: "number"},
+                                        POS: { editable: false, type: "number"},
+                                        EMI: { editable: model.AnyGranted('edit', 'confirm'), type: "number", validation: {  min: 1} },
+                                        LoanTenor: { editable: model.AnyGranted('edit', 'confirm'), type: "number", validation: {  min: 1} },
+                                        LoanStart: { editable: model.AnyGranted('edit', 'confirm'), defaultValue: null ,type: "date", validation: { } },
+                                        LoanEnd: { editable: model.AnyGranted('edit', 'confirm'), defaultValue: null,type: "date", validation: { } },
                                         EMIDue: { editable: false, type: "number", validation: { } },
                                         EMIBalance: { editable: false, type: "number", validation: {  min: 0} },
                                         Bounces: { editable: false, type: "number" },
                                         YearlyRepayment: { editable: false, type: "number" },
-                                        Month0: {},
-                                        Month1: {},
-                                        Month2: {},
-                                        Month3: {},
-                                        Month4: {},
-                                        Month5: {},
+                                        Month0: { editable: model.AnyGranted('edit', 'confirm') },
+                                        Month1: { editable: model.AnyGranted('edit', 'confirm') },
+                                        Month2: { editable: model.AnyGranted('edit', 'confirm') },
+                                        Month3: { editable: model.AnyGranted('edit', 'confirm') },
+                                        Month4: { editable: model.AnyGranted('edit', 'confirm') },
+                                        Month5: { editable: model.AnyGranted('edit', 'confirm') },
                                         DpdMaxTrack : { editable: false },
                                         //Bounces: { validation: {  } },
                                     }
@@ -751,13 +759,15 @@ function CreateBottomGrid(cust, deal, data, col){
         $('.btn-danger').show()
     }
 
-    $(".k-grid-cancel-changes").attr("class","btn btn-sm btn-danger k-grid-cancel-changes mgright pull-left");
+    var grant = model.AnyGranted('edit', 'confirm') ? "" : "no-grant"
+
+    $(".k-grid-cancel-changes").attr("class","btn btn-sm btn-danger k-grid-cancel-changes mgright pull-left " + grant);
     $(".k-grid-cancel-changes").text("Cancel");
 
     // $(".k-grid-save-changes").attr("class","btn btn-sm .btn-save k-grid-save-changes mgright pull-left");
     // $(".k-grid-save-changes").text("Save");
 
-    $(".k-grid-add").attr("class","btn btn-sm btn-add k-grid-add mgright pull-left");
+    $(".k-grid-add").attr("class","btn btn-sm btn-add k-grid-add mgright pull-left " + grant);
     $(".k-grid-add").text("Add");
 
 }
@@ -766,7 +776,7 @@ condSave = function(){
     $(".btn-reenter").hide();
     $(".btn-confirm").show();
     $(".btn-unfreeze").hide();
-    $(".btn-freeze").show();
+    $(".btn-freeze").hide();
     $(".btn-save").show()
     $(".k-grid-add").show()
     $(".k-grid-cancel-changes").show()

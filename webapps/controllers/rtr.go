@@ -27,7 +27,13 @@ func (c *RtrController) Default(k *knot.WebContext) interface{} {
 	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.OutputType = knot.OutputTemplate
-	k.Config.IncludeFiles = []string{"shared/dataaccess.html", "shared/filter.html", "rtr/topgrid.html", "rtr/bottomgrid.html", "shared/loading.html"}
+	k.Config.IncludeFiles = []string{
+		"shared/dataaccess.html",
+		"shared/filter.html",
+		"rtr/topgrid.html",
+		"rtr/bottomgrid.html",
+		"shared/loading.html",
+	}
 
 	return DataAccess
 }

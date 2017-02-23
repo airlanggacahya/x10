@@ -340,10 +340,10 @@ formula.render = function () {
 			}
 
 			return [
-				'<button class="btn btn-xs btn-primary tooltipster" title="Move up" data-direction="up" onclick="formula.moveTo(this, \'' + d.alias + '\')"><i class="fa fa-arrow-up"></i></button>',
-				'<button class="btn btn-xs btn-success tooltipster" title="Move down" data-direction="down" onclick="formula.moveTo(this, \'' + d.alias + '\')"><i class="fa fa-arrow-down"></i></button>',
-				'<button class="btn btn-xs btn-primary tooltipster" title="Edit formula" onclick="formula.editFinancial(\'' + d.alias + '\')"><i class="fa fa-edit"></i></button>',
-				'<button class="btn btn-xs btn-danger tooltipster" title="Delete formula" onclick="formula.deleteFinancial(\'' + d.alias + '\')"><i class="fa fa-trash"></i></button>',
+				model.IsGranted('edit') ? '<button class="btn btn-xs btn-primary tooltipster" title="Move up" data-direction="up" onclick="formula.moveTo(this, \'' + d.alias + '\')"><i class="fa fa-arrow-up"></i></button>' : '',
+				model.IsGranted('edit') ? '<button class="btn btn-xs btn-success tooltipster" title="Move down" data-direction="down" onclick="formula.moveTo(this, \'' + d.alias + '\')"><i class="fa fa-arrow-down"></i></button>' : '',
+				model.IsGranted('edit') ? '<button class="btn btn-xs btn-primary tooltipster" title="Edit formula" onclick="formula.editFinancial(\'' + d.alias + '\')"><i class="fa fa-edit"></i></button>' : '',
+				model.IsGranted('delete') ? '<button class="btn btn-xs btn-danger tooltipster" title="Delete formula" onclick="formula.deleteFinancial(\'' + d.alias + '\')"><i class="fa fa-trash"></i></button>' : '',
 			].join(' ')
 		}, width: 170 }
 	]

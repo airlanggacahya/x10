@@ -143,7 +143,40 @@
       if(typeof callback == "function"){
         callback()
       }
+      SADAccess();
     }
+
+var SADAccess = function(){
+  if(!model.IsGranted("confirm")){
+    $("button:contains('Confirm')").addClass("no-grant");
+  }else{
+    $("button:contains('Confirm')").removeClass("no-grant");
+  }
+
+   if(!model.IsGranted("edit")){
+    $("button:contains('Save')").addClass("no-grant");
+  }else{
+    $("button:contains('Save')").removeClass("no-grant");
+  }
+
+   if(!model.IsGranted("reenter")){
+    $("button:contains('Re-Enter')").addClass("no-grant");
+  }else{
+    $("button:contains('Re-Enter')").removeClass("no-grant");
+  }
+
+   if(!model.IsGranted("freeze")){
+    $("button:contains('Freeze')").addClass("no-grant");
+  }else{
+    $("button:contains('Freeze')").removeClass("no-grant");
+  }
+
+  if(!model.IsGranted("unfreeze")){
+    $("button:contains('Unfreeze')").addClass("no-grant");
+  }else{
+    $("button:contains('Unfreeze')").removeClass("no-grant");
+  }
+}
 
     var checkConfirm = function(){
       stockanddebtCloning.ConfirmText("Confirm")
@@ -610,6 +643,8 @@
       accordion : true
     });
   });
+
+  SADAccess();
 </script>
 
 <style type="text/css">

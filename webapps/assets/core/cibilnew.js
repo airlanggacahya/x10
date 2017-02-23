@@ -333,24 +333,35 @@ r.getData = function() {
 
 r.CibilAccess = function(){
   if(!model.IsGranted("confirm")){
-    $("button:contains('Confirm')").remove();
-    $("button:contains('Update')").remove();
+    $("button:contains('Confirm')").addClass("no-grant");
+    $("button:contains('Update')").addClass("no-grant");
+  }else{
+    $("button:contains('Confirm')").removeClass("no-grant");
+    $("button:contains('Update')").removeClass("no-grant");
   }
 
    if(!model.IsGranted("edit")){
-    $("button:contains('Edit')").remove();
+    $("button:contains('Edit')").addClass("no-grant");
+  }else{
+    $("button:contains('Edit')").removeClass("no-grant");
   }
 
    if(!model.IsGranted("reenter")){
-    $("button:contains('Re-Enter')").remove();
+    $("button:contains('Re-Enter')").addClass("no-grant");
+  }else{
+    $("button:contains('Re-Enter')").removeClass("no-grant");
   }
 
    if(!model.IsGranted("freeze")){
-    $("button:contains('Freeze')").remove();
+    $("button:contains('Freeze')").addClass("no-grant");
+  }else{
+    $("button:contains('Freeze')").removeClass("no-grant");
   }
 
   if(!model.IsGranted("unfreeze")){
-    $("button:contains('Unfreeze')").remove();
+    $("button:contains('Unfreeze')").addClass("no-grant");
+  }else{
+    $("button:contains('Unfreeze')").removeClass("no-grant");
   }
 }
 

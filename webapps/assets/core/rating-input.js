@@ -286,6 +286,11 @@ r.render = function () {
 		columnSection.headerAttributes = { style: 'vertical-align: middle; text-align: center;', class: 'k-header header-bgcolor' }
 		columnSection.attributes = { style: 'position: relative' }
 		columnSection.template = function (d) {
+			var disabled = ""
+			// need edit grant
+			if (!model.IsGranted('edit'))
+				disabled = "disabled"
+
 			if (d.Type !== 'Section') {
 				return ''
 			}
@@ -293,7 +298,7 @@ r.render = function () {
 			var value = d.columnData[i].WeightageOfGroupInCreditScore
 			return [
 				'<div class="onright">',
-				'<input onclick="r.delzero(this);" onblur="r.checkzero(this);" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
+				'<input onclick="r.delzero(this);" ' + disabled + ' onblur="r.checkzero(this);" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
 				'<span>%</span>',
 				'</div>'
 			].join('')
@@ -305,6 +310,11 @@ r.render = function () {
 		// columnSubSection.width = 100
 		columnSubSection.attributes = { style: 'position: relative' }
 		columnSubSection.template = function (d) {
+			var disabled = ""
+			// need edit grant
+			if (!model.IsGranted('edit'))
+				disabled = "disabled"
+
 			if (d.Type !== 'Sub Section') {
 				return ''
 			}
@@ -312,7 +322,7 @@ r.render = function () {
 			var value = d.columnData[i].WeightageWithinGroup
 			return [
 				'<div class="onright">',
-				'<input onclick="r.delzero(this);" onblur="r.checkzero(this);" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.ParentName + '" data-sub-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
+				'<input onclick="r.delzero(this);" ' + disabled + ' onblur="r.checkzero(this);" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-section="' + d.ParentName + '" data-sub-section="' + d.Name + '" value="' + value + '" style="border: none; background-color: transparent; width: 86%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right" />',
 				'<span>%</span>',
 				'</div>'
 			].join('')
@@ -325,12 +335,17 @@ r.render = function () {
 		columnField.attributes = { style: 'position: relative' }
 		
 		columnField.template = function (d) {
+			var disabled = ""
+			// need edit grant
+			if (!model.IsGranted('edit'))
+				disabled = "disabled"
+
 			if (d.Type !== 'Field') {
 				return ''
 			}
 
 			var value = d.columnData[i].Score
-			return '<input onclick="r.delzero(this);" onblur="r.checkzero(this);" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-field-id="' + d.id + '" data-field="' + d.Name + '" data-sub-section="' + d.SubSection + '" data-section="' + d.Section + '" value="' + value + '" style="border: none; background-color: transparent; width: 60%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right onright" />'
+			return '<input onclick="r.delzero(this);" ' + disabled + ' onblur="r.checkzero(this);" data-type="' + d.Type + '" data-rating="' + e.Id + '" data-field-id="' + d.id + '" data-field="' + d.Name + '" data-sub-section="' + d.SubSection + '" data-section="' + d.Section + '" value="' + value + '" style="border: none; background-color: transparent; width: 60%; text-align: right; font-weight: normal; padding: 1px 4px;" class="align-right onright" />'
 		}
 
 		columns.push(columnField)
@@ -409,6 +424,10 @@ r.render = function () {
     columns.push({
 		headerAttributes: { class: 'k-header header-bgcolor' },
     	template: function (d) {
+			// need edit grant
+			if (!model.IsGranted('edit'))
+				return ""
+
     		if (d.Type == 'Section') {
 	    		return [
 	        		"<button class='btn btn-xs btn-primary tooltipster' title='Move up' data-direction='up' onclick=\"r.moveSectionTo(this, '" + d.Name + "')\"><i class='fa fa-arrow-up'></i></button>",
@@ -827,7 +846,7 @@ r.renderMain = function (data) {
 			template: function (d) {
 				return [
 					'<button class="btn btn-xs btn-confirm" onclick="r.openRating(\'' + d.Id + '\')"><i class="fa fa-eye"></i> Open</button>',
-					'<button class="btn btn-xs btn-reset" onclick="r.deleteRating(\'' + d.Id + '\')"><i class="fa fa-trash"></i> Delete</button>',
+					model.IsGranted('delete') ? '<button class="btn btn-xs btn-reset" onclick="r.deleteRating(\'' + d.Id + '\')"><i class="fa fa-trash"></i> Delete</button>' : '',
 				].join('&nbsp;')
 			}
 		}]

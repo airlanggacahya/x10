@@ -381,10 +381,34 @@ function refreshdata(accountdetailsMaster){
     }else{
       blanked();
     }
-
+    CustomerProfileAccess();
   }, undefined);
 }
 
+
+var CustomerProfileAccess = function(){
+  if(!model.IsGranted("confirm")){
+    $("#cf").remove();
+  }
+
+   if(!model.IsGranted("edit")){
+    $("#edit").remove();
+    $("#save").remove();
+  }
+
+   if(!model.IsGranted("reenter")){
+    $("#re").remove();
+  }
+
+
+   if(!model.IsGranted("freeze")){
+    $("#vf").remove();
+  }
+
+  if(!model.IsGranted("unfreeze")){
+    $("#uvf").remove();
+  }
+}
 // function detailPayment(e){
 //   var param = {CustomerId: filter().CustomerSearchVal(), Dealno: filter().DealNumberSearchVal()}
 //   ajaxPost("/datacapturing/getcustomerprofiledetail", param, function(res) {

@@ -1,17 +1,4 @@
-<script type="text/javascript">
-model.PageTopMenu("{{.TopMenu}}");
-model.PageId('{{.Menuname}}');
-model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "#", "", ""));
-model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
-model.Access = ko.observable('{{.Menuid}}');
-model.View = ko.observable('{{.View}}');
-model.Create= ko.observable('{{.Create}}');
-model.Delete= ko.observable('{{.Delete}}');
-model.Process= ko.observable('{{.Process}}');
-model.Edit= ko.observable('{{.Edit}}')
-model.User= ko.observable('{{.Username}}');
-model.Fullname= ko.observable('{{.Fullname}}');
-</script>
+{{template "dataaccess.html" .}}
 
 <style type="text/css">
    .spacer {
@@ -172,10 +159,10 @@ model.Fullname= ko.observable('{{.Fullname}}');
             <div class="panel">
             <div class="col-md-12">
               <div class="col-sm-12">
-                 <button class="btn btn-sm btn-success" style="margin-bottom: 10px;" data-bind="click: exportPDF,visible:ratioPdf.KI()[0].row().length>0">
+                 <button class="btn btn-sm btn-success" style="margin-bottom: 10px;" data-bind="click: exportPDF,visible:ratioPdf.KI()[0].row().length>0, visible: model.IsGranted('download')">
                  <i class="fa fa-file-pdf-o"></i>&nbsp; Export PDF
                 </button>
-                <button class="btn btn-sm btn-primary" style="margin-bottom: 10px;" data-bind="click: exportPDF,visible:ratioPdf.KI()[0].row().length>0">
+                <button class="btn btn-sm btn-primary" style="margin-bottom: 10px;" data-bind="click: exportPDF,visible:ratioPdf.KI()[0].row().length>0, visible: model.IsGranted('email')">
                  <i class="fa fa-envelope"></i>&nbsp; Email PDF
                 </button>
               </div>

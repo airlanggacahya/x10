@@ -180,6 +180,7 @@ function refreshdata(accountdetailsMaster){
       // $(".grid2").getKendoGrid().dataSource.data(data[0].FinancialReport.DetailsPertainingBanker)
       // $(".grid2").getKendoGrid().refresh()
       // $(".grid3").getKendoGrid().dataSource.data(data[0].FinancialReport.ExistingRelationship)
+      dataHierarchi(data[0].FinancialReport.ExistingRelationship)
       var ds1 = new kendo.data.DataSource({
         data:data[0].FinancialReport.PreviousLoansDetail,
         pageSize:10
@@ -219,6 +220,8 @@ function refreshdata(accountdetailsMaster){
       if( h2 > 100){
           $('.grid2 .k-grid-content').height(100);
       }
+
+      // loadGrid3()
 
       $(".grid3").getKendoGrid().setDataSource(ds)
       //$(".grid3").getKendoGrid().refresh()
@@ -370,14 +373,149 @@ function refreshdata(accountdetailsMaster){
                   scrollTop: topi - 400
                 })
       }
+
+
       // buttonlogicstatus(customerprofile().Status());
     }else if(filter().CustomerSearchVal() != "" && filter().DealNumberSearchVal() != "" ){
        swal("warning","Data not available", "warning");
     }else{
       blanked();
     }
+
   }, undefined);
 }
+
+// function detailPayment(e){
+//   var param = {CustomerId: filter().CustomerSearchVal(), Dealno: filter().DealNumberSearchVal()}
+//   ajaxPost("/datacapturing/getcustomerprofiledetail", param, function(res) {
+//     console.log("----------------------->>> mmm", dataHierarchi())
+//     var data = []
+//     // $.each(res[0].FinancialReport.ExistingRelationship, function(i, set){
+//     //   console.log("----------------------->>>>222", set.Payment[0])
+//     //   $.each(set.Payment, function(i, dt){
+//     //     data.push(dt)
+//     //   })
+      
+//     // })
+
+  
+
+//     // $("<div/>").appendTo(e.detailCell).kendoGrid({
+//     //     dataSource: {
+//     //       data: data,
+//     //       // pageSize: 10,
+//     //       filter: { field: "instrumentAmount", operator: "eq", value: e.data.LoanAmount }
+//     //     },
+//     //     // pageable: true,
+//     //     columns:[
+//     //       {
+//     //         field: "payeeName",
+//     //         title: "payeeName",
+//     //         headerAttributes: {
+//     //                   "class": "sub-bgcolor"
+//     //               },
+//     //       },
+//     //       {
+//     //         field: "instrumentNo",
+//     //         title: "instrumentNo",
+//     //         headerAttributes: {
+//     //                   "class": "sub-bgcolor"
+//     //               },
+//     //       },
+//     //       {
+//     //         field: "instrumentDate",
+//     //         title: "instrument Date",
+//     //         headerAttributes: {
+//     //                   "class": "sub-bgcolor"
+//     //               },
+//     //       },
+//     //       {
+//     //         field: "instrumentAmount",
+//     //         title: "instrument Amount",
+//     //         headerAttributes: {
+//     //                   "class": "sub-bgcolor"
+//     //               },
+//     //       }
+//     //     ]
+//     //   });
+//   }) 
+// }
+
+// function loadGrid3 = function(){
+//   $(".grid3").kendoGrid({
+//       //dataSource: dataSource,
+//       // dataSource: {
+//       //     data : [],
+//       //     pageSize:10
+//       // },
+//       // pageable: true,
+//       // height: 350,
+//       toolbar: ["create"],
+//       scrolable : true,
+//       detailInit: detailPayment(),
+//       dataBound: function() {
+//         this.expandRow(this.tbody.find("tr.k-master-row").first());
+//       },
+//       columns: [
+//           {
+//              field: "LoanNo",
+//              headerAttributes: {
+//                  "class": "sub-bgcolor"
+//              },
+//              title: "Loan No.",
+//              format: "{0:c}",
+//              width: "120px"
+//          },
+//          {
+//              field: "TypeOfLoan",
+//              headerAttributes: {
+//                  "class": "sub-bgcolor"
+//              },
+//              title: "Type of Loan",
+//              width: "120px"
+//          },
+//          {
+//              field: "LoanAmount",
+//              headerAttributes: {
+//                  "class": "sub-bgcolor"
+//              },
+//              title: "Loan Amount (Rs.)",
+//              format: "{0:n0}",
+//              width: "120px",
+//              "attributes": {
+//                  class: "align-right",
+//                  style: "text-align: right;"
+//              },
+//              template:function(dt){
+//               if(dt.LoanAmount == null){
+//                 return "";
+//               }
+//               return app.formatnum(dt.LoanAmount)
+//             },
+//          },
+//          {
+//              field: "Payment",
+//              headerAttributes: {
+//                  "class": "sub-bgcolor"
+//              },
+//              title: "Payment (Rs.)",
+//              format: "{0:n0}",
+//              width: "120px",
+//              "attributes": {
+//                  class: "align-right",
+//                  style: "text-align: right;"
+//              },
+//              template:function(dt){
+//               if(dt.Payment == null){
+//                 return "";
+//               }
+//               return app.formatnum(dt.Payment)
+//             },
+//          },
+//      ],
+//           editable: "inline",
+//   });
+// }
 
 function CapitalExpansionPlansBool(stat){
   customerprofile().ApplicantDetail().CapitalExpansionPlansBool = stat

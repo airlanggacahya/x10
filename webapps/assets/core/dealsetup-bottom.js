@@ -260,11 +260,72 @@ setup.getBack = function(){
 	setup.loadExGrid()
 }
 
+setup.detailPayment = function(e){
+	console.log("----------------------->>>>", e)
+	data = []
+	$.each(setup.financialreport(), function(i, set){
+		$.each(set.Payment, function(i, dt){
+			dt["LoanNo"] = set.LoanNo; 
+			data.push(dt)
+		})
+		
+	})
+
+	
+
+	$("<div/>").appendTo(e.detailCell).kendoGrid({
+			dataSource: {
+				data: data,
+				// pageSize: 10,
+				filter: { field: "LoanNo", operator: "eq", value: e.data.LoanNo }
+			},
+			// pageable: true,
+			columns:[
+				{
+					field: "payeeName",
+					title: "Payee Name",
+					headerAttributes: {
+		                "class": "sub-bgcolor"
+		            },
+				},
+				{
+					field: "instrumentNo",
+					title: "Payment No",
+					headerAttributes: {
+		                "class": "sub-bgcolor"
+		            },
+				},
+				{
+					field: "instrumentDate",
+					title: "Payment Date",
+					headerAttributes: {
+		                "class": "sub-bgcolor"
+		            },
+				},
+				{
+					field: "instrumentAmount",
+					title: "Payment Amount (Rs.)",
+					headerAttributes: {
+		                "class": "sub-bgcolor"
+		            },
+		            template: function(d){
+                        return app.formatnum(d.instrumentAmount)
+                    }
+				}
+			]
+		});
+	
+}
+
 setup.loadExGrid = function(){
 	$("#grid-ex").html("");
 	$("#grid-ex").kendoGrid({
 		dataSource: setup.financialreport(),
         scrolable : true,
+        detailInit: setup.detailPayment,
+        // dataBound: function() {
+        //     this.expandRow(this.tbody.find("tr.k-master-row").first());
+        // },
         columns: [{
              field: "LoanNo",
              headerAttributes: {
@@ -301,25 +362,25 @@ setup.loadExGrid = function(){
               return app.formatnum(dt.LoanAmount)
             },
          },
-         {
-             field: "Payment",
-             headerAttributes: {
-                 "class": "sub-bgcolor"
-             },
-             title: "Payment (Rs.)",
-             format: "{0:n0}",
-             width: "120px",
-             "attributes": {
-                 class: "align-right",
-                 style: "text-align: right;"
-             },
-             template:function(dt){
-              if(dt.Payment == null){
-                return "";
-              }
-              return app.formatnum(dt.Payment)
-            },
-         },
+         // {
+         //     field: "Payment",
+         //     headerAttributes: {
+         //         "class": "header-bgcolor"
+         //     },
+         //     title: "Payment (Rs.)",
+         //     format: "{0:n0}",
+         //     width: "120px",
+         //     "attributes": {
+         //         class: "align-right",
+         //         style: "text-align: right;"
+         //     },
+         //     template:function(dt){
+         //      if(dt.Payment == null){
+         //        return "";
+         //      }
+         //      return app.formatnum(dt.Payment)
+         //    },
+         // },
      ],
         editable: "inline",
     });

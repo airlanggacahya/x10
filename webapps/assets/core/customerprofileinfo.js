@@ -28,6 +28,7 @@ var info = {
 //     });
 // });
 
+dataHierarchi = ko.observableArray([])
 positionList = ko.observableArray([])
 designationList = ko.observableArray([])
 selectedPosition = ko.observableArray(["DirectorPromoter"])
@@ -420,6 +421,63 @@ info.MonthlyInstallment = function(container, options){
         .kendoNumericTextBox({
             spinners : false
         });
+}
+
+info.detailPayment = function(e){
+    console.log("----------------------->>>>", e)
+    data = []
+    $.each(dataHierarchi(), function(i, set){
+        $.each(set.Payment, function(i, dt){
+            dt["LoanNo"] = set.LoanNo
+            data.push(dt)
+        })
+        
+    })
+
+    
+
+    $("<div/>").appendTo(e.detailCell).kendoGrid({
+            dataSource: {
+                data: data,
+                // pageSize: 10,
+                filter: { field: "LoanNo", operator: "eq", value: e.data.LoanNo }
+            },
+            // pageable: true,
+            columns:[
+                {
+                    field: "payeeName",
+                    title: "Payee Name",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                },
+                {
+                    field: "instrumentNo",
+                    title: "Payment No",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                },
+                {
+                    field: "instrumentDate",
+                    title: "Payment Date",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                },
+                {
+                    field: "instrumentAmount",
+                    title: "Payment Amount (Rs.)",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    template: function(d){
+                        return app.formatnum(d.instrumentAmount)
+                    }
+                }
+            ]
+        });
+    
 }
 
 

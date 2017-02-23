@@ -23,6 +23,7 @@ func (c *RatioController) Input(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputTemplate
 	DataAccess := NewPrevilege(access)
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{
@@ -40,6 +41,7 @@ func (c *RatioController) Pdf(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputTemplate
 	DataAccess := NewPrevilege(access)
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{
@@ -56,6 +58,7 @@ func (c *RatioController) Master(k *knot.WebContext) interface{} {
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
 	DataAccess := NewPrevilege(access)
+	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{
@@ -73,6 +76,7 @@ func (c *RatioController) Formula(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputTemplate
 	DataAccess := NewPrevilege(access)
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{
@@ -90,6 +94,7 @@ func (c *RatioController) Report(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputTemplate
 	DataAccess := NewPrevilege(access)
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{

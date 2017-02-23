@@ -167,6 +167,13 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 		}
 	}
 
+	//Get Customer
+	k.SetSession("CustomerProfileData", nil)
+	resroles := k.Session("roles").([]SysRolesModel)
+	for _, valx := range resroles {
+		new(LoginController).GetListUsersByRole(k, valx, k.Session("username").(string))
+	}
+
 	return res
 }
 

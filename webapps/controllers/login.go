@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	. "eaciit/x10/webapps/connection"
 	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"github.com/eaciit/cast"
@@ -183,7 +184,15 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 
 	ret := []tk.M{}
 
-	cur, err := d.Ctx.Connection.
+	cn, err := GetConnection()
+	defer cn.Close()
+
+	if err != nil {
+		tk.Println(err.Error())
+		return err
+	}
+
+	cur, err := cn.
 		NewQuery().
 		Select("_id").
 		Where(db.And(dbFilter...)).
@@ -219,7 +228,7 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 		caFilter = append(caFilter, db.Nin("_id", customeridx...))
 	}
 
-	cur, err = d.Ctx.Connection.
+	cur, err = cn.
 		NewQuery().
 		Select("_id", "applicantdetail.DealNo", "applicantdetail.CustomerID", "applicantdetail.CustomerName").
 		Where(db.And(caFilter...)).

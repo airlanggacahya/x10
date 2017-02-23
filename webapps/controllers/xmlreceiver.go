@@ -177,7 +177,7 @@ func checkMasterData(data DealSetupModel) error {
 			continue
 		}
 
-		return ErrorMasterNotFound
+		return errors.New(ErrorMasterNotFound.Error() + " ( " + key + " - " + val + " )")
 	}
 	return nil
 }

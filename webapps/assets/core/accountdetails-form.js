@@ -2352,26 +2352,39 @@ adf.getData = function () {
 
 var ADAccess = function(){
   if(!model.IsGranted("confirm")){
-    $(".btn-confirm").remove();
+    $("button:contains('Confirm')").addClass("no-grant");
+  }else{
+    $("button:contains('Confirm')").removeClass("no-grant");
   }
 
    if(!model.IsGranted("edit")){
-    $(".btn-save").remove();
+    $("button:contains('Save')").addClass("no-grant");
+  }else{
+    $("button:contains('Save')").removeClass("no-grant");
   }
 
    if(!model.IsGranted("reenter")){
-    $(".btn-reenter").remove();
+    $("button:contains('Re-Enter')").addClass("no-grant");
+  }else{
+    $("button:contains('Re-Enter')").removeClass("no-grant");
   }
 
-
    if(!model.IsGranted("freeze")){
-    $(".btn-freeze").remove();
+    $("button:contains('Freeze')").addClass("no-grant");
+  }else{
+    $("button:contains('Freeze')").removeClass("no-grant");
   }
 
   if(!model.IsGranted("unfreeze")){
-    $(".btn-unfreeze").remove();
+    $("button:contains('Unfreeze')").addClass("no-grant");
+  }else{
+    $("button:contains('Unfreeze')").removeClass("no-grant");
   }
 }
+
+$(document).ready(function(){
+	ADAccess();
+})
 
 formatingDate = function(date) {
 	if(date == "" || date.indexOf("1970-01-01") > -1  || date === undefined) {

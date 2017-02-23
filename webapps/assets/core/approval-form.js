@@ -334,9 +334,54 @@ checkConfirmed = function(){
     })
 }
 
+grant = function(){
+  if(model.IsGranted('ca_send_dc') == true){
+    $("#send").show()
+  }else{
+    $("#send").hide()
+  }
+
+  if(model.IsGranted('dc_approve') == true){
+    $("#approve").show()
+  }else{
+    $("#approve").hide()
+  }
+
+  if(model.IsGranted('dc_reject') == true){
+    $("#reject").show()
+  }else{
+    $("#reject").hide()
+  }
+
+  if(model.IsGranted('dc_cancel') == true){
+    $("#cancel").show()
+  }else{
+    $("#cancel").hide()
+  }
+
+  if(model.IsGranted('dc_hold') == true){
+    $("#hold").show()
+  }else{
+    $("#hold").hide()
+  }
+
+  if(model.IsGranted('dc_send_back') == true){
+    $("#send_back").show()
+  }else{
+    $("#send_back").hide()
+  }
+
+  if(model.IsGranted('ca_save') == true){
+    $("#save").show()
+  }else{
+    $("#save").hide()
+  }
+}
+
 refreshFilter = function(){
   countUnconfirm(0)
   $(".toaster").html("")
+  grant();
   checkConfirmed()
   r.initEvents()
   if (r.getCustomerId() === false) {

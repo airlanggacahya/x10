@@ -83,7 +83,12 @@ var gridbrowser = {
             headerAttributes: { "class": "k-header header-bgcolor" },
             title : "Action",
             template : function(o) {
-                return "<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"', '"+o.Id+"')\">Edit</button>"
+            	if(model.IsGranted("edit") == true){
+            		return "<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"', '"+o.Id+"')\">Edit</button>";
+            	}
+
+            	return "";
+                
             }
         }
     ]

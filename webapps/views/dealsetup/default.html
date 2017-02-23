@@ -8,7 +8,7 @@
 	}
 </style>
 
-<div class="col-md-12 col-sm-12 ez panel-content" data-bind="with: setup ">
+<div class="col-md-12 col-sm-12 ez panel-content" data-bind="with: setup,visible:model.IsGranted('view')" >
 	<div class="panel">
 		<div class="panel-body">
 			<div class="col-md-12" data-bind="visible: !(setup.detailIsShow())">

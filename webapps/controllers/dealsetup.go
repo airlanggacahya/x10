@@ -1103,6 +1103,16 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 		keys = append(keys, dbox.Eq("customerprofile._id", p.Id))
 	}
 
+	//Restrict Base On Role
+	if k.Session("CustomerProfileData") != nil {
+		list := k.Session("CustomerProfileData").([]tk.M)
+		keyx := []*dbox.Filter{}
+		for _, valx := range list {
+			keyx = append(keyx, dbox.Eq("customerprofile._id", valx.GetString("_id")))
+		}
+		keys = append(keys, dbox.Or(keyx...))
+	}
+
 	query1 := cn.NewQuery().
 		From("DealSetup").
 		Skip(p.Skip).

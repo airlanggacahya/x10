@@ -25,6 +25,7 @@ func (c *ApprovalController) Default(k *knot.WebContext) interface{} {
 	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.IncludeFiles = []string{
+		"shared/dataaccess.html",
 		"shared/filter.html",
 		"shared/loading.html",
 		"approval/accountdetails.html",

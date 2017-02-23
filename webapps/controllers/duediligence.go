@@ -50,7 +50,11 @@ func (c *DueDiligenceController) Master(k *knot.WebContext) interface{} {
 	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.OutputType = knot.OutputTemplate
-	k.Config.IncludeFiles = []string{"shared/dataaccess.html", "shared/filter.html", "shared/loading.html"}
+	k.Config.IncludeFiles = []string{
+		"shared/dataaccess.html",
+		"shared/filter.html",
+		"shared/loading.html",
+	}
 
 	return DataAccess
 }

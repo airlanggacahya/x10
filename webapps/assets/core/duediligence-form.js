@@ -693,6 +693,10 @@ due.setReEnter = function(){
 }
 
 due.setFreeze = function(){
+	if(due.form.Status() == 0){
+        swal("Warning","Please Confirm Data First","warning");
+        return;
+    }
 	// due.isLoading(true)
 	// due.form.Status(1);
 	due.form.DateFreeze((new Date()).toISOString())

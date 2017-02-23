@@ -128,10 +128,10 @@
 						<button id="onconfirm" class="btn btn-sm btn-reenter separator ontop" style="margin-right: inherit;" data-bind="visible:  model.IsGranted('reenter') && (due.form.Status() == 1)"onclick="due.setReEnter()">
 							<span>Re Enter</span>
 						</button>
-						<button class="btn btn-sm btn-freeze separator" style="margin-right: inherit;" data-bind="visible:  model.IsGranted('freeze') && (due.form.Freeze() == false) && (due.form.Status() == 1)" onclick="due.setFreeze()">
+						<button class="btn btn-sm btn-freeze separator" style="margin-right: inherit;" data-bind="visible:  model.IsGranted('freeze') && (due.form.Freeze() == false)" onclick="due.setFreeze()">
 							Freeze
 						</button>
-						<button class="btn btn-sm btn-unfreeze separator" style="margin-right: inherit;" data-bind="visible:  model.IsGranted('unfreeze') && (due.form.Freeze() == true) && (due.form.Status() == 1)" onclick="due.setUnFreeze()">
+						<button class="btn btn-sm btn-unfreeze separator" style="margin-right: inherit;" data-bind="visible:  model.IsGranted('unfreeze') && (due.form.Freeze() == true)" onclick="due.setUnFreeze()">
 							Unfreeze
 						</button>
 						<div class="clearfix">

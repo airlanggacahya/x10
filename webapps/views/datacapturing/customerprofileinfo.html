@@ -1,3 +1,5 @@
+{{template "dataaccess.html" .}}
+
 <style type="text/css">
   .no-margin{
     font-weight: bolder;
@@ -20,19 +22,6 @@
   }
 </style>
 <script type="text/javascript">
-model.PageTopMenu('{{.TopMenu}}');
-model.PageId('{{.Menuname}}');
-model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "#", "", ""));
-model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
-model.Access = ko.observable('{{.Menuid}}');
-model.View = ko.observable('{{.View}}');
-model.Create= ko.observable('{{.Create}}');
-model.Delete= ko.observable('{{.Delete}}');
-model.Process= ko.observable('{{.Process}}');
-model.Edit= ko.observable('{{.Edit}}')
-model.User= ko.observable('{{.Username}}');
-model.Rolename= ko.observable('{{.Rolename}}')
-model.Fullname = ko.observable('{{.Fullname}}');
 
 customerprofile = ko.observable({id: ""});
 customerprofile().FinancialReport = ko.observable();

@@ -286,7 +286,7 @@ var DrawDataBank = function(id){
             if(res.data.Detail != undefined && res.data.Detail.length > 0) {
                 var bankDetail = res.data.Detail[0]
                 statusPage.isConfirmed(bankDetail.IsConfirmed)
-                statusPage.isFreeze(bankDetail.isFreeze)
+                statusPage.isFreeze(bankDetail.IsFreeze)
                 checkStatusPage()
             }
         }

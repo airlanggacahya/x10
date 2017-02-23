@@ -1,18 +1,7 @@
+{{template "dataaccess.html" .}}
+
 <script type="text/javascript">
-model.PageTopMenu("{{.TopMenu}}");
-model.PageId('{{.Menuname}}');
-model.BreadCrumbs.push(new BreadCrumb("{{.TopMenu}}", "{{.TopMenu}}", "", "", ""));
-model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
-model.Access = ko.observable('{{.Menuid}}');
-model.View = ko.observable('{{.View}}');
-model.Create= ko.observable('{{.Create}}');
-model.Delete= ko.observable('{{.Delete}}');
-model.Process= ko.observable('{{.Process}}');
-model.Edit= ko.observable('{{.Edit}}')
-model.User= ko.observable('{{.Username}}');
-model.Rolename= ko.observable('{{.Rolename}}')
-model.Fullname = ko.observable('{{.Fullname}}');
-mincibil = ko.observable(0);
+	mincibil = ko.observable(0);
 </script>
 
 <script>document.write('<script src="/static/core/mastersuplier.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
@@ -28,8 +17,8 @@ mincibil = ko.observable(0);
 		<div class="panel-body">
 			<div class="col-md-2"></div>
 			<div class="col-md-7">
-				<button class="btn btn-sm btn-flat btn-primary" data-bind="click: saveMasterSuplier">Save</button>
-				<button class="btn btn-sm btn-flat btn-success" data-bind="click: addMasterSuplier">Add</button>
+				<button class="btn btn-sm btn-flat btn-primary" data-bind="click: saveMasterSuplier, visible: model.IsGranted('edit') || model.IsGranted('create')">Save</button>
+				<button class="btn btn-sm btn-flat btn-success" data-bind="click: addMasterSuplier, visible: model.IsGranted('create')">Add</button>
 				<div id="suplier"></div>
 			</div>
 			<div class="col-md-3"></div>

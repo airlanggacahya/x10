@@ -174,6 +174,24 @@ function clickRole(submodule_path, menuid, path) {
                 })
             return
         }
+
+        // disable all if view grant unchecked
+        if (!newVal && path == 'grant.view') {
+            $(sel)
+                .not('.grant\\.all')
+                .each(function (key, val) {
+                    _.set(it, $(val).data("path"), newVal)
+                })
+            return
+        }
+
+        // enable view if any grant selected
+        if (newVal) {
+            $(sel + '.grant\\.view')
+                .each(function (key, val) {
+                    _.set(it, $(val).data("path"), newVal)
+                })
+        }
     })
 
     rolesett._privToGrid(privilegesToNewRole(output))

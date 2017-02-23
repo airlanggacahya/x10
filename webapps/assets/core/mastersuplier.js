@@ -36,10 +36,16 @@ ms.loadGridSuplier = function(){
 		scrolable: true,
 		height: 400,
 		edit : function(e){
-					if(e.model.FromOmnifin){
-						this.closeCell(); 
-					}
-				},
+				// from omnifin
+				if (e.model.FromOmnifin) {
+					this.closeCell();
+				}
+
+				// not granted and from db
+				if (!model.IsGranted("edit") && e.model._id != "") {
+					this.closeCell();
+				}
+			},
 		columns : [
 			{
 				field: "Name",
@@ -54,10 +60,15 @@ ms.loadGridSuplier = function(){
 				headerTemplate: "Use in <br/> Account Details",
 				headerAttributes: {"class" : "sub-bgcolor"},
 				template: function(d){
-					if(d.UseInAD == true){
-						return "<center><input type='checkbox' onclick='ms.checkedADSuplier(\""+d._id+"\", \""+d.uid+"\")' id='AD"+ d._id+"' name='AD' checked><center>"
-					}
-					return "<center><input type='checkbox' onclick='ms.checkedADSuplier(\""+d._id+"\", \""+d.uid+"\")' id='AD"+ d._id+"' name='AD'><center>"
+					var checked = ""
+					if (d.UseInAD == true)
+						checked = "checked"
+
+					var disabled = ""
+					if (!model.IsGranted('edit') && d._id != "")
+						disabled = "disabled"
+
+					return "<center><input " + disabled + " type='checkbox' onclick='ms.checkedADSuplier(\""+d._id+"\", \""+d.uid+"\")' id='AD"+ d._id+"' name='AD' " + checked + "><center>"
 				},
 
 				width: 100,
@@ -79,12 +90,20 @@ ms.loadGridSuplier = function(){
 				title: "Action",
 				headerAttributes: {"class" : "sub-bgcolor"},
 				template: function(d){
-					if(d.FromOmnifin == false && d.Name == ""){
+					// from omnifin, undeletable
+					if (d.FromOmnifin)
+						return ""
+
+					// not yet saved on database
+					if(d.Name == ""){
 						return "<center><button class='btn btn-xs btn-flat btn-danger' onclick = 'ms.removeData1(\""+d.uid+"\")'><i class='fa fa-trash'></i></button></center>"
-					}else if(d.FromOmnifin == false && d.Name != ""){
-						return "<center><button class='btn btn-xs btn-flat btn-danger' onclick='ms.removeData2(\""+d.uid+"\")'><i class='fa fa-trash' onclick = 'ms.removeData2(\""+1+"\")'></i></button></center>"
 					}
-					return ""
+
+					// saved, but not granted permission
+					if(!model.IsGranted('delete'))
+						return ""
+
+					return "<center><button class='btn btn-xs btn-flat btn-danger' onclick='ms.removeData2(\""+d.uid+"\")'><i class='fa fa-trash' onclick = 'ms.removeData2(\""+1+"\")'></i></button></center>"
 				},
 				width: 50,
 			},

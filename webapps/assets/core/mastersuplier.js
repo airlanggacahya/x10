@@ -36,10 +36,16 @@ ms.loadGridSuplier = function(){
 		scrolable: true,
 		height: 400,
 		edit : function(e){
-					if(e.model.FromOmnifin){
-						this.closeCell(); 
-					}
-				},
+				// from omnifin
+				if (e.model.FromOmnifin) {
+					this.closeCell();
+				}
+
+				// not granted and from db
+				if (!model.IsGranted("edit") && e.model._id != "") {
+					this.closeCell();
+				}
+			},
 		columns : [
 			{
 				field: "Name",
@@ -59,7 +65,7 @@ ms.loadGridSuplier = function(){
 						checked = "checked"
 
 					var disabled = ""
-					if (!model.IsGranted('edit'))
+					if (!model.IsGranted('edit') && d._id != "")
 						disabled = "disabled"
 
 					return "<center><input " + disabled + " type='checkbox' onclick='ms.checkedADSuplier(\""+d._id+"\", \""+d.uid+"\")' id='AD"+ d._id+"' name='AD' " + checked + "><center>"

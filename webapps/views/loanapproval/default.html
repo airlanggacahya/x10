@@ -1,17 +1,4 @@
-<script type="text/javascript">
-  model.PageTopMenu('{{.TopMenu}}');
-  model.PageId('{{.Menuname}}');
-  model.BreadCrumbs.push(new BreadCrumb('{{.TopMenu}}', '{{.TopMenu}}', "#", "", ""));
-  model.BreadCrumbs.push(new BreadCrumb('{{.Menuname}}', '{{.Menuname}}', "#", "active", ""));
-  model.Access = ko.observable('{{.Menuid}}');
-  model.View = ko.observable('{{.View}}');
-  model.Create= ko.observable('{{.Create}}');
-  model.Delete= ko.observable('{{.Delete}}');
-  model.Process= ko.observable('{{.Process}}');
-  model.Edit= ko.observable('{{.Edit}}')
-  model.User= ko.observable('{{.Username}}');
-  model.Fullname= ko.observable('{{.Fullname}}');
-</script>
+{{template "dataaccess.html" .}}
 
 <script>document.write('<script type="text/javascript" src="/static/core/loanapproval.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 <script>document.write('<script type="text/javascript" src="/static/core/approvalcomments.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
@@ -71,7 +58,7 @@
     <div class="panel ez no-padding hardcore">
       <!-- <div class="panel-heading"><h4 data-bind="html: model.currentTitle()" style="margin-top: 4px">&nbsp;</h4></div> -->
       <div class="panel-heading">
-        <button class="btn btn-primary" data-bind="click:exportPDF()"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
+        <button class="btn btn-primary" data-bind="click:exportPDF(), visible: model.IsGranted('download')"><i class="fa fa-file-pdf-o"></i> Export PDF</button>
       </div>
       <div class="panel-body">
         <div class="tab-content cotainer-tab">

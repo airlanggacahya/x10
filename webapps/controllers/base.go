@@ -4,18 +4,19 @@ import (
 	. "eaciit/x10/webapps/connection"
 	_ "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
+	"encoding/json"
+
 	"fmt"
+	db "github.com/eaciit/dbox"
+	"github.com/eaciit/knot/knot.v1"
+	"github.com/eaciit/orm"
+	tk "github.com/eaciit/toolkit"
 	"log"
 	"math"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-
-	db "github.com/eaciit/dbox"
-	"github.com/eaciit/knot/knot.v1"
-	"github.com/eaciit/orm"
-	tk "github.com/eaciit/toolkit"
 )
 
 type IBaseController interface {
@@ -57,10 +58,10 @@ type Previlege struct {
 	Menuname     string
 	Username     string
 	TopMenu      string
-	Grant        map[string]bool
+	Grant        string
 	Rolename     interface{}
 	Fullname     interface{}
-	CustomerList []tk.M
+	CustomerList string
 }
 
 func NewPrevilege(accessList []tk.M) Previlege {
@@ -78,14 +79,26 @@ func NewPrevilege(accessList []tk.M) Previlege {
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Rolename = o["Rolename"].(string)
 		DataAccess.Fullname = o["Fullname"].(string)
-		DataAccess.Grant = o["Grant"].(map[string]bool)
+		jsonString, err := json.Marshal(o["Grant"].(map[string]bool))
+		if err != nil {
+			tk.Println(err)
+		}
+		DataAccess.Grant = string(jsonString)
 	}
 
 	return DataAccess
 }
 
-func (b *BaseController) LoadCustomerList(k *knot.WebContext) []tk.M {
-	return k.Session("CustomerProfileData").([]tk.M)
+func (b *BaseController) LoadCustomerList(k *knot.WebContext) string {
+	if k.Session("CustomerProfileData") == nil {
+		return ""
+	}
+
+	jsonString, err := json.Marshal(k.Session("CustomerProfileData").([]tk.M))
+	if err != nil {
+		tk.Println(err)
+	}
+	return string(jsonString)
 }
 
 func (b *BaseController) LoadBase(k *knot.WebContext) []tk.M {

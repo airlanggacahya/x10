@@ -12,7 +12,8 @@
     model.User= ko.observable('{{.Username}}');
     model.Rolename= ko.observable('{{.Rolename}}')
     model.Fullname = ko.observable('{{.Fullname}}');
-    model.Grant = ko.observable(app.stringMapToJSON('{{.Grant}}'));
+    model.Grant = ko.observable(JSON.parse('{{.Grant}}'));
+    model.CustomerList = ko.observable(JSON.parse('{{.CustomerList}}'));
 
     model.IsGranted = function(grant) {
         return _.get(model.Grant(), grant, false)

@@ -23,6 +23,7 @@ func (c *CreditScoreCardController) Default(k *knot.WebContext) interface{} {
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
 	DataAccess := NewPrevilege(access)
+	DataAccess.CustomerList = c.LoadCustomerList(k)
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{
@@ -40,6 +41,7 @@ func (c *CreditScoreCardController) New(k *knot.WebContext) interface{} {
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
 	DataAccess := NewPrevilege(access)
+	DataAccess.CustomerList = c.LoadCustomerList(k)
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 	k.Config.OutputType = knot.OutputTemplate
 	k.Config.IncludeFiles = []string{

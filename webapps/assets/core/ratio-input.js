@@ -91,6 +91,43 @@ r.getMasterBalanceSheetInput = function (callback) {
         }
     });
 };
+
+$(document).ready(function(){
+    r.ratioinputAccess();
+})
+
+r.ratioinputAccess = function(){
+  if(!model.IsGranted("confirm")){
+    $("button:contains('Confirm')").addClass("no-grant");
+  }else{
+    $("button:contains('Confirm')").removeClass("no-grant");
+  }
+
+   if(!model.IsGranted("edit")){
+    $("button:contains('Save')").addClass("no-grant");
+  }else{
+    $("button:contains('Save')").removeClass("no-grant");
+  }
+
+   if(!model.IsGranted("reenter")){
+    $("button:contains('Re-Enter')").addClass("no-grant");
+  }else{
+    $("button:contains('Re-Enter')").removeClass("no-grant");
+  }
+
+   if(!model.IsGranted("freeze")){
+    $("button:contains('Freeze')").addClass("no-grant");
+  }else{
+    $("button:contains('Freeze')").removeClass("no-grant");
+  }
+
+  if(!model.IsGranted("unfreeze")){
+    $("button:contains('Unfreeze')").addClass("no-grant");
+  }else{
+    $("button:contains('Unfreeze')").removeClass("no-grant");
+  }
+}
+
 r.usePlaceholderData = function (customerId, startDate) {
     var auditStatus = [
         { Date: "", Status: "AUDITED", Unit: r.unit() }
@@ -333,7 +370,7 @@ r.refresh = function (callback) {
                     callback();
                 }
             },1000);
-
+            r.ratioinputAccess();
         }, function () {
             r.isLoading(false)
         });

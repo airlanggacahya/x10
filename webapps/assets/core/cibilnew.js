@@ -326,8 +326,32 @@ r.getData = function() {
       if(r.reportCibilList().length == 0){
          r.ConfirmText("Confirm");
       }
+      r.CibilAccess();
     }
   })
+}
+
+r.CibilAccess = function(){
+  if(!model.IsGranted("confirm")){
+    $("button:contains('Confirm')").remove();
+    $("button:contains('Update')").remove();
+  }
+
+   if(!model.IsGranted("edit")){
+    $("button:contains('Edit')").remove();
+  }
+
+   if(!model.IsGranted("reenter")){
+    $("button:contains('Re-Enter')").remove();
+  }
+
+   if(!model.IsGranted("freeze")){
+    $("button:contains('Freeze')").remove();
+  }
+
+  if(!model.IsGranted("unfreeze")){
+    $("button:contains('Unfreeze')").remove();
+  }
 }
 
 r.setData = function() {
@@ -568,6 +592,7 @@ r.setData = function() {
       setTimeout(function(){
           cibil.unfreeze(false, 0);
       },300);
+      if(model.IsGranted("edit")){
       swal({
         title: "Multiple reports available",
         text: "",
@@ -592,6 +617,7 @@ r.setData = function() {
         }
         $(".swal-custom").prev().attr("style","");
       })
+    }
 
       $(".swal-custom").prev().css("opacity","1").css("display","block").css("width",$(".width-container").width()).css("height", $(".width-container").height()-30).css("left","34px").css("top", "33%");
       $(".swal-custom h2").css("font-size","22px")
@@ -1566,6 +1592,7 @@ $(document).ready(function () {
   $(".reportSummary").show()
   $(".promoters").show()
   $(".entryreportCibil").hide()
+  r.CibilAccess();
 });
 
 cibil.ShowComment = function(){

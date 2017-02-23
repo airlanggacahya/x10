@@ -125,7 +125,7 @@
 <!-- <div class="spacer"></div> -->
 {{template "filter.html"}}
 
-<div data-bind="with: cibil" style="background-color: white;">
+<div data-bind="with: cibil,visible:model.IsGranted('view')" style="background-color: white;">
   <div class="row">
     <div class="col-md-12">
       <div class="col-md-12 col-sm-12 ez panel-content">

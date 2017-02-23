@@ -22,6 +22,7 @@ func (c *ApprovalController) Default(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputTemplate
 	DataAccess := NewPrevilege(access)
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	k.Config.IncludeFiles = []string{
 		"shared/filter.html",

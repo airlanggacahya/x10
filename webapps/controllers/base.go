@@ -47,19 +47,20 @@ type ResultInfo struct {
 }
 
 type Previlege struct {
-	View     bool
-	Create   bool
-	Edit     bool
-	Delete   bool
-	Approve  bool
-	Process  bool
-	Menuid   string
-	Menuname string
-	Username string
-	TopMenu  string
-	Grant    map[string]bool
-	Rolename interface{}
-	Fullname interface{}
+	View         bool
+	Create       bool
+	Edit         bool
+	Delete       bool
+	Approve      bool
+	Process      bool
+	Menuid       string
+	Menuname     string
+	Username     string
+	TopMenu      string
+	Grant        map[string]bool
+	Rolename     interface{}
+	Fullname     interface{}
+	CustomerList []tk.M
 }
 
 func NewPrevilege(accessList []tk.M) Previlege {
@@ -81,6 +82,10 @@ func NewPrevilege(accessList []tk.M) Previlege {
 	}
 
 	return DataAccess
+}
+
+func (b *BaseController) LoadCustomerList(k *knot.WebContext) []tk.M {
+	return k.Session("CustomerProfileData").([]tk.M)
 }
 
 func (b *BaseController) LoadBase(k *knot.WebContext) []tk.M {

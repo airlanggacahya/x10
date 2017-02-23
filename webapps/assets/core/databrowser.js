@@ -67,13 +67,13 @@ TRN = {
 }
 
 TRN.UploadType.subscribe(function (value) {
-  if (model.View() != "false" && value != "") {
+  if (value != "") {
     loadGridTF();
   }
 });
 
 TRN.FileType.subscribe(function (value) {
-  if (model.View() != "false" && value != "") {
+  if (value != "") {
     loadGridTF();
   }
 });
@@ -120,11 +120,8 @@ function resetSearch() {
 var userid = model.User();
 var gcbrowser = new GridColumn('role_browser', userid, 'MasterDataBrowser');
 function loadGridTF() {
-  if (model.View() != "false") {
-    $(".k-button").show();
-  } else {
-    $(".k-button").hide();
-  }
+  $(".k-button").show();
+
   var x = TRN;
   x.loading(true);
   var params = {

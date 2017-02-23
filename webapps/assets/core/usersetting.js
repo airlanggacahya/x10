@@ -238,7 +238,7 @@ usersett.GetDataUser = function(){
                     title:"User Name",
                     width:150,
                     headerAttributes: {class: 'k-header header-bgcolor'},
-                    template: "#if(model.Edit() != 'false'){#<a class='grid-select' id='ls' href='javascript:usersett.EditData(\"#: Id #\")'>#: Username #</a>#}else{#<div>#: Username #</div>#}#"
+                    template: "#if(model.IsGranted('edit')){#<a class='grid-select' id='ls' href='javascript:usersett.EditData(\"#: Id #\")'>#: Username #</a>#}else{#<div>#: Username #</div>#}#"
 
                 },
                 {

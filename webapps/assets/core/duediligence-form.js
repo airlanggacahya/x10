@@ -64,10 +64,10 @@ due.LoadGrid = function(){
 					id: "Source",
 					fields: {
 						Source:{editable: false, nullable: true},
-						Applicable:{editable: true},
-						BankName:{editable: true},
-						Amount:{type: "number", editable: true, min: 1},
-						Status:{editable: true},
+						Applicable:{editable: model.AnyGranted('edit', 'confirm')},
+						BankName:{editable: model.AnyGranted('edit', 'confirm')},
+						Amount:{type: "number", editable: model.AnyGranted('edit', 'confirm'), min: 1},
+						Status:{editable: model.AnyGranted('edit', 'confirm')},
 					}
 				}
 			}
@@ -133,8 +133,8 @@ due.LoadGrid = function(){
 					id: "Particulars",
 					fields: {
 						Particulars:{editable: false, nullable: true},
-						Result:{editable: true},
-						Mitigants:{editable: true},
+						Result:{editable: model.AnyGranted('edit', 'confirm')},
+						Mitigants:{editable: model.AnyGranted('edit', 'confirm')},
 					}
 				}
 			}
@@ -186,11 +186,11 @@ due.LoadGrid = function(){
 				model:{
 					id: "Name",
 					fields: {
-						Name:{editable: true,},
-						Designation:{editable: true},
-						ShareHolding:{type: "number", editable: true, min: 1, spinner: false},
-						CIBILScore:{type: "number", editable: true, min: 1},
-						RedFlags:{editable: true},
+						Name:{editable: model.AnyGranted('edit', 'confirm'),},
+						Designation:{editable: model.AnyGranted('edit', 'confirm')},
+						ShareHolding:{type: "number", editable: model.AnyGranted('edit', 'confirm'), min: 1, spinner: false},
+						CIBILScore:{type: "number", editable: model.AnyGranted('edit', 'confirm'), min: 1},
+						RedFlags:{editable: model.AnyGranted('edit', 'confirm')},
 					}
 				}
 			}
@@ -248,7 +248,11 @@ due.LoadGrid = function(){
 				headerAttributes: { "class": "sub-bgcolor" },
 				width: 20,
 				template: function(d){
-					return '<center><button class="btn btn-flat btn-sm btn-danger noable" onclick="due.removeRowBackground(\''+d.uid+'\')"><i class="fa fa-trash"></i></button></center>'
+					var hidden = ""
+					if (!(model.IsGranted('edit') || model.IsGranted('confirm')))
+						hidden = "style='visibility: hidden'"
+
+					return '<center><button class="btn btn-flat btn-sm btn-danger noable" ' + hidden + ' onclick="due.removeRowBackground(\''+d.uid+'\')"><i class="fa fa-trash"></i></button></center>'
 				}
 			}
 

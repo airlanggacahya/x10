@@ -18,4 +18,13 @@
     model.IsGranted = function(grant) {
         return _.get(model.Grant(), grant, false)
     }
+
+    model.AnyGranted = function() {
+        for(var i = 0; i < arguments.length; i++) {
+            if (this.IsGranted(arguments[i]))
+                return true
+        }
+
+        return false
+    }
 </script>

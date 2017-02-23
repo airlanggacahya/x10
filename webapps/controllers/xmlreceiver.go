@@ -581,7 +581,10 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 	current.ApplicantDetail.CustomerPan = customerDtl.GetString("custmerPan")
 	current.ApplicantDetail.NatureOfBussiness = customerDtl.GetString("natureOfBusiness")
 	current.ApplicantDetail.YearsInBusiness = DetectDataType(customerDtl.GetString("yearOfEstblishment"), "")
-	current.ApplicantDetail.NoOfEmployees = DetectDataType(customerDtl.GetString("noOfEmployees"), "")
+	empno := CheckArray(customerDtl.Get("crDealCustomerBusinessActivityM"))
+	if len(empno) > 0 {
+		current.ApplicantDetail.NoOfEmployees = DetectDataType(empno[0].GetString("noOfEmployees"), "")
+	}
 	current.ApplicantDetail.UserGroupCompanies = customerDtl.GetString("customerGroupDesc")
 	if len(loanDtls) > 0 {
 		loanDtl = tk.M(loanDtls[0])
@@ -805,7 +808,10 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 		current.ApplicantDetail.CustomerPan = customerDtl.GetString("custmerPan")
 		current.ApplicantDetail.NatureOfBussiness = customerDtl.GetString("natureOfBusiness")
 		current.ApplicantDetail.YearsInBusiness = DetectDataType(customerDtl.GetString("yearOfEstblishment"), "")
-		current.ApplicantDetail.NoOfEmployees = DetectDataType(customerDtl.GetString("noOfEmployees"), "")
+		empno := CheckArray(customerDtl.Get("crDealCustomerBusinessActivityM"))
+		if len(empno) > 0 {
+			current.ApplicantDetail.NoOfEmployees = DetectDataType(empno[0].GetString("noOfEmployees"), "")
+		}
 		current.ApplicantDetail.UserGroupCompanies = customerDtl.GetString("customerGroupDesc")
 		if len(loanDtls) > 0 {
 			loanDtl = tk.M(loanDtls[0])
@@ -1088,7 +1094,7 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 	current.LoanDetails.ExistingRoi = body.GetFloat64("existingROI")
 	current.LoanDetails.ExistingPf = body.GetFloat64("existingPf")
 	if body.GetString("firstAgreementDate") != "" {
-		current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreemedtDate"), "yyyy-MM-dd").(time.Time)
+		current.LoanDetails.FirstAgreementDate = DetectDataType(body.GetString("firstAgreementDate"), "yyyy-MM-dd").(time.Time)
 	}
 	if body.GetString("recentAgreementDate") != "" {
 		current.LoanDetails.RecenetAgreementDate = DetectDataType(body.GetString("recentAgreementDate"), "yyyy-MM-dd").(time.Time)

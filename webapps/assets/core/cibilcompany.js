@@ -176,7 +176,12 @@ cc.RenderGrid = function(){
 			width : 100
 		}, {
 		 	template : function(x){
-		 		return "<button class='btn btn-xs btn-primary tooltipster' onclick='cc.getEdit(\""+ x.Id + "\")'><i class='fa fa-edit'></i></button>"
+		 		if(model.IsGranted("edit") == true){
+		 			return "<button class='btn btn-xs btn-primary tooltipster' onclick='cc.getEdit(\""+ x.Id + "\")'><i class='fa fa-edit'></i></button>"
+		 		}
+
+		 		return ""
+		 		
 		 	},
 		 	width : 50,
 		 	     headerAttributes: { class: 'k-header header-bgcolor' },

@@ -954,9 +954,7 @@ rolesett.Cancel = function(){
 }
 
 rolesett.filterRole.subscribe(function(value){
-  if(model.View() != "false"){
    rolesett.GetDataRole();
-  }
 });
 
 rolesett.GetDataRole = function(){
@@ -1015,7 +1013,7 @@ rolesett.GetDataRole = function(){
                     field:"Name",
                     title:"Role Name",
                     headerAttributes: {class: 'k-header header-bgcolor'},
-                    template: "#if(model.Edit() != 'false'){#<a class='grid-select' id='ls' href='javascript:rolesett.EditData(\"#: Id #\")'>#: Name #</a>#}else{#<div>#: Name #</div>#}#"
+                    template: "#if(model.IsGranted('edit')){#<a class='grid-select' id='ls' href='javascript:rolesett.EditData(\"#: Id #\")'>#: Name #</a>#}else{#<div>#: Name #</div>#}#"
 
                 },
                 {

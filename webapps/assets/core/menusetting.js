@@ -434,7 +434,23 @@ menusett.selectDirFolder = function(e){
 		}
 	});
 }
-$(document).ready(function () { 
+
+menusett.grant = function(){
+	if(model.IsGranted('create') == true || model.IsGranted('edit') == true){
+		$("#reset").show()
+	}else{
+		$("#reset").hide()
+	}
+
+	if(model.IsGranted('create') == true){
+		$("#new").show()
+	}else{
+		$("#new").hide()
+	}
+}
+
+$(document).ready(function () {
+	menusett.grant(); 
 	menusett.loadmenuMaster();
 	$("#IndexMenu").data("kendoNumericTextBox").readonly();
 });

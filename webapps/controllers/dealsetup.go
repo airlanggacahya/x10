@@ -202,6 +202,61 @@ const timeFormat = "2006-01-02T15:04:05.99Z"
 // 	return "OK"
 // }
 
+func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
+	roles := k.Session("roles").([]SysRolesModel)
+	var dbFilter []*dbox.Filter
+	userid := k.Session("userid").(string)
+	for _, Role := range roles {
+		Branch := Role.Branch
+		District := Role.District
+		Type := Role.Roletype
+		Dealvalue := Role.Dealvalue
+
+		_ = Branch
+		_ = District
+
+		Dv, err := new(LoginController).GetDealValue(Dealvalue)
+
+		if err != nil {
+			return dbFilter, err
+		}
+
+		if len(Dv) > 0 {
+			curDv := Dv[0]
+			opr := curDv.GetString("operator")
+			var1 := curDv.GetFloat64("var1")
+			var2 := curDv.GetFloat64("var2")
+
+			switch opr {
+			case "lt":
+				dbFilter = append(dbFilter, dbox.Lt("accountdetails.loandetails.proposedloanamount", var1))
+			case "lte":
+				dbFilter = append(dbFilter, dbox.Lte("accountdetails.loandetails.proposedloanamount", var1))
+			case "gt":
+				dbFilter = append(dbFilter, dbox.Gt("accountdetails.loandetails.proposedloanamount", var1))
+			case "gte":
+				dbFilter = append(dbFilter, dbox.Gte("accountdetails.loandetails.proposedloanamount", var1))
+			case "between":
+				dbFilter = append(dbFilter, dbox.And(dbox.Gte("accountdetails.loandetails.proposedloanamount", var1), dbox.Lte("accountdetails.loandetails.proposedloanamount", var2)))
+			}
+		}
+		tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
+		tk.Printf("--------- USERID %v ----------- \n", userid)
+		switch strings.ToUpper(Type) {
+		case "CA":
+			dbFilter = append(dbFilter, dbox.Eq("accountdetails.accountsetupdetails.CreditAnalystId", userid))
+		case "RM":
+			dbFilter = append(dbFilter, dbox.Eq("accountdetails.accountsetupdetails.RmNameId", userid))
+		case "CUSTOM":
+			dbFilter = append(dbFilter, dbox.Ne("_id", ""))
+		default:
+			dbFilter = append(dbFilter, dbox.Ne("_id", ""))
+
+		}
+	}
+	return dbFilter, nil
+}
+
 func BlendDealSetup(Id bson.ObjectId, inqueObj tk.M, infos tk.M) error {
 	//delete query
 	ctx, e := GetConnection()
@@ -1118,6 +1173,13 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	// 	keys = append(keys, dbox.Or(keyx...))
 	// }
 
+	dbf, err := GenerateRoleCondition(k)
+	if err != nil {
+		return err.Error()
+	}
+
+	keys = append(keys, dbox.And(dbf...))
+
 	query1 := cn.NewQuery().
 		From("DealSetup").
 		Skip(p.Skip).
@@ -1140,11 +1202,11 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	}
 
 	csr, e := query1.Cursor(nil)
-	defer csr.Close()
 
 	if e != nil {
-		panic(e)
+		return e.Error()
 	}
+	defer csr.Close()
 
 	results1 := make([]DealSetupModel, 0)
 	e = csr.Fetch(&results1, 0, false)

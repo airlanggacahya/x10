@@ -147,7 +147,11 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 
 	var dbFilter []*db.Filter
 
-	Dv := d.GetDealValue(Dealvalue)
+	Dv, err := d.GetDealValue(Dealvalue)
+	if err != nil {
+		tk.Println(err.Error())
+		return err
+	}
 
 	if len(Dv) > 0 {
 		curDv := Dv[0]
@@ -260,14 +264,22 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 	return nil
 }
 
-func (d *LoginController) GetDealValue(id string) []tk.M {
+func (d *LoginController) GetDealValue(id string) ([]tk.M, error) {
 	ret := []tk.M{}
 
 	if id == "" {
-		return ret
+		return ret, nil
 	}
 
-	cur, err := d.Ctx.Connection.
+	cn, err := GetConnection()
+	defer cn.Close()
+
+	if err != nil {
+		tk.Println(err.Error())
+		return ret, err
+	}
+
+	cur, err := cn.
 		NewQuery().
 		Where(db.Eq("_id", bson.ObjectIdHex(id))).
 		From("DealValueMaster").
@@ -275,10 +287,10 @@ func (d *LoginController) GetDealValue(id string) []tk.M {
 
 	if err != nil {
 		tk.Println(err.Error())
-		return ret
+		return ret, err
 	}
 
 	cur.Fetch(&ret, 0, true)
 
-	return ret
+	return ret, nil
 }

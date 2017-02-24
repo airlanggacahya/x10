@@ -70,7 +70,7 @@
                 &nbsp;
             </h3>
             <div class="panel-nav-button" style="margin-right: 16px;">
-              <button  type="button" class="btn btn-sm btn-success btn-flat" data-bind="click:AddNew"><i class="fa fa-plus"></i> Add New</button>
+              <button  type="button" class="btn btn-sm btn-success btn-flat" data-bind="click:AddNew, visible:(model.IsGranted('create') == true)"><i class="fa fa-plus"></i> Add New</button>
               <button class="btn btn-sm btn-info tooltipster" title="Toggle Advanced Filter" data-bind="click: toggleFilter"><i class="fa fa-server"></i> Show Filter</button>
             </div>
           </div>

@@ -55,10 +55,10 @@
 
 <script>document.write('<script src="/static/core/databrowser-new.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
-<div style="margin-top: 100px">
+<div style="margin-top: 100px" data-bind="visible: (model.IsGranted('view') == true)">
 	{{template "filter.html"}}
 </div>
-<div id="panel-conten">
+<div id="panel-conten" data-bind="visible: (model.IsGranted('view') == true)">
 	<div class="col-md-12" style="margin-left: 21px; margin-bottom: 12px;">
 		<button  type="button" btn-sm class="btn btn-sm btn-default btn-warning" data-bind="click: resetFilter">Reset</button>
 		<button  type="button" btn-sm class="btn btn-sm btn-default btn-primary" data-bind="click: refreshFilter">Refresh</button>

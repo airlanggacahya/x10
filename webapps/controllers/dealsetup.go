@@ -218,12 +218,12 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 		}
 
 		Branch := Role.Branch
-		District := Role.District
+		Region := Role.Region
 		Type := Role.Roletype
 		Dealvalue := Role.Dealvalue
 
 		_ = Branch
-		_ = District
+		_ = Region
 
 		Dv, err := new(LoginController).GetDealValue(Dealvalue)
 

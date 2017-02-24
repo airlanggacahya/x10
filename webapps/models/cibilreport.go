@@ -3,7 +3,9 @@ package models
 import (
 	. "eaciit/x10/webapps/connection"
 	// "fmt"
+	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
+	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/orm"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
@@ -299,7 +301,7 @@ func (m *CibilDraftModel) GetDataDraft(cust int, dealno string) (CibilDraftModel
 	return data, err
 }
 
-func (m *CibilReportModel) GetAllDataByParam(param tk.M) (tk.Result, int) {
+func (m *CibilReportModel) GetAllDataByParam(param tk.M, k *knot.WebContext) (tk.Result, int) {
 	conn, _ := GetConnection()
 	defer conn.Close()
 
@@ -337,6 +339,26 @@ func (m *CibilReportModel) GetAllDataByParam(param tk.M) (tk.Result, int) {
 		query = append(query, dbox.Or(keys...))
 		querydraft = append(querydraft, dbox.Or(keys...))
 
+	}
+
+	//RESTICT ACCESS
+	if k.Session("CustomerProfileData") != nil {
+		queryx := []*dbox.Filter{}
+
+		dts := k.Session("CustomerProfileData").([]tk.M)
+		for _, valx := range dts {
+			id := valx.GetString("_id")
+			custid := cast.ToInt(strings.Split(id, "|")[0], cast.RoundingAuto)
+			dealno := strings.Split(id, "|")[1]
+			queryx = append(queryx, dbox.And(dbox.Eq("Profile.customerid", custid), dbox.Eq("Profile.dealno", dealno)))
+		}
+
+		isCustomRole := k.Session("isCustomRole").(bool)
+		if isCustomRole {
+			queryx = append(queryx, dbox.Eq("IsMatch", false))
+		}
+
+		query = append(query, dbox.Or(queryx...))
 	}
 
 	csr, err := conn.NewQuery().

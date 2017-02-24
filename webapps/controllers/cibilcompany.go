@@ -61,7 +61,7 @@ func (c *CibilCompanyController) GetAllData(k *knot.WebContext) interface{} {
 	param := tk.M{}
 	k.GetPayload(&param)
 
-	data, total := new(CibilReportModel).GetAllDataByParam(param)
+	data, total := new(CibilReportModel).GetAllDataByParam(param, k)
 
 	return struct {
 		Res   interface{}

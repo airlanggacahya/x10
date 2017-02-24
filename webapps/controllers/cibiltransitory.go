@@ -5,7 +5,7 @@ import (
 	// . "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	// "fmt"
-	// "github.com/eaciit/cast"
+	"github.com/eaciit/cast"
 	"regexp"
 	"strconv"
 	"strings"
@@ -133,6 +133,26 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 		}
 
 		query = append(query, dbox.Or(keys...))
+	}
+
+	//RESTICT ACCESS
+	if k.Session("CustomerProfileData") != nil {
+		queryx := []*dbox.Filter{}
+
+		dts := k.Session("CustomerProfileData").([]tk.M)
+		for _, valx := range dts {
+			id := valx.GetString("_id")
+			custid := cast.ToInt(strings.Split(id, "|")[0], cast.RoundingAuto)
+			dealno := strings.Split(id, "|")[1]
+			queryx = append(queryx, dbox.And(dbox.Eq("ConsumerInfo.CustomerId", custid), dbox.Eq("ConsumerInfo.DealNo", dealno)))
+		}
+
+		isCustomRole := k.Session("isCustomRole").(bool)
+		if isCustomRole {
+			queryx = append(queryx, dbox.Eq("IsMatch", false))
+		}
+
+		query = append(query, dbox.Or(queryx...))
 	}
 
 	csr, err := cn.NewQuery().

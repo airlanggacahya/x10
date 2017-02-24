@@ -90,6 +90,17 @@ func (c *LoginController) Do(k *knot.WebContext) interface{} {
 				k.SetSession("roles", resroles)
 				k.SetSession("rolesid", resroles[0].Id.Hex())
 				k.SetSession("stime", time.Now())
+
+				isCustomRole := false
+
+				for _, valx := range resroles {
+					if strings.ToUpper(valx.Roletype) == "CUSTOM" {
+						isCustomRole = true
+						break
+					}
+				}
+				k.SetSession("isCustomRole", isCustomRole)
+
 				isValid = true
 
 				cursor, e := c.Ctx.Connection.NewQuery().Select().From("TopMenu").Where(db.Eq("Title", resroles[0].Landing)).Cursor(nil)

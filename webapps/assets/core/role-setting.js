@@ -15,16 +15,40 @@ var rolesett = {
     dealAllocationOpt : ko.observableArray(["Standard"]),
     dealAllocationEnable : ko.observable(false),
 
-    district : ko.observableArray([]),
-    districtOpt : new kendo.data.DataSource({
+    region : ko.observableArray([]),
+    regionOpt : new kendo.data.DataSource({
         transport: {
-            read: {
-                url: "/sysroles/getdistrict",
-                dataType: "json"
+            read: function(options) {
+                $.ajax({
+                    url: "/sysroles/getbranch",
+                    dataType: "json",
+                    success: function(result) {
+                        // group by regionid
+                        var region = {}
+                        _.each(result, function (val) {
+                            if (_.has(region, val.region.regionid))
+                                return;
+                            
+                            region[val.region.regionid] = val.region
+                        });
+
+                        var region_ar = _.map(region, function(val) {
+                            return {
+                                "regionid": val.regionid,
+                                "name": val.name
+                            }
+                        })
+
+                        options.success(region_ar);
+                    },
+                    error: function(result) {
+                        options.error(result);
+                    }
+                });
             }
         },
     }),
-    districtEnable: ko.observable(false),
+    regionEnable: ko.observable(false),
 
     branch : ko.observableArray([]),
     branchOpt: new kendo.data.DataSource({
@@ -108,6 +132,18 @@ rolesett.grantAccessNotifier.subscribe(function (val) {
     rolesett.listPage(page)
 })
 
+/*
+ * Role Setting Workflow - 2017/02/24
+ * 1. We get menuid array
+ * 2. Map menuid array to several datasource using hardcode mapping
+ *    (variable ends with Mapping)
+ * 3. Display on UI
+ * 4. Changes are handled using clickRole
+ * 5. Datasource mapped back into menuid array
+ * 6. Toggle grant on related Menuid
+ * 7. Parse back menuid array into datasource
+ */
+
 // Switch dealllocation based on roletype
 rolesett.roleType.subscribe(function (val) {
     switch (val) {
@@ -125,26 +161,29 @@ rolesett.roleType.subscribe(function (val) {
     }
 })
 
-// Switch Branch and District based on deal Reallocation
+// Switch Branch and Region based on deal Reallocation
 rolesett.dealAllocation.subscribe(function (val) {
     rolesett.branchEnable(false);
-    rolesett.districtEnable(false);
+    rolesett.regionEnable(false);
+    
+    // Clear branch and region
+    rolesett.branch([]);
+    rolesett.region([]);
 
     switch (val) {
     case "Branches":
         rolesett.branchEnable(true);
         break;
     case "Regions":
-        rolesett.districtEnable(true);
+        rolesett.regionEnable(true);
         break;
     }
 })
 
-// Inform on page access changes
-
+// Template to generate checkbox
 function checkboxField(field) {
     return '<input type="checkbox" ' +
-        'data-switch-no-init ' +
+        'data-switch-no-init ' + // disable bootstrap switch
         'id="#=menuid#_' + field + '"' +
         'class="role_#=submodule_path#_#=menuid# ' + field + '"' +
         'onclick="clickRole(\'#=submodule_path#\', \'#=menuid#\', \'' + field + '\')" ' +
@@ -153,8 +192,10 @@ function checkboxField(field) {
 }
 
 function clickRole(submodule_path, menuid, path) {
+    // map into menuid array
     var output = backMapping();
 
+    // process
     _.each(output, function(it) {
         if (it.menuid != menuid)
             return
@@ -194,9 +235,11 @@ function clickRole(submodule_path, menuid, path) {
         }
     })
 
+    // map back to datasouce
     rolesett._privToGrid(privilegesToNewRole(output))
 }
 
+// Big hardcode mapping data
 var dashboardMapping = [
     {
         "name": "Dashboard",
@@ -418,6 +461,7 @@ var adminMapping = [
     }
 ]
 
+// map menuid array into datasource-compatible data
 function processMapping(input, maps) {
     var ret = [];
     _.each(maps, function(component) {
@@ -761,7 +805,7 @@ rolesett.mappingRole = ko.mapping.fromJS(rolesett.templateRole);
 
 rolesett.ClearField = function(){
     rolesett.branch([]);
-    rolesett.district([]);
+    rolesett.region([]);
     rolesett.roleName("");
     rolesett.roleType("CA");
     // rolesett.dealAllocation("Standard");
@@ -855,7 +899,7 @@ rolesett.SaveData = function(){
     param.status = $('#Status').bootstrapSwitch('state');
     param.landing = rolesett.landingPage();
     param.menu = backMapping();
-    param.district = rolesett.district();
+    param.region = rolesett.region();
     param.branch = rolesett.branch();
     param.dealvalue = rolesett.dealValue();
     param.roletype = rolesett.roleType();
@@ -890,6 +934,8 @@ rolesett._privToGrid = function(priv) {
 
 rolesett.EditData = function(IdRole){
     // Old Data
+    rolesett.disableRolename(true);
+
     var url = "/sysroles/getmenuedit";
     var param = {
             Id : IdRole
@@ -898,7 +944,7 @@ rolesett.EditData = function(IdRole){
             if(!(res.IsError != true)){
                 return swal("Error!", res.Message, "error");
             }
-            rolesett.disableRolename(false);
+
             $("#roleModal").modal("show");
             $("#nav-dex").css('z-index', '0');
             $("#roleModal").modal({
@@ -908,6 +954,9 @@ rolesett.EditData = function(IdRole){
             rolesett.titleModel("Update Roles");
             rolesett.edit(true);
             var Records = res.Data.Records[0];
+
+            if(!Records.Deletable)
+            rolesett.disableRolename(false);
             // FILL UP FORM
             rolesett.Id(Records.Id);
             rolesett.roleName(Records.Name);
@@ -915,10 +964,11 @@ rolesett.EditData = function(IdRole){
             rolesett._privToGrid(privilegesToNewRole(Records.Menu));
             rolesett.landingPage(Records.LandingId);
             $('#Status').bootstrapSwitch('state',Records.Status);
-            rolesett.branch(Records.Branch);
-            rolesett.district(Records.District);
             rolesett.dealAllocation(Records.Dealallocation);
             rolesett.dealValue(Records.Dealvalue);
+            // last to set
+            rolesett.branch(Records.Branch);
+            rolesett.region(Records.Region);
 
             // old access layout setup
 
@@ -1019,6 +1069,12 @@ rolesett.GetDataRole = function(){
                 {
                     field:"Status",
                     title:"Status",
+                    template : function(dt){
+                        if(dt.Status){
+                            return "Active"
+                        }
+                        return "Inactive"
+                    },
                     headerAttributes: {class: 'k-header header-bgcolor'}
                 },
                 {

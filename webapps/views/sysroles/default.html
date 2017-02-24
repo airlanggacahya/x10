@@ -132,7 +132,7 @@
                       <div class="form-group">
                         <label for="roleType" class="col-sm-3 form-control-label">Role Type<span class="mandatory">*</span></label>
                         <div class="col-sm-8">
-                          <select class="form-control input-sm" name="roleType" id="roleType" validationMessage="Role Type Required" required data-bind="value: roleType">
+                          <select class="form-control input-sm" name="roleType" id="roleType" validationMessage="Role Type Required" required data-bind="value: roleType,enable:disableRolename">
                               <option>CA</option>
                               <option>RM</option>
                               <option>Custom</option>
@@ -155,14 +155,14 @@
                       <div class="form-group" data-bind="visible: rolesett.branchEnable">
                         <label for="branch" class="col-sm-3 form-control-label">Branches<span class="mandatory">*</span></label>
                         <div class="col-sm-8">
-                          <select name="branch" id="branch" data-bind="kendoMultiSelect: { data: rolesett.branchOpt, value: rolesett.branch, dataTextField: 'name', dataValueField: 'name', filter: 'contains'}">
+                          <select name="branch" id="branch" data-bind="kendoMultiSelect: { data: rolesett.branchOpt, value: rolesett.branch, dataTextField: 'name', dataValueField: 'branchid', filter: 'contains'}">
                           </select>
                         </div>
                       </div>
-                      <div class="form-group" data-bind="visible: rolesett.districtEnable">
-                        <label for="district" class="col-sm-3 form-control-label">Regions<span class="mandatory">*</span></label>
+                      <div class="form-group" data-bind="visible: rolesett.regionEnable">
+                        <label for="region" class="col-sm-3 form-control-label">Regions<span class="mandatory">*</span></label>
                         <div class="col-sm-8">
-                          <select name="district" id="district" data-bind="kendoMultiSelect: { data: rolesett.districtOpt, value: rolesett.district, dataTextField: 'name', dataValueField: 'name', filter: 'contains'}">
+                          <select name="region" id="region" data-bind="kendoMultiSelect: { data: rolesett.regionOpt, value: rolesett.region, dataTextField: 'name', dataValueField: 'regionid', filter: 'contains'}">
                           </select>
                         </div>
                       </div>

@@ -203,17 +203,27 @@ const timeFormat = "2006-01-02T15:04:05.99Z"
 // }
 
 func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
-	roles := k.Session("roles").([]SysRolesModel)
 	var dbFilter []*dbox.Filter
+
+	if k.Session("roles") == nil {
+		return dbFilter, nil
+	}
+
+	roles := k.Session("roles").([]SysRolesModel)
 	userid := k.Session("userid").(string)
 	for _, Role := range roles {
+
+		if !Role.Status {
+			continue
+		}
+
 		Branch := Role.Branch
-		District := Role.District
+		Region := Role.Region
 		Type := Role.Roletype
 		Dealvalue := Role.Dealvalue
 
 		_ = Branch
-		_ = District
+		_ = Region
 
 		Dv, err := new(LoginController).GetDealValue(Dealvalue)
 

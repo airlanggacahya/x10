@@ -70,13 +70,18 @@ func (c *BaseController) NewPrevilege(k *knot.WebContext) Previlege {
 	DataAccess.CustomerList = c.LoadCustomerList(k)
 
 	accessList := c.LoadBase(k)
+
+	for _, m := range accessList {
+		DataAccess.Grant = m["Grant"].(map[string]bool)
+	}
+
 	for _, o := range accessList {
 		DataAccess.Menuid = o["Menuid"].(string)
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Rolename = o["Rolename"].(string)
 		DataAccess.Fullname = o["Fullname"].(string)
-		DataAccess.Grant = o["Grant"].(map[string]bool)
+		// DataAccess.Grant = o["Grant"].(map[string]bool)
 		DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
 
 		return DataAccess
@@ -166,22 +171,19 @@ func (b *BaseController) AccessMenu(k *knot.WebContext) []tk.M {
 	}
 
 	// merge all role menu
-	accessMenu := []Detailsmenu{}
 	for _, r := range roles {
-		accessMenu = append(accessMenu, r.Menu...)
-	}
-
-	// find matching url
-	for _, o := range accessMenu {
-		if o.Url == url {
-			obj := tk.M{}
-			obj.Set("Menuid", o.Menuid)
-			obj.Set("Menuname", o.Menuname)
-			obj.Set("Username", k.Session("username").(string))
-			obj.Set("Rolename", roles[0].Name)
-			obj.Set("Fullname", k.Session("fullname").(string))
-			obj.Set("Grant", o.Grant)
-			access = append(access, obj)
+		// find matching url
+		for _, o := range r.Menu {
+			if o.Url == url {
+				obj := tk.M{}
+				obj.Set("Menuid", o.Menuid)
+				obj.Set("Menuname", o.Menuname)
+				obj.Set("Username", k.Session("username").(string))
+				obj.Set("Rolename", r.Name)
+				obj.Set("Fullname", k.Session("fullname").(string))
+				obj.Set("Grant", o.Grant)
+				access = append(access, obj)
+			}
 		}
 	}
 

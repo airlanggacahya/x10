@@ -371,9 +371,13 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 
 	tempMenu := o.Menu
 	for _, det := range oo.Menu {
-		dtl, err := defaultDetailsMenu(d.Ctx.Connection, det["menuid"].(string))
+		menuid := det["menuid"].(string)
+		menuDone[menuid] = true
+
+		dtl, err := defaultDetailsMenu(d.Ctx.Connection, menuid)
+		// on error, menu not found, just skip this one
 		if err != nil {
-			return d.SetResultInfo(true, err.Error(), nil)
+			continue
 		}
 
 		var isAccess = false
@@ -388,7 +392,6 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		}
 
 		tempMenu = append(tempMenu, dtl)
-		menuDone[dtl.Menuid] = true
 
 		// no parent
 		if len(dtl.Parent) == 0 {
@@ -413,7 +416,7 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		}
 
 		// pop our array
-		var menuid = menuQueue[0]
+		menuid := menuQueue[0]
 
 		// shift array, or set empty on length == 1
 		if len(menuQueue) == 1 {
@@ -427,10 +430,11 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 			continue
 		}
 
+		menuDone[menuid] = true
 		dtl, err := defaultDetailsMenu(d.Ctx.Connection, menuid)
-
+		// on error menu not found, skip this one
 		if err != nil {
-			return d.SetResultInfo(true, err.Error(), nil)
+			continue
 		}
 
 		tempMenu = append(tempMenu, dtl)

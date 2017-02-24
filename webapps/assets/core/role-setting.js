@@ -1024,6 +1024,12 @@ rolesett.GetDataRole = function(){
                 {
                     field:"Status",
                     title:"Status",
+                    template : function(dt){
+                        if(dt.Status){
+                            return "Active"
+                        }
+                        return "Inactive"
+                    },
                     headerAttributes: {class: 'k-header header-bgcolor'}
                 },
                 {

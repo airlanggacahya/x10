@@ -14,8 +14,8 @@ type SysRolesModel struct {
 	Status         bool
 	Landing        string
 	LandingId      string
-	Branch         []string
-	District       []string
+	Branch         []int
+	Region         []int
 	Dealallocation string
 	Dealvalue      string
 	Roletype       string

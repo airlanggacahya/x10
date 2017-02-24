@@ -280,6 +280,49 @@ func defaultDetailsMenu(conn db.IConnection, menuid string) (Detailsmenu, error)
 	return dtl, nil
 }
 
+func regionToBranch(regions []int) []int {
+	// transform array to set
+	regionSets := make(map[int]bool)
+	for _, val := range regions {
+		regionSets[val] = true
+	}
+
+	ret := []int{}
+
+	// Get branch list
+	acc, err := GetMasterAccountDetailv2()
+	if err != nil {
+		tk.Println(err.Error())
+		return ret
+	}
+
+	branchs := []tk.M{}
+	for key, val := range acc {
+		if key != "Branch" {
+			continue
+		}
+
+		branchs = val.([]tk.M)
+		break
+	}
+
+	if len(branchs) == 0 {
+		return ret
+	}
+
+	for _, val := range branchs {
+		reg := val["region"].(map[string]interface{})
+
+		regid := tk.ToInt(reg["regionid"], tk.RoundingDown)
+		if _, found := regionSets[regid]; found {
+			branchid := tk.ToInt(val["branchid"], tk.RoundingDown)
+			ret = append(ret, branchid)
+		}
+	}
+
+	return ret
+}
+
 func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 	r.Config.OutputType = knot.OutputJson
 	oo := struct {
@@ -288,8 +331,8 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		Status         bool
 		Landing        string
 		Menu           []tk.M
-		Branch         []string
-		District       []string
+		Branch         []int
+		Region         []int
 		Dealallocation string
 		Dealvalue      string
 		Roletype       string
@@ -306,10 +349,15 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 	o.Status = oo.Status
 	o.LandingId = oo.Landing
 	o.Branch = oo.Branch
-	o.District = oo.District
+	o.Region = oo.Region
 	o.Dealallocation = oo.Dealallocation
 	o.Dealvalue = oo.Dealvalue
 	o.Roletype = oo.Roletype
+
+	// If region filled, we fill branch with all branch under that region
+	if len(o.Region) > 0 {
+		o.Branch = regionToBranch(o.Region)
+	}
 
 	// Set landing from LandingId
 	landing, err := defaultDetailsMenu(d.Ctx.Connection, o.LandingId)
@@ -319,7 +367,7 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 
 	// helper for parent add
 	menuDone := make(map[string]bool)
-	menuQueue := make(map[string]bool)
+	menuQueue := []string{}
 
 	tempMenu := o.Menu
 	for _, det := range oo.Menu {
@@ -352,16 +400,28 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 			continue
 		}
 
-		// parent is already queued
-		if _, found := menuQueue[dtl.Parent]; found {
-			continue
-		}
-
 		// queue parent
-		menuQueue[dtl.Parent] = true
+		menuQueue = append(menuQueue, dtl.Parent)
 	}
 
-	for menuid, _ := range menuQueue {
+	_menuQueue := menuQueue
+	// add all parent recursive
+	for {
+		// queue empty
+		if len(menuQueue) == 0 {
+			break
+		}
+
+		// pop our array
+		var menuid = menuQueue[0]
+
+		// shift array, or set empty on length == 1
+		if len(menuQueue) == 1 {
+			menuQueue = _menuQueue[0:0]
+		} else {
+			menuQueue = menuQueue[1:]
+		}
+
 		// already loaded
 		if _, found := menuDone[menuid]; found {
 			continue
@@ -374,6 +434,19 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		}
 
 		tempMenu = append(tempMenu, dtl)
+
+		// no parent
+		if len(dtl.Parent) == 0 {
+			continue
+		}
+
+		// parent is already loaded
+		if _, found := menuDone[dtl.Parent]; found {
+			continue
+		}
+
+		// queue parent
+		menuQueue = append(menuQueue, dtl.Parent)
 	}
 
 	o.Menu = append(o.Menu, tempMenu...)
@@ -459,26 +532,6 @@ func (d *SysRolesController) GetBranch(r *knot.WebContext) interface{} {
 
 	for key, val := range acc {
 		if key != "Branch" {
-			continue
-		}
-
-		return val
-	}
-
-	return nil
-}
-
-func (d *SysRolesController) GetDistrict(r *knot.WebContext) interface{} {
-	r.Config.OutputType = knot.OutputJson
-	r.Config.NoLog = true
-
-	acc, err := GetMasterAccountDetailv2()
-	if err != nil {
-		tk.Println(err.Error())
-	}
-
-	for key, val := range acc {
-		if key != "District" {
 			continue
 		}
 

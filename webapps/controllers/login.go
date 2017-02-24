@@ -4,13 +4,14 @@ import (
 	. "eaciit/x10/webapps/connection"
 	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
+	"strings"
+	"time"
+
 	"github.com/eaciit/cast"
 	db "github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	"strings"
-	"time"
 )
 
 type LoginController struct {
@@ -151,12 +152,12 @@ func (b *LoginController) HeartBeat(k *knot.WebContext) interface{} {
 
 func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesModel, userid string) error {
 	Branch := Role.Branch
-	District := Role.District
+	Region := Role.Region
 	Type := Role.Roletype
 	Dealvalue := Role.Dealvalue
 
 	_ = Branch
-	_ = District
+	_ = Region
 
 	var dbFilter []*db.Filter
 

@@ -68,18 +68,26 @@ func (c *BaseController) NewPrevilege(k *knot.WebContext) Previlege {
 	DataAccess := Previlege{}
 
 	DataAccess.CustomerList = c.LoadCustomerList(k)
+	DataAccess.Grant = make(map[string]bool)
 
 	accessList := c.LoadBase(k)
+
 	for _, o := range accessList {
 		DataAccess.Menuid = o["Menuid"].(string)
 		DataAccess.Menuname = o["Menuname"].(string)
 		DataAccess.Username = o["Username"].(string)
 		DataAccess.Rolename = o["Rolename"].(string)
 		DataAccess.Fullname = o["Fullname"].(string)
-		DataAccess.Grant = o["Grant"].(map[string]bool)
-		DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
+		for name, val := range o["Grant"].(map[string]bool) {
+			// grant is not set, set it up
+			if _, found := DataAccess.Grant[name]; !found {
+				DataAccess.Grant[name] = val
+				continue
+			}
 
-		return DataAccess
+			// or operation
+			DataAccess.Grant[name] = DataAccess.Grant[name] || val
+		}
 	}
 
 	DataAccess.TopMenu = c.GetTopMenuName(DataAccess.Menuname)
@@ -166,22 +174,19 @@ func (b *BaseController) AccessMenu(k *knot.WebContext) []tk.M {
 	}
 
 	// merge all role menu
-	accessMenu := []Detailsmenu{}
 	for _, r := range roles {
-		accessMenu = append(accessMenu, r.Menu...)
-	}
-
-	// find matching url
-	for _, o := range accessMenu {
-		if o.Url == url {
-			obj := tk.M{}
-			obj.Set("Menuid", o.Menuid)
-			obj.Set("Menuname", o.Menuname)
-			obj.Set("Username", k.Session("username").(string))
-			obj.Set("Rolename", roles[0].Name)
-			obj.Set("Fullname", k.Session("fullname").(string))
-			obj.Set("Grant", o.Grant)
-			access = append(access, obj)
+		// find matching url
+		for _, o := range r.Menu {
+			if o.Url == url {
+				obj := tk.M{}
+				obj.Set("Menuid", o.Menuid)
+				obj.Set("Menuname", o.Menuname)
+				obj.Set("Username", k.Session("username").(string))
+				obj.Set("Rolename", r.Name)
+				obj.Set("Fullname", k.Session("fullname").(string))
+				obj.Set("Grant", o.Grant)
+				access = append(access, obj)
+			}
 		}
 	}
 
@@ -315,7 +320,6 @@ func (b *BaseController) GetDateList(ym string) []string {
 func (b *BaseController) InsertActivityLog(pageName string, pageActivity string, k *knot.WebContext) {
 	username := k.Session("username").(string)
 	sUrl := k.Request.URL.String()
-	tk.Println("URL-BASE: ", sUrl)
 	sUrl = sUrl[:strings.Index(sUrl, "/")]
 	ipaddress := k.Request.RemoteAddr
 	mdl := NewActivityLogModel()

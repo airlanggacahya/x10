@@ -890,6 +890,8 @@ rolesett._privToGrid = function(priv) {
 
 rolesett.EditData = function(IdRole){
     // Old Data
+    rolesett.disableRolename(true);
+
     var url = "/sysroles/getmenuedit";
     var param = {
             Id : IdRole
@@ -898,7 +900,7 @@ rolesett.EditData = function(IdRole){
             if(!(res.IsError != true)){
                 return swal("Error!", res.Message, "error");
             }
-            rolesett.disableRolename(false);
+
             $("#roleModal").modal("show");
             $("#nav-dex").css('z-index', '0');
             $("#roleModal").modal({
@@ -908,6 +910,9 @@ rolesett.EditData = function(IdRole){
             rolesett.titleModel("Update Roles");
             rolesett.edit(true);
             var Records = res.Data.Records[0];
+
+            if(!Records.Deletable)
+            rolesett.disableRolename(false);
             // FILL UP FORM
             rolesett.Id(Records.Id);
             rolesett.roleName(Records.Name);

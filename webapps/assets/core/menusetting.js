@@ -220,22 +220,24 @@ menusett.deleteMunulist = function(){
             cancelButtonText: "No, cancel it!",
             closeOnConfirm: false,
             closeOnCancel: false
-        },
-        function(isConfirm) {
-            if (isConfirm) {
-			    ajaxPost(url, param, function(data){
-					if (data.IsError == false){
-						menusett.resetAppMenu();
-						swal("Success!","Menu Success "+ menusett.Id() +" Delete","success");
-						menusett.saveData(false);
-						// window.location.href = "/menusetting/default";
-					}else{
-						swal("Error!",data.Message,"error");
-						menusett.saveData(false);
-					}
-				});
-            } else {
-            	menusett.saveData(false);
+        }).then(function(){
+            
+        	alert("masuk sini")
+		    ajaxPost(url, param, function(data){
+				if (data.IsError == false){
+					menusett.resetAppMenu();
+					swal("Success!","Menu Success "+ menusett.Id() +" Delete","success");
+					menusett.saveData(false);
+					// window.location.href = "/menusetting/default";
+				}else{
+					swal("Error!",data.Message,"error");
+					menusett.saveData(false);
+				}
+			});
+        },  function(dismiss) {
+			if (dismiss === 'cancel') {
+				console.log("dismiss");
+				menusett.saveData(false);
 			    menusett.updateData(false);
 			    menusett.Id("");
 			    menusett.PageId("");
@@ -249,8 +251,8 @@ menusett.deleteMunulist = function(){
 			    $("#Url").siblings("span.k-tooltip-validation").hide(); 
 			    $("#title").siblings("span.k-tooltip-validation").hide(); 
                 swal("Cancelled", "Cancelled Delete Menu", "error");
-            }
-        });
+			}
+		});
 }
 
 menusett.convert = function (array){

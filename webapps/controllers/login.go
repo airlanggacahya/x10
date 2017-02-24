@@ -78,7 +78,9 @@ func (c *LoginController) Do(k *knot.WebContext) interface{} {
 				//Get Customer
 				k.SetSession("CustomerProfileData", nil)
 				for _, valx := range resroles {
-					c.GetListUsersByRole(k, valx, resUser.Userid)
+					if valx.Status {
+						c.GetListUsersByRole(k, valx, resUser.Userid)
+					}
 				}
 
 				k.SetSession("userid", resUser.Id)

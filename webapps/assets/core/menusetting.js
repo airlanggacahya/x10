@@ -221,8 +221,6 @@ menusett.deleteMunulist = function(){
             closeOnConfirm: false,
             closeOnCancel: false
         }).then(function(){
-            
-        	alert("masuk sini")
 		    ajaxPost(url, param, function(data){
 				if (data.IsError == false){
 					menusett.resetAppMenu();

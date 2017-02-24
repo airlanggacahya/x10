@@ -22,6 +22,7 @@ var rolesett = {
                 $.ajax({
                     url: "/sysroles/getbranch",
                     dataType: "json",
+                    method: "POST",
                     success: function(result) {
                         // group by regionid
                         var region = {}
@@ -55,7 +56,8 @@ var rolesett = {
         transport: {
             read: {
                 url: "/sysroles/getbranch",
-                dataType: "json"
+                dataType: "json",
+                type: "POST"
             }
         },
     }),
@@ -66,7 +68,8 @@ var rolesett = {
         transport: {
             read: {
                 url: "/sysroles/getdealvalue",
-                dataType: "json"
+                dataType: "json",
+                type: "POST"
             }
         },
     }),

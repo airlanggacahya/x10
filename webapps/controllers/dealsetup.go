@@ -245,6 +245,7 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 				dbFilter = append(dbFilter, dbox.And(dbox.Gte("accountdetails.loandetails.proposedloanamount", var1), dbox.Lte("accountdetails.loandetails.proposedloanamount", var2)))
 			}
 		}
+		tk.Printf("--------- DV %v ----------- \n", Dv)
 		tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
 		tk.Printf("--------- USERID %v ----------- \n", userid)
 		switch strings.ToUpper(Type) {
@@ -258,7 +259,9 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 			for _, valx := range Role.Branch {
 				all = append(all, cast.ToString(valx))
 			}
-			dbFilter = append(dbFilter, dbox.In("accountdetails.accountsetupdetails.citynameid", all...))
+			if len(all) != 0 {
+				dbFilter = append(dbFilter, dbox.In("accountdetails.accountsetupdetails.citynameid", all...))
+			}
 		default:
 			dbFilter = append(dbFilter, dbox.Ne("_id", ""))
 

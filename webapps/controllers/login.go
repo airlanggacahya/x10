@@ -181,6 +181,7 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 			dbFilter = append(dbFilter, db.And(db.Gte("loandetails.proposedloanamount", var1), db.Lte("loandetails.proposedloanamount", var2)))
 		}
 	}
+	tk.Printf("--------- DV %v ----------- \n", Dv)
 	tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
 	tk.Printf("--------- USERID %v ----------- \n", userid)
 	switch strings.ToUpper(Type) {
@@ -195,7 +196,9 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 			all = append(all, cast.ToString(valx))
 		}
 
-		dbFilter = append(dbFilter, db.In("accountsetupdetails.citynameid", all...))
+		if len(all) != 0 {
+			dbFilter = append(dbFilter, db.In("accountsetupdetails.citynameid", all...))
+		}
 	default:
 		dbFilter = append(dbFilter, db.Ne("_id", ""))
 
@@ -293,7 +296,7 @@ func (d *LoginController) GetDealValue(id string) ([]tk.M, error) {
 		tk.Println(err.Error())
 		return ret, err
 	}
-
+	tk.Printf("---- ID ----", id)
 	cur, err := cn.
 		NewQuery().
 		Where(db.Eq("_id", bson.ObjectIdHex(id))).

@@ -151,13 +151,8 @@ func (b *LoginController) HeartBeat(k *knot.WebContext) interface{} {
 }
 
 func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesModel, userid string) error {
-	Branch := Role.Branch
-	Region := Role.Region
 	Type := Role.Roletype
 	Dealvalue := Role.Dealvalue
-
-	_ = Branch
-	_ = Region
 
 	var dbFilter []*db.Filter
 
@@ -194,7 +189,13 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 	case "RM":
 		dbFilter = append(dbFilter, db.Eq("accountsetupdetails.RmNameId", userid))
 	case "CUSTOM":
-		dbFilter = append(dbFilter, db.Ne("_id", ""))
+		all := []interface{}{}
+
+		for _, valx := range Role.Branch {
+			all = append(all, cast.ToString(valx))
+		}
+
+		dbFilter = append(dbFilter, db.In("accountsetupdetails.citynameid", all...))
 	default:
 		dbFilter = append(dbFilter, db.Ne("_id", ""))
 

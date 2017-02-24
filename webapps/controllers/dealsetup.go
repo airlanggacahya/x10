@@ -217,13 +217,8 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 			continue
 		}
 
-		Branch := Role.Branch
-		Region := Role.Region
 		Type := Role.Roletype
 		Dealvalue := Role.Dealvalue
-
-		_ = Branch
-		_ = Region
 
 		Dv, err := new(LoginController).GetDealValue(Dealvalue)
 
@@ -258,7 +253,12 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 		case "RM":
 			dbFilter = append(dbFilter, dbox.Eq("accountdetails.accountsetupdetails.RmNameId", userid))
 		case "CUSTOM":
-			dbFilter = append(dbFilter, dbox.Ne("_id", ""))
+			all := []interface{}{}
+
+			for _, valx := range Role.Branch {
+				all = append(all, cast.ToString(valx))
+			}
+			dbFilter = append(dbFilter, dbox.In("accountdetails.accountsetupdetails.citynameid", all...))
 		default:
 			dbFilter = append(dbFilter, dbox.Ne("_id", ""))
 
@@ -1183,6 +1183,7 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	// 	keys = append(keys, dbox.Or(keyx...))
 	// }
 
+	//RESTRICT ACCESS
 	dbf, err := GenerateRoleCondition(k)
 	if err != nil {
 		return err.Error()

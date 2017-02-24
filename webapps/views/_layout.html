@@ -834,18 +834,18 @@
   // model.currentMenu = ko.observable('Dashboard');
   // model.currentTitle = ko.observable('Dashboard');
   function getServerDateTime() {
-    var param = {};
-    ajaxPost("/dashboard/getcurrentdate", param, function (res) {
-      var d = new Date(res.Data.CurrentDate);
-      var DefaultDate = new Date(res.Data.CurrentDate);
-      var day = moment(d).format("ddd");
-      if (day != "Mon") {
-        DefaultDate.setDate(DefaultDate.getDate() - 1);
-      } else {
-        DefaultDate.setDate(DefaultDate.getDate() - 3);
-      }
-      model.CurrentDate(moment(new Date(DefaultDate)).format("YYYY-MM-DD"));
-    });
+    // var param = {};
+    // ajaxPost("/dashboard/getcurrentdate", param, function (res) {
+    //   var d = new Date(res.Data.CurrentDate);
+    //   var DefaultDate = new Date(res.Data.CurrentDate);
+    //   var day = moment(d).format("ddd");
+    //   if (day != "Mon") {
+    //     DefaultDate.setDate(DefaultDate.getDate() - 1);
+    //   } else {
+    //     DefaultDate.setDate(DefaultDate.getDate() - 3);
+    //   }
+    //   model.CurrentDate(moment(new Date(DefaultDate)).format("YYYY-MM-DD"));
+    // });
   }
   function convert(array) {
     var map = {};

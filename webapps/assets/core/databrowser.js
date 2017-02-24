@@ -487,27 +487,27 @@ function toggleFilter(){
 }
 
 $(document).ready(function () {
-  $("#TradeDate").kendoDatePicker({
-    value : new Date(),
-    format: "yyyy-MM-dd",
-  }).data("kendoDatePicker");
-  var param = {};
-  ajaxPost("/dashboard/getcurrentdate", param, function (res) {
-      var d = new Date(res.Data.CurrentDate);
-      var DefaultDate = new Date(res.Data.CurrentDate);
-      var day = moment(d).format("ddd");
-      if (day != "Mon"){
-          DefaultDate.setDate(DefaultDate.getDate()-1);
-      }else{
-          DefaultDate.setDate(DefaultDate.getDate()-3);
-      }
-     TRN.TradeDate(moment(new Date(DefaultDate)).format("YYYY-MM-DD"));
-     loadGrid();
-  });
+  // $("#TradeDate").kendoDatePicker({
+  //   value : new Date(),
+  //   format: "yyyy-MM-dd",
+  // }).data("kendoDatePicker");
+  // var param = {};
+  // ajaxPost("/dashboard/getcurrentdate", param, function (res) {
+  //     var d = new Date(res.Data.CurrentDate);
+  //     var DefaultDate = new Date(res.Data.CurrentDate);
+  //     var day = moment(d).format("ddd");
+  //     if (day != "Mon"){
+  //         DefaultDate.setDate(DefaultDate.getDate()-1);
+  //     }else{
+  //         DefaultDate.setDate(DefaultDate.getDate()-3);
+  //     }
+  //    TRN.TradeDate(moment(new Date(DefaultDate)).format("YYYY-MM-DD"));
+  //    loadGrid();
+  // });
 
-  $("#TradeDate").on("change",function (){
-    loadGrid();
-  });
+  // $("#TradeDate").on("change",function (){
+  //   loadGrid();
+  // });
 
   $("#export").click(function (e) {
     var grid = $("#MasterDataBrowser").data("kendoGrid");

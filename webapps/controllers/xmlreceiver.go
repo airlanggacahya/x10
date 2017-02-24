@@ -151,6 +151,9 @@ func checkMasterData(data DealSetupModel) error {
 			continue
 		}
 
+		if val == "" {
+			continue
+		}
 		exists, err := CheckMaster(key, "name", val)
 		if err != nil {
 			return err
@@ -1063,7 +1066,9 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 	}
 	current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 	current.AccountSetupDetails.RmNameId = body.GetString("dealRm")
-	current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
+	if hp.ToWordCase(body.GetString("dealSourceName")) == "Dealer" {
+		current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
+	}
 	current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
 	current.AccountSetupDetails.CreditAnalystId = body.GetString("makerId")
 	current.AccountSetupDetails.Product = hp.ToWordCase(Ld.GetString("dealProductDesc"))
@@ -1148,7 +1153,9 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		}
 		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 		current.AccountSetupDetails.RmNameId = body.GetString("dealRm")
-		current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
+		if hp.ToWordCase(body.GetString("dealSourceName")) == "Dealer" {
+			current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
+		}
 		current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
 		current.AccountSetupDetails.CreditAnalystId = body.GetString("makerId")
 		current.AccountSetupDetails.Product = hp.ToWordCase(Ld.GetString("dealProductDesc"))

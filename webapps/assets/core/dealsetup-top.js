@@ -5,7 +5,7 @@ setup.IdCustomerName = ko.observable('')
 setup.ListCustomerName = ko.observableArray([])
 setup.ListDealNo = ko.observableArray([])
 setup.AllCP = ko.observableArray([])
-setup.title = ko.observable('')
+setup.title = ko.observable("Customer Name :  | Dealno : ")
 
 setup.columnGrid = [
   {

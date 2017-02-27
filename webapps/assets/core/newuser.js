@@ -18,7 +18,7 @@ ns.email = ko.observable("");
 ns.uniqueid = ko.observable("");
 ns.role = ko.observable("");
 ns.nameValue = ko.observable("");
-ns.title = ko.observable("");
+ns.title = ko.observable("User Name : | Unique Id: ");
 ns.uniqueidValue = ko.observable("");
 
 ns.setList = function(){
@@ -352,10 +352,10 @@ ns.filterChange = function(){
 }
 
 ns.refreshFilter = function(){
-	if(ns.nameValue() == "" || ns.uniqueidValue() == ""){
-		swal("", "Please Select Filter", "warning");
-		var str = "User Name : " + ns.nameValue() + " | Unique Id: "+ ns.uniqueidValue() 
+	if(ns.nameValue() == ""){
+		var str = "User Name : " + ns.nameValue() + " | Unique Id: "+ ns.uniqueidValue();
 		ns.title(str)
+		swal("", "Please Select Filter", "warning");
 		return;
 	}
 	ns.LoadGetUser()

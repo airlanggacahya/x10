@@ -1090,8 +1090,12 @@ rolesett.GetDataRole = function(){
                 {
                     title: "Action",
                     headerAttributes: {class: 'k-header header-bgcolor'},
-                    width: 50,
-                    template: "<center><button class='btn btn-xs btn-flat btn-danger del' #if(!Deletable) {# disabled='disabled' #}# onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button></center>"
+                    width: 100,
+                    template: "<center>" +
+                            "<button class='btn btn-xs btn-flat btn-warning edit' onclick='rolesett.EditData(\"#: Id #\")'><span class='fa fa-edit'></span></button>" +
+                            "&nbsp;&nbsp;" +
+                            "<button class='btn btn-xs btn-flat btn-danger del' #if(!Deletable) {# disabled='disabled' #}# onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button>" +
+                            "</center>"
                 }
             ]
     });

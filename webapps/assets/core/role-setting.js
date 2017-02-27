@@ -3,7 +3,7 @@ var rolesett = {
     titleModel : ko.observable("New Roles"),
     loading : ko.observable(false),
     edit : ko.observable(true),
-    disableRolename : ko.observable(true),
+    roleNameEnable : ko.observable(true),
     temp: ko.observableArray([]),
     filterStatus: ko.observable(),
     //var field 
@@ -850,7 +850,7 @@ rolesett.AddNew = function(){
     $('.rolecheck-value-Approve').prop('checked', false);
     $('.rolecheck-value-Process').prop('checked', false);
     rolesett.titleModel("New Roles");
-    rolesett.disableRolename(true);
+    rolesett.roleNameEnable(true);
     rolesett.ClearField();
     rolesett.edit(true);
     rolesett.getTopMenu();
@@ -948,7 +948,7 @@ rolesett._privToGrid = function(priv) {
 
 rolesett.EditData = function(IdRole){
     // Old Data
-    rolesett.disableRolename(true);
+    rolesett.roleNameEnable(true);
 
     var url = "/sysroles/getmenuedit";
     var param = {
@@ -969,8 +969,10 @@ rolesett.EditData = function(IdRole){
             rolesett.edit(true);
             var Records = res.Data.Records[0];
 
-            if(!Records.Deletable)
-            rolesett.disableRolename(false);
+            if(!Records.Deletable) {
+                rolesett.roleNameEnable(false);
+            }
+
             // FILL UP FORM
             rolesett.Id(Records.Id);
             rolesett.roleName(Records.Name);
@@ -978,6 +980,8 @@ rolesett.EditData = function(IdRole){
             rolesett._privToGrid(privilegesToNewRole(Records.Menu));
             rolesett.landingPage(Records.LandingId);
             $('#Status').bootstrapSwitch('state',Records.Status);
+            $('#Status').bootstrapSwitch('disabled',!Records.Deletable);
+            console.log(Records.Deletable);
             rolesett.dealAllocation(Records.Dealallocation);
             rolesett.dealValue(Records.Dealvalue);
             // last to set

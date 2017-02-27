@@ -132,7 +132,7 @@
                       <div class="form-group">
                         <label for="roleType" class="col-sm-3 form-control-label">Role Type<span class="mandatory">*</span></label>
                         <div class="col-sm-8">
-                          <select class="form-control input-sm" name="roleType" id="roleType" validationMessage="Role Type Required" required data-bind="value: roleType,enable:disableRolename">
+                          <select class="form-control input-sm" name="roleType" id="roleType" validationMessage="Role Type Required" required data-bind="value: roleType,enable:roleNameEnable">
                               <option>CA</option>
                               <option>RM</option>
                               <option>Custom</option>
@@ -142,7 +142,7 @@
                       <div class="form-group">
                         <label for="roleName" class="col-sm-3 form-control-label">Role Name<span class="mandatory">*</span></label>
                         <div class="col-sm-8">
-                          <input type="text" class="form-control input-sm" name="roleName" id="roleName" validationMessage="Role Name required" required data-bind="value:roleName, enable:disableRolename"/>
+                          <input type="text" class="form-control input-sm" name="roleName" id="roleName" validationMessage="Role Name required" required data-bind="value:roleName, enable:roleNameEnable"/>
                         </div>
                       </div>
                       <div class="form-group">

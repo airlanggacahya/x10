@@ -267,7 +267,7 @@ var webFormMapping = [
         "grant": webFormGrant
     },
     {
-        "name": "Cibil Details",
+        "name": "CIBIL Details",
         "menuid": "2016815163422",
         "grant": webFormGrant
     },
@@ -395,7 +395,7 @@ var cibilMapping = [
     }
 ]
 
-var helpGrant = ["view"]
+var helpGrant = ["view", "download"]
 var helpMapping = [
     {
         "name": "Formula Glossary",
@@ -564,7 +564,7 @@ function completeColumn(init) {
     var ret = [
         {
             field: "submodule",
-            title: "Submodule",
+            title: "Sub-Module",
             headerAttributes: {class: 'k-header header-bgcolor'},
             width: 200
         }
@@ -769,7 +769,11 @@ var HelpCol = completeColumn([
     {
         field: "grant.view",
         title: "View"
-    }
+    },
+    {
+        field: "grant.download",
+        title: "Download"
+    },
 ])
 
 // Admin

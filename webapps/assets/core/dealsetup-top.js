@@ -2,6 +2,10 @@ var setup = {}
 setup.searchValueCustomerName = ko.observable('')
 setup.searchValueDealNo = ko.observable('')
 setup.IdCustomerName = ko.observable('')
+setup.ListCustomerName = ko.observableArray([])
+setup.ListDealNo = ko.observableArray([])
+setup.AllCP = ko.observableArray([])
+setup.title = ko.observable('')
 
 setup.columnGrid = [
   {
@@ -227,6 +231,37 @@ setup.resetDealSetup = function(){
   setup.IdCustomerName('')
   setup.createGrid(); 
 }
+
+setup.filterChange = function(){
+  var val = _.filter(setup.AllCP(), function(dt){
+    return dt.CustomerName == setup.searchValueCustomerName()
+  })
+  
+  if( val != undefined){
+    try{
+      // console.log("------->>>",val)
+        setup.ListDealNo([]);
+        $.each(val, function(i, tem){
+          setup.ListDealNo.push(tem.DealNo)
+        })
+        if(val.length == 1){
+          setup.searchValueDealNo(val[0].DealNo)
+        }
+        
+
+    }catch(e){
+
+    }
+    
+  }
+}
+
+window.refreshFilter = function(){
+  setup.createGrid()
+   str = "Customer Name : "+ setup.searchValueCustomerName() +" | Dealno : "+ setup.searchValueDealNo();
+   setup.title(str)
+}
+
 
 $(function(){
 	setup.createGrid()

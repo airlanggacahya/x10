@@ -1,7 +1,10 @@
 var ns = {}
 ns.Userdata = ko.observableArray([]);
 ns.roleList = ko.observableArray([]);
+ns.dataList = ko.observableArray([]);
 ns.valuerole = ko.observableArray([]);
+ns.nameList = ko.observableArray([]);
+ns.idlist = ko.observableArray([]);
 ns.param = ko.observableArray([]);
 ns.param = ko.observableArray([]);
 ns.catStatusList = ko.observableArray(["Enable", "Disable"]);
@@ -14,10 +17,28 @@ ns.username = ko.observable("");
 ns.email = ko.observable("");
 ns.uniqueid = ko.observable("");
 ns.role = ko.observable("");
+ns.nameValue = ko.observable("");
+ns.title = ko.observable("");
+ns.uniqueidValue = ko.observable("");
+
+ns.setList = function(){
+	var param ={
+		name : "",
+		userid : "", 
+	}
+	ajaxPost("/newuser/getuser", param, function(res){
+		var data = res.Data.data;
+		ns.dataList(data)
+	})
+}
 
 ns.LoadGetUser = function(){
 	ns.Userdata([])
-	ajaxPost("/newuser/getuser", {}, function(res){
+	var param ={
+		name : ns.nameValue(),
+		userid : ns.uniqueidValue(), 
+	}
+	ajaxPost("/newuser/getuser", param, function(res){
 		var data = res.Data.data;
 		if(data.length != 0){
 			ns.Userdata(data)
@@ -44,6 +65,9 @@ ns.LoadGetUser = function(){
 
 					temp.Role = temp.Role.join("|");
 				}
+
+				ns.nameList.push(temp.Username)
+				ns.idlist.push(temp.Userid)
 				
 
 			})
@@ -64,7 +88,13 @@ ns.LoadGridUser = function(){
 			pageSize: 10,
 		},
 
-		filterable: true,
+		filterable: {
+			operators: {
+				string: {
+					contains : "Contains",
+				}
+			}
+		},
 		pageable: {
 			refresh: true,
 			pageSizes: true,
@@ -303,8 +333,31 @@ ns.onPass = function(){
 	$(".conf").hide()
 }
 
+ns.filterChange = function(){
+	// alert("masuk")
+	var val = _.filter(ns.dataList(), function(dt){
+				console.log(ns.nameValue())
+				return dt.Username == ns.nameValue();
+	});
+
+	console.log(val)
+
+	if(val != undefined){
+		$.each(val, function(i, temp){
+			ns.uniqueidValue(temp.Userid)
+		})
+	}
+}
+
+ns.refreshFilter = function(){
+	ns.LoadGetUser()
+	var str = "User Name : " + ns.nameValue() + " | Unique Id: "+ ns.uniqueidValue() 
+	ns.title(str)
+}
+
 $(function(){
 	// ns.LoadGridUser()
+	ns.setList()
 	ns.LoadGetUser();
 	$("#gridUser").css("overflow", "hidden")
 	

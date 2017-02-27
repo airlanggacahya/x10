@@ -36,6 +36,7 @@ func (c *DealSetUpController) Default(k *knot.WebContext) interface{} {
 		"shared/loading.html",
 		"dealsetup/top.html",
 		"dealsetup/bottom.html",
+		"dealsetup/dealfilter.html",
 	}
 
 	return DataAccess

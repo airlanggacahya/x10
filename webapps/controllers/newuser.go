@@ -26,6 +26,7 @@ func (c *NewUserController) Default(k *knot.WebContext) interface{} {
 		"shared/dataaccess.html",
 		"shared/filter.html",
 		"shared/loading.html",
+		"newuser/userfilter.html",
 	}
 
 	return DataAccess
@@ -63,16 +64,33 @@ func (c *NewUserController) Default(k *knot.WebContext) interface{} {
 func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	payload := NewUser{}
+	payload := tk.M{}
 	k.GetPayload(&payload)
+
+	tk.Println("---------->>>>>>>", payload)
 
 	cn, _ := GetConnection()
 	defer cn.Close()
 
-	csr, err := cn.NewQuery().
+	filter := []*dbox.Filter{}
+
+	if payload["name"] != "" {
+		filter = append(filter, dbox.Eq("username", payload["name"]))
+	}
+
+	if payload["userid"] != "" {
+		filter = append(filter, dbox.Eq("userid", payload["userid"]))
+	}
+
+	data := cn.NewQuery().
 		From("MasterUser").
-		Order("-lastUpdateDate").
-		Cursor(nil)
+		Order("-lastUpdateDate")
+
+	if len(filter) > 0 {
+		data = data.Where(dbox.And(filter...))
+	}
+
+	csr, err := data.Cursor(nil)
 
 	defer csr.Close()
 

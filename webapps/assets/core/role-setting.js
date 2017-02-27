@@ -891,6 +891,11 @@ rolesett.ValidateData = function() {
     case "Branches":
         if (rolesett.branch().length == 0)
             return swalErr("Branches cannot empty")
+        break;
+    case "Regions":
+        if (rolesett.region().length == 0)
+            return swalErr("Regions cannot empty")
+        break;
     }
 
     if (rolesett.dealValue() == "")

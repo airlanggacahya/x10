@@ -92,6 +92,11 @@ ns.LoadGridUser = function(){
 			operators: {
 				string: {
 					contains : "Contains",
+					eq: "Is equal to",
+					neq: "Is not equal to",
+					startswith: "Starts with",
+					doesnotcontain: "Does not contain",
+					endswith: "Ends with"
 				}
 			}
 		},
@@ -334,22 +339,25 @@ ns.onPass = function(){
 }
 
 ns.filterChange = function(){
-	// alert("masuk")
 	var val = _.filter(ns.dataList(), function(dt){
-				console.log(ns.nameValue())
 				return dt.Username == ns.nameValue();
 	});
-
-	console.log(val)
-
 	if(val != undefined){
-		$.each(val, function(i, temp){
-			ns.uniqueidValue(temp.Userid)
-		})
+		try{
+			ns.uniqueidValue(val[0].Userid)
+		}catch(e){
+
+		}
 	}
 }
 
 ns.refreshFilter = function(){
+	if(ns.nameValue() == "" || ns.uniqueidValue() == ""){
+		swal("", "Please Select Filter", "warning");
+		var str = "User Name : " + ns.nameValue() + " | Unique Id: "+ ns.uniqueidValue() 
+		ns.title(str)
+		return;
+	}
 	ns.LoadGetUser()
 	var str = "User Name : " + ns.nameValue() + " | Unique Id: "+ ns.uniqueidValue() 
 	ns.title(str)

@@ -47,7 +47,7 @@
        
         <select class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:ns.nameList, value:ns.nameValue , dataBound: ns.filterChange, optionLabel: 'Choose Customer' , filter:'contains'}"></select>
         
-        <select class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:ns.idlist, value:ns.uniqueidValue , select: ns.filterChange , optionLabel: 'Choose DealNo' , filter:'contains'}"></select>
+        <select class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:ns.idlist, value:ns.uniqueidValue , optionLabel: 'Choose Unique Id' , filter:'contains'}"></select>
       <!-- </div> -->
       <div class="pull-left">
         <button class="btn btn-sm filter-font filter-button" type="button" id="refresh" btn-sm onclick="ns.refreshFilter()"> 

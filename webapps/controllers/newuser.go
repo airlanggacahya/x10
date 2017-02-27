@@ -87,7 +87,7 @@ func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 		Order("-lastUpdateDate")
 
 	if len(filter) > 0 {
-		data = data.Where(dbox.And(filter...))
+		data = data.Where(dbox.Or(filter...))
 	}
 
 	csr, err := data.Cursor(nil)

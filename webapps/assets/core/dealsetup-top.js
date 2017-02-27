@@ -257,6 +257,12 @@ setup.filterChange = function(){
 }
 
 window.refreshFilter = function(){
+  if(setup.searchValueCustomerName() == ""){
+    swal("", "Please Select Filter", "warning");
+    str = "Customer Name :  | Dealno : ";
+   setup.title(str)
+    return;
+  }
   setup.createGrid()
    str = "Customer Name : "+ setup.searchValueCustomerName() +" | Dealno : "+ setup.searchValueDealNo();
    setup.title(str)

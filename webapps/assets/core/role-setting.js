@@ -3,7 +3,7 @@ var rolesett = {
     titleModel : ko.observable("New Roles"),
     loading : ko.observable(false),
     edit : ko.observable(true),
-    disableRolename : ko.observable(true),
+    roleNameEnable : ko.observable(true),
     temp: ko.observableArray([]),
     filterStatus: ko.observable(),
     //var field 
@@ -267,7 +267,7 @@ var webFormMapping = [
         "grant": webFormGrant
     },
     {
-        "name": "Cibil Details",
+        "name": "CIBIL Details",
         "menuid": "2016815163422",
         "grant": webFormGrant
     },
@@ -395,7 +395,7 @@ var cibilMapping = [
     }
 ]
 
-var helpGrant = ["view"]
+var helpGrant = ["view", "download"]
 var helpMapping = [
     {
         "name": "Formula Glossary",
@@ -564,7 +564,7 @@ function completeColumn(init) {
     var ret = [
         {
             field: "submodule",
-            title: "Submodule",
+            title: "Sub-Module",
             headerAttributes: {class: 'k-header header-bgcolor'},
             width: 200
         }
@@ -769,7 +769,11 @@ var HelpCol = completeColumn([
     {
         field: "grant.view",
         title: "View"
-    }
+    },
+    {
+        field: "grant.download",
+        title: "Download"
+    },
 ])
 
 // Admin
@@ -846,7 +850,7 @@ rolesett.AddNew = function(){
     $('.rolecheck-value-Approve').prop('checked', false);
     $('.rolecheck-value-Process').prop('checked', false);
     rolesett.titleModel("New Roles");
-    rolesett.disableRolename(true);
+    rolesett.roleNameEnable(true);
     rolesett.ClearField();
     rolesett.edit(true);
     rolesett.getTopMenu();
@@ -883,10 +887,19 @@ rolesett.ValidateData = function() {
     if (rolesett.roleName().length == 0)
         return swalErr("Role Name must be filled")
 
-     if (rolesett.dealValue() == "")
-        return swalErr("Proposed Amount Range must be filled")
+    switch (rolesett.dealAllocation()) {
+    case "Branches":
+        if (rolesett.branch().length == 0)
+            return swalErr("Branches cannot empty")
+        break;
+    case "Regions":
+        if (rolesett.region().length == 0)
+            return swalErr("Regions cannot empty")
+        break;
+    }
 
-    // rolesett.dealAllocation();
+    if (rolesett.dealValue() == "")
+        return swalErr("Proposed Amount Range must be filled")
     
     if (rolesett.landingPage().length == 0 || _.findIndex(rolesett.listPage(), {"menuid": rolesett.landingPage()}) == -1)
         return swalErr("Landing Page must be filled")
@@ -940,7 +953,7 @@ rolesett._privToGrid = function(priv) {
 
 rolesett.EditData = function(IdRole){
     // Old Data
-    rolesett.disableRolename(true);
+    rolesett.roleNameEnable(true);
 
     var url = "/sysroles/getmenuedit";
     var param = {
@@ -961,8 +974,10 @@ rolesett.EditData = function(IdRole){
             rolesett.edit(true);
             var Records = res.Data.Records[0];
 
-            if(!Records.Deletable)
-            rolesett.disableRolename(false);
+            if(!Records.Deletable) {
+                rolesett.roleNameEnable(false);
+            }
+
             // FILL UP FORM
             rolesett.Id(Records.Id);
             rolesett.roleName(Records.Name);
@@ -970,6 +985,8 @@ rolesett.EditData = function(IdRole){
             rolesett._privToGrid(privilegesToNewRole(Records.Menu));
             rolesett.landingPage(Records.LandingId);
             $('#Status').bootstrapSwitch('state',Records.Status);
+            $('#Status').bootstrapSwitch('disabled',!Records.Deletable);
+            console.log(Records.Deletable);
             rolesett.dealAllocation(Records.Dealallocation);
             rolesett.dealValue(Records.Dealvalue);
             // last to set
@@ -1086,8 +1103,12 @@ rolesett.GetDataRole = function(){
                 {
                     title: "Action",
                     headerAttributes: {class: 'k-header header-bgcolor'},
-                    width: 50,
-                    template: "<center><button class='btn btn-xs btn-flat btn-danger del' #if(!Deletable) {# disabled='disabled' #}# onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button></center>"
+                    width: 100,
+                    template: "<center>" +
+                            "<button class='btn btn-xs btn-flat btn-warning edit' onclick='rolesett.EditData(\"#: Id #\")'><span class='fa fa-edit'></span></button>" +
+                            "&nbsp;&nbsp;" +
+                            "<button class='btn btn-xs btn-flat btn-danger del' #if(!Deletable) {# disabled='disabled' #}# onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button>" +
+                            "</center>"
                 }
             ]
     });

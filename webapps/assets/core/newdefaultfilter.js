@@ -90,6 +90,8 @@ function applyFilterCityDS() {
 		var v = _.get(val, CITY)
 		if (typeof(v) == "undefined")
 			return false
+		if (v == null)
+			return false
 		if (v.length == 0)
 			return false
 		return true
@@ -105,6 +107,8 @@ function applyFilterProductDS() {
 	applyFilter(filters.ProductDS, PRODUCT,function(val) {
 		var v = _.get(val, PRODUCT)
 		if (typeof(v) == "undefined")
+			return false
+		if (v == null)
 			return false
 		if (v.length == 0)
 			return false
@@ -122,6 +126,8 @@ function applyFilterBRHeadDS() {
 		var v = _.get(val, BRHEAD)
 		if (typeof(v) == "undefined")
 			return false
+		if (v == null)
+			return false
 		if (v.length == 0)
 			return false
 		return true
@@ -137,6 +143,8 @@ function applyFilterSchemeDS() {
 	applyFilter(filters.SchemeDS, SCHEME,function(val) {
 		var v = _.get(val, SCHEME)
 		if (typeof(v) == "undefined")
+			return false
+		if (v == null)
 			return false
 		if (v.length == 0)
 			return false
@@ -154,6 +162,8 @@ function applyFilterRMDS() {
 		var v = _.get(val, RM)
 		if (typeof(v) == "undefined")
 			return false
+		if (v == null)
+			return false
 		if (v.length == 0)
 			return false
 		return true
@@ -169,6 +179,8 @@ function applyFilterCADS() {
 	applyFilter(filters.CADS, CA,function(val) {
 		var v = _.get(val, CA)
 		if (typeof(v) == "undefined")
+			return false
+		if (v == null)
 			return false
 		if (v.length == 0)
 			return false

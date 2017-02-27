@@ -883,10 +883,14 @@ rolesett.ValidateData = function() {
     if (rolesett.roleName().length == 0)
         return swalErr("Role Name must be filled")
 
-     if (rolesett.dealValue() == "")
-        return swalErr("Proposed Amount Range must be filled")
+    switch (rolesett.dealAllocation()) {
+    case "Branches":
+        if (rolesett.branch().length == 0)
+            return swalErr("Branches cannot empty")
+    }
 
-    // rolesett.dealAllocation();
+    if (rolesett.dealValue() == "")
+        return swalErr("Proposed Amount Range must be filled")
     
     if (rolesett.landingPage().length == 0 || _.findIndex(rolesett.listPage(), {"menuid": rolesett.landingPage()}) == -1)
         return swalErr("Landing Page must be filled")

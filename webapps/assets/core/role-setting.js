@@ -46,6 +46,11 @@ var rolesett = {
                             }
                         })
 
+                        region_ar.unshift({
+                            name: "All",
+                            regionid: 0,
+                        })
+
                         options.success(region_ar);
                     },
                     error: function(result) {
@@ -60,11 +65,32 @@ var rolesett = {
     branch : ko.observableArray([]),
     branchOpt: new kendo.data.DataSource({
         transport: {
-            read: {
-                url: "/sysroles/getbranch",
-                dataType: "json",
-                type: "POST"
+            read: function(options){
+               $.ajax({
+                    url: "/sysroles/getbranch",
+                    dataType: "json",
+                    method: "POST",
+                    success: function(result) {
+                        result.unshift({
+                            branchid: 0,
+                            name: "All",
+                            region: {
+                                desclarge: null,
+                                name:"All",
+                                regionid:0,
+                            },
+                        })
+
+                        console.log(result)
+
+                        options.success(result);
+                    },
+                    error: function(result) {
+                        options.error(result);
+                    }
+               })
             }
+            
         },
     }),
     branchEnable: ko.observable(false),
@@ -110,16 +136,6 @@ var rolesett = {
 // Data grantAccessNotifier notifier
 function notifGrantChanges(value) {
     rolesett.grantAccessNotifier(backMapping())
-}
-
-rolesett.addItem = function(e){
-    console.log("_______________________>>>>>", e)
-    e.sender.dataSource.add({
-        branchid: null,
-        name: "All",
-        region: null,
-    })
-                        // console.log("--------------------->>>>>", result)
 }
 
 rolesett.dashboardData.subscribe(notifGrantChanges);
@@ -978,6 +994,15 @@ rolesett.branch.subscribe(function(value){
     })
 })
 
+rolesett.region.subscribe(function(value){
+    $.each(value, function(i, val){
+        if(val == 0){
+            rolesett.region(val) 
+
+        }
+    })
+})
+
 rolesett.EditData = function(IdRole){
     // Old Data
     rolesett.roleNameEnable(true);
@@ -991,12 +1016,8 @@ rolesett.EditData = function(IdRole){
                 return swal("Error!", res.Message, "error");
             }
 
-            var a = $("#branch").data("kendoMultiSelect").dataSource.data();
-            a.unshift({
-                branchid: 0,
-                name: "All",
-                region: null,
-            })
+            // var a = $("#branch").data("kendoMultiSelect").dataSource.data();
+           
 
             $("#roleModal").modal("show");
             $("#nav-dex").css('z-index', '0');

@@ -1,7 +1,10 @@
 var ns = {}
 ns.Userdata = ko.observableArray([]);
 ns.roleList = ko.observableArray([]);
+ns.dataList = ko.observableArray([]);
 ns.valuerole = ko.observableArray([]);
+ns.nameList = ko.observableArray([]);
+ns.idlist = ko.observableArray([]);
 ns.param = ko.observableArray([]);
 ns.param = ko.observableArray([]);
 ns.catStatusList = ko.observableArray(["Enable", "Disable"]);
@@ -14,10 +17,28 @@ ns.username = ko.observable("");
 ns.email = ko.observable("");
 ns.uniqueid = ko.observable("");
 ns.role = ko.observable("");
+ns.nameValue = ko.observable("");
+ns.title = ko.observable("User Name : | Unique Id: ");
+ns.uniqueidValue = ko.observable("");
+
+ns.setList = function(){
+	var param ={
+		name : "",
+		userid : "", 
+	}
+	ajaxPost("/newuser/getuser", param, function(res){
+		var data = res.Data.data;
+		ns.dataList(data)
+	})
+}
 
 ns.LoadGetUser = function(){
 	ns.Userdata([])
-	ajaxPost("/newuser/getuser", {}, function(res){
+	var param ={
+		name : ns.nameValue(),
+		userid : ns.uniqueidValue(), 
+	}
+	ajaxPost("/newuser/getuser", param, function(res){
 		var data = res.Data.data;
 		if(data.length != 0){
 			ns.Userdata(data)
@@ -44,6 +65,9 @@ ns.LoadGetUser = function(){
 
 					temp.Role = temp.Role.join("|");
 				}
+
+				ns.nameList.push(temp.Username)
+				ns.idlist.push(temp.Userid)
 				
 
 			})
@@ -64,7 +88,18 @@ ns.LoadGridUser = function(){
 			pageSize: 10,
 		},
 
-		filterable: true,
+		filterable: {
+			operators: {
+				string: {
+					contains : "Contains",
+					eq: "Is equal to",
+					neq: "Is not equal to",
+					startswith: "Starts with",
+					doesnotcontain: "Does not contain",
+					endswith: "Ends with"
+				}
+			}
+		},
 		pageable: {
 			refresh: true,
 			pageSizes: true,
@@ -303,8 +338,34 @@ ns.onPass = function(){
 	$(".conf").hide()
 }
 
+ns.filterChange = function(){
+	var val = _.filter(ns.dataList(), function(dt){
+				return dt.Username == ns.nameValue();
+	});
+	if(val != undefined){
+		try{
+			ns.uniqueidValue(val[0].Userid)
+		}catch(e){
+
+		}
+	}
+}
+
+ns.refreshFilter = function(){
+	if(ns.nameValue() == ""){
+		var str = "User Name : " + ns.nameValue() + " | Unique Id: "+ ns.uniqueidValue();
+		ns.title(str)
+		swal("", "Please Select Filter", "warning");
+		return;
+	}
+	ns.LoadGetUser()
+	var str = "User Name : " + ns.nameValue() + " | Unique Id: "+ ns.uniqueidValue() 
+	ns.title(str)
+}
+
 $(function(){
 	// ns.LoadGridUser()
+	ns.setList()
 	ns.LoadGetUser();
 	$("#gridUser").css("overflow", "hidden")
 	

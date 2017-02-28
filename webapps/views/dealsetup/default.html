@@ -7,37 +7,38 @@
 		cursor: pointer;
 	}
 </style>
+{{template "dealfilter.html"}}
 
 <div class="col-md-12 col-sm-12 ez panel-content" data-bind="with: setup,visible:model.IsGranted('view')" >
 	<div class="panel">
 		<div class="panel-body">
 			<div class="col-md-12" data-bind="visible: !(setup.detailIsShow())">
-				<div class="col-md-4">
+				<!-- <div class="col-md-4">
 					<div class="form-group col-sm-12 filterhide">
 				     	<label class="col-sm-3 form-control-label margin-top5px">Customer Name</label>
 				     	<div class="col-sm-9">
-					 		<!-- 	<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: searchValueCustomerName, event:{change: onChangeSearchCustomerName}"> -->
+					 			<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: searchValueCustomerName, event:{change: onChangeSearchCustomerName}">
 					 		<input type="text" style="width: 100%;" name="customerName" class="form-control k-textbox" data-bind="value: searchValueCustomerName">
 					    </div>
 					    <div class="clearfix"></div>
 				    </div>
-				</div>
-				<div class="col-md-4">
+				</div> -->
+				<!-- <div class="col-md-4">
 					<div class="form-group col-sm-12 filterhide">
 				     	<label class="col-sm-3 form-control-label margin-top5px">Deal No</label>
 				     	<div class="col-sm-9">
-					 <!-- 			<input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: searchValueDealNo, event:{change: onChangeSearchDealNo}" > -->
+					 			<input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: searchValueDealNo, event:{change: onChangeSearchDealNo}" >
 					 <input type="text" style="width: 100%;" name="dealno" class="form-control k-textbox" data-bind="value: searchValueDealNo" >
 					    </div>
 					    <div class="clearfix"></div>
 				    </div>
-				</div>
-				<div class="col-md-4">
+				</div> -->
+				<!-- <div class="col-md-4">
 					<div class="form-group col-sm-12 filterhide">
 				     	<button class="btn btn-sm btn-primary btn-flat" data-bind="click:createGrid">Refresh</button>
 				     	<button class="btn btn-sm btn-danger btn-flat" data-bind="click: resetDealSetup">Reset</button>
 				    </div>
-				</div>
+				</div> -->
 			</div>
 			<div class="col-md-12" data-bind="visible: !(setup.detailIsShow())">
 				{{template "top.html"}}

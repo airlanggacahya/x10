@@ -26,6 +26,7 @@ var rolesett = {
                     success: function(result) {
                         // group by regionid
                         var region = {}
+
                         _.each(result, function (val) {
                             if (_.has(region, val.region.regionid))
                                 return;
@@ -38,6 +39,12 @@ var rolesett = {
                                 "regionid": val.regionid,
                                 "name": val.name
                             }
+                        })
+
+                        // Inject ALL options
+                        region_ar.unshift({
+                            name: "All",
+                            regionid: 0,
                         })
 
                         options.success(region_ar);
@@ -54,11 +61,26 @@ var rolesett = {
     branch : ko.observableArray([]),
     branchOpt: new kendo.data.DataSource({
         transport: {
-            read: {
-                url: "/sysroles/getbranch",
-                dataType: "json",
-                type: "POST"
+            read: function(options){
+               $.ajax({
+                    url: "/sysroles/getbranch",
+                    dataType: "json",
+                    method: "POST",
+                    success: function(result) {
+                        // Inject ALL options
+                        result.unshift({
+                            branchid: 0,
+                            name: "All"
+                        })
+
+                        options.success(result);
+                    },
+                    error: function(result) {
+                        options.error(result);
+                    }
+               })
             }
+            
         },
     }),
     branchEnable: ko.observable(false),
@@ -835,6 +857,7 @@ rolesett.Reset = function(){
 rolesett.AddNew = function(){
     // var landing = $("#role").data("kendoDropDownList");
     // landing.value("");
+    
     $("#roleModal").modal("show");
     $("#nav-dex").css('z-index', '0');
     $("#roleModal").modal({
@@ -918,8 +941,18 @@ rolesett.SaveData = function(){
     param.status = $('#Status').bootstrapSwitch('state');
     param.landing = rolesett.landingPage();
     param.menu = backMapping();
-    param.region = rolesett.region();
-    param.branch = rolesett.branch();
+
+    // If ALL is selected, we sent empty array
+    if (_.isEqual(rolesett.region(), [0]))
+        param.region = [];
+    else
+        param.region = rolesett.region();
+    
+    if (_.isEqual(rolesett.branch(), [0]))
+        param.branch = [];
+    else
+        param.branch = rolesett.branch();
+
     param.dealvalue = rolesett.dealValue();
     param.roletype = rolesett.roleType();
 
@@ -938,6 +971,7 @@ rolesett.SaveData = function(){
     });
 }
 
+
 rolesett._privToGrid = function(priv) {
     rolesett.dashboardData(priv["Dashboard"]);
     rolesett.dealSetupData(priv["Deal Setup"]);
@@ -951,6 +985,24 @@ rolesett._privToGrid = function(priv) {
     rolesett.adminData(priv["Admin"]);
 }
 
+rolesett.branch.subscribe(function(value){
+    var found = _.indexOf(value, 0);
+
+    console.log(found, 'aw', value)
+    if (value.length != 1 && found != -1) {
+        rolesett.branch([0])
+    }
+})
+
+rolesett.region.subscribe(function(value){
+    var found = _.indexOf(value, 0);
+
+    console.log(found, 'bw')
+    if (value.length != 1 && found != -1) {
+        rolesett.region([0])
+    }
+})
+
 rolesett.EditData = function(IdRole){
     // Old Data
     rolesett.roleNameEnable(true);
@@ -963,6 +1015,9 @@ rolesett.EditData = function(IdRole){
             if(!(res.IsError != true)){
                 return swal("Error!", res.Message, "error");
             }
+
+            // var a = $("#branch").data("kendoMultiSelect").dataSource.data();
+           
 
             $("#roleModal").modal("show");
             $("#nav-dex").css('z-index', '0');
@@ -992,6 +1047,11 @@ rolesett.EditData = function(IdRole){
             // last to set
             rolesett.branch(Records.Branch);
             rolesett.region(Records.Region);
+
+            if (_.isArray(Records.Branch) && Records.Branch.length == 0)
+                rolesett.branch([0]);
+            if (_.isArray(Records.Region) && Records.Region.length == 0)
+                rolesett.region([0]);
 
             // old access layout setup
 

@@ -1,0 +1,167 @@
+
+</script>
+<style type="text/css">
+  .filter-label {
+    font-size: 12px;
+    color: black;
+    display: inline-block;
+    margin-top: 6px;
+  }
+
+  .filter-font {
+    font-weight: normal;
+    font-size: 11px;
+  }
+
+  .filter-button {
+    padding-top: 6px;
+    color: #fff;
+    background-color: #0c4979;
+    border-color: #fff;
+    margin-left: 5px;
+  }
+
+  .filter-button:hover {
+    color: #fff;
+    background-color: #0c1969;
+  }
+
+  .filter-button:focus {
+    color: #fff;
+    background-color: #0c4979;
+  }
+
+  .filter-select {
+    width: 33.33333333%;
+    margin-top: 1.5px;
+    margin-left: 3px;
+  }
+
+  .app-menu .k-animation-container{
+      height: 40px!important;
+  }
+
+</style>
+
+    <div class="jf-tbl col-md-8" style="display: none;">
+       
+        <select class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:setup.ListCustomerName, value:setup.searchValueCustomerName , dataBound: setup.filterChange, optionLabel: 'Choose Customer' , filter:'contains'}"></select>
+        
+        <select class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:setup.ListDealNo, value:setup.searchValueDealNo , select: setup.filterChange , optionLabel: 'Choose DealNo' , filter:'contains'}"></select>
+      <!-- </div> -->
+      <div class="pull-left">
+        <button class="btn btn-sm filter-font filter-button" type="button" id="refresh" btn-sm onclick="refreshFilter()"> 
+          Select
+        </button>
+      </div>
+    </div>
+
+    <div id="replacedfilter" class="col-md-12">
+      <span data-bind="text: setup.title()"></span>
+    </div>
+
+<script type="text/javascript">
+
+
+function showFilter(show) {
+  $(document).unbind("scroll");
+  $(".app-title").removeAttr('css');
+  $(".jf-tbl")[show ? 'show' : 'hide']()
+  $("#replacedfilter")[show ? 'hide' : 'show']()
+  if (show) {
+    // if($("#menubackup .jf-tbl").length == 0){
+      $(".jf-tbl").appendTo("#filtercontainer");
+      $("#filtercontainer").appendTo("#menubackup");
+    // }
+    $(".app-title").css("margin-bottom",150);
+  } else {
+    // if($("#menubackup #replacedfilter").length == 0){
+      $("#replacedfilter").appendTo("#filtercontainer");
+      $("#filtercontainer").appendTo("#menubackup");      
+    // }
+    $(".app-title").css("margin-bottom",120);
+  }
+
+
+  if($("#menubackup #filtercontainer").length > 0){
+    $("#filtercontainer").show();
+  }
+  setTimeout(function () {
+  $(document).scroll(function(e){
+  if(setup.searchValueCustomerName() != "" ){
+    showFilter(false);
+  } 
+ });
+}, 0);
+}
+
+function loadDataList(){
+    $.ajax({
+      'url': "/dealsetup/getalldatadealsetup",
+      'data': JSON.stringify({
+        'Id': "",
+        'SearchCustomerName': "",
+        'SearchDealNo': "",
+        'page': 0,
+        'pageSize': 0,
+        'skip': 0,
+        'take': 0
+      }),
+      'contentType': 'application/json',
+      'type': 'POST',
+      'success': function (data) {
+        var dt = data.Data;
+        setup.ListCustomerName([]);
+        $.each(dt, function(i, item){
+          setup.AllCP.push(item.CustomerProfile.applicantdetail)
+          setup.ListCustomerName.push(item.CustomerProfile.applicantdetail.CustomerName)
+          // setup.ListDealNo.push(item.CustomerProfile.applicantdetail.DealNo)
+        });
+      }
+    })
+}
+
+$(document).ready(function(){
+  loadDataList();
+
+});
+
+$("body").click(function(e){  
+  var check = $(e.toElement).closest("#filtercontainer");
+  if((check.length==0 && !$(e.toElement).is("li"))&& setup.searchValueCustomerName() != "" ){
+    showFilter(false);
+  }
+});
+
+
+$(document).scroll(function(e){
+  if(setup.searchValueCustomerName() != ""){
+    showFilter(false);
+  } 
+});
+
+$("#replacedfilter").click(function(e){
+  showFilter(true);
+});
+
+$(".filter-button").click(function(event) { 
+  showFilter(false)
+})
+</script>
+
+<style type="text/css">
+  .f-ddl{
+    width: 260px;
+}
+.f-val{
+    padding-right: 25px;
+     min-width: 400px;
+}
+.f-lbl{
+    max-width: 80px;
+    padding-right: 10px;
+    margin-left: 23px;
+    text-align: right;
+}
+</style>
+

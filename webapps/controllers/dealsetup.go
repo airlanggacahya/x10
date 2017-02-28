@@ -36,6 +36,7 @@ func (c *DealSetUpController) Default(k *knot.WebContext) interface{} {
 		"shared/loading.html",
 		"dealsetup/top.html",
 		"dealsetup/bottom.html",
+		"dealsetup/dealfilter.html",
 	}
 
 	return DataAccess
@@ -1142,7 +1143,7 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	p := struct {
 		Skip               int
 		Take               int
-		Sort               []xsorting
+		Sort               []xsorting `omitempty`
 		SearchCustomerName string
 		SearchDealNo       string
 		Id                 string
@@ -1153,8 +1154,6 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	if e != nil {
 		c.WriteLog(e)
 	}
-
-	c.WriteLog(p)
 
 	cn, err := GetConnection()
 	defer cn.Close()
@@ -1195,9 +1194,15 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	keys = append(keys, dbox.And(dbf...))
 
 	query1 := cn.NewQuery().
-		From("DealSetup").
-		Skip(p.Skip).
-		Take(p.Take)
+		From("DealSetup")
+
+	if p.Skip > 0 {
+		query1 = query1.Skip(p.Skip)
+	}
+
+	if p.Take > 0 {
+		query1 = query1.Take(p.Take)
+	}
 
 	if len(keys) > 0 {
 		query1 = query1.Where(dbox.And(keys...))

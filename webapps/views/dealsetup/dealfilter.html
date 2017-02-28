@@ -96,18 +96,29 @@ function showFilter(show) {
 }
 
 function loadDataList(){
-  
-    var url = "/dealsetup/getalldatadealsetup";
-    ajaxPost(url, "", function(data) {
-      var dt = data.Data;
-      setup.ListCustomerName([]) 
-      $.each(dt, function(i, item){
-        setup.AllCP.push(item.CustomerProfile.applicantdetail)
-        setup.ListCustomerName.push(item.CustomerProfile.applicantdetail.CustomerName)
-        // setup.ListDealNo.push(item.CustomerProfile.applicantdetail.DealNo)
-      });
-    }, undefined);
-  
+    $.ajax({
+      'url': "/dealsetup/getalldatadealsetup",
+      'data': JSON.stringify({
+        'Id': "",
+        'SearchCustomerName': "",
+        'SearchDealNo': "",
+        'page': 0,
+        'pageSize': 0,
+        'skip': 0,
+        'take': 0
+      }),
+      'contentType': 'application/json',
+      'type': 'POST',
+      'success': function (data) {
+        var dt = data.Data;
+        setup.ListCustomerName([]);
+        $.each(dt, function(i, item){
+          setup.AllCP.push(item.CustomerProfile.applicantdetail)
+          setup.ListCustomerName.push(item.CustomerProfile.applicantdetail.CustomerName)
+          // setup.ListDealNo.push(item.CustomerProfile.applicantdetail.DealNo)
+        });
+      }
+    })
 }
 
 $(document).ready(function(){

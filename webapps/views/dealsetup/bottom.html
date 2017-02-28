@@ -124,8 +124,7 @@
 	margin-top: px !important;
 }*/
 </style>
-<div class="col-md-12" data-bind="visible: setup.detailIsShow" style="padding-bottom: 15px;
-}">
+<div class="col-md-12" data-bind="visible: setup.detailIsShow" style="padding-bottom: 15px;">
 		<button id="backbutton" class="btn btn-sm btn-flat btn-danger" onclick='setup.getBack()'><i class="fa fa-arrow-left"></i> Back</button>
 		<button id="accept" data-bind="visible:model.IsGranted('accept')" class="btn btn-sm btn-flat btn-success" onclick="setup.getAccept()">Accept</button>
 		<button id="sendback" class="btn btn-sm btn-flat btn-warning" data-bind="visible:model.IsGranted('reject')" onclick="setup.getSendBack()">Reject</button>

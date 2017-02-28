@@ -26,12 +26,7 @@ var rolesett = {
                     success: function(result) {
                         // group by regionid
                         var region = {}
-                        // result.unshift({
-                        //     branchid: null,
-                        //     name: "All",
-                        //     region: null,
-                        // })
-                        // console.log("--------------------->>>>>", result)
+
                         _.each(result, function (val) {
                             if (_.has(region, val.region.regionid))
                                 return;
@@ -46,6 +41,7 @@ var rolesett = {
                             }
                         })
 
+                        // Inject ALL options
                         region_ar.unshift({
                             name: "All",
                             regionid: 0,
@@ -71,17 +67,11 @@ var rolesett = {
                     dataType: "json",
                     method: "POST",
                     success: function(result) {
+                        // Inject ALL options
                         result.unshift({
                             branchid: 0,
-                            name: "All",
-                            region: {
-                                desclarge: null,
-                                name:"All",
-                                regionid:0,
-                            },
+                            name: "All"
                         })
-
-                        console.log(result)
 
                         options.success(result);
                     },
@@ -951,8 +941,18 @@ rolesett.SaveData = function(){
     param.status = $('#Status').bootstrapSwitch('state');
     param.landing = rolesett.landingPage();
     param.menu = backMapping();
-    param.region = rolesett.region();
-    param.branch = rolesett.branch();
+
+    // If ALL is selected, we sent empty array
+    if (_.isEqual(rolesett.region(), [0]))
+        param.region = [];
+    else
+        param.region = rolesett.region();
+    
+    if (_.isEqual(rolesett.branch(), [0]))
+        param.branch = [];
+    else
+        param.branch = rolesett.branch();
+
     param.dealvalue = rolesett.dealValue();
     param.roletype = rolesett.roleType();
 
@@ -986,21 +986,21 @@ rolesett._privToGrid = function(priv) {
 }
 
 rolesett.branch.subscribe(function(value){
-    $.each(value, function(i, val){
-        if(val == 0){
-            rolesett.branch(val) 
+    var found = _.indexOf(value, 0);
 
-        }
-    })
+    console.log(found, 'aw', value)
+    if (value.length != 1 && found != -1) {
+        rolesett.branch([0])
+    }
 })
 
 rolesett.region.subscribe(function(value){
-    $.each(value, function(i, val){
-        if(val == 0){
-            rolesett.region(val) 
+    var found = _.indexOf(value, 0);
 
-        }
-    })
+    console.log(found, 'bw')
+    if (value.length != 1 && found != -1) {
+        rolesett.region([0])
+    }
 })
 
 rolesett.EditData = function(IdRole){
@@ -1047,6 +1047,11 @@ rolesett.EditData = function(IdRole){
             // last to set
             rolesett.branch(Records.Branch);
             rolesett.region(Records.Region);
+
+            if (_.isArray(Records.Branch) && Records.Branch.length == 0)
+                rolesett.branch([0]);
+            if (_.isArray(Records.Region) && Records.Region.length == 0)
+                rolesett.region([0]);
 
             // old access layout setup
 

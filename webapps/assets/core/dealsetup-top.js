@@ -257,6 +257,7 @@ setup.filterChange = function(){
 }
 
 window.refreshFilter = function(){
+  setup.detailIsShow(false)
   if(setup.searchValueCustomerName() == ""){
     swal("", "Please Select Filter", "warning");
     str = "Customer Name :  | Dealno : ";

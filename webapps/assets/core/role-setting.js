@@ -159,7 +159,7 @@ rolesett.roleType.subscribe(function (val) {
     default:
         rolesett.dealAllocation("Branches");
         rolesett.dealAllocationEnable(true);
-        rolesett.dealAllocationOpt(["Branches", "Regions"]);
+        rolesett.dealAllocationOpt(["All", "Branches", "Regions"]);
         break;
     }
 })

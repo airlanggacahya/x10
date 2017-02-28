@@ -26,6 +26,12 @@ var rolesett = {
                     success: function(result) {
                         // group by regionid
                         var region = {}
+                        // result.unshift({
+                        //     branchid: null,
+                        //     name: "All",
+                        //     region: null,
+                        // })
+                        // console.log("--------------------->>>>>", result)
                         _.each(result, function (val) {
                             if (_.has(region, val.region.regionid))
                                 return;
@@ -106,6 +112,16 @@ function notifGrantChanges(value) {
     rolesett.grantAccessNotifier(backMapping())
 }
 
+rolesett.addItem = function(e){
+    console.log("_______________________>>>>>", e)
+    e.sender.dataSource.add({
+        branchid: null,
+        name: "All",
+        region: null,
+    })
+                        // console.log("--------------------->>>>>", result)
+}
+
 rolesett.dashboardData.subscribe(notifGrantChanges);
 rolesett.dealSetupData.subscribe(notifGrantChanges);
 rolesett.webFormsData.subscribe(notifGrantChanges);
@@ -159,7 +175,7 @@ rolesett.roleType.subscribe(function (val) {
     default:
         rolesett.dealAllocation("Branches");
         rolesett.dealAllocationEnable(true);
-        rolesett.dealAllocationOpt(["All", "Branches", "Regions"]);
+        rolesett.dealAllocationOpt(["Branches", "Regions"]);
         break;
     }
 })
@@ -835,6 +851,7 @@ rolesett.Reset = function(){
 rolesett.AddNew = function(){
     // var landing = $("#role").data("kendoDropDownList");
     // landing.value("");
+    
     $("#roleModal").modal("show");
     $("#nav-dex").css('z-index', '0');
     $("#roleModal").modal({
@@ -938,6 +955,7 @@ rolesett.SaveData = function(){
     });
 }
 
+
 rolesett._privToGrid = function(priv) {
     rolesett.dashboardData(priv["Dashboard"]);
     rolesett.dealSetupData(priv["Deal Setup"]);
@@ -951,6 +969,38 @@ rolesett._privToGrid = function(priv) {
     rolesett.adminData(priv["Admin"]);
 }
 
+rolesett.datatemp = ko.observableArray([]);
+
+rolesett.dataChange = function(value){
+    var data = $("#branch").data("kendoMultiSelect").dataSource.data();
+    var temp = rolesett.datatemp();
+    if(data.length == 1){
+        setTimeout(function(){
+            $("#branch").data("kendoMultiSelect").dataSource.data([]);
+            $("#branch").data("kendoMultiSelect").dataSource.data(temp);
+        }, 200)
+       
+    }
+}
+
+rolesett.branch.subscribe(function(value){
+    var data = $("#branch").data("kendoMultiSelect").dataSource.data();
+    rolesett.datatemp(data);
+    $.each(value, function(i, val){
+        if(val == 0){
+            
+            var fl = _.filter(data, function(item){
+                return item.branchid == val;
+            })
+
+            // var temp = 
+            if(fl != undefined){
+                $("#branch").data("kendoMultiSelect").dataSource.data(fl);
+            }       
+        }
+    })
+})
+
 rolesett.EditData = function(IdRole){
     // Old Data
     rolesett.roleNameEnable(true);
@@ -963,6 +1013,13 @@ rolesett.EditData = function(IdRole){
             if(!(res.IsError != true)){
                 return swal("Error!", res.Message, "error");
             }
+
+            var a = $("#branch").data("kendoMultiSelect").dataSource.data();
+            a.unshift({
+                branchid: 0,
+                name: "All",
+                region: null,
+            })
 
             $("#roleModal").modal("show");
             $("#nav-dex").css('z-index', '0');

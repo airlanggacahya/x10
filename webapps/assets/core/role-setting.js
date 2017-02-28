@@ -969,34 +969,11 @@ rolesett._privToGrid = function(priv) {
     rolesett.adminData(priv["Admin"]);
 }
 
-rolesett.datatemp = ko.observableArray([]);
-
-rolesett.dataChange = function(value){
-    var data = $("#branch").data("kendoMultiSelect").dataSource.data();
-    var temp = rolesett.datatemp();
-    if(data.length == 1){
-        setTimeout(function(){
-            $("#branch").data("kendoMultiSelect").dataSource.data([]);
-            $("#branch").data("kendoMultiSelect").dataSource.data(temp);
-        }, 200)
-       
-    }
-}
-
 rolesett.branch.subscribe(function(value){
-    var data = $("#branch").data("kendoMultiSelect").dataSource.data();
-    rolesett.datatemp(data);
     $.each(value, function(i, val){
         if(val == 0){
-            
-            var fl = _.filter(data, function(item){
-                return item.branchid == val;
-            })
+            rolesett.branch(val) 
 
-            // var temp = 
-            if(fl != undefined){
-                $("#branch").data("kendoMultiSelect").dataSource.data(fl);
-            }       
         }
     })
 })

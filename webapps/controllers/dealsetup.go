@@ -262,12 +262,15 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 			}
 			if len(all) != 0 {
 				dbFilter = append(dbFilter, dbox.In("accountdetails.accountsetupdetails.citynameid", all...))
+			} else {
+				dbFilter = append(dbFilter, dbox.Ne("_id", ""))
 			}
 		default:
 			dbFilter = append(dbFilter, dbox.Ne("_id", ""))
 
 		}
 	}
+
 	return dbFilter, nil
 }
 
@@ -1236,7 +1239,11 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	// results2 := results1
 
 	query := tk.M{}.Set("AGGR", "$sum")
-	csr, err = c.Ctx.Find(new(DealSetupModel), query)
+	query.Set("Where", dbox.And(keys...))
+	csr, err = cn.NewQuery().
+		From("DealSetup").
+		Where(dbox.And(keys...)).
+		Cursor(nil)
 	defer csr.Close()
 	if err != nil {
 		return err.Error()

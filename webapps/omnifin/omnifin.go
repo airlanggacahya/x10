@@ -99,7 +99,7 @@ func PushMasterUser(list []UserMaster) error {
 		if len(user) > 0 {
 			userfix = user[0]
 		}
-
+		userfix.Id = i.UserId
 		userfix.ID = i.UserId
 		userfix.Userid = i.UserId
 		userfix.Userempid = i.UserEmpId

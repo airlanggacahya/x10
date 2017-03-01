@@ -1106,6 +1106,8 @@ rolesett.filterRole.subscribe(function(value){
    rolesett.GetDataRole();
 });
 
+
+
 rolesett.GetDataRole = function(){
     rolesett.loading(false);
     var param =  {
@@ -1146,7 +1148,7 @@ rolesett.GetDataRole = function(){
                         }
                     },
                 },
-                pageSize: 15,
+                pageSize: 10,
                 serverPaging: true,
                 serverSorting: true,
             },
@@ -1323,4 +1325,9 @@ $(document).ready(function (){
     rolesett.getRole();
     rolesett.GetDataRole();
     rolesett.resizeSwitch()
+    $('#filterStatus').on('switchChange.bootstrapSwitch', function (event, state) {
+       setTimeout(function(){
+        rolesett.GetDataRole();
+    },500);
+    });
 });

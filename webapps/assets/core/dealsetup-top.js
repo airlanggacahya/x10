@@ -269,6 +269,14 @@ window.refreshFilter = function(){
    setup.title(str)
 }
 
+window.resetFilter = function() {
+  setup.searchValueCustomerName("");
+  setup.searchValueDealNo("");
+  str = "Customer Name :  | Dealno : ";
+  setup.title(str)
+  setup.createGrid()
+}
+
 
 $(function(){
 	setup.createGrid()

@@ -326,7 +326,7 @@ ns.saveEdit = function(d){
 		ajaxPost("/newuser/saveuser", ns.param(), function(res){
 			ns.LoadGetUser()
 			$("#editUser").modal("hide");
-			swal("", "Save sucessfully", "success");
+			swal("", "Saved successfully", "success");
 		})
 	}else{
 		$(".conf").show()

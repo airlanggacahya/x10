@@ -209,7 +209,8 @@ ns.LoadGridUser = function(){
 				width: 100,
 				filterable: {
 					multi: true,
-				}
+				},
+				template: "#: Catstatus #d" // Hack to label it as Enabled and Disabled
 			},
 			{
 				field: "",

@@ -1,7 +1,7 @@
 var ns = {}
 ns.Userdata = ko.observableArray([]);
 ns.OriginalUserdata = ko.observableArray([]);
-ns.SearchBarText = ko.observable();
+ns.SearchBarText = ko.observable("");
 ns.roleList = ko.observableArray([]);
 ns.valuerole = ko.observableArray([]);
 ns.param = ko.observableArray([]);
@@ -50,7 +50,7 @@ ns.LoadGetUser = function(){
 		if (data.length != 0){
 			data = ns.PreprocessUser(data);
 			ns.OriginalUserdata(data);
-			ns.SearchBarText("");
+			ns.FilterSearchBar(ns.SearchBarText());
 		}
 	})
 }
@@ -79,8 +79,6 @@ ns.FilterSearchBar = function(val) {
 			return newdata.push(i)
 	})
 
-	console.log(newdata);
-	console.log(ns.OriginalUserdata());
 	ns.Userdata(newdata);
 }
 

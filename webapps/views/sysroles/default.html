@@ -63,16 +63,36 @@
 
 </style>
 <div  data-bind="with:rolesett">
-    <div class="col-md-9 col-sm-9 ez panel-content" style="margin-top: 54px;">
+    <div class="col-md-12 col-sm-12 ez panel-content" style="margin-top: 54px;">
         <div class="panel ez no-padding hardcore">
           <div class="panel-heading">
-            <h3 class="no-margin">
-                &nbsp;
-            </h3>
-            <div class="panel-nav-button" style="margin-right: 16px;">
+            <div class="controls-left">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label class="col-sm-2 form-label" style="width: 60px;">Role</label>
+                    <div class="col-sm-4">
+                      <select type="text" id = "filterRole" data-bind="kendoMultiSelect: {value:filterRole, data: listRole, filter: 'startswith', dataTextField: 'text', dataValueField: 'value'}"></select>
+                    </div>
+                    <!-- <div class="clearfix"></div> -->
+                <!-- </div>
+                <div class="form-group"> -->
+                  <label class="col-sm-2 form-label" style="width: 60px;">Status</label>
+                    <div class="col-sm-2">
+                      <input id="filterStatus" class="switch-mini" type="checkbox"  data-off-text="inactive" data-on-text="active">
+                    </div>
+                    <div class="col-sm-3" style="float: right;">
+                      <button  style="float: right;margin-right: 1px;" type="button" class="btn btn-sm btn-success btn-flat" data-bind="click:AddNew, visible:(model.IsGranted('create') == true)"><i class="fa fa-plus"></i> Add New</button>
+                       <button  style="float: right;margin-right: 1px;" type="button" btn-sm class="btn btn-sm btn-primary btn-flat" data-bind="click:Search"><i class="fa fa-search"></i> Search</button>
+                      <button  style="float: right;margin-right: 1px;" type="button" class="btn btn-sm btn-danger btn-flat" data-bind="click:Reset"><i class="fa fa-refresh"></i> Reset</button>
+                    </div>
+                    <!-- <div class="clearfix"></div> -->
+                </div>
+              </div>
+            </div>
+            <!-- <div class="panel-nav-button" style="margin-right: 16px;">
               <button  type="button" class="btn btn-sm btn-success btn-flat" data-bind="click:AddNew, visible:(model.IsGranted('create') == true)"><i class="fa fa-plus"></i> Add New</button>
               <button class="btn btn-sm btn-info tooltipster" title="Toggle Advanced Filter" data-bind="click: toggleFilter"><i class="fa fa-server"></i> Show Filter</button>
-            </div>
+            </div> -->
           </div>
           <div class="panel-body">
             <div data-bind="visible:loading">
@@ -81,13 +101,13 @@
                   <img src="/static/img/loader.gif" alt="Loading..." />
               </center>
             </div>
-            <div data-bind="visible:!loading()" style="margin-top: -54px;">
-                <div id="MasterGridRole"></div>
+            <div data-bind="visible:!loading()">
+                <div id="MasterGridRole" style="margin-top: -27px;"></div>
             </div>
           </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-3 ez panel-filter" style="margin-top: 54px;">
+    <!-- <div class="col-md-3 col-sm-3 ez panel-filter" style="margin-top: 54px;" hidden>
         <div class="panel ez no-padding hardcore">
           <div class="panel-heading">
               <h3 class="no-margin">Filter</h3>
@@ -116,7 +136,7 @@
             </div>
           </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg">

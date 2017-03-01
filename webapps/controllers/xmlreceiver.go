@@ -1148,9 +1148,9 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 
 		current.AccountSetupDetails.CityName = body.GetString("dealBranchDesc")
 		current.AccountSetupDetails.CityNameId = cast.ToString(body.GetInt("dealBranch"))
-		if body.GetString("dealInitiationDate") != "" {
-			current.AccountSetupDetails.LoginDate = DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
-		}
+		// if body.GetString("dealInitiationDate") != "" {
+		current.AccountSetupDetails.LoginDate = time.Now() //DetectDataType(body.GetString("dealInitiationDate"), "yyyy-MM-dd").(time.Time)
+		// }
 		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 		current.AccountSetupDetails.RmNameId = body.GetString("dealRm")
 		if hp.ToWordCase(body.GetString("dealSourceName")) == "Dealer" {

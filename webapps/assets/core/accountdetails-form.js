@@ -2067,9 +2067,9 @@ adf.getData = function () {
 				 return x
 			})
 
-			setTimeout(function(){
-				adf.form.AccountSetupDetails.CityName(res.ApplicantDetail.RegisteredAddress.CityRegistered)
-			}, 500);
+			// setTimeout(function(){
+			// 	adf.form.AccountSetupDetails.CityName(res.ApplicantDetail.RegisteredAddress.CityRegistered)
+			// }, 500);
 			setTimeout(function(){
 				adf.DataPromotorCP(res.DetailOfPromoters.Biodata);
 				// $.each(res.DetailOfPromoters.Biodata, function(i, item){
@@ -2201,16 +2201,16 @@ adf.getData = function () {
 						adf.form.AccountSetupDetails.PdInfo.CustomerMargin("")
 					}
 
-					if(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970") >-1)
+					if(res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("1970") >-1 || res.Data.AccountSetupDetails.PdInfo.PdDate.indexOf("0001") > -1)
 						adf.PdDate("")
 
-						if(res.Data.LoanDetails.FirstAgreementDate.indexOf("1970") >-1)
+						if(res.Data.LoanDetails.FirstAgreementDate.indexOf("1970") >-1 || res.Data.LoanDetails.FirstAgreementDate.indexOf("0001") > -1)
 						adf.form.LoanDetails.FirstAgreementDate("");
 
-						if(res.Data.LoanDetails.RecenetAgreementDate.indexOf("1970") >-1)
+						if(res.Data.LoanDetails.RecenetAgreementDate.indexOf("1970") >-1 || res.Data.LoanDetails.RecenetAgreementDate.indexOf("0001") > -1)
 						adf.form.LoanDetails.RecenetAgreementDate("");
 
-						if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1)
+						if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1 || res.Data.BorrowerDetails.DateBusinessStarted.indexOf("0001") > -1)
 						adf.form.BorrowerDetails.DateBusinessStarted("");
 
 
@@ -2287,7 +2287,7 @@ adf.getData = function () {
 				}
 
 				// console.log(res.Data)
-				adf.FirstAgreementDate(res.Data.LoanDetails.FirstAgreementDate)
+				adf.FirstAgreementDate(adf.form.LoanDetails.FirstAgreementDate());
 				var temp = formatingDate(adf.FirstAgreementDate())
 
 				// console.log(temp)
@@ -2387,7 +2387,7 @@ $(document).ready(function(){
 })
 
 formatingDate = function(date) {
-	if(date == "" || date.indexOf("1970-01-01") > -1  || date === undefined) {
+	if(date == "" || date.indexOf("1970-01-01") > -1  || date.indexOf("0001") > -1  || date === undefined) {
 		return ""
 	} else {
 		try {

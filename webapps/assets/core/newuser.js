@@ -1,10 +1,9 @@
 var ns = {}
 ns.Userdata = ko.observableArray([]);
+ns.OriginalUserdata = ko.observableArray([]);
+ns.SearchBarText = ko.observable();
 ns.roleList = ko.observableArray([]);
-ns.dataList = ko.observableArray([]);
 ns.valuerole = ko.observableArray([]);
-ns.nameList = ko.observableArray([]);
-ns.idlist = ko.observableArray([]);
 ns.param = ko.observableArray([]);
 ns.param = ko.observableArray([]);
 ns.catStatusList = ko.observableArray(["Enable", "Disable"]);
@@ -17,64 +16,78 @@ ns.username = ko.observable("");
 ns.email = ko.observable("");
 ns.uniqueid = ko.observable("");
 ns.role = ko.observable("");
-ns.nameValue = ko.observable("");
-ns.title = ko.observable("User Name : | Unique Id: ");
-ns.uniqueidValue = ko.observable("");
 
-ns.setList = function(){
-	var param ={
-		name : "",
-		userid : "", 
-	}
-	ajaxPost("/newuser/getuser", param, function(res){
-		var data = res.Data.data;
-		ns.dataList(data)
+ns.PreprocessUser = function(input){
+	$.each(input, function(i, temp){
+		if(temp.Recstatus == "X"){
+			temp.Recstatus = "Inactive";
+		}else if(temp.Recstatus == "A"){
+			temp.Recstatus = "Active";
+		}else{
+			temp.Recstatus = "To be assigned";
+		}
+
+		if(temp.Catstatus == ""){
+			temp.Catstatus = "To be assigned"
+		}
+		if(temp.Catrole != null){
+			temp.Catrole = temp.Catrole.join("|")
+		}else{
+			temp.Catrole = "To be assigned";
+		}
+
+		if(temp.Role != null){
+			temp.Role = temp.Role.join("|");
+		}
 	})
+
+	return input;
 }
 
 ns.LoadGetUser = function(){
-	ns.Userdata([])
-	var param ={
-		name : ns.nameValue(),
-		userid : ns.uniqueidValue(), 
-	}
-	ajaxPost("/newuser/getuser", param, function(res){
+	ajaxPost("/newuser/getuser", {}, function(res){
 		var data = res.Data.data;
-		if(data.length != 0){
-			ns.Userdata(data)
-			$.each(ns.Userdata(), function(i, temp){
-				if(temp.Recstatus == "X"){
-					temp.Recstatus = "Inactive";
-				}else if(temp.Recstatus == "A"){
-					temp.Recstatus = "Active";
-				}else{
-					temp.Recstatus = "To be assigned";
-				}
-
-				if(temp.Catstatus == ""){
-					temp.Catstatus = "To be assigned"
-				}
-				if(temp.Catrole != null){
-
-					temp.Catrole = temp.Catrole.join("|")
-				}else{
-					temp.Catrole = "To be assigned";
-				}
-
-				if(temp.Role != null){
-
-					temp.Role = temp.Role.join("|");
-				}
-
-				ns.nameList.push(temp.Username)
-				ns.idlist.push(temp.Userid)
-				
-
-			})
-			ns.LoadGridUser()
+		if (data.length != 0){
+			data = ns.PreprocessUser(data);
+			ns.OriginalUserdata(data);
+			ns.SearchBarText("");
 		}
 	})
 }
+
+ns.SearchBarText.subscribe(function (val) {
+	ns.FilterSearchBar(val);
+})
+
+ns.FilterSearchBar = function(val) {
+	val = val.toLowerCase();
+	var newdata = []
+	_.each(ns.OriginalUserdata(), function (i) {
+		if (i.Username.toLowerCase().indexOf(val) != -1)
+			return newdata.push(i)
+		
+		if (i.Userid.toLowerCase().indexOf(val) != -1)
+			return newdata.push(i)
+
+		if (i.Useremail.toLowerCase().indexOf(val) != -1)
+			return newdata.push(i)
+
+		if (i.Catrole.toLowerCase().indexOf(val) != -1)
+			return newdata.push(i)
+
+		if (i.Role.toLowerCase().indexOf(val) != -1)
+			return newdata.push(i)
+	})
+
+	console.log(newdata);
+	console.log(ns.OriginalUserdata());
+	ns.Userdata(newdata);
+}
+
+ns.Userdata.subscribe(function () {
+	ns.LoadGridUser();
+	$("#gridUser").data("kendoGrid").refresh()
+})
 
 ns.LoadGridUser = function(){
 	$("#gridUser").html("");
@@ -88,18 +101,7 @@ ns.LoadGridUser = function(){
 			pageSize: 10,
 		},
 
-		filterable: {
-			operators: {
-				string: {
-					contains : "Contains",
-					eq: "Is equal to",
-					neq: "Is not equal to",
-					startswith: "Starts with",
-					doesnotcontain: "Does not contain",
-					endswith: "Ends with"
-				}
-			}
-		},
+		filterable: true,
 		pageable: {
 			refresh: true,
 			pageSizes: true,
@@ -338,34 +340,8 @@ ns.onPass = function(){
 	$(".conf").hide()
 }
 
-ns.filterChange = function(){
-	var val = _.filter(ns.dataList(), function(dt){
-				return dt.Username == ns.nameValue();
-	});
-	if(val != undefined){
-		try{
-			ns.uniqueidValue(val[0].Userid)
-		}catch(e){
-
-		}
-	}
-}
-
-ns.refreshFilter = function(){
-	if(ns.nameValue() == ""){
-		var str = "User Name : " + ns.nameValue() + " | Unique Id: "+ ns.uniqueidValue();
-		ns.title(str)
-		swal("", "Please Select Filter", "warning");
-		return;
-	}
-	ns.LoadGetUser()
-	var str = "User Name : " + ns.nameValue() + " | Unique Id: "+ ns.uniqueidValue() 
-	ns.title(str)
-}
-
 $(function(){
 	// ns.LoadGridUser()
-	ns.setList()
 	ns.LoadGetUser();
 	$("#gridUser").css("overflow", "hidden")
 	

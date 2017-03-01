@@ -440,7 +440,7 @@ var helpMapping = [
 
 var decisionCommitteMapping = [
     {
-        "name": "Decision Committe",
+        "name": "Decision Committee",
         "menuid": "2016825142718",
         "grant": ["view", "dc_approve", "dc_reject", "dc_cancel", "dc_hold", "dc_send_back"]
     }
@@ -448,7 +448,7 @@ var decisionCommitteMapping = [
 
 var caCommitteMapping = [
     {
-        "name": "CA Committe",
+        "name": "Credit Analyst",
         "menuid": "2016825142718",
         "grant": ["view", "ca_save", "ca_send_dc"]
     }
@@ -458,7 +458,7 @@ var adminGrant = ["view", "edit", "create", "delete"]
 var adminMapping = [
     {
         "name": "User",
-        "menuid": "201685212148",
+        "menuid": "201721611052",
         "grant": adminGrant
     },
     {
@@ -476,11 +476,11 @@ var adminMapping = [
         "menuid": "2017214122614",
         "grant": adminGrant
     },
-    {
-        "name": "New User",
-        "menuid": "201721611052",
-        "grant": adminGrant
-    },
+    // {
+    //     "name": "New User",
+    //     "menuid": "201721611052",
+    //     "grant": adminGrant
+    // },
     {
         "name": "Data Browser",
         "menuid": "201711316158",
@@ -756,7 +756,7 @@ var caCommitteCol = completeColumn([
     },
     {
         field: "grant.ca_send_dc",
-        title: "Send DC"
+        title: "Send to DC"
     }
 ])
 
@@ -1348,7 +1348,7 @@ rolesett.GetDataRole = function(){
                     template: "<center>" +
                             "<button class='btn btn-xs btn-flat btn-primary edit' onclick='rolesett.EditData(\"#: Id #\")'><span class='fa fa-edit'></span></button>" +
                             "&nbsp;&nbsp;" +
-                            "<button class='btn btn-xs btn-flat btn-warning del' onclick='rolesett.Listuser(\"#: Name #\")'><span class='fa fa-list-alt'></span></button>" +
+                            "<button class='btn btn-xs btn-flat btn-warning del' onclick='rolesett.Listuser(\"#: Name #\")'><span class='fa fa-user'></span></button>" +
                             "&nbsp;&nbsp;" +
                             "<button class='btn btn-xs btn-flat btn-danger del' #if(!Deletable) {# disabled='disabled' #}# onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button>" +
                             "</center>"

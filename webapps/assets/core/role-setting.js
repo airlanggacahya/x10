@@ -1117,6 +1117,7 @@ rolesett.Listuser = function(name){
             rolesett.userList(res);
             rolesett.LoadGridUser();
             $("#user").modal("show", true);
+            $(".k-grid-header").css("padding-right", "0px !important")
 
         }
         
@@ -1135,7 +1136,7 @@ rolesett.LoadGridUser = function(){
             pageSize: 10,
         },
 
-        filterable: true,
+        // filterable: true,
         pageable: {
             refresh: true,
             pageSizes: true,

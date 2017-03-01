@@ -14,7 +14,7 @@ setup.columnGrid = [
     width : 200,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
-      return '<a style="cursor: pointer" onClick="setup.onClickCustomerName(\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.CustomerName+'</a>'
+      return '<a style="cursor: pointer;color:#676767;text-decoration: none;" onClick="setup.onClickCustomerName(\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.CustomerName+'</a>'
     }
  },
  {
@@ -171,6 +171,7 @@ setup.columnGrid = [
 ]
 
 setup.createGrid = function(){
+  $("#gridDealSetup").html('')
   dbgrid = $("#gridDealSetup").kendoGrid({
     dataSource: {
         serverPaging: true,
@@ -257,6 +258,7 @@ setup.filterChange = function(){
 }
 
 window.refreshFilter = function(){
+  setup.IdCustomerName('')
   setup.detailIsShow(false)
   if(setup.searchValueCustomerName() == ""){
     swal("", "Please Select Filter", "warning");

@@ -894,7 +894,7 @@ rolesett.DeleteRole = function(id) {
                 $('#MasterGridRole').data('kendoGrid').dataSource.read();
                 $('#MasterGridRole').data('kendoGrid').refresh();
             }else{
-                return swal("Error!", res.Message, "error");
+                return swal("Error", res.Message, "error");
             }
         });
     });

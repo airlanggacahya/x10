@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
 	"strconv"
 	"strings"
@@ -598,4 +599,41 @@ func (d *SysRolesController) RemoveRole(r *knot.WebContext) interface{} {
 	ret.Data = ""
 
 	return ret
+}
+
+func (c SysRolesController) GetlistUserRoles(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	payload := tk.M{}
+	k.GetPayload(&payload)
+
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	csr, err := cn.NewQuery().
+		From("MasterUser").
+		Cursor(nil)
+	defer csr.Close()
+
+	if err != nil {
+		return c.SetResultInfo(true, "error", nil)
+	}
+
+	rl := []NewUser{}
+	result := []interface{}{}
+	err = csr.Fetch(&rl, 0, false)
+
+	if err != nil {
+		return c.SetResultInfo(true, "error", nil)
+	}
+
+	for _, val := range rl {
+		// tk.Println("------------------------->>>>", rl)
+		for _, onrole := range val.Catrole {
+			if onrole == payload["name"] {
+				result = append(result, val)
+			}
+		}
+	}
+
+	return result
 }

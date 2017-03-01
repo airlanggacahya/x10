@@ -5,11 +5,13 @@ var rolesett = {
     edit : ko.observable(true),
     roleNameEnable : ko.observable(true),
     temp: ko.observableArray([]),
+    userList: ko.observableArray([]),
     filterStatus: ko.observable(),
     //var field 
     Id : ko.observable(""),
     roleName : ko.observable(""),
     roleType : ko.observable(""),
+    user : ko.observable(""),
 
     dealAllocation : ko.observable("Standard"),
     dealAllocationOpt : ko.observableArray(["Standard"]),
@@ -1106,6 +1108,168 @@ rolesett.filterRole.subscribe(function(value){
    rolesett.GetDataRole();
 });
 
+rolesett.Listuser = function(name){
+    rolesett.user('');
+    rolesett.user(name);
+    ajaxPost("/sysroles/getlistuserroles", {name: name}, function(res){
+        if (res != null){
+            rolesett.userList(res);
+            rolesett.LoadGridUser();
+            $("#user").modal("show", true);
+
+        }
+        
+    })
+}
+
+rolesett.LoadGridUser = function(){
+    $("#gridUser").html("");
+    $("#gridUser").kendoGrid({
+        // dataSource: ns.Userdata(),
+        dataSource: {
+            data:  rolesett.userList(),
+            schema: {
+                model: {Username: "Username"}
+            },
+            pageSize: 10,
+        },
+
+        filterable: true,
+        pageable: {
+            refresh: true,
+            pageSizes: true,
+            buttonCount: 10
+        },
+        columns: [
+            {
+                field: "Username",
+                title: "Name",
+                headerAttributes : {"class":"k-header header-bgcolor"},
+                
+            },
+            {
+                field: "Userid",
+                title: "Unique ID",
+                headerAttributes : {"class":"k-header header-bgcolor"},
+                width: 100,
+                
+            },
+            {
+                field: "Useremail",
+                title: "Email ID",
+                headerAttributes : {"class":"k-header header-bgcolor"},
+                
+            },
+            {
+                field: "Role",
+                title: "Role",
+                headerAttributes : {"class":"k-header header-bgcolor"},
+                attributes:{"class": "no-padding"},
+                width: 200,
+                template: function(d){
+                    var res = '';
+                    try{
+                        if((d.Role).length != 0 && d.Role != null){
+                            // var rest = (d.Role).split("|")
+                            var last = (d.Role).length - 1;
+                            res += "<table role='grid' id='tab1'>"
+                            $.each(d.Role, function(i, item){
+                                res += "<tr>"
+                                if(i == last){
+                                    res += "<td class='line1' role='gridcell' style='border-bottom: hidden;'>"+item+"</td>"
+                                }else{
+                                    res += "<td class='line1' role='gridcell'>"+item+"</td>"
+                                }
+                                
+                                res += "</tr>"
+                            })
+                            res += "</table>"
+                            return res
+                        }
+                    }catch(e){
+
+                    }
+                    
+
+                    return res
+                }
+            },
+            // {
+            //     field: "Catrole",
+            //     title: "CAT Role",
+            //     headerAttributes : {"class":"k-header header-bgcolor"},
+            //     attributes:{"class": "no-padding"},
+            //     width: 150,
+            //     template: function(d){
+            //         console.log("----------------------->>>>>>", d.Catrole)
+            //         var res = '';
+            //             if(d.Catrole != null){
+            //                 // var rest = (d.Catrole).split("|")
+            //                 var last = (d.Catrole).length - 1;
+            //                 res += "<table role='grid'>"
+            //                 $.each(d.Catrole, function(i, item){
+            //                     res += "<tr>"
+            //                     if(i == last){
+            //                         res += "<td class='line' role='gridcell' style='height: 20px;border-bottom: hidden;'>"+item+"</td>"
+            //                     }else{
+            //                         res += "<td class='line' role='gridcell' style='height: 20px;'>"+item+"</td>"
+            //                     }
+                                
+            //                     res += "</tr>"
+            //                 })
+            //                 res += "</table>"
+            //                 return res
+            //             }
+
+            //         return "&nbsp To be assigned"
+            //     }
+            // },
+            {
+                field: "Recstatus",
+                title: "Status",
+                headerAttributes : {"class":"k-header header-bgcolor"},
+                width: 100,
+                filterable:{
+                    multi: true,
+                },
+                template: function(d){
+                    var str = ''
+                    if(d.Recstatus != "X"){
+                        d.Recstatus = "Active"
+                        
+                    }else{
+                        d.Recstatus = "Inactive"
+                    }
+
+                    return d.Recstatus
+                }
+            },
+            {
+                field: "Catstatus",
+                title: "CAT Status",
+                headerAttributes : {"class":"k-header header-bgcolor"},
+                width: 100,
+                filterable: {
+                    multi: true,
+                },
+            },
+            // {
+            //     field: "",
+            //     title: "Action",
+            //     headerAttributes : {"class":"k-header header-bgcolor"},
+            //     width: 50,
+            //     template: function(d){
+            //         if(model.IsGranted("edit") == true){
+            //             return "<center><button class='btn btn-xs btn-flat btn-warning  edituserright' onclick='ns.editUser(\""+d.Id+"\")'><span class='fa fa-edit'></span></button></center>";
+            //         }
+                    
+            //         return "";
+            //     }
+            // },
+        ],
+    });
+}
+
 rolesett.GetDataRole = function(){
     rolesett.loading(false);
     var param =  {
@@ -1181,7 +1345,9 @@ rolesett.GetDataRole = function(){
                     headerAttributes: {class: 'k-header header-bgcolor'},
                     width: 100,
                     template: "<center>" +
-                            "<button class='btn btn-xs btn-flat btn-warning edit' onclick='rolesett.EditData(\"#: Id #\")'><span class='fa fa-edit'></span></button>" +
+                            "<button class='btn btn-xs btn-flat btn-primary edit' onclick='rolesett.EditData(\"#: Id #\")'><span class='fa fa-edit'></span></button>" +
+                            "&nbsp;&nbsp;" +
+                            "<button class='btn btn-xs btn-flat btn-warning del' onclick='rolesett.Listuser(\"#: Name #\")'><span class='fa fa-list-alt'></span></button>" +
                             "&nbsp;&nbsp;" +
                             "<button class='btn btn-xs btn-flat btn-danger del' #if(!Deletable) {# disabled='disabled' #}# onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button>" +
                             "</center>"

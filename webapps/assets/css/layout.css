@@ -1414,3 +1414,24 @@ button:focus {
   background-color:#F26419!important;
   color:white!important;
 }
+
+/*.bootstrap-switch-handle-on, .bootstrap-switch-primary, .bootstrap-switch-label'{
+        width :55px!important
+      }
+
+    .bootstrap-switch-handle-off .bootstrap-switch-default{
+      width : 69px!important
+    }
+
+    .bootstrap-switch,.bootstrap-switch-wrapper,.bootstrap-switch-on, .bootstrap-switch-id-Status, .bootstrap-switch-disabled, .bootstrap-switch-animate{ 
+      width : 108px!important
+}
+
+   .bootstrap-switch, .bootstrap-switch-label{
+    font-size : 12px!important
+  }
+  
+.bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-label{
+            font-size : 12px!important
+            line-height : 17px!important
+          }*/

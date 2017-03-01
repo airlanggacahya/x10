@@ -229,6 +229,13 @@ ns.LoadGridUser = function(){
 	});
 }
 
+ns.resizeSwitch = function(){
+ $('.bootstrap-switch, .bootstrap-switch-label').css("font-size", "12px")
+    $(".bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-label")
+            .css("font-size", "12px")
+            .css("line-height", "17px")
+        }
+
 ns.editUser = function(d){
 	ns.username("");
 	ns.email("");
@@ -290,6 +297,7 @@ ns.editUser = function(d){
 			}else if(ns.status() === "Active" && ns.catstatus() === ""){
 				$("[name='catstatus']").bootstrapSwitch('disabled',false);
 			}
+			ns.resizeSwitch()
 		}, 200)
 		
 		

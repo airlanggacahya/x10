@@ -579,7 +579,38 @@ func (d *SysRolesController) RemoveRole(r *knot.WebContext) interface{} {
 		return d.SetResultInfo(true, err.Error(), nil)
 	}
 
-	ret := ResultInfo{}
+	// Fetch full role data, to get role name for crosscheck with masteruser
+	cur, err := d.Ctx.Connection.
+		NewQuery().
+		From("SysRoles").
+		Where(db.Eq("_id", bson.ObjectIdHex(payload.Id))).
+		Cursor(nil)
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	role := NewSysRolesModel()
+	err = cur.Fetch(&role, 1, true)
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	// Check masteruser for role usage
+	cur, err = d.Ctx.Connection.
+		NewQuery().
+		From("MasterUser").
+		Where(db.Eq("catrole", role.Name)).
+		Cursor(nil)
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	rest := []tk.M{}
+	cur.Fetch(&rest, 0, true)
+
+	if len(rest) > 0 {
+		return d.SetResultInfo(true, "This role is still assigned to user!", nil)
+	}
 
 	q := d.Ctx.Connection.
 		NewQuery().
@@ -593,9 +624,9 @@ func (d *SysRolesController) RemoveRole(r *knot.WebContext) interface{} {
 		return d.SetResultInfo(true, err.Error(), nil)
 	}
 
-	ret.IsError = false
-	ret.Message = "Delete Role Successfully"
-	ret.Data = ""
-
-	return ret
+	return ResultInfo{
+		IsError: false,
+		Message: "Delete Role Successfully",
+		Data:    "",
+	}
 }

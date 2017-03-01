@@ -221,7 +221,7 @@ checkConfirmed = function(){
         customerID : filter().CustomerSearchVal(),
         dealNO : filter().DealNumberSearchVal(),
     }
-
+  $(".toaster").html("");
     ajaxPost("/approval/getcheckconfirm", param, function(res){
         var data = res.Data
         if(res.IsError != true){

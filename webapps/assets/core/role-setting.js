@@ -882,9 +882,14 @@ rolesett.AddNew = function(){
 }
 
 rolesett.resizeSwitch = function(){
-    $('.bootstrap-switch-handle-on, .bootstrap-switch-primary, .bootstrap-switch-label, .bootstrap-switch-handle-off, .bootstrap-switch-default').css("width", "55px");
+    $('.bootstrap-switch-handle-on, .bootstrap-switch-primary, .bootstrap-switch-label')
+        .css("width", "55px")
+    $(".bootstrap-switch-handle-off .bootstrap-switch-default").css("width", "69px");
     $('.bootstrap-switch,.bootstrap-switch-wrapper,.bootstrap-switch-on, .bootstrap-switch-id-Status, .bootstrap-switch-disabled, .bootstrap-switch-animate').css("width", "108px");
     $('.bootstrap-switch, .bootstrap-switch-label').css("font-size", "12px")
+    $(".bootstrap-switch .bootstrap-switch-handle-off, .bootstrap-switch .bootstrap-switch-handle-on, .bootstrap-switch .bootstrap-switch-label")
+            .css("font-size", "12px")
+            .css("line-height", "17px")
 }
 
 rolesett.DeleteRole = function(id) {

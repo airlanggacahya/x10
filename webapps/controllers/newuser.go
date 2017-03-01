@@ -64,33 +64,16 @@ func (c *NewUserController) Default(k *knot.WebContext) interface{} {
 func (c NewUserController) GetUser(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	payload := tk.M{}
+	payload := NewUser{}
 	k.GetPayload(&payload)
-
-	tk.Println("---------->>>>>>>", payload)
 
 	cn, _ := GetConnection()
 	defer cn.Close()
 
-	filter := []*dbox.Filter{}
-
-	if payload["name"] != "" {
-		filter = append(filter, dbox.Eq("username", payload["name"]))
-	}
-
-	if payload["userid"] != "" {
-		filter = append(filter, dbox.Eq("userid", payload["userid"]))
-	}
-
-	data := cn.NewQuery().
+	csr, err := cn.NewQuery().
 		From("MasterUser").
-		Order("-lastUpdateDate")
-
-	if len(filter) > 0 {
-		data = data.Where(dbox.Or(filter...))
-	}
-
-	csr, err := data.Cursor(nil)
+		Order("-lastUpdateDate").
+		Cursor(nil)
 
 	defer csr.Close()
 

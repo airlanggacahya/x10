@@ -864,6 +864,7 @@ rolesett.AddNew = function(){
         backdrop: 'static',
         keyboard: false
     });
+    rolesett.resizeSwitch()
     $('.rolecheck-value-check-all').prop('checked', false);
     $('.rolecheck-value-Access').prop('checked', false);
     $('.rolecheck-value-Create').prop('checked', false);
@@ -878,6 +879,12 @@ rolesett.AddNew = function(){
     rolesett.edit(true);
     rolesett.getTopMenu();
     rolesett.Id("");
+}
+
+rolesett.resizeSwitch = function(){
+    $('.bootstrap-switch-handle-on, .bootstrap-switch-primary, .bootstrap-switch-label, .bootstrap-switch-handle-off, .bootstrap-switch-default').css("width", "55px");
+    $('.bootstrap-switch,.bootstrap-switch-wrapper,.bootstrap-switch-on, .bootstrap-switch-id-Status, .bootstrap-switch-disabled, .bootstrap-switch-animate').css("width", "108px");
+    $('.bootstrap-switch, .bootstrap-switch-label').css("font-size", "12px")
 }
 
 rolesett.DeleteRole = function(id) {
@@ -1077,6 +1084,10 @@ rolesett.EditData = function(IdRole){
                     "View": dataMenu[d].View,
                 });
             }
+            setTimeout(function(){
+                rolesett.resizeSwitch()
+            }, 500)
+            
             // rolesett.GetDataMenu(newRecords);
     }); 
 }
@@ -1306,4 +1317,5 @@ $(document).ready(function (){
     $('#filterStatus').bootstrapSwitch('state',true)
     rolesett.getRole();
     rolesett.GetDataRole();
+    rolesett.resizeSwitch()
 });

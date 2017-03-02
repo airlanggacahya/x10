@@ -214,7 +214,7 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 	roles := k.Session("roles").([]SysRolesModel)
 	userid := k.Session("userid").(string)
 	for _, Role := range roles {
-
+		var dbFilterTemp []*dbox.Filter
 		if !Role.Status {
 			continue
 		}
@@ -236,15 +236,15 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 
 			switch opr {
 			case "lt":
-				dbFilter = append(dbFilter, dbox.Lt("accountdetails.loandetails.proposedloanamount", var1))
+				dbFilterTemp = append(dbFilterTemp, dbox.Lt("accountdetails.loandetails.proposedloanamount", var1))
 			case "lte":
-				dbFilter = append(dbFilter, dbox.Lte("accountdetails.loandetails.proposedloanamount", var1))
+				dbFilterTemp = append(dbFilterTemp, dbox.Lte("accountdetails.loandetails.proposedloanamount", var1))
 			case "gt":
-				dbFilter = append(dbFilter, dbox.Gt("accountdetails.loandetails.proposedloanamount", var1))
+				dbFilterTemp = append(dbFilterTemp, dbox.Gt("accountdetails.loandetails.proposedloanamount", var1))
 			case "gte":
-				dbFilter = append(dbFilter, dbox.Gte("accountdetails.loandetails.proposedloanamount", var1))
+				dbFilterTemp = append(dbFilterTemp, dbox.Gte("accountdetails.loandetails.proposedloanamount", var1))
 			case "between":
-				dbFilter = append(dbFilter, dbox.And(dbox.Gte("accountdetails.loandetails.proposedloanamount", var1), dbox.Lte("accountdetails.loandetails.proposedloanamount", var2)))
+				dbFilterTemp = append(dbFilterTemp, dbox.And(dbox.Gte("accountdetails.loandetails.proposedloanamount", var1), dbox.Lte("accountdetails.loandetails.proposedloanamount", var2)))
 			}
 		}
 		tk.Printf("--------- DV %v ----------- \n", Dv)
@@ -252,9 +252,9 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 		tk.Printf("--------- USERID %v ----------- \n", userid)
 		switch strings.ToUpper(Type) {
 		case "CA":
-			dbFilter = append(dbFilter, dbox.Eq("accountdetails.accountsetupdetails.CreditAnalystId", userid))
+			dbFilterTemp = append(dbFilterTemp, dbox.Eq("accountdetails.accountsetupdetails.CreditAnalystId", userid))
 		case "RM":
-			dbFilter = append(dbFilter, dbox.Eq("accountdetails.accountsetupdetails.RmNameId", userid))
+			dbFilterTemp = append(dbFilterTemp, dbox.Eq("accountdetails.accountsetupdetails.RmNameId", userid))
 		case "CUSTOM":
 			all := []interface{}{}
 
@@ -262,14 +262,15 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 				all = append(all, cast.ToString(valx))
 			}
 			if len(all) != 0 {
-				dbFilter = append(dbFilter, dbox.In("accountdetails.accountsetupdetails.citynameid", all...))
+				dbFilterTemp = append(dbFilterTemp, dbox.In("accountdetails.accountsetupdetails.citynameid", all...))
 			} else {
-				dbFilter = append(dbFilter, dbox.Ne("_id", ""))
+				dbFilterTemp = append(dbFilterTemp, dbox.Ne("_id", ""))
 			}
 		default:
-			dbFilter = append(dbFilter, dbox.Ne("_id", ""))
+			dbFilterTemp = append(dbFilterTemp, dbox.Ne("_id", ""))
 
 		}
+		dbFilter = append(dbFilter, dbox.And(dbFilterTemp...))
 	}
 
 	return dbFilter, nil
@@ -1195,7 +1196,7 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 		return err.Error()
 	}
 
-	keys = append(keys, dbox.And(dbf...))
+	keys = append(keys, dbox.Or(dbf...))
 
 	query1 := cn.NewQuery().
 		From("DealSetup")

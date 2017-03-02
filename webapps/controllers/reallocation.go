@@ -252,8 +252,38 @@ func GetAllUser() (interface{}, error) {
 		return resCust, err
 	}
 
-	defer qcust.Close()
-	qcust.Fetch(&resCust, 0, false)
+	qcust.Fetch(&resCust, 0, true)
+
+	qcust, err = conn.NewQuery().From("SysRoles").Cursor(nil)
+	if err != nil {
+		return resCust, err
+	}
+
+	resRole := []tk.M{}
+	qcust.Fetch(&resRole, 0, true)
+
+	roleMap := make(map[string]tk.M)
+	for _, role := range resRole {
+		roleMap[role.GetString("name")] = role
+	}
+
+	for _, val := range resCust {
+		roleAr := []tk.M{}
+		val.Set("_catrole", &roleAr)
+
+		catrole := val.Get("catrole")
+
+		if catrole == nil {
+			continue
+		}
+
+		for _, rname := range catrole.([]interface{}) {
+			roleName := tk.ToString(rname)
+			if role, found := roleMap[roleName]; found {
+				roleAr = append(roleAr, role)
+			}
+		}
+	}
 
 	return resCust, err
 }

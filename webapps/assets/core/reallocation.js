@@ -103,7 +103,7 @@ r.getDataAllocate = function() {
 			_.each(row.Logs, function(row1){
 				row1.TimeStamp = moment(row.TimeStamp).format("DD-MMM-YYYY h:mm:ss a")
 			})
-		})		 
+		})
     });
 }
 
@@ -119,8 +119,8 @@ r.getData = function(getAllocate){
 
 			r.renderFilter(body.Data)
 			
-			r.renderCAName(r.allCaName, body.Data.AccountDetails)
-			r.renderRMName(r.allRmName, body.Data.AccountDetails)
+			r.renderNameFromMaster(r.allCaName, body.Data.MasterUser, "CA")
+			r.renderNameFromMaster(r.allRmName, body.Data.MasterUser, "RM")
 
 			// r.renderKendoGrid(r.normalisasiDataGrid, body.Data.AccountDetails)
 		}
@@ -260,10 +260,10 @@ r.validateDataGrid = function(data) {
 	var validate = false 
 	for(var i=0; i<data.length; i++) {
 		allocateSelect = $("#select" + i).val()
-		toSelect = $("#to" + i).val()
+		toSelect = $("#to" + i).data('kendoDropDownList')
 		reason = $("#reason" + i).val()
 
-		if(allocateSelect === "" || toSelect === "" || reason === "") {
+		if(allocateSelect === "" || toSelect.value() === "" || reason === "") {
 			validate = false
 			swal("Warning","Please fill all fields","warning");
 			break
@@ -279,15 +279,8 @@ r.validateDataGrid = function(data) {
 			ADFormat.CustomerName = data[i].CustomerName
 			ADFormat.DealNo = data[i].DealNo
 			ADFormat.Role = allocateSelect
-			ADFormat.FromText = $("#from"+i).text()
-			ADFormat.FromId = $("#fromid"+i).val()
-			ADFormat.ToText = toSelect
-			ADFormat.ToId = ""
-
-			user = r.findCustomerByName(toSelect)
-			if(user !== undefined && user.length > 0) {
-				ADFormat.ToId = "" + user[0].userid
-			}
+			ADFormat.ToText = toSelect.text()
+			ADFormat.ToId = toSelect.value()
 
 			ADFormat.Reason = reason
 			if(r.validateUniqueData(ADFormat.Role,ADFormat.DealNo) || r.modeEdit()){
@@ -372,6 +365,28 @@ r.renderCAName = function(target, data) {
 	})
 }
 
+r.renderNameFromMaster = function(target, data, stype) {
+	var list = [];
+	_.each(data, function(val) {
+		if (val._catrole.length == 0)
+			return
+		
+		var found = _.findIndex(val._catrole, function(catrole) {
+			return catrole.roletype == stype
+		})
+
+		if (found == -1)
+			return
+		
+		list.push({
+			"text": val.username,
+			"value": val.userid
+		})
+	})
+
+	target(list)
+}
+
 r.renderCompany = function(target, user, account) {
 	r.buildFilter(target, account, function(val){
 		custId = parseInt(val.CustomerId)
@@ -430,7 +445,7 @@ r.findCustomerById = function(zone){
 }
 
 r.findCustomerByName = function(name) {
-	var user = _.filter(r.masterUserList(), function(row){
+	var user = _.filter(r.masterCustomerList(), function(row){
 		return name === row.username
 	})
 

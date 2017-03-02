@@ -170,9 +170,13 @@ func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 
 		if len(AD) > 0 {
 			if v.GetString("Role") == "CA" {
+				v.Set("FromText", AD[0].AccountSetupDetails.CreditAnalyst)
+				v.Set("FromId", AD[0].AccountSetupDetails.CreditAnalystId)
 				AD[0].AccountSetupDetails.CreditAnalyst = v.GetString("ToText")
 				AD[0].AccountSetupDetails.CreditAnalystId = v.GetString("ToId")
 			} else {
+				v.Set("FromText", AD[0].AccountSetupDetails.RmName)
+				v.Set("FromId", AD[0].AccountSetupDetails.RmNameId)
 				AD[0].AccountSetupDetails.RmName = v.GetString("ToText")
 				AD[0].AccountSetupDetails.RmNameId = v.GetString("ToId")
 			}

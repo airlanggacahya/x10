@@ -343,7 +343,61 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 
 	err := r.GetPayload(&oo)
 	if err != nil {
+		// tk.Println("---------------------------->>>>> 346", bson.ObjectIdHex(oo.Id))
 		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	if oo.Id != "" {
+		csr, err := cn.NewQuery().
+			From("SysRoles").
+			Where(db.And(
+				db.Ne("_id", bson.ObjectIdHex(oo.Id)),
+				db.Eq("name", oo.Name))).
+			Cursor(nil)
+
+		defer csr.Close()
+		if err != nil {
+			return d.SetResultInfo(true, err.Error(), nil)
+		}
+
+		val := []SysRolesModel{}
+		err = csr.Fetch(&val, 0, false)
+
+		if err != nil {
+			// tk.Println("---------------------------->>>>>366", bson.ObjectIdHex(oo.Id))
+			return d.SetResultInfo(true, err.Error(), nil)
+		}
+
+		if len(val) > 0 {
+			return d.SetResultInfo(true, "Role Name already exists", nil)
+		}
+	} else {
+		csr, err := cn.NewQuery().
+			From("SysRoles").
+			Where(db.Eq("name", oo.Name)).
+			Cursor(nil)
+
+		defer csr.Close()
+
+		if err != nil {
+			// tk.Println("---------------------------->>>>>359", bson.ObjectIdHex(oo.Id))
+			return d.SetResultInfo(true, err.Error(), nil)
+		}
+
+		val := []SysRolesModel{}
+		err = csr.Fetch(&val, 0, false)
+
+		if err != nil {
+			// tk.Println("---------------------------->>>>>366", bson.ObjectIdHex(oo.Id))
+			return d.SetResultInfo(true, err.Error(), nil)
+		}
+
+		if len(val) > 0 {
+			return d.SetResultInfo(true, "Role Name already exists", nil)
+		}
 	}
 
 	o.Name = oo.Name

@@ -32,10 +32,7 @@
         }
     };
 </script>
-<div class="panel-body" data-bind="visible: (source().length == 0)">
-    <center><h1>No Reallocation data available</h1></center>
-</div>
-<div class="col-md-12 col-sm-12 ez panel-content" style="margin-top: 54px" data-bind="visible: (source().length > 0)">
+<div class="col-md-12 col-sm-12 ez panel-content" style="margin-top: 54px">
     <div data-bind="visible: page.isState('')">
         {{ template "list.html"}}
     </div>

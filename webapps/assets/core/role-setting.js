@@ -359,11 +359,11 @@ var dataMasterMapping = [
         "menuid": "2016102614510",
         "grant": dataMasterGrant
     },
-    {
-        "name": "User Master",
-        "menuid": "2016825144254",
-        "grant": dataMasterGrant
-    },
+    // {
+    //     "name": "User Master",
+    //     "menuid": "2016825144254",
+    //     "grant": dataMasterGrant
+    // },
     {
         "name": "Ratings Model Master",
         "menuid": "2016825145014",

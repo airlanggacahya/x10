@@ -9,6 +9,7 @@ import (
 	"image/png"
 	"io"
 	"os"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -16,6 +17,7 @@ import (
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/toolkit"
+	tk "github.com/eaciit/toolkit"
 	"golang.org/x/image/draw"
 )
 
@@ -155,4 +157,21 @@ func ToWordCase(word string) string {
 	}
 	reg := regexp.MustCompile(`\w+`)
 	return reg.ReplaceAllStringFunc(strings.ToLower(word), replace)
+}
+
+func CheckArraytkM(dt interface{}) []tk.M {
+	if fmt.Sprintf("%v", reflect.TypeOf(dt)) == "[]interface {}" {
+		arr := dt.([]interface{})
+		arrf := []tk.M{}
+		for _, vf := range arr {
+			arrf = append(arrf, vf.(tk.M))
+		}
+		return arrf
+	}
+
+	if dt != nil {
+		return []tk.M{dt.(tk.M)}
+	}
+
+	return []tk.M{}
 }

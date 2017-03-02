@@ -252,8 +252,38 @@ func GetAllUser() (interface{}, error) {
 		return resCust, err
 	}
 
-	defer qcust.Close()
-	qcust.Fetch(&resCust, 0, false)
+	qcust.Fetch(&resCust, 0, true)
+
+	qcust, err = conn.NewQuery().From("SysRoles").Cursor(nil)
+	if err != nil {
+		return resCust, err
+	}
+
+	resRole := []tk.M{}
+	qcust.Fetch(&resRole, 0, true)
+
+	roleMap := make(map[string]tk.M)
+	for _, role := range resRole {
+		roleMap[role.GetString("name")] = role
+	}
+
+	for _, val := range resCust {
+		roleAr := []tk.M{}
+		val.Set("_catrole", &roleAr)
+
+		catrole := val.Get("catrole")
+
+		if catrole == nil {
+			continue
+		}
+
+		for _, rname := range catrole.([]interface{}) {
+			roleName := tk.ToString(rname)
+			if role, found := roleMap[roleName]; found {
+				roleAr = append(roleAr, role)
+			}
+		}
+	}
 
 	return resCust, err
 }
@@ -267,7 +297,7 @@ func GetAllCustomer() (interface{}, error) {
 	}
 	defer conn.Close()
 
-	qcust, err := conn.NewQuery().From("MasterCustomer").Cursor(nil)
+	qcust, err := conn.NewQuery().From("CustomerProfile").Cursor(nil)
 	if err != nil {
 		return resCust, err
 	}
@@ -275,7 +305,19 @@ func GetAllCustomer() (interface{}, error) {
 	defer qcust.Close()
 	qcust.Fetch(&resCust, 0, false)
 
-	return resCust, err
+	res := []tk.M{}
+	for _, val := range resCust {
+
+		ad := val.Get("applicantdetail").(tk.M)
+		res = append(res, tk.M{
+			"_id":           val.GetString("_id"),
+			"customer_id":   ad.GetInt("CustomerID"),
+			"customer_name": ad.GetString("CustomerName"),
+			"deal_no":       ad.GetString("DealNo"),
+		})
+	}
+
+	return res, err
 }
 
 func (c *ReallocationController) UpdateReallocationRole(k *knot.WebContext) interface{} {

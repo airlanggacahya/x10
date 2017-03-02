@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 
 	. "eaciit/x10/webapps/connection"
@@ -86,8 +87,59 @@ func (m *ReallocationDeal) SearchByParam(param tk.M) ([]ReallocationDeal, error)
 	return reallocation, err
 }
 
-func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
+var ErrorWrongType = errors.New("Wrong DealSetup Role Type")
 
+func updateDealSetup(id string, types string, name string, nameid string) error {
+	con, err := GetConnection()
+	if err != nil {
+		return err
+	}
+	defer con.Close()
+
+	cur, err := con.NewQuery().
+		From("DealSetup").
+		Where(dbox.Eq("accountdetails._id", id)).
+		Cursor(nil)
+	if err != nil {
+		return err
+	}
+
+	ins := con.NewQuery().
+		From("DealSetup").
+		SetConfig("multiexec", true).
+		Save()
+
+	dealst := []tk.M{}
+	err = cur.Fetch(&dealst, 0, true)
+	if err != nil {
+		return err
+	}
+
+	for _, deal := range dealst {
+		ad := deal.Get("accountdetails").(tk.M)
+		ads := ad.Get("accountsetupdetails").(tk.M)
+		switch types {
+		case "RM":
+			ads.Set("rmname", name)
+			ads.Set("RmNameId", nameid)
+		case "CA":
+			ads.Set("creditanalyst", name)
+			ads.Set("CreditAnalystId", nameid)
+		default:
+			return ErrorWrongType
+		}
+
+		insdata := map[string]interface{}{"data": deal}
+		err = ins.Exec(insdata)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 	cMongo, em := GetConnection()
 	if em != nil {
 		return em
@@ -106,9 +158,11 @@ func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 		Save()
 
 	for _, v := range param {
+		tk.Printfn("%v \n", v)
 		filter := []*dbox.Filter{}
 
 		filter = append(filter, dbox.Eq("_id", v.GetString("Id")))
+
 		AD, err := new(AccountDetail).Where(filter)
 		if err != nil {
 			return err
@@ -116,9 +170,13 @@ func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 
 		if len(AD) > 0 {
 			if v.GetString("Role") == "CA" {
+				v.Set("FromText", AD[0].AccountSetupDetails.CreditAnalyst)
+				v.Set("FromId", AD[0].AccountSetupDetails.CreditAnalystId)
 				AD[0].AccountSetupDetails.CreditAnalyst = v.GetString("ToText")
 				AD[0].AccountSetupDetails.CreditAnalystId = v.GetString("ToId")
 			} else {
+				v.Set("FromText", AD[0].AccountSetupDetails.RmName)
+				v.Set("FromId", AD[0].AccountSetupDetails.RmNameId)
 				AD[0].AccountSetupDetails.RmName = v.GetString("ToText")
 				AD[0].AccountSetupDetails.RmNameId = v.GetString("ToId")
 			}
@@ -129,6 +187,8 @@ func (m *ReallocationDeal) UpdateReallocationRole(param []tk.M) error {
 				return em
 			}
 		}
+
+		updateDealSetup(v.GetString("Id"), v.GetString("Role"), v.GetString("ToText"), v.GetString("ToId"))
 
 		allocate := new(ReallocationDeal)
 		logDeal := LogReallocationDeal{}

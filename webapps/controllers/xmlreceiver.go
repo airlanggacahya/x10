@@ -432,18 +432,18 @@ func MergeInfo(infos tk.M) tk.M {
 
 	info := tk.M{}
 
-	caInfo := CheckArraytkM(infos.Get("caInfo"))
-	cacInfo := CheckArraytkM(infos.Get("cacInfo"))
-	sbdInfo := CheckArraytkM(infos.Get("sbdInfo"))
-	ertrInfo := CheckArraytkM(infos.Get("ertrInfo"))
-	cibilInfo := CheckArraytkM(infos.Get("cibilInfo"))
-	adInfo := CheckArraytkM(infos.Get("adInfo"))
-	myInfos := CheckArraytkM(infos.Get("myInfo"))
-	bsiInfo := CheckArraytkM(infos.Get("bsiInfo"))
-	irtrInfo := CheckArraytkM(infos.Get("irtrInfo"))
-	ddInfo := CheckArraytkM(infos.Get("ddInfo"))
-	baInfo := CheckArraytkM(infos.Get("baInfo"))
-	dcfInfo := CheckArraytkM(infos.Get("dcfInfo"))
+	caInfo := hp.CheckArraytkM(infos.Get("caInfo"))
+	cacInfo := hp.CheckArraytkM(infos.Get("cacInfo"))
+	sbdInfo := hp.CheckArraytkM(infos.Get("sbdInfo"))
+	ertrInfo := hp.CheckArraytkM(infos.Get("ertrInfo"))
+	cibilInfo := hp.CheckArraytkM(infos.Get("cibilInfo"))
+	adInfo := hp.CheckArraytkM(infos.Get("adInfo"))
+	myInfos := hp.CheckArraytkM(infos.Get("myInfo"))
+	bsiInfo := hp.CheckArraytkM(infos.Get("bsiInfo"))
+	irtrInfo := hp.CheckArraytkM(infos.Get("irtrInfo"))
+	ddInfo := hp.CheckArraytkM(infos.Get("ddInfo"))
+	baInfo := hp.CheckArraytkM(infos.Get("baInfo"))
+	dcfInfo := hp.CheckArraytkM(infos.Get("dcfInfo"))
 	idx := len(myInfos) - 1
 	myInfo := myInfos[len(myInfos)-1]
 	myStatus := myInfo.GetString("status")
@@ -532,7 +532,7 @@ func isDealSetupExists(cid string, dealno string) (bool, string, tk.M, bson.Obje
 	// return base on logic in excel
 	for _, val := range results {
 		infos := val.Get("info").(tk.M)
-		myInfos := CheckArraytkM(infos.Get("myInfo"))
+		myInfos := hp.CheckArraytkM(infos.Get("myInfo"))
 		if len(myInfos) == 0 {
 			continue
 		}
@@ -825,13 +825,13 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 		//================ APPLICANT DETAIL END ================
 
 		//================ EXISTING LOAN START =================
-		exist := CheckArraytkM(body.Get("existingDealDetails"))
+		exist := hp.CheckArraytkM(body.Get("existingDealDetails"))
 		Ld := loanDtl //body.Get("dealLoanDetails").(tk.M)
 
 		current.FinancialReport.ExistingRelationship = []ExistingRelationshipGen{}
 		if len(exist) > 0 {
 			for _, val := range exist {
-				ld := CheckArraytkM(val.Get("loanDetails"))
+				ld := hp.CheckArraytkM(val.Get("loanDetails"))
 				for _, valx := range ld {
 					ex := ExistingRelationshipGen{}
 					ex.LoanNo = valx.GetString("loanNo")
@@ -851,8 +851,8 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 		current.DetailOfPromoters.DetailOfReference = []DetailOfReference{}
 		for _, val := range crList {
 			dtl := val.Get("customerDtl").(tk.M)
-			reff := CheckArraytkM(dtl.Get("crDealReferenceM"))
-			addr := CheckArraytkM(dtl.Get("customerAddresses"))
+			reff := hp.CheckArraytkM(dtl.Get("crDealReferenceM"))
+			addr := hp.CheckArraytkM(dtl.Get("customerAddresses"))
 
 			//=============== REFERENCE START =========================
 			for _, revl := range reff {
@@ -954,7 +954,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 		}
 
 		//================ PROMOTOR FROM STAKEHOLDER=======================
-		stkhold := CheckArraytkM(customerDtl.Get("crDealCustomerStakeholderM"))
+		stkhold := hp.CheckArraytkM(customerDtl.Get("crDealCustomerStakeholderM"))
 
 		for _, val := range stkhold {
 			Bio := BiodataGen{}
@@ -1136,7 +1136,7 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 	}
 
 	valid := comp.GetString("dealCustomerId")
-	existdeal := CheckArraytkM(body.Get("existingDealDetails"))
+	existdeal := hp.CheckArraytkM(body.Get("existingDealDetails"))
 
 	if valid != "" {
 		dtl := comp.Get("customerDtl").(tk.M)
@@ -1481,23 +1481,6 @@ func CheckArray(dt interface{}) []tk.M {
 	return []tk.M{}
 }
 
-func CheckArraytkM(dt interface{}) []tk.M {
-	if fmt.Sprintf("%v", reflect.TypeOf(dt)) == "[]interface {}" {
-		arr := dt.([]interface{})
-		arrf := []tk.M{}
-		for _, vf := range arr {
-			arrf = append(arrf, vf.(tk.M))
-		}
-		return arrf
-	}
-
-	if dt != nil {
-		return []tk.M{dt.(tk.M)}
-	}
-
-	return []tk.M{}
-}
-
 func BuildInternalRTR(body tk.M, cid string, dealno string) (tk.M, error) {
 	exs := CheckArray(body.Get("existingDealDetails"))
 
@@ -1542,7 +1525,7 @@ func BuildInternalRTR(body tk.M, cid string, dealno string) (tk.M, error) {
 }
 
 func GenerateInternalRTR(body tk.M, cid string, dealno string) error {
-	exs := CheckArraytkM(body.Get("existingDealDetails"))
+	exs := hp.CheckArraytkM(body.Get("existingDealDetails"))
 
 	arr := []tk.M{}
 	arrb := []tk.M{}

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	. "eaciit/x10/webapps/connection"
+	. "eaciit/x10/webapps/helper"
 	"errors"
 	"strings"
 

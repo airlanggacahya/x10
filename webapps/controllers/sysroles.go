@@ -35,7 +35,7 @@ func (d *SysRolesController) GetData(r *knot.WebContext) interface{} {
 
 	oo := struct {
 		Name   []interface{}
-		Status bool
+		Status string
 		Take   int
 		Skip   int
 		Sort   []tk.M
@@ -47,7 +47,13 @@ func (d *SysRolesController) GetData(r *knot.WebContext) interface{} {
 	}
 	var dbFilter []*db.Filter
 
-	dbFilter = append(dbFilter, db.Eq("status", oo.Status))
+	if oo.Status != "" {
+		ret, err := strconv.ParseBool(oo.Status)
+		if err != nil {
+			return d.SetResultInfo(true, err.Error(), nil)
+		}
+		dbFilter = append(dbFilter, db.Eq("status", ret))
+	}
 
 	if len(oo.Name) != 0 {
 		dbFilter = append(dbFilter, db.In("name", oo.Name...))

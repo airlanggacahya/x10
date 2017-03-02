@@ -852,7 +852,7 @@ rolesett.Search = function(){
 rolesett.Reset = function(){
     var multiSelect = $('#filterRole').data("kendoMultiSelect");
     multiSelect.value([]);
-    $('#filterStatus').bootstrapSwitch('state', true);
+    // $('#filterStatus').bootstrapSwitch('state', true);
     rolesett.GetDataRole();
 }
 
@@ -1272,11 +1272,23 @@ rolesett.LoadGridUser = function(){
     });
 }
 
+rolesett.StatusOptions = ko.observableArray([
+        {
+            val : true,
+            text : "Active"
+        },
+        {
+            val : false,
+            text : "Inactive"
+        },
+    ])
+
 rolesett.GetDataRole = function(){
+    setTimeout(function(){
     rolesett.loading(false);
     var param =  {
         "Name" : rolesett.filterRole(),
-        "Status" : $('#filterStatus').bootstrapSwitch('state')
+        "Status" : rolesett.filterStatus()//$('#filterStatus').bootstrapSwitch('state').toString()
     };
     var dataSource = [];
     var url = "/sysroles/getdata";
@@ -1359,6 +1371,7 @@ rolesett.GetDataRole = function(){
     setTimeout(function(){
         rolesett.grantDelete();
     }, 100)
+},300);
 }
 
 rolesett.getTopMenu = function(){
@@ -1487,13 +1500,13 @@ rolesett.grantDelete = function(){
 }
 
 $(document).ready(function (){ 
-    $('#filterStatus').bootstrapSwitch('state',true)
+    // $('#filterStatus').bootstrapSwitch('state',true)
     rolesett.getRole();
     rolesett.GetDataRole();
     rolesett.resizeSwitch()
-    $('#filterStatus').on('switchChange.bootstrapSwitch', function (event, state) {
-       setTimeout(function(){
-        rolesett.GetDataRole();
-    },500);
-    });
+    // $('#filterStatus').on('switchChange.bootstrapSwitch', function (event, state) {
+    //    setTimeout(function(){
+    //     rolesett.GetDataRole();
+    // },500);
+    // });
 });

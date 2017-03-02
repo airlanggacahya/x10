@@ -263,7 +263,7 @@ setup.onClickDealNo = function(d, id, dealno, name){
 setup.getBack = function(){
 	setup.detailIsShow(false)
 	setup.custIdDealNo('');
-	setup.loadExGrid()
+	setup.loadExGrid();
 }
 
 setup.detailPayment = function(e){
@@ -636,18 +636,14 @@ setup.getAccept = function(){
 }
 
 setup.getSendBack = function(){
-	setup.searchValueDealNo("") 
-	setup.searchValueCustomerName("")
+	
 	var on = setup.custIdDealNo().split("|");
 	var param ={
 		custid : on[0],
 		dealno : on[1]
 	}
 
-	ajaxPost("/dealsetup/sendback", param, function(res){
-		console.log(res)
-		if(res.Message == "" && res.Status != "NOK"){
-			swal({
+	swal({
 				title: 'Are you sure?',
 				text: "you want to reject Omnifin data?",
 				type: 'warning',
@@ -660,6 +656,10 @@ setup.getSendBack = function(){
 				cancelButtonClass: 'btn btn-danger',
 				buttonsStyling: false
 			}).then(function () {
+	ajaxPost("/dealsetup/sendback", param, function(res){
+		console.log(res)
+		if(res.Message == "" && res.Status != "NOK"){
+			
 				swal({
 					title: '',
 					text: "Send Back Succesfully",
@@ -672,11 +672,11 @@ setup.getSendBack = function(){
 					setup.createGrid()
 					str = "Customer Name :  | Dealno : ";
 					setup.title(str);
+					setup.searchValueDealNo("") 
+					setup.searchValueCustomerName("")
+					showFilter(true)
 				})
-			}, function (dismiss) {
-				if (dismiss === 'cancel') {
-				}
-			})
+			
 			
 		}else{
 			swal({
@@ -690,7 +690,13 @@ setup.getSendBack = function(){
 				setup.detailIsShow(false)
 			})
 		}
+
 	})
+
+	}, function (dismiss) {
+				if (dismiss === 'cancel') {
+				}
+			})
 }
 
 setup.getCurrenStatusDetails = function(d){

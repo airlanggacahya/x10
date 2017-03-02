@@ -349,7 +349,44 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 
 	err := r.GetPayload(&oo)
 	if err != nil {
+		// tk.Println("---------------------------->>>>> 346", bson.ObjectIdHex(oo.Id))
 		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	keys := []*db.Filter{}
+
+	query := cn.NewQuery().
+		From("SysRoles")
+
+	if oo.Id != "" {
+		keys = append(keys, db.And(db.Ne("_id", bson.ObjectIdHex(oo.Id)), db.Eq("name", oo.Name)))
+
+	} else {
+		keys = append(keys, db.Eq("name", oo.Name))
+	}
+
+	query = query.Where(db.And(keys...))
+
+	csr, err := query.Cursor(nil)
+
+	defer csr.Close()
+	if err != nil {
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	val := []SysRolesModel{}
+	err = csr.Fetch(&val, 0, false)
+
+	if err != nil {
+		// tk.Println("---------------------------->>>>>366", bson.ObjectIdHex(oo.Id))
+		return d.SetResultInfo(true, err.Error(), nil)
+	}
+
+	if len(val) > 0 {
+		return d.SetResultInfo(true, "Role Name already exists", nil)
 	}
 
 	o.Name = oo.Name

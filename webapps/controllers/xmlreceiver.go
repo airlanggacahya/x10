@@ -1066,7 +1066,7 @@ func BuildAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) (*A
 	}
 	current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 	current.AccountSetupDetails.RmNameId = body.GetString("dealRm")
-	if hp.ToWordCase(body.GetString("dealSourceName")) == "Dealer" {
+	if hp.ToWordCase(body.GetString("dealSourceType")) == "Dealer" {
 		current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 	}
 	current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")
@@ -1153,7 +1153,7 @@ func GenerateAccountDetail(body tk.M, crList []tk.M, cid string, dealno string) 
 		// }
 		current.AccountSetupDetails.RmName = body.GetString("dealRmDesc")
 		current.AccountSetupDetails.RmNameId = body.GetString("dealRm")
-		if hp.ToWordCase(body.GetString("dealSourceName")) == "Dealer" {
+		if hp.ToWordCase(body.GetString("dealSourceType")) == "Dealer" {
 			current.AccountSetupDetails.LeadDistributor = hp.ToWordCase(body.GetString("dealSourceName"))
 		}
 		current.AccountSetupDetails.CreditAnalyst = body.GetString("makerIdDesc")

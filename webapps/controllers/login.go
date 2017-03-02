@@ -62,7 +62,7 @@ func (c *LoginController) Do(k *knot.WebContext) interface{} {
 				wh := []*db.Filter{}
 
 				for _, valx := range resUser.Catrole {
-					wh = append(wh, db.Eq("name", valx))
+					wh = append(wh, db.And(db.Eq("name", valx), db.Eq("status", true)))
 				}
 
 				//resroles := make([]SysRolesModel, 0)
@@ -75,6 +75,11 @@ func (c *LoginController) Do(k *knot.WebContext) interface{} {
 					return c.SetResultInfo(true, errR.Error(), nil)
 				}
 				defer crsR.Close()
+
+				if len(resroles) == 0 {
+					return tk.M{}.Set("Valid", false).Set("Message", "Your Role is Inactive")
+
+				}
 
 				//Get Customer
 				k.SetSession("CustomerProfileData", nil)

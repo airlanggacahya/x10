@@ -12,6 +12,7 @@ var rolesett = {
     roleName : ko.observable(""),
     roleType : ko.observable(""),
     user : ko.observable(""),
+    isAddNew : ko.observable(false),
 
     dealAllocation : ko.observable("Standard"),
     dealAllocationOpt : ko.observableArray(["Standard"]),
@@ -859,7 +860,7 @@ rolesett.Reset = function(){
 rolesett.AddNew = function(){
     // var landing = $("#role").data("kendoDropDownList");
     // landing.value("");
-    
+    rolesett.isAddNew(true)
     $("#roleModal").modal("show");
     $("#nav-dex").css('z-index', '0');
     $("#roleModal").modal({
@@ -969,7 +970,6 @@ rolesett.SaveData = function(){
 
     param.dealvalue = rolesett.dealValue();
     param.roletype = rolesett.roleType();
-
     // rolesett.Cancel();
     // rolesett.Reset();
     ajaxPost("/sysroles/savedata", param, function(res){
@@ -1019,6 +1019,7 @@ rolesett.region.subscribe(function(value){
 
 rolesett.EditData = function(IdRole){
     // Old Data
+    rolesett.isAddNew(false)
     rolesett.roleNameEnable(true);
 
     var url = "/sysroles/getmenuedit";

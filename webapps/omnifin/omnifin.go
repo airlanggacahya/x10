@@ -5,15 +5,18 @@ import (
 	"eaciit/x10/consoleapps/OmnifinMaster/core"
 	"eaciit/x10/consoleapps/OmnifinMaster/helpers"
 	"eaciit/x10/webapps/controllers"
+	hp "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"encoding/json"
 	"errors"
+
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	// "github.com/eaciit/orm"
-	tk "github.com/eaciit/toolkit"
 	"io"
 	"net/http"
+
+	tk "github.com/eaciit/toolkit"
 )
 
 var ErrorRemoteServer = errors.New("Remote Server Error")
@@ -103,7 +106,7 @@ func PushMasterUser(list []UserMaster) error {
 		userfix.ID = i.UserId
 		userfix.Userid = i.UserId
 		userfix.Userempid = i.UserEmpId
-		userfix.Username = i.UserName
+		userfix.Username = hp.ToWordCase(i.UserName)
 		userfix.Useremail = i.UserEmail
 		userfix.Userphone1 = i.UserPhone1
 		userfix.Userphone2 = string(i.UserPhone2)

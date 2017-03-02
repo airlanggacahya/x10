@@ -82,9 +82,10 @@ var gridbrowser = {
         {
             headerAttributes: { "class": "k-header header-bgcolor" },
             title : "Action",
+            width: 50,
             template : function(o) {
             	if(model.IsGranted("edit") == true){
-            		return "<button class='btn btn-save' onClick=\"r.edit('"+o.DealNo+"', '"+o.Id+"')\">Edit</button>";
+            		return "<center><button class='btn btn-xs btn-flat btn-primary' onClick=\"r.edit('"+o.DealNo+"', '"+o.Id+"')\"><i class='fa fa-edit'></i></button></center>";
             	}
 
             	return "";
@@ -218,9 +219,9 @@ r.edit = function(dealno,  id) {
 		dropdownlistRole.value(reallocation.Role);
 		dropdownlistRole.trigger("change");
 
-		setTimeout(function(){
-			dropdownlistTo.value(reallocation.ToName);	
-		}, 500)
+		// setTimeout(function(){
+		// 	dropdownlistTo.value(reallocation.ToName);	
+		// }, 500)
 		
 		$("#reason0").val(reallocation.Reason)
 		

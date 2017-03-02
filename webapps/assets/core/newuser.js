@@ -3,6 +3,7 @@ ns.Userdata = ko.observableArray([]);
 ns.OriginalUserdata = ko.observableArray([]);
 ns.SearchBarText = ko.observable("");
 ns.roleList = ko.observableArray([]);
+ns.roleListAll = ko.observableArray([]);
 ns.valuerole = ko.observableArray([]);
 ns.param = ko.observableArray([]);
 ns.param = ko.observableArray([]);
@@ -32,12 +33,25 @@ ns.PreprocessUser = function(input){
 		}
 		if(temp.Catrole != null){
 			temp.Catrole = temp.Catrole.join("|")
+			temp.RoleType = [];
+			_.forEach(temp.Catrole.split("|"),function(xu){
+				console.log(xu,"xu")
+				var rtype = _.find(ns.roleListAll(),function(x){ return x.Name == xu });
+				console.log(rtype)
+				if (rtype != undefined){
+					temp.RoleType.push(rtype.Roletype);
+				}else{
+					temp.RoleType.push("");
+				}
+			});
+			temp.RoleType = temp.RoleType.join("|");
 		}else{
 			temp.Catrole = "To be assigned";
 		}
 
 		if(temp.Role != null){
 			temp.Role = temp.Role.join("|");
+			
 		}
 	})
 
@@ -76,6 +90,9 @@ ns.FilterSearchBar = function(val) {
 			return newdata.push(i)
 
 		if (i.Role.toLowerCase().indexOf(val) != -1)
+			return newdata.push(i)
+
+		if (i.Roletype.toLowerCase().indexOf(val) != -1)
 			return newdata.push(i)
 	})
 
@@ -194,6 +211,41 @@ ns.LoadGridUser = function(){
 				}
 			},
 			{
+				field: "RoleType",
+				title: "CAT Role Type",
+				headerAttributes : {"class":"k-header header-bgcolor"},
+				attributes:{"class": "no-padding"},
+				// filterable: false,
+				template: function(d){
+
+					var res = '';
+					try{
+						if(d.Catrole != null){
+							var rest = (d.RoleType).split("|")
+							var last = rest.length - 1;
+							res += "<table role='grid'>"
+							$.each(rest, function(i, item){
+								res += "<tr>"
+								if(i == last){
+									res += "<td class='line' role='gridcell' style='height: 20px;border-bottom: hidden;'>"+item+"</td>"
+								}else{
+									res += "<td class='line' role='gridcell' style='height: 20px;'>"+item+"</td>"
+								}
+								
+								res += "</tr>"
+							})
+							res += "</table>"
+							return res
+						}
+					}catch(e){
+
+					}
+					
+
+					return "&nbsp To be assigned"
+				}
+			},
+			{
 				field: "Recstatus",
 				title: "Status",
 				headerAttributes : {"class":"k-header header-bgcolor"},
@@ -245,11 +297,21 @@ ns.resizeSwitch = function(){
             .css("line-height", "17px")
         }
 
+$(document).ready(function(){
+	ajaxPost("/sysroles/getdata", {}, function(res){
+			var data = res.Data;
+			if(data.length != 0 || data != null){
+				ns.roleListAll(data.Records);
+				ns.roleList( _.map(_.filter(ns.roleListAll(),function(x){ return x.Status == true }),function(x){ return x.Name}));
+			}
+		});
+})
+
 ns.editUser = function(d){
 	ns.username("");
 	ns.email("");
 	ns.uniqueid("");
-	ns.roleList([]);
+	// ns.roleList([]);
 	ns.valuerole([]);
 	ns.status("");
 	ns.catstatus("");
@@ -261,12 +323,7 @@ ns.editUser = function(d){
 	ajaxPost("/newuser/getuseredit", {Id: d}, function(res){
 		var data = res.Data.data[0];
 		ns.param(data)
-		ajaxPost("/newuser/getsysrole", {}, function(res){
-			var data = res.Data;
-			if(data.length != 0 || data != null){
-				ns.roleList(data);
-			}
-		});
+		
 		ns.username(ns.param().Username);
 		ns.email(ns.param().Useremail);
 		ns.uniqueid(ns.param().Userid);

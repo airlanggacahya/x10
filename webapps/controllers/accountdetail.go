@@ -223,6 +223,8 @@ func (c *AccountDetailController) SaveAccountDetail(k *knot.WebContext) interfac
 		payload.Id = payload.CustomerId + "|" + payload.DealNo
 	}
 
+	payload.LoanDetails.ProposedLoanAmount = payload.LoanDetails.ProposedLoanAmount * 100000
+
 	if err := c.Ctx.Save(payload); err != nil {
 		res.SetError(err)
 		return res

@@ -555,7 +555,7 @@ adf.LoadPromotorEducation = function(){
 
 		if(row != undefined){
 			row.Education = row.Education == ""? "NA" : row.Education;
-			$('#edu'+i).tooltipster({content: 'Educational Background : '+ row.Education})
+			// $('#edu'+i).tooltipster({content: 'Educational Background : '+ row.Education})
 		};
 	});
 }
@@ -2059,12 +2059,15 @@ adf.getData = function () {
 		DealNo: dealNo
 	}
 	app.ajaxPost(url, param, function (res) {
+
+		res = res[0]
+
 		if (typeof res.ApplicantDetail == "undefined" || res.ApplicantDetail.CustomerID == null) {
 			// res = checkConfirmedOrNot(res.Status, 1, 2, res, [], "Customer Application");
 
 		}
 		// console.log("----------->>> data res", res.DetailOfPromoters)
-		if (res.Status == 1) {
+		// if (res.Status == 1) {
 			res.DetailOfPromoters.Biodata = _.map(res.DetailOfPromoters.Biodata,function(x){
 				 x.Name = toTitleCase(x.Name)
 				 return x
@@ -2083,11 +2086,11 @@ adf.getData = function () {
 				// adf.form.LoanDetails.ProposedLoanAmount(res.ApplicantDetail.AmountLoan/100000)
 				// console.log(res[0].ApplicantDetail.AmountLoan)
 			}, 500);
-
 			adf.optionPromotors(_.sortBy(res.DetailOfPromoters.Biodata, 'Name'));
+
 			var date = moment(adf.form.AccountSetupDetails.PdInfo.PdDate()).format('DD-MMM-YYYY');
 			adf.PdDate(date);
-		}
+		// }
 
 		var url = "/accountdetail/getaccountdetail"
 		var param = {
@@ -2293,6 +2296,7 @@ adf.getData = function () {
 				adf.optionTemporaryData(res.Data)
 				adf.setForm(res.Data)
 				// adf.loanDetailEnable()
+
 				adf.form.LoanDetails.ProposedLoanAmount(adf.form.LoanDetails.ProposedLoanAmount()/100000)
 
 				setTimeout(function(){

@@ -2050,7 +2050,7 @@ adf.getData = function () {
 
 	adf.form.BorrowerDetails.CommentsonFinancials([""])
 
-	var url = "/datacapturing/getcustomerprofiledetailconfirmed"
+	var url = "/datacapturing/getcustomerprofiledetail"
 	var param = {
 		CustomerId: customerId,
 		DealNo: dealNo
@@ -2077,7 +2077,7 @@ adf.getData = function () {
 				// 		adf.form.PromotorDetails()[i].CibilScore(item.CIBILScore)
 				// 	}
 				// })
-				adf.form.LoanDetails.ProposedLoanAmount(res.ApplicantDetail.AmountLoan/100000)
+				// adf.form.LoanDetails.ProposedLoanAmount(res.ApplicantDetail.AmountLoan/100000)
 				// console.log(res[0].ApplicantDetail.AmountLoan)
 			}, 500);
 
@@ -2260,7 +2260,6 @@ adf.getData = function () {
 					adf.setDisable()
 
 					tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
-					
 				}, 1000)
 				adf.form.BorrowerDetails.DateBusinessStarted("");
 				adf.form.LoanDetails.IfBackedByPO("");
@@ -2291,6 +2290,7 @@ adf.getData = function () {
 				adf.optionTemporaryData(res.Data)
 				adf.setForm(res.Data)
 				// adf.loanDetailEnable()
+				adf.form.LoanDetails.ProposedLoanAmount(adf.form.LoanDetails.ProposedLoanAmount()/100000)
 
 				setTimeout(function(){
 					adf.FirstAgreementDate(adf.form.LoanDetails.FirstAgreementDate());
@@ -3275,7 +3275,6 @@ adf.checkVendor = function(){
 		}
 	})
 
-	console.log(numloop)
 	if(numloop != adf.form.VendorDetails().length){
 		Materialize.toast("Please fill Distributor name", 2000);
         $('.toast').css("background-color","#F26419").css("color","white")

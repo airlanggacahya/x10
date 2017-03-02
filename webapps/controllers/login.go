@@ -170,15 +170,15 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 
 		switch opr {
 		case "lt":
-			dbFilter = append(dbFilter, db.Lt("loandetails.proposedloanamount", var1/100000))
+			dbFilter = append(dbFilter, db.Lt("loandetails.proposedloanamount", var1))
 		case "lte":
-			dbFilter = append(dbFilter, db.Lte("loandetails.proposedloanamount", var1/100000))
+			dbFilter = append(dbFilter, db.Lte("loandetails.proposedloanamount", var1))
 		case "gt":
-			dbFilter = append(dbFilter, db.Gt("loandetails.proposedloanamount", var1/100000))
+			dbFilter = append(dbFilter, db.Gt("loandetails.proposedloanamount", var1))
 		case "gte":
-			dbFilter = append(dbFilter, db.Gte("loandetails.proposedloanamount", var1/100000))
+			dbFilter = append(dbFilter, db.Gte("loandetails.proposedloanamount", var1))
 		case "between":
-			dbFilter = append(dbFilter, db.And(db.Gte("loandetails.proposedloanamount", var1/100000), db.Lte("loandetails.proposedloanamount", var2/100000)))
+			dbFilter = append(dbFilter, db.And(db.Gte("loandetails.proposedloanamount", var1), db.Lte("loandetails.proposedloanamount", var2)))
 		}
 	}
 	tk.Printf("--------- DV %v ----------- \n", Dv)

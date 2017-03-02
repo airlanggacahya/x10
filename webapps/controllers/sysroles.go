@@ -330,6 +330,45 @@ func regionToBranch(regions []int) []int {
 	return ret
 }
 
+// Return true when rolename is not used anywhere
+func validateRoleName(id string, name string) (bool, error) {
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	keys := []*db.Filter{}
+
+	query := cn.NewQuery().
+		From("SysRoles")
+
+	if id != "" {
+		keys = append(keys, db.And(db.Ne("_id", bson.ObjectIdHex(id)), db.Eq("name", name)))
+	} else {
+		keys = append(keys, db.Eq("name", name))
+	}
+
+	query = query.Where(db.And(keys...))
+
+	csr, err := query.Cursor(nil)
+
+	defer csr.Close()
+	if err != nil {
+		return false, err
+	}
+
+	val := []SysRolesModel{}
+	err = csr.Fetch(&val, 0, false)
+
+	if err != nil {
+		return false, err
+	}
+
+	if len(val) > 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
 func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 	r.Config.OutputType = knot.OutputJson
 	oo := struct {
@@ -343,49 +382,22 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		Dealallocation string
 		Dealvalue      string
 		Roletype       string
+		Force          bool `json:"force,omitempty"`
 	}{}
 	ret := ResultInfo{}
 	o := NewSysRolesModel()
 
 	err := r.GetPayload(&oo)
 	if err != nil {
-		// tk.Println("---------------------------->>>>> 346", bson.ObjectIdHex(oo.Id))
 		return d.SetResultInfo(true, err.Error(), nil)
 	}
 
-	cn, _ := GetConnection()
-	defer cn.Close()
-
-	keys := []*db.Filter{}
-
-	query := cn.NewQuery().
-		From("SysRoles")
-
-	if oo.Id != "" {
-		keys = append(keys, db.And(db.Ne("_id", bson.ObjectIdHex(oo.Id)), db.Eq("name", oo.Name)))
-
-	} else {
-		keys = append(keys, db.Eq("name", oo.Name))
-	}
-
-	query = query.Where(db.And(keys...))
-
-	csr, err := query.Cursor(nil)
-
-	defer csr.Close()
+	valid, err := validateRoleName(oo.Id, oo.Name)
 	if err != nil {
 		return d.SetResultInfo(true, err.Error(), nil)
 	}
 
-	val := []SysRolesModel{}
-	err = csr.Fetch(&val, 0, false)
-
-	if err != nil {
-		// tk.Println("---------------------------->>>>>366", bson.ObjectIdHex(oo.Id))
-		return d.SetResultInfo(true, err.Error(), nil)
-	}
-
-	if len(val) > 0 {
+	if !valid {
 		return d.SetResultInfo(true, "Role Name already exists", nil)
 	}
 
@@ -513,6 +525,15 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 		current := NewSysRolesModel()
 		cur.Fetch(&current, 1, true)
 
+		used, err := isRoleUsed(current.Name)
+		if err != nil {
+			return d.SetResultInfo(true, err.Error(), nil)
+		}
+
+		if current.Status && !o.Status && used && !oo.Force {
+			return d.SetResultInfo(true, "This role is still assigned to user.<br>Are you sure to set it inactive?", "NEED_CONFIRM")
+		}
+
 		o.Deletable = current.Deletable
 	} else {
 		o.Id = bson.NewObjectId()
@@ -610,6 +631,27 @@ func (d *SysRolesController) GetDealValue(r *knot.WebContext) interface{} {
 	return ret
 }
 
+func isRoleUsed(name string) (bool, error) {
+	con, err := GetConnection()
+	if err != nil {
+		return false, err
+	}
+
+	cur, err := con.
+		NewQuery().
+		From("MasterUser").
+		Where(db.Eq("catrole", name)).
+		Cursor(nil)
+	if err != nil {
+		return false, err
+	}
+
+	rest := []tk.M{}
+	cur.Fetch(&rest, 0, true)
+
+	return len(rest) > 0, nil
+}
+
 func (d *SysRolesController) RemoveRole(r *knot.WebContext) interface{} {
 	r.Config.OutputType = knot.OutputJson
 	r.Config.NoLog = true
@@ -640,19 +682,12 @@ func (d *SysRolesController) RemoveRole(r *knot.WebContext) interface{} {
 	}
 
 	// Check masteruser for role usage
-	cur, err = d.Ctx.Connection.
-		NewQuery().
-		From("MasterUser").
-		Where(db.Eq("catrole", role.Name)).
-		Cursor(nil)
+	used, err := isRoleUsed(role.Name)
 	if err != nil {
 		return d.SetResultInfo(true, err.Error(), nil)
 	}
 
-	rest := []tk.M{}
-	cur.Fetch(&rest, 0, true)
-
-	if len(rest) > 0 {
+	if used {
 		return d.SetResultInfo(true, "This role is still assigned to user!", nil)
 	}
 
@@ -701,7 +736,6 @@ func (c SysRolesController) GetlistUserRoles(k *knot.WebContext) interface{} {
 	}
 
 	for _, val := range rl {
-		// tk.Println("------------------------->>>>", rl)
 		for _, onrole := range val.Catrole {
 			if onrole == payload["name"] {
 				result = append(result, val)

@@ -970,8 +970,12 @@ rolesett.SaveData = function(){
 
     param.dealvalue = rolesett.dealValue();
     param.roletype = rolesett.roleType();
-    // rolesett.Cancel();
-    // rolesett.Reset();
+    
+    SendRoleSave(param);
+
+}
+
+function SendRoleSave(param) {
     ajaxPost("/sysroles/savedata", param, function(res){
         if(res.IsError != true){
             rolesett.Cancel();
@@ -979,7 +983,19 @@ rolesett.SaveData = function(){
             $("#nav-dex").css('z-index', 'none');
             swal("Success!", res.Message, "success");
             location.reload();
-        }else{
+        } else if (res.Data == "NEED_CONFIRM") {
+            swal({
+                title: "Are you sure?",
+                text: res.Message,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, Set Inactive"
+            }).then(function () {
+                param.force = true;
+                SendRoleSave(param);
+            });
+        } else {
             return swal("Error!", res.Message, "error");
         }
     });
@@ -1002,7 +1018,6 @@ rolesett._privToGrid = function(priv) {
 rolesett.branch.subscribe(function(value){
     var found = _.indexOf(value, 0);
 
-    console.log(found, 'aw', value)
     if (value.length != 1 && found != -1) {
         rolesett.branch([0])
     }
@@ -1011,7 +1026,6 @@ rolesett.branch.subscribe(function(value){
 rolesett.region.subscribe(function(value){
     var found = _.indexOf(value, 0);
 
-    console.log(found, 'bw')
     if (value.length != 1 && found != -1) {
         rolesett.region([0])
     }

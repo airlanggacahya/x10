@@ -23,7 +23,7 @@ setup.columnGrid = [
     width : 200,
     headerAttributes: { "class": "sub-bgcolor" },
     template: function(dt){
-     return '<a style="cursor: pointer" onClick="setup.onClickDealNo(\''+dt.Id+'\',\''+dt.CustomerProfile._id+'\')">'+dt.CustomerProfile.applicantdetail.DealNo+'</a>'
+     return '<a style="cursor: pointer" onClick="setup.onClickDealNo(\''+dt.Id+'\',\''+dt.CustomerProfile._id+'\',\''+dt.CustomerProfile.applicantdetail.DealNo+'\',\''+dt.CustomerProfile.applicantdetail.CustomerName+'\')">'+dt.CustomerProfile.applicantdetail.DealNo+'</a>'
     }
  },
  {

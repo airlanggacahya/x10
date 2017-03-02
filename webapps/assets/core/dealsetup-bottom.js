@@ -163,7 +163,11 @@ setup.detailOfRefrence = ko.observable([setup.refrenceTemplate]);
 setup.detailIsShow = ko.observable(false);
 setup.custIdDealNo = ko.observable('')
 
-setup.onClickDealNo = function(d, id){
+setup.onClickDealNo = function(d, id, dealno, name){
+	// setup.searchValueDealNo(dealno) 
+	setup.searchValueCustomerName(name)
+	str = "Customer Name : "+ name +" | Dealno : "+ dealno;
+   	setup.title(str)
 	setup.custIdDealNo(id);
 	var param = {Id : d}
 	ajaxPost("/dealsetup/getselecteddatadealsetup", param, function(res){
@@ -263,7 +267,7 @@ setup.getBack = function(){
 }
 
 setup.detailPayment = function(e){
-	console.log("----------------------->>>>", e)
+	// console.log("----------------------->>>>", e)
 	data = []
 	$.each(setup.financialreport(), function(i, set){
 		$.each(set.Payment, function(i, dt){
@@ -581,6 +585,8 @@ setup.setAccept = function(param){
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
 			}).then(function () {
+				str = "Customer Name :  | Dealno : ";
+				setup.title(str)
 				setup.createGrid()
 				setup.detailIsShow(false)
 			})
@@ -591,6 +597,8 @@ setup.setAccept = function(param){
 }
 
 setup.getAccept = function(){
+	setup.searchValueDealNo("") 
+	setup.searchValueCustomerName("")
 	var on = setup.custIdDealNo().split("|");
 	var param ={
 		custid : on[0],
@@ -601,6 +609,7 @@ setup.getAccept = function(){
 		console.log(res.Data.count)
 		if(res.Status != "NOK"){
 			if(res.Data.count > 1){
+				alert("masuk")
 				swal({
 					title: "",
 					text: "Deal already exists in CAT, accept new Omnifin Data?",
@@ -613,7 +622,7 @@ setup.getAccept = function(){
 					confirmButtonClass: 'btn btn-success',
 					cancelButtonClass: 'btn btn-danger',
 				}).then(function(){
-					setup.setAccept(param)
+   					setup.setAccept(param)
 				}, function(dismiss){
 					console.log("dismiss")
 				});
@@ -627,6 +636,8 @@ setup.getAccept = function(){
 }
 
 setup.getSendBack = function(){
+	setup.searchValueDealNo("") 
+	setup.searchValueCustomerName("")
 	var on = setup.custIdDealNo().split("|");
 	var param ={
 		custid : on[0],
@@ -637,16 +648,36 @@ setup.getSendBack = function(){
 		console.log(res)
 		if(res.Message == "" && res.Status != "NOK"){
 			swal({
-				title: '',
-				text: "Send Back Succesfully",
-				type: 'success',
-				showCancelButton: false,
+				title: 'Are you sure?',
+				text: "you want to reject Omnifin data?",
+				type: 'warning',
+				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes',
+				cancelButtonText: 'No',
+				confirmButtonClass: 'btn btn-success',
+				cancelButtonClass: 'btn btn-danger',
+				buttonsStyling: false
 			}).then(function () {
-				setup.detailIsShow(false)
-				setup.createGrid()
+				swal({
+					title: '',
+					text: "Send Back Succesfully",
+					type: 'success',
+					showCancelButton: false,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+				}).then(function () {
+					setup.detailIsShow(false)
+					setup.createGrid()
+					str = "Customer Name :  | Dealno : ";
+					setup.title(str);
+				})
+			}, function (dismiss) {
+				if (dismiss === 'cancel') {
+				}
 			})
+			
 		}else{
 			swal({
 				title: '',

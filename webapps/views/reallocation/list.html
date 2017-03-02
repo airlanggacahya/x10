@@ -8,10 +8,10 @@
 <div class="panel ez">
   <div class="panel-heading">
     <div class="row">
-        <div class="col-md-6">
-            <button class="btn btn-sm btn-success btn-flat" data-bind="click: r.showModal('.modal-reallocation'), visible:(model.IsGranted('create') == true)">Create Reallocation Deal</button>
-        </div>
         <div class="col-md-6 pull-right">
+            <button class="btn btn-sm btn-success btn-flat" style="float:right;" data-bind="click: r.showModal('.modal-reallocation'), visible:(model.IsGranted('create') == true)"><i class="fa fa-plus"></i> Reallocate Deal</button>
+        </div>
+        <div class="col-md-6 pull-left">
             <label class="col-sm-2 form-label">Search</label>
         
             <div class="col-sm-10">
@@ -22,10 +22,10 @@
   </div>
   <div class="panel-body margin-top-0">
     <div class="row">
-        <div class="col-md-12">
-            
+        <div class="col-md-12" data-bind="visible: (source().length == 0)">
+          <center><h1>No Reallocation data available</h1></center>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12" data-bind="visible: (source().length > 0)">
             <div data-bind="kendoGrid: { data: source, columns: gridbrowser.column }">
             </div>
         </div>

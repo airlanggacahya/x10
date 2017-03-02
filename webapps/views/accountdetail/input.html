@@ -771,34 +771,34 @@ mincibil = ko.observable(0);
 						        			</div>
 
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: MaxDelayDays, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: MaxDelayDays, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" type="text" style="width: 100%;">
 						        			</div>
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: MaxPaymentDays, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: MaxPaymentDays, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" type="text" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" style="width: 100%;">
 						        			</div>
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AverageDelayDays, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AverageDelayDays, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" type="text" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" style="width: 100%;">
 						        			</div>
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: StandardDeviation, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: StandardDeviation, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" type="text" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" style="width: 100%;">
 						        			</div>
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AveragePaymentDays, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AveragePaymentDays, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" type="text" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" style="width: 100%;">
 						        			</div>
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AvgTransactionWeightedPaymentDelayDays, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AvgTransactionWeightedPaymentDelayDays, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" type="text" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" style="width: 100%;">
 						        			</div>
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: DelayDaysStandardDeviation, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: DelayDaysStandardDeviation, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" type="text" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" style="width: 100%;">
 						        			</div>
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AvgTransactionWeightedPaymentDays, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AvgTransactionWeightedPaymentDays, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" type="text" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" style="width: 100%;">
 						        			</div>
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: DaysStandardDeviation, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: DaysStandardDeviation, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" type="text" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" style="width: 100%;">
 						        			</div>
 						        			<div class="form-group">
-						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AmountOfBusinessDone, format: 'n0', spinners:false, change: adf.checkVendor}" type="text" style="width: 100%;">
+						        				<input class="vendor" data-bind="kendoNumericTextBox: { value: AmountOfBusinessDone, format: 'n0', spinners:false, change: adf.checkVendor},enable : (adf.form.VendorDetails()[$index()].DistributorName() != '' && adf.form.VendorDetails()[$index()].DistributorName() != undefined)" type="text" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" style="width: 100%;">
 						        			</div>
 						        		</div>
 					            	</div>

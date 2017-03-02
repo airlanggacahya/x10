@@ -484,8 +484,11 @@ adf.setForm = function (data) {
 		}
 	})
 
-
-	
+	setTimeout(function(){
+		_.forEach(adf.form.VendorDetails(),function(val,idx){
+			adf.form.VendorDetails()[idx].DistributorName.valueHasMutated();
+		});
+	},1000)
 	// adf.Tempform.PromotorDetails.RealEstatePosition(data)
 
 	adf.form.PromotorDetails().forEach(function (d) {
@@ -2571,6 +2574,11 @@ adf.fixMultiSectionCSS = function () {
 		adf.form.PromotorDetails().length,
 		adf.form.VendorDetails().length
 	])
+
+	_.forEach(adf.form.VendorDetails(),function(val,idx){
+		adf.form.VendorDetails()[idx].DistributorName.valueHasMutated();
+	});
+
 	$('.wrapper').width(totalWidth)
 
 	var maxPromotors = _.max(adf.form.PromotorDetails().map(function (d) {
@@ -3276,9 +3284,25 @@ adf.checkVendor = function(){
 	})
 
 	if(numloop != adf.form.VendorDetails().length){
-		Materialize.toast("Please fill Distributor name", 2000);
-        $('.toast').css("background-color","#F26419").css("color","white")
+		// Materialize.toast("Please fill Distributor name", 2000);
+  //       $('.toast').css("background-color","#F26419").css("color","white")
 	}
+}
+
+adf.deleteZero = function(e){
+		var val = $(e).val();
+		if (val == 0){
+			$(e).val("");
+		}
+}
+
+adf.addZero = function(e){
+	setTimeout(function(){
+		var val = $(e).val();
+		if (val.toString() == ""){
+			$(e).getKendoNumericTextBox().value(0);
+		}
+	},200)
 }
 
 $(function () {

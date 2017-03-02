@@ -2057,7 +2057,7 @@ adf.getData = function () {
 	}
 	app.ajaxPost(url, param, function (res) {
 		if (typeof res.ApplicantDetail == "undefined" || res.ApplicantDetail.CustomerID == null) {
-			res = checkConfirmedOrNot(res.Status, 1, 2, res, [], "Customer Application");
+			// res = checkConfirmedOrNot(res.Status, 1, 2, res, [], "Customer Application");
 
 		}
 		// console.log("----------->>> data res", res.DetailOfPromoters)
@@ -2287,16 +2287,17 @@ adf.getData = function () {
 				}
 
 				// console.log(res.Data)
-				adf.FirstAgreementDate(adf.form.LoanDetails.FirstAgreementDate());
-				var temp = formatingDate(adf.FirstAgreementDate())
-
-				// console.log(temp)
-				FirstAgreementDateStr(temp)
+				
 				adf.optionTemporaryData(res.Data)
 				adf.setForm(res.Data)
 				// adf.loanDetailEnable()
 
 				setTimeout(function(){
+					adf.FirstAgreementDate(adf.form.LoanDetails.FirstAgreementDate());
+					var temp = formatingDate(adf.FirstAgreementDate())
+
+					// console.log(temp)
+					FirstAgreementDateStr(temp)
 					adf.LoadPromotorEducation();
 					$("#refrence").data("kendoGrid").dataSource.data(ko.mapping.toJS(adf.form.BorrowerDetails.RefrenceCheck()));
 				}, 500)

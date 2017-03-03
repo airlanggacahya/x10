@@ -1398,6 +1398,12 @@ rolesett.GetDataRole = function(){
 
                 },
                 {
+                    field:"Roletype",
+                    title:"Role Type",
+                    headerAttributes: {class: 'k-header header-bgcolor'},
+
+                },
+                {
                     field:"Status",
                     title:"Status",
                     template : function(dt){

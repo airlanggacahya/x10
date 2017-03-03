@@ -176,41 +176,6 @@ ns.LoadGridUser = function(){
 				}
 			},
 			{
-				field: "Catrole",
-				title: "CAT Role",
-				headerAttributes : {"class":"k-header header-bgcolor"},
-				attributes:{"class": "no-padding"},
-				// filterable: false,
-				template: function(d){
-
-					var res = '';
-					try{
-						if(d.Catrole != null){
-							var rest = (d.Catrole).split("|")
-							var last = rest.length - 1;
-							res += "<table role='grid'>"
-							$.each(rest, function(i, item){
-								res += "<tr>"
-								if(i == last){
-									res += "<td class='line' role='gridcell' style='height: 20px;border-bottom: hidden;'>"+item+"</td>"
-								}else{
-									res += "<td class='line' role='gridcell' style='height: 20px;'>"+item+"</td>"
-								}
-								
-								res += "</tr>"
-							})
-							res += "</table>"
-							return res
-						}
-					}catch(e){
-
-					}
-					
-
-					return "&nbsp To be assigned"
-				}
-			},
-			{
 				field: "RoleType",
 				title: "CAT Role Type",
 				headerAttributes : {"class":"k-header header-bgcolor"},
@@ -245,6 +210,42 @@ ns.LoadGridUser = function(){
 					return "&nbsp To be assigned"
 				}
 			},
+			{
+				field: "Catrole",
+				title: "CAT Role",
+				headerAttributes : {"class":"k-header header-bgcolor"},
+				attributes:{"class": "no-padding"},
+				// filterable: false,
+				template: function(d){
+
+					var res = '';
+					try{
+						if(d.Catrole != null){
+							var rest = (d.Catrole).split("|")
+							var last = rest.length - 1;
+							res += "<table role='grid'>"
+							$.each(rest, function(i, item){
+								res += "<tr>"
+								if(i == last){
+									res += "<td class='line' role='gridcell' style='height: 20px;border-bottom: hidden;'>"+item+"</td>"
+								}else{
+									res += "<td class='line' role='gridcell' style='height: 20px;'>"+item+"</td>"
+								}
+								
+								res += "</tr>"
+							})
+							res += "</table>"
+							return res
+						}
+					}catch(e){
+
+					}
+					
+
+					return "&nbsp To be assigned"
+				}
+			},
+			
 			{
 				field: "Recstatus",
 				title: "Status",
@@ -307,12 +308,23 @@ $(document).ready(function(){
 		});
 })
 
+ns.filterRole = function(){
+	setTimeout(function(){
+		var arr = ns.valuerole();
+		if(ns.valuerole() != null){
+			var roleType = _.map(_.filter(ns.roleListAll(),function(x){ return x.Status == true && ns.valuerole().indexOf(x.Name) > -1 }),function(x){ return x.Roletype});
+			ns.roleList( _.map(_.filter(ns.roleListAll(),function(x){ return (x.Status == true && roleType.indexOf(x.Roletype) == -1) || ns.valuerole().indexOf(x.Name) > -1 }),function(x){ return x.Name}));
+		}
+	},200)
+}
+
 ns.editUser = function(d){
 	ns.username("");
 	ns.email("");
 	ns.uniqueid("");
 	// ns.roleList([]);
 	ns.valuerole([]);
+	ns.filterRole();
 	ns.status("");
 	ns.catstatus("");
 	ns.Password("");
@@ -364,6 +376,7 @@ ns.editUser = function(d){
 				$("[name='catstatus']").bootstrapSwitch('disabled',false);
 			}
 			ns.resizeSwitch()
+			ns.filterRole();
 		}, 200)
 		
 		

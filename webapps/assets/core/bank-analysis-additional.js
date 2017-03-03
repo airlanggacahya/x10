@@ -1833,8 +1833,107 @@ $(document).ready(function(){
         }
     });
 
+    function validateDataBank(databank) {
+        var listCheck = {
+            "_" : [
+                {
+                    "field": "BankAccount.BankName",
+                    "name": "Bank Name"
+                }
+            ],
+            "Fund Based" : [
+                {
+                    "field": "BankAccount.FundBased.AccountType",
+                    "name": "A/C Type"
+                },
+                {
+                    "field": "BankAccount.FundBased.AccountNo",
+                    "name": "A/C No"
+                },
+                {
+                    "field": "BankAccount.FundBased.AccountHolder",
+                    "name": "A/C Holder"
+                },
+                {
+                    "field": "BankAccount.FundBased.SancLimit",
+                    "name": "Sanction Limit"
+                },
+                {
+                    "field": "BankAccount.FundBased.ROI",
+                    "name": "ROI Per Annum"
+                },
+                {
+                    "field": "BankAccount.FundBased.SanctionDate",
+                    "name": "Saction Date"
+                }
+            ],
+            "Non-Fund Based": [
+                {
+                    "field": "BankAccount.NonFundBased.NatureOfFacility",
+                    "name": "Nature of Facility"
+                },
+                {
+                    "field": "BankAccount.NonFundBased.SancLimit",
+                    "name": "Sanction Limit"
+                },
+                {
+                    "field": "BankAccount.NonFundBased.SanctionDate",
+                    "name": "Sanction Date"
+                }
+            ],
+            "Current": [
+                {
+                    "field": "BankAccount.CurrentBased.AccountNo",
+                    "name": "A/C No"
+                },
+                {
+                    "field": "BankAccount.CurrentBased.AccountHolder",
+                    "name": "A/C Holder"
+                }
+            ]
+        }
+
+        var facilitylist = _.cloneDeep(_.get(databank, "BankAccount.FacilityType", []))
+        var error = false
+        facilitylist.unshift("_");
+        _.each(facilitylist, function (facility) {
+            _.each(listCheck[facility], function (check) {
+                var v = _.get(databank, check.field, undefined)
+                if (typeof(v) == "undefined" ||
+                    v == null ||
+                    v.length == 0) {
+                    error = true
+                    fixToast("Please fill " + _.get(databank, "BankAccount.BankName", "") + " " + check.name)
+                }
+            })
+        })
+
+        return error
+    }
+
+    function validateBank(val) {
+        var error = false
+        _.each(_.get(val, "DataBank", []), function (databank) {
+            error = error || validateDataBank(databank)
+        })
+
+        return error
+    }
+
+    function validateForm() {
+        var error = false
+        _.each(databank(), function (val) {
+            error = error || validateBank(val)
+        })
+
+        return error
+    }
+
     $("#othernf").hide();
     $("#bconfirm").click(function(){
+        if (validateForm())
+            return;
+
         if (filter().CustomerSearchVal() == "" || filter().DealNumberSearchVal() == ""){
             swal("Warning","Select Customer First","warning");
             return;

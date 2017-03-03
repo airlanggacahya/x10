@@ -995,7 +995,96 @@ function typeOfLoanDropDownEditor(container, options) {
 
 }
 
+function validateForm() {
+    var data = $('#bottomgrid').data('kendoGrid').dataSource.data();
+    var checkList = [
+        {
+            "field": "Bank",
+            "name": "Bank"
+        },
+        {
+            "field": "TypeOfLoan",
+            "name": "Type Of Loan"
+        },
+        {
+            "field": "BSLStatus",
+            "name": "BSL / PBSL"
+        },
+        {
+            "field": "LoanStatus",
+            "name": "(Closed / Live)"
+        },
+        {
+            "field": "Amount",
+            "name": "Amount"
+        },
+        {
+            "field": "POS",
+            "name": "POS"
+        },
+        {
+            "field": "EMI",
+            "name": "EMI"
+        },
+        {
+            "field": "LoanTenor",
+            "name": "Loan Tenor"
+        },
+        {
+            "field": "LoanStart",
+            "name": "Loan Start Date"
+        },
+        {
+            "field": "LoanEnd",
+            "name": "Loan End Date"
+        },
+        {
+            "field": "Month0",
+            "name": "Month 0 DPD Track"
+        },
+        {
+            "field": "Month1",
+            "name": "Month 1 DPD Track"
+        },
+        {
+            "field": "Month2",
+            "name": "Month 2 DPD Track"
+        },
+        {
+            "field": "Month3",
+            "name": "Month 3 DPD Track"
+        },
+        {
+            "field": "Month4",
+            "name": "Month 4 DPD Track"
+        },
+        {
+            "field": "Month5",
+            "name": "Month 5 DPD Track"
+        }
+    ]
+    var error = false
+    _.each(data, function(val, idx) {
+        _.each(checkList, function (tocheck) {
+            var v = _.get(val, tocheck.field)
+            if (typeof(v) == "undefined" ||
+                v == null ||
+                v.length == 0) {
+                fixToast("Please fill row " + (idx + 1) + " column " + tocheck.name)
+                error = true
+            }
+        })
+    })
+
+    return error
+}
+
 function confirm(){
+
+    $(".toaster").html("")
+
+    if (validateForm())
+        return;
 
     onsave(function(){
            

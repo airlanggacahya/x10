@@ -352,12 +352,12 @@ apcom.checkingAndSaveStatus = function(status) {
 		param.Date = (new Date()).toISOString()
 		param.LatestStatus = status
 
-		if(status == "Approved"){
+		if(status == "Approved" || status == "Rejected"){
 			var valid = apcom.validateMandatoryDC(param);
 			if(!valid){
 				return false;
 			}
-		}else{
+		}else if(status == "On Hold" || status == "Sent Back"){
 			var valid = apcom.validateMandatoryDCRemark(param);
 			if(!valid){
 				return false;

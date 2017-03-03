@@ -1033,7 +1033,7 @@ adf.getConfirm = function(){
 			param.CMISNULL = adf.CMISNULL()
 			adf.countBlank(0)
 			$(".toaster").html("")
-			if(!adf.validationConfirm(param)){
+			if(adf.validationConfirm(param)){
 				// alert("masuk")
 				return;
 			}
@@ -1264,42 +1264,6 @@ adf.validateBorrowerDetails = function(param){
 
 }
 
-adf.validatePromotor = function(param){
-	var count = 0;
-	var stt = 0;
-	var cb = 0;
-	$.each(param, function(i , item){
-		
-		if(item.RealEstatePosition == 0){
-			adf.countBlank(adf.countBlank() + 1);
-			stt = stt + 1;
-		}
-
-		if(item.CibilScore == 0){
-			adf.countBlank(adf.countBlank() + 1);
-			cb = cb + 1;
-		}
-	})
-
-	if(mincibil() == 0){
-		count = count + 1;
-		fixToast("Please fill Minimum CIBIL Score Promoter Details");
-	}
-
-	if(stt > 0){
-		fixToast("Please fill Real Estate Position  Promoter Details");
-	}
-
-	if(cb > 0){
-		fixToast("Please fill Cibil Score Promoter Details");
-	}
-
-	if(param.length == 0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Add Promotor Details");
-	}
-}
-
 adf.validateVendorTrack = function(param){
 	var name = 0;
 	var delay = 0;
@@ -1317,49 +1281,6 @@ adf.validateVendorTrack = function(param){
 			adf.countBlank(adf.countBlank() + 1);
 		}
 
-		if(item.MaxDelayDays == 0){
-			delay = delay + 1;
-			adf.countBlank(adf.countBlank() + 1);
-		}
-
-		if(item.MaxPaymentDays == 0){
-			pay = pay + 1;
-			adf.countBlank(adf.countBlank() + 1);
-		}
-
-		if(item.AverageDelayDays == 0){
-			avg = avg + 1;
-			adf.countBlank(adf.countBlank() + 1);
-		}
-
-		if(item.StandardDeviation == 0){
-			std = std + 1;
-			adf.countBlank(adf.countBlank() + 1);
-		}
-
-		if(item.AveragePaymentDays == 0){
-			apd = apd + 1;
-			adf.countBlank(adf.countBlank() + 1);
-		}
-
-		if(item.AvgTransactionWeightedPaymentDelayDays == 0){
-			tpdd = tpdd + 1;
-		}
-
-		if(item.StandardDeviation == 0){
-			sd = sd + 1;
-			adf.countBlank(adf.countBlank() + 1);
-		}
-
-		if(item.DelayDaysStandardDeviation == 0){
-			wpd = wpd + 1;
-			adf.countBlank(adf.countBlank() + 1);
-		}
-
-		if(item.AvgTransactionWeightedPaymentDays == 0){
-			dds = dds + 1;
-			adf.countBlank(adf.countBlank() + 1);
-		}
 	});
 
 	if(param.length == 0){
@@ -1371,51 +1292,6 @@ adf.validateVendorTrack = function(param){
 	if(name >0){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Distributor Name");
-	}
-
-	if(delay >0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Max Delay Days");
-	}
-
-	if(pay >0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Max Payment Days");
-	}
-
-	if(avg >0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Average Delay Days");
-	}
-
-	if(std >0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Standard Deviation");
-	}
-
-	if(apd >0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Average Payment Days");
-	}
-
-	if(tpdd >0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Avg. Transaction Weighted Payment Delay Days");
-	}
-
-	if(sd >0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Standard Deviation");
-	}
-
-	if(wpd >0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Avg. Transaction Weighted Payment Days");
-	}
-
-	if(dds >0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Standard Deviation");
 	}
 
 
@@ -1434,18 +1310,18 @@ adf.validateLoanDetails = function(param){
 }
 
 adf.validationConfirm = function(param){
-	console.log(param)
 	var pdInfo = param.AccountSetupDetails.PdInfo;
 	var borrower = param.BorrowerDetails;
-	var promotor = param.PromotorDetails;
 	var vendor = param.VendorDetails;
 	var loan = param.LoanDetails;
 	adf.validatePdInfo(pdInfo);
 	adf.validateBorrowerDetails(borrower);
-	adf.validatePromotor(promotor)
 	adf.validateVendorTrack(vendor)
 	adf.validateLoanDetails(loan)
 	adf.LetterConfirm()
+	if(adf.countBlank() > 0){
+		return true
+	}
 	return false
 }
 

@@ -20,6 +20,9 @@
   span.k-dropdown-wrap.k-state-disabled .k-input{
     color: black !important;
   }
+  .str{
+    color: red;
+  }
 </style>
 <script type="text/javascript">
 
@@ -826,12 +829,20 @@ function blanked(){
 }
 }
 
+var countBlank = ko.observable(0)
+
 function confirmorverify(status){
+  countBlank(0)
+  $(".toaster").html("")
   if(customerprofile().Status() == 0 && status == 2){
     sweetAlert("Please Confirm Data First", "", "warning");
     return;
   }
-  if(status == 1){
+  if(status == 1 && validateConfirm()){
+    
+    return;
+  }
+  if(status == 1 && !validateConfirm()){
     customerprofile().Status(status);
     info.getConfirmed();
   }else if (status == 2){
@@ -847,6 +858,102 @@ function confirmorverify(status){
   // buttonlogicstatus(status);
   // $("#edit").hide();
   $("#ceedit").hide();
+}
+
+function validateConfirm(){
+    if(customerprofile().ApplicantDetail().TAN == null || customerprofile().ApplicantDetail().TAN == ""){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Customer Margin on PD Info");
+    }
+
+    if(customerprofile().ApplicantDetail().AnnualTurnOver == null || customerprofile().ApplicantDetail().AnnualTurnOver == ""){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Annual Turnover");
+    }
+
+    var dataGrid1 = $(".grid1").data("kendoGrid").dataSource.data();
+    var bank = 0;
+    var sec = 0;
+    $.each(dataGrid1, function(i, dt){
+      if(dt.BanksFls == ""){
+        bank = bank + 1;
+      }
+
+      if(dt.SecuredUnsecured == ""){
+        sec = sec + 1;
+      }
+
+    });
+
+    if(bank > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Banks/Fls");
+    }
+
+    if(sec > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Secured/Unsecured");
+    }
+
+    var dataGrid2 = $(".grid2").data("kendoGrid").dataSource.data();
+    var nm = 0;
+    var add = 0;
+    var ac = 0;
+    var ty = 0;
+    var y = 0;
+    $.each(dataGrid2, function(i, dt){
+      if(dt.NameOfBanks == ""){
+        nm = nm + 1;
+      }
+
+      if(dt.AddressContactNo == ""){
+        add = add + 1;
+      }
+
+      if(dt.AcNo == ""){
+        ac = ac + 1;
+      }
+
+      if(dt.TypeOfAc == ""){
+        ty = ty + 1;
+      }
+
+      if(dt.YearOpening == null){
+        y = y + 1;
+      }
+
+    })
+
+    if(nm > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Name Of the Banks/Fls");
+    }
+
+    if(add > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Address & Contact No.");
+    }
+
+    if(ac > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill A/c. No");
+    }
+
+    if(ty > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Type Of A/c");
+    }
+
+    if(y > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Year Of Opening");
+    }
+
+    if(countBlank() > 0){
+      return true
+    }
+
+    return false
 }
 
 // SHORT FUNCTION TO CONVERT BETWEEN Date

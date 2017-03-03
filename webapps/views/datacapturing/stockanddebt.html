@@ -216,6 +216,74 @@ var SADAccess = function(){
     })
 
     var setConfirm = function(){
+
+      var listCheck = [
+        {
+          "field": "OperatingRatioString",
+          "name": "Adjusted Operating Metrics Operating Ratio"
+        },
+        {
+          "field": "ReceivablesAmount",
+          "name": "Adjusted Operating Metrics Receivables Amount"
+        },
+        {
+          "field": "InventoryAmount",
+          "name": "Adjusted Operating Metrics Inventory Amount"
+        },
+        {
+          "field": "LessPayablesAmount",
+          "name": "Adjusted Operating Metrics Payables Amount"
+        }
+      ]
+
+      var error = false
+      _.each(AOM(), function (tobeChecked) {
+        _.each(listCheck, function (validator) {
+          var value = tobeChecked[validator.field]()
+          console.log(value)
+          if (typeof(value) == "undefined" ||
+            value == null ||
+            value.length == 0) {
+            fixToast("Please fill " + validator.name)
+            error = true
+          }
+        })
+      })
+
+      listCheck = [
+        {
+          "field": "BulanString",
+          "name": "Ageing Analysis Month"
+        }//,
+        // {
+        //   "field": "ReceivableMin90",
+        //   "name": "Ageing Analysis 0-90 Days"
+        // },
+        // {
+        //   "field": "ReceivableMore90",
+        //   "name": "Ageing Analysis >90 Days"
+        // },
+        // {
+        //   "field": "ReceivableMore180",
+        //   "name": "Ageing Analysis >180 Days"
+        //}
+      ]
+
+      _.each(AA(), function (tobeChecked) {
+        _.each(listCheck, function (validator) {
+          var value = tobeChecked[validator.field]()
+          if (typeof(value) == "undefined" ||
+            value == null ||
+            value.length == 0) {
+            fixToast("Please fill " + validator.name)
+            error = true
+            console.log(validator.name, ":", tobeChecked.ReceivableMin90())
+          }
+        })
+      })
+
+      return function() {}
+
       return function(){
         save(function(){
         param = {Id: stockanddebt().Id, IsConfirm: !stockanddebtCloning.IsConfirm()}

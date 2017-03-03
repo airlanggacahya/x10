@@ -895,24 +895,49 @@ rolesett.resizeSwitch = function(){
             .css("line-height", "17px")
 }
 
-rolesett.DeleteRole = function(id) {
-    swal({
-        title: "Are you sure?",
-        text: "Role will be deleted.",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, delete it!"
-    }).then(function() {
-        ajaxPost("/sysroles/removerole", { "id": id }, function(res) {
-            if(res.IsError != true){
-                $('#MasterGridRole').data('kendoGrid').dataSource.read();
-                $('#MasterGridRole').data('kendoGrid').refresh();
-            }else{
-                return swal("Error", res.Message, "error");
-            }
+rolesett.DeleteRole = function(id,name) {
+
+rolesett.ListuserForDelete(name,function(){
+
+    if(rolesett.ChoosenUser().length>0){
+        swal({
+            title: "This role is still in use",
+            text: "you want to delete this role?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it"
+        }).then(function() {
+            ajaxPost("/sysroles/removerole", { "id": id }, function(res) {
+                if(res.IsError != true){
+                    $('#MasterGridRole').data('kendoGrid').dataSource.read();
+                    $('#MasterGridRole').data('kendoGrid').refresh();
+                }else{
+                    return swal("Error", res.Message, "error");
+                }
+            });
         });
-    });
+    }else{
+        swal({
+            title: "Are you sure?",
+            text: "you want to delete this role",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it"
+        }).then(function() {
+            ajaxPost("/sysroles/removerole", { "id": id }, function(res) {
+                if(res.IsError != true){
+                    $('#MasterGridRole').data('kendoGrid').dataSource.read();
+                    $('#MasterGridRole').data('kendoGrid').refresh();
+                }else{
+                    return swal("Error", res.Message, "error");
+                }
+            });
+        });
+    }
+
+    })
 }
 
 function swalErr(msg) {
@@ -1136,6 +1161,20 @@ rolesett.Listuser = function(name){
 
         }
         
+    })
+}
+
+rolesett.ChoosenUser = ko.observableArray([]);
+
+rolesett.ListuserForDelete = function(name,callback){
+    rolesett.ChoosenUser([]);
+    ajaxPost("/sysroles/getlistuserroles", {name: name}, function(res){
+        if (res != null){
+            rolesett.ChoosenUser(res);
+            if(typeof callback == 'function'){
+                callback();
+            }
+        }
     })
 }
 
@@ -1378,7 +1417,7 @@ rolesett.GetDataRole = function(){
                             "&nbsp;&nbsp;" +
                             "<button class='btn btn-xs btn-flat btn-warning del' onclick='rolesett.Listuser(\"#: Name #\")'><span class='fa fa-user'></span></button>" +
                             "&nbsp;&nbsp;" +
-                            "<button class='btn btn-xs btn-flat btn-danger del' #if(!Deletable) {# disabled='disabled' #}# onclick='rolesett.DeleteRole(\"#: Id #\")'><span class='fa fa-trash-o'></span></button>" +
+                            "<button class='btn btn-xs btn-flat btn-danger del' #if(!Deletable) {# disabled='disabled' #}# onclick='rolesett.DeleteRole(\"#: Id #\",\"#: Name #\")'><span class='fa fa-trash-o'></span></button>" +
                             "</center>"
                 }
             ]

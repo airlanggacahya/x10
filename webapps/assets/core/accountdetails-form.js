@@ -33,6 +33,7 @@ adf.optionSectionCustomerConfirm = ko.observable(" Confirm");
 adf.optionSectionDistributorConfirm = ko.observable(" Confirm");
 adf.optionPurchaseOrderBackingConfirm = ko.observable(" Confirm");
 adf.optionConfirm = ko.observable(false);
+adf.countBlank = ko.observable(0);
 // adf.optionExternalRatings = ko.observableArray([
 // 	{ value: "Highest Safety", text: "Highest Safety"},
 // 	{ value: "High Safety", text:"High Safety"},
@@ -1030,6 +1031,12 @@ adf.getConfirm = function(){
 			var url = "/accountdetail/saveaccountdetail"
 			var param = adf.getForm();
 			param.CMISNULL = adf.CMISNULL()
+			adf.countBlank(0)
+			$(".toaster").html("")
+			if(adf.validationConfirm(param)){
+				// alert("masuk")
+				return;
+			}
 			// param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
 			adf.isLoading(true)
 			app.ajaxPost(url, param, function (res) {
@@ -1119,6 +1126,203 @@ adf.getConfirm = function(){
 
 	$(".mincibil").prop("disabled", true);
 
+}
+
+adf.LetterConfirm = function(){
+	sts = "Re Enter";
+	$("#LoanAmount").prop( "disabled", true );
+	adf.EnableAllfieldsOnconfirm(true)
+	// $(".btn").prop("disabled", false)
+	adf.form.Status(0);
+	adf.form.AccountSetupDetails.Status(0);
+	adf.form.BorrowerDetails.Status(0);
+	var date = (new Date()).toISOString();
+	adf.form.DateConfirmed(date);
+	$.each(adf.form.PromotorDetails(), function(i, item){
+		item.Status(0)
+	});
+	$.each(adf.form.VendorDetails(), function(i, items){
+		items.Status(0)
+	});
+	$("#avg").prop("disabled", true)
+	$("#max").prop("disabled", true)
+	adf.form.LoanDetails.Status(0);
+	adf.form.CustomerBussinesMix.Status(0);
+	adf.form.DistributorMix.Status(0);
+	$("#onreset").prop( "disabled", false );
+	$("#onsave").prop( "disabled", false );
+	$("#LoanAmount").prop( "disabled", true );
+	$("#addpromotor").prop("disabled", false);
+	$("#addvendor").prop("disabled", false);
+	$("#addvendor1").prop("disabled", false);
+	setTimeout(function(){
+		adf.optionChangeConfirm(" Confirm");
+		adf.sectionDisable("#city", false)
+		adf.sectionDisable("#DealNo", false)
+		// adf.sectionDisable("#loginDate", false)
+	}, 100)
+
+	adf.optionChangeConfirm(" Confirm")
+	adf.optionSectionAccountConfirm(" Confirm")
+	adf.optionSectionDistributorConfirm(" Confirm")
+	adf.optionSectionBorrowerConfirm(" Confirm")
+	adf.optionSectionPromoterConfirm(" Confirm")
+	adf.optionSectionVendorConfirm(" Confirm")
+	adf.optionSectionLoanConfirm(" Confirm")
+	adf.optionSectionCustomerConfirm(" Confirm")
+	adf.optionSectionDistributorConfirm(" Confirm")
+	$("#onreset1").prop("disabled", false);
+	$("#onreset2").prop("disabled", false);
+	$("#onreset3").prop("disabled", false);
+	$("#onreset4").prop("disabled", false);
+	$("#onreset5").prop("disabled", false);
+	$("#onreset6").prop("disabled", false);
+	$("#onreset7").prop("disabled", false);
+	$("#onreset8").prop("disabled", false);
+	adf.setDisable()
+}
+
+adf.validatePdInfo = function(param){
+	if(param.CustomerMargin == 0){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Customer Margin on PD Info");
+	}
+
+	if(param.PdComments == ""){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill PD Comment on PD Info");
+	}
+
+	if(param.PdDoneBy == ""){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill PD Done By on PD Info");
+	}
+
+	if(param.PdPlace == ""){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill PD Place on PD Info");
+	}
+
+	if(param.PdRemarks == ""){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill PD Remarks on PD Info");
+	}
+
+	if(param.PersonMet == ""){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Person Met on PD Info");
+	}
+
+	if(param.PdDate == "1970-01-01T00:00:00.000Z"){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill PD Date on PD Info");
+	}
+
+
+}
+
+adf.validateBorrowerDetails = function(param){
+	if(param.CustomerSegmentClasification == ""){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Business Segment");
+	}
+
+	if(param.DiversificationCustomers == 0){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Diversification: No. of Clients / Customers");
+	}
+
+	if(param.BusinessVintage == 0){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Business Vintage");
+	}
+
+	if(param.Management == ""){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Management");
+	}
+
+	if(param.DateBusinessStarted == "1970-01-01T00:00:00.000Z"){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Business Start Date");
+	}
+
+	if((param.ProductNameandDetails).length == 1 && param.ProductNameandDetails[0] == ""){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Product : Name & Details");
+	}
+
+	if((param.CommentsonFinancials).length == 1 && param.CommentsonFinancials[0] == ""){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Comment on Financials");
+	}
+
+	if((param.RefrenceCheck).length == 0){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Reference Check");
+	}
+
+}
+
+adf.validateVendorTrack = function(param){
+	var name = 0;
+	var delay = 0;
+	var pay = 0;
+	var avg = 0;
+	var std = 0;
+	var apd = 0;
+	var tpdd = 0;
+	var sd = 0;
+	var wpd = 0;
+	var dds = 0;
+	$.each(param, function(i, item){
+		if(item.DistributorName == "" || item.DistributorName == undefined){
+			name = name + 1;
+			adf.countBlank(adf.countBlank() + 1);
+		}
+
+	});
+
+	if(param.length == 0){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Add Vendor");
+
+	}
+
+	if(name >0){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Distributor Name");
+	}
+
+
+}
+
+adf.validateLoanDetails = function(param){
+	if(param.LoanTenorDays == 0){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Loan Tenor (Days)");
+	}
+
+	if(param.LoanTenorDays == 0){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Loan Tenor (Days)");
+	}
+}
+
+adf.validationConfirm = function(param){
+	var pdInfo = param.AccountSetupDetails.PdInfo;
+	var borrower = param.BorrowerDetails;
+	var vendor = param.VendorDetails;
+	var loan = param.LoanDetails;
+	adf.validatePdInfo(pdInfo);
+	adf.validateBorrowerDetails(borrower);
+	adf.validateVendorTrack(vendor)
+	adf.validateLoanDetails(loan)
+	adf.LetterConfirm()
+	if(adf.countBlank() > 0){
+		return true
+	}
+	return false
 }
 
 adf.blankdate = function(val){

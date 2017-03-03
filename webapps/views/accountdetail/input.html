@@ -100,6 +100,15 @@ mincibil = ko.observable(0);
 		margin-top: -19px;
     	margin-bottom: -11px;
 	}
+
+	/*.filled.form-label:before, .filled.input-label:before{
+		content:"* ";
+		color: red;
+	}*/
+
+	.str{
+		color: red;
+	}
 </style>
 
 {{template "filter.html"}}
@@ -212,7 +221,7 @@ mincibil = ko.observable(0);
 				            </div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">PD Info</label>
+					            	<label class="form-label col-sm-4 filled">PD Info<span class="str">*</span></label>
 					            	<div class="col-sm-8 tooltipstered" id="tipster">
 					            		<button class="btn btn-flat btn-sm btn-add noable"  style="width:100%;" data-bind="click: adf.modalPdInfo"> Click to enter details & hover to show details</button>
 					            	</div>
@@ -288,7 +297,7 @@ mincibil = ko.observable(0);
 						<div class="panel-body" data-bind="with: BorrowerDetails">
 							<div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">Business Segment</label>
+					            	<label class="form-label col-sm-4 filled">Business Segment<span class="str">*</span></label>
 					            	<div class="col-sm-8">
 					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionRatingMastersCustomerSegment, value: CustomerSegmentClasification, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 					            	</div>
@@ -297,7 +306,7 @@ mincibil = ko.observable(0);
 				            </div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">Diversification: No. of Clients / Customers</label>
+					            	<label class="form-label col-sm-4 filled">Diversification: No. of Clients / Customers<span class="str">*</span></label>
 					            	<div class="col-sm-8">
 				    					<input class="borr" data-bind="kendoNumericTextBox: { value: DiversificationCustomers, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
 					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionDiversificationCustomers, value: DiversificationCustomers, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
@@ -318,7 +327,7 @@ mincibil = ko.observable(0);
 				            </div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">Business Vintage</label>
+					            	<label class="form-label col-sm-4 filled">Business Vintage<span class="str">*</span></label>
 					            	<div class="col-sm-8">
 				    							<input class="borr" data-bind="kendoNumericTextBox: { value: BusinessVintage, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
 					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionBusinessVintages, value: BusinessVintage, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
@@ -329,7 +338,7 @@ mincibil = ko.observable(0);
 				            <div class="clearfix"></div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">External Rating</label>
+					            	<label class="form-label col-sm-4 filled">External Rating<span class="str">*</span></label>
 					            	<div class="col-sm-8">
 					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionExternalRatings, value: ExternalRating, dataTextField:'text', dataValueField: 'value', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 					            	</div>
@@ -348,7 +357,7 @@ mincibil = ko.observable(0);
 				            <div class="clearfix"></div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">Management</label>
+					            	<label class="form-label col-sm-4 filled">Management<span class="str">*</span></label>
 					            	<div class="col-sm-8">
 					            		<input class="borr" data-bind="kendoDropDownList: { data: adf.optionManagements, value: Management,  optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;">
 					            	</div>
@@ -357,7 +366,7 @@ mincibil = ko.observable(0);
 				            </div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">Business Start Date</label>
+					            	<label class="form-label col-sm-4 filled">Business Start Date<span class="str">*</span></label>
 					            	<div class="col-sm-8">
 					            		<input class="input-sm form-control" data-bind="kendoDatePicker: { value: DateBusinessStarted, format: 'dd-MMM-yyyy',}" >
 					            	</div>
@@ -384,7 +393,7 @@ mincibil = ko.observable(0);
 				            </div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">Product : Name & Details</label>
+					            	<label class="form-label col-sm-4 filled">Product : Name & Details<span class="str">*</span></label>
 					            	<div class="col-sm-8" data-bind="foreach: adf.form.BorrowerDetails.ProductNameandDetails" style="margin-left: -20px;">
 					            		<div class="col-sm-12" style="padding-top: 6px">
 					            			<div class="col-sm-10">
@@ -430,7 +439,7 @@ mincibil = ko.observable(0);
 				            </div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-4">Comment on Financials</label>
+					            	<label class="form-label col-sm-4 filled">Comment on Financials<span class="str">*</span></label>
 					            	<div class="col-sm-8" data-bind="foreach: adf.form.BorrowerDetails.CommentsonFinancials" style="margin-left: -20px;">
 					            		<div class="col-sm-12" style="padding-top: 6px">
 					            			<div class="col-sm-10">
@@ -497,7 +506,7 @@ mincibil = ko.observable(0);
 							</div>
 							<div class="col-sm-8">
 								<div class="form-group">
-									<label class="col-sm-4 form-label align-right">Reference Check Details </label>
+									<label class="col-sm-4 form-label align-right">Reference Check Details<span class="str">*</span> </label>
 									<div class="col-sm-4">
 										<button class="btn btn-flat btn-sm btn-add noable" onclick="adf.addRowReffrence()" style="width: 100%;">Add Reference Check</button>
 									</div>
@@ -559,10 +568,10 @@ mincibil = ko.observable(0);
 			            		<label class="form-label">Office Ownership Status</label>
 			            	</div>
 			            	<div class="form-group">
-			            		<label class="form-label">CIBIL Score</label>
+			            		<label class="form-label filled">CIBIL Score<span class="str">*</span></label>
 			            	</div>
 			            	<div class="form-group">
-			            		<label class="form-label">Real Estate Position (Rs. Lacs)</label>
+			            		<label class="form-label filled">Real Estate Position (Rs. Lacs)<span class="str">*</span></label>
 			            	</div>
 					        </div>
 			            <div class="vendor-col-content">
@@ -631,7 +640,7 @@ mincibil = ko.observable(0);
 		        			<div class="relative" style="padding-bottom: -12px !important">
 				        		<div class="vendor-col-header1">
 				        			<div class="form-group">
-				            			<label class="input-label">Minimum CIBIL Score</label>
+				            			<label class="input-label filled">Minimum CIBIL Score<span class="str">*</span></label>
 					            	</div>
 					            </div>
 					            <div class="vendor-col-content">
@@ -720,34 +729,34 @@ mincibil = ko.observable(0);
 							<div class="relative">
 					            <div class="vendor-col-header">
 					            	<div class="form-group">
-					            		<label class="form-label">Distributor Name</label>
+					            		<label class="form-label filled">Distributor Name<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
-					            		<label class="form-label">Max Delay Days</label>
+					            		<label class="form-label filled">Max Delay Days<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
-					            		<label class="form-label">Max Payment Days</label>
+					            		<label class="form-label filled">Max Payment Days<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
-					            		<label class="form-label">Average Delay Days</label>
+					            		<label class="form-label filled">Average Delay Days<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
-					            		<label class="form-label">Standard Deviation</label>
+					            		<label class="form-label filled">Standard Deviation<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
-					            		<label class="form-label">Average Payment Days</label>
+					            		<label class="form-label filled">Average Payment Days<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
-					            		<label class="form-label">Avg. Transaction Weighted Payment Delay Days</label>
+					            		<label class="form-label filled">Avg. Transaction Weighted Payment Delay Days<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
-					            		<label class="form-label">Standard Deviation</label>
+					            		<label class="form-label filled">Standard Deviation<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
-					            		<label class="form-label">Avg. Transaction Weighted Payment Days</label>
+					            		<label class="form-label filled">Avg. Transaction Weighted Payment Days<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
-					            		<label class="form-label">Standard Deviation</label>
+					            		<label class="form-label filled">Standard Deviation<span class="str">*</span></label>
 					            	</div>
 					            	<div class="form-group">
 					            		<label class="form-label" title="Amount of business done in Last 12 months with Lead Distributor in Lacs">Amount of Business Done with Distributor (Rs. Lacs)</label>
@@ -862,7 +871,7 @@ mincibil = ko.observable(0);
 
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-7">Loan Tenor (Days)</label>
+					            	<label class="form-label col-sm-7">Loan Tenor (Days)<span class="str">*</span></label>
 					            	<div class="col-sm-5">
 					            		<input class="loan" data-bind="kendoNumericTextBox: { value: LoanTenorDays, format: 'n0', spinners:false }" type="text" style="width: 100%;">
 					            	</div>
@@ -881,7 +890,7 @@ mincibil = ko.observable(0);
 				            </div>
 				            <div class="col-sm-6">
 				            	<div class="form-group">
-					            	<label class="form-label col-sm-7">Proposed Processing Fee %</label>
+					            	<label class="form-label col-sm-7">Proposed Processing Fee %<span class="str">*</span></label>
 					            	<div class="col-sm-5">
 					            		<input class="loan" data-bind="kendoNumericTextBox: { value: ProposedPFee, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
 					            	</div>

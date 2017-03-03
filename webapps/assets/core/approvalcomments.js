@@ -284,11 +284,85 @@ apcom.saveSanctionFix = function(param, callback) {
 	}
 }
 
+apcom.validateMandatoryDC = function(param){
+	$(".toaster").html("");
+	var idx = 0;
+	if(param.Amount == 0 || isNaN(param.Amount)){
+		fixToast("Please fill Amount");
+		idx+=1;
+	}
+
+	if(param.ROI == 0 || isNaN(param.ROI)){
+		fixToast("Please fill ROI (%)");
+		idx+=1;
+	}
+
+	if(param.PF == ""){
+		fixToast("Please fill PF");
+		idx+=1;
+	}
+
+	if(param.PG == ""){
+		fixToast("Please fill PG");
+		idx+=1;
+	}
+
+	if(param.Security == ""){
+		fixToast("Please fill Security");
+		idx+=1;
+	}
+
+	if(param.CommitteeRemarks == ""){
+		fixToast("Plese fill Committe Remarks");
+		idx+=1;
+	}
+
+	if(_.filter(param.OtherConditions,function(x){ return x.trim() != "" }).length == 0){
+		fixToast("Please fill Sanction Conditions");
+		idx+=1;
+	}
+
+	if(idx>0)
+	{
+		return false
+	}
+
+	return true
+}
+
+apcom.validateMandatoryDCRemark = function(param){
+	$(".toaster").html("");
+	var idx = 0;
+	if(param.CommitteeRemarks == ""){
+		fixToast("Plese fill Committe Remarks");
+		idx+=1;
+	}
+
+	if(idx>0)
+	{
+		return false
+	}
+
+	return true
+}
+
 apcom.checkingAndSaveStatus = function(status) {
 	return function(){
 		param = apcom.setParamSanction()
 		param.Date = (new Date()).toISOString()
 		param.LatestStatus = status
+
+		if(status == "Approved"){
+			var valid = apcom.validateMandatoryDC(param);
+			if(!valid){
+				return false;
+			}
+		}else{
+			var valid = apcom.validateMandatoryDCRemark(param);
+			if(!valid){
+				return false;
+			}
+		}
 
 		apcom.saveSanctionFix(param, function(res){
 			if(res.success != true){

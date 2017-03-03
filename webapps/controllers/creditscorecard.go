@@ -65,7 +65,8 @@ func (a *CreditScoreCardController) GetAllData(r *knot.WebContext) interface{} {
 	id := t.GetString("customerid") + "|" + t.GetString("dealno")
 	dealno := t.GetString("dealno")
 	customerid := t.GetString("customerid")
-	tk.Println(id)
+	_ = id
+	// tk.Println(id)
 	//get data grid
 	c, err := GetConnection()
 	defer c.Close()

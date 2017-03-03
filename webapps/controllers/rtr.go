@@ -59,7 +59,7 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 
 	t := []tk.M{}
 	err := k.GetPayload(&t)
-	tk.Printfn("----------->", t)
+	// tk.Printfn("----------->", t)
 	if err != nil {
 		tk.Println(err.Error())
 	}

@@ -66,7 +66,7 @@ func (c *AccountDetailController) GetAccountDetail(k *knot.WebContext) interface
 		return res
 	}
 
-	tk.Printf("---- %#v\n", payload)
+	// tk.Printf("---- %#v\n", payload)
 
 	data, err := c.FetchAccountDetail(payload.CustomerId, payload.DealNo)
 	if err != nil {
@@ -92,7 +92,7 @@ func (c *AccountDetailController) GetAccountDetailConfirmed(k *knot.WebContext) 
 		return res
 	}
 
-	tk.Printf("---- %#v\n", payload)
+	// tk.Printf("---- %#v\n", payload)
 
 	// data, err := c.FetchAccountDetail(payload.CustomerId, payload.DealNo)
 	// if err != nil {

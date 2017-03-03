@@ -238,7 +238,7 @@ func (c *BankAnalysisController) SaveDetailBankTemplate(k *knot.WebContext) inte
 	ba := BankAnalysis{DataBank: dbs}
 	bas = append(bas, ba)
 
-	tk.Println(bas)
+	// tk.Println(bas)
 
 	ret := new(BankAnalysis).GenerateBankSummary(bas)
 	return CreateResult(true, ret, "")
@@ -302,7 +302,7 @@ func (c *BankAnalysisController) SetConfirmed(k *knot.WebContext) interface{} {
 	}
 	err = query.Fetch(&res, 0, false)
 	defer query.Close()
-	tk.Println(query.Count())
+	// tk.Println(query.Count())
 
 	for _, val := range res {
 		// fmt.Println("-----------", val.IsConfirmed, val.DateConfirmed, "\n")
@@ -365,7 +365,7 @@ func (c *BankAnalysisController) CreateBankAnalysis(k *knot.WebContext) interfac
 	t.CurrentBankDetails = param.CurrentBankDetails
 
 	bankanalysis.DataBank = append(bankanalysis.DataBank, t)
-	tk.Println(bankanalysis.DataBank)
+	// tk.Println(bankanalysis.DataBank)
 	ba := map[string]interface{}{"data": bankanalysis}
 
 	qinsert := conn.NewQuery().
@@ -604,7 +604,7 @@ func (c *BankAnalysisController) UpdateV2(k *knot.WebContext) interface{} {
 	type listIdType struct {
 		Id bson.ObjectId `bson:"_id" , json:"_id" `
 	}
-	tk.Println(tx)
+	// tk.Println(tx)
 	bankanalysis := BankAnalysisV2{}
 	bankanalysis.Id = bson.ObjectIdHex(tx.Id)
 	bankanalysis.CustomerId = id
@@ -682,7 +682,7 @@ func (c *BankAnalysisController) SetConfirmedV2(k *knot.WebContext) interface{} 
 	}
 	err = query.Fetch(&res, 0, false)
 	defer query.Close()
-	tk.Println(query.Count())
+	// tk.Println(query.Count())
 
 	for idx, val := range res {
 		// fmt.Println("-----------", val.IsConfirmed, val.DateConfirmed, "\n")

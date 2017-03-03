@@ -411,7 +411,7 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 }
 
 func UpdateUnmatchData(c CustomerProfiles) {
-	tk.Println("test")
+	// tk.Println("test")
 	cn, err := GetConnection()
 	defer cn.Close()
 
@@ -450,7 +450,7 @@ func UpdateUnmatchData(c CustomerProfiles) {
 		defer csr.Close()
 
 		if len(result) > 0 {
-			tk.Println("test2")
+			// tk.Println("test2")
 			setting := NewSimilaritySetting()
 			setting.SplitDelimeters = []rune{' ', '.', '-'}
 
@@ -480,7 +480,7 @@ func UpdateUnmatchData(c CustomerProfiles) {
 					isMatch = true
 				}
 
-				tk.Println(cuttingcpname, cuttingcompname, cppan, cibilpan, similar, isMatch)
+				// tk.Println(cuttingcpname, cuttingcompname, cppan, cibilpan, similar, isMatch)
 
 				if isMatch {
 					val.IsMatch = isMatch

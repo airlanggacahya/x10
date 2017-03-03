@@ -1834,6 +1834,7 @@ $(document).ready(function(){
     });
 
     function validateDataBank(databank) {
+        $(".toaster").html("");
         var listCheck = {
             "_" : [
                 {
@@ -1865,6 +1866,10 @@ $(document).ready(function(){
                 {
                     "field": "BankAccount.FundBased.SanctionDate",
                     "name": "Saction Date"
+                },
+                {
+                    "field": "BankAccount.FundBased.SecurityOfFB",
+                    "name": "Security for FB"
                 }
             ],
             "Non-Fund Based": [
@@ -1879,6 +1884,10 @@ $(document).ready(function(){
                 {
                     "field": "BankAccount.NonFundBased.SanctionDate",
                     "name": "Sanction Date"
+                },
+                {
+                    "field": "BankAccount.NonFundBased.SecurityOfNFB",
+                    "name": "Security for NFB"
                 }
             ],
             "Current": [
@@ -1899,11 +1908,17 @@ $(document).ready(function(){
         _.each(facilitylist, function (facility) {
             _.each(listCheck[facility], function (check) {
                 var v = _.get(databank, check.field, undefined)
+                console.log(v)
                 if (typeof(v) == "undefined" ||
-                    v == null ||
-                    v.length == 0) {
+                    v == null ) {
                     error = true
                     fixToast("Please fill " + _.get(databank, "BankAccount.BankName", "") + " " + check.name)
+                }else if(typeof v === "object"){
+                    console.log(_.filter(v,function(x){ return x != "" }).length)
+                    if(_.filter(v,function(x){ return x != "" }).length == 0){
+                        error = true
+                    fixToast("Please fill " + _.get(databank, "BankAccount.BankName", "") + " " + check.name)
+                    }
                 }
             })
         })

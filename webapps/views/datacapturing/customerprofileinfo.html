@@ -863,7 +863,7 @@ function confirmorverify(status){
 function validateConfirm(){
     if(customerprofile().ApplicantDetail().TAN == null || customerprofile().ApplicantDetail().TAN == ""){
       countBlank(countBlank() + 1);
-      fixToast("Please fill Customer Margin on PD Info");
+      fixToast("Please fill Tax Account Number (TAN)");
     }
 
     if(customerprofile().ApplicantDetail().AnnualTurnOver == null || customerprofile().ApplicantDetail().AnnualTurnOver == ""){
@@ -874,6 +874,10 @@ function validateConfirm(){
     var dataGrid1 = $(".grid1").data("kendoGrid").dataSource.data();
     var bank = 0;
     var sec = 0;
+    var out = 0;
+    var inst = 0;
+    var ten = 0;
+    var loan = 0;
     $.each(dataGrid1, function(i, dt){
       if(dt.BanksFls == ""){
         bank = bank + 1;
@@ -881,6 +885,21 @@ function validateConfirm(){
 
       if(dt.SecuredUnsecured == ""){
         sec = sec + 1;
+      }
+
+      if(dt.OutstandingAmount == null){
+        out = out + 1;
+      }
+      if(dt.MonthlyInstallment == null){
+        inst = inst + 1;
+      }
+
+      if(dt.Tenure == null){
+        ten = ten + 1;
+      }
+
+      if(dt.LoanAmount == null){
+        loan = loan + 1;
       }
 
     });
@@ -893,6 +912,26 @@ function validateConfirm(){
     if(sec > 0){
       countBlank(countBlank() + 1);
       fixToast("Please fill Secured/Unsecured");
+    }
+
+    if(out > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Outstanding Amount (Rs.)");
+    }
+
+    if(inst > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Monthly Installment");
+    }
+
+    if(loan > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill   Loan Amount (Rs.)");
+    }
+
+    if(ten > 0){
+      countBlank(countBlank() + 1);
+      fixToast("Please fill Tenure");
     }
 
     var dataGrid2 = $(".grid2").data("kendoGrid").dataSource.data();

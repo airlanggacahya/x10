@@ -1033,7 +1033,7 @@ adf.getConfirm = function(){
 			param.CMISNULL = adf.CMISNULL()
 			adf.countBlank(0)
 			$(".toaster").html("")
-			if(adf.validationConfirm(param)){
+			if(adf.validationConfirm(param) == true && param.Status == 1){
 				// alert("masuk")
 				return;
 			}
@@ -1183,10 +1183,10 @@ adf.LetterConfirm = function(){
 }
 
 adf.validatePdInfo = function(param){
-	if(param.CustomerMargin == 0){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Customer Margin on PD Info");
-	}
+	// if(param.CustomerMargin == 0){
+	// 	adf.countBlank(adf.countBlank() + 1);
+	// 	fixToast("Please fill Customer Margin on PD Info");
+	// }
 
 	if(param.PdComments == ""){
 		adf.countBlank(adf.countBlank() + 1);
@@ -1227,12 +1227,12 @@ adf.validateBorrowerDetails = function(param){
 		fixToast("Please fill Business Segment");
 	}
 
-	if(param.DiversificationCustomers == 0){
+	if(param.DiversificationCustomers == null){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Diversification: No. of Clients / Customers");
 	}
 
-	if(param.BusinessVintage == 0){
+	if(param.BusinessVintage == null){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Business Vintage");
 	}
@@ -1260,6 +1260,11 @@ adf.validateBorrowerDetails = function(param){
 	if((param.RefrenceCheck).length == 0){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Reference Check");
+	}
+
+	if((param.MarketReference == "")){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Market Reference");
 	}
 
 }
@@ -1298,26 +1303,27 @@ adf.validateVendorTrack = function(param){
 }
 
 adf.validateLoanDetails = function(param){
-	if(param.LoanTenorDays == 0){
+	if(param.LoanTenorDays == null){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Loan Tenor (Days)");
 	}
 
-	if(param.LoanTenorDays == 0){
+	if(param.LoanTenorDays == null){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Loan Tenor (Days)");
 	}
 }
 
 adf.validationConfirm = function(param){
+	console.log(param)
 	var pdInfo = param.AccountSetupDetails.PdInfo;
 	var borrower = param.BorrowerDetails;
 	var vendor = param.VendorDetails;
-	var loan = param.LoanDetails;
+	// var loan = param.LoanDetails;
 	adf.validatePdInfo(pdInfo);
 	adf.validateBorrowerDetails(borrower);
 	adf.validateVendorTrack(vendor)
-	adf.validateLoanDetails(loan)
+	// adf.validateLoanDetails(loan)
 	adf.LetterConfirm()
 	if(adf.countBlank() > 0){
 		return true

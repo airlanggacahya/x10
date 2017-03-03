@@ -1036,6 +1036,11 @@ adf.getConfirm = function(){
 			if(adf.validationConfirm(param) == true && param.Status == 1){
 				// alert("masuk")
 				return;
+			}else if(adf.validationConfirm(param) == false && param.Status == 1){
+				setTimeout(function(){
+					adf.LetterReEnter()
+				}, 500)
+				
 			}
 			// param.AccountSetupDetails.PdInfo.PdDate = kendo.parseDate(adf.PdDate(), "dd-MMM-yyyy");
 			adf.isLoading(true)
@@ -1126,6 +1131,86 @@ adf.getConfirm = function(){
 
 	$(".mincibil").prop("disabled", true);
 
+}
+
+adf.LetterReEnter = function(){
+	adf.optionChangeConfirm(" Re-Enter");
+	adf.form.DateConfirmed(new Date())
+	setTimeout(function(){
+		$('.form-last-confirmation-info').html('');
+		$('.form-last-confirmation-info').html('Last Confirmed on: '+kendo.toString(new Date(),"dd-MM-yyyy h:mm:ss tt") )
+	},500)
+	try{
+		$('#tipster').tooltipster('destroy')
+	}catch(e){
+
+	}
+	if(adf.PdDate() != ""){
+		$('#tipster').tooltipster({
+			contentAsHTML: true,
+	    	interactive: true,
+	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>"+kendo.toString(new Date(adf.PdDate()),"dd-MMM-yyyy")+"</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+		})
+
+	}else{
+		$('#tipster').tooltipster({
+			contentAsHTML: true,
+	    	interactive: true,
+	    	content: $("<p class='info'>PD Done By : <span>"+adf.form.AccountSetupDetails.PdInfo.PdDoneBy()+"</span><br>PD Date : <span>	</span><br>PD Place : <span>"+adf.form.AccountSetupDetails.PdInfo.PdPlace()+"</span><br>Person Met : <span>"+adf.form.AccountSetupDetails.PdInfo.PersonMet()+"</span><br> PD Customer Margin: "+adf.form.AccountSetupDetails.PdInfo.CustomerMargin()+"% </span><br>PD Remarks: <span>"+adf.form.AccountSetupDetails.PdInfo.PdRemarks()+"</span><br> PD Comments : "+adf.form.AccountSetupDetails.PdInfo.PdComments()+"</span></p>")
+		})
+	}
+	adf.form.Status(1);
+	adf.form.AccountSetupDetails.Status(1);
+	adf.form.BorrowerDetails.Status(1);
+	$.each(adf.form.PromotorDetails(), function(i, item){
+		item.Status(1)
+	});
+	$.each(adf.form.VendorDetails(), function(i, items){
+		items.Status(1)
+	});
+	// $(".btn").prop("disabled", true)
+	$("#avg").prop("disabled", true)
+	$("#max").prop("disabled", true)
+	adf.form.LoanDetails.Status(1);
+	adf.form.CustomerBussinesMix.Status(1);
+	adf.form.DistributorMix.Status(1);
+	adf.EnableAllfieldsOnconfirm(false)
+	setTimeout(function(){
+		for(var i = 0; i< adf.form.PromotorDetails().length; i++){
+			$("#cibil"+i).prop("disabled", "disabled")
+			$("#real"+i).prop("disabled", "disabled")
+		}
+		$("#req").prop("disabled", "disabled")
+		$("#mincibil").prop("disabled", "disabled")
+	}, 500)
+	$("#onreset").prop( "disabled", true );
+	$("#LoanAmount").prop( "disabled", true );
+	adf.optionChangeConfirm(" Re-Enter")
+	adf.optionSectionAccountConfirm(" Re Enter")
+	adf.optionSectionDistributorConfirm(" Re Enter")
+	adf.optionSectionBorrowerConfirm(" Re Enter")
+	adf.optionSectionPromoterConfirm(" Re Enter")
+	adf.optionSectionVendorConfirm(" Re Enter")
+	adf.optionSectionLoanConfirm(" Re Enter")
+	adf.optionSectionCustomerConfirm(" Re Enter")
+	adf.optionSectionDistributorConfirm(" Re Enter")
+	$("#addpromotor").prop("disabled", true);
+	$("#addvendor").prop("disabled", true);
+	$("#addvendor1").prop("disabled", true);
+	for(var a = 0; a< adf.form.DistributorMix.Data().length; a++){
+		$("#del"+a).prop( "disabled", true );
+	}
+	$(".dlt").prop("disabled", "disabled");
+	sts = "Confirmed"
+	$("#onreset1").prop("disabled", true);
+	$("#onreset2").prop("disabled", true);
+	$("#onreset3").prop("disabled", true);
+	$("#onreset4").prop("disabled", true);
+	$("#onreset5").prop("disabled", true);
+	$("#onreset6").prop("disabled", true);
+	$("#onreset7").prop("disabled", true);
+	$("#onreset8").prop("disabled", true);
+	adf.sectionDisable("#c-2", false)
 }
 
 adf.LetterConfirm = function(){

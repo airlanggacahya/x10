@@ -219,6 +219,8 @@ $(document).ready(function(){
     refreshFilter = (function() {
       var cached_function = refreshFilter;
       return function(str) {
+        $(".toaster").html("");
+
         if(filter().CustomerSearchVal() == "" || filter().DealNumberSearchVal() == "" ) {
           swal("Warning","Please complete the filters","warning")
           return;

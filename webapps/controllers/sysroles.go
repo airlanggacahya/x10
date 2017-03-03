@@ -682,14 +682,14 @@ func (d *SysRolesController) RemoveRole(r *knot.WebContext) interface{} {
 	}
 
 	// Check masteruser for role usage
-	used, err := isRoleUsed(role.Name)
-	if err != nil {
-		return d.SetResultInfo(true, err.Error(), nil)
-	}
+	// used, err := isRoleUsed(role.Name)
+	// if err != nil {
+	// 	return d.SetResultInfo(true, err.Error(), nil)
+	// }
 
-	if used {
-		return d.SetResultInfo(true, "This role is still assigned to user!", nil)
-	}
+	// if used {
+	// 	return d.SetResultInfo(true, "This role is still assigned to user!", nil)
+	// }
 
 	q := d.Ctx.Connection.
 		NewQuery().

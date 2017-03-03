@@ -282,7 +282,9 @@ var SADAccess = function(){
         })
       })
 
-      return function() {}
+      if (error) {
+        return function() {}
+      }
 
       return function(){
         save(function(){

@@ -320,6 +320,47 @@ apcom.checkingAndSaveStatus = function(status) {
 	}
 }
 
+apcom.validateMandatory = function(){
+	$(".toaster").html("");
+	var idx = 0;
+	var dataGrid = $("#grid1").data("kendoGrid").dataSource.data();
+
+	if(_.filter(apcom.formCreditAnalyst.CreditAnalysRisks(),function(x){ 
+		if(typeof x.Risks == 'function')
+		return x.Risks().trim() != "" && x.Mitigants().trim() != "" 
+		else
+		return x.Risks.trim() != "" && x.Mitigants.trim() != "" 
+	}).length != dataGrid.length){
+		fixToast("Please fill Risk / Concerns & Mitigants");
+		idx+=1;
+	}
+
+	if(apcom.Amount() == "" || apcom.formCreditAnalyst.FinalComment.Amount() == 0){
+		fixToast("Please fill Final Comments Amount");
+		idx+=1;
+	}
+
+
+	apcom.RecCondition(_.filter(apcom.RecCondition(),function(x){ return x.trim() != "" }));
+
+	if(apcom.RecCondition().length == 0){
+		fixToast("Please fill Final Comments Recommend Condition");
+		idx+=1;
+		apcom.addRecomendedCondition();
+	}
+
+	if(apcom.formCreditAnalyst.FinalComment.Recommendations().trim() == ""){
+		fixToast("Please fill Final Comments Recommendations");
+		idx+=1;
+	}
+
+	if(idx > 0){
+		return false
+	}
+
+	return true
+}
+
 apcom.sendCreditAnalyst = function(a, event){
 	apcom.formCreditAnalyst.CreditAnalysRisks([]);
 	apcom.formCreditAnalyst.DealNo(r.customerId().split('|')[1])
@@ -334,7 +375,7 @@ apcom.sendCreditAnalyst = function(a, event){
 
 	apcom.formCreditAnalyst.FinalComment.Amount(parseFloat(apcom.Amount()))
 	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition(apcom.RecommendedCondition)
-	apcom.formCreditAnalyst.FinalComment.Recommendations(apcom.Recommendations)
+	apcom.formCreditAnalyst.FinalComment.Recommendations(apcom.Recommendations())
 	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition([])
 	// console.log("--------->>>>", apcom.RecCondition())
 	// apcom.formCreditAnalyst.FinalComment.RecommendedCondition(apcom.RecCondition())
@@ -356,6 +397,13 @@ apcom.sendCreditAnalyst = function(a, event){
 		param.Ca.FinalComment.IsFreeze = true;
 	}else{
 		param.Ca.FinalComment.IsFreeze = false;
+	}
+
+	if(param.Status == apcom.CaStatus.SEND){
+		var valid = apcom.validateMandatory();
+		if(!valid){
+			return false;
+		}
 	}
 	
 	if(r.customerId().split('|')[0] != "" && r.customerId().split('|')[1] != ""){

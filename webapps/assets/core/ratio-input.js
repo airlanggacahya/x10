@@ -1831,7 +1831,10 @@ r.disableInputForm = function(){
     var valuepro = r.ProjectedDate().split('-')
     if (valuepro[2] == 'null' ||value[2] == 'null' || r.AuditedDate() == '' || r.ProjectedDate() == '' ){
         $('.inputmasterform').prop("disabled", true)
+        $("#button-container button").prop("disabled", true)
     }else {
+        $("#button-container button").prop("disabled", false)
+
         if (r.confirmLabel() == 'Re-Enter'){
             // console.log(r.statusCustomer(), "masuk save / confirm")
             $('.inputmasterform').prop("disabled", true)    

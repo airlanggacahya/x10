@@ -467,6 +467,11 @@ adf.setForm = function (data) {
 			adf.addMorePromotor()
 		}
 
+		if((adf.form.BorrowerDetails.DateBusinessStarted()).indexOf("1970") >-1 || (adf.form.BorrowerDetails.DateBusinessStarted()).indexOf("0001") > -1){
+			adf.form.BorrowerDetails.DateBusinessStarted("");
+		}
+						
+
 		if (data.VendorDetails.length == 0) {
 			adf.addMoreVendor()
 		}
@@ -801,7 +806,9 @@ adf.getConfirm = function(){
 	// 	adf.form.BorrowerDetails.DateBusinessStarted(null);
 	// }
 	// adf.isoAllDate()
-	generatemc()
+	generatemc();
+	var dtRef = $("#refrence").data("kendoGrid").dataSource.data()
+	adf.form.BorrowerDetails.RefrenceCheck(dtRef)
 	var sts =''
 	if(adf.optionChangeConfirm() == " Confirm"){
 		adf.optionChangeConfirm(" Re-Enter");
@@ -2412,7 +2419,14 @@ adf.getData = function () {
 				adf.initFreshForm(customerId, dealNo)
 				adf.reloadStatus(0)
 				adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
-
+				// setTimeout(function(){
+				// 	if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1 || res.Data.BorrowerDetails.DateBusinessStarted.indexOf("0001") > -1){
+				// 		alert("masuk")
+				// 		adf.form.BorrowerDetails.DateBusinessStarted("");
+				// 	}
+				// }, 100)
+				
+						
 				adf.setDisable()
 
 				if(adf.form.Freeze() == true){
@@ -2511,8 +2525,8 @@ adf.getData = function () {
 						if(res.Data.LoanDetails.RecenetAgreementDate.indexOf("1970") >-1 || res.Data.LoanDetails.RecenetAgreementDate.indexOf("0001") > -1)
 						adf.form.LoanDetails.RecenetAgreementDate("");
 
-						if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1 || res.Data.BorrowerDetails.DateBusinessStarted.indexOf("0001") > -1)
-						adf.form.BorrowerDetails.DateBusinessStarted("");
+						// if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1 || res.Data.BorrowerDetails.DateBusinessStarted.indexOf("0001") > -1)
+						// adf.form.BorrowerDetails.DateBusinessStarted("");
 
 
 						if(adf.PdDate().indexOf("1970") > -1 || adf.PdDate() == ''){

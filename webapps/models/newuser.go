@@ -55,6 +55,7 @@ type NewUser struct {
 	Catstatus      string `bson:"catstatus,omitempty"`
 	Catpassword    string `bson:"catpassword,omitempty"`
 	Autherdate     string
+	DontDelete     bool
 	LastUpdateDate time.Time `bson:"lastUpdateDate,omitempty"`
 }
 

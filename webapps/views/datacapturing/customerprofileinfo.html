@@ -880,26 +880,26 @@ function validateConfirm(){
     var ten = 0;
     var loan = 0;
     $.each(dataGrid1, function(i, dt){
-      if(dt.BanksFls == ""){
+      if(dt.BanksFls == "" || dt.BanksFls == undefined){
         bank = bank + 1;
       }
 
-      if(dt.SecuredUnsecured == ""){
+      if(dt.SecuredUnsecured == ""|| dt.SecuredUnsecured == undefined){
         sec = sec + 1;
       }
 
-      if(dt.OutstandingAmount == null){
+      if(dt.OutstandingAmount == null|| dt.OutstandingAmount == undefined){
         out = out + 1;
       }
-      if(dt.MonthlyInstallment == null){
+      if(dt.MonthlyInstallment == null|| dt.MonthlyInstallment == undefined){
         inst = inst + 1;
       }
 
-      if(dt.Tenure == null){
+      if(dt.Tenure == null || dt.Tenure == ""){
         ten = ten + 1;
       }
 
-      if(dt.LoanAmount == null){
+      if(dt.LoanAmount == null|| dt.LoanAmount == undefined){
         loan = loan + 1;
       }
 
@@ -942,7 +942,7 @@ function validateConfirm(){
     var ty = 0;
     var y = 0;
     $.each(dataGrid2, function(i, dt){
-      if(dt.NameOfBanks == ""){
+      if(dt.NameOfBanks == "" ){
         nm = nm + 1;
       }
 
@@ -958,7 +958,7 @@ function validateConfirm(){
         ty = ty + 1;
       }
 
-      if(dt.YearOpening == null){
+      if(dt.YearOpening == null || dt.YearOpening == ""){
         y = y + 1;
       }
 

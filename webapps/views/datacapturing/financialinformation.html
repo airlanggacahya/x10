@@ -1,4 +1,4 @@
-<script type="text/javascript" src="/static/core/customerprofileinfo.js"></script>
+<script type="text/javascript" src="/static/core/customerprofileinfo.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 <style type="text/css">
     .k-grid-toolbar{
         display: none;
@@ -9,24 +9,29 @@
 </style>
 <ul class="collapsible" data-collapsible="accordion">
   <li class="panel">
-    <div class="panel-heading"><h5 class="no-margin">Previous Loan Details (Non X10 loans)</h5></div>
+    <div class="panel-heading"><h5 class="no-margin">Previous Loan Details (Non X10 loans) <span class="str">*</span></h5></div>
     <div class="panel-body">
       <div class="row" style="padding: 25px; margin-top: -40px;">
         <div>
           <button id="btn1" class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" onclick = "info.addPreviousLoanDetails()">Add</button>
+          &nbsp; <input id="cbgrid1" type="checkbox" data-switch-no-init onclick="MakeNA(this,'Previous Loan');"><label>not applicable</label>
         </div>
+        <div class="grid10" style="display: none;"></div>
         <div class="grid1"></div>
       </div>
     </div>
   </li>
   <li class="panel">
-    <div class="panel-heading"><h5 class="no-margin">Details Pertaining to Bankers / Financial Institutions</h5></div>
+    <div class="panel-heading"><h5 class="no-margin">Details Pertaining to Bankers / Financial Institutions <span class="str">*</span></h5></div>
     <div class="panel-body">
       <div class="row" style="padding: 25px; margin-top: -40px;">
         <div>
-          <button class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" class="fa fa-plus" onclick="info.addDetailsPertainingtoBankers()">Add </button>
+          <button id="btn2" class="btn btn-sm btn-flat btn-success add" style="margin-bottom: 5px;" class="fa fa-plus" onclick="info.addDetailsPertainingtoBankers()">Add </button>
+          &nbsp; <input id="cbgrid2" type="checkbox" data-switch-no-init onclick="MakeNA(this,'Detail Pertaining');"><label>not applicable</label>
+
         </div>
         <div class="grid2"></div>
+        <div class="grid20" style="display: none;"></div>
       </div>
     </div>
   </li>
@@ -41,6 +46,59 @@
 </ul>
 
 <script>
+function MakeNA (e,grid){
+var val = $(e).is(":checked");
+  if(grid == "Previous Loan"){
+    var data = $(".grid1").data("kendoGrid").dataSource.data([]);
+    if(val){
+      info.addPreviousLoanDetails();
+      var dt = $(".grid1").data("kendoGrid").dataSource.data()[0];
+      dt.SrNo = "NA";
+      dt.BanksFls = "NA";
+      dt.LoanAmount = 99;
+      dt.Tenure = 99;
+      dt.MonthlyInstallment = 99;
+      dt.OutstandingAmount = 99;
+      dt.SecuredUnsecured = "Secured";
+      $(".grid1").data("kendoGrid").refresh();
+      $(".grid10").show();
+      $(".grid1").hide();
+      $("#btn1").hide();
+    }else{
+      info.addPreviousLoanDetails();
+      $(".grid1").show();
+      $(".grid10").hide();
+      $("#btn1").show();
+
+    }
+  }
+
+  if(grid == "Detail Pertaining"){
+    var data = $(".grid2").data("kendoGrid").dataSource.data([]);
+    if(val){
+      info.addDetailsPertainingtoBankers();
+      var dt = $(".grid2").data("kendoGrid").dataSource.data()[0];
+      dt.SrNo = "NA";
+      dt.NameOfBanks = "NA";
+      dt.AddressContactNo = "NA";
+      dt.AcNo = "NA";
+      dt.TypeOfAc = "Auto Loan";
+      dt.YearOpening = "NA";
+      $(".grid2").data("kendoGrid").refresh();
+      $(".grid20").show();
+      $(".grid2").hide();
+      $("#btn2").hide();
+
+    }else{
+      info.addDetailsPertainingtoBankers();
+      $(".grid2").show();
+      $(".grid20").hide();
+      $("#btn2").show();
+
+    }
+  }
+}
+
     function toggleChevron(e) {
         $(e.target)
             .prev('.panel-heading')
@@ -62,6 +120,134 @@
     }
 
     $(document).ready(function(){
+          $(".grid10").kendoGrid({
+                // dataSource: {
+                //     data : [],
+                //     pageSize:10
+                // },
+                // pageable: true,
+                // height: 350,
+                // schema:{
+                //   model:{
+                //     id:"SrNo",
+                //     fields:{
+                //       SrNo:{editable: true, nullable: true},
+                //       BanksFls:{editable: true, nullable: true},
+                //       LoanAmount:{type: "number", editable: true, nullable: true},
+                //       Tenure:{type: "number", editable: true, nullable: true},
+                //       MonthlyInstallment:{type: "number", editable: true, nullable: true},
+                //       OutstandingAmount:{type: "number", editable: true, nullable: true},
+                //       SecuredUnsecured:{editable: true, nullable: true},
+                //     }
+                //   }
+                // },
+                toolbar: ["create"],
+                scrolable : true,
+// <<<<<<< HEAD
+                columns: [{
+                    field: "SrNo",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "Sr. No.",
+                    width: "120px",
+                    template:function(dt){
+                        return "NA"
+                      }  
+                },
+                {
+                    field: "BanksFls",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "Banks/Fls",
+                    width: "120px",
+                    template:function(dt){
+                        return "NA"
+                      }  
+                },
+                {
+                    field: "LoanAmount",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Loan Amount (Rs.)",
+                    width: "120px",
+                   template:function(dt){
+                        return "NA"
+                      }                  
+                },
+                {
+                    field: "Tenure",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Tenure",
+                    width: "120px",
+                   template:function(dt){
+                        return "NA"
+                      }  
+                },
+                {
+                    field: "MonthlyInstallment",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Monthly Installment",
+                    width: "120px",
+                   template:function(dt){
+                        return "NA"
+                      }  
+                },
+                {
+                    field: "OutstandingAmount",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    attributes: {
+                        style: 'text-align: right'
+                    },
+                    title: "Outstanding Amount (Rs.)",
+                    width: "120px",
+                    template:function(dt){
+                        return "NA"
+                      }                 
+                },
+                {
+                    field: "SecuredUnsecured",
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "Secured/Unsecured",
+                    width: "120px",
+                    template:function(dt){
+                        return "NA"
+                      }
+                },
+                {
+                    headerAttributes: {
+                        "class": "sub-bgcolor"
+                    },
+                    title: "",
+                    width: "30px",
+                    template: function(d) {
+                        return ""
+                    }
+                },
+            ],               
+            });
+
+            info.addPreviousLoanDetailsDummy();
+
             $(".grid1").kendoGrid({
                 // dataSource: {
                 //     data : [],
@@ -203,6 +389,14 @@
                   }
 
                 },
+                dataBound : function(dt){
+                  var dtx = $(".grid1").getKendoGrid().dataSource.data();
+                  if(dtx.length > 0){
+                    if(dtx[0].SrNo == "NA" && !$("#cbgrid1").prop("checked")){
+                      $("#cbgrid1").trigger("click")
+                    }
+                  }
+                }
             });
             $(".grid2").kendoGrid({
                     //dataSource: dataSource,
@@ -244,8 +438,71 @@
                         this.closeCell();
                       }
                     },
+                    dataBound : function(dt){
+                      var dtx = $(".grid2").getKendoGrid().dataSource.data();
+                      if(dtx.length > 0){
+                        if(dtx[0].SrNo == "NA" && !$("#cbgrid2").prop("checked")){
+                          $("#cbgrid2").trigger("click")
+                        }
+                      }
+                    }
                 });
 
+             $(".grid20").kendoGrid({
+                    //dataSource: dataSource,
+                //      dataSource: {
+                //     data : [],
+                //     pageSize:10
+                // },
+                    // pageable: true,
+                    // height: 350,
+                    //  schema:{
+                    //   model:{
+                    //     id:"SrNo",
+                    //     fields:{
+                    //       SrNo:{editable: true, nullable: true},
+                    //       NameOfBanks:{type: "text", editable: true, nullable: true},
+                    //       AddressContactNo:{type: "text", editable: true, nullable: true},
+                    //       AcNo:{type: "text", editable: true, nullable: true},
+                    //       TypeOfAc:{type: "text", editable: true, nullable: true},
+                    //       YearOpening: {type: "text", editable: true, nullable: true}
+                    //     }
+                    //   }
+                    // },
+                    toolbar: ["create"],
+                    scrolable : true,
+                    columns: [
+                        { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", width: "120px", template:function(dt){
+                        return "NA"
+                      } },
+                        { field: "NameOfBanks", headerAttributes: { "class": "sub-bgcolor" }, title: "Name Of the Banks/Fls", width: "120px", template:function(dt){
+                        return "NA"
+                      } },
+                        { field: "AddressContactNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Address & Contact No.",width: "120px", template:function(dt){
+                        return "NA"
+                      } },
+                        { field: "AcNo", headerAttributes: { "class": "sub-bgcolor" }, title: "A/c. No", width: "120px", template:function(dt){
+                        return "NA"
+                      } },
+                        { field: "TypeOfAc", headerAttributes: { "class": "sub-bgcolor" }, title: "Type Of A/c", width: "120px", template:function(dt){
+                        return "NA"
+                      }},
+                        { field: "YearOpening", headerAttributes: { "class": "sub-bgcolor" }, title: "Year Of Opening",  width: "120px", format : "{0:yyyy}", template:function(dt){
+                        return "NA"
+                      } },
+                        { headerAttributes: { "class": "sub-bgcolor del" }, title: "", width: "30px", template:function(d){ return ""} },
+                        ],
+                    // editable: {
+                    //   createAt: "bottom"
+                    // },
+                    // edit: function (e) {
+                    //   if(customerprofile().Status() == 1 || customerprofile().Status() == 2){
+                    //     this.closeCell();
+                    //   }
+                    // },
+                });
+
+             info.addDetailsPertainingtoBankersDummy();
 
 function typeOfLoanDropDownEditor(container, options) {
     

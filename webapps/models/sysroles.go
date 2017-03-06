@@ -20,6 +20,7 @@ type SysRolesModel struct {
 	Dealvalue      string
 	Roletype       string
 	Deletable      bool
+	DontEdit       bool
 }
 
 type Detailsmenu struct {

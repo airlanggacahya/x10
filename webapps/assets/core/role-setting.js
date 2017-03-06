@@ -1419,7 +1419,7 @@ rolesett.GetDataRole = function(){
                     headerAttributes: {class: 'k-header header-bgcolor'},
                     width: 100,
                     template: "<center>" +
-                            "<button class='btn btn-xs btn-flat btn-primary edit' onclick='rolesett.EditData(\"#: Id #\")'><span class='fa fa-edit'></span></button>" +
+                            "<button class='btn btn-xs btn-flat btn-primary edit'  #if(DontEdit) {# disabled='disabled' #}#  onclick='rolesett.EditData(\"#: Id #\")'><span class='fa fa-edit'></span></button>" +
                             "&nbsp;&nbsp;" +
                             "<button class='btn btn-xs btn-flat btn-warning del' onclick='rolesett.Listuser(\"#: Name #\")'><span class='fa fa-user'></span></button>" +
                             "&nbsp;&nbsp;" +

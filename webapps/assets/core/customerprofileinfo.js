@@ -328,6 +328,22 @@ info.addPreviousLoanDetails= function(){
     }
 }
 
+info.addPreviousLoanDetailsDummy = function(){
+    var b = $('.grid10 .k-grid-content').height();
+    $(".grid10").data("kendoGrid").dataSource.data([]);
+    var data = $(".grid10").data("kendoGrid").dataSource.data();
+    var temp = ko.mapping.toJS(info.templateGrid1);
+    data.push(temp);
+
+    if(b < 100){
+        var h = $('.grid10 .k-grid-content').height();
+
+        if( h > 100){
+            $('.grid10 .k-grid-content').height(100);
+        }
+    }
+}
+
 info.addDetailsPertainingtoBankers = function(){
     var b = $('.grid2 .k-grid-content').height();
     var data = $(".grid2").data("kendoGrid").dataSource.data();
@@ -338,6 +354,22 @@ info.addDetailsPertainingtoBankers = function(){
 
         if( h > 100){
             var h = $('.grid2 .k-grid-content').height(100);
+        }
+    }
+    
+}
+
+info.addDetailsPertainingtoBankersDummy = function(){
+    var b = $('.grid20 .k-grid-content').height();
+    $(".grid20").data("kendoGrid").dataSource.data([]);
+    var data = $(".grid20").data("kendoGrid").dataSource.data();
+    var temp = ko.mapping.toJS(info.templateGrid2);
+    data.push(temp);
+    if(b < 100){
+        var h = $('.grid20 .k-grid-content').height();
+
+        if( h > 100){
+            var h = $('.grid20 .k-grid-content').height(100);
         }
     }
     

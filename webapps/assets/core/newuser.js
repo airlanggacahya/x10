@@ -280,7 +280,7 @@ ns.LoadGridUser = function(){
 				headerAttributes : {"class":"k-header header-bgcolor"},
 				width: 50,
 				template: function(d){
-					if(model.IsGranted("edit") == true){
+					if(model.IsGranted("edit") == true && d.DontDelete != true){
 						return "<center><button class='btn btn-xs btn-flat btn-primary  edituserright' onclick='ns.editUser(\""+d.Id+"\")'><span class='fa fa-edit'></span></button></center>";
 					}
 					

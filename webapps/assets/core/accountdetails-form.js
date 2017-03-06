@@ -1253,6 +1253,8 @@ adf.LetterConfirm = function(){
 		adf.optionChangeConfirm(" Confirm");
 		adf.sectionDisable("#city", false)
 		adf.sectionDisable("#DealNo", false)
+		$(".ondel").prop("disabled", false);
+		$(".dlt").prop("disabled", false);
 		// adf.sectionDisable("#loginDate", false)
 	}, 100)
 
@@ -1284,32 +1286,32 @@ adf.validatePdInfo = function(param){
 
 	if(param.PdComments == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Comment on PD Info");
+		fixToast("Please fill PD Comment in PD Info");
 	}
 
 	if(param.PdDoneBy == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Done By on PD Info");
+		fixToast("Please fill PD Done By in PD Info");
 	}
 
 	if(param.PdPlace == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Place on PD Info");
+		fixToast("Please fill PD Place in PD Info");
 	}
 
 	if(param.PdRemarks == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Remarks on PD Info");
+		fixToast("Please fill PD Remarks in PD Info");
 	}
 
 	if(param.PersonMet == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Person Met on PD Info");
+		fixToast("Please fill Person Met in PD Info");
 	}
 
 	if(param.PdDate == "1970-01-01T00:00:00.000Z"){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Date on PD Info");
+		fixToast("Please fill PD Date in PD Info");
 	}
 
 
@@ -1331,6 +1333,11 @@ adf.validateBorrowerDetails = function(param){
 		fixToast("Please fill Business Vintage");
 	}
 
+	if(param.ExternalRating == "") {
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill External Rating");
+	}
+
 	if(param.Management == ""){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Management");
@@ -1341,12 +1348,20 @@ adf.validateBorrowerDetails = function(param){
 		fixToast("Please fill Business Start Date");
 	}
 
-	if((param.ProductNameandDetails).length == 1 && param.ProductNameandDetails[0] == ""){
+	var found = null;
+	found = _.findIndex(param.ProductNameandDetails, function(val) {
+		return val.trim().length == 0;
+	})
+
+	if (found != -1){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Product : Name & Details");
 	}
 
-	if((param.CommentsonFinancials).length == 1 && param.CommentsonFinancials[0] == ""){
+	found = _.findIndex(param.CommentsonFinancials, function(val) {
+		return val.trim().length == 0;
+	})
+	if (found != -1){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Comment on Financials");
 	}
@@ -1401,15 +1416,13 @@ adf.validateLoanDetails = function(param){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Loan Tenor (Days)");
 	}
-
-	if(param.LoanTenorDays == null){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Loan Tenor (Days)");
-	}
 }
 
 adf.validationConfirm = function(param){
 	// console.log(param)
+	if((adf.form.BorrowerDetails.DateBusinessStarted()).indexOf("1970") >-1 || (adf.form.BorrowerDetails.DateBusinessStarted()).indexOf("0001") > -1){
+			adf.form.BorrowerDetails.DateBusinessStarted("");
+	}
 	var pdInfo = param.AccountSetupDetails.PdInfo;
 	var borrower = param.BorrowerDetails;
 	var vendor = param.VendorDetails;

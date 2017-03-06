@@ -467,6 +467,11 @@ adf.setForm = function (data) {
 			adf.addMorePromotor()
 		}
 
+		if((adf.form.BorrowerDetails.DateBusinessStarted()).indexOf("1970") >-1 || (adf.form.BorrowerDetails.DateBusinessStarted()).indexOf("0001") > -1){
+			adf.form.BorrowerDetails.DateBusinessStarted("");
+		}
+						
+
 		if (data.VendorDetails.length == 0) {
 			adf.addMoreVendor()
 		}
@@ -801,7 +806,9 @@ adf.getConfirm = function(){
 	// 	adf.form.BorrowerDetails.DateBusinessStarted(null);
 	// }
 	// adf.isoAllDate()
-	generatemc()
+	generatemc();
+	var dtRef = $("#refrence").data("kendoGrid").dataSource.data()
+	adf.form.BorrowerDetails.RefrenceCheck(dtRef)
 	var sts =''
 	if(adf.optionChangeConfirm() == " Confirm"){
 		adf.optionChangeConfirm(" Re-Enter");
@@ -1210,6 +1217,7 @@ adf.LetterReEnter = function(){
 	$("#onreset6").prop("disabled", true);
 	$("#onreset7").prop("disabled", true);
 	$("#onreset8").prop("disabled", true);
+	$("mixdel").prop("disabled", true);
 	adf.sectionDisable("#c-2", false)
 }
 
@@ -1240,6 +1248,7 @@ adf.LetterConfirm = function(){
 	$("#addpromotor").prop("disabled", false);
 	$("#addvendor").prop("disabled", false);
 	$("#addvendor1").prop("disabled", false);
+	$(".mixdel").prop("disabled", false);
 	setTimeout(function(){
 		adf.optionChangeConfirm(" Confirm");
 		adf.sectionDisable("#city", false)
@@ -1400,7 +1409,7 @@ adf.validateLoanDetails = function(param){
 }
 
 adf.validationConfirm = function(param){
-	console.log(param)
+	// console.log(param)
 	var pdInfo = param.AccountSetupDetails.PdInfo;
 	var borrower = param.BorrowerDetails;
 	var vendor = param.VendorDetails;
@@ -2412,7 +2421,14 @@ adf.getData = function () {
 				adf.initFreshForm(customerId, dealNo)
 				adf.reloadStatus(0)
 				adf.form.AccountSetupDetails.PdInfo.CustomerMargin("");
-
+				// setTimeout(function(){
+				// 	if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1 || res.Data.BorrowerDetails.DateBusinessStarted.indexOf("0001") > -1){
+				// 		alert("masuk")
+				// 		adf.form.BorrowerDetails.DateBusinessStarted("");
+				// 	}
+				// }, 100)
+				
+						
 				adf.setDisable()
 
 				if(adf.form.Freeze() == true){
@@ -2511,8 +2527,8 @@ adf.getData = function () {
 						if(res.Data.LoanDetails.RecenetAgreementDate.indexOf("1970") >-1 || res.Data.LoanDetails.RecenetAgreementDate.indexOf("0001") > -1)
 						adf.form.LoanDetails.RecenetAgreementDate("");
 
-						if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1 || res.Data.BorrowerDetails.DateBusinessStarted.indexOf("0001") > -1)
-						adf.form.BorrowerDetails.DateBusinessStarted("");
+						// if(res.Data.BorrowerDetails.DateBusinessStarted.indexOf("1970") >-1 || res.Data.BorrowerDetails.DateBusinessStarted.indexOf("0001") > -1)
+						// adf.form.BorrowerDetails.DateBusinessStarted("");
 
 
 						if(adf.PdDate().indexOf("1970") > -1 || adf.PdDate() == ''){
@@ -2724,6 +2740,7 @@ window.refreshFilter = function () {
 adf.initEvents = function () {
 	filter().CustomerSearchVal.subscribe(function () {
 		adf.formVisibility(false)
+		$(".toaster").html("")
 	})
 	filter().DealNumberSearchVal.subscribe(function () {
 		adf.formVisibility(false)

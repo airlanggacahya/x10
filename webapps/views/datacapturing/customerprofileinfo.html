@@ -97,6 +97,7 @@ formatnum =  function(number, decimalPlace) {
 }
 
 function refreshFilter(){
+  $(".toaster").html("")
   info.formVisibility(false)
   refreshdata(getMasterAccountDetails);
   initEvents()

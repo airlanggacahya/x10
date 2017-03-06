@@ -1284,32 +1284,32 @@ adf.validatePdInfo = function(param){
 
 	if(param.PdComments == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Comment on PD Info");
+		fixToast("Please fill PD Comment in PD Info");
 	}
 
 	if(param.PdDoneBy == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Done By on PD Info");
+		fixToast("Please fill PD Done By in PD Info");
 	}
 
 	if(param.PdPlace == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Place on PD Info");
+		fixToast("Please fill PD Place in PD Info");
 	}
 
 	if(param.PdRemarks == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Remarks on PD Info");
+		fixToast("Please fill PD Remarks in PD Info");
 	}
 
 	if(param.PersonMet == ""){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Person Met on PD Info");
+		fixToast("Please fill Person Met in PD Info");
 	}
 
 	if(param.PdDate == "1970-01-01T00:00:00.000Z"){
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Date on PD Info");
+		fixToast("Please fill PD Date in PD Info");
 	}
 
 

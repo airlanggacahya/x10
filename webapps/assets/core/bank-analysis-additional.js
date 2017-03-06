@@ -1946,8 +1946,11 @@ $(document).ready(function(){
 
     $("#othernf").hide();
     $("#bconfirm").click(function(){
-        if (validateForm())
-            return;
+        if(statusPage.isConfirmed() == false){
+            if (validateForm())
+                return;
+        }
+        
 
         if (filter().CustomerSearchVal() == "" || filter().DealNumberSearchVal() == ""){
             swal("Warning","Select Customer First","warning");

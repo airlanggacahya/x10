@@ -313,7 +313,7 @@ ns.filterRole = function(){
 		var arr = ns.valuerole();
 		if(ns.valuerole() != null){
 			var roleType = _.map(_.filter(ns.roleListAll(),function(x){ return x.Status == true && ns.valuerole().indexOf(x.Name) > -1 }),function(x){ return x.Roletype});
-			ns.roleList( _.map(_.filter(ns.roleListAll(),function(x){ return (x.Status == true && roleType.indexOf(x.Roletype) == -1) || ns.valuerole().indexOf(x.Name) > -1 }),function(x){ return x.Name}));
+			ns.roleList( _.map(_.filter(ns.roleListAll(),function(x){ return (x.Status == true && roleType.indexOf(x.Roletype) == -1) || ns.valuerole().indexOf(x.Name) > -1 || x.Roletype.toLowerCase() == "custom"}),function(x){ return x.Name}));
 		}
 	},200)
 }

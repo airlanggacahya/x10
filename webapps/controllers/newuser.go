@@ -288,6 +288,7 @@ func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 			return c.SetResultInfo(true, errR.Error(), nil)
 		}
 		defer crsR.Close()
+		k.SetSession("roles", resroles)
 
 		if len(resroles) > 0 {
 			k.SetSession("CustomerProfileData", nil)
@@ -297,6 +298,8 @@ func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 				}
 			}
 		}
+		return c.SetResultInfo(false, "refresh", res)
+
 	}
 
 	return c.SetResultInfo(false, "save success", res)

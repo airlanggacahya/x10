@@ -415,6 +415,9 @@ ns.saveEdit = function(d){
 			ns.LoadGetUser()
 			$("#editUser").modal("hide");
 			swal("", "Saved successfully", "success");
+			if(res.Message == "refresh"){
+				location.reload();
+			}
 		})
 	}else{
 		$(".conf").show()

@@ -1412,6 +1412,9 @@ adf.validateLoanDetails = function(param){
 
 adf.validationConfirm = function(param){
 	// console.log(param)
+	if((adf.form.BorrowerDetails.DateBusinessStarted()).indexOf("1970") >-1 || (adf.form.BorrowerDetails.DateBusinessStarted()).indexOf("0001") > -1){
+			adf.form.BorrowerDetails.DateBusinessStarted("");
+	}
 	var pdInfo = param.AccountSetupDetails.PdInfo;
 	var borrower = param.BorrowerDetails;
 	var vendor = param.VendorDetails;

@@ -1336,8 +1336,6 @@ adf.validateBorrowerDetails = function(param){
 		fixToast("Please fill External Rating");
 	}
 
-	console.log(param.ExternalRating);
-
 	if(param.Management == ""){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Management");

@@ -1006,7 +1006,7 @@ function SendRoleSave(param) {
             rolesett.Cancel();
             rolesett.Reset();
             $("#nav-dex").css('z-index', 'none');
-            swal("Success!", res.Message, "success");
+            swal("Success", res.Message, "success");
             location.reload();
         } else if (res.Data == "NEED_CONFIRM") {
             swal({

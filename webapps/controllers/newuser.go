@@ -269,6 +269,36 @@ func (c NewUserController) SaveUser(k *knot.WebContext) interface{} {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
+	if payload.Userid == k.Session("username").(string) {
+		//Get Customer
+		resroles := []SysRolesModel{}
+
+		wh := []*dbox.Filter{}
+
+		for _, valx := range payload.Catrole {
+			wh = append(wh, dbox.And(dbox.Eq("name", valx), dbox.Eq("status", true)))
+		}
+
+		crsR, errR := c.Ctx.Find(new(SysRolesModel), tk.M{}.Set("where", dbox.Or(wh...)))
+		if errR != nil {
+			return c.SetResultInfo(true, errR.Error(), nil)
+		}
+		errR = crsR.Fetch(&resroles, 0, false)
+		if errR != nil {
+			return c.SetResultInfo(true, errR.Error(), nil)
+		}
+		defer crsR.Close()
+
+		if len(resroles) > 0 {
+			k.SetSession("CustomerProfileData", nil)
+			for _, valx := range resroles {
+				if valx.Status {
+					new(LoginController).GetListUsersByRole(k, valx, k.Session("username").(string))
+				}
+			}
+		}
+	}
+
 	return c.SetResultInfo(false, "save success", res)
 }
 

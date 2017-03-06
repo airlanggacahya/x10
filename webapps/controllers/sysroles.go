@@ -549,6 +549,15 @@ func (d *SysRolesController) SaveData(r *knot.WebContext) interface{} {
 	ret.Message = "Saving Data Successfully"
 	ret.Data = ""
 
+	//Get Customer
+	resroles := r.Session("roles").([]SysRolesModel)
+	r.SetSession("CustomerProfileData", nil)
+	for _, valx := range resroles {
+		if valx.Status {
+			new(LoginController).GetListUsersByRole(r, valx, r.Session("username").(string))
+		}
+	}
+
 	return ret
 }
 

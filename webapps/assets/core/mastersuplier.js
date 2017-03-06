@@ -103,7 +103,7 @@ ms.loadGridSuplier = function(){
 					if(!model.IsGranted('delete'))
 						return ""
 
-					return "<center><button class='btn btn-xs btn-flat btn-danger' onclick='ms.removeData2(\""+d.uid+"\")'><i class='fa fa-trash' onclick = 'ms.removeData2(\""+1+"\")'></i></button></center>"
+					return "<center><button class='btn btn-xs btn-flat btn-danger' onclick='ms.removeData2(\""+d._id+"\", \""+d.Name+"\")'><i class='fa fa-trash'></i></button></center>"
 				},
 				width: 50,
 			},
@@ -211,11 +211,9 @@ ms.removeData1 = function(d){
 
 }
 
-ms.removeData2 = function(uid){
+ms.removeData2 = function(id, name){
 	ms.suplierDataTemp([]);
-	var index = $('#suplier tr[data-uid="'+uid+'"]').index();
 	var data = $('#suplier').data('kendoGrid').dataSource.data();
-	// console.log(data[index]._id)
 	$.each(data, function(i, item){
 		ms.suplierDataTemp.push({
 			Id: item._id,
@@ -241,9 +239,12 @@ ms.removeData2 = function(uid){
 			FromOmnifin : item.FromOmnifin
 		});
 	});
+	
+
 	var param ={
 		alldata : ms.suplierDataTemp(),
-		Id : data[index]._id
+		Id : id,
+		Name: name
 	}
 
 	ajaxPost("/mastersuplier/deletemastersuplier", param, function(res){

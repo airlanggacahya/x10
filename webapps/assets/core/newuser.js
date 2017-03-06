@@ -46,12 +46,12 @@ ns.PreprocessUser = function(input){
 			});
 			temp.RoleType = temp.RoleType.join("|");
 		}else{
+			temp.RoleType = "";
 			temp.Catrole = "To be assigned";
 		}
 
 		if(temp.Role != null){
 			temp.Role = temp.Role.join("|");
-			
 		}
 	})
 
@@ -92,7 +92,7 @@ ns.FilterSearchBar = function(val) {
 		if (i.Role.toLowerCase().indexOf(val) != -1)
 			return newdata.push(i)
 
-		if (i.Roletype.toLowerCase().indexOf(val) != -1)
+		if (i.RoleType.toLowerCase().indexOf(val) != -1)
 			return newdata.push(i)
 	})
 

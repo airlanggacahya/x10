@@ -308,7 +308,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4 filled">Diversification: No. of Clients / Customers<span class="str">*</span></label>
 					            	<div class="col-sm-8">
-				    					<input class="borr" data-bind="kendoNumericTextBox: { value: DiversificationCustomers, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
+				    					<input class="borr" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: DiversificationCustomers, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
 					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionDiversificationCustomers, value: DiversificationCustomers, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
 					            	</div>
 					            	<div class="clearfix"></div>
@@ -319,7 +319,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Dependence on Suppliers</label>
 					            	<div class="col-sm-8">
-				    							<input class="borr" data-bind="kendoNumericTextBox: { value: DependenceOnSuppliers, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
+				    							<input class="borr" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: DependenceOnSuppliers, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
 					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionDependenceOnSuppliers, value: DependenceOnSuppliers, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
 					            	</div>
 					            	<div class="clearfix"></div>
@@ -329,7 +329,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4 filled">Business Vintage<span class="str">*</span></label>
 					            	<div class="col-sm-8">
-				    							<input class="borr" data-bind="kendoNumericTextBox: { value: BusinessVintage, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
+				    							<input class="borr" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: BusinessVintage, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
 					            		<!-- <input data-bind="kendoDropDownList: { data: adf.optionBusinessVintages, value: BusinessVintage, dataValueField: 'Categories', dataTextField: 'Categories', optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"> -->
 					            	</div>
 					            	<div class="clearfix"></div>
@@ -413,7 +413,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Orders in Hand</label>
 					            	<div class="col-sm-8">
-				    							<input class="borr" data-bind="kendoNumericTextBox: { value: OrdersinHand, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
+				    							<input class="borr" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: OrdersinHand, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -422,7 +422,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-4">Projects Completed</label>
 					            	<div class="col-sm-8">
-				    							<input class="borr" data-bind="kendoNumericTextBox: { value: ProjectsCompleted, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
+				    							<input class="borr" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: ProjectsCompleted, format: 'n0', min: 0, spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -589,7 +589,7 @@ mincibil = ko.observable(0);
 				        			</div>
 
 				        			<div class="form-group">
-				        				<input class="promoter" data-bind="kendoNumericTextBox: { value: ExperienceInSameLineOfBusiness, format: 'n0', spinners:false }" type="text" style="width: 100%;">
+				        				<input class="promoter" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: ExperienceInSameLineOfBusiness, format: 'n0', spinners:false }" type="text" style="width: 100%;">
 				        			</div>
 				        			<div class="form-group">
 				        				<span class="tooltipster" data-bind="attr:{'id':'edu'+$index()}" title="Educational"><input class="promoter tooltipster" data-bind="kendoDropDownList: { data: adf.optionEducationalQualificationOfMainPromoters, value: EducationalQualificationOfMainPromoter, optionLabel: 'Select One' }" type="text" class="input-sm form-control" style="width: 100%;"></span>
@@ -614,7 +614,7 @@ mincibil = ko.observable(0);
 								            	<div class="col-sm-12" style="padding-left: 0px;">
 								            		<div style="margin-bottom: 5px;">
 								            			<div class="col-sm-10">
-							            					<input class="promoter" class="realest-input" data-bind="kendoNumericTextBox: { value: value, format: 'n0', spinners:false }" type="text" style="width: 100%;">
+							            					<input class="promoter" class="realest-input" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: value, format: 'n0', spinners:false }" type="text" style="width: 100%;">
 								            			</div>
 								            			<div class="col-sm-2" style="text-align: right;">
 									        				<button   class="btn btn-sm btn-add promoter plus noable" style="float: left;" data-bind="click: adf.addMoreRealEstatePosition($parent), visible: ($index() == 0)">
@@ -873,7 +873,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Loan Tenor (Days)<span class="str">*</span></label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoNumericTextBox: { value: LoanTenorDays, format: 'n0', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="loan" data-bind="kendoNumericTextBox: { value: LoanTenorDays, format: 'n0', spinners:false }" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -892,7 +892,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-7">Proposed Processing Fee %<span class="str">*</span></label>
 					            	<div class="col-sm-5">
-					            		<input class="loan" data-bind="kendoNumericTextBox: { value: ProposedPFee, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="loan" data-bind="kendoNumericTextBox: { value: ProposedPFee, format: '#.00 \\%', spinners:false }" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -955,7 +955,7 @@ mincibil = ko.observable(0);
 			            	<div class="form-group">
 				            	<label class="form-label col-sm-7">Project PO Value for Back to Back Transaction</label>
 				            	<div class="col-sm-5">
-				            		<input id="BackToBack" data-bind="kendoNumericTextBox: { value: POValueforBacktoBack, format: 'n0', enabled: adf.loadIfBackedByPO , spinners:false }" type="text" style="width: 100%;">
+				            		<input id="BackToBack" data-bind="kendoNumericTextBox: { value: POValueforBacktoBack, format: 'n0', enabled: adf.loadIfBackedByPO , spinners:false }" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" type="text" style="width: 100%;">
 				            	</div>
 				            	<div class="clearfix"></div>
 			            	</div>
@@ -964,7 +964,7 @@ mincibil = ko.observable(0);
 			            	<div class="form-group">
 				            	<label class="form-label col-sm-7">Expected Payment from Project in 120 days (Rs. Lacs)</label>
 				            	<div class="col-sm-5">
-				            		<input id="Expected" data-bind="kendoNumericTextBox: { value: ExpectedPayment, format: 'n0', enabled:adf.loadIfBackedByPO , spinners:false }" type="text" style="width: 100%;">
+				            		<input id="Expected" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: ExpectedPayment, format: 'n0', enabled:adf.loadIfBackedByPO , spinners:false }" type="text" style="width: 100%;">
 				            	</div>
 				            	<div class="clearfix"></div>
 			            	</div>
@@ -1112,7 +1112,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-6">Stock & Sell - in %</label>
 					            	<div class="col-sm-5">
-					            		<input class="cust" data-bind="kendoNumericTextBox: { value: StockSellIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="cust" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: StockSellIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1121,7 +1121,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-6">B2B - Govt.- in %</label>
 					            	<div class="col-sm-5">
-					            		<input class="cust" data-bind="kendoNumericTextBox: { value: B2BGovtIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="cust" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: B2BGovtIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1131,7 +1131,7 @@ mincibil = ko.observable(0);
 				            	<div class="form-group">
 					            	<label class="form-label col-sm-6">B2B - Corporate  - in %</label>
 					            	<div class="col-sm-5">
-					            		<input class="cust" data-bind="kendoNumericTextBox: { value: B2BCorporateIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
+					            		<input class="cust" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: B2BCorporateIn, format: '#.00 \\%', spinners:false }" type="text" style="width: 100%;">
 					            	</div>
 					            	<div class="clearfix"></div>
 				            	</div>
@@ -1164,10 +1164,10 @@ mincibil = ko.observable(0);
 						            	</div>
 						            	<div class="col-sm-5">
 						            		<div class="col-md-8">
-						            			<input class="dist col-sm-4" data-bind="kendoNumericTextBox: { value: Result, format: '#.00 \\%', spinners:false }" type="number" style="width: 100%;">
+						            			<input class="dist col-sm-4" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: Result, format: '#.00 \\%', spinners:false }" type="number" style="width: 100%;">
 						            		</div>
 						            		<div class="col-md-4">
-						            			<button type="button" class="btn btn-sm btn-danger" data-bind="click: adf.removeDistributorMix($index()), attr:{'id' : 'del'+$index()}"><i class="fa fa-trash"></i></button>
+						            			<button type="button" class="btn btn-sm btn-danger mixdel" data-bind="click: adf.removeDistributorMix($index()), attr:{'id' : 'del'+$index()}"><i class="fa fa-trash"></i></button>
 						            		</div>
 						            	</div>
 						            	<div class="clearfix"></div>
@@ -1239,7 +1239,7 @@ mincibil = ko.observable(0);
 			            	<div class="form-group">
 				            	<label class="form-label col-sm-3">Customer Margin(%)</label>
 				            	<div class="col-sm-7">
-				            		<input id="CustomerMargin" data-bind="kendoNumericTextBox: { value: adf.form.AccountSetupDetails.PdInfo.CustomerMargin, format: '#.00 \\%', spinners:false }">
+				            		<input id="CustomerMargin" onfocus="adf.deleteZero(this)" onblur="adf.addZero(this)" data-bind="kendoNumericTextBox: { value: adf.form.AccountSetupDetails.PdInfo.CustomerMargin, format: '#.00 \\%', spinners:false }">
 				            	</div>
 				            	<div class="clearfix"></div>
 			            	</div>

@@ -1217,6 +1217,7 @@ adf.LetterReEnter = function(){
 	$("#onreset6").prop("disabled", true);
 	$("#onreset7").prop("disabled", true);
 	$("#onreset8").prop("disabled", true);
+	$("mixdel").prop("disabled", true);
 	adf.sectionDisable("#c-2", false)
 }
 
@@ -1247,6 +1248,7 @@ adf.LetterConfirm = function(){
 	$("#addpromotor").prop("disabled", false);
 	$("#addvendor").prop("disabled", false);
 	$("#addvendor1").prop("disabled", false);
+	$(".mixdel").prop("disabled", false);
 	setTimeout(function(){
 		adf.optionChangeConfirm(" Confirm");
 		adf.sectionDisable("#city", false)
@@ -1407,7 +1409,7 @@ adf.validateLoanDetails = function(param){
 }
 
 adf.validationConfirm = function(param){
-	console.log(param)
+	// console.log(param)
 	var pdInfo = param.AccountSetupDetails.PdInfo;
 	var borrower = param.BorrowerDetails;
 	var vendor = param.VendorDetails;
@@ -2738,6 +2740,7 @@ window.refreshFilter = function () {
 adf.initEvents = function () {
 	filter().CustomerSearchVal.subscribe(function () {
 		adf.formVisibility(false)
+		$(".toaster").html("")
 	})
 	filter().DealNumberSearchVal.subscribe(function () {
 		adf.formVisibility(false)

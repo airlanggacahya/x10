@@ -1401,11 +1401,6 @@ adf.validateLoanDetails = function(param){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Loan Tenor (Days)");
 	}
-
-	if(param.LoanTenorDays == null){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Loan Tenor (Days)");
-	}
 }
 
 adf.validationConfirm = function(param){

@@ -582,7 +582,7 @@ mincibil = ko.observable(0);
 				        			</div>
 				        			<div class="form-group" data-bind="visible: ($index() > 0)">
 				        				<input class="promoter" data-bind="kendoDropDownList: { data: adf.optionPromotors, value: PromoterName, dataValueField: 'Name', dataTextField: 'Name', optionLabel: 'Select One', change: adf.changePromotorName($data) }, attr:{'id':'promotor'+$index()}" type="text" class="input-sm form-control" style="width: 152px;">
-					            		<button class="btn btn-sm btn-danger promoter noable" style="float: right;" data-bind="click: adf.removePromotor($data)">
+					            		<button class="btn btn-sm btn-danger promoter noable ondel" style="float: right;" data-bind="click: adf.removePromotor($data)">
 					            			<i class="fa fa-trash"></i>
 					            		</button>
 					            		<div class="clearfix"></div>

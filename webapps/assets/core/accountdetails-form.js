@@ -1253,6 +1253,8 @@ adf.LetterConfirm = function(){
 		adf.optionChangeConfirm(" Confirm");
 		adf.sectionDisable("#city", false)
 		adf.sectionDisable("#DealNo", false)
+		$(".ondel").prop("disabled", false);
+		$(".dlt").prop("disabled", false);
 		// adf.sectionDisable("#loginDate", false)
 	}, 100)
 

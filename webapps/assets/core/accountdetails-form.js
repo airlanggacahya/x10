@@ -1333,6 +1333,11 @@ adf.validateBorrowerDetails = function(param){
 		fixToast("Please fill Business Vintage");
 	}
 
+	if(param.ExternalRating == "") {
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill External Rating");
+	}
+
 	if(param.Management == ""){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Management");
@@ -1343,12 +1348,20 @@ adf.validateBorrowerDetails = function(param){
 		fixToast("Please fill Business Start Date");
 	}
 
-	if((param.ProductNameandDetails).length == 1 && param.ProductNameandDetails[0] == ""){
+	var found = null;
+	found = _.findIndex(param.ProductNameandDetails, function(val) {
+		return val.trim().length == 0;
+	})
+
+	if (found != -1){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Product : Name & Details");
 	}
 
-	if((param.CommentsonFinancials).length == 1 && param.CommentsonFinancials[0] == ""){
+	found = _.findIndex(param.CommentsonFinancials, function(val) {
+		return val.trim().length == 0;
+	})
+	if (found != -1){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Comment on Financials");
 	}
@@ -1399,11 +1412,6 @@ adf.validateVendorTrack = function(param){
 }
 
 adf.validateLoanDetails = function(param){
-	if(param.LoanTenorDays == null){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Loan Tenor (Days)");
-	}
-
 	if(param.LoanTenorDays == null){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Loan Tenor (Days)");

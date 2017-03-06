@@ -116,7 +116,10 @@ function initEvents() {
 
 function DeleteData(id, e){
     if(id === "null") {
-        $(e).parent().parent().remove()
+        var grid = $("#bottomgrid").data("kendoGrid");
+        var tr = $(e).closest("tr");
+        console.log(e)
+        grid.removeRow(tr);
     } else {
         var callData = {_id : id};
 
@@ -451,10 +454,10 @@ function getData(callback){
 
         col.push({
             headerAttributes: { "class": "header-bgcolor wrap" },
-            template : function() {
+            template : function(dt) {
                 if (!model.AnyGranted('edit', 'confirm'))
                     return ""
-                return "<button type='button' btn-sm='' class='btn btn-sm btn-danger del tooltipster' title='Delete' onclick='DeleteData(\"#: Id #\");'> <span class='glyphicon glyphicon-trash'></span>&nbsp; </button>"
+                return "<button type='button' btn-sm='' class='btn btn-sm btn-danger del tooltipster' title='Delete' onclick='DeleteData(\""+ dt.Id +"\",this);'> <span class='glyphicon glyphicon-trash'></span>&nbsp; </button>"
             },
             width: 50
         })

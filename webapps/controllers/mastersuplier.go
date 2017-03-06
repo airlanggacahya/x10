@@ -49,6 +49,42 @@ func (c *MasterSuplierController) GetMasterSuplier(k *knot.WebContext) interface
 
 }
 
+func CheckIsUse(name string) (bool, error) {
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	param := []*db.Filter{}
+	query := cn.NewQuery().
+		From("AccountDetails")
+
+	if name != "" {
+		param = append(param, db.Or(db.Eq("distributormix.Data.Label", name), db.Eq("vendordetails.distributorname", name)))
+	}
+
+	query = query.Where(db.And(param...))
+
+	csr, err := query.Cursor(nil)
+	defer csr.Close()
+
+	if err != nil {
+		return false, err
+	}
+
+	val := []AccountDetail{}
+
+	err = csr.Fetch(&val, 0, false)
+	if err != nil {
+		return false, err
+	}
+
+	if len(val) > 0 {
+		return true, nil
+	}
+
+	return false, nil
+
+}
+
 func (c *MasterSuplierController) DeleteMasterSuplier(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	payload := tk.M{}
@@ -56,6 +92,16 @@ func (c *MasterSuplierController) DeleteMasterSuplier(k *knot.WebContext) interf
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	validate, err := CheckIsUse(payload["Name"].(string))
+
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	if validate {
+		return c.SetResultInfo(true, "This distributor is in use", nil)
 	}
 
 	res := []MasterSuplier{}

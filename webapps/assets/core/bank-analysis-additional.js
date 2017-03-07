@@ -1869,7 +1869,8 @@ $(document).ready(function(){
                 },
                 {
                     "field": "BankAccount.FundBased.SanctionDate",
-                    "name": "Saction Date"
+                    "name": "Saction Date",
+                    "type": "date"
                 },
                 {
                     "field": "BankAccount.FundBased.SecurityOfFB",
@@ -1887,7 +1888,8 @@ $(document).ready(function(){
                 },
                 {
                     "field": "BankAccount.NonFundBased.SanctionDate",
-                    "name": "Sanction Date"
+                    "name": "Sanction Date",
+                    "type": "date"
                 },
                 {
                     "field": "BankAccount.NonFundBased.SecurityOfNFB",
@@ -1917,7 +1919,8 @@ $(document).ready(function(){
                     v == null || // v is null
                     (typeof(v) == "string" && v.trim().length == 0) || // v is string and empty
                     (_.isArray(v) && v.length == 0) || // v is array and empty
-                    (_.isArray(v) && _.findIndex(v, function(val) { return val.trim().length == 0; }) != -1)) // v is array, and one of them is empty string
+                    (_.isArray(v) && _.findIndex(v, function(val) { return val.trim().length == 0; }) != -1) || // v is array, and one of them is empty string
+                    (_.get(check, "type", "") == "date" && v.substring(0, 10) == "1970-01-01")) // type date
                     {
                     error = true
                     fixToast("Please fill " + _.get(databank, "BankAccount.BankName", "") + " " + check.name)

@@ -443,15 +443,17 @@ var keyPolicyParam = function(norm) {
 }
 
 var exportPDF = function() {
-   return function(){
-    $('#headerpdf').show();
-    kendo.drawing.drawDOM($("#tab0"), {})
-        .then(function(group){
-            kendo.drawing.pdf.saveAs(group, loanapproval.companyname() + ".pdf");
-        })
-        .done(function(data){
-            $('#headerpdf').hide();
-        })
+    return function(){
+        $('.apx-loading').show();
+        $('#headerpdf').show();
+        kendo.drawing.drawDOM($("#tab0"), {})
+            .then(function(group){
+                kendo.drawing.pdf.saveAs(group, loanapproval.companyname() + ".pdf");
+            })
+            .done(function(data){
+                $('.apx-loading').hide()
+                $('#headerpdf').hide();
+            })
    }
 }
 

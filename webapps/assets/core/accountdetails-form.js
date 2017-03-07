@@ -1325,15 +1325,15 @@ adf.validateBorrowerDetails = function(param){
 		fixToast("Please fill Business Segment");
 	}
 
-	if(param.DiversificationCustomers == null){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Diversification: No. of Clients / Customers");
-	}
+	// if(param.DiversificationCustomers == null){
+	// 	adf.countBlank(adf.countBlank() + 1);
+	// 	fixToast("Please fill Diversification: No. of Clients / Customers");
+	// }
 
-	if(param.BusinessVintage == null){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Business Vintage");
-	}
+	// if(param.BusinessVintage == null){
+	// 	adf.countBlank(adf.countBlank() + 1);
+	// 	fixToast("Please fill Business Vintage");
+	// }
 
 	if(param.ExternalRating == "") {
 		adf.countBlank(adf.countBlank() + 1);

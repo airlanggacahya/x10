@@ -1284,36 +1284,48 @@ adf.validatePdInfo = function(param){
 	// 	fixToast("Please fill Customer Margin on PD Info");
 	// }
 
+	var text = "Please fill PD Info";
+	var idx = 0;
 	if(param.PdComments == ""){
+		idx+=1;
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Comment in PD Info");
+		fixToast(text);
 	}
 
-	if(param.PdDoneBy == ""){
+	if(param.PdDoneBy == "" && idx == 0){
+		idx+=1;
+
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Done By in PD Info");
+		fixToast(text);
 	}
 
-	if(param.PdPlace == ""){
+	if(param.PdPlace == "" && idx == 0){
+		idx+=1;
+
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Place in PD Info");
+		fixToast(text);
 	}
 
-	if(param.PdRemarks == ""){
+	if(param.PdRemarks == "" && idx == 0){
+		idx+=1;
+
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Remarks in PD Info");
+		fixToast(text);
 	}
 
-	if(param.PersonMet == ""){
+	if(param.PersonMet == "" && idx == 0){
+		idx+=1;
+
 		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill Person Met in PD Info");
+		fixToast(text);
 	}
 
-	if(param.PdDate == "1970-01-01T00:00:00.000Z"){
-		adf.countBlank(adf.countBlank() + 1);
-		fixToast("Please fill PD Date in PD Info");
-	}
+	if(param.PdDate == "1970-01-01T00:00:00.000Z" && idx == 0){
+		idx+=1;
 
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast(text);
+	}
 
 }
 

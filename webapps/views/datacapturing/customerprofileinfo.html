@@ -881,31 +881,32 @@ function validateConfirm(){
     var ten = 0;
     var loan = 0;
     $.each(dataGrid1, function(i, dt){
-      if(dt.SrNo == "" || typeof(dt.SrNo) == "undefined"){
+      if(dt.SrNo === "" || typeof(dt.SrNo) == "undefined"){
         srno = srno + 1;
       }
 
-      if(dt.BanksFls == "" || typeof(dt.BanksFls) == "undefined"){
+      if(dt.BanksFls === "" || typeof(dt.BanksFls) == "undefined"){
         bank = bank + 1;
       }
 
-      if(dt.LoanAmount == null|| typeof(dt.LoanAmount) == "undefined"){
+      if(dt.LoanAmount === null|| typeof(dt.LoanAmount) == "undefined"){
         loan = loan + 1;
       }
 
-      if(dt.Tenure == null || dt.Tenure == ""){
+      console.log(dt);
+      if(dt.Tenure === null || dt.Tenure === ""){
         ten = ten + 1;
       }
 
-      if(dt.MonthlyInstallment == null|| typeof(dt.MonthlyInstallment) == "undefined"){
+      if(dt.MonthlyInstallment === null|| typeof(dt.MonthlyInstallment) == "undefined"){
         inst = inst + 1;
       }
 
-      if(dt.OutstandingAmount == null|| typeof(dt.OutstandingAmount) == "undefined"){
+      if(dt.OutstandingAmount === null|| typeof(dt.OutstandingAmount) == "undefined"){
         out = out + 1;
       }
 
-      if(dt.SecuredUnsecured == ""|| typeof(dt.SecuredUnsecured) == "undefined"){
+      if(dt.SecuredUnsecured === ""|| typeof(dt.SecuredUnsecured) == "undefined"){
         sec = sec + 1;
       }
 

@@ -1869,7 +1869,7 @@ $(document).ready(function(){
                 },
                 {
                     "field": "BankAccount.FundBased.SanctionDate",
-                    "name": "Saction Date",
+                    "name": "Sanction Date",
                     "type": "date"
                 },
                 {

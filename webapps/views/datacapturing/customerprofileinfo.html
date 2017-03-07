@@ -873,6 +873,7 @@ function validateConfirm(){
     }
 
     var dataGrid1 = $(".grid1").data("kendoGrid").dataSource.data();
+    var srno = 0;
     var bank = 0;
     var sec = 0;
     var out = 0;
@@ -880,68 +881,53 @@ function validateConfirm(){
     var ten = 0;
     var loan = 0;
     $.each(dataGrid1, function(i, dt){
-      if(dt.BanksFls == "" || dt.BanksFls == undefined){
+      if(dt.SrNo == "" || typeof(dt.SrNo) == "undefined"){
+        srno = srno + 1;
+      }
+
+      if(dt.BanksFls == "" || typeof(dt.BanksFls) == "undefined"){
         bank = bank + 1;
       }
 
-      if(dt.SecuredUnsecured == ""|| dt.SecuredUnsecured == undefined){
-        sec = sec + 1;
-      }
-
-      if(dt.OutstandingAmount == null|| dt.OutstandingAmount == undefined){
-        out = out + 1;
-      }
-      if(dt.MonthlyInstallment == null|| dt.MonthlyInstallment == undefined){
-        inst = inst + 1;
+      if(dt.LoanAmount == null|| typeof(dt.LoanAmount) == "undefined"){
+        loan = loan + 1;
       }
 
       if(dt.Tenure == null || dt.Tenure == ""){
         ten = ten + 1;
       }
 
-      if(dt.LoanAmount == null|| dt.LoanAmount == undefined){
-        loan = loan + 1;
+      if(dt.MonthlyInstallment == null|| typeof(dt.MonthlyInstallment) == "undefined"){
+        inst = inst + 1;
+      }
+
+      if(dt.OutstandingAmount == null|| typeof(dt.OutstandingAmount) == "undefined"){
+        out = out + 1;
+      }
+
+      if(dt.SecuredUnsecured == ""|| typeof(dt.SecuredUnsecured) == "undefined"){
+        sec = sec + 1;
       }
 
     });
 
-    if(bank > 0){
+    if(srno > 0 || bank > 0 || sec > 0 || out > 0 || inst > 0 || loan > 0 || ten > 0){
       countBlank(countBlank() + 1);
-      fixToast("Please fill Banks/Fls");
-    }
-
-    if(sec > 0){
-      countBlank(countBlank() + 1);
-      fixToast("Please fill Secured/Unsecured");
-    }
-
-    if(out > 0){
-      countBlank(countBlank() + 1);
-      fixToast("Please fill Outstanding Amount (Rs.)");
-    }
-
-    if(inst > 0){
-      countBlank(countBlank() + 1);
-      fixToast("Please fill Monthly Installment");
-    }
-
-    if(loan > 0){
-      countBlank(countBlank() + 1);
-      fixToast("Please fill   Loan Amount (Rs.)");
-    }
-
-    if(ten > 0){
-      countBlank(countBlank() + 1);
-      fixToast("Please fill Tenure");
+      fixToast("Please fill Previous Loan Details");
     }
 
     var dataGrid2 = $(".grid2").data("kendoGrid").dataSource.data();
+    var sr = 0
     var nm = 0;
     var add = 0;
     var ac = 0;
     var ty = 0;
     var y = 0;
     $.each(dataGrid2, function(i, dt){
+      if(dt.SrNo == "" || typeof(dt.SrNo) == "undefined"){
+        srno = srno + 1;
+      }
+
       if(dt.NameOfBanks == "" ){
         nm = nm + 1;
       }
@@ -964,29 +950,9 @@ function validateConfirm(){
 
     })
 
-    if(nm > 0){
+    if(nm > 0 || add > 0 || ac > 0 || ty > 0 || y > 0){
       countBlank(countBlank() + 1);
-      fixToast("Please fill Name Of the Banks/Fls");
-    }
-
-    if(add > 0){
-      countBlank(countBlank() + 1);
-      fixToast("Please fill Address & Contact No.");
-    }
-
-    if(ac > 0){
-      countBlank(countBlank() + 1);
-      fixToast("Please fill A/c. No");
-    }
-
-    if(ty > 0){
-      countBlank(countBlank() + 1);
-      fixToast("Please fill Type Of A/c");
-    }
-
-    if(y > 0){
-      countBlank(countBlank() + 1);
-      fixToast("Please fill Year Of Opening");
+      fixToast("Please fill Details Pertaining to Bankers / Financial Institutions");
     }
 
     if(countBlank() > 0){
@@ -1247,7 +1213,6 @@ function SaveUploadPhoto() {
             detail.biodata()[i].FilePhoto = fullFileName
         }
     }
-
 }
 
 
@@ -1309,7 +1274,7 @@ input[disabled]{
 }
 
 .multifield .k-state-disabled span, .k-state-disabled input {
-  color: #ffff !important;
+  color: #ffffff !important;
 }
 </style>
 

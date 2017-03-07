@@ -2233,6 +2233,7 @@ var deleteBankData = function(index) {
         })
     }
 }
+
 var editBankData = function(index){
     return function(){
         isEdit = true
@@ -2265,24 +2266,13 @@ var editBankData = function(index){
             }else{
                 $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
             }
-            var arrsecfbs = databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB
-                 if (typeof arrsecfbs === 'string' || arrsecfbs == '' || arrsecfbs == null){
-                arrsecfbs = []
+
+            // SecurityofFB
+            bankaccount.fbsecurity(databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB)
+            for (var i = 0; i < bankaccount.fbsecurity().length; i++){
+                $('#securityfb'+i).val(bankaccount.fbsecurity()[i])
             }
-            for (var i = 0; i < arrsecfbs.length; i++){
-                if (arrsecfbs[i] == ''){
-                    arrsecfbs.splice(i)
-                }
-            }
-            if(typeof arrsecfbs === "string" || arrsecfbs == ""){
-                bankaccount.fbsecurity([""])
-            }else{
-                bankaccount.fbsecurity(arrsecfbs)
-            }
-            console.log(bankaccount.fbsecurity())
-            for (var i = 0; i < arrsecfbs.length; i++){
-                $('#securityfb'+i).val(arrsecfbs[i])
-            }
+
             //loadGridDataBank(databank()[index].DataBank[0].BankDetails)
         }
 

@@ -289,7 +289,8 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 
 	// Reject Data
 	if found && (myStatus == UnderProcess || myStatus == SendBackAnalysis || myStatus == OnHold || myStatus == SendToDecision) {
-		LogData.Set("error", "Deal exists in CAT")
+		LogData.Set("error", "Deal exists in CAT --- "+string(curId)+" --- "+myStatus)
+		LogData.Set("xmlstring", "")
 		CreateLog(LogData)
 		return resFail.Set("operationMessage", "Deal exists in CAT")
 	}
@@ -386,6 +387,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	}
 
 	LogData.Set("iscomplete", true)
+	LogData.Set("xmlstring", "")
 	CreateLog(LogData)
 	return res
 }

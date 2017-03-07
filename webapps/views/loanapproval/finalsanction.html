@@ -3,7 +3,7 @@
 	<div class="k-grid">
 	    <table class="table-bordered" style="word-break: break-word">
 	    	<tr>
-	    		<td class="col-sm-3">Date</td>
+	    		<td class="col-sm-3">Decision Date</td>
 	    		<td data-bind="text: apcom.Date()"></td>
 	    	</tr>
 	    	<tr>
@@ -33,6 +33,10 @@
 	    	<tr>
 	    		<td class="col-sm-3">Committee Remarks</td>
 	    		<td data-bind="text: apcom.CommitteeRemarks()"></td>
+	    	</tr>
+	    	<tr>
+	    		<td class="col-sm-3">Status</td>
+	    		<td data-bind="text: apcom.DCLatestStatus()"></td>
 	    	</tr>
 	    </table>
 	</div>

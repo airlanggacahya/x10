@@ -495,9 +495,9 @@ intrtr.getConfirmed = function(status, isfreeze){
 		if(res.IsError != true){
 			intrtr.status(status)
 			if(status == 1){
-				swal("Confirm Data Success", "", "success");
+				swal("Successfully Confirmed", "", "success");
 			}else{
-				swal("Re enter Data Success","","success");
+				swal("Please Edit / Enter Data","","success");
 			}
 		}else{
 			swal(res.Message, "","error");

@@ -364,6 +364,8 @@ apcom.checkingAndSaveStatus = function(status) {
 			if(!valid){
 				return false;
 			}
+		}else{
+			$(".toaster").html("");
 		}
 
 		apcom.saveSanctionFix(param, function(res){

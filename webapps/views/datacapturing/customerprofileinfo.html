@@ -911,7 +911,7 @@ function validateConfirm(){
 
     });
 
-    if(srno > 0 || bank > 0 || sec > 0 || out > 0 || inst > 0 || loan > 0 || ten > 0){
+    if(dataGrid1.length == 0 || srno > 0 || bank > 0 || sec > 0 || out > 0 || inst > 0 || loan > 0 || ten > 0){
       countBlank(countBlank() + 1);
       fixToast("Please fill Previous Loan Details");
     }
@@ -950,7 +950,7 @@ function validateConfirm(){
 
     })
 
-    if(nm > 0 || add > 0 || ac > 0 || ty > 0 || y > 0){
+    if(dataGrid2.length == 0 || nm > 0 || add > 0 || ac > 0 || ty > 0 || y > 0){
       countBlank(countBlank() + 1);
       fixToast("Please fill Details Pertaining to Bankers / Financial Institutions");
     }

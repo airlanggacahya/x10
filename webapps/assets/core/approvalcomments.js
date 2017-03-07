@@ -276,7 +276,7 @@ apcom.checkLatestStatus = function(param){
 		$(".checkLatestStatus").prop("disabled", true)
 	} else if(param != undefined && param.Id != undefined && param.Id !== "" && apcom.sanction.LatestStatus() === "") {
 		$(".checkLatestStatus").prop("disabled", false)
-	} else if(apcom.sanction.LatestStatus() === "Awaiting Action" || apcom.sanction.LatestStatus() === "On Hold" || apcom.sanction.LatestStatus() === "Sent Back") {
+	} else if(apcom.sanction.LatestStatus() === "Awaiting Action" || apcom.sanction.LatestStatus() === "On Hold" ) {
 		$(".checkLatestStatus").prop("disabled", false)
 	} else {
 		$(".checkLatestStatus").prop("disabled", true)

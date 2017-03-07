@@ -396,7 +396,7 @@ var val = $(e).is(":checked");
                 dataBound : function(dt){
                   var dtx = $(".grid1").getKendoGrid().dataSource.data();
                   if(dtx.length > 0){
-                    if(dtx[0].SrNo == "NA" && !$("#cbgrid1").prop("checked")){
+                    if(dtx[0].BanksFls == "NA" && !$("#cbgrid1").prop("checked")){
                       $("#cbgrid1").trigger("click")
                     }
                   }
@@ -450,7 +450,7 @@ var val = $(e).is(":checked");
                     dataBound : function(dt){
                       var dtx = $(".grid2").getKendoGrid().dataSource.data();
                       if(dtx.length > 0){
-                        if(dtx[0].SrNo == "NA" && !$("#cbgrid2").prop("checked")){
+                        if(dtx[0].NameOfBanks == "NA" && !$("#cbgrid2").prop("checked")){
                           $("#cbgrid2").trigger("click")
                         }
                       }

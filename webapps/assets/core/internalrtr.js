@@ -483,10 +483,10 @@ intrtr.dataUnselectScroll = function(e){
 }
 
 intrtr.getConfirmed = function(status, isfreeze){
-	if(intrtr.dataInternalSnapshot().length == 0 ){
-		swal("Warning", "Data not found","warning")
-		return
-	}
+	// if(intrtr.dataInternalSnapshot().length == 0 ){
+	// 	swal("Warning", "Data not found","warning")
+	// 	return
+	// }
 
 
 	intrtr.dataTemp().Status = status;

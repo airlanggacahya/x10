@@ -109,6 +109,7 @@ apcom.loadCommentData = function(tayp){
 
 	apcom.dataBasisRecommendation([])
 	apcom.tempFinalComment([])
+	apcom.dcsanctiondatestring("")
 
 	ajaxPost("/approval/getdcandcreditanalys" + (tayp != undefined ? tayp : ""), param, function(res){
 		var data = res;

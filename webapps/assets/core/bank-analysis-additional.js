@@ -1840,6 +1840,10 @@ $(document).ready(function(){
                 {
                     "field": "BankAccount.BankName",
                     "name": "Bank Name"
+                },
+                {
+                    "field": "BankAccount.FacilityType",
+                    "name": "Facility Type"
                 }
             ],
             "Fund Based" : [
@@ -1909,16 +1913,14 @@ $(document).ready(function(){
             _.each(listCheck[facility], function (check) {
                 var v = _.get(databank, check.field, undefined)
                 console.log(v)
-                if (typeof(v) == "undefined" ||
-                    v == null ) {
+                if (typeof(v) == "undefined" || // v is undefined
+                    v == null || // v is null
+                    (typeof(v) == "string" && v.trim().length == 0) || // v is string and empty
+                    (_.isArray(v) && v.length == 0) || // v is array and empty
+                    (_.isArray(v) && _.findIndex(v, function(val) { return val.trim().length == 0; }) != -1)) // v is array, and one of them is empty string
+                    {
                     error = true
                     fixToast("Please fill " + _.get(databank, "BankAccount.BankName", "") + " " + check.name)
-                }else if(typeof v === "object"){
-                    console.log(_.filter(v,function(x){ return x != "" }).length)
-                    if(_.filter(v,function(x){ return x != "" }).length == 0){
-                        error = true
-                    fixToast("Please fill " + _.get(databank, "BankAccount.BankName", "") + " " + check.name)
-                    }
                 }
             })
         })
@@ -2231,6 +2233,7 @@ var deleteBankData = function(index) {
         })
     }
 }
+
 var editBankData = function(index){
     return function(){
         isEdit = true
@@ -2263,24 +2266,13 @@ var editBankData = function(index){
             }else{
                 $('#fbsanctiondate').data('kendoDatePicker').value(databank()[index].DataBank[0].BankAccount.FundBased.SanctionDate)
             }
-            var arrsecfbs = databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB
-                 if (typeof arrsecfbs === 'string' || arrsecfbs == '' || arrsecfbs == null){
-                arrsecfbs = []
+
+            // SecurityofFB
+            bankaccount.fbsecurity(databank()[index].DataBank[0].BankAccount.FundBased.SecurityOfFB)
+            for (var i = 0; i < bankaccount.fbsecurity().length; i++){
+                $('#securityfb'+i).val(bankaccount.fbsecurity()[i])
             }
-            for (var i = 0; i < arrsecfbs.length; i++){
-                if (arrsecfbs[i] == ''){
-                    arrsecfbs.splice(i)
-                }
-            }
-            if(typeof arrsecfbs === "string" || arrsecfbs == ""){
-                bankaccount.fbsecurity([""])
-            }else{
-                bankaccount.fbsecurity(arrsecfbs)
-            }
-            console.log(bankaccount.fbsecurity())
-            for (var i = 0; i < arrsecfbs.length; i++){
-                $('#securityfb'+i).val(arrsecfbs[i])
-            }
+
             //loadGridDataBank(databank()[index].DataBank[0].BankDetails)
         }
 

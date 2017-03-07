@@ -181,6 +181,13 @@ function refreshdata(accountdetailsMaster){
         $('#CapitalExpansionPlansBoolDetail').prop("checked", false);
       }
 
+      // Process Sr No
+      _.each(data[0].FinancialReport.PreviousLoansDetail, function(val, key) {
+        data[0].FinancialReport.PreviousLoansDetail[key].SrNo = "" + (key + 1);
+      })
+      _.each(data[0].FinancialReport.DetailsPertainingBanker, function(val, key) {
+        data[0].FinancialReport.DetailsPertainingBanker[key].SrNo = "" + (key + 1);
+      })
       // $(".grid2").getKendoGrid().dataSource.data(data[0].FinancialReport.DetailsPertainingBanker)
       // $(".grid2").getKendoGrid().refresh()
       // $(".grid3").getKendoGrid().dataSource.data(data[0].FinancialReport.ExistingRelationship)
@@ -925,27 +932,27 @@ function validateConfirm(){
     var ty = 0;
     var y = 0;
     $.each(dataGrid2, function(i, dt){
-      if(dt.SrNo == "" || typeof(dt.SrNo) == "undefined"){
+      if(dt.SrNo === "" || typeof(dt.SrNo) == "undefined"){
         srno = srno + 1;
       }
 
-      if(dt.NameOfBanks == "" ){
+      if(dt.NameOfBanks === "" ){
         nm = nm + 1;
       }
 
-      if(dt.AddressContactNo == ""){
+      if(dt.AddressContactNo === ""){
         add = add + 1;
       }
 
-      if(dt.AcNo == ""){
+      if(dt.AcNo === ""){
         ac = ac + 1;
       }
 
-      if(dt.TypeOfAc == ""){
+      if(dt.TypeOfAc === ""){
         ty = ty + 1;
       }
 
-      if(dt.YearOpening == null || dt.YearOpening == ""){
+      if(dt.YearOpening === null || dt.YearOpening === ""){
         y = y + 1;
       }
 

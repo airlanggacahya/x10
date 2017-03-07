@@ -388,6 +388,10 @@ var val = $(e).is(":checked");
                     this.closeCell();
                   }
 
+                  var colname = $(e.container[0]).children("input").first().attr("name");
+                  if (colname == "SrNo") {
+                    this.closeCell();
+                  }
                 },
                 dataBound : function(dt){
                   var dtx = $(".grid1").getKendoGrid().dataSource.data();
@@ -436,6 +440,11 @@ var val = $(e).is(":checked");
                     edit: function (e) {
                       if(customerprofile().Status() == 1 || customerprofile().Status() == 2){
                         this.closeCell();
+                      }
+
+                      var colname = $(e.container[0]).children("input").first().attr("name");
+                      if (colname == "SrNo") {
+                          this.closeCell();
                       }
                     },
                     dataBound : function(dt){

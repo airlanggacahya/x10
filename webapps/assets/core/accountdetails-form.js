@@ -1393,7 +1393,6 @@ adf.validateBorrowerDetails = function(param){
 }
 
 adf.validatePromotor = function(param){
-	console.log(param)
 	var name = 0;
 	var edu = 0;
 	var res = 0;
@@ -1418,18 +1417,22 @@ adf.validatePromotor = function(param){
 	});
 
 	if(name > 0){
-			fixToast("Please fill Name of Main Promoter");
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("Please fill Name of Main Promoter");
 	}
 
 	if(edu > 0){
+		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Educational Qualification of Main Promoter");
 	}
 
 	if(res > 0){
+		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Residence Ownership Status");
 	}
 
 	if(off > 0){
+		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Office Ownership Status");
 	}
 }

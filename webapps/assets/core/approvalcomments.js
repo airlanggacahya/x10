@@ -147,10 +147,12 @@ apcom.loadCommentData = function(tayp){
 
 		    	if(apcom.sanction.LatestStatus() === "Awaiting Action") {
 		    		apcom.LARDate("");
+			    	apcom.dcsanctiondatestring("")
+
 			    	if(apcom.ValidateDate(apcom.formCreditAnalyst.FinalComment.SendDate())) {
 			    		var tempDate = moment(apcom.formCreditAnalyst.FinalComment.SendDate()).format("DD-MMM-YYYY")
 			    		apcom.sanction.Date(apcom.formCreditAnalyst.FinalComment.SendDate())
-			    		apcom.dcsanctiondatestring(tempDate)
+			    		// apcom.dcsanctiondatestring(tempDate)
 			    	} else {
 			    		apcom.sanction.Date((new Date()).toISOString())
 			    		apcom.dcsanctiondatestring("")

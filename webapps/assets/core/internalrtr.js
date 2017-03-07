@@ -506,10 +506,10 @@ intrtr.getConfirmed = function(status, isfreeze){
 }
 
 intrtr.getFreeze = function(status, isfreeze){
-	if(intrtr.dataInternalSnapshot().length == 0 ){
-		swal("Warning", "Data not found","warning")
-		return
-	}
+	// if(intrtr.dataInternalSnapshot().length == 0 ){
+	// 	swal("Warning", "Data not found","warning")
+	// 	return
+	// }
 
 	intrtr.dataTemp().Status = status;
 	intrtr.dataTemp().Isfreeze = isfreeze;

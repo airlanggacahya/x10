@@ -1397,6 +1397,7 @@ adf.validatePromotor = function(param){
 	var edu = 0;
 	var res = 0;
 	var off = 0;
+	var cib = 0;
 	$.each(param, function(i, item){
 		if(item.PromoterName == ""){
 			name = name + 1;
@@ -1414,6 +1415,9 @@ adf.validatePromotor = function(param){
 			off = off + 1;
 		}
 
+		if(item.CibilScore == null){
+			cib +=1;
+		}
 	});
 
 	if(name > 0){
@@ -1434,6 +1438,11 @@ adf.validatePromotor = function(param){
 	if(off > 0){
 		adf.countBlank(adf.countBlank() + 1);
 		fixToast("Please fill Office Ownership Status");
+	}
+
+	if(cib > 0){
+		adf.countBlank(adf.countBlank() + 1);
+		fixToast("CIBIL data not found");
 	}
 }
 

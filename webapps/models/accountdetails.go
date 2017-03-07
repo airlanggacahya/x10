@@ -431,9 +431,11 @@ func (a *AccountDetail) GetDataForFormulaBuilder(customerId, dealNo string) (Acc
 			return x.(PromotorDetails).CibilScore
 		}).Exec().Result.Max)
 
-		minCbl := 1000.0
-		for _, val := range acc.PromotorDetails {
-			if minCbl > val.CibilScore && val.CibilScore != 0 {
+		minCbl := 0.0
+		for idx, val := range acc.PromotorDetails {
+			if idx == 0 || minCbl == 0 {
+				minCbl = val.CibilScore
+			} else if minCbl > val.CibilScore && val.CibilScore != 0 {
 				minCbl = val.CibilScore
 			}
 		}

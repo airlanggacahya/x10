@@ -603,7 +603,8 @@ mincibil = ko.observable(0);
 				        			</div>
 				        			<div class="form-group">
 				        				<!-- <input class="promoter" data-bind="kendoNumericTextBox: { value: CibilScore, format: 'n0', enabled: false, spinners:false,change:function(e){ changecibilscore(this, $index()) } }" type="text" style="width: 100%;"> -->
-				        				<input class="promoter cibilscored form-control input-sm" readonly disabled="disabled" data-bind="attr:{id: 'cibil'+$index()}, value: CibilScore" type="text" style="width: 100%;">
+				        				<input class="promoter cibilscored form-control input-sm" readonly disabled="disabled" data-bind="visible: adf.form.PromotorDetails()[$index()].CibilScore() != null,attr:{id: 'cibil'+$index()}, value: CibilScore" type="text" style="width: 100%;">
+				        				<input class="promoter cibilscored form-control input-sm" readonly disabled="disabled" data-bind="visible: adf.form.PromotorDetails()[$index()].CibilScore() == null, attr:{id: 'cibilnull'+$index()}, value: 'NA'" type="text" style="width: 100%;">
 				        			</div>
 				        			<div class="form-group">
 					            		<input class="promoter form-control input-sm real" data-bind="value: adf.sumRealEstate($data), attr:{id: 'real'+$index()}" type="text" style="width: 100%; margin-right: 8px;">
@@ -647,7 +648,8 @@ mincibil = ko.observable(0);
 					            	<div class="wrapper">
 					            		<div class="vendor-col-column">
 					            			<div class="form-group">
-							        				<input class="form-control input-sm mincibil" readonly data-bind="value: mincibil, attr:{'id': 'micibil'}" style="width: 100%">
+							        				<input class="form-control input-sm mincibil" readonly data-bind="visible:(mincibil != null),value: mincibil, attr:{'id': 'micibil'}" style="width: 100%">
+							        				<input class="form-control input-sm mincibil" readonly data-bind="visible:(mincibil == null),value: 'NA', attr:{'id': 'micibil'}" style="width: 100%">
 							        			</div>
 					            		</div>
 					            	</div>

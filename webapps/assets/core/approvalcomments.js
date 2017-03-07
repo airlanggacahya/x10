@@ -52,6 +52,9 @@ apcom.templateSanction ={
 	Status: false,
 	LatestValue : "Awaiting Action"
 }
+
+apcom.LARDate = ko.observable("")
+
 apcom.sanction = ko.mapping.fromJS(apcom.templateSanction)
 apcom.accountCommentFinancials = ko.observable('');
 apcom.tempFinalComment = ko.observableArray([
@@ -137,7 +140,11 @@ apcom.loadCommentData = function(tayp){
 
 			    apcom.checkLatestStatus(res[0].CreditAnalys)
 
+		    	apcom.LARDate(apcom.dcsanctiondatestring());
+
+
 		    	if(apcom.sanction.LatestStatus() === "Awaiting Action") {
+		    		apcom.LARDate("");
 			    	if(apcom.ValidateDate(apcom.formCreditAnalyst.FinalComment.SendDate())) {
 			    		var tempDate = moment(apcom.formCreditAnalyst.FinalComment.SendDate()).format("DD-MMM-YYYY")
 			    		apcom.sanction.Date(apcom.formCreditAnalyst.FinalComment.SendDate())
@@ -151,7 +158,7 @@ apcom.loadCommentData = function(tayp){
 			    apcom.latestStatusStr(apcom.sanction.LatestStatus())
 		    }
 
-		    apcom.Date(apcom.dcsanctiondatestring())
+		    apcom.Date("")
 			apcom.LeftAmount("")
 			apcom.ROI("")
 			apcom.PF("")
@@ -166,7 +173,7 @@ apcom.loadCommentData = function(tayp){
 
 			// apcom.plainDate(data[1].DCFinalSanction.Date)
 			apcom.sanction.Id(data[1].DCFinalSanction.Id)
-		    // apcom.Date(moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY') == "01-Jan-0001" ? "" : moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY'));
+		    apcom.Date(moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY') == "01-Jan-0001" ? "" : moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY'));
 		    if(data[1].DCFinalSanction.IsNullAmount != true){
 		    	apcom.LeftAmount("");
 		    }else{

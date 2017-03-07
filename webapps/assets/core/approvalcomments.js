@@ -13,6 +13,7 @@ var apcom = {
 	isfreezeCA: ko.observable(false),
 	LeftAmount: ko.observable(),
 	Status: ko.observable(),
+	DCLatestStatus: ko.observable(),
 	CaStatus: {
 		val: ko.observable(),
 		SEND: 1,
@@ -189,6 +190,7 @@ apcom.loadCommentData = function(tayp){
 				apcom.OtherConditions(data[1].DCFinalSanction.OtherConditions);
 
 		    apcom.CommitteeRemarks(data[1].DCFinalSanction.CommitteeRemarks);
+		    apcom.DCLatestStatus(data[1].DCFinalSanction.LatestStatus);
 		    apcom.Status(data[1].DCFinalSanction.Status)
 
 		    apcom.formCreditAnalyst.Id(data[0].CreditAnalys.Id)

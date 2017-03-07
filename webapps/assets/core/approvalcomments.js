@@ -315,7 +315,7 @@ apcom.validateMandatoryDC = function(param){
 	}
 
 	if(param.CommitteeRemarks == ""){
-		fixToast("Plese fill Committe Remarks");
+		fixToast("Plese fill Committee Remarks");
 		idx+=1;
 	}
 
@@ -336,7 +336,7 @@ apcom.validateMandatoryDCRemark = function(param){
 	$(".toaster").html("");
 	var idx = 0;
 	if(param.CommitteeRemarks == ""){
-		fixToast("Plese fill Committe Remarks");
+		fixToast("Plese fill Committee Remarks");
 		idx+=1;
 	}
 

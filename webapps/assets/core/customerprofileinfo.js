@@ -317,7 +317,12 @@ info.addPreviousLoanDetails= function(){
     var b = $('.grid1 .k-grid-content').height();
     var data = $(".grid1").data("kendoGrid").dataSource.data();
     var temp = ko.mapping.toJS(info.templateGrid1);
+
     data.push(temp);
+    _.each(data, function(val, key) {
+        data[key].SrNo = "" + (key + 1);
+    })
+    $(".grid1").data("kendoGrid").refresh();
 
     if(b < 100){
         var h = $('.grid1 .k-grid-content').height();
@@ -333,7 +338,12 @@ info.addPreviousLoanDetailsDummy = function(){
     $(".grid10").data("kendoGrid").dataSource.data([]);
     var data = $(".grid10").data("kendoGrid").dataSource.data();
     var temp = ko.mapping.toJS(info.templateGrid1);
+
     data.push(temp);
+    _.each(data, function(val, key) {
+        data[key].SrNo = "" + (key + 1);
+    })
+    $(".grid10").data("kendoGrid").refresh();
 
     if(b < 100){
         var h = $('.grid10 .k-grid-content').height();
@@ -348,7 +358,13 @@ info.addDetailsPertainingtoBankers = function(){
     var b = $('.grid2 .k-grid-content').height();
     var data = $(".grid2").data("kendoGrid").dataSource.data();
     var temp = ko.mapping.toJS(info.templateGrid2);
+
     data.push(temp);
+    _.each(data, function(val, key) {
+        data[key].SrNo = "" + (key + 1);
+    })
+    $(".grid2").data("kendoGrid").refresh();
+
     if(b < 100){
         var h = $('.grid2 .k-grid-content').height();
 
@@ -364,7 +380,13 @@ info.addDetailsPertainingtoBankersDummy = function(){
     $(".grid20").data("kendoGrid").dataSource.data([]);
     var data = $(".grid20").data("kendoGrid").dataSource.data();
     var temp = ko.mapping.toJS(info.templateGrid2);
+
     data.push(temp);
+    _.each(data, function(val, key) {
+        data[key].SrNo = "" + (key + 1);
+    })
+    $(".grid20").data("kendoGrid").refresh();
+
     if(b < 100){
         var h = $('.grid20 .k-grid-content').height();
 

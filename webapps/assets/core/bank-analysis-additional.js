@@ -1840,6 +1840,10 @@ $(document).ready(function(){
                 {
                     "field": "BankAccount.BankName",
                     "name": "Bank Name"
+                },
+                {
+                    "field": "BankAccount.FacilityType",
+                    "name": "Facility Type"
                 }
             ],
             "Fund Based" : [
@@ -1909,16 +1913,14 @@ $(document).ready(function(){
             _.each(listCheck[facility], function (check) {
                 var v = _.get(databank, check.field, undefined)
                 console.log(v)
-                if (typeof(v) == "undefined" ||
-                    v == null ) {
+                if (typeof(v) == "undefined" || // v is undefined
+                    v == null || // v is null
+                    (typeof(v) == "string" && v.trim().length == 0) || // v is string and empty
+                    (_.isArray(v) && v.length == 0) || // v is array and empty
+                    (_.isArray(v) && _.findIndex(v, function(val) { return val.trim().length == 0; }) != -1)) // v is array, and one of them is empty string
+                    {
                     error = true
                     fixToast("Please fill " + _.get(databank, "BankAccount.BankName", "") + " " + check.name)
-                }else if(typeof v === "object"){
-                    console.log(_.filter(v,function(x){ return x != "" }).length)
-                    if(_.filter(v,function(x){ return x != "" }).length == 0){
-                        error = true
-                    fixToast("Please fill " + _.get(databank, "BankAccount.BankName", "") + " " + check.name)
-                    }
                 }
             })
         })

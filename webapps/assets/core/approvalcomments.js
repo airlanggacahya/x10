@@ -358,6 +358,31 @@ apcom.validateMandatoryDCRemark = function(param){
 	return true
 }
 
+apcom.APPDF = ko.observable("");
+
+apcom.GeneratePDF = function(callback){
+	$(".collapsible-header.active").trigger("click");
+	$("#tab0 .collapsible-header").trigger("click");
+	apcom.APPDF = ko.observable("");
+
+	kendo.drawing.drawDOM($("#tab0"),{
+            // forcePageBreak: ".new-page",
+            paperSize: "a3",
+            landscape :true,
+            margin: {top:"1cm",left:"0cm",right:"1cm",bottom:"1cm"},
+          })
+        .then(function (group) {
+          return kendo.drawing.exportPDF(group);
+        })
+        .done(function (data) {
+          apcom.APPDF(data);
+		  $(".collapsible-header.active").trigger("click");
+		  if(typeof callback === "function"){
+		  	callback();
+		  }
+    });
+}
+
 function processPdfDataURL(renderFun) {
 	var deferred = $.Deferred();
 

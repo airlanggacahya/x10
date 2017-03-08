@@ -540,9 +540,9 @@ databrowser.fullcoll = [
  			
 	 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
 	 						if(i==0){
-	 							str += "<td style='border-bottom: hidden;' id=' id='gua"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+	 							str += "<td class='line' style='border-bottom: hidden;' id='gua"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
 	 						}else{
-	 							str += "<td>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+	 							str += "<td class='line'>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
 	 						}
 	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
 	 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
@@ -591,9 +591,9 @@ databrowser.fullcoll = [
 	 			
 		 					if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'string'){
 		 						if(i==0){
-		 							str += "<td id='prom"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
+		 							str += "<td class='line' id='prom"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
 		 						}else{
-		 							str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
+		 							str += "<td class='line'>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
 		 						}
 		 						
 		 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'boolean'){
@@ -642,15 +642,15 @@ databrowser.fullcoll = [
 	 			
 		 					if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'string'){
 		 						if(i==0){
-		 							str += "<td id='dir"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
+		 							str += "<td class='line' id='dir"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
 		 						}else{
-		 							str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
+		 							str += "<td class='line'>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
 		 						}
 		 						
 		 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Director === 'boolean'){
 		 						if(dt.CA.detailofpromoters.biodata[i].Director){
 		 							if(i==0){
-		 								str += "<td class='line' id='dir"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>Yes</td>"
+		 								str += "<td class='line' class='line' id='dir"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>Yes</td>"
 		 							}else{
 		 								str += "<td class='line'>Yes</td>"
 		 							}
@@ -1077,9 +1077,10 @@ function showthis(e){
 		$("#"+e).closest("table").parent().parent().find(".hiddentd").hide();
 		$("#"+e).find("a").html("<i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i>")
 		$("#"+e).css('border-bottom', 'hidden')
+		$("#gua"+e).css('border-bottom', 'hidden')
 		$("#det"+e).css('border-bottom', 'hidden')
 		$("#dir"+e).css('border-bottom', 'hidden')
 		$("#prom"+e).css('border-bottom', 'hidden')
-		$("#gua"+e).css('border-bottom', 'hidden')
+		
 	}
 }

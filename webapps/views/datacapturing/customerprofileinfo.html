@@ -232,7 +232,7 @@ function refreshdata(accountdetailsMaster){
         pageSize:10
       });
 
-      if(data[0].FinancialReport.ExistingRelationship.length == 0){
+      if(data[0].FinancialReport.DetailsPertainingBanker.length == 0){
         info.addDetailsPertainingtoBankers();
       }
 

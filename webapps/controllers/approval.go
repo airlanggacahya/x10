@@ -5,8 +5,14 @@ import (
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"errors"
+	"os"
+	"strings"
+	"time"
 	// "fm	t"
 	"strconv"
+
+	"encoding/base64"
+	"io"
 
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
@@ -251,14 +257,35 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 
 	credit := NewCreditAnalysModel()
 
-	datas := DCFinalSanctionModel{}
+	datas := struct {
+		DCFinalSanctionModel
+		AppPdf    string
+		LoanPdf   string
+		CreditPdf string
+	}{}
 	err := k.GetPayload(&datas)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}
 
+	// DEBUG write to file
+	filename := time.Now().Format("20060102_0304")
+	for idx, val := range []string{datas.AppPdf, datas.LoanPdf, datas.CreditPdf} {
+		decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(val))
+		fp, err := os.Create("data/tmp/" + filename + "_" + strconv.Itoa(idx) + ".pdf")
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
+		io.Copy(fp, decoder)
+		fp.Close()
+	}
+
+	// BEGIN hit remote
+	//return CreateResult(false, nil, "NOT IMPLEMENTED")
+	// END hit remote
+
 	model := NewDCFinalSanctionModel()
-	err = model.Update(datas)
+	err = model.Update(datas.DCFinalSanctionModel)
 	if err != nil {
 		c.WriteLog("sarif")
 		return CreateResult(false, nil, err.Error())

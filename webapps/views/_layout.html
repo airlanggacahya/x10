@@ -555,20 +555,20 @@
         generateDDL();
       });
       function generateDDL(){
-        var url = "{{BaseUrl}}datacapturing/getcustomerprofilelist";
-        ajaxPost(url, "", function(data) {
-          filter().CustomerSearchAll(data);
-          var arr = [];
-          var arrkey = [];
-          for(var i in data){
-            if(arrkey.indexOf(data[i].customer_id) == -1){
-            arr.push({ customer_id : data[i].customer_id, customer_name : data[i].customer_id + " - " + data[i].customer_name})
-            arrkey.push(data[i].customer_id);
-          }
-          }
+        // var url = "{{BaseUrl}}datacapturing/getcustomerprofilelist";
+        // ajaxPost(url, "", function(data) {
+        //   filter().CustomerSearchAll(data);
+        //   var arr = [];
+        //   var arrkey = [];
+        //   for(var i in data){
+        //     if(arrkey.indexOf(data[i].customer_id) == -1){
+        //     arr.push({ customer_id : data[i].customer_id, customer_name : data[i].customer_id + " - " + data[i].customer_name})
+        //     arrkey.push(data[i].customer_id);
+        //   }
+        //   }
 
-          filter().CustomerSearchList(arr)
-        }, undefined);
+        //   filter().CustomerSearchList(arr)
+        // }, undefined);
       }
 
 //      (function () {

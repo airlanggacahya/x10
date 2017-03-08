@@ -3,7 +3,7 @@ package controllers
 import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/helper"
-	// "github.com/eaciit/cast"
+	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -359,6 +359,7 @@ func AttachCustomerProfile(conn dbox.IConnection, val tk.M) {
 	qprofile, err := conn.NewQuery().
 		From("CustomerProfile").
 		Where(dbox.Eq("_id", fmt.Sprintf("%d|%s", val["customer_id"], val["deal_no"]))).
+		Select("_id", "applicantdetail").
 		Cursor(nil)
 	if err != nil {
 		return
@@ -379,6 +380,7 @@ func AttachAccountDetail(conn dbox.IConnection, val tk.M) {
 	qprofile, err := conn.NewQuery().
 		From("AccountDetails").
 		Where(dbox.Eq("_id", fmt.Sprintf("%d|%s", val["customer_id"], val["deal_no"]))).
+		Select("_id", "accountsetupdetails").
 		Cursor(nil)
 	if err != nil {
 		return
@@ -404,13 +406,24 @@ func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} 
 	defer conn.Close()
 
 	resCust := []tk.M{}
-	qcust, err := conn.NewQuery().From("MasterCustomer").Cursor(nil)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
+	// qcust, err := conn.NewQuery().From("MasterCustomer").Cursor(nil)
+	// if err != nil {
+	// 	return CreateResult(false, nil, err.Error())
+	// }
 
-	defer qcust.Close()
-	qcust.Fetch(&resCust, 0, false)
+	// defer qcust.Close()
+	// qcust.Fetch(&resCust, 0, false)
+
+	if k.Session("CustomerProfileData") != nil {
+		arrSes := k.Session("CustomerProfileData").([]tk.M)
+		for _, val := range arrSes {
+			appdet := val.Get("applicantdetail").(tk.M)
+			appdet.Set("customer_id", cast.ToInt(appdet.GetString("CustomerID"), cast.RoundingAuto))
+			appdet.Set("deal_no", appdet.GetString("DealNo"))
+			appdet.Set("customer_name", appdet.GetString("CustomerName"))
+			resCust = append(resCust, appdet)
+		}
+	}
 
 	for _, val := range resCust {
 		AttachCustomerProfile(conn, val)

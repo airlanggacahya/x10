@@ -711,6 +711,16 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		// filtersAD = append(filtersAD, dbox.In("dealno", payload.Get("dealno").([]interface{})...))
 	}
 
+	if k.Session("CustomerProfileData") != nil {
+		arrSes := k.Session("CustomerProfileData").([]tk.M)
+		dealnos := []interface{}{}
+		for _, val := range arrSes {
+			appdet := val.Get("applicantdetail").(tk.M)
+			dealnos = append(dealnos, appdet.GetString("DealNo"))
+		}
+		filtersCA = append(filtersCA, dbox.In("applicantdetail.DealNo", dealnos...))
+	}
+
 	q := cn.NewQuery()
 
 	if len(filtersAD) > 0 {

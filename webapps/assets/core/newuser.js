@@ -41,9 +41,14 @@ ns.PreprocessUser = function(input){
 				if (rtype != undefined){
 					temp.RoleType.push(rtype.Roletype);
 				}else{
-					temp.RoleType.push("");
+					// temp.RoleType.push("");
+					temp.Catrole = _.filter(temp.Catrole.split("|"),function(xi){ return xi != xu })
+					temp.Catrole = temp.Catrole.join("|")
 				}
 			});
+			if (temp.Catrole == ""){
+				temp.Catrole = "To be assigned";
+			}
 			temp.RoleType = temp.RoleType.join("|");
 		}else{
 			temp.RoleType = "";

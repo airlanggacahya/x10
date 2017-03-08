@@ -493,13 +493,22 @@ databrowser.fullcoll = [
  						break;
  					}
 
- 					if(i==0){
- 						str += "<tr>"
+ 					if((dt.CA.detailofpromoters.biodata).length > 1){
+ 						
  						// str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "&nbsp; <a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a></td>"
- 						str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + "<a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a>&nbsp;&nbsp;&nbsp;"+ dt.CA.detailofpromoters.biodata[i].Name +"</td>"
- 						str+="</tr>"
+ 						if(i == 0){
+ 							str += "<tr>"
+ 							str += "<td class='line' role='gridcell' style='border-bottom: hidden;' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + "<a onclick='showthis(\""+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"\")'><i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i></a>&nbsp;&nbsp;&nbsp;"+ dt.CA.detailofpromoters.biodata[i].Name +"</td>"
+ 							str+="</tr>"
+ 						}else{
+ 							str += "<tr class='hiddentd'>"
+ 							str += "<td class='line' role='gridcell' id='"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>"+ dt.CA.detailofpromoters.biodata[i].Name +"</td>"
+ 							str+="</tr>"
+ 						}
+ 						
+ 						
  					}else{
- 						str += "<tr class='hiddentd'>"
+ 						str += "<tr >"
  						str += "<td class='line' role='gridcell'  id='"+  dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Name + "</td>"
  						str+="</tr>"
  					}
@@ -530,12 +539,27 @@ databrowser.fullcoll = [
  						str += elem				
  			
 	 					if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'string'){
-	 						str += "<td>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+	 						if(i==0){
+	 							str += "<td style='border-bottom: hidden;' id=' id='gua"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+	 						}else{
+	 							str += "<td>" + dt.CA.detailofpromoters.biodata[i].Guarantor +"</td>"
+	 						}
 	 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'boolean'){
 	 						if(dt.CA.detailofpromoters.biodata[i].Guarantor){
-		 						str += "<td class='line'>Yes</td>"
+	 							if(i==0){
+	 								str += "<td class='line' style='border-bottom: hidden;' id='gua"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>Yes</td>"
+	 							}else{
+	 								str += "<td class='line'>Yes</td>"
+	 							}
+	 							// str += "<td class='line' style='border-bottom: hidden;'>Yes</td>"
+		 						
 			 				}else{
-			 					str += "<td class='line'>No</td>"
+			 					if(i==0){
+			 						str += "<td class='line' style='border-bottom: hidden;' id='gua"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'>No</td>"
+			 					}else{
+			 						str += "<td class='line'>No</td>"
+			 					}
+			 					// str += "<td class='line' style='border-bottom: hidden;'>No</td>"
 			 				}
 	 					} 
 	 				}
@@ -566,12 +590,25 @@ databrowser.fullcoll = [
 	 						str += elem				
 	 			
 		 					if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'string'){
-		 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
+		 						if(i==0){
+		 							str += "<td id='prom"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
+		 						}else{
+		 							str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Promotor +"</td>"
+		 						}
+		 						
 		 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'boolean'){
 		 						if(dt.CA.detailofpromoters.biodata[i].Promotor){
-			 						str += "<td class='line'>"+"Yes</td>"
+		 							if(i==0){
+			 							str += "<td class='line' d='prom"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>"+"Yes</td>"
+			 						}else{
+			 							str += "<td class='line' >"+"Yes</td>"
+			 						}
 				 				}else{
-				 					str += "<td class='line'>"+"No</td>"
+				 					if(i==0){
+			 							str += "<td class='line' id='prom"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>"+"No</td>"
+			 						}else{
+			 							str += "<td class='line' >"+"No</td>"
+			 						}
 				 				}
 		 					} 
 		 					
@@ -604,12 +641,27 @@ databrowser.fullcoll = [
 	 						str += elem				
 	 			
 		 					if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'string'){
-		 						str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
+		 						if(i==0){
+		 							str += "<td id='dir"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
+		 						}else{
+		 							str += "<td>"+ dt.CA.detailofpromoters.biodata[i].Director +"</td>"
+		 						}
+		 						
 		 					} else if (typeof dt.CA.detailofpromoters.biodata[i].Director === 'boolean'){
 		 						if(dt.CA.detailofpromoters.biodata[i].Director){
-			 						str += "<td class='line'>Yes</td>"
+		 							if(i==0){
+		 								str += "<td class='line' id='dir"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>Yes</td>"
+		 							}else{
+		 								str += "<td class='line'>Yes</td>"
+		 							}
+			 						
 				 				}else{
-				 					str += "<td class='line'>No</td>"
+				 					if(i==0){
+				 						str += "<td class='line' id='dir"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'>No</td>"
+				 					}else{
+				 						str += "<td class='line'>No</td>"
+				 					}
+				 					
 				 				}
 		 					} 
 		 					
@@ -628,7 +680,7 @@ databrowser.fullcoll = [
 	 			template : function(dt){ 
 	 				var str = "<table class='intable'>";
 
-
+	 				var last = (dt.CA.detailofpromoters.biodata).length - 1;
 	 				for(var i in dt.CA.detailofpromoters.biodata){
 	 					if(dt.CA.detailofpromoters.biodata[i].Name == undefined){
 	 						break;
@@ -641,8 +693,12 @@ databrowser.fullcoll = [
 	 					}
 	 					str += elem
 
-	 					
-	 				str += "<td class='line'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Show More</a></td>" 
+	 					if(i==0){
+	 						str += "<td class='line' id='det"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Show More</a></td>" 
+	 					}else{
+	 						str += "<td class='line'><a style='cursor: pointer;' onclick='databrowser.GoProm(\""+ dt.CA._id +"\",\""+ dt.CA.detailofpromoters.biodata[i].Name +"\")'>Show More</a></td>" 
+	 					}
+	 				
 	 					str+="</tr>"
 
 	 			}
@@ -940,15 +996,42 @@ databrowser.GetDataGrid = function(){
 			logindate: filters.loginDateVal
 		}
 	}
-	ajaxPost("/accountdetail/getdatabrowser", param, function(data){
-		databrowser.normalisasiAD(data.Data);
+	// ajaxPost("/accountdetail/getdatabrowser", param, function(data){
+		// databrowser.normalisasiAD(data.Data);
 		dbgrid = $("#griddb").kendoGrid({
 			 dataSource: {
-			 	data : data.Data,
-			 	pageSize: 10
+			 	// data : data.Data,
+			 	// pageSize: 10
+			 	transport:{
+			 		read:{
+			 			url: "/accountdetail/getdatabrowser",
+			 			data: param,
+			 			dataType: "json",
+						type: "POST",
+						contentType: "application/json",
+			 		},
+			 		parameterMap: function(data) {
+			 			return JSON.stringify(data);
+			 		}
+			 	},
+			 	schema:{
+			 		data: function(data) {
+			 			if (data.Data.Count == 0) {
+			 				return dataSource;
+			 			}else{
+			 				databrowser.normalisasiAD(data.Data);
+			 				return data.Data;
+			 			}
+
+			 		},
+			 		total: "Total",
+			 	},
+			 	pageSize: 10,
+				serverPaging: true, // enable server paging
+				serverSorting: true,
 			 },
 			 columns : databrowser.fullcoll,
-			 groupable: true,
+			 // groupable: true,
 			 scrollable : true,
 			 pageable: true,
 			 height:450,
@@ -960,7 +1043,7 @@ databrowser.GetDataGrid = function(){
 			 	},10)
 			}
 		}).data("kendoGrid");
-	})
+	// })
 }
 
 databrowser.normalisasiAD = function(dt){
@@ -972,6 +1055,7 @@ databrowser.normalisasiAD = function(dt){
 }
 
 $(document).ready(function(){
+	$("body").css("overflow-x", "hidden")
 	databrowser.GetDataGrid();
 	$("#panel-filter .filterhide").hide();
 
@@ -984,9 +1068,18 @@ function showthis(e){
 	if(test.indexOf("plus") > -1){
 		$("#"+e).closest("table").parent().parent().find(".hiddentd").show();
 		$("#"+e).find("a").html("<i class='fa fa-minus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i>")
-		$(".line").css('border-bottom', '')
-	}else{
+		$("#"+e).css('border-bottom', '1px solid #ebebeb')
+		$("#gua"+e).css('border-bottom', '1px solid #ebebeb')
+		$("#prom"+e).css('border-bottom', '1px solid #ebebeb')
+		$("#dir"+e).css('border-bottom', '1px solid #ebebeb')
+		$("#det"+e).css('border-bottom', '1px solid #ebebeb')
+	}else if (test.indexOf("minus") > -1){
 		$("#"+e).closest("table").parent().parent().find(".hiddentd").hide();
 		$("#"+e).find("a").html("<i class='fa fa-plus-square-o' style='font-size: 12px; color: rgb(22, 136, 70);'></i>")
+		$("#"+e).css('border-bottom', 'hidden')
+		$("#det"+e).css('border-bottom', 'hidden')
+		$("#dir"+e).css('border-bottom', 'hidden')
+		$("#prom"+e).css('border-bottom', 'hidden')
+		$("#gua"+e).css('border-bottom', 'hidden')
 	}
 }

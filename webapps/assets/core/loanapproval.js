@@ -457,6 +457,19 @@ var exportPDF = function() {
    }
 }
 
+var exportPDFDataURL = function(handler) {
+    $('.apx-loading').show();
+    $('#headerpdf').show();
+    kendo.drawing.drawDOM($("#tab0"), {})
+        .then(function(group){
+            kendo.drawing.pdf.toDataURL(group, handler);
+        })
+        .done(function(data){
+            $('.apx-loading').hide()
+            $('#headerpdf').hide();
+        })
+}
+
 var promoterBackground = function(param) {
     var data = [];
     var settings = {

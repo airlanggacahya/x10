@@ -358,8 +358,37 @@ apcom.validateMandatoryDCRemark = function(param){
 	return true
 }
 
+function processPdfDataURL(renderFun) {
+	var deferred = $.Deferred();
+
+	renderFun(
+		function(dataurl) {
+			deferred.resolve(dataurl)
+		}
+	)
+
+	return deferred.promise();
+}
+
+apcom.renderPDFasString = function() {
+  var loanFrame = $("#LoanApprovalFrame").first()[0]
+  var creditFrame = $("#CreditScoreFrame").first()[0]
+
+  $.when(
+	  processPdfDataURL(loanFrame.contentWindow.exportPDFDataURL),
+	  processPdfDataURL(creditFrame.contentWindow.frp.exportPDFDataURL)
+  ).then(function (data1, data2) {
+	  console.log(data1);
+	  console.log(data2);
+  })
+}
+
 apcom.checkingAndSaveStatus = function(status) {
 	return function(){
+		// FOR DEBUG, STOP APPROVAL HERE
+		apcom.renderPDFasString();
+		return;
+
 		param = apcom.setParamSanction()
 		param.Date = (new Date()).toISOString()
 		param.LatestStatus = status

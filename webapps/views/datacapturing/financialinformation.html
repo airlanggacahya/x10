@@ -300,11 +300,12 @@ var val = $(e).is(":checked");
                     width: "120px",
                     editor: info.LoanAmount,
                     template:function(dt){
-                        if(dt.LoanAmount == null){
+                        var amount = dt.LoanAmount;
+                        if(typeof amount === "undefined" || amount === null || amount === ""){
                           return "";
                         }
-                        return app.formatnum(dt.LoanAmount)
-                      },                  
+                        return app.formatnum(amount)
+                      },                
                 },
                 {
                     field: "Tenure",
@@ -316,7 +317,14 @@ var val = $(e).is(":checked");
                     },
                     title: "Tenure",
                     width: "120px",
-                    editor: info.Tenure
+                    editor: info.Tenure,
+                    template:function(dt){
+                        var amount = dt.Tenure;
+                        if(typeof amount === "undefined" || amount === null || amount === ""){
+                          return "";
+                        }
+                        return app.formatnum(amount)
+                      }, 
                 },
                 {
                     field: "MonthlyInstallment",
@@ -328,7 +336,14 @@ var val = $(e).is(":checked");
                     },
                     title: "Monthly Installment",
                     width: "120px",
-                    editor: info.MonthlyInstallment
+                    editor: info.MonthlyInstallment,
+                    template:function(dt){
+                        var amount = dt.MonthlyInstallment;
+                        if(typeof amount === "undefined" || amount === null || amount === ""){
+                          return "";
+                        }
+                        return app.formatnum(amount)
+                      }, 
                 },
                 {
                     field: "OutstandingAmount",
@@ -342,11 +357,12 @@ var val = $(e).is(":checked");
                     width: "120px",
                     editor: info.Outstanding,
                     template:function(dt){
-                        if(dt.OutstandingAmount == null){
+                        var amount = dt.OutstandingAmount;
+                        if(typeof amount === "undefined" || amount === null || amount === ""){
                           return "";
                         }
-                        return app.formatnum(dt.OutstandingAmount)
-                      },                   
+                        return app.formatnum(amount)
+                      },                
                 },
                 {
                     field: "SecuredUnsecured",
@@ -388,8 +404,9 @@ var val = $(e).is(":checked");
                     this.closeCell();
                   }
 
-                  var colname = $(e.container[0]).children("input").first().attr("name");
-                  if (colname == "SrNo") {
+                  var ele = $(e.container[0]).children("input").first();
+                  var name = ele.attr("name")
+                  if (name == "SrNo") {
                     this.closeCell();
                   }
                 },
@@ -609,7 +626,7 @@ function typeOfLoanDropDownEditor(container, options) {
 //editor
 function dateeditor(container,options){
     var temp = ""
-    console.log(options.model.YearOpening)
+
     if(options.model.YearOpening == "") {
       temp = ""
     } else {

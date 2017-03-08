@@ -306,10 +306,13 @@ info.templateGrid2 = {
 info.templateGrid1 = {
     SrNo: "",
     Banks: "",
-    Loan: "",
-    Tenure: "",
-    Installment: "",
-    Outstanding: "",
+    Loan: 0,
+    Tenure: 0,
+    Installment: 0,
+    LoanAmount: 0,
+    MonthlyInstallment: 0,
+    Outstanding: 0,
+    OutstandingAmount: 0,
     SecUnsec: ""
 }
 
@@ -446,6 +449,9 @@ info.removeRowGrid3 = function(id){
 }
 
 info.LoanAmount = function(container, options){
+    if(options.model[options.field] == 0)
+        options.model[options.field] = ""
+
     $('<input data-bind="value:' + options.field + '"/>')
         .appendTo(container)
         .kendoNumericTextBox({
@@ -454,6 +460,9 @@ info.LoanAmount = function(container, options){
 }
 
 info.Tenure = function(container, options){
+    if(options.model[options.field] == 0)
+        options.model[options.field] = ""
+
     $('<input data-bind="value:' + options.field + '"/>')
         .appendTo(container)
         .kendoNumericTextBox({
@@ -462,6 +471,9 @@ info.Tenure = function(container, options){
 }
 
 info.Outstanding = function(container, options){
+    if(options.model[options.field] == 0)
+        options.model[options.field] = ""
+
     $('<input data-bind="value:' + options.field + '"/>')
         .appendTo(container)
         .kendoNumericTextBox({
@@ -470,6 +482,9 @@ info.Outstanding = function(container, options){
 }
 
 info.MonthlyInstallment = function(container, options){
+    if(options.model[options.field] == 0)
+        options.model[options.field] = ""
+
     $('<input data-bind="value:' + options.field + '"/>')
         .appendTo(container)
         .kendoNumericTextBox({
@@ -478,7 +493,6 @@ info.MonthlyInstallment = function(container, options){
 }
 
 info.detailPayment = function(e){
-    console.log("----------------------->>>>", e)
     data = []
     $.each(dataHierarchi(), function(i, set){
         $.each(set.Payment, function(i, dt){

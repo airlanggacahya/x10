@@ -67,7 +67,7 @@ filter().CustomerSearchVal.subscribe(function(value){
     <div class="jf-tbl col-md-8" style="display: none;">
       <!-- <div class="pull-left"><span class="filter-label">Customer:</span></div> -->
       <!-- <div class="col-sm-4 pull-left"> -->
-        <select class="filter-select filter-font pull-left" name="page" id="customer" data-bind="kendoDropDownList: {data:model.CustomerList(), value:filter().CustomerSearchVal, dataValueField: 'applicantdetail.CustomerID', dataTextField: 'FullName', optionLabel: 'Choose Customer', filter:'contains'}" ></select>
+        <select class="filter-select filter-font pull-left" name="page" id="customer" data-bind="kendoDropDownList: {data:filter().CustomerSearchAll, value:filter().CustomerSearchVal, dataValueField: 'applicantdetail.CustomerID', dataTextField: 'FullName', optionLabel: 'Choose Customer', filter:'contains'}" ></select>
       <!-- </div> -->
       <!-- <div class="pull-left"><span class="filter-label" style="margin-left: 13px">Deal No:</span></div> -->
       <!-- <div class="col-sm-4 pull-left"> -->
@@ -213,8 +213,13 @@ function autoSetFilter() {
 //   // }
 // }
 
+function filterDDLCA (){
+  filter().CustomerSearchAll(_.uniqBy(model.CustomerList(),'FullName'));
+}
+
 $(document).ready(function(){
-  generateDDL();
+  filterDDLCA();
+  // generateDDL();
   setTimeout(function(){
     refreshFilter = (function() {
       var cached_function = refreshFilter;

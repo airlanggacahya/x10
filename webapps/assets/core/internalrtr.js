@@ -165,6 +165,9 @@ intrtr.getDataIntRTR = function(dealNo, customerId){
 				intrtr.isFreeze(false);
 				$(".btn-confirm").prop("disabled", false);
 			}
+		}else{
+		$(".btn-confirm").prop("disabled", false);
+			intrtr.isFreeze(false);
 		}
 
 		intrtr.loadGrid();

@@ -491,7 +491,6 @@ intrtr.getConfirmed = function(status, isfreeze){
 	var temp = {}
 
 	if((intrtr.dataTemp()).length == 0){
-		alert("masuk")
 		var customerId = filter().CustomerSearchVal();
 		var dealNo = filter().DealNumberSearchVal();
 		var id = customerId +"|"+dealNo;
@@ -501,7 +500,6 @@ intrtr.getConfirmed = function(status, isfreeze){
 		temp.Status = status;
 		temp.Isfreeze = isfreeze;
 		intrtr.dataTemp(temp)
-		console.log(temp)
 	}
 
 	// intrtr.dsataTemp() =temp;

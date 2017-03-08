@@ -181,6 +181,8 @@ function refreshdata(accountdetailsMaster){
         $('#CapitalExpansionPlansBoolDetail').prop("checked", false);
       }
 
+
+
       // Process Sr No
       _.each(data[0].FinancialReport.PreviousLoansDetail, function(val, key) {
         data[0].FinancialReport.PreviousLoansDetail[key].SrNo = "" + (key + 1);
@@ -201,6 +203,10 @@ function refreshdata(accountdetailsMaster){
         data:data[0].FinancialReport.PreviousLoansDetail,
         pageSize:10
       });
+
+      if(data[0].FinancialReport.PreviousLoansDetail.length == 0){
+        info.addPreviousLoanDetails();
+      }
 
       var h1 = $('.grid1 .k-grid-content').height();
 
@@ -225,6 +231,10 @@ function refreshdata(accountdetailsMaster){
         data:data[0].FinancialReport.ExistingRelationship,
         pageSize:10
       });
+
+      if(data[0].FinancialReport.ExistingRelationship.length == 0){
+        info.addDetailsPertainingtoBankers();
+      }
 
       var h2 = $('.grid2 .k-grid-content').height();
 

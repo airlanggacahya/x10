@@ -74,7 +74,7 @@ intrtr.showDetails = ko.observable(false);
 intrtr.dataTemp = ko.observableArray([]);
 intrtr.dataInternalSnapshot = ko.observableArray([]);
 intrtr.dataInternalDealist = ko.observableArray([]);
-intrtr.isFreeze = ko.observable();
+intrtr.isFreeze = ko.observable(false);
 intrtr.status = ko.observable();
 
 intrtr.getData = function(){
@@ -488,7 +488,23 @@ intrtr.getConfirmed = function(status, isfreeze){
 	// 	return
 	// }
 
+	var temp = {}
 
+	if((intrtr.dataTemp()).length == 0){
+		alert("masuk")
+		var customerId = filter().CustomerSearchVal();
+		var dealNo = filter().DealNumberSearchVal();
+		var id = customerId +"|"+dealNo;
+		temp.Id = id;
+		temp.Dealist = [];
+		temp.Snapshot = [];
+		temp.Status = status;
+		temp.Isfreeze = isfreeze;
+		intrtr.dataTemp(temp)
+		console.log(temp)
+	}
+
+	// intrtr.dsataTemp() =temp;
 	intrtr.dataTemp().Status = status;
 	intrtr.dataTemp().Isfreeze = isfreeze;
 	ajaxPost("/internalrtr/internalrtrconfirmed", intrtr.dataTemp(), function(res){

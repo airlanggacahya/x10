@@ -532,7 +532,12 @@ databrowser.fullcoll = [
  					}
 
  					if(dt.CA.detailofpromoters.biodata[i].Guarantor === null) {
- 						str += elem+"<td></td></tr>"
+ 						if(i==0){
+ 							str += elem+"<td class='line' style='border-bottom: hidden;' id='gua"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"'></td></tr>"
+ 						}else{
+ 							str += elem+"<td class='line'></td></tr>"
+ 						}
+ 						
  					} else if(typeof dt.CA.detailofpromoters.biodata[i].Guarantor === 'undefined'){ 						
  						break;
  					} else {
@@ -583,7 +588,12 @@ databrowser.fullcoll = [
 	 					}
 
 	 					if(dt.CA.detailofpromoters.biodata[i].Promotor === null) {
-	 						str += elem+"<td></td></tr>"
+	 						if(i==0){
+	 							str += elem+"<td class='line' id='prom"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'></td></tr>"	
+	 						}else{
+	 							str += elem+"<td class='line'></td></tr>"
+	 						}
+	 						
 	 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Promotor === 'undefined'){ 						
 	 						break;
 	 					} else {
@@ -634,7 +644,12 @@ databrowser.fullcoll = [
 	 					}
 
 	 					if(dt.CA.detailofpromoters.biodata[i].Director === null) {
-	 						str += elem+"<td></td></tr>"
+	 						if(i==0){
+	 							str += elem+"<td class='line' id='dir"+ dt.CA._id.replace("|").replace("-") + dt.CA.detailofpromoters.biodata[i].Name.split(" ").join("") + i +"' style='border-bottom: hidden;'></td></tr>"
+	 						}else{
+	 							str += elem+"<td class='line'></td></tr>"
+	 						}
+	 						
 	 					} else if(typeof dt.CA.detailofpromoters.biodata[i].Director === 'undefined'){ 						
 	 						break;
 	 					} else {

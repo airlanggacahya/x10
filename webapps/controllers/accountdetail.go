@@ -731,8 +731,8 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 	csr, e := q.
 		From("AccountDetails").
 		// Order(SORT).
-		// Take(take).
-		// Skip(skip).
+		Take(payload.GetInt("take")).
+		Skip(payload.GetInt("skip")).
 		Cursor(nil)
 	if e != nil {
 		res.SetError(e)
@@ -769,8 +769,8 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 	csr, e = q.
 		From("CustomerProfile").
 		// Order(SORT).
-		// Take(take).
-		// Skip(skip).
+		Take(payload.GetInt("take")).
+		Skip(payload.GetInt("skip")).
 		Cursor(nil)
 	if e != nil {
 		res.SetError(e)
@@ -785,8 +785,11 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		return res
 	}
 
-	finalres := []tk.M{}
+	result := tk.M{}
+	// total := tk.M{}
+	result.Set("Total", csr.Count())
 
+	finalres := []tk.M{}
 	for _, val := range resultsCA {
 		re := tk.M{}
 		re.Set("CA", val)
@@ -801,7 +804,7 @@ func (c *AccountDetailController) GetDataBrowser(k *knot.WebContext) interface{}
 		finalres = append(finalres, re)
 	}
 
-	res.SetData(finalres)
+	result.Set("Data", finalres)
 
-	return res
+	return result
 }

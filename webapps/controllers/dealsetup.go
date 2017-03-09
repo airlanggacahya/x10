@@ -757,6 +757,7 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 func SendJSONtoOmnifin(custid string, dealno string) error {
 	res := tk.M{}
 	c := ReadConfig()
+	dataLog := tk.M{}
 
 	usercred := tk.M{}.Set("userId", c["userOmnifin"]).Set("userPassword", c["passOmnifin"])
 	res.Set("userCredentials", usercred)
@@ -775,21 +776,37 @@ func SendJSONtoOmnifin(custid string, dealno string) error {
 	res.Set("processedDealDetails", procdetail)
 
 	tk.Printfn(" ----- SEND TO OMNIFIN ------ %v ------", res)
+	id := custid + "|" + dealno
+	dataLog.Set("dataSent", res)
+	dataLog.Set("createdDate", time.Now())
+	dataLog.Set("_id", id+cast.ToString(dataLog.Get("createdDate")))
 
 	resp, err := doSendBackRequest("http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit", res)
+	dataLog.Set("dataReceived", resp)
+	CreateLogSendBack(dataLog)
+
 	if err != nil {
+		dataLog.Set("error", err.Error())
+		CreateLogSendBack(dataLog)
 		return err
 	}
 	defer resp.Close()
 
 	jsonResp, err := ioutil.ReadAll(resp)
 	if err != nil {
+		dataLog.Set("error", err.Error())
+		CreateLogSendBack(dataLog)
 		return err
 	}
 
 	data := tk.M{}
 	err = json.Unmarshal(jsonResp, &data)
+	dataLog.Set("dataReceived", data)
+	CreateLogSendBack(dataLog)
+
 	if err != nil {
+		dataLog.Set("error", err.Error())
+		CreateLogSendBack(dataLog)
 		return err
 	}
 
@@ -852,6 +869,33 @@ func (c *DealSetUpController) SendBack(k *knot.WebContext) interface{} {
 	}
 
 	return res
+}
+
+func CreateLogSendBack(LogData tk.M) error {
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		tk.Println(err.Error())
+		return err
+	}
+
+	qinsert := conn.NewQuery().
+		From("OmnifinSendBackLog").
+		SetConfig("multiexec", true).
+		Save()
+
+	csc := map[string]interface{}{"data": LogData}
+	err = qinsert.Exec(csc)
+	if err != nil {
+		tk.Println(err.Error())
+		return err
+	}
+
+	if LogData.Get("error") != nil {
+		// SendMail(LogData.GetString("error"), LogData.GetString("_id"))
+	}
+
+	return nil
 }
 
 func (c *DealSetUpController) CheckData(k *knot.WebContext) interface{} {

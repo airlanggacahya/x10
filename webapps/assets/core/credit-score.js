@@ -614,3 +614,20 @@ frp.exportPDF = function() {
    $(".button-hidden").show()
    $(".fa-arrow-right").show()
 }
+
+frp.exportPDFDataURL = function(handler) {
+	frp.showDetail(false)
+	frp.render()
+
+	$(".fa-arrow-right").hide()
+	$(".button-hidden").hide()
+	$(".customerrow").show()
+
+	 kendo.drawing.drawDOM($(".form-container")).then(function(group){
+      kendo.drawing.pdf.toDataURL(group, handler);
+   });
+
+	$(".customerrow").hide()
+   $(".button-hidden").show()
+   $(".fa-arrow-right").show()
+}

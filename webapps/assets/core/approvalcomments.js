@@ -358,78 +358,103 @@ apcom.validateMandatoryDCRemark = function(param){
 	return true
 }
 
-apcom.APPDF = ko.observable("");
-
-apcom.GeneratePDF = function(callback){
+apcom.GeneratePDF = function(handler){
 	$(".collapsible-header.active").trigger("click");
 	$("#tab0 .collapsible-header").trigger("click");
-	apcom.APPDF = ko.observable("");
 
 	kendo.drawing.drawDOM($("#tab0"),{
-            // forcePageBreak: ".new-page",
-            paperSize: "a3",
-            landscape :true,
-            margin: {top:"1cm",left:"0cm",right:"1cm",bottom:"1cm"},
-          })
-        .then(function (group) {
-          return kendo.drawing.exportPDF(group);
-        })
-        .done(function (data) {
-          apcom.APPDF(data);
-		  $(".collapsible-header.active").trigger("click");
-		  if(typeof callback === "function"){
-		  	callback();
-		  }
-    });
+		// forcePageBreak: ".new-page",
+		paperSize: "a3",
+		landscape :true,
+		margin: {top:"1cm",left:"0cm",right:"1cm",bottom:"1cm"},
+    }).then(function (group) {
+		kendo.drawing.pdf.toDataURL(group, handler);
+	}).done(function () {
+		$(".collapsible-header.active").trigger("click");
+	});
+}
+
+function processPdfDataURL(renderFun) {
+	var deferred = $.Deferred();
+
+	renderFun(
+		function(dataurl) {
+			deferred.resolve(dataurl)
+		}
+	)
+
+	return deferred.promise();
+}
+
+apcom.renderPDFasString = function() {
+  var deferred = $.Deferred();
+
+  var loanFrame = $("#LoanApprovalFrame").first()[0]
+  var creditFrame = $("#CreditScoreFrame").first()[0]
+
+  $.when(
+	  processPdfDataURL(apcom.GeneratePDF),
+	  processPdfDataURL(loanFrame.contentWindow.exportPDFDataURL),
+	  processPdfDataURL(creditFrame.contentWindow.frp.exportPDFDataURL)
+  ).then(function (data1, data2, data3) {
+	  // Remove pesky data url header
+	  data1 = data1.substring(28)
+	  data2 = data2.substring(28)
+	  data3 = data3.substring(28)
+	  // promise fullfilled
+	  deferred.resolve(data1, data2, data3)
+  })
+
+  return deferred.promise();
 }
 
 apcom.checkingAndSaveStatus = function(status) {
 	return function(){
-		param = apcom.setParamSanction()
-		param.Date = (new Date()).toISOString()
-		param.LatestStatus = status
+		$.when(apcom.renderPDFasString()).then(function(appPdf, loanPdf, creditPdf) {
+			param = apcom.setParamSanction()
+			param.Date = (new Date()).toISOString()
+			param.LatestStatus = status
+			param.appPdf = appPdf
+			param.loanPdf = loanPdf
+			param.creditPdf = creditPdf
 
-		if(status == "Approved" || status == "Rejected"){
-			var valid = apcom.validateMandatoryDC(param);
-			if(!valid){
-				return false;
-			}
-		}else if(status == "On Hold" || status == "Sent Back"){
-			var valid = apcom.validateMandatoryDCRemark(param);
-			if(!valid){
-				return false;
-			}
-		}else{
-			$(".toaster").html("");
-		}
-
-		apcom.saveSanctionFix(param, function(res){
-			if(res.success != true){
-				swal("Error", res.message, "error")
-			}else{
-				var tempDate = (new Date()).toISOString()
-				apcom.sanction.Date(tempDate)
-
-				tempDate = moment(apcom.sanction.Date()).format("DD-MMM-YYYY") 
-				apcom.dcsanctiondatestring(tempDate)
-
-				apcom.sanction.LatestStatus(status)
-				
-				apcom.checkLatestStatus()
-
-				if(apcom.sanction.LatestStatus() === "Sent Back") {
-					apcom.setFreezeCommentCA(false)
-					apcom.isfreezeCA(false)
+			if(status == "Approved" || status == "Rejected"){
+				var valid = apcom.validateMandatoryDC(param);
+				if(!valid){
+					return false;
 				}
-				apcom.latestStatusStr(apcom.sanction.LatestStatus())
-				swal("Success", "Data Successfully " + status, "success");
+			}else if(status == "On Hold" || status == "Sent Back"){
+				var valid = apcom.validateMandatoryDCRemark(param);
+				if(!valid){
+					return false;
+				}
+			}else{
+				$(".toaster").html("");
 			}
+
+			apcom.saveSanctionFix(param, function(res){
+				if(res.success != true){
+					swal("Error", res.message, "error")
+				}else{
+					var tempDate = (new Date()).toISOString()
+					apcom.sanction.Date(tempDate)
+
+					tempDate = moment(apcom.sanction.Date()).format("DD-MMM-YYYY") 
+					apcom.dcsanctiondatestring(tempDate)
+
+					apcom.sanction.LatestStatus(status)
+					
+					apcom.checkLatestStatus()
+
+					if(apcom.sanction.LatestStatus() === "Sent Back") {
+						apcom.setFreezeCommentCA(false)
+						apcom.isfreezeCA(false)
+					}
+					apcom.latestStatusStr(apcom.sanction.LatestStatus())
+					swal("Success", "Data Successfully " + status, "success");
+				}
+			})
 		})
-
-
-		// apcom.sanction.Date
-
-		// console.log(status)
 	}
 }
 

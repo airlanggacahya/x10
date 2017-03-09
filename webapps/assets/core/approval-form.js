@@ -378,6 +378,22 @@ grant = function(){
   }
 }
 
+// Random Int Round from MDN
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+loadRenderingFrame = function(custId, dealId) {
+  var loanFrame = $("#LoanApprovalFrame")
+  var creditFrame = $("#CreditScoreFrame")
+
+  // determine current base URLRender
+  var base = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+  var query = "?customerid="+custId+"&dealno="+dealId+"&_t="+getRandomInt(0,999999)
+  loanFrame.attr("src", base+"/loanapproval/default"+query)
+  creditFrame.attr("src", base+"/creditscorecard/new"+query)
+}
+
 refreshFilter = function(){
   countUnconfirm(0)
   $(".toaster").html("")
@@ -391,6 +407,9 @@ refreshFilter = function(){
   var param = {}
   param.customerid = r.customerId().split('|')[0]
   param.dealno = r.customerId().split('|')[1]
+
+  loadRenderingFrame(param.customerid, param.dealno)
+
   URLRender()
   r.AllData('')
   r.isLoading(true)

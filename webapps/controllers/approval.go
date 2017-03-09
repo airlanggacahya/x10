@@ -8,7 +8,6 @@ import (
 	. "eaciit/x10/webapps/models"
 	"errors"
 	"math/rand"
-	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -283,8 +282,49 @@ type DFFRequest struct {
 	ProcessedDealDetails DFFOmnifinDetails      `json:"processedDealDetails"`
 }
 
+var ErrorOmnifinNotFound = errors.New("Omnifin data not found")
+var ErrorStatusNotOk = errors.New("HTTP Status Not Ok")
+
 func sendOmnifinApproval(data DFFinalSanctionInput) error {
-	dealid, err := strconv.Atoi(data.DealNo)
+	omnifin, err := FetchOmnifinXML(strconv.Itoa(data.CustomerId), data.DealNo)
+	if err != nil {
+		return err
+	}
+	if len(omnifin) == 0 {
+		return ErrorOmnifinNotFound
+	}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return err
+	}
+
+	cur, err := conn.NewQuery().
+		From("CreditScorecard").
+		Where(
+			dbox.And(
+				dbox.Eq("CustomerId", data.CustomerId),
+				dbox.Eq("DealNo", data.DealNo),
+			),
+		).
+		Cursor(nil)
+	if err != nil {
+		return err
+	}
+
+	csc := tk.M{}
+	err = cur.Fetch(&csc, 1, true)
+	if err != nil {
+		return err
+	}
+
+	pf, err := strconv.ParseFloat(data.PF, 64)
+	if err != nil {
+		return err
+	}
+
+	pg, err := strconv.ParseFloat(data.PG, 64)
 	if err != nil {
 		return err
 	}
@@ -296,12 +336,12 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 			Password: "44382d31c7fc609d8ff46ad3add2e4a5",
 		},
 		DFFOmnifinDetails{
-			DealId:                          dealid,
-			Score:                           0,
-			SanctionAmount:                  0,
+			DealId:                          omnifin[0].GetInt("dealId"),
+			Score:                           csc.GetFloat64("FinalScore"),
+			SanctionAmount:                  data.Amount,
 			ROI:                             data.ROI,
-			ManagementFee:                   0,
-			PersonalGuarantee:               0,
+			ManagementFee:                   pf,
+			PersonalGuarantee:               pg,
 			ApprovalStatus:                  "A",
 			ApprovalRemark:                  data.CommitteeRemarks,
 			LoanApprovalFormReport:          data.AppPdf,
@@ -311,18 +351,26 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 	}
 
 	json.NewEncoder(buf).Encode(req)
-	resp, err := http.Post(
-		"http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit",
-		"application/json",
-		buf,
-	)
+	// resp, err := http.Post(
+	// 	"http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit",
+	// 	"application/json",
+	// 	buf,
+	// )
+	filename := time.Now().Format("20060102_030405.000") + fmt.Sprintf("-%04d", rand.Intn(10000))
+	fp, err := os.Create("data/tmp/json_" + filename + "_.txt")
+	if err != nil {
+		return err
+	}
+	io.Copy(fp, buf)
+	fp.Close()
+
 	if err != nil {
 		return err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil
-	}
+	// if resp.StatusCode != http.StatusOK {
+	// 	return ErrorStatusNotOk
+	// }
 
 	return nil
 }
@@ -357,9 +405,14 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 		fp.Close()
 	}
 
+	err = sendOmnifinApproval(datas)
+	if err != nil {
+		CreateResult(false, nil, err.Error())
+	}
+
 	// BEGIN hit remote
 	//return CreateResult(false, nil, "NOT IMPLEMENTED")
-	return CreateResult(true, nil, "")
+	//return CreateResult(true, nil, "")
 	// END hit remote
 
 	model := NewDCFinalSanctionModel()

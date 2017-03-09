@@ -1202,8 +1202,8 @@ adf.LetterConfirm = function(){
 	adf.form.LoanDetails.Status(0);
 	adf.form.CustomerBussinesMix.Status(0);
 	adf.form.DistributorMix.Status(0);
-	$("#onreset").prop( "disabled", false );
-	$("#onsave").prop( "disabled", false );
+	$("#onreset").prop( "disabled", true );
+	$("#onsave").prop( "disabled", true );
 	$("#LoanAmount").prop( "disabled", true );
 	$("#addpromotor").prop("disabled", false);
 	$("#addvendor").prop("disabled", false);
@@ -3626,6 +3626,7 @@ return function(){
 	}
 }
 
+// ======== button bar fixed
 adf.scroll = function(){
 	var elementPosition = $('.btnFixed').offset();
 	$(window).scroll(function(){

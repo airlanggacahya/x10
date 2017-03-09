@@ -269,7 +269,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 	}
 
 	// DEBUG write to file
-	filename := time.Now().Format("20060102_0304")
+	filename := time.Now().Format("20060102_030405.000")
 	for idx, val := range []string{datas.AppPdf, datas.LoanPdf, datas.CreditPdf} {
 		decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(val))
 		fp, err := os.Create("data/tmp/" + filename + "_" + strconv.Itoa(idx) + ".pdf")
@@ -282,6 +282,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 
 	// BEGIN hit remote
 	//return CreateResult(false, nil, "NOT IMPLEMENTED")
+	//return CreateResult(true, nil, "")
 	// END hit remote
 
 	model := NewDCFinalSanctionModel()

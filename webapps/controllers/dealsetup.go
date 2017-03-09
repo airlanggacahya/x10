@@ -14,7 +14,14 @@ import (
 	"time"
 	// "github.com/eaciit/dbox"
 	// . "eaciit/x10/webapps/connection"
+	"bytes"
 	. "eaciit/x10/webapps/models"
+
+	"encoding/json"
+	"io"
+
+	"io/ioutil"
+	"net/http"
 
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -43,6 +50,38 @@ func (c *DealSetUpController) Default(k *knot.WebContext) interface{} {
 	return DataAccess
 }
 
+func FetchOmnifinXML(cid string, dealno string) ([]tk.M, error) {
+	cn, err := GetConnection()
+	defer cn.Close()
+	results := []tk.M{}
+
+	if err != nil {
+		return results, err
+	}
+
+	filters := []*dbox.Filter{}
+
+	filters = append(filters, dbox.Eq("dealNo", dealno))
+	filters = append(filters, dbox.Eq("dealCustomerId", cast.ToInt(cid, cast.RoundingAuto)))
+
+	csr, err := cn.NewQuery().
+		Where(dbox.And(filters...)).
+		From("OmnifinXML").
+		Cursor(nil)
+	defer csr.Close()
+
+	if err != nil {
+		return results, err
+	}
+
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return results, err
+	}
+
+	return results, nil
+}
+
 func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
@@ -54,18 +93,23 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 		return res
 	}
 
-	cn, err := GetConnection()
-	defer cn.Close()
+	// cn, err := GetConnection()
+	// defer cn.Close()
 
-	if err != nil {
-		res.SetError(err)
-		return res
-	}
+	// if err != nil {
+	// 	res.SetError(err)
+	// 	return res
+	// }
 
-	filters := []*dbox.Filter{}
+	// filters := []*dbox.Filter{}
 
 	cid := payload.GetString("custid")
 	dealno := payload.GetString("dealno")
+
+	if dealno == "" || cid == "" {
+		res.SetError(errors.New("Parameter Invalid"))
+		return res
+	}
 
 	err, cou, infos, curId, latestObj := checkDealSetup(cid, dealno)
 	if err != nil {
@@ -82,27 +126,7 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 		}
 	}
 
-	if dealno != "" && cid != "" {
-		filters = append(filters, dbox.Eq("dealNo", dealno))
-		filters = append(filters, dbox.Eq("dealCustomerId", cast.ToInt(cid, cast.RoundingAuto)))
-	} else {
-		res.SetError(errors.New("Parameter Invalid"))
-		return res
-	}
-
-	csr, e := cn.NewQuery().
-		Where(dbox.And(filters...)).
-		From("OmnifinXML").
-		Cursor(nil)
-	defer csr.Close()
-
-	if e != nil {
-		res.SetError(e)
-		return res
-	}
-
-	results := []tk.M{}
-	err = csr.Fetch(&results, 0, false)
+	results, err := FetchOmnifinXML(cid, dealno)
 	if err != nil {
 		res.SetError(err)
 		return res
@@ -730,6 +754,70 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 	return nil
 }
 
+func SendJSONtoOmnifin(custid string, dealno string) error {
+	res := tk.M{}
+	c := ReadConfig()
+
+	usercred := tk.M{}.Set("userId", c["userOmnifin"]).Set("userPassword", c["passOmnifin"])
+	res.Set("userCredentials", usercred)
+
+	results, err := FetchOmnifinXML(custid, dealno)
+	if err != nil {
+		return err
+	}
+
+	OmXML := results[len(results)-1]
+
+	procdetail := tk.M{}
+	procdetail.Set("dealId", cast.ToString(OmXML.GetInt("dealId")))
+	procdetail.Set("approvalStatus", "X")
+	procdetail.Set("approvalRemark", "Send back from CAT stage")
+	res.Set("processedDealDetails", procdetail)
+
+	tk.Printfn(" ----- SEND TO OMNIFIN ------ %v ------", res)
+
+	resp, err := doSendBackRequest("http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit", res)
+	if err != nil {
+		return err
+	}
+	defer resp.Close()
+
+	jsonResp, err := ioutil.ReadAll(resp)
+	if err != nil {
+		return err
+	}
+
+	data := tk.M{}
+	err = json.Unmarshal(jsonResp, &data)
+	if err != nil {
+		return err
+	}
+
+	tk.Printfn(" ----- RESPOND FROM OMNIFIN ------ %v ------", data)
+
+	if data.GetString("operationStatus") == "0" {
+		return errors.New("Failed to Send Back - " + data.GetString("operationMessage"))
+	}
+
+	return nil
+}
+
+func doSendBackRequest(url string, body tk.M) (io.ReadCloser, error) {
+	buf := new(bytes.Buffer)
+	json.NewEncoder(buf).Encode(body)
+
+	resp, err := http.Post(url, "application/json", buf)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Response is not HTTP 200 OK")
+	}
+
+	return resp.Body, nil
+}
+
 func (c *DealSetUpController) SendBack(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
@@ -751,9 +839,16 @@ func (c *DealSetUpController) SendBack(k *knot.WebContext) interface{} {
 	// 	return res
 	// }
 
-	err := updateDealSetupLatestData(cid, dealno, "ds", SendBackOmnifin)
+	err := SendJSONtoOmnifin(cid, dealno)
 	if err != nil {
 		res.SetError(err)
+		return res
+	}
+
+	err = updateDealSetupLatestData(cid, dealno, "ds", SendBackOmnifin)
+	if err != nil {
+		res.SetError(err)
+		return res
 	}
 
 	return res

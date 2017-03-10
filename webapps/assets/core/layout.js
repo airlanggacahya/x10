@@ -241,12 +241,13 @@ vm.accordionSideBar = function(){
 			if(panel.style.display === 'block'){
 				panel.style.display = "none";
 				panel.style.color = "white";
+				panel.style.transition = "0.5s";
 				
 
 			}else{
-				// console.log("------>>",i)
 				panel.style.display = 'block';
 				panel.style.color = 'white';
+				panel.style.transition = "0.5s";
 				
 			}
 

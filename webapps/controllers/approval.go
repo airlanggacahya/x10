@@ -454,7 +454,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 	}
 
 	// BEGIN hit remote
-	return CreateResult(false, nil, "NOT IMPLEMENTED")
+	// return CreateResult(false, nil, "NOT IMPLEMENTED")
 	//return CreateResult(true, nil, "")
 	// END hit remote
 

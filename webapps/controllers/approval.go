@@ -860,17 +860,18 @@ func DeleteAllDatas(CustomerID string, DealNo string, TableName string) error {
 	custInt := cast.ToInt(CustomerID, cast.RoundingAuto)
 	concate := CustomerID + "|" + DealNo
 
-	//delete query
 	ctx, e := GetConnection()
 	if e != nil {
 		return e
 	}
+
+	defer ctx.Close()
+
 	que := ctx.NewQuery().
 		Delete().
 		From(TableName).
 		SetConfig("multiexec", true)
 
-	defer ctx.Close()
 	defer que.Close()
 
 	switch TableName {
@@ -878,13 +879,13 @@ func DeleteAllDatas(CustomerID string, DealNo string, TableName string) error {
 		que = que.Where(dbox.Eq("_id", concate))
 	case "InternalRTR":
 		que = que.Where(dbox.Eq("_id", concate))
-	case "BankAnalysisV2":
+	case "BankAnalysisV2", "CreditAnalys", "CreditAnalysDraft":
 		que = que.Where(dbox.Eq("CustomerId", custInt), dbox.Eq("DealNo", DealNo))
 	case "CustomerProfile":
 		que = que.Where(dbox.Eq("_id", concate))
 	case "RatioInputData":
 		que = que.Where(dbox.Eq("customerid", concate))
-	case "RepaymentRecords":
+	case "RepaymentRecords", "CreditScorecard":
 		que = que.Where(dbox.Eq("CustomerId", CustomerID), dbox.Eq("DealNo", DealNo))
 	case "StockandDebt":
 		que = que.Where(dbox.Eq("customerid", concate))
@@ -899,9 +900,34 @@ func DeleteAllDatas(CustomerID string, DealNo string, TableName string) error {
 	}
 
 	e = que.Exec(nil)
+
 	if e != nil {
 		return e
 	}
 
+	que = ctx.NewQuery().
+		Delete().
+		From(TableName+"Confirmed").
+		SetConfig("multiexec", true)
+	e = que.Exec(nil)
+
+	if e != nil {
+		return e
+	}
+
+	return nil
+}
+
+func ResetSession(k *knot.WebContext) error {
+	resroles := k.Session("roles").([]SysRolesModel)
+
+	if len(resroles) > 0 {
+		k.SetSession("CustomerProfileData", nil)
+		for _, valx := range resroles {
+			if valx.Status {
+				new(LoginController).GetListUsersByRole(k, valx, k.Session("username").(string))
+			}
+		}
+	}
 	return nil
 }

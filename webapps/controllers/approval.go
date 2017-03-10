@@ -7,7 +7,8 @@ import (
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"errors"
-	"math/rand"
+	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -18,7 +19,7 @@ import (
 	"encoding/json"
 	"io"
 
-	"fmt"
+	"io/ioutil"
 
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
@@ -273,9 +274,9 @@ type DFFOmnifinDetails struct {
 	ApprovalConditions              []DFFOmnifinApprovalCondition `json:"approvalConditions"`
 	ApprovalStatus                  string                        `json:"approvalStatus"`
 	ApprovalRemark                  string                        `json:"approvalRemark"`
-	LoanApprovalFormReport          string                        `json:"loanDetailReportData"`
-	CreditScoreReport               string                        `json:"creditScoreReportData"`
-	PromoterManagementDetailsReport string                        `json:"promoterManagementDetailReportData"`
+	LoanApprovalFormReport          string                        `json:"loanApprovalForm"`
+	CreditScoreReport               string                        `json:"creditScoreReport"`
+	PromoterManagementDetailsReport string                        `json:"promoterManagementDetailsReport"`
 }
 
 type DFFRequest struct {
@@ -286,7 +287,34 @@ type DFFRequest struct {
 var ErrorOmnifinNotFound = errors.New("Omnifin data not found")
 var ErrorStatusNotOk = errors.New("HTTP Status Not Ok")
 
+func writeDebugFile(CustId int, DealNo string, src io.Reader, ext string) error {
+	filename := fmt.Sprintf("data/tmp/%d-%s-%s%s", CustId, DealNo, time.Now().Format("20060102_030405.000"), ext)
+	fp, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer fp.Close()
+	_, err = io.Copy(fp, src)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func sendOmnifinApproval(data DFFinalSanctionInput) error {
+	// Converting status to approval status
+	// And only process data with status Approved and Rejected
+	var appStatus string
+	switch data.LatestStatus {
+	case "Approved":
+		appStatus = "A"
+	case "Rejected":
+		appStatus = "R"
+	default:
+		return nil
+	}
+
 	omnifin, err := FetchOmnifinXML(strconv.Itoa(data.CustomerId), data.DealNo)
 	if err != nil {
 		return err
@@ -304,11 +332,11 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 	cur, err := conn.NewQuery().
 		From("CreditScorecard").
 		Where(
-		dbox.And(
-			dbox.Eq("CustomerId", data.CustomerId),
-			dbox.Eq("DealNo", data.DealNo),
-		),
-	).
+			dbox.And(
+				dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
+				dbox.Eq("DealNo", data.DealNo),
+			),
+		).
 		Cursor(nil)
 	if err != nil {
 		return err
@@ -330,6 +358,14 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 		return err
 	}
 
+	// Converting OtherCondition / SanctionCondition
+	appCondition := []DFFOmnifinApprovalCondition{}
+	for _, comment := range data.OtherConditions {
+		appCondition = append(appCondition, DFFOmnifinApprovalCondition{
+			Conditions: comment,
+		})
+	}
+
 	buf := new(bytes.Buffer)
 	req := DFFRequest{
 		core.CredentialRequest{
@@ -343,7 +379,8 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 			ROI:                             data.ROI,
 			ManagementFee:                   pf,
 			PersonalGuarantee:               pg,
-			ApprovalStatus:                  "A",
+			ApprovalStatus:                  appStatus,
+			ApprovalConditions:              appCondition,
 			ApprovalRemark:                  data.CommitteeRemarks,
 			LoanApprovalFormReport:          data.AppPdf,
 			CreditScoreReport:               data.CreditPdf,
@@ -351,27 +388,35 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 		},
 	}
 
-	json.NewEncoder(buf).Encode(req)
-	// resp, err := http.Post(
-	// 	"http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit",
-	// 	"application/json",
-	// 	buf,
-	// )
-	filename := time.Now().Format("20060102_030405.000") + fmt.Sprintf("-%04d", rand.Intn(10000))
-	fp, err := os.Create("data/tmp/json_" + filename + "_.txt")
-	if err != nil {
-		return err
-	}
-	io.Copy(fp, buf)
-	fp.Close()
-
+	err = json.NewEncoder(buf).Encode(req)
 	if err != nil {
 		return err
 	}
 
-	// if resp.StatusCode != http.StatusOK {
-	// 	return ErrorStatusNotOk
-	// }
+	err = writeDebugFile(data.CustomerId, data.DealNo, buf, "_JSON.txt")
+	if err != nil {
+		return err
+	}
+
+	resp, err := http.Post(
+		"http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit",
+		"application/json",
+		buf,
+	)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	err = writeDebugFile(data.CustomerId, data.DealNo, bytes.NewReader(body), "_RESP.txt")
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return ErrorStatusNotOk
+	}
 
 	return nil
 }
@@ -394,32 +439,28 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 		return CreateResult(false, nil, err.Error())
 	}
 
-	// DEBUG write to file
-	filename := time.Now().Format("20060102_030405.000") + fmt.Sprintf("-%04d", rand.Intn(10000))
+	// DEBUG write pdf to file
 	for idx, val := range []string{datas.AppPdf, datas.LoanPdf, datas.CreditPdf} {
 		decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(val))
-		fp, err := os.Create("data/tmp/" + filename + "_" + strconv.Itoa(idx) + ".pdf")
+		err = writeDebugFile(datas.CustomerId, datas.DealNo, decoder, "_PDF"+strconv.Itoa(idx)+".pdf")
 		if err != nil {
-			return CreateResult(false, nil, err.Error())
+			return err
 		}
-		io.Copy(fp, decoder)
-		fp.Close()
 	}
 
 	err = sendOmnifinApproval(datas)
 	if err != nil {
-		CreateResult(false, nil, err.Error())
+		return CreateResult(false, nil, err.Error())
 	}
 
 	// BEGIN hit remote
-	//return CreateResult(false, nil, "NOT IMPLEMENTED")
+	return CreateResult(false, nil, "NOT IMPLEMENTED")
 	//return CreateResult(true, nil, "")
 	// END hit remote
 
 	model := NewDCFinalSanctionModel()
 	err = model.Update(datas.DCFinalSanctionModel)
 	if err != nil {
-		c.WriteLog("sarif")
 		return CreateResult(false, nil, err.Error())
 	}
 

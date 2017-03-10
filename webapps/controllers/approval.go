@@ -332,11 +332,11 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 	cur, err := conn.NewQuery().
 		From("CreditScorecard").
 		Where(
-		dbox.And(
-			dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
-			dbox.Eq("DealNo", data.DealNo),
-		),
-	).
+			dbox.And(
+				dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
+				dbox.Eq("DealNo", data.DealNo),
+			),
+		).
 		Cursor(nil)
 	if err != nil {
 		return err

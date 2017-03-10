@@ -230,6 +230,40 @@ vm.showPas = function(){
 	$("#conf").val("")
 }
 
+vm.accordionSideBar = function(){
+	var acc = $(".accordion");
+	for(var i = 0; i < acc.length; i++){
+		acc[i].onclick = function(){
+			this.classList.toggle('active');
+				acc.css("color","#1586f0");
+
+			var panel = this.nextElementSibling;
+			if(panel.style.display === 'block'){
+				panel.style.display = "none";
+				panel.style.color = "white";
+				panel.style.transition = "0.5s";
+				
+
+			}else{
+				panel.style.display = 'block';
+				panel.style.color = 'white';
+				panel.style.transition = "0.5s";
+				
+			}
+
+			if($(this).find("h5>").hasClass("fa-chevron-down")){
+				$(this).find("h5>").removeClass("fa-chevron-down");
+				$(this).find("h5>").addClass("fa-chevron-up");
+			}else{
+				$(this).find("h5>").addClass("fa-chevron-down");
+				$(this).find("h5>").removeClass("fa-chevron-up");
+			}
+
+
+		}
+	}
+}
+
 $(function () {
 	vm.prepareDropDownMenu();
 	vm.prepareFilterToggle();

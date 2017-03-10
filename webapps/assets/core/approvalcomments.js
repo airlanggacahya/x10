@@ -458,6 +458,26 @@ apcom.renderPDFasString = function() {
 
 apcom.checkingAndSaveStatus = function(status) {
 	return function(){
+		// Validation First
+		// Prepare variable to be checked
+		param = apcom.setParamSanction()
+		param.Date = (new Date()).toISOString()
+		param.LatestStatus = status
+
+		if(status == "Approved" || status == "Rejected"){
+			var valid = apcom.validateMandatoryDC(param);
+			if(!valid){
+				return false;
+			}
+		}else if(status == "On Hold" || status == "Sent Back"){
+			var valid = apcom.validateMandatoryDCRemark(param);
+			if(!valid){
+				return false;
+			}
+		}else{
+			$(".toaster").html("");
+		}
+		
 		swal({
 			title: "Processing",
 			text: "Please wait while system generate required documents",
@@ -469,26 +489,10 @@ apcom.checkingAndSaveStatus = function(status) {
 		})
 		
 		$.when(apcom.renderPDFasString()).then(function(appPdf, loanPdf, creditPdf) {
-			param = apcom.setParamSanction()
-			param.Date = (new Date()).toISOString()
-			param.LatestStatus = status
+			// Inject our pdf dataurl
 			param.appPdf = appPdf
 			param.loanPdf = loanPdf
 			param.creditPdf = creditPdf
-
-			if(status == "Approved" || status == "Rejected"){
-				var valid = apcom.validateMandatoryDC(param);
-				if(!valid){
-					return false;
-				}
-			}else if(status == "On Hold" || status == "Sent Back"){
-				var valid = apcom.validateMandatoryDCRemark(param);
-				if(!valid){
-					return false;
-				}
-			}else{
-				$(".toaster").html("");
-			}
 
 			apcom.saveSanctionFix(param, function(res){
 				if(res.success != true){

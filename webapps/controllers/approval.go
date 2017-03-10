@@ -936,29 +936,44 @@ func DeleteAllDatas(CustomerID string, DealNo string, TableName string) error {
 		From(TableName).
 		SetConfig("multiexec", true)
 
+	queconf := ctx.NewQuery().
+		Delete().
+		From(TableName+"Confirmed").
+		SetConfig("multiexec", true)
+
 	defer que.Close()
 
 	switch TableName {
 	case "AccountDetails":
 		que = que.Where(dbox.Eq("_id", concate))
+		queconf = queconf.Where(dbox.Eq("_id", concate))
 	case "InternalRTR":
 		que = que.Where(dbox.Eq("_id", concate))
+		queconf = queconf.Where(dbox.Eq("_id", concate))
 	case "BankAnalysisV2", "CreditAnalys", "CreditAnalysDraft":
 		que = que.Where(dbox.Eq("CustomerId", custInt), dbox.Eq("DealNo", DealNo))
+		queconf = queconf.Where(dbox.Eq("CustomerId", custInt), dbox.Eq("DealNo", DealNo))
 	case "CustomerProfile":
 		que = que.Where(dbox.Eq("_id", concate))
+		queconf = queconf.Where(dbox.Eq("_id", concate))
 	case "RatioInputData":
 		que = que.Where(dbox.Eq("customerid", concate))
+		queconf = queconf.Where(dbox.Eq("customerid", concate))
 	case "RepaymentRecords", "CreditScorecard":
 		que = que.Where(dbox.Eq("CustomerId", CustomerID), dbox.Eq("DealNo", DealNo))
+		queconf = queconf.Where(dbox.Eq("CustomerId", CustomerID), dbox.Eq("DealNo", DealNo))
 	case "StockandDebt":
 		que = que.Where(dbox.Eq("customerid", concate))
+		queconf = queconf.Where(dbox.Eq("customerid", concate))
 	case "CibilReport":
 		que = que.Where(dbox.Eq("Profile.customerid", custInt), dbox.Eq("Profile.dealno", DealNo))
+		queconf = queconf.Where(dbox.Eq("Profile.customerid", custInt), dbox.Eq("Profile.dealno", DealNo))
 	case "CibilReportPromotorFinal":
 		que = que.Where(dbox.Eq("ConsumerInfo.CustomerId", custInt), dbox.Eq("ConsumerInfo.DealNo", DealNo))
+		queconf = queconf.Where(dbox.Eq("ConsumerInfo.CustomerId", custInt), dbox.Eq("ConsumerInfo.DealNo", DealNo))
 	case "DueDiligenceInput":
 		que = que.Where(dbox.Eq("_id", concate))
+		queconf = queconf.Where(dbox.Eq("_id", concate))
 	default:
 		return errors.New("Table Name Not Registered")
 	}
@@ -969,11 +984,7 @@ func DeleteAllDatas(CustomerID string, DealNo string, TableName string) error {
 		return e
 	}
 
-	que = ctx.NewQuery().
-		Delete().
-		From(TableName+"Confirmed").
-		SetConfig("multiexec", true)
-	e = que.Exec(nil)
+	e = queconf.Exec(nil)
 
 	if e != nil {
 		return e

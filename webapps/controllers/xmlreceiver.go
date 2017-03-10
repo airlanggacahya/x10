@@ -296,7 +296,7 @@ func (c *XMLReceiverController) GetOmnifinData(r *knot.WebContext) interface{} {
 	}
 
 	//override existing data
-	if found && (myStatus == SendBackOmnifin || myStatus == Inque || myStatus == Cancelled) {
+	if found && (myStatus == SendBackOmnifin || myStatus == Inque || myStatus == Cancel) {
 		globalId = curId
 		globalInfo = MergeInfo(infos)
 	}

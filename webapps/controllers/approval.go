@@ -20,6 +20,7 @@ import (
 
 	"fmt"
 
+	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -303,11 +304,11 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 	cur, err := conn.NewQuery().
 		From("CreditScorecard").
 		Where(
-			dbox.And(
-				dbox.Eq("CustomerId", data.CustomerId),
-				dbox.Eq("DealNo", data.DealNo),
-			),
-		).
+		dbox.And(
+			dbox.Eq("CustomerId", data.CustomerId),
+			dbox.Eq("DealNo", data.DealNo),
+		),
+	).
 		Cursor(nil)
 	if err != nil {
 		return err
@@ -852,4 +853,55 @@ func (c *ApprovalController) FetchBankAnalis(customerID int, DealNo string) (*Ba
 	defer query.Close()
 
 	return &res[0], nil
+}
+
+func DeleteAllDatas(CustomerID string, DealNo string, TableName string) error {
+
+	custInt := cast.ToInt(CustomerID, cast.RoundingAuto)
+	concate := CustomerID + "|" + DealNo
+
+	//delete query
+	ctx, e := GetConnection()
+	if e != nil {
+		return e
+	}
+	que := ctx.NewQuery().
+		Delete().
+		From(TableName).
+		SetConfig("multiexec", true)
+
+	defer ctx.Close()
+	defer que.Close()
+
+	switch TableName {
+	case "AccountDetails":
+		que = que.Where(dbox.Eq("_id", concate))
+	case "InternalRTR":
+		que = que.Where(dbox.Eq("_id", concate))
+	case "BankAnalysisV2":
+		que = que.Where(dbox.Eq("CustomerId", custInt), dbox.Eq("DealNo", DealNo))
+	case "CustomerProfile":
+		que = que.Where(dbox.Eq("_id", concate))
+	case "RatioInputData":
+		que = que.Where(dbox.Eq("customerid", concate))
+	case "RepaymentRecords":
+		que = que.Where(dbox.Eq("CustomerId", CustomerID), dbox.Eq("DealNo", DealNo))
+	case "StockandDebt":
+		que = que.Where(dbox.Eq("customerid", concate))
+	case "CibilReport":
+		que = que.Where(dbox.Eq("Profile.customerid", custInt), dbox.Eq("Profile.dealno", DealNo))
+	case "CibilReportPromotorFinal":
+		que = que.Where(dbox.Eq("ConsumerInfo.CustomerId", custInt), dbox.Eq("ConsumerInfo.DealNo", DealNo))
+	case "DueDiligenceInput":
+		que = que.Where(dbox.Eq("_id", concate))
+	default:
+		return errors.New("Table Name Not Registered")
+	}
+
+	e = que.Exec(nil)
+	if e != nil {
+		return e
+	}
+
+	return nil
 }

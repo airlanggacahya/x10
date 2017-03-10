@@ -368,7 +368,9 @@ apcom.GeneratePDF = function(handler){
 		landscape :true,
 		margin: {top:"1cm",left:"0cm",right:"1cm",bottom:"1cm"},
     }).then(function (group) {
-		kendo.drawing.pdf.toDataURL(group, handler);
+		setTimeout(function () {
+			kendo.drawing.pdf.toDataURL(group, handler);
+		}, 1500);
 	}).done(function () {
 		$(".collapsible-header.active").trigger("click");
 	});
@@ -386,23 +388,69 @@ function processPdfDataURL(renderFun) {
 	return deferred.promise();
 }
 
+// Random Int Round from MDN
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+apcom.loadFrame = function(custId, dealId) {
+  var loanPromise = $.Deferred();
+  var creditPromise = $.Deferred();
+  var bothPromise = $.Deferred();
+
+  var loanFrame = $("#LoanApprovalFrame")
+  var creditFrame = $("#CreditScoreFrame")
+
+  // determine current base URLRender
+  var base = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+  var query = "?customerid="+custId+"&dealno="+dealId+"&_t="+getRandomInt(0,999999)
+
+  // reset onload handler
+  loanFrame.off("load");
+  creditFrame.off("load");
+
+  // ping us when frame finish load
+  loanFrame.on("load", function () {
+	  setTimeout(function() {
+	  	loanPromise.resolve();
+	  }, 8000);
+  })
+  creditFrame.on("load", function () {
+	  setTimeout(function() {
+	  	creditPromise.resolve();
+	  }, 8000);
+  })
+
+  loanFrame.attr("src", base+"/loanapproval/default"+query)
+  creditFrame.attr("src", base+"/creditscorecard/new"+query)
+
+  $.when(loanPromise.promise(), creditPromise.promise()).then(function () {
+	  bothPromise.resolve();
+  })
+
+  return bothPromise.promise();
+}
+
 apcom.renderPDFasString = function() {
   var deferred = $.Deferred();
+  var iframe = apcom.loadFrame(filter().CustomerSearchVal(), filter().DealNumberSearchVal());
 
   var loanFrame = $("#LoanApprovalFrame").first()[0]
   var creditFrame = $("#CreditScoreFrame").first()[0]
 
-  $.when(
-	  processPdfDataURL(apcom.GeneratePDF),
-	  processPdfDataURL(loanFrame.contentWindow.exportPDFDataURL),
-	  processPdfDataURL(creditFrame.contentWindow.frp.exportPDFDataURL)
-  ).then(function (data1, data2, data3) {
-	  // Remove pesky data url header
-	  data1 = data1.substring(28)
-	  data2 = data2.substring(28)
-	  data3 = data3.substring(28)
-	  // promise fullfilled
-	  deferred.resolve(data1, data2, data3)
+  iframe.done(function () {
+	$.when(
+		processPdfDataURL(apcom.GeneratePDF),
+		processPdfDataURL(loanFrame.contentWindow.exportPDFDataURL),
+		processPdfDataURL(creditFrame.contentWindow.frp.exportPDFDataURL)
+	).then(function (data1, data2, data3) {
+		// Remove pesky data url header
+		data1 = data1.substring(28)
+		data2 = data2.substring(28)
+		data3 = data3.substring(28)
+		// promise fullfilled
+		deferred.resolve(data1, data2, data3)
+	})
   })
 
   return deferred.promise();
@@ -410,6 +458,16 @@ apcom.renderPDFasString = function() {
 
 apcom.checkingAndSaveStatus = function(status) {
 	return function(){
+		swal({
+			title: "Processing",
+			text: "Please wait while system generate required documents",
+			showConfirmButton: false,
+			closeOnCancel: false,
+			allowEscapeKey: false,
+			allowOutsideClick: false,
+			type: "info",
+		})
+		
 		$.when(apcom.renderPDFasString()).then(function(appPdf, loanPdf, creditPdf) {
 			param = apcom.setParamSanction()
 			param.Date = (new Date()).toISOString()
@@ -454,8 +512,8 @@ apcom.checkingAndSaveStatus = function(status) {
 					swal("Success", "Data Successfully " + status, "success");
 				}
 			})
-		})
-	}
+		}) // Jquery Promise
+	} // lambda
 }
 
 apcom.validateMandatory = function(){

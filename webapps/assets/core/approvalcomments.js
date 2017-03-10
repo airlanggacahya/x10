@@ -456,8 +456,60 @@ apcom.renderPDFasString = function() {
   return deferred.promise();
 }
 
+apcom.doDCSanctionAjax = function(param) {
+	apcom.saveSanctionFix(param, function(res){
+		if(res.success != true){
+			swal("Error", res.message, "error")
+		} else {
+			var tempDate = (new Date()).toISOString()
+			apcom.sanction.Date(tempDate)
+
+			tempDate = moment(apcom.sanction.Date()).format("DD-MMM-YYYY") 
+			apcom.dcsanctiondatestring(tempDate)
+
+			apcom.sanction.LatestStatus(param.LatestStatus)
+			
+			apcom.checkLatestStatus()
+
+			if(apcom.sanction.LatestStatus() === "Sent Back") {
+				apcom.setFreezeCommentCA(false)
+				apcom.isfreezeCA(false)
+			}
+			apcom.latestStatusStr(apcom.sanction.LatestStatus())
+			swal("Success", "Data Successfully " + param.LatestStatus, "success");
+		}
+	})
+}
+
 apcom.checkingAndSaveStatus = function(status) {
 	return function(){
+		// Validation First
+		// Prepare variable to be checked
+		param = apcom.setParamSanction()
+		param.Date = (new Date()).toISOString()
+		param.LatestStatus = status
+
+		switch (status) {
+		case "Approved":
+		case "Rejected":
+			var valid = apcom.validateMandatoryDC(param);
+			if(!valid){
+				return false;
+			}
+			break;
+
+		case "On Hold":
+		case "Sent Back":
+			var valid = apcom.validateMandatoryDCRemark(param);
+			if(!valid){
+				return false;
+			}
+			break;
+
+		default:
+			$(".toaster").html("");
+		}
+		
 		swal({
 			title: "Processing",
 			text: "Please wait while system generate required documents",
@@ -467,52 +519,30 @@ apcom.checkingAndSaveStatus = function(status) {
 			allowOutsideClick: false,
 			type: "info",
 		})
-		
-		$.when(apcom.renderPDFasString()).then(function(appPdf, loanPdf, creditPdf) {
-			param = apcom.setParamSanction()
-			param.Date = (new Date()).toISOString()
-			param.LatestStatus = status
-			param.appPdf = appPdf
-			param.loanPdf = loanPdf
-			param.creditPdf = creditPdf
 
-			if(status == "Approved" || status == "Rejected"){
-				var valid = apcom.validateMandatoryDC(param);
-				if(!valid){
-					return false;
-				}
-			}else if(status == "On Hold" || status == "Sent Back"){
-				var valid = apcom.validateMandatoryDCRemark(param);
-				if(!valid){
-					return false;
-				}
-			}else{
-				$(".toaster").html("");
-			}
+		if (status == "Cancelled") {	
+			swal({
+				title: "Are you sure ? ",
+				text: "You want to cancel. All data will be wiped out.",
+				type: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Yes',
+				cancelButtonText: 'No',
+			}).then(function() {
+				apcom.doDCSanctionAjax(param);
+			});
+		} else if (status == "Approved" || status == "Rejected") {
+			$.when(apcom.renderPDFasString()).then(function(appPdf, loanPdf, creditPdf) {
+				// Inject our pdf dataurl
+				param.appPdf = appPdf
+				param.loanPdf = loanPdf
+				param.creditPdf = creditPdf
 
-			apcom.saveSanctionFix(param, function(res){
-				if(res.success != true){
-					swal("Error", res.message, "error")
-				}else{
-					var tempDate = (new Date()).toISOString()
-					apcom.sanction.Date(tempDate)
-
-					tempDate = moment(apcom.sanction.Date()).format("DD-MMM-YYYY") 
-					apcom.dcsanctiondatestring(tempDate)
-
-					apcom.sanction.LatestStatus(status)
-					
-					apcom.checkLatestStatus()
-
-					if(apcom.sanction.LatestStatus() === "Sent Back") {
-						apcom.setFreezeCommentCA(false)
-						apcom.isfreezeCA(false)
-					}
-					apcom.latestStatusStr(apcom.sanction.LatestStatus())
-					swal("Success", "Data Successfully " + status, "success");
-				}
-			})
-		}) // Jquery Promise
+				apcom.doDCSanctionAjax(param)
+			}) // Jquery Promise
+		} else {
+			apcom.doDCSanctionAjax(param)
+		}
 	} // lambda
 }
 

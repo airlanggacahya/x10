@@ -325,7 +325,7 @@ apcom.validateMandatoryDC = function(param){
 	}
 
 	if(param.CommitteeRemarks == ""){
-		fixToast("Plese fill Committee Remarks");
+		fixToast("Please fill Committee Remarks");
 		idx+=1;
 	}
 
@@ -523,7 +523,7 @@ apcom.checkingAndSaveStatus = function(status) {
 		if (status == "Cancelled") {	
 			swal({
 				title: "Are you sure ? ",
-				text: "You want to cancel. All data will be wiped out.",
+				text: "Cancelling will wipe out all data entered in system.",
 				type: 'warning',
 				showCancelButton: true,
 				confirmButtonText: 'Yes',

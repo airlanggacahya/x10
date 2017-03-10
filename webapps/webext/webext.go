@@ -61,7 +61,6 @@ func init() {
 	app.Register(&AccountDetailController{baseCtrl})
 	app.Register(&XMLReceiverController{baseCtrl})
 
-	app.Register(&UserSettingController{baseCtrl})
 	app.Register(&MenuSettingController{baseCtrl})
 	app.Register(&CreditScoreCardController{baseCtrl})
 

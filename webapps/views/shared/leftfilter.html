@@ -1,6 +1,6 @@
 <div id="sidebar-wrapper">
 <ul class="sidebar-nav">
-    <li class="lilabel">Customer ID | Name</li>
+    <!-- <li class="lilabel">Customer ID | Name</li>
     <li><select name="page" id="customer"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
      <li class="lilabel">Deal Number</li>
     <li><select name="page" id="role"  data-bind="kendoDropDownList: {data:filter().DealNumberSearchList, value:filter().DealNumberSearchVal , optionLabel: 'Select One' , filter:'contains'}"></select></li>
@@ -15,7 +15,83 @@
      <li class="lilabel">Turnover</li>
     <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
      <li class="lilabel">Time Period</li>
-    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li> -->
+    <li>
+      <div class="panel col-md-12" style="background-color: #202935;">
+         <div class="form-group">
+          <label class="cnt">Time Period</label>
+          <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div type="button" class="accordion col-md-12 active" style="background-color: #202935;color: #1586f0; margin-top: -15px;"><h5>Location Filters <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
+      <div class="panel" style="display: block;background-color: #202935;color: white;">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="cnt">Region</label>
+            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+          </div>
+           <div class="form-group">
+            <label class="cnt">Branch</label>
+            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+          </div>
+          <hr style="border-top: 1px solid #1586f0;"/>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div type="button" class="accordion col-md-12 active" style="background-color: #202935;color: #1586f0;"><h5>Verticals <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
+      <div class="panel" style="display: block;background-color: #202935;color: white;">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="cnt">Product</label>
+            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+          </div>
+          <div class="form-group">
+            <label class="cnt">Scheme</label>
+            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+          </div>
+          <hr style="border-top: 1px solid #1586f0;"/>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div type="button" class="accordion col-md-12 active" style="background-color: #202935;color: #1586f0;"><h5>Client Filters <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
+      <div class="panel" style="display: block;background-color: #202935;color: white;">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="cnt">Client Type</label>
+            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+          </div>
+          <div class="form-group">
+            <label class="cnt">Client Turnover</label>
+            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+          </div>
+          <div class="form-group">
+            <label class="cnt">Customer Name</label>
+            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+          </div>
+          <div class="form-group">
+            <label class="cnt">Deal Number</label>
+            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+          </div>
+          <hr style="border-top: 1px solid #1586f0;"/>
+        </div>
+      </div>
+    </li>
+    <!-- <li>
+      <div type="button" class="accordion col-md-12 active" style="background-color: #202935;color: #1586f0;"><h5>satu <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
+      <div class="panel" style="display: block;background-color: #202935;color: white;">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="cnt">dicoba :</label>
+            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+          </div>
+          <hr style="border-top: 1px solid #1586f0;"/>
+        </div>
+      </div>
+    </li> -->
     <li>
       <div class="mgtop10">
           <button type="button" id="add" class="btn btn-sm btn-success side-reset"><span class="glyphicon glyphicon-repeat"></span> Reset</button>

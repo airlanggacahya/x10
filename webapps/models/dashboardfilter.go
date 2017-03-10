@@ -7,9 +7,10 @@ import (
 type DashboardFilterModel struct {
 	orm.ModelBase `bson:"-",json:"-"`
 	Id            string ` bson:"_id" , json:"_id" ` //mas Bud ini sampean isi UserID
-	Filters       struct {
-		ShowMe bool
-		Value  string
+	Filters       []struct {
+		FilterName string
+		ShowMe     bool
+		Value      string
 	}
 }
 

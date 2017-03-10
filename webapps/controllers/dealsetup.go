@@ -767,6 +767,10 @@ func SendJSONtoOmnifin(custid string, dealno string) error {
 		return err
 	}
 
+	if len(results) == 0 {
+		return errors.New("Error, Omnifin data not found")
+	}
+
 	OmXML := results[len(results)-1]
 
 	procdetail := tk.M{}

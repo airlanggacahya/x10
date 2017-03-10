@@ -332,11 +332,11 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 	cur, err := conn.NewQuery().
 		From("CreditScorecard").
 		Where(
-			dbox.And(
-				dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
-				dbox.Eq("DealNo", data.DealNo),
-			),
-		).
+		dbox.And(
+			dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
+			dbox.Eq("DealNo", data.DealNo),
+		),
+	).
 		Cursor(nil)
 	if err != nil {
 		return err
@@ -496,6 +496,29 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 			if err != nil {
 				return CreateResult(false, nil, err.Error())
 			}
+		}
+	}
+
+	if datas.LatestStatus == Cancel {
+		err = SendJSONtoOmnifin(cid, dealno)
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
+
+		arr = append(arr, "CreditAnalysDraft")
+		arr = append(arr, "CreditScorecard")
+		arr = append(arr, "InternalRTR")
+
+		for _, val := range arr {
+			err = DeleteAllDatas(cid, dealno, val)
+			if err != nil {
+				return CreateResult(false, nil, err.Error())
+			}
+		}
+
+		err = ResetSession(k)
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
 		}
 	}
 

@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"bytes"
+	"eaciit/x10/consoleapps/OmnifinMaster/core"
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"errors"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -12,7 +15,10 @@ import (
 	"strconv"
 
 	"encoding/base64"
+	"encoding/json"
 	"io"
+
+	"fmt"
 
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
@@ -252,24 +258,143 @@ func (c *ApprovalController) SaveDCFinalSanction(k *knot.WebContext) interface{}
 	return CreateResult(true, result, "")
 }
 
+type DFFOmnifinApprovalCondition struct {
+	Conditions string `json:"conditions"`
+}
+
+type DFFOmnifinDetails struct {
+	DealId                          int                           `json:"dealId"`
+	Score                           float64                       `json:"score"`
+	SanctionAmount                  float64                       `json:"sanctionAmount"`
+	ROI                             float64                       `json:"roi"`
+	ManagementFee                   float64                       `json:"managementFee"`
+	PersonalGuarantee               float64                       `json:"personalGuarantee"`
+	ApprovalConditions              []DFFOmnifinApprovalCondition `json:"approvalConditions"`
+	ApprovalStatus                  string                        `json:"approvalStatus"`
+	ApprovalRemark                  string                        `json:"approvalRemark"`
+	LoanApprovalFormReport          string                        `json:"loanDetailReportData"`
+	CreditScoreReport               string                        `json:"creditScoreReportData"`
+	PromoterManagementDetailsReport string                        `json:"promoterManagementDetailReportData"`
+}
+
+type DFFRequest struct {
+	UserCredential       core.CredentialRequest `json:"userCredentials"`
+	ProcessedDealDetails DFFOmnifinDetails      `json:"processedDealDetails"`
+}
+
+var ErrorOmnifinNotFound = errors.New("Omnifin data not found")
+var ErrorStatusNotOk = errors.New("HTTP Status Not Ok")
+
+func sendOmnifinApproval(data DFFinalSanctionInput) error {
+	omnifin, err := FetchOmnifinXML(strconv.Itoa(data.CustomerId), data.DealNo)
+	if err != nil {
+		return err
+	}
+	if len(omnifin) == 0 {
+		return ErrorOmnifinNotFound
+	}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return err
+	}
+
+	cur, err := conn.NewQuery().
+		From("CreditScorecard").
+		Where(
+			dbox.And(
+				dbox.Eq("CustomerId", data.CustomerId),
+				dbox.Eq("DealNo", data.DealNo),
+			),
+		).
+		Cursor(nil)
+	if err != nil {
+		return err
+	}
+
+	csc := tk.M{}
+	err = cur.Fetch(&csc, 1, true)
+	if err != nil {
+		return err
+	}
+
+	pf, err := strconv.ParseFloat(data.PF, 64)
+	if err != nil {
+		return err
+	}
+
+	pg, err := strconv.ParseFloat(data.PG, 64)
+	if err != nil {
+		return err
+	}
+
+	buf := new(bytes.Buffer)
+	req := DFFRequest{
+		core.CredentialRequest{
+			Id:       "CAT",
+			Password: "44382d31c7fc609d8ff46ad3add2e4a5",
+		},
+		DFFOmnifinDetails{
+			DealId:                          omnifin[0].GetInt("dealId"),
+			Score:                           csc.GetFloat64("FinalScore"),
+			SanctionAmount:                  data.Amount,
+			ROI:                             data.ROI,
+			ManagementFee:                   pf,
+			PersonalGuarantee:               pg,
+			ApprovalStatus:                  "A",
+			ApprovalRemark:                  data.CommitteeRemarks,
+			LoanApprovalFormReport:          data.AppPdf,
+			CreditScoreReport:               data.CreditPdf,
+			PromoterManagementDetailsReport: data.LoanPdf,
+		},
+	}
+
+	json.NewEncoder(buf).Encode(req)
+	// resp, err := http.Post(
+	// 	"http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit",
+	// 	"application/json",
+	// 	buf,
+	// )
+	filename := time.Now().Format("20060102_030405.000") + fmt.Sprintf("-%04d", rand.Intn(10000))
+	fp, err := os.Create("data/tmp/json_" + filename + "_.txt")
+	if err != nil {
+		return err
+	}
+	io.Copy(fp, buf)
+	fp.Close()
+
+	if err != nil {
+		return err
+	}
+
+	// if resp.StatusCode != http.StatusOK {
+	// 	return ErrorStatusNotOk
+	// }
+
+	return nil
+}
+
+type DFFinalSanctionInput struct {
+	DCFinalSanctionModel
+	AppPdf    string
+	LoanPdf   string
+	CreditPdf string
+}
+
 func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
 	credit := NewCreditAnalysModel()
 
-	datas := struct {
-		DCFinalSanctionModel
-		AppPdf    string
-		LoanPdf   string
-		CreditPdf string
-	}{}
+	datas := DFFinalSanctionInput{}
 	err := k.GetPayload(&datas)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}
 
 	// DEBUG write to file
-	filename := time.Now().Format("20060102_0304")
+	filename := time.Now().Format("20060102_030405.000") + fmt.Sprintf("-%04d", rand.Intn(10000))
 	for idx, val := range []string{datas.AppPdf, datas.LoanPdf, datas.CreditPdf} {
 		decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(val))
 		fp, err := os.Create("data/tmp/" + filename + "_" + strconv.Itoa(idx) + ".pdf")
@@ -280,8 +405,14 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 		fp.Close()
 	}
 
+	err = sendOmnifinApproval(datas)
+	if err != nil {
+		CreateResult(false, nil, err.Error())
+	}
+
 	// BEGIN hit remote
 	//return CreateResult(false, nil, "NOT IMPLEMENTED")
+	//return CreateResult(true, nil, "")
 	// END hit remote
 
 	model := NewDCFinalSanctionModel()

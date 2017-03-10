@@ -260,28 +260,29 @@ func (c *ApprovalController) SaveDCFinalSanction(k *knot.WebContext) interface{}
 	return CreateResult(true, result, "")
 }
 
-type DFFOmnifinApprovalCondition struct {
-	Conditions string `json:"conditions"`
-}
-
 type DFFOmnifinDetails struct {
-	DealId                          int                           `json:"dealId"`
-	Score                           float64                       `json:"score"`
-	SanctionAmount                  float64                       `json:"sanctionAmount"`
-	ROI                             float64                       `json:"roi"`
-	ManagementFee                   float64                       `json:"managementFee"`
-	PersonalGuarantee               float64                       `json:"personalGuarantee"`
-	ApprovalConditions              []DFFOmnifinApprovalCondition `json:"approvalConditions"`
-	ApprovalStatus                  string                        `json:"approvalStatus"`
-	ApprovalRemark                  string                        `json:"approvalRemark"`
-	LoanApprovalFormReport          string                        `json:"loanApprovalForm"`
-	CreditScoreReport               string                        `json:"creditScoreReport"`
-	PromoterManagementDetailsReport string                        `json:"promoterManagementDetailsReport"`
+	DealId                          int     `json:"dealId"`
+	Score                           float64 `json:"score"`
+	SanctionAmount                  float64 `json:"sanctionAmount"`
+	ROI                             float64 `json:"roi"`
+	ManagementFee                   float64 `json:"managementFee"`
+	PersonalGuarantee               string  `json:"personalGuarantee"`
+	ApprovalConditions              string  `json:"approvalConditions"`
+	ApprovalStatus                  string  `json:"approvalStatus"`
+	ApprovalRemark                  string  `json:"approvalRemark"`
+	LoanApprovalFormReport          string  `json:"loanApprovalFormReport"`
+	CreditScoreReport               string  `json:"creditScoreReport"`
+	PromoterManagementDetailsReport string  `json:"promoterManagementDetailsReport"`
 }
 
 type DFFRequest struct {
 	UserCredential       core.CredentialRequest `json:"userCredentials"`
 	ProcessedDealDetails DFFOmnifinDetails      `json:"processedDealDetails"`
+}
+
+type DFFResponse struct {
+	OpStatus  string `json:"operationStatus"`
+	OpMessage string `json:"operationMessage"`
 }
 
 var ErrorOmnifinNotFound = errors.New("Omnifin data not found")
@@ -353,20 +354,6 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 		return err
 	}
 
-	pg, err := strconv.ParseFloat(data.PG, 64)
-	if err != nil {
-		return err
-	}
-
-	// Converting OtherCondition / SanctionCondition
-	appCondition := []DFFOmnifinApprovalCondition{}
-	for _, comment := range data.OtherConditions {
-		appCondition = append(appCondition, DFFOmnifinApprovalCondition{
-			Conditions: comment,
-		})
-	}
-
-	buf := new(bytes.Buffer)
 	req := DFFRequest{
 		core.CredentialRequest{
 			Id:       "CAT",
@@ -378,9 +365,9 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 			SanctionAmount:                  data.Amount,
 			ROI:                             data.ROI,
 			ManagementFee:                   pf,
-			PersonalGuarantee:               pg,
+			PersonalGuarantee:               data.PG,
 			ApprovalStatus:                  appStatus,
-			ApprovalConditions:              appCondition,
+			ApprovalConditions:              strings.Join(data.OtherConditions, "; "),
 			ApprovalRemark:                  data.CommitteeRemarks,
 			LoanApprovalFormReport:          data.AppPdf,
 			CreditScoreReport:               data.CreditPdf,
@@ -388,12 +375,12 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 		},
 	}
 
-	err = json.NewEncoder(buf).Encode(req)
+	reqbody, err := json.Marshal(req)
 	if err != nil {
 		return err
 	}
 
-	err = writeDebugFile(data.CustomerId, data.DealNo, buf, "_JSON.txt")
+	err = writeDebugFile(data.CustomerId, data.DealNo, bytes.NewReader(reqbody), "_JSON.txt")
 	if err != nil {
 		return err
 	}
@@ -401,7 +388,7 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 	resp, err := http.Post(
 		"http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit",
 		"application/json",
-		buf,
+		bytes.NewReader(reqbody),
 	)
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -416,6 +403,16 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return ErrorStatusNotOk
+	}
+
+	omnifinResp := DFFResponse{}
+	err = json.Unmarshal(body, &omnifinResp)
+	if err != nil {
+		return err
+	}
+
+	if omnifinResp.OpStatus != "1" {
+		return errors.New(omnifinResp.OpMessage)
 	}
 
 	return nil
@@ -454,7 +451,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 	}
 
 	// BEGIN hit remote
-	// return CreateResult(false, nil, "NOT IMPLEMENTED")
+	//return CreateResult(false, nil, "NOT IMPLEMENTED")
 	//return CreateResult(true, nil, "")
 	// END hit remote
 

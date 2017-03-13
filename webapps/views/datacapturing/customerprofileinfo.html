@@ -296,13 +296,13 @@ function refreshdata(accountdetailsMaster){
     // data[0].DetailOfPromoters.Biodata[i].Src = name+"";
     // alert();
 
-        if(data[0].DetailOfPromoters.Biodata[i].Gender === "M") {
+        if(data[0].DetailOfPromoters.Biodata[i].Gender.toUpperCase() === "M" ||data[0].DetailOfPromoters.Biodata[i].Gender.toUpperCase() === "MALE") {
           data[0].DetailOfPromoters.Biodata[i].Gender = "MALE"
         }else {
           data[0].DetailOfPromoters.Biodata[i].Gender = "FEMALE"
         }
 
-        if(data[0].DetailOfPromoters.Biodata[i].MaritalStatus === "M") {
+        if(data[0].DetailOfPromoters.Biodata[i].MaritalStatus === "M" ||data[0].DetailOfPromoters.Biodata[i].MaritalStatus.toUpperCase() === "MARRIED") {
           data[0].DetailOfPromoters.Biodata[i].MaritalStatus = "Married"
         }else {
           data[0].DetailOfPromoters.Biodata[i].MaritalStatus = "Single"
@@ -980,8 +980,27 @@ function validateConfirm(){
 }
 
 // SHORT FUNCTION TO CONVERT BETWEEN Date
-function validateDateUTC(tgl) {
-  var e = moment(tgl)
+function validateDateUTC(tgl,format) {
+  if(format == undefined){
+    format = "DD-MM-YYYY"
+  }
+
+  var e = moment(tgl,format.toUpperCase())
+
+  if (!e.isValid()){
+    format = "DD-MMM-YYYY"
+  }
+
+  e = moment(tgl,format.toUpperCase())
+
+  if(tgl != null && tgl.indexOf("T") > -1){
+    e = moment(tgl, "")
+  }
+
+  if((tgl != null && tgl != "") && !e.isValid()){
+    swal("Warning","There is invalid date - "+tgl,"warning");
+  }
+
 
   if (!e.isValid())
     return ""
@@ -1000,8 +1019,8 @@ function validateDateUTC(tgl) {
   return d
 }
 
-function validateDateUTCISO(tgl) {
-  var d = validateDateUTC(tgl)
+function validateDateUTCISO(tgl,format) {
+  var d = validateDateUTC(tgl,format)
 
   if (d == "")
     return ""
@@ -1010,7 +1029,7 @@ function validateDateUTCISO(tgl) {
 }
 
 function validateDateUTCFormat(tgl, format) {
-  var d = validateDateUTC(tgl)
+  var d = validateDateUTC(tgl,format)
   
   if (d == "")
     return ""

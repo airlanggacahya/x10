@@ -737,18 +737,17 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 		if bb.Name != nil { // promotor exists
 			BioS = bbs
 			Bio = bb
-		} else {
-			Bio.Name = val.GetString("stakeholderName")
-			// Bio.FatherName = val.GetString("FatherHusbandName") -- gak onok
-			// Bio.Gender = val.GetString("genderDesc") -- gak onok
-			Bio.DateOfBirth = DetectDataType(val.GetString("stakeholderDob"), "yyyy-MM-dd")
-			// Bio.MaritalStatus = val.GetString("maritalStatusDesc") -- gak onok
-			// Bio.Education = dtl.GetString("eduDetail") -- gak onok
-			Bio.PAN = val.GetString("stakeholderPan")
-			Bio.Mobile = val.GetString("stakeholderPrimaryPhone")
-			Bio.ShareHoldingPercentage = val.GetFloat64("stakeholderPercentage")
-			// Bio.Designation = ToWordCase(val.GetString("stakeholderPositionDesc"))
 		}
+		Bio.Name = val.GetString("stakeholderName")
+		// Bio.FatherName = val.GetString("FatherHusbandName") -- gak onok
+		// Bio.Gender = val.GetString("genderDesc") -- gak onok
+		Bio.DateOfBirth = DetectDataType(val.GetString("stakeholderDob"), "yyyy-MM-dd")
+		// Bio.MaritalStatus = val.GetString("maritalStatusDesc") -- gak onok
+		// Bio.Education = dtl.GetString("eduDetail") -- gak onok
+		Bio.PAN = val.GetString("stakeholderPan")
+		Bio.Mobile = val.GetString("stakeholderPrimaryPhone")
+		Bio.ShareHoldingPercentage = val.GetFloat64("stakeholderPercentage")
+		// Bio.Designation = ToWordCase(val.GetString("stakeholderPositionDesc"))
 
 		if position == "promoter" {
 			Bio.Promotor = "Yes"
@@ -910,7 +909,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				continue
 			}
 			// stkhold := CheckArray(dtl.Get("crDealCustomerStakeholderM"))
-
+			// tk.Printfn("++++++++++++ %v ++++++++++++", dtl)
 			Bio := BiodataGen{}
 			Bio.Name = dtl.GetString("customerName")
 			Bio.FatherName = dtl.GetString("fatherHusbandName")
@@ -963,20 +962,23 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 			bb, bbs := FindSamePromotor(BioS, val)
 			position := strings.ToLower(val.GetString("stakeholderPositionDesc"))
 			if bb.Name != nil { // promotor exists
+				// tk.Printfn("++++++++++++ %v %v ++++++++++++", "Exist", val)
+
 				BioS = bbs
 				Bio = bb
-			} else {
-				Bio.Name = val.GetString("stakeholderName")
-				// Bio.FatherName = val.GetString("FatherHusbandName") -- gak onok
-				// Bio.Gender = val.GetString("genderDesc") -- gak onok
-				Bio.DateOfBirth = DetectDataType(val.GetString("stakeholderDob"), "yyyy-MM-dd")
-				// Bio.MaritalStatus = val.GetString("maritalStatusDesc") -- gak onok
-				// Bio.Education = dtl.GetString("eduDetail") -- gak onok
-				Bio.PAN = val.GetString("stakeholderPan")
-				Bio.Mobile = val.GetString("stakeholderPrimaryPhone")
-				Bio.ShareHoldingPercentage = val.GetFloat64("stakeholderPercentage")
-				// Bio.Designation = ToWordCase(val.GetString("stakeholderPositionDesc"))
 			}
+			// tk.Printfn("++++++++++++ %v %v ++++++++++++", "Not Exist", val)
+
+			Bio.Name = val.GetString("stakeholderName")
+			// Bio.FatherName = val.GetString("FatherHusbandName") -- gak onok
+			// Bio.Gender = val.GetString("genderDesc") -- gak onok
+			Bio.DateOfBirth = DetectDataType(val.GetString("stakeholderDob"), "yyyy-MM-dd")
+			// Bio.MaritalStatus = val.GetString("maritalStatusDesc") -- gak onok
+			// Bio.Education = dtl.GetString("eduDetail") -- gak onok
+			Bio.PAN = val.GetString("stakeholderPan")
+			Bio.Mobile = val.GetString("stakeholderPrimaryPhone")
+			Bio.ShareHoldingPercentage = val.GetFloat64("stakeholderPercentage")
+			// Bio.Designation = ToWordCase(val.GetString("stakeholderPositionDesc"))
 
 			if position == "promoter" {
 				Bio.Promotor = "Yes"
@@ -1599,9 +1601,9 @@ func FindSamePromotor(listprom []BiodataGen, prom tk.M) (BiodataGen, []BiodataGe
 	for idx, val := range listprom {
 		name := prom.GetString("stakeholderName")
 		dob := DetectDataType(prom.GetString("stakeholderDob"), "yyyy-MM-dd")
-		pan := prom.GetString("stakeholderPan")
+		// pan := prom.GetString("stakeholderPan")
 
-		if val.Name == name && val.DateOfBirth == dob && pan == val.PAN {
+		if val.Name == name && val.DateOfBirth == dob {
 			listprom = append(listprom[:idx], listprom[idx+1:]...)
 			return val, listprom
 		}

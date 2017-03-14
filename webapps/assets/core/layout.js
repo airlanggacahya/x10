@@ -287,7 +287,8 @@ vm.accordionSideBar = function(){
 
 		}else{
 			$this.next().removeClass('hide');
-			$this.next().slideDown(350).addClass("show");
+			$this.next().slideDown(350);
+			$this.next().addClass("show");
 			$this.find("h5>").addClass("fa-chevron-down");
 			$this.find("h5>").removeClass("fa-chevron-up");
 		}
@@ -302,6 +303,7 @@ vm.accordionSideBar = function(){
 }
 
 $(function () {
+	vm.accordionSideBar();
 	vm.prepareDropDownMenu();
 	vm.prepareFilterToggle();
 	vm.adjustLayout();

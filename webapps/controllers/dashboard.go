@@ -2,6 +2,8 @@ package controllers
 
 import (
 	. "eaciit/x10/webapps/connection"
+	. "eaciit/x10/webapps/models"
+	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	"time"
@@ -80,4 +82,53 @@ func (c *DashboardController) GetBranch(k *knot.WebContext) interface{} {
 	}
 
 	return &result
+}
+
+func (c *DashboardController) GetFilter(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	res := new(tk.Result)
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	query, err := conn.NewQuery().From("DashboardFilter").Where(dbox.Eq("_id", k.Session("username").(string))).Cursor(nil)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	result := []DashboardFilterModel{}
+	err = query.Fetch(&result, 0, false)
+	defer query.Close()
+
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	if len(result) == 0 {
+		return c.SetResultInfo(true, "data not found", nil)
+	}
+
+	return c.SetResultInfo(false, "success", &result)
+}
+
+func (c *DashboardController) SaveFilter(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	payload := DashboardFilterModel{}
+	k.GetPayload(&payload)
+
+	if payload.Id == "" {
+		payload.Id = k.Session("username").(string)
+	}
+
+	if err := c.Ctx.Save(&payload); err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	return c.SetResultInfo(false, "success", nil)
+
 }

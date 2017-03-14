@@ -11,6 +11,7 @@ vm.New = ko.observable("");
 vm.Confirm = ko.observable("");
 vm.OldMessage = ko.observable("")
 vm.NewMessage = ko.observable("")
+vm.open = ko.observable(false)
 // vm.menu = ko.observableArray([
 // { title: 'Dashboard', icon: 'fa fa-home', href: "/dashboard/default", submenu: [] }, 
 // { title: 'Data Master', icon: 'fa fa-home', href:"/datamaster/default", submenu: [
@@ -230,80 +231,36 @@ vm.showPas = function(){
 	$("#conf").val("")
 }
 
-vm.accordionSideBar = function(){
-	// alert("#"+id)
-	// var acc = $(".accordion");
-	// for(var i = 0; i < acc.length; i++){
-	// 	$(acc[i]).attr("id", "acc"+i)
-	// 	acc[i].onclick = function(){
-	// 		// this.addClass("coba")
-			
-	// 		// this.classList.toggle('active');
-	// 		// 	acc.css("color","#1586f0");
+// vm.accordionSideBar = function(){
+// 	$(".toggle").click(function(e){
+// 		e.preventDefault();
 
-	// 		// var panel = this.nextElementSibling;
-	// 		// if(panel.style.display === 'block'){
-	// 		// 	panel.style.display = "none";
-	// 		// 	panel.style.color = "white";
-	// 		// 	// panel.addClass("show");
-	// 		// }else{
-	// 		// 	panel.style.display = 'block';
-	// 		// 	panel.style.color = 'white';
-	// 		// 	// panel.addClass("hide");
-				
-	// 		// }
-	// 	}
-	// }
+// 		var $this = $(this);
+// 		if($this.next().hasClass('show')){
+// 			$this.next().removeClass('show');
+// 			$this.next().slideUp(350);
+// 			$this.find("h5>").removeClass("fa-chevron-down");
+// 			$this.find("h5>").addClass("fa-chevron-up");
 
-	// if($("."+id).find("h5>").hasClass("fa-chevron-down")){
-	// 	alert("masuk hide")
-	// 	// $("#"+id).addClass("hide")
-	// 	// $("#"+id).removeClass("show");
-	// 	$("."+id).find("h5>").removeClass("fa-chevron-down");
-	// 	$("."+id).find("h5>").addClass("fa-chevron-up");
+// 		}else{
+// 			$this.next().removeClass('hide');
+// 			$this.next().slideDown(350);
+// 			$this.next().addClass("show");
+// 			$this.find("h5>").addClass("fa-chevron-down");
+// 			$this.find("h5>").removeClass("fa-chevron-up");
+// 		}
+// 	})
 
-	// }else{
-	// 	alert("masuk show")
-	// 	$("."+id).find("h5>").addClass("fa-chevron-down");
-	// 	$("."+id).find("h5>").removeClass("fa-chevron-up");
-	// 	// $("#"+id).addClass("show")
-	// 	// $("#"+id).removeClass("hide");
-		
-	// }
-	// $('#'+id).toggleClass('hide').toggleClass('show');
- //    return false;
-			// $("#"+id).toggleClass("hide").toggleClass("show")
-
-			// 	return false
-	$(".toggle").click(function(e){
-		e.preventDefault();
-
-		var $this = $(this);
-		if($this.next().hasClass('show')){
-			$this.next().removeClass('show');
-			$this.next().slideUp(350);
-			$this.find("h5>").removeClass("fa-chevron-down");
-			$this.find("h5>").addClass("fa-chevron-up");
-
-		}else{
-			$this.next().removeClass('hide');
-			$this.next().slideDown(350);
-			$this.next().addClass("show");
-			$this.find("h5>").addClass("fa-chevron-down");
-			$this.find("h5>").removeClass("fa-chevron-up");
-		}
-	})
-
-	$("#all").click(function(e){
-		$(".toggle").next().removeClass('hide');
-		$(".toggle").next().slideDown(350).addClass("show");
-		$(".toggle").find("h5>").addClass("fa-chevron-down");
-		$(".toggle").find("h5>").removeClass("fa-chevron-up");
-	})
-}
+// 	$("#all").click(function(e){
+// 		$(".toggle").next().removeClass('hide');
+// 		$(".toggle").next().slideDown(350).addClass("show");
+// 		$(".toggle").find("h5>").addClass("fa-chevron-down");
+// 		$(".toggle").find("h5>").removeClass("fa-chevron-up");
+// 	})
+// }
 
 $(function () {
-	vm.accordionSideBar();
+	// vm.accordionSideBar();
 	vm.prepareDropDownMenu();
 	vm.prepareFilterToggle();
 	vm.adjustLayout();

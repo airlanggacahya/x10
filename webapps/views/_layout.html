@@ -1169,7 +1169,7 @@
                   $(".sidebar-nav").show()
                   $("#sidebar-wrapper").width('16.66666667%')
                   menumarginleft = $("#toggle-toggle").outerWidth(false)
-                  // vm.accordionSideBar();
+                  vm.open(true);
                 } else {
                   menumarginleft = $("#toggle-toggle").outerWidth(false)
                 }
@@ -1178,6 +1178,7 @@
                 $(".sidebar-toggle").removeClass("pull-right")
                 // $("#sidebar-wrapper").hide('slide', {direction: 'left'}, 750)
                 // $("#sidebar-title").hide()
+                vm.open(false);
                 $(".sidebar-nav").hide()
                 $("#sidebar-wrapper").width(0);
                 menumarginleft = $("#toggle-toggle").outerWidth(false)

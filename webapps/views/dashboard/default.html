@@ -1,3 +1,25 @@
 {{template "dataaccess.html" .}}
 <script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 {{template "leftfilter.html"}}
+
+<!-- TODO: fix with margin -->
+<br>
+<br>
+
+<style>
+    .fa-font-neutral {
+        color: #00B0F0;
+    }
+
+    .fa-font-green {
+        color: #92D050;
+    }
+
+    .fa-font-red {
+        color: #ff0000;
+    }
+</style>
+
+<div class="container-fluid">
+    {{template "alert_summary.html"}}
+</div>

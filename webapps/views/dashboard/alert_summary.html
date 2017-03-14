@@ -1,0 +1,230 @@
+
+<script>
+    // LATER SEPARATE JS FROM THIS PAGE
+    alertSum = {}
+    alertSum.trendMonth = ko.observable(moment().format('MMMM YYYY'));
+    alertSum.trendMonthTitle = ko.computed(function () {
+        return moment(alertSum.trendMonth()).format('MMM `YY')
+    })
+
+    alertSum.trendDataSeries = ko.observableArray([
+        {
+            amountApproved: 200,
+            amountRejected: 300,
+            countApproved: 4,
+            countRejected: 2
+        },
+        {
+            amountApproved: 175,
+            amountRejected: 400,
+            countApproved: 1,
+            countRejected: 3
+        },
+        {
+            amountApproved: 400,
+            amountRejected: 300,
+            countApproved: 4,
+            countRejected: 1
+        }
+    ]);
+    alertSum.trendDataConfig = [
+        {
+            type: 'column',
+            name: 'Amount Approved',
+            field: 'amountApproved',
+            axis: 'cr'
+        },
+        {
+            type: 'column',
+            name: 'Amount Rejected',
+            field: 'amountRejected',
+            axis: 'cr'
+        },
+        {
+            type: 'line',
+            name: 'Deal Count Approved',
+            field: 'countApproved',
+            axis: 'count'
+        },
+        {
+            type: 'line',
+            name: 'Deal Count Rejected',
+            field: 'countRejected',
+            axis: 'count'
+        }
+    ]
+    alertSum.trendDataMonths = ["Jan", "Feb", "Mar"];
+
+    alertSum.summary2fa = function (values) {
+        if (values > 0)
+            return "fa fa-angle-double-down fa-font-red";
+        if (values < 0)
+            return "fa fa-angle-double-up fa-font-green";
+        return "fa fa-minus fa-font-white";
+    }
+
+    alertSum.summaryAmountMax = ko.computed(function () {
+        var maxapp = _.maxBy(alertSum.trendDataSeries(), 'amountApproved');
+        var maxrej = _.maxBy(alertSum.trendDataSeries(), 'amountRejected');
+
+        return Math.max(maxapp, maxrej);
+    })
+    alertSum.summaryCountMax = ko.computed(function () {
+        var maxapp = _.maxBy(alertSum.trendDataSeries(), 'countApproved');
+        var maxrej = _.maxBy(alertSum.trendDataSeries(), 'countRejected');
+
+        return Math.max(maxapp, maxrej);
+    })
+
+    alertSum.summaryApp = ko.computed(function () {
+        var series = alertSum.trendDataSeries()
+        return series[0].amountApproved;
+    })
+    alertSum.summaryAppChange = ko.computed(function () {
+        var series = alertSum.trendDataSeries()
+        return series[0].amountApproved - series[1].amountApproved;
+    })
+    alertSum.summaryAppFa = ko.computed(function () {
+        return alertSum.summary2fa(alertSum.summaryAppChange());
+    })
+    alertSum.summaryRej = ko.computed(function () {
+        var series = alertSum.trendDataSeries()
+        return series[0].amountRejected;
+    })
+    alertSum.summaryRejChange = ko.computed(function () {
+        var series = alertSum.trendDataSeries()
+        return series[0].amountRejected - series[1].amountRejected;
+    })
+    alertSum.summaryRejFa = ko.computed(function () {
+        return alertSum.summary2fa(alertSum.summaryRejChange());
+    })
+</script>
+
+<style>
+    .summary-box {
+        background: #1F2834;
+        border-radius: 4px;
+        margin-top: 10px;
+        min-height: 80px;
+        color: #ffffff;
+        padding: 10px;
+    }
+
+    .summary-box>.score {
+        font-size: 24px;
+    }
+
+    .summary-box>.score.unit {
+        font-size: 18px;
+    }
+
+    .summary-box>i.fa {
+        font-size: 24px;
+    }
+
+    .summary-box .box-label {
+        text-align: left;
+        display: block;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .summary-box .box-label.blue {
+        color: #00B0F0;;
+    }
+
+    .summary-box .box-label.red {
+        color: #ff0000;
+    }
+    .summary-box .fa-font-neutral {
+        color: #00B0F0;
+    }
+
+    .summary-box .fa-font-green {
+        color: #92D050;
+    }
+
+    .summary-box .fa-font-red {
+        color: #ff0000;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h4>Actioned Deals: Summary and Trends</h4>
+    </div>
+</div>
+
+<div class="row" data-bind="">
+    <div class="col-sm-4">
+        <div>
+            <input data-bind="kendoDatePicker: {
+                value: alertSum.trendMonth,
+                start: 'year',
+                depth: 'year',
+                format: 'MMMM yyyy'
+            }" id="alertTrendMonthPicker" />
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="summary-box">
+                    <span class="score" data-bind="text: alertSum.summaryApp"></span>
+                    <i data-bind="attr: { class: alertSum.summaryAppFa }" aria-hidden="true"></i>
+                    <span class="box-label blue">Approved</span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="summary-box">
+                    <span class="score" data-bind="text: alertSum.summaryRej"></span>
+                    <i data-bind="attr: { class: alertSum.summaryRejFa }" aria-hidden="true"></i>
+                    <span class="box-label red">Rejected</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="summary-box">
+                    <span class="score" data-bind="text: alertSum.summaryApp"></span><span class="score unit"> cr.</span>
+                    <i data-bind="attr: { class: alertSum.summaryAppFa }" aria-hidden="true"></i>
+                    <span class="box-label blue">Approved</span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="summary-box">
+                    <span class="score" data-bind="text: alertSum.summaryRej"></span><span class="score unit"> cr.</span>
+                    <i data-bind="attr: { class: alertSum.summaryRejFa }" aria-hidden="true"></i>
+                    <span class="box-label red">Rejected</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+            </div>
+            <div class="col-sm-6">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-8">
+        <h5>Trend: Last 6 months</h5>
+        <div data-bind="kendoChart: {
+            data: alertSum.trendDataSeries,
+            series: alertSum.trendDataConfig,
+            categoryAxis: {
+                categories: alertSum.trendDataMonths
+            },
+            valueAxes: [{
+                name: 'cr',
+                title: { text: 'cr' },
+                min: 0,
+                max: 700
+            },{
+                name: 'count',
+                title: { text: 'count' },
+                min: 0,
+                max: 10
+            }]
+        }">
+        </div>
+    </div>
+</div>

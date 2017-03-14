@@ -127,9 +127,9 @@ func (c *DashboardController) SaveNotes(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	cMongo, em := GetConnection()
+	cMongo, err := GetConnection()
 	defer cMongo.Close()
-	if em != nil {
+	if err != nil {
 		return res.SetError(err)
 	}
 
@@ -138,7 +138,11 @@ func (c *DashboardController) SaveNotes(k *knot.WebContext) interface{} {
 	defer q.Close()
 
 	payload.Id = k.Session("username").(string)
+
 	err = q.Exec(tk.M{"data": payload})
+	if err != nil {
+		return res.SetError(err)
+	}
 
 	res.SetData(payload)
 
@@ -204,3 +208,26 @@ func fetchNotification(days int, formtype string) ([]string, error) {
 
 	return res, nil
 }
+
+// func (c *DashboardController) SummaryAndTrends(k *knot.WebContext) interface{} {
+// 	k.Config.OutputType = knot.OutputJson
+// 	res := new(tk.Result)
+
+// 	payload := tk.M{}
+// 	err := k.GetPayload(&payload)
+// 	if err != nil {
+// 		return res.SetError(err)
+// 	}
+
+// 	month := payload.GetString("month") // "Feb-2017"
+// 	currDate := cast.String2Date("01-", "dd-MMM-yyyy")
+// 	lastDate := currDate.AddDate(0, -8, 0)
+
+// 	wh := []tk.M{}
+// 	currWhere := tk.M{}.Set("info.myInfo.updateTime", tk.M{}.Set("$lte", currDate))
+// 	lastWhere := tk.M{}.Set("info.myInfo.updateTime", tk.M{}.Set("$gt", lastDate))
+
+// 	res.SetData(re)
+
+// 	return res
+// }

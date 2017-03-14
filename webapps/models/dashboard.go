@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/eaciit/orm"
+	"time"
 )
 
 type DashboardFilterModel struct {
@@ -26,8 +27,9 @@ type DashboardNoteModel struct {
 	orm.ModelBase `bson:"-",json:"-"`
 	Id            string ` bson:"_id" , json:"_id" ` //mas Bud ini sampean isi UserID
 	Comments      []struct {
-		Text    string
-		Checked bool
+		Text        string
+		Checked     bool
+		CreatedDate time.Time
 	}
 }
 

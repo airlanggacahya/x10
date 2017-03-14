@@ -139,6 +139,7 @@ var ErrorMasterNotFound = errors.New("Error Master Data Doesn't Match")
 func checkMasterData(data DealSetupModel) error {
 	// list all check
 	ad := data.AccountDetails.(*AccountDetail)
+	cp := data.CustomerProfile.(*CustomerProfiles)
 	checklist := map[string]string{
 		"Products":                 ad.AccountSetupDetails.Product,
 		"Scheme":                   ad.AccountSetupDetails.Scheme,
@@ -167,7 +168,14 @@ func checkMasterData(data DealSetupModel) error {
 	}
 
 	if found {
-		return nil
+		found, err := checkPosition(cp.DetailOfPromoters.Biodata, false)
+		if err != nil {
+			return err
+		}
+
+		if found {
+			return nil
+		}
 	}
 
 	omni.DoMain()
@@ -182,7 +190,72 @@ func checkMasterData(data DealSetupModel) error {
 
 		return errors.New(ErrorMasterNotFound.Error() + " ( " + key + " - " + val + " )")
 	}
+	found, err := checkPosition(cp.DetailOfPromoters.Biodata, true)
+	if err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func checkPosition(prom []BiodataGen, throwerr bool) (bool, error) {
+	found := true
+
+	for _, cprom := range prom {
+		for _, val := range cprom.Position {
+			if len(val) == 0 {
+				continue
+			}
+
+			if val == "" {
+				continue
+			}
+			exists, err := CheckMaster("StakeholderPosition", "name", val)
+			if err != nil {
+				return found, err
+			}
+			if exists {
+				// tk.Printf("CHECK %s - %s...FOUND", key, val)
+				continue
+			}
+			// tk.Printf("CHECK %s - %s...NOT FOUND", key, val)
+			found = found && exists
+		}
+		if !found {
+			if throwerr {
+				return found, errors.New(ErrorMasterNotFound.Error() + " ( StakeholderPosition - " + strings.Join(cprom.Position, "|") + " )")
+			}
+
+			return found, nil
+		} else {
+			for _, val := range cprom.Designation {
+				if len(val) == 0 {
+					continue
+				}
+
+				if val == "" {
+					continue
+				}
+				exists, err := CheckMaster("Position", "name", val)
+				if err != nil {
+					return found, err
+				}
+				if exists {
+					// tk.Printf("CHECK %s - %s...FOUND", key, val)
+					continue
+				}
+				// tk.Printf("CHECK %s - %s...NOT FOUND", key, val)
+				found = found && exists
+			}
+		}
+		if !found {
+			if throwerr {
+				return found, errors.New(ErrorMasterNotFound.Error() + " ( Designation/Position - " + strings.Join(cprom.Designation, "|") + " ) ")
+			}
+		}
+	}
+
+	return found, nil
 }
 
 // Function to test checkMasterAccountDetails
@@ -698,8 +771,8 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 			Bio.Guarantor = "Yes"
 		} else {
 			Bio.Guarantor = "No"
-			Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
-			Bio.Designation = append(Bio.Designation, val.GetString("dealCustomerRoleType"))
+			// Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
+			// Bio.Designation = append(Bio.Designation, val.GetString("dealCustomerRoleType"))
 			// add position
 		}
 
@@ -755,8 +828,8 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 			Bio.Director = "Yes"
 		}
 
-		Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
-		Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
+		Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderTypeDesc")))
+		Bio.Designation = append(Bio.Designation, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
 		//add ke position
 
 		BioS = append(BioS, Bio)
@@ -925,8 +998,8 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				Bio.Guarantor = "Yes"
 			} else {
 				Bio.Guarantor = "No"
-				Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
-				Bio.Designation = append(Bio.Designation, val.GetString("dealCustomerRoleType"))
+				// Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("dealCustomerRoleTypeDesc")))
+				// Bio.Designation = append(Bio.Designation, val.GetString("dealCustomerRoleType"))
 				// add position
 			}
 
@@ -986,8 +1059,8 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 				Bio.Director = "Yes"
 			}
 
-			Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
-			Bio.Designation = append(Bio.Designation, val.GetString("stakeholderPosition"))
+			Bio.Position = append(Bio.Position, hp.ToWordCase(val.GetString("stakeholderTypeDesc")))
+			Bio.Designation = append(Bio.Designation, hp.ToWordCase(val.GetString("stakeholderPositionDesc")))
 			//add ke position
 
 			BioS = append(BioS, Bio)
@@ -1025,9 +1098,9 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 		}
 	}
 
-	customerDtl := comp.Get("customerDtl").(tk.M)
+	// customerDtl := comp.Get("customerDtl").(tk.M)
 
-	err = SaveMaster(cid, dealno, customerDtl.GetString("customerName"))
+	// err = SaveMaster(cid, dealno, customerDtl.GetString("customerName"))
 
 	return IsNew, IsConfirmed, err
 }
@@ -1601,9 +1674,12 @@ func FindSamePromotor(listprom []BiodataGen, prom tk.M) (BiodataGen, []BiodataGe
 	for idx, val := range listprom {
 		name := prom.GetString("stakeholderName")
 		dob := DetectDataType(prom.GetString("stakeholderDob"), "yyyy-MM-dd")
-		// pan := prom.GetString("stakeholderPan")
+		pan := prom.GetString("stakeholderPan")
 
-		if val.Name == name && val.DateOfBirth == dob {
+		if val.Name == name && val.DateOfBirth == dob && val.PAN == pan {
+			listprom = append(listprom[:idx], listprom[idx+1:]...)
+			return val, listprom
+		} else if val.Name == name && val.DateOfBirth == dob {
 			listprom = append(listprom[:idx], listprom[idx+1:]...)
 			return val, listprom
 		}

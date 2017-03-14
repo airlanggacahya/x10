@@ -101,12 +101,16 @@ var formatDataPosition = function(param, setPosition) {
             return row.Field === "Position"
         })
 
+        var stakeholderPosition = _.filter(param, function(row){
+            return row.Field === "StakeholderPosition"
+        })
+
         if(position != undefined && position.length > 0) {
             
             formatDataDesignation(position, setDesignation)
 
             var temp = []
-            _.each(position[0].Items, function(row){
+            _.each(stakeholderPosition[0].Items, function(row){
                 temp.push(row.name) 
             })
 
@@ -121,7 +125,7 @@ var formatDataPosition = function(param, setPosition) {
 var formatDataDesignation = function(data, setDesignation) {
     var temp = []
     _.each(data[0].Items, function(row){
-        temp.push(row.code) 
+        temp.push(row.name) 
     })
 
     designationList(temp)

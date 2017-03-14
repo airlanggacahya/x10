@@ -54,17 +54,18 @@ func (s *EmptyString) UnmarshalJSON(b []byte) (err error) {
 }
 
 type DataResponse struct {
-	RecordCount          int                `json:"recordCount"`
-	OperationStatus      string             `json:"operationStatus"`
-	OperationMsg         string             `json:"operationMsg"`
-	ResponseDateTime     string             `json:"responseDateTime"`
-	ProductMasterList    []ProductMaster    `json:"productMasterList,omitempty"`
-	SchemeMasterList     []SchemeMaster     `json:"schemeMasterList,omitempty"`
-	SupplierMasterList   []SupplierMaster   `json:"manufactureSupplier,omitempty"`
-	BranchMasterList     []BranchMaster     `json:"branchMasterList,omitempty"`
-	DistrictMasterList   []DistrictMaster   `json:"districtMasterList,omitempty"`
-	GenericMasterList    []GenericMaster    `json:"genericMasterList",omitempty`
-	DepartmentMasterList []DepartmentMaster `json:"comDepartmentMList",omitempty`
+	RecordCount                    int                `json:"recordCount"`
+	OperationStatus                string             `json:"operationStatus"`
+	OperationMsg                   string             `json:"operationMsg"`
+	ResponseDateTime               string             `json:"responseDateTime"`
+	ProductMasterList              []ProductMaster    `json:"productMasterList,omitempty"`
+	SchemeMasterList               []SchemeMaster     `json:"schemeMasterList,omitempty"`
+	SupplierMasterList             []SupplierMaster   `json:"manufactureSupplier,omitempty"`
+	BranchMasterList               []BranchMaster     `json:"branchMasterList,omitempty"`
+	DistrictMasterList             []DistrictMaster   `json:"districtMasterList,omitempty"`
+	GenericMasterList              []GenericMaster    `json:"genericMasterList",omitempty`
+	GenericStakeholderPositionList []GenericMaster    `json:"genericStackHolderManagementTypeList",omitempty`
+	DepartmentMasterList           []DepartmentMaster `json:"comDepartmentMList",omitempty`
 }
 
 //-------------------------
@@ -232,6 +233,11 @@ func DoMain() {
 			"GenericMaster (Cust Constitution, Designation/Position)",
 			"http://103.251.60.132:8085/OmniFinServices/restServices/genricServices/fetchCombinedGenericData",
 			SaveGeneric,
+		},
+		{
+			"GenericMaster (stakeHolderPosition)",
+			"http://103.251.60.132:8085/OmniFinServices/restServices/combinedGenericService/combinegeneric",
+			SaveGenericCombine,
 		},
 	}
 

@@ -75,3 +75,13 @@ func SaveGeneric(data DataResponse) error {
 
 	return nil
 }
+
+func SaveGenericCombine(data DataResponse) error {
+
+	err := SaveStakeholderPosition(data.GenericStakeholderPositionList)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

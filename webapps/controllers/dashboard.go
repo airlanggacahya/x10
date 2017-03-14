@@ -2,8 +2,12 @@ package controllers
 
 import (
 	. "eaciit/x10/webapps/connection"
+	. "eaciit/x10/webapps/models"
+	"github.com/eaciit/cast"
+	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
+	"strings"
 	"time"
 )
 
@@ -80,4 +84,123 @@ func (c *DashboardController) GetBranch(k *knot.WebContext) interface{} {
 	}
 
 	return &result
+}
+
+func (c *DashboardController) GetNotes(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	conn, err := GetConnection()
+	if err != nil {
+		res.SetError(err)
+		return err
+	}
+	defer conn.Close()
+
+	query, err := conn.NewQuery().Where(dbox.Eq("_id", k.Session("username").(string))).From(new(DashboardNoteModel).TableName()).Cursor(nil)
+	if err != nil {
+
+		res.SetError(err)
+		return err
+	}
+
+	results := DashboardNoteModel{}
+	err = query.Fetch(&results, 1, false)
+	if err != nil {
+		res.SetError(err)
+		return err
+	}
+	defer query.Close()
+
+	res.SetData(results)
+
+	return res
+}
+
+func (c *DashboardController) SaveNotes(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	payload := new(DashboardNoteModel)
+	err := k.GetPayload(payload)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	cMongo, em := GetConnection()
+	defer cMongo.Close()
+	if em != nil {
+		return res.SetError(err)
+	}
+
+	q := cMongo.NewQuery().SetConfig("multiexec", true).From(payload.TableName()).Save()
+
+	defer q.Close()
+
+	payload.Id = k.Session("username").(string)
+	err = q.Exec(tk.M{"data": payload})
+
+	res.SetData(payload)
+
+	return res
+}
+
+func (c *DashboardController) GetNotification(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	payload := tk.M{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	days := payload.GetInt("days")
+	re, err := fetchNotification(days, "myInfo")
+
+	res.SetData(re)
+
+	return res
+}
+
+func fetchNotification(days int, formtype string) ([]string, error) {
+	res := []string{}
+
+	until := time.Now().AddDate(0, 0, days*-1)
+	now := time.Now()
+
+	wh := dbox.And(dbox.Gte("info."+formtype+".updateTime", until), dbox.Lte("info."+formtype+".updateTime", now))
+
+	conn, err := GetConnection()
+	if err != nil {
+		return res, err
+	}
+	defer conn.Close()
+
+	query, err := conn.NewQuery().Where(wh).From("DealSetup").Cursor(nil)
+	if err != nil {
+		return res, err
+	}
+
+	results := []tk.M{}
+	err = query.Fetch(&results, 0, false)
+	if err != nil {
+		return res, err
+	}
+	defer query.Close()
+
+	for _, val := range results {
+		inf := val.Get("info").(tk.M)
+		this := CheckArray(inf.Get(formtype))
+		curr := this[len(this)-1]
+		stat := curr.GetString("status")
+		times := curr.Get("updateTime").(time.Time)
+
+		cp := val.Get("customerprofile").(tk.M)
+		dealno := strings.Split(cp.GetString("_id"), "|")[1]
+
+		res = append(res, "Deal "+dealno+" has been "+stat+" at "+cast.Date2String(times, "yyyy-MM-dd HH:mm:ss"))
+	}
+
+	return res, nil
 }

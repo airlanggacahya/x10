@@ -195,20 +195,77 @@ func (c *DashboardController) GetNotification(k *knot.WebContext) interface{} {
 	}
 
 	days := payload.GetInt("days")
-	re, err := fetchNotification(days, "myInfo")
+	re, err := fetchNotification(days, "myInfo", k)
+	if err != nil {
+		return res.SetError(err)
+	}
+	rexnote, err := fetchNotesNotification(k)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	for _, val := range rexnote {
+		re = append(re, val)
+	}
 
 	res.SetData(re)
 
 	return res
 }
 
-func fetchNotification(days int, formtype string) ([]string, error) {
+func fetchNotesNotification(k *knot.WebContext) ([]string, error) {
+	res := []string{}
+	conn, err := GetConnection()
+	if err != nil {
+		return res, err
+	}
+	defer conn.Close()
+
+	wh := dbox.Eq("_id", k.Session("username").(string))
+
+	query, err := conn.NewQuery().Where(wh).From(new(DashboardNoteModel).TableName()).Cursor(nil)
+	if err != nil {
+		return res, err
+	}
+
+	results := DashboardNoteModel{}
+	err = query.Fetch(&results, 1, false)
+	if err != nil {
+		return res, err
+	}
+	defer query.Close()
+
+	yester := time.Now().AddDate(0, 0, -1)
+
+	for _, val := range results.Comments {
+		if !val.Checked && val.CreatedDate.Before(yester) {
+			res = append(res, "To Do List Alert - "+val.Text+" created at "+cast.Date2String(val.CreatedDate, "yyyy-MM-dd HH:mm:ss"))
+		}
+	}
+
+	return res, nil
+}
+
+func fetchNotification(days int, formtype string, k *knot.WebContext) ([]string, error) {
 	res := []string{}
 
 	until := time.Now().AddDate(0, 0, days*-1)
 	now := time.Now()
 
 	wh := dbox.And(dbox.Gte("info."+formtype+".updateTime", until), dbox.Lte("info."+formtype+".updateTime", now))
+
+	if k.Session("CustomerProfileData") != nil {
+		arrSes := k.Session("CustomerProfileData").([]tk.M)
+		arrin := []interface{}{}
+		for _, val := range arrSes {
+			arrin = append(arrin, val.Get("_id"))
+		}
+		wh = dbox.And(wh, dbox.In("customerprofile._id", arrin...))
+	}
+
+	if k.Session("username") != nil {
+		wh = dbox.And(wh, dbox.Ne("info.myInfo.updateBy", k.Session("username").(string)))
+	}
 
 	conn, err := GetConnection()
 	if err != nil {
@@ -233,12 +290,17 @@ func fetchNotification(days int, formtype string) ([]string, error) {
 		this := CheckArray(inf.Get(formtype))
 		curr := this[len(this)-1]
 		stat := curr.GetString("status")
+		by := curr.GetString("updateBy")
 		times := curr.Get("updateTime").(time.Time)
+
+		if by == "" {
+			by = "System"
+		}
 
 		cp := val.Get("customerprofile").(tk.M)
 		dealno := strings.Split(cp.GetString("_id"), "|")[1]
 
-		res = append(res, "Deal "+dealno+" has been "+stat+" at "+cast.Date2String(times, "yyyy-MM-dd HH:mm:ss"))
+		res = append(res, "Deal "+dealno+" has been "+stat+" at "+cast.Date2String(times, "yyyy-MM-dd HH:mm:ss")+" by "+by)
 	}
 
 	return res, nil

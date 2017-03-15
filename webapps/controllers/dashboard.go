@@ -3,13 +3,14 @@ package controllers
 import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
+	"strings"
+	"time"
+
 	"github.com/eaciit/cast"
 
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
-	"strings"
-	"time"
 )
 
 type DashboardController struct {
@@ -27,6 +28,7 @@ func (c *DashboardController) Default(k *knot.WebContext) interface{} {
 		"shared/leftfilter.html",
 
 		"dashboard/alert_summary.html",
+		"dashboard/alert_sidebar.html",
 	}
 
 	return DataAccess

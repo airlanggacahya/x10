@@ -3,13 +3,14 @@ package controllers
 import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
+	"strings"
+	"time"
+
 	"github.com/eaciit/cast"
 
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
-	"strings"
-	"time"
 )
 
 type DashboardController struct {
@@ -27,6 +28,7 @@ func (c *DashboardController) Default(k *knot.WebContext) interface{} {
 		"shared/leftfilter.html",
 
 		"dashboard/alert_summary.html",
+		"dashboard/alert_sidebar.html",
 	}
 
 	return DataAccess
@@ -304,6 +306,67 @@ func fetchNotification(days int, formtype string, k *knot.WebContext) ([]string,
 	}
 
 	return res, nil
+}
+
+func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	payload := tk.M{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	month := payload.GetString("month") // "February 2017"
+	currDate, err := time.Parse("2 January 2006 (MST)", "1 "+month+" (UTC)")
+	if err != nil {
+		return res.SetError(err)
+	}
+	nextDate := currDate.AddDate(0, 1, 0)
+	pastDate := currDate.AddDate(0, -8, 0)
+
+	pipe := []tk.M{}
+	pipe = append(pipe, tk.M{"$project": tk.M{
+		"amount": "$customerprofile.applicantdetail.AmountLoan",
+		"info": tk.M{
+			"$slice": []interface{}{"$info.myInfo", -1},
+		},
+	}})
+	pipe = append(pipe, tk.M{"$unwind": "$info"})
+	pipe = append(pipe, tk.M{"$match": tk.M{
+		"info.updateTime": tk.M{
+			"$gte": pastDate,
+			"$lt":  nextDate,
+		},
+	}})
+	pipe = append(pipe, tk.M{"$group": tk.M{
+		"_id": tk.M{
+			"status": "$info.status",
+			"month":  tk.M{"$month": "$info.updateTime"},
+			"year":   tk.M{"$year": "$info.updateTime"},
+		},
+		"totalAmount": tk.M{"$sum": "$amount"},
+		"totalCount":  tk.M{"$sum": 1},
+	}})
+
+	csr, err := c.Ctx.Connection.
+		NewQuery().
+		Command("pipe", pipe).
+		From("DealSetup").
+		Cursor(nil)
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer csr.Close()
+
+	data := []tk.M{}
+	if err := csr.Fetch(&data, 0, false); err != nil {
+		return res.SetError(err)
+	}
+
+	res.SetData(data)
+	return res
 }
 
 // func (c *DashboardController) SummaryAndTrends(k *knot.WebContext) interface{} {

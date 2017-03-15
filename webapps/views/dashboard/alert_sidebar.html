@@ -1,0 +1,77 @@
+
+<script>document.write('<script src="/static/core/dashboard-alert-sidebar.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+
+<style>
+    .sidebar h5 {
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .sidebar.sidebar-box {
+        border-radius: 8px;
+        border: 1px solid #acacac;
+        margin-bottom: 10px;
+        padding: 5px 10px;
+    }
+    /* NOTIF */
+    .sidebar.sidebar-box.system-notif ul {
+        padding-left: 20px;
+    }
+    .sidebar.sidebar-box.system-notif ul li {
+        list-style: disc;
+        margin-bottom: 2px;
+    }
+    /* TODO */
+    .sidebar.sidebar-box.system-todo ul {
+        padding-left: 20px;
+    }
+    .sidebar.sidebar-box.system-todo ul li {
+        list-style: disc;
+        margin-bottom: 10px;
+    }
+    .sidebar.sidebar.sidebar-box.sidebar.sidebar-box.system-todo .messages .remove {
+        font-size: 14px;
+        color: #ff0000;
+    }
+    .sidebar.sidebar.sidebar-box.sidebar.sidebar-box.system-todo .messages span.text {
+        margin-top: 3px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="sidebar sidebar-box system-notif">
+            <h5>System Notifications</h5>
+            <ul data-bind="foreach: alertSide.notifData">
+                <li data-bind="text: $data"></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="sidebar sidebar-box system-todo">
+            <div class="pull-right" style="margin-top: 3px">
+                <button data-bind="click: alertSide.todoEnableEdit.bind($data, true), visible: alertSide.todoEditState() == 'READ'"><i class="fa fa-pencil"></i></button>
+                <button data-bind="click: alertSide.todoAdd, visible: alertSide.todoEditState() == 'READ'"><i class="fa fa-plus"></i></button>
+                <button data-bind="click: alertSide.todoSave, visible: alertSide.todoEditState() == 'EDIT'"><i class="fa fa-floppy-o"></i></button>
+            </div>
+            <h5>To Do Checkboard</h5>
+
+            <ul class="messages" data-bind="foreach: alertSide.todoData, visible: alertSide.todoEditState() == 'READ'">
+                <li>
+                    <a class="remove pull-right" data-bind="click: alertSide.todoRemove.bind($data, $index())">
+                        <i class="fa fa-times"></i>
+                    </a>
+                    <span class="text" data-bind="text: Text"></span>
+                </li>
+            </ul>
+
+            <ul class="messages" data-bind="foreach: alertSide.todoData, visible: alertSide.todoEditState() == 'EDIT'">
+                <li>
+                    <input class="text" type="text" data-bind="textInput: Text" />
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

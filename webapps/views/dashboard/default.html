@@ -20,7 +20,16 @@
     }
 </style>
 
-<div class="container-fluid" >
-    {{template "alert_summary.html"}}
-    {{template "time_tracker.html"}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>Hello <span data-bind="text: model.User"></span></h4>
+            {{template "alert_sidebar.html"}}
+        </div>
+        <div class="col-sm-9">
+            {{template "alert_summary.html"}}
+            {{template "time_tracker.html"}}
+        </div>
+
+    </div>
 </div>

@@ -33,6 +33,7 @@ dash.getMasterData = function(){
 	dash.DealNo([]);
 	dash.CA([]);
 	dash.RM([]);
+	dash.DealNo([]);
 
 	ajaxPost('/databrowser/getcombineddata', {}, function(res){
 		var data = res.data;
@@ -47,6 +48,7 @@ dash.getMasterData = function(){
 		var temp2 = []
 		$.each(data, function(i, item){
 			dash.cutomerName.push(item.CustomerName);
+			dash.DealNo.push(item.DealNo);
 			if(item._accountdetails.accountsetupdetails.creditanalyst != ""){
 				temp1.push(item._accountdetails.accountsetupdetails.creditanalyst)
 				temp2.push(item._accountdetails.accountsetupdetails.rmname)
@@ -80,6 +82,35 @@ dash.getMasterData = function(){
 	})
 }
 
+dash.BranchList = function(){
+	dash.scheme([]);
+	dash.Branch([])
+	nm = _.groupBy(dash.dataTemp().Items, "name");
+	$.each(nm, function(key, item){
+		dash.Branch.push(key)
+	})
+}
+
+dash.productList = function(){
+	dash.product([]);
+	if(dash.BranchVal() != ""){
+		fl = _.filter(dash.dataonTemp(), function(res){
+			return res._accountdetails.accountsetupdetails.cityname == dash.Branch()
+		})
+		onfl = _.groupBy(fl, "_accountdetails.accountsetupdetails.product");
+		$.each(onfl, function(key, item){
+			// console.log(key)
+			if(key != ""){
+				dash.product.push(key)
+			}
+			
+		})
+
+	}else{
+		dash.getMasterData()
+	}
+}
+
 dash.cutomerNameVal.subscribe(function(value){
 	if(value != "Select One" || value != ""){
 		dash.DealNo([]);
@@ -87,35 +118,76 @@ dash.cutomerNameVal.subscribe(function(value){
 			return val.CustomerName == value;
 		})
 
-		console.log(dt)
 
 		if(dt != undefined){
 			$.each(dt, function(i, item){
-
 				dash.DealNo.push(item.DealNo)
 			})
 		}
 
-		if(dash.DealNo().length == 1){
-			if(value != "Select One"){
-				dash.DealNoVal(dash.DealNo()[0])
-			}else{
-				dash.DealNoVal("")
-			}
-			
-		}
-
 		dash.FilterField()[6].Value = value;
-		dash.SaveFilter();
+		
 	}
+	if(value == "Select One" || value == ""){
+		if(dash.BranchVal() != ""){
+			dash.DealNo[""]
+			fl = _.filter(dash.dataonTemp(), function(res){
+				return res._accountdetails.accountsetupdetails.cityname == dash.BranchVal()
+			})
+
+			city =  _.groupBy(fl, "_accountdetails.accountsetupdetails.cityname");
+			// var oncity = [];
+			var ondeal = [];
+			$.each(city, function(key, items){
+				$.each(items, function(i, k){
+					// oncity.push(k.CustomerName);
+					ondeal.push(k.DealNo);
+				})
+			})
+
+			// dash.cutomerName(_.uniqBy(oncity));
+			setTimeout(function(){
+				dash.DealNo(_.uniqBy(ondeal));
+			}, 200)
+		}else{
+			dash.getMasterData()
+		}
+	}
+	dash.SaveFilter();
 	
 });
 
 dash.DealNoVal.subscribe(function(value){
 	if(value != "Select One" || value != ""){
 		dash.FilterField()[7].Value = value;
-		dash.SaveFilter();
 	}
+	if (value == "Select One" || value == ""){
+		if(dash.BranchVal() != ""){
+			dash.DealNo[""]
+			fl = _.filter(dash.dataonTemp(), function(res){
+				return res._accountdetails.accountsetupdetails.cityname == dash.BranchVal()
+			})
+
+			city =  _.groupBy(fl, "_accountdetails.accountsetupdetails.cityname");
+			var oncity = [];
+			// var ondeal = [];
+			$.each(city, function(key, items){
+				$.each(items, function(i, k){
+					oncity.push(k.CustomerName);
+					// ondeal.push(k.DealNo);
+				})
+			})
+
+			dash.cutomerName(_.uniqBy(oncity));
+			// setTimeout(function(){
+			// 	dash.DealNo(_.uniqBy(ondeal));
+			// }, 200)
+		}else{
+			dash.getMasterData()
+		}
+	}
+
+	dash.SaveFilter();
 })
 
 dash.RegionVal.subscribe(function(value){
@@ -133,8 +205,18 @@ dash.RegionVal.subscribe(function(value){
 		})
 
 		dash.FilterField()[0].Value = value;
-		dash.SaveFilter();
+		if(dash.Branch().length == 0){
+			dash.BranchList()
+		}
+
+
 	}
+	if(value == "Select One" || value == ""){
+		dash.RegionVal("")
+		dash.getMasterData();
+	}
+
+	dash.SaveFilter();
 	
 })
 
@@ -143,7 +225,10 @@ dash.BranchVal.subscribe(function(value){
 		var res = []
 		// dash.Region([]);
 		dash.product([])
-		dash.scheme([])
+		dash.cutomerName([]);
+		dash.DealNo([])
+		dash.CA([]);
+		dash.RM([]);
 		var dt = _.groupBy(dash.dataTemp().Items, "name")
 		$.each(dt, function(key, item){
 			if(key == value){
@@ -155,6 +240,26 @@ dash.BranchVal.subscribe(function(value){
 			return res._accountdetails.accountsetupdetails.cityname == value
 		})
 
+		var inca = []
+		onca = _.groupBy(fl, "_accountdetails.accountsetupdetails.creditanalyst");
+		$.each(onca, function(key, item){
+			if(key != ""){
+				inca.push(key)
+			}
+			
+		})
+		dash.CA(_.uniqBy(inca))
+
+		var inrm = []
+		onrm = _.groupBy(fl, "_accountdetails.accountsetupdetails.rmname");
+		$.each(onrm, function(key, item){
+			if(key != ""){
+				inrm.push(key)
+			}
+			
+		})
+		dash.RM(_.uniqBy(inrm))
+
 		onfl = _.groupBy(fl, "_accountdetails.accountsetupdetails.product");
 		$.each(onfl, function(key, item){
 			// console.log(key)
@@ -164,6 +269,22 @@ dash.BranchVal.subscribe(function(value){
 			
 		})
 
+		city =  _.groupBy(fl, "_accountdetails.accountsetupdetails.cityname");
+		var oncity = [];
+		var ondeal = [];
+		$.each(city, function(key, items){
+			$.each(items, function(i, k){
+				oncity.push(k.CustomerName);
+				ondeal.push(k.DealNo);
+			})
+		})
+
+		dash.cutomerName(_.uniqBy(oncity));
+		setTimeout(function(){
+			dash.DealNo(_.uniqBy(ondeal));
+		}, 200)
+
+		dash.scheme([])
 		onsc = _.groupBy(fl, "_accountdetails.accountsetupdetails.scheme")
 		$.each(onsc, function(key, item){
 			// console.log(key)
@@ -174,9 +295,20 @@ dash.BranchVal.subscribe(function(value){
 		})
 
 		dash.FilterField()[1].Value = value;
-		dash.SaveFilter();
 
 	}
+
+	if(value == "Select One" || value == ""){
+		dash.scheme([]);
+		dash.BranchVal("")
+		if(dash.Branch().length == 0){
+			dash.BranchList()
+		}else{
+			dash.getMasterData();
+		}
+	}
+
+	dash.SaveFilter();
 	
 })
 
@@ -195,15 +327,19 @@ dash.productVal.subscribe(function(value){
 		sc =  _.groupBy(pro, "_accountdetails.accountsetupdetails.scheme")
 		$.each(sc, function(key, item){
 			if(key != "" && key != "undefined"){
-
 				dash.scheme.push(key)
 			}
 			
 		})
 
 		dash.FilterField()[2].Value = value;
-		dash.SaveFilter();
 	}
+	if(value == "Select One" || value == ""){
+		dash.productVal("")
+		dash.productList()
+	}
+
+	dash.SaveFilter();
 })
 
 dash.schemeVal.subscribe(function(value){
@@ -224,8 +360,6 @@ dash.schemeVal.subscribe(function(value){
 			temp2.push(item._accountdetails.accountsetupdetails.rmname);
 		})
 
-		dash.DealNoVal("")
-
 		dash.CA(_.uniqBy(temp1))
 		dash.RM(_.uniqBy(temp2))
 
@@ -240,8 +374,31 @@ dash.schemeVal.subscribe(function(value){
 		})
 
 		dash.FilterField()[3].Value = value;
-		dash.SaveFilter();
+		
 	}
+	if(value == "Select One" || value == ""){
+		dash.schemeVal("")
+		dash.scheme([]);
+		if(dash.Branch() != ""){
+			fl = _.filter(dash.dataonTemp(), function(res){
+				return res._accountdetails.accountsetupdetails.cityname == value
+			})
+			onsc = _.groupBy(fl, "_accountdetails.accountsetupdetails.scheme")
+			$.each(onsc, function(key, item){
+				// console.log(key)
+				if(key != "" && key != "undefined"){
+					dash.scheme.push(key)
+				}
+				
+			})
+		}else{
+		
+			dash.getMasterData();
+		}
+		
+	}
+
+	dash.SaveFilter();
 	
 })
 
@@ -249,6 +406,10 @@ dash.DealNoVal.subscribe(function(value){
 	if(value != "Select One" || value != ""){
 		dash.FilterField()[7].Value = value;
 		dash.SaveFilter();
+	}else if(value == "Select One" || value != ""){
+		alert("masukk")
+		dash.DealNoVal("")
+		dash.getMasterData();
 	}
 	
 })
@@ -258,23 +419,173 @@ dash.irdataVal.subscribe(function(value){
 		dash.FilterField()[8].Value = value;
 		dash.SaveFilter();
 	}
+	if(value == "Select One" || value == ""){
+		dash.irdataVal("");
+		dash.getMasterData();
+	}
 	
 })
 
 dash.CAVal.subscribe(function(value){
 	if(value != "Select One" || value != ""){
 		dash.FilterField()[10].Value = value;
-		dash.SaveFilter();
+		data = _.filter(dash.dataonTemp(), function(item){
+			return item._accountdetails.accountsetupdetails.creditanalyst == value;
+		})
+		
+		dash.CA([]);
+		var inca = []
+		$.each(data, function(i, key){
+			inca.push(key._accountdetails.accountsetupdetails.creditanalyst)
+		})
+		dash.CA(_.uniqBy(inca));
+
+		dash.cutomerName([]);
+		var cust = []
+		$.each(data, function(i, key){
+			cust.push(key.CustomerName)
+		})
+		dash.cutomerName(cust)
+
+		dash.DealNo([]);
+		var deal = [];
+		$.each(data, function(i, key){
+			deal.push(key.DealNo)
+		})
+		dash.DealNo(deal)
+
+		dash.product([]);
+		var pro = []
+		$.each(data, function(i, key){
+			pro.push(key._accountdetails.accountsetupdetails.product)
+		})
+		dash.product(_.uniqBy(pro));
+
+		dash.scheme([]);
+		var sc = []
+		$.each(data, function(i, key){
+			sc.push(key._accountdetails.accountsetupdetails.scheme)
+		})
+		dash.scheme(_.uniqBy(sc));
+
+		dash.Branch([]);
+		var br = [];
+		$.each(data, function(i, key){
+			br.push(key._accountdetails.accountsetupdetails.cityname)
+		})
+		dash.Branch(_.uniqBy(br));
 	}
+	if(value == "Select One" || value == ""){
+		dash.CAVal("")
+		dash.getMasterData();
+	}
+
+	dash.SaveFilter();
 })
 
 dash.RMVal.subscribe(function(value){
 	if(value != "Select One" || value != ""){
 		dash.FilterField()[11].Value = value;
-		dash.SaveFilter();
+
+		data = _.filter(dash.dataonTemp(), function(item){
+			return item._accountdetails.accountsetupdetails.rmname == value;
+		})
+		
+		dash.CA([]);
+		var inca = []
+		$.each(data, function(i, key){
+			inca.push(key._accountdetails.accountsetupdetails.creditanalyst)
+		})
+		dash.CA(_.uniqBy(inca));
+
+		dash.cutomerName([]);
+		var cust = []
+		$.each(data, function(i, key){
+			cust.push(key.CustomerName)
+		})
+		dash.cutomerName(cust)
+
+		dash.DealNo([]);
+		var deal = [];
+		$.each(data, function(i, key){
+			deal.push(key.DealNo)
+		})
+		dash.DealNo(deal)
+
+		dash.product([]);
+		var pro = []
+		$.each(data, function(i, key){
+			pro.push(key._accountdetails.accountsetupdetails.product)
+		})
+		dash.product(_.uniqBy(pro));
+
+		dash.scheme([]);
+		var sc = []
+		$.each(data, function(i, key){
+			sc.push(key._accountdetails.accountsetupdetails.scheme)
+		})
+		dash.scheme(_.uniqBy(sc));
+
+		dash.Branch([]);
+		var br = [];
+		$.each(data, function(i, key){
+			br.push(key._accountdetails.accountsetupdetails.cityname)
+		})
+		dash.Branch(_.uniqBy(br));
+		// dash.onfilter(data, value)
+
+
 	}
+	if(value == "Select One" || value == ""){
+		dash.RMVal("");
+		// if(dash.BranchVal() != ""){
+
+		// }else{
+			dash.getMasterData();
+		// }
+		
+	}
+
+	dash.SaveFilter();
 	
 })
+
+dash.onfilter = function(data,value){
+	dash.cutomerName([]);
+	var cust = []
+	$.each(data, function(i, key){
+		cust.push(key.CustomerName)
+	})
+	dash.cutomerName(cust)
+
+	dash.DealNo([]);
+	var deal = [];
+	$.each(data, function(i, key){
+		deal.push(key.DealNo)
+	})
+	dash.DealNo(deal)
+
+	dash.product([]);
+	var pro = []
+	$.each(data, function(i, key){
+		pro.push(key._accountdetails.accountsetupdetails.product)
+	})
+	dash.product(_.uniqBy(pro));
+
+	dash.scheme([]);
+	var sc = []
+	$.each(data, function(i, key){
+		sc.push(key._accountdetails.accountsetupdetails.scheme)
+	})
+	dash.scheme(_.uniqBy(sc));
+
+	dash.Branch([]);
+	var br = [];
+	$.each(data, function(i, key){
+		br.push(key._accountdetails.accountsetupdetails.cityname)
+	})
+	dash.Branch(_.uniqBy(br));
+}
 
 dash.SaveFilter = function(){
 	if(vm.open() == true){
@@ -555,7 +866,7 @@ dash.reset = function(){
 	dash.RMVal("");
 	dash.schemeVal("");
 	dash.productVal("");
-	dash.BranchVal("");
+	// dash.BranchVal("");
 	dash.RegionVal("");
 
 }

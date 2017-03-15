@@ -216,7 +216,7 @@ func (c *ApprovalController) SaveCreditAnalys(k *knot.WebContext) interface{} {
 	}
 
 	if datas.Status == 1 {
-		err = UpdateDealSetup(strconv.Itoa(datas.Ca.CustomerId), datas.Ca.DealNo, "ds", SendToDecision)
+		err = UpdateDealSetup(strconv.Itoa(datas.Ca.CustomerId), datas.Ca.DealNo, "ds", SendToDecision, k)
 		if err != nil {
 			c.WriteLog(err.Error())
 			// return CreateResult(false, nil, err.Error())
@@ -333,11 +333,11 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 	cur, err := conn.NewQuery().
 		From("CreditScorecard").
 		Where(
-			dbox.And(
-				dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
-				dbox.Eq("DealNo", data.DealNo),
-			),
-		).
+		dbox.And(
+			dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
+			dbox.Eq("DealNo", data.DealNo),
+		),
+	).
 		Cursor(nil)
 	if err != nil {
 		return err
@@ -469,7 +469,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 	if datas.LatestStatus == "Sent Back" {
 		datas.LatestStatus = SendBackAnalysis
 		for _, val := range arr {
-			err = changeStatus(cid, dealno, val, 1)
+			err = changeStatus(cid, dealno, val, 1, k)
 			if err != nil {
 				return CreateResult(false, nil, err.Error())
 			}
@@ -489,7 +489,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 
 	} else {
 		for _, val := range arr {
-			err = changeStatus(cid, dealno, val, 2)
+			err = changeStatus(cid, dealno, val, 2, k)
 			if err != nil {
 				return CreateResult(false, nil, err.Error())
 			}
@@ -519,7 +519,7 @@ func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interf
 		}
 	}
 
-	err = UpdateDealSetup(cid, dealno, "ds", datas.LatestStatus)
+	err = UpdateDealSetup(cid, dealno, "ds", datas.LatestStatus, k)
 
 	// if err != nil {
 	// 	return CreateResult(false, nil, err.Error())

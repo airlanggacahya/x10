@@ -405,7 +405,7 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 		"Confirmed",
 		"Freeze",
 	}
-	UpdateDealSetup(custstring, dealstring, "ca", statusmap[p.Status])
+	UpdateDealSetup(custstring, dealstring, "ca", statusmap[p.Status], k)
 
 	return p
 }

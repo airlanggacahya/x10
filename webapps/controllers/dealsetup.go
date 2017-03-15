@@ -175,17 +175,17 @@ func (c *DealSetUpController) Accept(k *knot.WebContext) interface{} {
 	if cou > 1 {
 		arr := []string{"AccountDetails", "InternalRTR", "BankAnalysisV2", "CustomerProfile", "RatioInputData", "RepaymentRecords", "StockandDebt", "CibilReport", "CibilReportPromotorFinal", "DueDiligenceInput"}
 		for _, val := range arr {
-			err = changeStatus(cid, dealno, val, 0)
+			err = changeStatus(cid, dealno, val, 0, k)
 			if err != nil {
 				res.SetError(err)
 			}
 		}
-		err := updateDealSetupLatestData(cid, dealno, "ds", UnderProcess)
+		err := updateDealSetupLatestData(cid, dealno, "ds", UnderProcess, k)
 		if err != nil {
 			res.SetError(err)
 		}
 	} else {
-		err = updateDealSetupLatestData(cid, dealno, "all", UnderProcess)
+		err = updateDealSetupLatestData(cid, dealno, "all", UnderProcess, k)
 		if err != nil {
 			res.SetError(err)
 		}
@@ -334,7 +334,7 @@ func BlendDealSetup(Id bson.ObjectId, inqueObj tk.M, infos tk.M) error {
 	return nil
 }
 
-func changeStatus(CustomerID string, DealNo string, TableName string, Status int) error {
+func changeStatus(CustomerID string, DealNo string, TableName string, Status int, k *knot.WebContext) error {
 
 	custInt := cast.ToInt(CustomerID, cast.RoundingAuto)
 	concate := CustomerID + "|" + DealNo
@@ -383,17 +383,17 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.Status = 0
 				dt.Freeze = false
-				UpdateDealSetup(CustomerID, DealNo, "ad", UnderProcess)
+				UpdateDealSetup(CustomerID, DealNo, "ad", UnderProcess, k)
 			case 1:
 				dt.Status = 1
 				dt.Freeze = false
 				dt.DateConfirmed = curTime
-				UpdateDealSetup(CustomerID, DealNo, "ad", "Confirmed")
+				UpdateDealSetup(CustomerID, DealNo, "ad", "Confirmed", k)
 			case 2:
 				dt.Status = 1
 				dt.Freeze = true
 				dt.DateFreeze = curTime
-				UpdateDealSetup(CustomerID, DealNo, "ad", "Freeze")
+				UpdateDealSetup(CustomerID, DealNo, "ad", "Freeze", k)
 			}
 
 			insertdata = insertdata.Set("data", dt)
@@ -423,15 +423,15 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.Status = 0
 				dt.Isfreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "irtr", UnderProcess)
+				UpdateDealSetup(CustomerID, DealNo, "irtr", UnderProcess, k)
 			case 1:
 				dt.Status = 1
 				dt.Isfreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "irtr", "Confirmed")
+				UpdateDealSetup(CustomerID, DealNo, "irtr", "Confirmed", k)
 			case 2:
 				dt.Status = 1
 				dt.Isfreeze = true
-				UpdateDealSetup(CustomerID, DealNo, "irtr", "Freeze")
+				UpdateDealSetup(CustomerID, DealNo, "irtr", "Freeze", k)
 			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
@@ -461,19 +461,19 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 				dt.Status = 0
 				dt.IsConfirmed = false
 				dt.IsFreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "ba", UnderProcess)
+				UpdateDealSetup(CustomerID, DealNo, "ba", UnderProcess, k)
 			case 1:
 				dt.Status = 1
 				dt.IsConfirmed = true
 				dt.IsFreeze = false
 				dt.DateConfirmed = curTime
-				UpdateDealSetup(CustomerID, DealNo, "ba", "Confirmed")
+				UpdateDealSetup(CustomerID, DealNo, "ba", "Confirmed", k)
 			case 2:
 				dt.Status = 1
 				dt.IsConfirmed = true
 				dt.IsFreeze = true
 				dt.DateFreeze = curTime
-				UpdateDealSetup(CustomerID, DealNo, "ba", "Freeze")
+				UpdateDealSetup(CustomerID, DealNo, "ba", "Freeze", k)
 			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
@@ -512,11 +512,11 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			// Update DealSetup
 			switch dt.Status {
 			case 2:
-				UpdateDealSetup(CustomerID, DealNo, "ca", "Freeze")
+				UpdateDealSetup(CustomerID, DealNo, "ca", "Freeze", k)
 			case 1:
-				UpdateDealSetup(CustomerID, DealNo, "ca", "Confirmed")
+				UpdateDealSetup(CustomerID, DealNo, "ca", "Confirmed", k)
 			case 0:
-				UpdateDealSetup(CustomerID, DealNo, "ca", UnderProcess)
+				UpdateDealSetup(CustomerID, DealNo, "ca", UnderProcess, k)
 			}
 
 			insertdata = insertdata.Set("data", dt)
@@ -545,15 +545,15 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.Confirmed = false
 				dt.IsFrozen = false
-				UpdateDealSetup(CustomerID, DealNo, "bsi", UnderProcess)
+				UpdateDealSetup(CustomerID, DealNo, "bsi", UnderProcess, k)
 			case 1:
 				dt.Confirmed = true
 				dt.IsFrozen = false
-				UpdateDealSetup(CustomerID, DealNo, "bsi", "Confirmed")
+				UpdateDealSetup(CustomerID, DealNo, "bsi", "Confirmed", k)
 			case 2:
 				dt.Confirmed = true
 				dt.IsFrozen = true
-				UpdateDealSetup(CustomerID, DealNo, "bsi", "Freeze")
+				UpdateDealSetup(CustomerID, DealNo, "bsi", "Freeze", k)
 			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
@@ -583,13 +583,13 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			dt.DateSave = curTime
 			switch Status {
 			case 0:
-				UpdateDealSetup(CustomerID, DealNo, "ertr", UnderProcess)
+				UpdateDealSetup(CustomerID, DealNo, "ertr", UnderProcess, k)
 			case 1:
 				dt.DateConfirmed = curTime
-				UpdateDealSetup(CustomerID, DealNo, "ertr", "Confirmed")
+				UpdateDealSetup(CustomerID, DealNo, "ertr", "Confirmed", k)
 			case 2:
 				dt.DateFreeze = curTime
-				UpdateDealSetup(CustomerID, DealNo, "ertr", "Freeze")
+				UpdateDealSetup(CustomerID, DealNo, "ertr", "Freeze", k)
 			}
 
 			insertdata = insertdata.Set("data", dt)
@@ -618,15 +618,15 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.IsConfirm = false
 				dt.IsFreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "sbd", UnderProcess)
+				UpdateDealSetup(CustomerID, DealNo, "sbd", UnderProcess, k)
 			case 1:
 				dt.IsConfirm = true
 				dt.IsFreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "sbd", "Confirmed")
+				UpdateDealSetup(CustomerID, DealNo, "sbd", "Confirmed", k)
 			case 2:
 				dt.IsConfirm = true
 				dt.IsFreeze = true
-				UpdateDealSetup(CustomerID, DealNo, "sbd", "Freeze")
+				UpdateDealSetup(CustomerID, DealNo, "sbd", "Freeze", k)
 			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
@@ -657,15 +657,15 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.IsConfirm = 0
 				dt.IsFreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "cibil", UnderProcess)
+				UpdateDealSetup(CustomerID, DealNo, "cibil", UnderProcess, k)
 			case 1:
 				dt.IsConfirm = 1
 				dt.IsFreeze = false
-				UpdateDealSetup(CustomerID, DealNo, "cibil", "Confirmed")
+				UpdateDealSetup(CustomerID, DealNo, "cibil", "Confirmed", k)
 			case 2:
 				dt.IsConfirm = 1
 				dt.IsFreeze = true
-				UpdateDealSetup(CustomerID, DealNo, "cibil", "Freeze")
+				UpdateDealSetup(CustomerID, DealNo, "cibil", "Freeze", k)
 			}
 
 			dt.Status = Status
@@ -729,17 +729,17 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 			case 0:
 				dt.Status = 0
 				dt.Freeze = false
-				UpdateDealSetup(CustomerID, DealNo, "dd", UnderProcess)
+				UpdateDealSetup(CustomerID, DealNo, "dd", UnderProcess, k)
 			case 1:
 				dt.Status = 1
 				dt.Freeze = false
 				dt.LastConfirmed = curTime
-				UpdateDealSetup(CustomerID, DealNo, "dd", "Confirmed")
+				UpdateDealSetup(CustomerID, DealNo, "dd", "Confirmed", k)
 			case 2:
 				dt.Status = 1
 				dt.Freeze = true
 				dt.DateFreeze = curTime
-				UpdateDealSetup(CustomerID, DealNo, "dd", "Freeze")
+				UpdateDealSetup(CustomerID, DealNo, "dd", "Freeze", k)
 			}
 			insertdata = insertdata.Set("data", dt)
 			e = qinsert.Exec(insertdata)
@@ -866,7 +866,7 @@ func (c *DealSetUpController) SendBack(k *knot.WebContext) interface{} {
 		return res
 	}
 
-	err = updateDealSetupLatestData(cid, dealno, "ds", SendBackOmnifin)
+	err = updateDealSetupLatestData(cid, dealno, "ds", SendBackOmnifin, k)
 	if err != nil {
 		res.SetError(err)
 		return res
@@ -966,7 +966,7 @@ func checkDealSetup(cid string, dealno string) (error, int, tk.M, bson.ObjectId,
 	return nil, len(result), tk.M{}, id, tk.M{}
 }
 
-func updateDealSetupLatestData(cid string, dealno string, formname string, formstatus string) error {
+func updateDealSetupLatestData(cid string, dealno string, formname string, formstatus string, r *knot.WebContext) error {
 
 	cn, err := GetConnection()
 	defer cn.Close()
@@ -1002,98 +1002,98 @@ func updateDealSetupLatestData(cid string, dealno string, formname string, forms
 	switch formname {
 	case "ds":
 		myInfos := CheckArraytkM(infos.Get("myInfo"))
-		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("myInfo", myInfos)
 	case "ca":
 		caInfos := CheckArraytkM(infos.Get("caInfo"))
-		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("caInfo", caInfos)
 	case "cibil":
 		cibilInfos := CheckArraytkM(infos.Get("cibilInfo"))
-		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("cibilInfo", cibilInfos)
 	case "bsi":
 		bsiInfos := CheckArraytkM(infos.Get("bsiInfo"))
-		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("bsiInfo", bsiInfos)
 	case "sbd":
 		sbdInfos := CheckArraytkM(infos.Get("sbdInfo"))
-		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("sbdInfo", sbdInfos)
 	case "ad":
 		adInfos := CheckArraytkM(infos.Get("adInfo"))
-		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("adInfo", adInfos)
 	case "ba":
 		baInfos := CheckArraytkM(infos.Get("baInfo"))
-		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("baInfo", baInfos)
 	case "ertr":
 		ertrInfos := CheckArraytkM(infos.Get("ertrInfo"))
-		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("ertrInfo", ertrInfos)
 	case "irtr":
 		irtrInfos := CheckArraytkM(infos.Get("irtrInfo"))
-		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("irtrInfo", irtrInfos)
 	case "dd":
 		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
-		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("ddInfo", ddInfos)
 	case "dcf":
 		dcfInfos := CheckArraytkM(infos.Get("dcfInfo"))
-		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("dcfInfo", dcfInfos)
 	case "cac":
 		cacInfos := CheckArraytkM(infos.Get("cacInfo"))
-		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("cacInfo", cacInfos)
 	case "all":
 		myInfos := CheckArraytkM(infos.Get("myInfo"))
-		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("myInfo", myInfos)
 		caInfos := CheckArraytkM(infos.Get("caInfo"))
-		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("caInfo", caInfos)
 
 		cibilInfos := CheckArraytkM(infos.Get("cibilInfo"))
-		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("cibilInfo", cibilInfos)
 
 		bsiInfos := CheckArraytkM(infos.Get("bsiInfo"))
-		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("bsiInfo", bsiInfos)
 
 		sbdInfos := CheckArraytkM(infos.Get("sbdInfo"))
-		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("sbdInfo", sbdInfos)
 
 		adInfos := CheckArraytkM(infos.Get("adInfo"))
-		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("adInfo", adInfos)
 
 		baInfos := CheckArraytkM(infos.Get("baInfo"))
-		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("baInfo", baInfos)
 
 		ertrInfos := CheckArraytkM(infos.Get("ertrInfo"))
-		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("ertrInfo", ertrInfos)
 
 		irtrInfos := CheckArraytkM(infos.Get("irtrInfo"))
-		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("irtrInfo", irtrInfos)
 
 		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
-		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("ddInfo", ddInfos)
 
 		dcfInfos := CheckArraytkM(infos.Get("dcfInfo"))
-		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("dcfInfo", dcfInfos)
 
 		cacInfos := CheckArraytkM(infos.Get("cacInfo"))
-		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("cacInfo", cacInfos)
 	}
 
@@ -1116,7 +1116,7 @@ func updateDealSetupLatestData(cid string, dealno string, formname string, forms
 
 var ErrorDataNotFound = errors.New("Data Deal Set-up Not Found")
 
-func UpdateDealSetup(cid string, dealno string, formname string, formstatus string) error {
+func UpdateDealSetup(cid string, dealno string, formname string, formstatus string, r *knot.WebContext) error {
 
 	cn, err := GetConnection()
 	defer cn.Close()
@@ -1169,98 +1169,98 @@ func UpdateDealSetup(cid string, dealno string, formname string, formstatus stri
 	switch formname {
 	case "ds":
 		myInfos := CheckArraytkM(infos.Get("myInfo"))
-		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("myInfo", myInfos)
 	case "ca":
 		caInfos := CheckArraytkM(infos.Get("caInfo"))
-		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("caInfo", caInfos)
 	case "cibil":
 		cibilInfos := CheckArraytkM(infos.Get("cibilInfo"))
-		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("cibilInfo", cibilInfos)
 	case "bsi":
 		bsiInfos := CheckArraytkM(infos.Get("bsiInfo"))
-		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("bsiInfo", bsiInfos)
 	case "sbd":
 		sbdInfos := CheckArraytkM(infos.Get("sbdInfo"))
-		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("sbdInfo", sbdInfos)
 	case "ad":
 		adInfos := CheckArraytkM(infos.Get("adInfo"))
-		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("adInfo", adInfos)
 	case "ba":
 		baInfos := CheckArraytkM(infos.Get("baInfo"))
-		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("baInfo", baInfos)
 	case "ertr":
 		ertrInfos := CheckArraytkM(infos.Get("ertrInfo"))
-		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("ertrInfo", ertrInfos)
 	case "irtr":
 		irtrInfos := CheckArraytkM(infos.Get("irtrInfo"))
-		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("irtrInfo", irtrInfos)
 	case "dd":
 		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
-		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("ddInfo", ddInfos)
 	case "dcf":
 		dcfInfos := CheckArraytkM(infos.Get("dcfInfo"))
-		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("dcfInfo", dcfInfos)
 	case "cac":
 		cacInfos := CheckArraytkM(infos.Get("cacInfo"))
-		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("cacInfo", cacInfos)
 	case "all":
 		myInfos := CheckArraytkM(infos.Get("myInfo"))
-		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		myInfos = append(myInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("myInfo", myInfos)
 		caInfos := CheckArraytkM(infos.Get("caInfo"))
-		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		caInfos = append(caInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("caInfo", caInfos)
 
 		cibilInfos := CheckArraytkM(infos.Get("cibilInfo"))
-		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		cibilInfos = append(cibilInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("cibilInfo", cibilInfos)
 
 		bsiInfos := CheckArraytkM(infos.Get("bsiInfo"))
-		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		bsiInfos = append(bsiInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("bsiInfo", bsiInfos)
 
 		sbdInfos := CheckArraytkM(infos.Get("sbdInfo"))
-		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		sbdInfos = append(sbdInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("sbdInfo", sbdInfos)
 
 		adInfos := CheckArraytkM(infos.Get("adInfo"))
-		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		adInfos = append(adInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("adInfo", adInfos)
 
 		baInfos := CheckArraytkM(infos.Get("baInfo"))
-		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		baInfos = append(baInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("baInfo", baInfos)
 
 		ertrInfos := CheckArraytkM(infos.Get("ertrInfo"))
-		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		ertrInfos = append(ertrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("ertrInfo", ertrInfos)
 
 		irtrInfos := CheckArraytkM(infos.Get("irtrInfo"))
-		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		irtrInfos = append(irtrInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("irtrInfo", irtrInfos)
 
 		ddInfos := CheckArraytkM(infos.Get("ddInfo"))
-		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		ddInfos = append(ddInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("ddInfo", ddInfos)
 
 		dcfInfos := CheckArraytkM(infos.Get("dcfInfo"))
-		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		dcfInfos = append(dcfInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("dcfInfo", dcfInfos)
 
 		cacInfos := CheckArraytkM(infos.Get("cacInfo"))
-		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus))
+		cacInfos = append(cacInfos, tk.M{}.Set("updateTime", time.Now()).Set("status", formstatus).Set("updateBy", r.Session("username")))
 		infos.Set("cacInfo", cacInfos)
 	}
 

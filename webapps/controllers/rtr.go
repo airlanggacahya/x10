@@ -227,7 +227,7 @@ func (c *RtrController) Update(k *knot.WebContext) interface{} {
 		"Confirmed",
 		"Freeze",
 	}
-	UpdateDealSetup(ar.CustomerId, ar.DealNo, "ertr", statusmap[ar.Status])
+	UpdateDealSetup(ar.CustomerId, ar.DealNo, "ertr", statusmap[ar.Status], k)
 
 	return CreateResult(true, arr, "")
 }

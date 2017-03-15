@@ -141,9 +141,9 @@ func (c *DataCapturingController) ConfirmStockAndDebt(k *knot.WebContext) interf
 	deal := strings.Split(result.CustomerId, "|")[1]
 	// Update DealSetup
 	if p.Get("IsConfirm").(bool) {
-		UpdateDealSetup(cust, deal, "sbd", "Confirmed")
+		UpdateDealSetup(cust, deal, "sbd", "Confirmed", k)
 	} else {
-		UpdateDealSetup(cust, deal, "sbd", UnderProcess)
+		UpdateDealSetup(cust, deal, "sbd", UnderProcess, k)
 	}
 	return result
 }
@@ -163,9 +163,9 @@ func (c *DataCapturingController) FreezeStockAndDebt(k *knot.WebContext) interfa
 	deal := strings.Split(result.CustomerId, "|")[1]
 	// Update DealSetup
 	if p.Get("IsFreeze").(bool) {
-		UpdateDealSetup(cust, deal, "sbd", "Freeze")
+		UpdateDealSetup(cust, deal, "sbd", "Freeze", k)
 	} else {
-		UpdateDealSetup(cust, deal, "sbd", "Confirmed")
+		UpdateDealSetup(cust, deal, "sbd", "Confirmed", k)
 	}
 	return result
 }

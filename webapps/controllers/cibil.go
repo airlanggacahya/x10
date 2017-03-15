@@ -227,9 +227,9 @@ func (c *DataCapturingController) UpdateFreeze(k *knot.WebContext) interface{} {
 	// Update DealSetup
 	// Only update freeze, otherwise it will create duplicate entry
 	if p["status"].(bool) {
-		UpdateDealSetup(p.GetString("custid"), p.GetString("dealno"), "cibil", "Freeze")
+		UpdateDealSetup(p.GetString("custid"), p.GetString("dealno"), "cibil", "Freeze", k)
 	} else {
-		UpdateDealSetup(p.GetString("custid"), p.GetString("dealno"), "cibil", "Confirmed")
+		UpdateDealSetup(p.GetString("custid"), p.GetString("dealno"), "cibil", "Confirmed", k)
 	}
 
 	return CreateResult(true, nil, "")
@@ -920,9 +920,9 @@ func (c *DataCapturingController) UpdateConfirmCibil(k *knot.WebContext) interfa
 	}
 	// Update DealSetup
 	if inputCibilConfirm == 0 {
-		UpdateDealSetup(p.GetString("CustomerId"), p.GetString("DealNo"), "cibil", UnderProcess)
+		UpdateDealSetup(p.GetString("CustomerId"), p.GetString("DealNo"), "cibil", UnderProcess, k)
 	} else {
-		UpdateDealSetup(p.GetString("CustomerId"), p.GetString("DealNo"), "cibil", "Confirmed")
+		UpdateDealSetup(p.GetString("CustomerId"), p.GetString("DealNo"), "cibil", "Confirmed", k)
 	}
 
 	return CreateResult(true, nil, "")

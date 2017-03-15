@@ -469,11 +469,13 @@ func BuildInfo() tk.M {
 	infoNA := tk.M{
 		"updateTime": time.Now(),
 		"status":     "NA",
+		"updateBy":   "System",
 	}
 
 	infoQueue := tk.M{
 		"updateTime": time.Now(),
 		"status":     Inque,
+		"updateBy":   "System",
 	}
 
 	info := tk.M{
@@ -498,11 +500,13 @@ func MergeInfo(infos tk.M) tk.M {
 	infoNA := tk.M{
 		"updateTime": time.Now(),
 		"status":     "NA",
+		"updateBy":   "System",
 	}
 
 	infoQueue := tk.M{
 		"updateTime": time.Now(),
 		"status":     Inque,
+		"updateBy":   "System",
 	}
 
 	info := tk.M{}

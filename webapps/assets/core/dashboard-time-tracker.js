@@ -115,6 +115,9 @@ ttrack.renderChart = function(datas){
                     field: "count",
                     name: "#= group.value.split('*')[1] #"
                 }],
+                chartArea:{
+                    background: "#f0f3f4"
+                },
                 seriesClick : function(e){
                     var status = e.dataItem.timestatus.split("*")[1];
                     if(status == "Over due"){

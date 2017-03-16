@@ -17,17 +17,17 @@
     }
 
     .summary-box>.score.unit {
-        font-size: 18px;
+        font-size: 13px;
     }
 
     .summary-box>i.fa {
-        font-size: 24px;
+        font-size: 22px;
     }
 
     .summary-box .box-label {
         text-align: left;
         display: block;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
     }
 
@@ -58,7 +58,7 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <div>
             <input data-bind="kendoDatePicker: {
                 value: alertSum.trendMonth,
@@ -70,15 +70,15 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.summaryApp"></span>
-                    <i data-bind="attr: { class: alertSum.summaryAppFa }" aria-hidden="true"></i>
+                    <span class="score" data-bind="text: alertSum.currentData('countApproved')"></span>
+                    <i data-bind="attr: { class: alertSum.seriesChangeFa('countApproved') }" aria-hidden="true"></i>
                     <span class="box-label blue">Approved</span>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.summaryRej"></span>
-                    <i data-bind="attr: { class: alertSum.summaryRejFa }" aria-hidden="true"></i>
+                    <span class="score" data-bind="text: alertSum.currentData('countRejected')"></span>
+                    <i data-bind="attr: { class: alertSum.seriesChangeFa('countRejected') }" aria-hidden="true"></i>
                     <span class="box-label red">Rejected</span>
                 </div>
             </div>
@@ -86,16 +86,16 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.summaryApp"></span><span class="score unit"> cr.</span>
-                    <i data-bind="attr: { class: alertSum.summaryAppFa }" aria-hidden="true"></i>
-                    <span class="box-label blue">Approved</span>
+                    <span class="score" data-bind="text: alertSum.currentData('amountApproved', 7, 1)"></span><span class="score unit"> cr.</span>
+                    <i data-bind="attr: { class: alertSum.seriesChangeFa('amountApproved') }" aria-hidden="true"></i>
+                    <span class="box-label blue">Deal Amount</span>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.summaryRej"></span><span class="score unit"> cr.</span>
-                    <i data-bind="attr: { class: alertSum.summaryRejFa }" aria-hidden="true"></i>
-                    <span class="box-label red">Rejected</span>
+                    <span class="score" data-bind="text: alertSum.currentData('amountRejected', 7, 1)"></span><span class="score unit"> cr.</span>
+                    <i data-bind="attr: { class: alertSum.seriesChangeFa('amountRejected') }" aria-hidden="true"></i>
+                    <span class="box-label red">Deal Amount</span>
                 </div>
             </div>
         </div>
@@ -107,25 +107,24 @@
         </div>
     </div>
 
-    <div class="col-sm-8">
-        <h5>Trend: Last 6 months</h5>
+    <div class="col-sm-9">
+        <span class="pull-right">
+            <div data-bind="kendoDropDownList: {
+                data: alertSum.trendDataLengthOptions,
+                value: alertSum.trendDataLength,
+                dataTextField: 'text',
+                dataValueField: 'value'
+            }">
+            </div>
+        </span>
+        <h5>Trend: Last <span data-bind="text: alertSum.trendDataLengthTitle"></span></h5>
         <div data-bind="kendoChart: {
             data: alertSum.trendDataSeries,
             series: alertSum.trendDataConfig,
             categoryAxis: {
                 categories: alertSum.trendDataMonths
             },
-            valueAxes: [{
-                name: 'cr',
-                title: { text: 'cr' },
-                min: 0,
-                max: 700
-            },{
-                name: 'count',
-                title: { text: 'count' },
-                min: 0,
-                max: 10
-            }]
+            valueAxes: alertSum.trendDataAxes
         }">
         </div>
     </div>

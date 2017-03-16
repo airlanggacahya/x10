@@ -784,7 +784,7 @@ func BuildCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string) (
 		// 	Bio.ShareHoldingPercentage = stkhold[0].GetFloat64("stakeholderPercentage")
 		// 	Bio.Designation = stkhold[0].GetString("stakeholderPosition")
 		// }
-		Bio.Education = dtl.GetString("eduDetail")
+		Bio.Education = dtl.GetString("eduDetailDesc")
 		Bio.PAN = dtl.GetString("custmerPan")
 
 		if len(addr) > 0 {
@@ -1011,7 +1011,7 @@ func GenerateCustomerProfile(body tk.M, crList []tk.M, cid string, dealno string
 			// 	Bio.ShareHoldingPercentage = stkhold[0].GetFloat64("stakeholderPercentage")
 			// 	Bio.Designation = stkhold[0].GetString("stakeholderPosition")
 			// }
-			Bio.Education = dtl.GetString("eduDetail")
+			Bio.Education = dtl.GetString("eduDetailDesc")
 			Bio.PAN = dtl.GetString("custmerPan")
 
 			if len(addr) > 0 {

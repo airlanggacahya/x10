@@ -116,7 +116,6 @@ ttrack.renderChart = function(datas){
                     name: "#= group.value.split('*')[1] #"
                 }],
                 seriesClick : function(e){
-                    console.log(e)
                     var status = e.dataItem.timestatus.split("*")[1];
                     if(status == "Over due"){
                         ttrack.popupchartcolor(["#FF0000"]);
@@ -133,7 +132,6 @@ ttrack.renderChart = function(datas){
 
                     ttrack.modalChartTittle(str);
                     if(ttrack.trackingValue() == 'stages'){
-                        alert("Stages")
                         ttrack.loadDataStages(e);
                     }else if(ttrack.trackingValue() == 'region'){
                         ttrack.loadDataRegion(e);
@@ -256,12 +254,11 @@ ttrack.normalisasiData = function(data){
           }
         }
       }
-      console.log(data)
+      // console.log(data)
     return data
 }
 
 ttrack.loadDealGrid = function(){
-    console.log("nnnnnn----------",ttrack.DataGridModal())
     $("#dealStatus").html('');
     $("#dealStatus").kendoGrid({
         dataSource: ttrack.DataGridModal(),

@@ -846,3 +846,100 @@ func GenerateRoleConditionTkM(k *knot.WebContext) ([]tk.M, error) {
 
 	return dbFilter, nil
 }
+
+func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	payload := tk.M{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	cn, err := GetConnection()
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer cn.Close()
+
+	whs, err := GenerateRoleCondition(k)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	query := cn.NewQuery().
+		From("DealSetup").
+		Where(dbox.And(whs...))
+
+	csr, e := query.Cursor(nil)
+
+	if e != nil {
+		return res.SetError(err)
+	}
+	defer csr.Close()
+
+	results := make([]tk.M, 0)
+	e = csr.Fetch(&results, 0, false)
+	if e != nil {
+		return res.SetError(err)
+	}
+
+	// dayRange := []int{15, 11, 6, 0}
+	textRange := []string{"15 + Days", "11 - 15 Days", "6 - 10 Days", "0 - 5 Days"}
+	statusAlias := tk.M{SendBackOmnifin: "Re-Processed", Cancel: "Re-Processed", SendToDecision: "Processed", UnderProcess: "Accepted"}
+	mapRes := tk.M{}
+	for _, val := range results {
+		info := val.Get("info").(tk.M)
+		myInfo := CheckArray(info.Get("myInfo"))
+		if len(myInfo) > 1 {
+			for idx, inf := range myInfo {
+				if idx+1 == len(myInfo) {
+					continue
+				}
+
+				firstDate := inf.Get("updateTime").(time.Time)
+				secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
+				status := myInfo[idx+1].GetString("status")
+
+				year, month, day, _, _, _ := Diff(firstDate, secondDate)
+				idxRange := 3
+				if day > 15 || month > 0 || year > 0 {
+					idxRange = 0
+				} else if day >= 11 {
+					idxRange = 1
+				} else if day >= 6 {
+					idxRange = 2
+				}
+
+				alias := statusAlias.GetString(status)
+
+				if alias != "" {
+					status = alias
+				}
+
+				key := status + "|" + textRange[idxRange]
+
+				if mapRes.Get(key) == nil {
+					mapRes.Set(key, 0)
+				}
+
+				mapRes.Set(key, mapRes.GetInt(key)+1)
+			}
+		}
+	}
+
+	finalRes := []tk.M{}
+	for key, val := range mapRes {
+		arr := strings.Split(key, "|")
+		re := tk.M{}
+		re.Set("status", arr[0])
+		re.Set("dayrange", arr[1])
+		re.Set("count", val)
+		finalRes = append(finalRes, re)
+	}
+
+	res.SetData(finalRes)
+
+	return res
+}

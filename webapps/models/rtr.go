@@ -239,7 +239,7 @@ func (r *RTRBottom) GetData(custid, dealno string) ([]RTRBottom, *RTRSummary, []
 			}
 
 			if !minDate.IsZero() && !v.LoanStart.IsZero() {
-				year, month, _, _, _, _ := diff(minDate, v.LoanStart)
+				year, month, _, _, _, _ := Diff(minDate, v.LoanStart)
 
 				allmonth := month
 				allmonth += year * 12
@@ -475,7 +475,7 @@ func (r *RTRBottom) GetDataConfirmed(custid, dealno string) ([]RTRBottom, *RTRSu
 			}
 
 			if !minDate.IsZero() && !v.LoanStart.IsZero() {
-				year, month, _, _, _, _ := diff(minDate, v.LoanStart)
+				year, month, _, _, _, _ := Diff(minDate, v.LoanStart)
 
 				allmonth := month
 				allmonth += year * 12
@@ -711,7 +711,7 @@ func (r *RTRBottom) GetDataForAccountDetails(custid, dealno string) ([]RTRBottom
 			}
 
 			if !minDate.IsZero() && !v.LoanStart.IsZero() {
-				year, month, _, _, _, _ := diff(minDate, v.LoanStart)
+				year, month, _, _, _, _ := Diff(minDate, v.LoanStart)
 
 				allmonth := month
 				allmonth += year * 12
@@ -938,7 +938,7 @@ func (r *RTRBottom) FindRate(amt float64, pmt float64, nper int64) (error, float
 	return nil, lastdiff.GetFloat64("rate")
 }
 
-func diff(a, b time.Time) (year, month, day, hour, min, sec int) {
+func Diff(a, b time.Time) (year, month, day, hour, min, sec int) {
 	if a.Location() != b.Location() {
 		b = b.In(a.Location())
 	}

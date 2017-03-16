@@ -1307,7 +1307,7 @@ func (c *DealSetUpController) GetAllDataDealSetup(k *knot.WebContext) interface{
 	defer cn.Close()
 
 	if err != nil {
-		panic(err)
+		return err.Error()
 	}
 
 	keys := []*dbox.Filter{}

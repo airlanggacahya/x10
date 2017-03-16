@@ -331,13 +331,32 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	pastDate := currDate.AddDate(0, 1-length, 0)
 
 	pipe := []tk.M{}
+	pipe = append(pipe, tk.M{"$lookup": tk.M{
+		"from":         "DCFinalSanction",
+		"localField":   "accountdetails.dealno",
+		"foreignField": "DealNo",
+		"as":           "dc",
+	}})
 	pipe = append(pipe, tk.M{"$project": tk.M{
-		"amount": "$customerprofile.applicantdetail.AmountLoan",
+		"dealno": "$accountdetails.dealno",
+		"dc": tk.M{
+			"$slice": []interface{}{"$dc", -1},
+		},
 		"info": tk.M{
 			"$slice": []interface{}{"$info.myInfo", -1},
 		},
 	}})
 	pipe = append(pipe, tk.M{"$unwind": "$info"})
+	pipe = append(pipe, tk.M{"$unwind": tk.M{
+		"path": "$dc",
+		"preserveNullAndEmptyArrays": true,
+	}})
+	pipe = append(pipe, tk.M{"$project": tk.M{
+		"dealno": "$dealno",
+		"dc":     "$dc",
+		"info":   "$info",
+		"amount": tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
+	}})
 	pipe = append(pipe, tk.M{"$match": tk.M{
 		"info.updateTime": tk.M{
 			"$gte": pastDate,

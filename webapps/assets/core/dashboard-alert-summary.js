@@ -11,11 +11,11 @@ alertSum.trendDataCurrent = ko.observable();
 
 alertSum.prepareTrendData = function (data, start, length) {
     var cur = moment(start)
-    cur.subtract(length, 'months')
+    cur.add(1, 'months')
 
     var ret = []
     _.times(length, function() {
-        cur.add(1, 'months')
+        cur.subtract(1, 'months')
         var obj = _.find(data, function(val) {
             return val.year == cur.year() && val.month == (cur.month() + 1)
         })
@@ -56,8 +56,8 @@ alertSum.mergeTrendData = function(data) {
         })
     })
 
-    alertSum.trendDataCurrent(ret.pop())
-    return _.reverse(ret)
+    alertSum.trendDataCurrent(ret.shift())
+    return ret
 }
 
 alertSum.generateMonths = function (start, length) {
@@ -128,6 +128,7 @@ alertSum.trendDataConfig = [
         axis: 'count'
     }
 ]
+
 alertSum.trendDataMonths = ko.observableArray([]);
 
 alertSum.summary2fa = function (values) {
@@ -139,55 +140,56 @@ alertSum.summary2fa = function (values) {
         return "fa fa-angle-double-up fa-font-green";
 }
 
-alertSum.summaryAmountMax = ko.computed(function () {
-    var maxapp = _.maxBy(alertSum.trendDataSeries(), 'amountApproved');
-    var maxrej = _.maxBy(alertSum.trendDataSeries(), 'amountRejected');
+alertSum.seriesMax = function (sections) {
+    var n = _.reduce(sections, function (max, val) {
+        return Math.max(
+            max,
+            _.get(_.maxBy(alertSum.trendDataSeries(), val), val, 0)
+        )
+    }, 0)
 
-    return Math.max(maxapp, maxrej);
-})
-alertSum.summaryCountMax = ko.computed(function () {
-    var maxapp = _.maxBy(alertSum.trendDataSeries(), 'countApproved');
-    var maxrej = _.maxBy(alertSum.trendDataSeries(), 'countRejected');
+    if (isNaN(n))
+        return 0
+    
+    return n
+}
 
-    return Math.max(maxapp, maxrej);
-})
-
-alertSum.summaryAppChange = ko.computed(function () {
-    var series = alertSum.trendDataSeries()
-    if (series.length < 2)
-        return 0;
-    return _.get(alertSum.trendDataCurrent(), "amountApproved", 0) - _.get(series[0], "amountApproved", 0);
-})
-alertSum.summaryAppFa = ko.computed(function () {
-    return alertSum.summary2fa(alertSum.summaryAppChange());
-})
-
-alertSum.summaryRejChange = ko.computed(function () {
-    var series = alertSum.trendDataSeries()
-    if (series.length < 2)
-        return 0;
-    return _.get(alertSum.trendDataCurrent(), "amountRejected", 0) - _.get(series[0], "amountRejected", 0);
-})
-alertSum.summaryRejFa = ko.computed(function () {
-    return alertSum.summary2fa(alertSum.summaryRejChange());
+alertSum.trendDataAxes = ko.computed(function () {
+    return [{
+        name: 'cr',
+        title: { text: 'cr' },
+        min: 0,
+        max: alertSum.seriesMax(['countApproved', 'countRejected']) + 5000
+    },{
+        name: 'count',
+        title: { text: 'count' },
+        min: 0,
+        max: alertSum.seriesMax(['countApproved', 'countRejected']) + 5
+    }]
 })
 
-alertSum.summaryCountAppChange = ko.computed(function () {
-    var series = alertSum.trendDataSeries()
-    if (series.length < 2)
-        return 0;
-    return _.get(alertSum.trendDataCurrent(), "countApproved", 0) - _.get(series[0], "countApproved", 0);
-})
-alertSum.summaryCountAppFa = ko.computed(function () {
-    return alertSum.summary2fa(alertSum.summaryCountAppChange());
-})
+alertSum.seriesChange = function(section) {
+    return ko.computed(function() {
+        var series = alertSum.trendDataSeries()
+        if (series.length < 1)
+            return 0;
+        return _.get(alertSum.trendDataCurrent(), section, 0) - _.get(series[0], section, 0);
+    })
+}
+alertSum.seriesChangeFa = function(section) {
+    return ko.computed(function() {
+        return alertSum.summary2fa(alertSum.seriesChange(section)());
+    })
+}
 
-alertSum.summaryCountRejChange = ko.computed(function () {
-    var series = alertSum.trendDataSeries()
-    if (series.length < 2)
-        return 0;
-    return _.get(alertSum.trendDataCurrent(), "countRejected", 0) - _.get(series[0], "countRejected", 0);
-})
-alertSum.summaryCountRejFa = ko.computed(function () {
-    return alertSum.summary2fa(alertSum.summaryCountRejChange());
-})
+alertSum.currentData = function(section, div = 0, rounding = 0) {
+    return ko.computed(function () {
+        var num = _.get(alertSum.trendDataCurrent(), section, 0)
+
+        if (div > 0) {
+            num = num / Math.pow(10, div)
+        }
+
+        return kendo.toString(num, "n" + rounding);
+    })
+}

@@ -70,15 +70,15 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.summaryCountAppChange"></span>
-                    <i data-bind="attr: { class: alertSum.summaryCountAppFa }" aria-hidden="true"></i>
+                    <span class="score" data-bind="text: alertSum.currentData('countApproved')"></span>
+                    <i data-bind="attr: { class: alertSum.seriesChangeFa('countApproved') }" aria-hidden="true"></i>
                     <span class="box-label blue">Approved</span>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.summaryCountRejChange"></span>
-                    <i data-bind="attr: { class: alertSum.summaryCountRejFa }" aria-hidden="true"></i>
+                    <span class="score" data-bind="text: alertSum.currentData('countRejected')"></span>
+                    <i data-bind="attr: { class: alertSum.seriesChangeFa('countRejected') }" aria-hidden="true"></i>
                     <span class="box-label red">Rejected</span>
                 </div>
             </div>
@@ -86,15 +86,15 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.summaryAppChange"></span><span class="score unit"> cr.</span>
-                    <i data-bind="attr: { class: alertSum.summaryAppFa }" aria-hidden="true"></i>
+                    <span class="score" data-bind="text: alertSum.currentData('amountApproved', 7, 1)"></span><span class="score unit"> cr.</span>
+                    <i data-bind="attr: { class: alertSum.seriesChangeFa('amountApproved') }" aria-hidden="true"></i>
                     <span class="box-label blue">Deal Amount</span>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.summaryRejChange"></span><span class="score unit"> cr.</span>
-                    <i data-bind="attr: { class: alertSum.summaryRejFa }" aria-hidden="true"></i>
+                    <span class="score" data-bind="text: alertSum.currentData('amountRejected', 7, 1)"></span><span class="score unit"> cr.</span>
+                    <i data-bind="attr: { class: alertSum.seriesChangeFa('amountRejected') }" aria-hidden="true"></i>
                     <span class="box-label red">Deal Amount</span>
                 </div>
             </div>
@@ -115,17 +115,7 @@
             categoryAxis: {
                 categories: alertSum.trendDataMonths
             },
-            valueAxes: [{
-                name: 'cr',
-                title: { text: 'cr' },
-                min: 0,
-                max: 700
-            },{
-                name: 'count',
-                title: { text: 'count' },
-                min: 0,
-                max: 10
-            }]
+            valueAxes: alertSum.trendDataAxes
         }">
         </div>
     </div>

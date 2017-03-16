@@ -461,8 +461,8 @@ func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interfa
 		return res.SetError(err)
 	}
 
-	tk.Println("Result ---------", results)
-	tk.Println("Query ---------", pipe)
+	// tk.Println("Result ---------", results)
+	// tk.Println("Query ---------", pipe)
 
 	period := []int{-3, -2, -1, 0}
 	status := []string{"d*Over due", "c*Getting due", "b*In time", "a*New"}
@@ -486,7 +486,7 @@ func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interfa
 			currPeriod := today.AddDate(0, 0, peri)
 
 			if mydate.Before(currPeriod) {
-				tk.Println(mydate, currPeriod, timeStatus, status[idx])
+				// tk.Println(mydate, currPeriod, timeStatus, status[idx])
 				if status[idx] == timeStatus {
 					finalRes = append(finalRes, val)
 				}
@@ -611,7 +611,7 @@ func GetRegionName(id string, k *knot.WebContext) (string, error) {
 			break
 		}
 	}
-	tk.Println("-------------", res)
+	// tk.Println("-------------", res)
 	return res, nil
 }
 
@@ -712,7 +712,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	}
 	defer csr.Close()
 
-	tk.Println(pipe)
+	// tk.Println(pipe)
 
 	results := []tk.M{}
 	err = csr.Fetch(&results, 0, false)
@@ -720,7 +720,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	tk.Println("Result ---------+", results)
+	// tk.Println("Result ---------+", results)
 
 	period := []int{-3, -2, -1, 0}
 	status := []string{"d*Over due", "c*Getting due", "b*In time", "a*New"}
@@ -809,11 +809,11 @@ func GenerateRoleConditionTkM(k *knot.WebContext) ([]tk.M, error) {
 			case "lt":
 				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lt": var1}})
 			case "lte":
-				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lt": var1}})
+				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lte": var1}})
 			case "gt":
-				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lt": var1}})
+				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$gt": var1}})
 			case "gte":
-				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lt": var1}})
+				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$gte": var1}})
 			case "between":
 				dbFilterTemp = append(dbFilterTemp, tk.M{"$and": []tk.M{tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$gte": var1}}, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lte": var2}}}})
 			}

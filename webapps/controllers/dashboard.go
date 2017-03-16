@@ -371,7 +371,7 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	return res
 }
 
-func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
+func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
@@ -383,7 +383,18 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 
 	wh := []tk.M{}
 
-	groupBy := payload.GetString("groupby")
+	regionName := payload.GetString("regionname")
+	timeStatus := payload.GetString("timestatus")
+	stageName := payload.GetString("stageName")
+
+	branchIds := []string{}
+
+	if regionName != "" {
+		branchIds, err = GetBranchId(regionName)
+		if err != nil {
+			return res.SetError(err)
+		}
+	}
 
 	//set Role Access
 	if k.Session("CustomerProfileData") != nil {
@@ -404,28 +415,33 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	projfirst.Set("laststatus", tk.M{"$arrayElemAt": []interface{}{"$info.myInfo.status", -1}})
 	projfirst.Set("lastDate", tk.M{"$arrayElemAt": []interface{}{"$info.myInfo.updateTime", -1}})
 	projfirst.Set("branch", "$accountdetails.accountsetupdetails.citynameid")
+	projfirst.Set("caname", "$accountdetails.accountsetupdetails.creditanalyst")
+	projfirst.Set("rmname", "$accountdetails.accountsetupdetails.rmname")
+	projfirst.Set("dealno", "$accountdetails.dealno")
+	projfirst.Set("custname", "$customerprofile.applicantdetail.CustomerName")
 
 	proj := tk.M{}
 	proj.Set("date", tk.M{"$dateToString": tk.M{"format": "%Y-%m-%d", "date": "$lastDate"}})
 	proj.Set("status", "$laststatus")
 	proj.Set("branch", 1)
+	proj.Set("caname", 1)
+	proj.Set("rmname", 1)
+	proj.Set("dealno", 1)
+	proj.Set("custname", 1)
 
 	pipe = append(pipe, tk.M{"$project": projfirst})
 
-	pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$in", []interface{}{Cancel, UnderProcess, OnHold, SendToDecision}))))
-
-	pipe = append(pipe, tk.M{"$project": proj})
-
-	groupfield := "$status"
-	if groupBy == "region" {
-		groupfield = "$branch"
+	if len(branchIds) > 0 {
+		pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("branch", tk.M{"$in": branchIds})))
 	}
 
-	group := tk.M{}
-	group.Set("_id", tk.M{"date": "$date", "status": groupfield})
-	group.Set("count", tk.M{"$sum": 1})
+	if stageName != "" {
+		pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$eq", stageName))))
+	} else {
+		pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$in", []interface{}{Cancel, UnderProcess, OnHold, SendToDecision}))))
+	}
 
-	pipe = append(pipe, tk.M{"$group": group})
+	pipe = append(pipe, tk.M{"$project": proj})
 
 	cn, err := GetConnection()
 	if err != nil {
@@ -454,17 +470,16 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	period := []int{-3, -2, -1, 0}
 	status := []string{"d*Over due", "c*Getting due", "b*In time", "a*New"}
 	today := time.Now()
-	// today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 
-	finalRes := tk.M{}
+	finalRes := []tk.M{}
 	k.SetSession("regionItems", nil)
 	for _, val := range results {
 		for idx, peri := range period {
-			id := val.Get("_id").(tk.M)
-			mydate := cast.String2Date(id.GetString("date"), "yyyy-MM-dd")
-			mystatus := id.GetString("status")
+			// id := val.Get("_id").(tk.M)
+			mydate := cast.String2Date(val.GetString("date"), "yyyy-MM-dd")
+			mystatus := val.GetString("status")
 
-			if groupBy == "region" {
+			if regionName != "" {
 				mystatus, err = GetRegionName(mystatus, k)
 				if err != nil {
 					return res.SetError(err)
@@ -474,26 +489,72 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 			currPeriod := today.AddDate(0, 0, peri)
 
 			if mydate.Before(currPeriod) {
-				key := status[idx] + "|" + mystatus + "|" + cast.ToString(idx)
-				if finalRes.Get(key) == nil {
-					finalRes.Set(key, 0)
+				tk.Println(mydate, currPeriod, timeStatus, status[idx])
+				if status[idx] == timeStatus {
+					finalRes = append(finalRes, val)
 				}
 
-				finalRes.Set(key, finalRes.Get(key).(int)+1)
 				break
 			}
 		}
 	}
 
-	results = []tk.M{}
-	for key, val := range finalRes {
-		keyArr := strings.Split(key, "|")
-		results = append(results, tk.M{"timestatus": keyArr[0], "status": keyArr[1], "count": val, "order": cast.ToInt(keyArr[2], cast.RoundingAuto)})
-	}
-
-	res.SetData(results)
+	res.SetData(finalRes)
 
 	return res
+}
+
+func GetBranchId(id string) ([]string, error) {
+	res := []string{}
+	items := []tk.M{}
+
+	conn, err := GetConnection()
+	defer conn.Close()
+	if err != nil {
+		return res, err
+	}
+
+	q, err := conn.
+		NewQuery().
+		Select().
+		From("MasterAccountDetail").
+		Cursor(nil)
+
+	if err != nil {
+		return res, err
+	}
+
+	// fetch one MasterAccountDetail data
+	var account tk.M
+	err = q.Fetch(&account, 1, true)
+	if err != nil {
+		return res, err
+	}
+
+	// casting to array of interface
+	accData, ok := account.Get("Data").([]interface{})
+	if !ok {
+		return res, errors.New("Unable to access Data")
+	}
+
+	for _, val := range accData {
+		v := val.(tk.M)
+		if v.Get("Field") != "Branch" {
+			continue
+		}
+
+		// found, populate with our data
+		items = CheckArray(v.Get("Items"))
+		break
+	}
+
+	for _, val := range items {
+		if val.Get("region").(tk.M).GetString("name") == id {
+			res = append(res, cast.ToString(val.GetInt("branchid")))
+		}
+	}
+
+	return res, nil
 }
 
 func GetRegionName(id string, k *knot.WebContext) (string, error) {
@@ -573,4 +634,151 @@ func (c *DashboardController) SaveFilter(k *knot.WebContext) interface{} {
 
 	return c.SetResultInfo(false, "success", nil)
 
+}
+
+func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	payload := tk.M{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	wh := []tk.M{}
+
+	groupBy := payload.GetString("groupby")
+	regionName := payload.GetString("regionname")
+	timeStatus := payload.GetString("timestatus")
+	branchIds := []string{}
+
+	if regionName != "" {
+		branchIds, err = GetBranchId(regionName)
+		if err != nil {
+			return res.SetError(err)
+		}
+	}
+
+	//set Role Access
+	if k.Session("CustomerProfileData") != nil {
+		arrSes := k.Session("CustomerProfileData").([]tk.M)
+		arrin := []interface{}{}
+		for _, val := range arrSes {
+			arrin = append(arrin, val.Get("_id"))
+		}
+		currwh := tk.M{}.Set("customerprofile._id", tk.M{}.Set("$in", arrin))
+		wh = append(wh, currwh)
+	}
+
+	Fwh := tk.M{}.Set("$and", wh)
+	pipe := []tk.M{}
+	pipe = append(pipe, tk.M{}.Set("$match", Fwh))
+
+	projfirst := tk.M{}
+	projfirst.Set("laststatus", tk.M{"$arrayElemAt": []interface{}{"$info.myInfo.status", -1}})
+	projfirst.Set("lastDate", tk.M{"$arrayElemAt": []interface{}{"$info.myInfo.updateTime", -1}})
+	projfirst.Set("branch", "$accountdetails.accountsetupdetails.citynameid")
+
+	proj := tk.M{}
+	proj.Set("date", tk.M{"$dateToString": tk.M{"format": "%Y-%m-%d", "date": "$lastDate"}})
+	proj.Set("status", "$laststatus")
+	proj.Set("branch", 1)
+
+	pipe = append(pipe, tk.M{"$project": projfirst})
+
+	pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$in", []interface{}{Cancel, UnderProcess, OnHold, SendToDecision}))))
+
+	if len(branchIds) > 0 {
+		pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("branch", tk.M{"$in": branchIds})))
+	}
+
+	pipe = append(pipe, tk.M{"$project": proj})
+
+	groupfield := "$status"
+	if groupBy == "region" {
+		groupfield = "$branch"
+	}
+
+	group := tk.M{}
+	group.Set("_id", tk.M{"date": "$date", "status": groupfield})
+	group.Set("count", tk.M{"$sum": 1})
+
+	pipe = append(pipe, tk.M{"$group": group})
+
+	cn, err := GetConnection()
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	defer cn.Close()
+
+	csr, err := cn.NewQuery().
+		Command("pipe", pipe).
+		From("DealSetup").
+		Cursor(nil)
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer csr.Close()
+
+	results := []tk.M{}
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	tk.Println("Result ---------", results)
+
+	period := []int{-3, -2, -1, 0}
+	status := []string{"d*Over due", "c*Getting due", "b*In time", "a*New"}
+	today := time.Now()
+	// today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+
+	finalRes := tk.M{}
+	k.SetSession("regionItems", nil)
+	for _, val := range results {
+		for idx, peri := range period {
+			id := val.Get("_id").(tk.M)
+			mydate := cast.String2Date(id.GetString("date"), "yyyy-MM-dd")
+			mystatus := id.GetString("status")
+
+			if groupBy == "region" {
+				mystatus, err = GetRegionName(mystatus, k)
+				if err != nil {
+					return res.SetError(err)
+				}
+			}
+
+			currPeriod := today.AddDate(0, 0, peri)
+
+			if mydate.Before(currPeriod) {
+				key := status[idx] + "|" + mystatus + "|" + cast.ToString(idx)
+				if finalRes.Get(key) == nil {
+					finalRes.Set(key, 0)
+				}
+
+				finalRes.Set(key, finalRes.Get(key).(int)+1)
+				break
+			}
+		}
+	}
+
+	results = []tk.M{}
+	for key, val := range finalRes {
+		keyArr := strings.Split(key, "|")
+
+		if timeStatus != "" {
+			if timeStatus == keyArr[0] {
+				results = append(results, tk.M{"timestatus": keyArr[0], "status": keyArr[1], "count": val, "order": cast.ToInt(keyArr[2], cast.RoundingAuto)})
+			}
+			continue
+		}
+
+		results = append(results, tk.M{"timestatus": keyArr[0], "status": keyArr[1], "count": val, "order": cast.ToInt(keyArr[2], cast.RoundingAuto)})
+	}
+
+	res.SetData(results)
+
+	return res
 }

@@ -115,6 +115,9 @@ ttrack.renderChart = function(datas){
                     field: "count",
                     name: "#= group.value.split('*')[1] #"
                 }],
+                chartArea:{
+                    background: "#f0f3f4"
+                },
                 seriesClick : function(e){
                     var status = e.dataItem.timestatus.split("*")[1];
                     if(status == "Over due"){
@@ -263,13 +266,13 @@ ttrack.loadDealGrid = function(){
     $("#dealStatus").kendoGrid({
         dataSource: ttrack.DataGridModal(),
         columns:[
-            {
-                field: "",
-                title: "Sr. No.",
-                headerAttributes: {style: "background: red; color: white"},
-                width: 50,
+            // {
+            //     field: "",
+            //     title: "Sr. No.",
+            //     headerAttributes: {style: "background: red; color: white"},
+            //     width: 50,
 
-            },
+            // },
             {
                 field: "custname",
                 title: "Customer Name",

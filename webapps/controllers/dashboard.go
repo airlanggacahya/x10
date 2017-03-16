@@ -9,6 +9,7 @@ import (
 	"github.com/eaciit/cast"
 
 	"errors"
+
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -321,12 +322,13 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	}
 
 	month := payload.GetString("month") // "February 2017"
+	length := payload.GetInt("length")  // How far we look back
 	currDate, err := time.Parse("2 January 2006 (MST)", "1 "+month+" (UTC)")
 	if err != nil {
 		return res.SetError(err)
 	}
 	nextDate := currDate.AddDate(0, 1, 0)
-	pastDate := currDate.AddDate(0, -8, 0)
+	pastDate := currDate.AddDate(0, 1-length, 0)
 
 	pipe := []tk.M{}
 	pipe = append(pipe, tk.M{"$project": tk.M{
@@ -351,6 +353,21 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 		"totalAmount": tk.M{"$sum": "$amount"},
 		"totalCount":  tk.M{"$sum": 1},
 	}})
+	pipe = append(pipe, tk.M{"$sort": tk.M{
+		"_id.year":  -1,
+		"_id.month": -1,
+	}})
+	pipe = append(pipe, tk.M{"$group": tk.M{
+		"_id": tk.M{"status": "$_id.status"},
+		"data": tk.M{
+			"$push": tk.M{
+				"totalAmount": "$totalAmount",
+				"totalCount":  "$totalCount",
+				"month":       "$_id.month",
+				"year":        "$_id.year",
+			},
+		},
+	}})
 
 	csr, err := c.Ctx.Connection.
 		NewQuery().
@@ -362,12 +379,22 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	}
 	defer csr.Close()
 
-	data := []tk.M{}
-	if err := csr.Fetch(&data, 0, false); err != nil {
+	// dbdata := []struct {
+	// 	ID   string `json:"_id"`
+	// 	Data []struct {
+	// 		Month       int     `json:"month"`
+	// 		Year        int     `json:"year"`
+	// 		TotalAmount float64 `json:"totalAmount"`
+	// 		TotalCount  float64 `json:"totalCount"`
+	// 	} `json:"data"`
+	// }{}
+	dbdata := []tk.M{}
+	if err := csr.Fetch(&dbdata, 0, false); err != nil {
 		return res.SetError(err)
 	}
 
-	res.SetData(data)
+	res.SetData(dbdata)
+
 	return res
 }
 

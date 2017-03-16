@@ -1,9 +1,71 @@
 <script>document.write('<script src="/static/core/dashboard-time-tracker.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
-
+<style type="text/css">
+	.bd{
+		margin-top: 0px !important;
+	}
+	.modal-header{
+		border-bottom: none !important;
+	}
+	.trcolor{
+		color: white;
+		background-color: red;
+	}
+</style>
 <div class="row">
 
 <div class="col-md-12">
-	<div id="timeTrackerChart"></div>
+	<div class="panel">
+		<div class="panel-heading">
+			<div class="col-md-12">
+				<h4 style="text-decoration: underline;">To be Actioned Deals : Tracker</h4>
+			</div>
+		</div>
+		<div class="panel-body bd" style="margin-top: 0px !important;">
+			<div class="col-md-8" >
+				<div class="form-group">
+					<div class="col-md-12">
+						<div class="col-md-2">
+							<label class="form-label">View Accross</label>
+						</div>
+						<div class="col-md-3">
+							<select data-bind="kendoDropDownList: {data: ttrack.trackingList, value: ttrack.trackingValue, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select Deal'}" style="width: 100%;"></select>
+						</div>
+						<div class="col-md-2">
+							<div type="button" class="btn btn-sm btn-flat btn-primary" data-bind="click: ttrack.getData"> Search</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div id="timeTrackerChart"></div>
+			</div>
+		</div>
+	</div>
 </div>
 
+</div>
+
+<div id="Deals" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" style="width: 100s%;">
+		<!-- <form class="form-add"> -->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<center><h5 class="modal-title"></h5></center>
+				</div>
+				<div class="modal-body" style="margin-top: -25px;">
+					<!-- <div class="col-md-12"> -->
+						<center data-bind="visible: ttrack.isRegion() == true"><div id="chartRegion"></div></center>
+						<center><h5 data-bind="text: ttrack.modalGridTittle"></h5></center>
+						<div id="dealStatus"></div>
+					<!-- </div> -->
+				</div>
+				<!-- <div class="modal-footer">
+					<button type="button" class="btn btn-sm btn-flat btn-primary" data-dismiss="modal" data-bind="click: adf.onclickDismissModal">Save</button>
+					<button type="button" class="btn btn-sm btn-flat btn-danger" data-dismiss="modal">Close</button>
+				</div> -->
+			</div>
+		<!-- </form> -->
+	</div>
 </div>

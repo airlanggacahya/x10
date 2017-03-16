@@ -292,7 +292,7 @@
     <div class="panel-body">
       <div class="row">
         <div class="col-sm-12" data-bind="foreach: ApplicantDetail.Detail">
-          <div class="col-sm-4 well well-sm" data-bind="visible:ApplicantDetail.Detail()[$index()].Title != 'Residence'">
+          <div class="col-sm-6 well well-sm" data-bind="visible:ApplicantDetail.Detail()[$index()].Title != 'Residence'">
             <img src="/static/img/sign-check.svg" class="pull-right" style="padding-top: 5px;height: 23px;" data-bind="visible: (ApplicantDetail.Detail()[$index()].CorrespondeceAddress != undefined ? ApplicantDetail.Detail()[$index()].CorrespondeceAddress.toUpperCase() == 'YES' : false)"><h5 style="font-weight: bold;" data-bind="text:Title"></h5>
 
 

@@ -1,9 +1,36 @@
 
 alertSum = {}
 alertSum.trendMonth = ko.observable(moment().format('MMMM YYYY'));
+alertSum.trendMonth.subscribe(function () {
+    alertSum.trendDataAjaxRefresh()
+})
 
-alertSum.trendMonthTitle = ko.computed(function () {
-    return moment(alertSum.trendMonth()).format('MMM `YY');
+alertSum.trendDataLengthOptions = ko.observableArray([
+    {
+        text: "3 months",
+        value: 3
+    },
+    {
+        text: "4 months",
+        value: 4
+    },
+    {
+        text: "6 months",
+        value: 6
+    },
+    {
+        text: "12 months",
+        value: 12
+    }
+]);
+alertSum.trendDataLength = ko.observable(6);
+alertSum.trendDataLength.subscribe(function () {
+    alertSum.trendDataAjaxRefresh()
+})
+alertSum.trendDataLengthTitle = ko.computed(function () {
+    return _.find(alertSum.trendDataLengthOptions(), function (val) {
+        return val.value == alertSum.trendDataLength()
+    }).text;
 })
 
 alertSum.trendDataSeries = ko.observableArray([]);
@@ -64,7 +91,7 @@ alertSum.generateMonths = function (start, length) {
     var cur = moment(start)
     var ret = []
     _.times(length, function() {
-        ret.push(cur.format('MMM'))
+        ret.push(cur.format('MMM `YY'))
         cur.subtract(1, 'months')
     })
 
@@ -72,24 +99,25 @@ alertSum.generateMonths = function (start, length) {
 }
 
 alertSum.trendDataAjaxRefresh = function() {
-    var len = 6
+    var len = alertSum.trendDataLength();
+    var start = moment(alertSum.trendMonth()).format('MMMM YYYY');
     $.ajax("/dashboard/summarytrends", {
         method: "post",
-        data: JSON.stringify({month: alertSum.trendMonth(), length: len + 1}),
+        data: JSON.stringify({month: start, length: len + 1}),
         contentType: "application/json",
         success: function(body) {
             if (body.Status == "") {
 
                 //normalize data
                 _.map(body.Data, function (val) {
-                    val.data = alertSum.prepareTrendData(val.data, alertSum.trendMonth(), len + 1)
+                    val.data = alertSum.prepareTrendData(val.data, start, len + 1)
                     return val
                 })
                 //merge data
                 var merge = alertSum.mergeTrendData(body.Data)
                 alertSum.trendDataSeries(merge)
                 //generate label
-                var months = alertSum.generateMonths(alertSum.trendMonth(), len + 1)
+                var months = alertSum.generateMonths(start, len + 1)
                 months.shift()
                 alertSum.trendDataMonths(months)
                 return
@@ -117,13 +145,13 @@ alertSum.trendDataConfig = [
     },
     {
         type: 'line',
-        name: 'Deal Count Approved',
+        name: 'Deal Approved',
         field: 'countApproved',
         axis: 'count'
     },
     {
         type: 'line',
-        name: 'Deal Count Rejected',
+        name: 'Deal Rejected',
         field: 'countRejected',
         axis: 'count'
     }

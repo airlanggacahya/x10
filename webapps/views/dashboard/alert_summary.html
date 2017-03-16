@@ -17,17 +17,17 @@
     }
 
     .summary-box>.score.unit {
-        font-size: 18px;
+        font-size: 13px;
     }
 
     .summary-box>i.fa {
-        font-size: 24px;
+        font-size: 22px;
     }
 
     .summary-box .box-label {
         text-align: left;
         display: block;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
     }
 
@@ -58,7 +58,7 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <div>
             <input data-bind="kendoDatePicker: {
                 value: alertSum.trendMonth,
@@ -107,8 +107,17 @@
         </div>
     </div>
 
-    <div class="col-sm-8">
-        <h5>Trend: Last 6 months</h5>
+    <div class="col-sm-9">
+        <span class="pull-right">
+            <div data-bind="kendoDropDownList: {
+                data: alertSum.trendDataLengthOptions,
+                value: alertSum.trendDataLength,
+                dataTextField: 'text',
+                dataValueField: 'value'
+            }">
+            </div>
+        </span>
+        <h5>Trend: Last <span data-bind="text: alertSum.trendDataLengthTitle"></span></h5>
         <div data-bind="kendoChart: {
             data: alertSum.trendDataSeries,
             series: alertSum.trendDataConfig,

@@ -381,11 +381,11 @@ func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interfa
 		return res.SetError(err)
 	}
 
-	wh := []tk.M{}
-
 	regionName := payload.GetString("regionname")
 	timeStatus := payload.GetString("timestatus")
-	stageName := payload.GetString("stageName")
+	stageName := payload.GetString("stagename")
+
+	tk.Println("PAYLOAD", payload)
 
 	branchIds := []string{}
 
@@ -396,19 +396,15 @@ func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interfa
 		}
 	}
 
+	pipe := []tk.M{}
+
 	//set Role Access
-	if k.Session("CustomerProfileData") != nil {
-		arrSes := k.Session("CustomerProfileData").([]tk.M)
-		arrin := []interface{}{}
-		for _, val := range arrSes {
-			arrin = append(arrin, val.Get("_id"))
-		}
-		currwh := tk.M{}.Set("customerprofile._id", tk.M{}.Set("$in", arrin))
-		wh = append(wh, currwh)
+	whRoles, err := GenerateRoleConditionTkM(k)
+	if err != nil {
+		return res.SetError(err)
 	}
 
-	Fwh := tk.M{}.Set("$and", wh)
-	pipe := []tk.M{}
+	Fwh := tk.M{}.Set("$and", whRoles)
 	pipe = append(pipe, tk.M{}.Set("$match", Fwh))
 
 	projfirst := tk.M{}
@@ -438,7 +434,7 @@ func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interfa
 	if stageName != "" {
 		pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$eq", stageName))))
 	} else {
-		pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$in", []interface{}{Cancel, UnderProcess, OnHold, SendToDecision}))))
+		pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$in", []interface{}{Inque, UnderProcess, OnHold, SendToDecision}))))
 	}
 
 	pipe = append(pipe, tk.M{"$project": proj})
@@ -466,6 +462,7 @@ func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interfa
 	}
 
 	tk.Println("Result ---------", results)
+	tk.Println("Query ---------", pipe)
 
 	period := []int{-3, -2, -1, 0}
 	status := []string{"d*Over due", "c*Getting due", "b*In time", "a*New"}
@@ -646,8 +643,6 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	wh := []tk.M{}
-
 	groupBy := payload.GetString("groupby")
 	regionName := payload.GetString("regionname")
 	timeStatus := payload.GetString("timestatus")
@@ -659,20 +654,15 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 			return res.SetError(err)
 		}
 	}
+	pipe := []tk.M{}
 
 	//set Role Access
-	if k.Session("CustomerProfileData") != nil {
-		arrSes := k.Session("CustomerProfileData").([]tk.M)
-		arrin := []interface{}{}
-		for _, val := range arrSes {
-			arrin = append(arrin, val.Get("_id"))
-		}
-		currwh := tk.M{}.Set("customerprofile._id", tk.M{}.Set("$in", arrin))
-		wh = append(wh, currwh)
+	whRoles, err := GenerateRoleConditionTkM(k)
+	if err != nil {
+		return res.SetError(err)
 	}
 
-	Fwh := tk.M{}.Set("$and", wh)
-	pipe := []tk.M{}
+	Fwh := tk.M{}.Set("$and", whRoles)
 	pipe = append(pipe, tk.M{}.Set("$match", Fwh))
 
 	projfirst := tk.M{}
@@ -687,7 +677,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 
 	pipe = append(pipe, tk.M{"$project": projfirst})
 
-	pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$in", []interface{}{Cancel, UnderProcess, OnHold, SendToDecision}))))
+	pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$in", []interface{}{Inque, UnderProcess, OnHold, SendToDecision}))))
 
 	if len(branchIds) > 0 {
 		pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("branch", tk.M{"$in": branchIds})))
@@ -722,13 +712,15 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	}
 	defer csr.Close()
 
+	tk.Println(pipe)
+
 	results := []tk.M{}
 	err = csr.Fetch(&results, 0, false)
 	if err != nil {
 		return res.SetError(err)
 	}
 
-	tk.Println("Result ---------", results)
+	tk.Println("Result ---------+", results)
 
 	period := []int{-3, -2, -1, 0}
 	status := []string{"d*Over due", "c*Getting due", "b*In time", "a*New"}
@@ -758,7 +750,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 					finalRes.Set(key, 0)
 				}
 
-				finalRes.Set(key, finalRes.Get(key).(int)+1)
+				finalRes.Set(key, finalRes.Get(key).(int)+val.GetInt("count"))
 				break
 			}
 		}
@@ -781,4 +773,76 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	res.SetData(results)
 
 	return res
+}
+
+func GenerateRoleConditionTkM(k *knot.WebContext) ([]tk.M, error) {
+	dbFilter := []tk.M{}
+
+	if k.Session("roles") == nil {
+		return dbFilter, nil
+	}
+
+	roles := k.Session("roles").([]SysRolesModel)
+	userid := k.Session("userid").(string)
+	for _, Role := range roles {
+		var dbFilterTemp []tk.M
+		if !Role.Status {
+			continue
+		}
+
+		Type := Role.Roletype
+		Dealvalue := Role.Dealvalue
+
+		Dv, err := new(LoginController).GetDealValue(Dealvalue)
+
+		if err != nil {
+			return dbFilter, err
+		}
+
+		if len(Dv) > 0 {
+			curDv := Dv[0]
+			opr := curDv.GetString("operator")
+			var1 := curDv.GetFloat64("var1")
+			var2 := curDv.GetFloat64("var2")
+
+			switch opr {
+			case "lt":
+				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lt": var1}})
+			case "lte":
+				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lt": var1}})
+			case "gt":
+				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lt": var1}})
+			case "gte":
+				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lt": var1}})
+			case "between":
+				dbFilterTemp = append(dbFilterTemp, tk.M{"$and": []tk.M{tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$gte": var1}}, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lte": var2}}}})
+			}
+		}
+		tk.Printf("--------- DV %v ----------- \n", Dv)
+		tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
+		tk.Printf("--------- USERID %v ----------- \n", userid)
+		switch strings.ToUpper(Type) {
+		case "CA":
+			dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.accountsetupdetails.CreditAnalystId": tk.M{"$eq": userid}})
+		case "RM":
+			dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.accountsetupdetails.RmNameId": tk.M{"$eq": userid}})
+
+		case "CUSTOM":
+			all := []interface{}{}
+
+			for _, valx := range Role.Branch {
+				all = append(all, cast.ToString(valx))
+			}
+			if len(all) != 0 {
+				dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.accountsetupdetails.citynameid": tk.M{"$in": all}})
+			} else {
+				dbFilterTemp = append(dbFilterTemp, tk.M{"_id": tk.M{"$ne": ""}})
+			}
+		default:
+			dbFilterTemp = append(dbFilterTemp, tk.M{"_id": tk.M{"$ne": ""}})
+		}
+		dbFilter = append(dbFilter, tk.M{"$and": dbFilterTemp})
+	}
+
+	return dbFilter, nil
 }

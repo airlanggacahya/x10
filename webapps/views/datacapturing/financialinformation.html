@@ -286,7 +286,8 @@ var val = $(e).is(":checked");
                         "class": "sub-bgcolor"
                     },
                     title: "Banks/Fls",
-                    width: "120px"
+                    width: "120px",
+                    editor : inputNoNumber
                 },
                 {
                     field: "LoanAmount",
@@ -444,7 +445,7 @@ var val = $(e).is(":checked");
                     scrolable : true,
                     columns: [
                         { field: "SrNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Sr. No.", width: "120px" },
-                        { field: "NameOfBanks", headerAttributes: { "class": "sub-bgcolor" }, title: "Name Of the Banks/Fls", width: "120px" },
+                        { field: "NameOfBanks", headerAttributes: { "class": "sub-bgcolor" }, title: "Name Of the Banks/Fls", width: "120px" , editor : inputNoNumber},
                         { field: "AddressContactNo", headerAttributes: { "class": "sub-bgcolor" }, title: "Address & Contact No.",width: "120px" },
                         { field: "AcNo", headerAttributes: { "class": "sub-bgcolor" }, title: "A/c. No", width: "120px" },
                         { field: "TypeOfAc", headerAttributes: { "class": "sub-bgcolor" }, title: "Type Of A/c", width: "120px", editor : typeOfLoanDropDownEditor},
@@ -644,6 +645,18 @@ function dateeditor(container,options){
           format: "yyyy"  
         });
     //$(".dtp").attr("readonly", true);
+}
+
+function inputNoNumber(container,options){
+  $inp = $('<input type="text" class="k-input k-textbox"  data-bind="value: '+options.field+'">')
+  $inp.keypress(function(event) {
+     var charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return true;
+    }
+    return false;
+});
+        $inp.appendTo(container)
 }
 
 //editor

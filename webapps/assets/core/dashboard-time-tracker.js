@@ -266,13 +266,13 @@ ttrack.loadDealGrid = function(){
     $("#dealStatus").kendoGrid({
         dataSource: ttrack.DataGridModal(),
         columns:[
-            {
-                field: "",
-                title: "Sr. No.",
-                headerAttributes: {style: "background: red; color: white"},
-                width: 50,
+            // {
+            //     field: "",
+            //     title: "Sr. No.",
+            //     headerAttributes: {style: "background: red; color: white"},
+            //     width: 50,
 
-            },
+            // },
             {
                 field: "custname",
                 title: "Customer Name",

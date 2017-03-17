@@ -27,7 +27,6 @@ alertSide.todoData = ko.observableArray([])
 alertSide.todoEditState = ko.observable("READ")
 alertSide.todoAjaxState = ko.observable("LOAD")
 alertSide.todoEditStateIs = function(val) {
-    console.log("OW", alertSide.todoEditState())
     return alertSide.todoEditState() == val
 }
 alertSide.todoAjaxRefresh = function() {
@@ -64,7 +63,6 @@ alertSide.todoAdd = function () {
         CreatedDate: moment().toISOString()
     })
     alertSide.todoEnableEdit(true)
-    console.log(alertSide.todoData())
 }
 alertSide.todoRemove = function (index) {
     var todo = alertSide.todoData()
@@ -73,7 +71,6 @@ alertSide.todoRemove = function (index) {
     alertSide.todoSave()
 }
 alertSide.todoSave = function() {
-    console.log(alertSide.todoData())
     alertSide.todoEnableEdit(false)
     $.ajax("/dashboard/savenotes", {
         method: "post",
@@ -82,8 +79,14 @@ alertSide.todoSave = function() {
         }),
         contentType: "application/json",
         success: function(body) {
-            console.log(body)
             alertSide.todoAjaxRefresh()
         }
     })
+}
+alertSide.todoSaveDelay = function() {
+    setTimeout(function () {
+        alertSide.todoSave()
+    }, 100);
+
+    return true;
 }

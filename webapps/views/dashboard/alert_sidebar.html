@@ -38,15 +38,67 @@
     .sidebar.sidebar.sidebar-box.sidebar.sidebar-box.system-todo .messages textarea.text {
         width: 100%;
     }
+    /* the checkbox */
+    label.todo {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        -ms-word-break: break-all;
+        word-break: break-word;
+    }
+
+    input[type=checkbox].todo-checkbox {
+        position: absolute; 
+        overflow: hidden; 
+        clip: rect(0 0 0 0); 
+        height:1px; 
+        width:1px; 
+        margin:-1px; 
+        padding:0;
+        border:0;
+    }
+
+    input[type=checkbox].todo-checkbox + label.todo {
+        padding-left:20px;
+        line-height:15px; 
+        display:inline-block;
+        background-repeat:no-repeat;
+        background-position: 0 0;
+        font-size:15px;
+        vertical-align:middle;
+        cursor:pointer;
+    }
+
+    input[type=checkbox].todo-checkbox:checked + label.todo {
+        background-image:url(/static/img/form/checkbox-green.png);
+        background-position: 0 -15px;
+
+    }
+
+    label.todo {
+        width: 100%;
+        background-image:url(/static/img/form/checkbox-green-uncheck.png);
+    }
 </style>
 
 <div class="row">
     <div class="col-sm-12">
         <div class="sidebar sidebar-box system-notif">
+            <button class="pull-right"  style="margin-top: 3px" data-toggle="collapse" data-target="#dashboard-summary-trend">
+                <i class="fa fa-external-link"></i>
+            </button>
             <h5>System Notifications</h5>
-            <ul data-bind="foreach: alertSide.notifData">
-                <li data-bind="text: $data"></li>
-            </ul>
+            <div class="collapse in">
+                <ul data-bind="foreach: alertSide.notifData">
+                    <li data-bind="text: $data"></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -63,17 +115,19 @@
 
             <ul class="messages" data-bind="foreach: alertSide.todoData, visible: alertSide.todoEditState() == 'READ'">
                 <li>
-                    <input type="checkbox" data-bind="checked: Checked" />
-                    <a class="remove pull-right" data-bind="click: alertSide.todoRemove.bind($data, $index())">
-                        <i class="fa fa-times"></i>
-                    </a>
-                    <span class="text" data-bind="text: Text"></span>
+                    <input class="todo-checkbox" type="checkbox" data-bind="checked: Checked, attr: {id: 'todo' + $index()}, click: alertSide.todoSaveDelay" />
+                    <label class="todo" data-bind="attr: {for: 'todo' + $index()}">
+                        <a class="remove pull-right" data-bind="click: alertSide.todoRemove.bind($data, $index())">
+                            <i class="fa fa-times"></i>
+                        </a>
+                        <span data-bind="text: Text"></span>
+                    </label>
                 </li>
             </ul>
 
             <ul class="messages" data-bind="foreach: alertSide.todoData, visible: alertSide.todoEditState() == 'EDIT'">
                 <li>
-                    <textarea class="text" type="text" data-bind="textInput: Text">
+                    <textarea class="text form-control input-sm" type="text" data-bind="textInput: Text" style="resize: vertical">
                     </textarea>
                 </li>
             </ul>

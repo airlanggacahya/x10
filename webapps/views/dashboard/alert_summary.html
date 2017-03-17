@@ -54,7 +54,12 @@
         margin-top: 2px !important;
         border: 1px solid #acacac;
         border-radius: 10px;
-        background-color: #f0f3f4;
+        background-color: #f0f3f4 !important;
+    }
+    .hed{
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 1px;
     }
 </style>
 
@@ -139,14 +144,14 @@
         <div class="panel pn" style="margin-top: 12px;border-bottom: 0px !important;background-color: #f0f3f4;">
             <div class="panel-heading hd toggle1">
                 <div type="button" class="col-md-12" >
-                    <h4 style="text-decoration: underline;background-color: #f0f3f4;cursor: pointer;">Actioned Deals: Summary and Trends <span style="float: right" class="ic fa fa-chevron-down"></span></h4>
+                    <h5 class="hed" style="text-decoration: underline;background-color: #f0f3f4;cursor: pointer;">Actioned Deals: Summary and Trends <span style="float: right" class="ic fa fa-chevron-down"></span></h5>
                 </div>
             </div>
             <div class="panel-body bd">
-                <div class="panel show" style="background-color: #f0f3f4;">
-                    <div class="col-sm-4">
+                <div class="panel show" style="background-color: #f0f3f4 !important;border: 0px;">
+                    <div class="col-md-4">
                         
-                        <div class="panel">
+                        <div class="panel" style="background-color: #f0f3f4 !important;">
                             <div class="panel-body mm">
                                 <div>
                                     <input data-bind="kendoDatePicker: {
@@ -198,37 +203,49 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-8">
+                    <div class="col-md-8">
                         <span class="pull-right">
-                            <div data-bind="kendoDropDownList: {
-                                data: alertSum.trendDataLengthOptions,
-                                value: alertSum.trendDataLength,
-                                dataTextField: 'text',
-                                dataValueField: 'value'
-                            }">
+                            <div class="col-md-12">
+                                <div class="col-md-6" style="margin-top: 5px;">
+                                    <label>View Trend for</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <div style="width: 110%;" data-bind="kendoDropDownList: {
+                                        data: alertSum.trendDataLengthOptions,
+                                        value: alertSum.trendDataLength,
+                                        dataTextField: 'text',
+                                        dataValueField: 'value'
+                                    }">
+                                    </div>
+                                </div>
                             </div>
                         </span>
-                        <h5 style="font-size: 12px">Trend: Last <span data-bind="text: alertSum.trendDataLengthTitle"></span></h5>
+                        <div style="font-size: 12px;font-family:Arial,Helvetica,Sans-Serif;font-weight: bold !important;">Trend: Last <span data-bind="text: alertSum.trendDataLengthTitle"></span></div>
                         <div id="alert" data-bind="kendoChart: {
                             data: alertSum.trendDataSeries,
                             series: alertSum.trendDataConfig,
+                            axisDefaults: {
+                                labels: {
+                                    font: '10px Sans-Serif'
+                                }
+                            },
                             title:{
-                                font: 'bold 9px Arial,Helvetica,Sans-Serif',
+                                font: 'bold 10px Arial,Helvetica,Sans-Serif',
                             },
                             chartArea:{
-                                height: 175,
+                                height: 220,
                                 background: '#f0f3f4',
                                 font: '10px Arial,Helvetica,Sans-Serif',
                             },
                             categoryAxis: {
                                 categories: alertSum.trendDataMonths,
+                                axisCrossingValue: [0, 13],
                             },
                             legend:{
                                 position: 'bottom',
                                 labels:{
-                                    font: '9px Arial,Helvetica,Sans-Serif',
+                                    font: '10px Arial,Helvetica,Sans-Serif',
                                 },
-                                font: '8px Arial,Helvetica,Sans-Serif'
                             },
                             valueAxes: alertSum.trendDataAxes,
                         }">

@@ -510,17 +510,25 @@ func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interfa
 	// tk.Println("Result ---------", results)
 	// tk.Println("Query ---------", pipe)
 
-	period := []int{-3, -2, -1, 0}
+	period := tk.M{}
+	period.Set(Inque, []int{-5, -4, 0})
+	period.Set(UnderProcess, []int{-10, -4, 0})
+	period.Set(SendToDecision, []int{-10, -4, 0})
+	period.Set(OnHold, []int{-10, -4, 0})
 	status := []string{"d*Over due", "c*Getting due", "b*In time", "a*New"}
 	today := time.Now()
 
 	finalRes := []tk.M{}
 	k.SetSession("regionItems", nil)
 	for _, val := range results {
-		for idx, peri := range period {
+		// id := val.Get("_id").(tk.M)
+		mystatus := val.GetString("status")
+		periodMe := period.Get(mystatus).([]int)
+
+		for idx, peri := range periodMe {
 			// id := val.Get("_id").(tk.M)
 			mydate := cast.String2Date(val.GetString("date"), "yyyy-MM-dd")
-			mystatus := val.GetString("status")
+			// mystatus := val.GetString("status")
 
 			if regionName != "" {
 				mystatus, err = GetRegionName(mystatus, k)
@@ -768,7 +776,11 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 
 	// tk.Println("Result ---------+", results)
 
-	period := []int{-3, -2, -1, 0}
+	period := tk.M{}
+	period.Set(Inque, []int{-5, -4, 0})
+	period.Set(UnderProcess, []int{-10, -4, 0})
+	period.Set(SendToDecision, []int{-10, -4, 0})
+	period.Set(OnHold, []int{-10, -4, 0})
 	status := []string{"d*Over due", "c*Getting due", "b*In time", "a*New"}
 	today := time.Now()
 	// today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
@@ -776,10 +788,12 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	finalRes := tk.M{}
 	k.SetSession("regionItems", nil)
 	for _, val := range results {
-		for idx, peri := range period {
-			id := val.Get("_id").(tk.M)
+		id := val.Get("_id").(tk.M)
+		mystatus := id.GetString("status")
+		periodMe := period.Get(mystatus).([]int)
+
+		for idx, peri := range periodMe {
 			mydate := cast.String2Date(id.GetString("date"), "yyyy-MM-dd")
-			mystatus := id.GetString("status")
 
 			if groupBy == "region" {
 				mystatus, err = GetRegionName(mystatus, k)

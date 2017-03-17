@@ -273,7 +273,32 @@ var dashboardMapping = [
         "name": "Dashboard",
         "menuid": "20168521323",
         "grant": ["all", "view"]
-    }
+    },
+    {
+        "name": "Alerts & Updates",
+        "menuid": "2017317133947",
+        "grant": ["all", "view"]
+    },
+    {
+        "name": "Turnaround Time",
+        "menuid": "2017317134037",
+        "grant": ["all", "view"]
+    },
+    {
+        "name": "Conversion Rate",
+        "menuid": "2017317134112",
+        "grant": ["all", "view"]
+    },
+    {
+        "name": "Deal Profile Metrics",
+        "menuid": "2017317134147",
+        "grant": ["all", "view"]
+    },
+    {
+        "name": "Custom Analysis",
+        "menuid": "2017317134221",
+        "grant": ["all", "view"]
+    },
 ]
 
 var dealSetupMapping = [

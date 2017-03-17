@@ -2,6 +2,7 @@
 <style type="text/css">
 	.bd{
 		margin-top: 0px !important;
+		margin-bottom: -14px !important;
 	}
 	.modal-header{
 		border-bottom: none !important;
@@ -10,43 +11,49 @@
 		color: white;
 		background-color: red;
 	}
-	.panel {
+	.pn{
 	    background-color: #f0f3f4;
 	    border-top: 1px solid blue;
     	border-left: 1px solid blue;
     	border-bottom: 1px solid blue;
     	border-right: 1px solid grey;
     	border-radius: 0px;
+    	/*margin-top: 12px;*/
+	}
+	.hd{
+		margin-top: -14px;
 	}
 </style>
 <div class="row">
 
 <div class="col-md-12">
-	<div class="panel">
-		<div class="panel-heading">
+	<div class="panel pn">
+		<div class="panel-heading hd toggle1">
 			<div class="col-md-12">
-				<h4 style="text-decoration: underline;">To be Actioned Deals : Tracker</h4>
+				<h4 style="text-decoration: underline;">To be Actioned Deals : Tracker <span style="float: right" class="ic fa fa-chevron-down"></span></h4>
 			</div>
 		</div>
-		<div class="panel-body bd" style="margin-top: 0px !important;">
-			<div class="col-md-8" >
-				<div class="form-group">
-					<div class="col-md-12">
-						<div class="col-md-2">
-							<label class="form-label">View Accross</label>
+		<div class="panel-body bd">
+			<div class="panel show">
+				<div class="col-md-8 vv" >
+					<div class="form-group">
+						<div class="col-md-12">
+							<div class="col-md-2">
+								<label class="form-label">View Accross</label>
+							</div>
+							<div class="col-md-3">
+								<select data-bind="kendoDropDownList: {data: ttrack.trackingList, value: ttrack.trackingValue, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select Deal'}" style="width: 100%;"></select>
+							</div>
+							<div class="col-md-2">
+								<div type="button" class="btn btn-sm btn-flat btn-primary" data-bind="click: ttrack.getData"><span class="fa fa-refresh"></span> Search</div>
+							</div>
 						</div>
-						<div class="col-md-3">
-							<select data-bind="kendoDropDownList: {data: ttrack.trackingList, value: ttrack.trackingValue, dataTextField: 'text', dataValueField: 'value', optionLabel: 'Select Deal'}" style="width: 100%;"></select>
-						</div>
-						<div class="col-md-2">
-							<div type="button" class="btn btn-sm btn-flat btn-primary" data-bind="click: ttrack.getData"><span class="fa fa-refresh"></span> Search</div>
-						</div>
-					</div>
 
+					</div>
 				</div>
-			</div>
-			<div class="col-md-12">
-				<div id="timeTrackerChart"></div>
+				<div class="col-md-12 vv">
+					<div id="timeTrackerChart"></div>
+				</div>
 			</div>
 		</div>
 	</div>

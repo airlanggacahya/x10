@@ -270,11 +270,6 @@ function clickRole(submodule_path, menuid, path) {
 // Big hardcode mapping data
 var dashboardMapping = [
     {
-        "name": "Dashboard",
-        "menuid": "20168521323",
-        "grant": ["all", "view"]
-    },
-    {
         "name": "Alerts & Updates",
         "menuid": "2017317133947",
         "grant": ["all", "view"]

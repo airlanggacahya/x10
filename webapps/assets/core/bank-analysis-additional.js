@@ -103,9 +103,19 @@ var getSearchVal = function(){
     };
 }
 var refreshFilter = function(){
+    $(".toaster").html("");
     DrawDataBank(getSearchVal());
-    setdatestt()
-    initEvents()
+    setdatestt();
+    initEvents();
+    checkBSI();
+}
+
+var checkBSI = function(){
+    ajaxPost("/ratio/getratioinputdataallconfirmed",{"customerId" : filter().CustomerSearchVal() + "|" + filter().DealNumberSearchVal()},function(res){
+        if(res.Status != "OK"){
+            fixToast("Balance Sheet Input Data Not Confirmed");
+        }
+    })
 }
 
 var addRowSecurityNFB = function(){

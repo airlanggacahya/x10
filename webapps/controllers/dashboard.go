@@ -726,6 +726,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 
 	proj := tk.M{}
 	proj.Set("date", tk.M{"$dateToString": tk.M{"format": "%Y-%m-%d", "date": "$lastDate"}})
+	proj.Set("branchstatus", tk.M{"$concat": []interface{}{"$branch", "^", "$laststatus"}})
 	proj.Set("status", "$laststatus")
 	proj.Set("branch", 1)
 
@@ -741,7 +742,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 
 	groupfield := "$status"
 	if groupBy == "region" {
-		groupfield = "$branch"
+		groupfield = "$branchstatus"
 	}
 
 	group := tk.M{}
@@ -790,7 +791,14 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	for _, val := range results {
 		id := val.Get("_id").(tk.M)
 		mystatus := id.GetString("status")
-		periodMe := period.Get(mystatus).([]int)
+		periodMe := []int{}
+
+		if groupBy == "region" {
+			mystatus = strings.Split(id.GetString("status"), "^")[0]
+			periodMe = period.Get(strings.Split(id.GetString("status"), "^")[1]).([]int)
+		} else {
+			periodMe = period.Get(mystatus).([]int)
+		}
 
 		for idx, peri := range periodMe {
 			mydate := cast.String2Date(id.GetString("date"), "yyyy-MM-dd")

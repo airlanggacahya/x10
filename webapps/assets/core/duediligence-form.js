@@ -394,7 +394,7 @@ due.getCostumerData = function(){
 	due.formVisible(false);
 	app.ajaxPost(url, param, function (res) {
 		if (res.length > 0)
-		res = checkConfirmedOrNot(res[0].Status, 1, 2, res, [], "Customer Application");
+		// res = checkConfirmedOrNot(res[0].Status, 1, 2, res, [], "Customer Application");
 
 		if(due.form.Freeze() == true){
 			due.EnableAllfields(false)

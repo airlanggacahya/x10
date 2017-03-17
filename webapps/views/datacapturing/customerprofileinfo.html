@@ -849,18 +849,18 @@ function blanked(){
 
 var countBlank = ko.observable(0)
 
-function confirmorverify(status){
+function confirmorverify(status,lable){
   countBlank(0)
   $(".toaster").html("")
   if(customerprofile().Status() == 0 && status == 2){
     sweetAlert("Please Confirm Data First", "", "warning");
     return;
   }
-  if(status == 1 && validateConfirm()){
+  if((status == 1 && lable != "unfreeze" ) && validateConfirm()){
     
     return;
   }
-  if(status == 1 && !validateConfirm()){
+  if((status == 1 && lable != "unfreeze") && !validateConfirm()){
     customerprofile().Status(status);
     info.getConfirmed();
   }else if (status == 2){
@@ -1331,7 +1331,7 @@ input[disabled]{
                <button  type="button" id="cf" btn-sm class="btn btn-sm btn-confirm" onclick="confirmorverify(1)">Confirm</button>
                <button  type="button" id="re" btn-sm class="btn btn-sm btn-confirm" onclick="confirmorverify(0)">Re-Enter</button>
                <button  type="button" id="vf" btn-sm class="btn btn-sm btn-freeze" onclick="confirmorverify(2)">Freeze</button>
-               <button  type="button" id="uvf" btn-sm class="btn btn-sm btn-unfreeze" onclick="confirmorverify(1)">Unfreeze</button>
+               <button  type="button" id="uvf" btn-sm class="btn btn-sm btn-unfreeze" onclick="confirmorverify(1,'unfreeze')">Unfreeze</button>
                <!-- <button type="button" btn-sm class="btn btn-sm btn-default" > View All</button> -->
                <button  type="button" id="pdf" btn-sm class="btn btn-sm btn-primary" onclick="exportPDF();">Download as PDF</button>
               <!-- <button  id="pdf" class="btn-pdf" onclick="exportPDF();"><span></span></button> -->

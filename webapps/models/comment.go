@@ -12,7 +12,7 @@ type CommentModel struct {
 	CustomerId    string
 	DealNo        string
 	CustomerName  string
-	UserId        bson.ObjectId
+	UserId        string
 	UserName      string
 	FullName      string
 	Comment       string

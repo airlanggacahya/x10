@@ -215,7 +215,7 @@ r.getData = function() {
   ajaxPost(url, param, function(data) {
     r.cibilDraftTemp(data[2].CibilDraft)
 
-    checkConfirmedOrNot(data[0].CustomerProfile.Status, 1, 2, data[0].CustomerProfile, null, "Customer Application");
+    // checkConfirmedOrNot(data[0].CustomerProfile.Status, 1, 2, data[0].CustomerProfile, null, "Customer Application");
     if(data.success != false) {
 
       r.filtercustid(data[0].CustomerProfile.Id)

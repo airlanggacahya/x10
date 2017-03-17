@@ -79,7 +79,7 @@ func (m *DataCapturingController) CommentSave(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
 	p := struct {
-		Id         bson.ObjectId
+		Id         string
 		CustomerId string
 		DealNo     string
 		Comment    string
@@ -95,7 +95,7 @@ func (m *DataCapturingController) CommentSave(k *knot.WebContext) interface{} {
 	if k.Session("userid") != nil && k.Session("username") != nil && k.Session("fullname") != nil {
 		mdl.CustomerId = p.CustomerId
 		mdl.CustomerName = ""
-		mdl.UserId = bson.ObjectIdHex(k.Session("userid").(string))
+		mdl.UserId = k.Session("userid").(string)
 		mdl.UserName = k.Session("username").(string)
 		mdl.FullName = k.Session("fullname").(string)
 		mdl.Comment = p.Comment
@@ -108,7 +108,7 @@ func (m *DataCapturingController) CommentSave(k *knot.WebContext) interface{} {
 			mdl.Id = bson.NewObjectId()
 			mdl.DateInput = time.Now()
 		} else {
-			mdl.Id = p.Id
+			mdl.Id = bson.ObjectIdHex(p.Id)
 			mdl.DateInput = p.DateInput
 		}
 

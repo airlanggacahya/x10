@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	. "eaciit/x10/consoleapps/x10upload/models"
+	. "eaciit/x10upload/models"
 
 	"github.com/eaciit/dbox"
 	. "github.com/eaciit/textsearch"
@@ -778,7 +778,7 @@ func ExtractIndividualCibilReport(PathFrom string, Filename string) ReportData {
 
 func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, ReportType string, XmlName string, inbox string, success string, failed string, webapps string) {
 	tk.Println("Extracting", FName)
-	Name := strings.TrimRight(FName, ".pdf")
+	//Name := strings.TrimRight(FName, ".pdf")
 
 	conn, err := PrepareConnection()
 	if err != nil {
@@ -788,9 +788,9 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 
 	if ReportType == "Company" {
 		reportobj := ExtractCompanyCibilReport(PathTo, XmlName)
-
+		tk.Println(reportobj.Profile)
 		filename := strings.TrimRight(FName, ".pdf")
-		timestamp := time.Now().UTC()
+		timestamp := time.Now().UTC().Add(time.Duration(5.5*60) * time.Minute)
 		datestr := timestamp.String()
 		dates := strings.Split(datestr, " ")
 		times := strings.Split(dates[1], ".")
@@ -799,17 +799,25 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 		formattedName := strings.Replace(newfilename, " ", "\\ ", -1)
 
 		if reportobj.Profile.CompanyName == "" {
+			tk.Println("Undefined Company Name")
 			MoveFile(inbox+"/"+formattedName, failed)
 			os.RemoveAll(PathFrom + "/" + XmlName)
 		} else {
 			customer := strings.Split(reportobj.Profile.CompanyName, " ")
 			res := []tk.M{}
 			filter := []*dbox.Filter{}
+			isMatch := false
+			customerid := 0
+			dealno := ""
+			cpstatus := 0
+
 			for _, splited := range customer {
-				if len(splited) > 3 {
+				if len(splited) > 3 && splited != "PVT" && splited != "LTD" && splited != "PRIVATE" && splited != "LIMITED" {
+					tk.Println(splited)
 					filter = append(filter, dbox.Contains("applicantdetail.CustomerName", splited))
 				}
 			}
+
 			cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(filter...).Cursor(nil)
 			if err != nil {
 				tk.Println(err.Error())
@@ -820,36 +828,86 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 			if len(res) > 0 {
 				for _, val := range res {
 					customername := val["applicantdetail"].(tk.M)["CustomerName"].(string)
+					app := val.Get("applicantdetail").(tk.M)
+					customerid = app.GetInt("CustomerID")
+					dealno = val["applicantdetail"].(tk.M)["DealNo"].(string)
+					custpan := val["applicantdetail"].(tk.M)["CustomerPan"].(string)
+					cpstatus = val.GetInt("Status")
+
 					setting := NewSimilaritySetting()
 					setting.SplitDelimeters = []rune{' ', '.', '-'}
-					similar := Similarity(reportobj.Profile.CompanyName, customername, setting)
+					splitedreportname := strings.Split(reportobj.Profile.CompanyName, " ")
+					splitedcpname := strings.Split(customername, " ")
+					simreportname := ""
+					simcpname := ""
 
-					if similar > 70 {
-						reportobj.Id = bson.NewObjectId()
-						app := val.Get("applicantdetail").(tk.M)
-						reportobj.Profile.CustomerId = app.GetInt("CustomerID")
-						reportobj.Profile.DealNo = val["applicantdetail"].(tk.M)["DealNo"].(string)
-						reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
-						reportobj.FileName = newfilename
-						reportobj.IsMatch = true
-						query := conn.NewQuery().From("CibilReport").Save()
-						err = query.Exec(tk.M{
-							"data": reportobj,
-						})
-						if err != nil {
-							tk.Println(err.Error())
+					for _, reportname := range splitedreportname {
+						if reportname != "PVT" || reportname != "LTD" || reportname != "PRIVATE" || reportname != "LIMITED" {
+							simreportname = simreportname + " " + reportname
 						}
-						query.Close()
+					}
 
-						CopyFile(inbox+"/"+formattedName, webapps)
-						MoveFile(inbox+"/"+formattedName, success)
+					for _, cpname := range splitedcpname {
+						if cpname != "PVT" || cpname != "LTD" || cpname != "PRIVATE" || cpname != "LIMITED" {
+							simcpname = simcpname + " " + cpname
+						}
+					}
+
+					similar := Similarity(simreportname, simcpname, setting)
+					tk.Println(simreportname, simcpname, similar, reportobj.Profile.Pan, custpan)
+
+					if similar >= 50 && custpan == reportobj.Profile.Pan {
+						isMatch = true
+					} else if similar >= 70 {
+						isMatch = true
+					}
+
+					if isMatch {
+						if cpstatus == 1 {
+							reportobj.Id = bson.NewObjectId()
+							reportobj.Profile.CustomerId = customerid
+							reportobj.Profile.DealNo = dealno
+							reportobj.FilePath = PathFrom + "/" + FName
+							reportobj.FileName = newfilename
+							reportobj.IsMatch = isMatch
+							reportobj.UnconfirmID = ""
+							query := conn.NewQuery().From("CibilReport").Save()
+							err = query.Exec(tk.M{
+								"data": reportobj,
+							})
+							if err != nil {
+								tk.Println(err.Error())
+							}
+							query.Close()
+						} else {
+							reportobj.Id = bson.NewObjectId()
+							reportobj.Profile.CustomerId = 0
+							reportobj.Profile.DealNo = ""
+							reportobj.FilePath = PathFrom + "/" + FName
+							reportobj.FileName = newfilename
+							reportobj.IsMatch = false
+							custid := strconv.Itoa(customerid)
+							reportobj.UnconfirmID = custid + "_" + dealno
+							query := conn.NewQuery().From("CibilReport").Save()
+							err = query.Exec(tk.M{
+								"data": reportobj,
+							})
+							if err != nil {
+								tk.Println(err.Error())
+							}
+							query.Close()
+						}
 					}
 				}
 			} else {
+				tk.Println("else")
 				reportobj.Id = bson.NewObjectId()
-				reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
+				reportobj.Profile.CustomerId = 0
+				reportobj.Profile.DealNo = ""
+				reportobj.FilePath = PathFrom + "/" + FName
 				reportobj.FileName = newfilename
-				reportobj.IsMatch = false
+				reportobj.IsMatch = isMatch
+				reportobj.UnconfirmID = ""
 				query := conn.NewQuery().From("CibilReport").Save()
 				err = query.Exec(tk.M{
 					"data": reportobj,
@@ -859,9 +917,11 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 				}
 				query.Close()
 
-				CopyFile(inbox+"/"+formattedName, webapps)
-				MoveFile(inbox+"/"+formattedName, success)
 			}
+
+			os.RemoveAll(PathFrom + "/" + XmlName)
+			CopyFile(inbox+"/"+formattedName, webapps)
+			MoveFile(inbox+"/"+formattedName, success)
 		}
 	}
 
@@ -869,7 +929,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 		reportobj := ExtractIndividualCibilReport(PathTo, XmlName)
 
 		filename := strings.TrimRight(FName, ".pdf")
-		timestamp := time.Now().UTC()
+		timestamp := time.Now().UTC().Add(time.Duration(5.5*60) * time.Minute)
 		datestr := timestamp.String()
 		dates := strings.Split(datestr, " ")
 		times := strings.Split(dates[1], ".")
@@ -877,7 +937,25 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 		os.Rename(inbox+"/"+FName, inbox+"/"+newfilename)
 		formattedName := strings.Replace(newfilename, " ", "\\ ", -1)
 
-		if reportobj.CibilScore == 0 {
+		exsfilter := []*dbox.Filter{}
+		exsfilter = append(exsfilter, dbox.Eq("ConsumerInfo.ConsumerName", reportobj.ConsumersInfos.ConsumerName))
+		exsfilter = append(exsfilter, dbox.Eq("DateOfReport", reportobj.DateOfReport))
+		exsfilter = append(exsfilter, dbox.Eq("TimeOfReport", reportobj.TimeOfReport))
+		exsfilter = append(exsfilter, dbox.Eq("CibilScore", reportobj.CibilScore))
+		existdatarep := []tk.M{}
+
+		csr, err := conn.NewQuery().Select().From("CibilReportPromotorFinal").Where(exsfilter...).Cursor(nil)
+		if err != nil {
+			tk.Println(err.Error())
+		}
+		err = csr.Fetch(&existdatarep, 0, false)
+		defer csr.Close()
+
+		if len(existdatarep) > 0 {
+			MoveFile(inbox+"/"+formattedName, failed)
+			os.RemoveAll(PathFrom + "/" + XmlName)
+			tk.Println("Data Existed")
+		} else if reportobj.CibilScore == 0 {
 			MoveFile(inbox+"/"+formattedName, failed)
 			os.RemoveAll(PathFrom + "/" + XmlName)
 		} else {
@@ -889,25 +967,29 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 			dealno := ""
 
 			for _, splited := range customer {
-				if len(splited) > 2 {
+				if len(splited) > 2 && splited != "JAIN" && splited != "PATEL" && splited != "SHAH" {
 					filter = append(filter, dbox.Contains("detailofpromoters.biodata.Name", splited))
 				}
 			}
 
-			cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(filter...).Cursor(nil)
+			cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(dbox.Or(filter...)).Cursor(nil)
 			if err != nil {
 				tk.Println(err.Error())
 			}
 			err = cursor.Fetch(&res, 0, false)
 			defer cursor.Close()
 
+			tk.Println("Length", len(res))
+
 			if len(res) > 0 {
 				for _, val := range res {
+					isMatch = false
 					customername := val.Get("detailofpromoters").(tk.M)["biodata"]
 					bio := customername.([]interface{})
 					app := val.Get("applicantdetail").(tk.M)
 					customerid = app.GetInt("CustomerID")
 					dealno = val["applicantdetail"].(tk.M)["DealNo"].(string)
+					cpstatus := val.GetInt("Status")
 
 					for _, vals := range bio {
 						data := vals.(tk.M)
@@ -916,73 +998,64 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						similar := Similarity(reportobj.ConsumersInfos.ConsumerName, data.GetString("Name"), setting)
 						dob, isdate := data.Get("DateOfBirth").(time.Time)
 
+						tk.Println(similar)
+
 						if isdate {
 							if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == dob.UTC() {
 								isMatch = true
+								break
+							} else if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
+								isMatch = true
+								break
 							}
 						} else {
-							if similar >= 50 && reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
-								isMatch = true
+							datestring := data.GetString("DateOfBirth")
+							datesplitted := strings.Split(datestring, "T")
+							layout := "2006-01-02"
+							strdate := datesplitted[0]
+							t, err := time.Parse(layout, strdate)
+
+							if err != nil {
+								tk.Println(err)
+							} else {
+								if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == t {
+									isMatch = true
+									break
+								} else if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
+									isMatch = true
+									break
+								}
 							}
 						}
 					}
-				}
-			}
 
-			if isMatch {
-				filter := []*dbox.Filter{}
-				filter = append(filter, dbox.Eq("ConsumerInfo.ConsumerName", reportobj.ConsumersInfos.ConsumerName))
-				filter = append(filter, dbox.Eq("ConsumerInfo.CustomerId", customerid))
-				filter = append(filter, dbox.Eq("ConsumerInfo.DealNo", dealno))
-				cursor, err = conn.NewQuery().Select().From("CibilReportPromotorFinal").Where(filter...).Cursor(nil)
-				if err != nil {
-					tk.Println(err.Error())
-				}
-				result := []tk.M{}
+					if isMatch {
+						tk.Println("PDF Match")
+						tk.Println("Where", customerid, dealno, reportobj.ConsumersInfos.ConsumerName)
 
-				err = cursor.Fetch(&result, 0, false)
+						filter := []*dbox.Filter{}
+						filter = append(filter, dbox.Eq("ConsumerInfo.ConsumerName", reportobj.ConsumersInfos.ConsumerName))
+						filter = append(filter, dbox.Eq("ConsumerInfo.CustomerId", customerid))
+						filter = append(filter, dbox.Eq("ConsumerInfo.DealNo", dealno))
+						cursor, err = conn.NewQuery().Select().From("CibilReportPromotorFinal").Where(filter...).Cursor(nil)
+						if err != nil {
+							tk.Println(err.Error())
+						}
+						result := []tk.M{}
 
-				if len(result) == 0 {
-					reportobj.Id = bson.NewObjectId()
-					reportobj.ConsumersInfos.CustomerId = customerid
-					reportobj.ConsumersInfos.DealNo = dealno
-					reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
-					reportobj.FileName = newfilename
-					reportobj.StatusCibil = 0
-					reportobj.IsMatch = isMatch
-					query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
-					err = query.Exec(tk.M{
-						"data": reportobj,
-					})
-					if err != nil {
-						tk.Println(err.Error())
-					}
-					query.Close()
+						err = cursor.Fetch(&result, 0, false)
 
-					CopyFile(inbox+"/"+formattedName, webapps)
-					MoveFile(inbox+"/"+formattedName, success)
-
-				} else {
-					for _, existdata := range result {
-						if existdata.GetInt("StatusCibil") != 1 {
-							datereport := existdata.Get("DateOfReport").(time.Time)
-							timereport := existdata.Get("TimeOfReport").(time.Time)
-							if datereport.Before(reportobj.DateOfReport) || datereport == reportobj.DateOfReport && timereport.Before(reportobj.TimeOfReport) {
-								wh := []*dbox.Filter{}
-								ids := existdata.Get("_id").(bson.ObjectId)
-								wh = append(wh, dbox.Eq("_id", ids))
-								err = conn.NewQuery().From("CibilReportPromotorFinal").Delete().Where(filter...).Exec(nil)
-								if err != nil {
-									tk.Println(err.Error())
-								}
-
+						if len(result) == 0 {
+							if cpstatus == 1 {
+								tk.Println(cpstatus)
 								reportobj.Id = bson.NewObjectId()
 								reportobj.ConsumersInfos.CustomerId = customerid
 								reportobj.ConsumersInfos.DealNo = dealno
-								reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
+								reportobj.FilePath = PathFrom + "/" + FName
 								reportobj.FileName = newfilename
 								reportobj.StatusCibil = 0
 								reportobj.IsMatch = isMatch
+								reportobj.UnconfirmID = ""
 								query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
 								err = query.Exec(tk.M{
 									"data": reportobj,
@@ -991,15 +1064,136 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 									tk.Println(err.Error())
 								}
 								query.Close()
+							} else {
+								tk.Println(cpstatus)
+								reportobj.Id = bson.NewObjectId()
+								reportobj.ConsumersInfos.CustomerId = 0
+								reportobj.ConsumersInfos.DealNo = ""
+								reportobj.FilePath = PathFrom + "/" + FName
+								reportobj.FileName = newfilename
+								reportobj.StatusCibil = 0
+								reportobj.IsMatch = false
+								custid := strconv.Itoa(customerid)
+								unconfirmid := custid + "_" + dealno
+								reportobj.UnconfirmID = unconfirmid
+								query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
+								err = query.Exec(tk.M{
+									"data": reportobj,
+								})
+								if err != nil {
+									tk.Println(err.Error())
+								}
+								query.Close()
+							}
 
-								CopyFile(inbox+"/"+formattedName, webapps)
-								MoveFile(inbox+"/"+formattedName, success)
+						} else {
+							for _, existdata := range result {
+								if existdata.GetInt("StatusCibil") != 1 {
+									datereport := existdata.Get("DateOfReport").(time.Time)
+									timereport := existdata.Get("TimeOfReport").(time.Time)
+									if datereport.Before(reportobj.DateOfReport) || datereport == reportobj.DateOfReport && timereport.Before(reportobj.TimeOfReport) {
+										wh := []*dbox.Filter{}
+										ids := existdata.Get("_id").(bson.ObjectId)
+										tk.Println("ID", ids)
+										wh = append(wh, dbox.Eq("_id", ids))
+										err = conn.NewQuery().From("CibilReportPromotorFinal").Delete().Where(wh...).Exec(nil)
+										if err != nil {
+											tk.Println(err.Error())
+										}
+										if cpstatus == 1 {
+											tk.Println(cpstatus)
+											reportobj.Id = bson.NewObjectId()
+											reportobj.ConsumersInfos.CustomerId = customerid
+											reportobj.ConsumersInfos.DealNo = dealno
+											reportobj.FilePath = PathFrom + "/" + FName
+											reportobj.FileName = newfilename
+											reportobj.StatusCibil = 0
+											reportobj.IsMatch = isMatch
+											reportobj.UnconfirmID = ""
+											query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
+											err = query.Exec(tk.M{
+												"data": reportobj,
+											})
+											if err != nil {
+												tk.Println(err.Error())
+											}
+											query.Close()
+										} else {
+											tk.Println(cpstatus)
+											reportobj.Id = bson.NewObjectId()
+											reportobj.ConsumersInfos.CustomerId = 0
+											reportobj.ConsumersInfos.DealNo = ""
+											reportobj.FilePath = PathFrom + "/" + FName
+											reportobj.FileName = newfilename
+											reportobj.StatusCibil = 0
+											reportobj.IsMatch = false
+											custid := strconv.Itoa(customerid)
+											unconfirmid := custid + "_" + dealno
+											reportobj.UnconfirmID = unconfirmid
+											query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
+											err = query.Exec(tk.M{
+												"data": reportobj,
+											})
+											if err != nil {
+												tk.Println(err.Error())
+											}
+											query.Close()
+										}
 
+									} else {
+										if cpstatus == 1 {
+											tk.Println(cpstatus)
+											reportobj.Id = bson.NewObjectId()
+											reportobj.ConsumersInfos.CustomerId = customerid
+											reportobj.ConsumersInfos.DealNo = dealno
+											reportobj.FilePath = PathFrom + "/" + FName
+											reportobj.FileName = newfilename
+											reportobj.StatusCibil = 0
+											reportobj.IsMatch = isMatch
+											reportobj.UnconfirmID = ""
+											query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
+											err = query.Exec(tk.M{
+												"data": reportobj,
+											})
+											if err != nil {
+												tk.Println(err.Error())
+											}
+											query.Close()
+										} else {
+											tk.Println(cpstatus)
+											reportobj.Id = bson.NewObjectId()
+											reportobj.ConsumersInfos.CustomerId = 0
+											reportobj.ConsumersInfos.DealNo = ""
+											reportobj.FilePath = PathFrom + "/" + FName
+											reportobj.FileName = newfilename
+											reportobj.StatusCibil = 0
+											reportobj.IsMatch = false
+											custid := strconv.Itoa(customerid)
+											unconfirmid := custid + "_" + dealno
+											reportobj.UnconfirmID = unconfirmid
+											query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
+											err = query.Exec(tk.M{
+												"data": reportobj,
+											})
+											if err != nil {
+												tk.Println(err.Error())
+											}
+											query.Close()
+										}
+
+									}
+								} //else {
+								//	isMatch = false
+								//}
 							}
 						}
 					}
 				}
-			} else {
+			}
+
+			if isMatch == false {
+				tk.Println("PDF Unmatch")
+
 				filter := []*dbox.Filter{}
 				filter = append(filter, dbox.Eq("ConsumerInfo.ConsumerName", reportobj.ConsumersInfos.ConsumerName))
 				cursor, err = conn.NewQuery().Select().From("CibilReportPromotorFinal").Where(filter...).Cursor(nil)
@@ -1012,10 +1206,13 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 
 				if len(result) == 0 {
 					reportobj.Id = bson.NewObjectId()
-					reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
+					reportobj.ConsumersInfos.CustomerId = 0
+					reportobj.ConsumersInfos.DealNo = ""
+					reportobj.FilePath = PathFrom + "/" + FName
 					reportobj.FileName = newfilename
 					reportobj.StatusCibil = 0
-					reportobj.IsMatch = isMatch
+					reportobj.IsMatch = false
+					reportobj.UnconfirmID = ""
 					query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
 					err = query.Exec(tk.M{
 						"data": reportobj,
@@ -1024,46 +1221,12 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						tk.Println(err.Error())
 					}
 					query.Close()
-
-					CopyFile(inbox+"/"+formattedName, webapps)
-					MoveFile(inbox+"/"+formattedName, success)
-
-				} else {
-					for _, existdata := range result {
-						if existdata.GetInt("StatusCibil") != 1 {
-							datereport := existdata.Get("DateOfReport").(time.Time).UTC()
-							timereport := existdata.Get("TimeOfReport").(time.Time).UTC()
-							if datereport.Before(reportobj.DateOfReport.UTC()) || datereport == reportobj.DateOfReport.UTC() && timereport.Before(reportobj.TimeOfReport.UTC()) {
-								wh := []*dbox.Filter{}
-								ids := existdata.Get("_id").(bson.ObjectId)
-								wh = append(wh, dbox.Eq("_id", ids))
-								err = conn.NewQuery().From("CibilReportPromotorFinal").Delete().Where(filter...).Exec(nil)
-								if err != nil {
-									tk.Println(err.Error())
-								}
-
-								reportobj.Id = bson.NewObjectId()
-								reportobj.FilePath = PathFrom + "/" + ReportType + "/" + Name + "/" + newfilename
-								reportobj.FileName = newfilename
-								reportobj.StatusCibil = 0
-								reportobj.IsMatch = isMatch
-								query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
-								err = query.Exec(tk.M{
-									"data": reportobj,
-								})
-								if err != nil {
-									tk.Println(err.Error())
-								}
-								query.Close()
-
-								CopyFile(inbox+"/"+formattedName, webapps)
-								MoveFile(inbox+"/"+formattedName, success)
-
-							}
-						}
-					}
 				}
+
 			}
+			os.RemoveAll(PathFrom + "/" + XmlName)
+			CopyFile(inbox+"/"+formattedName, webapps)
+			MoveFile(inbox+"/"+formattedName, success)
 
 		}
 	}
@@ -1075,4 +1238,16 @@ func ReplaceString(number string) string {
 	rex := regexp.MustCompile("[^0-9]")
 	valStr := rex.ReplaceAllString(number, "")
 	return valStr
+}
+
+func SaveCibilIndividual(obj ReportData, isMatch bool) {
+	conn, err := PrepareConnection()
+	if err != nil {
+		log.Println(err)
+	}
+	defer conn.Close()
+
+	if isMatch {
+
+	}
 }

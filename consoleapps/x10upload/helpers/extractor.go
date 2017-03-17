@@ -809,7 +809,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 			isMatch := false
 			customerid := 0
 			dealno := ""
-			cpstatus := 0
+			// cpstatus := 0
 
 			for _, splited := range customer {
 				if len(splited) > 3 && splited != "PVT" && splited != "LTD" && splited != "PRIVATE" && splited != "LIMITED" {
@@ -832,7 +832,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 					customerid = app.GetInt("CustomerID")
 					dealno = val["applicantdetail"].(tk.M)["DealNo"].(string)
 					custpan := val["applicantdetail"].(tk.M)["CustomerPan"].(string)
-					cpstatus = val.GetInt("Status")
+					// cpstatus = val.GetInt("Status")
 
 					setting := NewSimilaritySetting()
 					setting.SplitDelimeters = []rune{' ', '.', '-'}
@@ -989,7 +989,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 					app := val.Get("applicantdetail").(tk.M)
 					customerid = app.GetInt("CustomerID")
 					dealno = val["applicantdetail"].(tk.M)["DealNo"].(string)
-					cpstatus := val.GetInt("Status")
+					// cpstatus := val.GetInt("Status")
 
 					for _, vals := range bio {
 						data := vals.(tk.M)
@@ -1047,7 +1047,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 
 						if len(result) == 0 {
 							// if cpstatus == 1 {
-							tk.Println(cpstatus)
+							// tk.Println(cpstatus)
 							reportobj.Id = bson.NewObjectId()
 							reportobj.ConsumersInfos.CustomerId = customerid
 							reportobj.ConsumersInfos.DealNo = dealno
@@ -1101,7 +1101,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 											tk.Println(err.Error())
 										}
 										// if cpstatus == 1 {
-										tk.Println(cpstatus)
+										// tk.Println(cpstatus)
 										reportobj.Id = bson.NewObjectId()
 										reportobj.ConsumersInfos.CustomerId = customerid
 										reportobj.ConsumersInfos.DealNo = dealno
@@ -1142,7 +1142,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 
 									} else {
 										// if cpstatus == 1 {
-										tk.Println(cpstatus)
+										// tk.Println(cpstatus)
 										reportobj.Id = bson.NewObjectId()
 										reportobj.ConsumersInfos.CustomerId = customerid
 										reportobj.ConsumersInfos.DealNo = dealno

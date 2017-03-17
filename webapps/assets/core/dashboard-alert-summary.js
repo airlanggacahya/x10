@@ -135,7 +135,7 @@ alertSum.trendDataConfig = [
         type: 'column',
         name: 'Amount Approved',
         field: 'amountApproved',
-        axis: 'cr'
+        axis: 'cr',
     },
     {
         type: 'column',
@@ -185,16 +185,25 @@ alertSum.seriesMax = function (sections) {
 alertSum.trendDataAxes = ko.computed(function () {
     return [{
         name: 'cr',
-        title: { text: 'cr' },
+        title: { 
+            text: 'Deal Amount',
+            font: '11px sans-serif',
+            color: 'blue' 
+        },
         min: 0,
         max: Math.ceil(alertSum.seriesMax(['countApproved', 'countRejected']) + 2),
-        majorUnit: 1
+        majorUnit: 1,
+        
     },{
         name: 'count',
-        title: { text: 'count' },
+        title: { 
+            text: 'Deal Account',
+            font: '11px sans-serif',
+            color: 'blue'
+        },
         min: 0,
         max: alertSum.seriesMax(['countApproved', 'countRejected']) + 2,
-        majorUnit: 1
+        majorUnit: 1,
     }]
 })
 

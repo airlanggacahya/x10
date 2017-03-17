@@ -9,8 +9,8 @@ ttrack.isRegion = ko.observable(false);
 ttrack.modalGridTittle = ko.observable("");
 ttrack.DataGridModal = ko.observableArray([])
 ttrack.popupchartcolor = ko.observableArray([])
-
-ttrack.chartcolors = ["#4472C4","#70AD47","#FFC000","#FF0000"];
+//"#4472C4"
+ttrack.chartcolors = ["#70AD47","#FFC000","#FF0000"];
 ttrack.renderModalChart = function(datas){
     datas = ttrack.normalisasiData(datas)
 

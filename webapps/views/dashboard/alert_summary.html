@@ -6,22 +6,23 @@
         background: #1F2834;
         border-radius: 8px;
         margin-top: 10px;
-        min-height: 80px;
+        min-height: 70px;
         color: #ffffff;
         padding: 10px;
+        font-size: 10px;
     }
 
     .summary-box>.score {
-        font-size: 24px;
+        font-size: 16px;
         font-weight: bold;
     }
 
     .summary-box>.score.unit {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .summary-box>i.fa {
-        font-size: 22px;
+        font-size: 16px;
     }
 
     .summary-box .box-label {
@@ -49,16 +50,22 @@
     .summary-box .fa-font-red {
         color: #ff0000;
     }
+    .mm{
+        margin-top: 2px !important;
+        border: 1px solid #acacac;
+        border-radius: 10px;
+        background-color: #f0f3f4;
+    }
 </style>
 
-<div class="row">
+<!-- <div class="row">
     <div class="col-sm-12">
         <h4>Actioned Deals: Summary and Trends</h4>
     </div>
-</div>
+</div> -->
 
 <div class="row">
-    <div class="col-sm-3">
+    <!-- <div class="col-sm-3">
         <div>
             <input data-bind="kendoDatePicker: {
                 value: alertSum.trendMonth,
@@ -126,6 +133,110 @@
             },
             valueAxes: alertSum.trendDataAxes
         }">
+        </div>
+    </div> -->
+    <div class="col-md-12" style="margin-bottom: -20px;">
+        <div class="panel pn" style="margin-top: 12px;border-bottom: 0px !important;">
+            <div class="panel-heading hd toggle1">
+                <div type="button" class="col-md-12" >
+                    <h4 style="text-decoration: underline;">Actioned Deals: Summary and Trends <span style="float: right" class="ic fa fa-chevron-down"></span></h4>
+                </div>
+            </div>
+            <div class="panel-body bd">
+                <div class="panel show">
+                    <div class="col-sm-4">
+                        
+                        <div class="panel">
+                            <div class="panel-body mm">
+                                <div>
+                                    <input data-bind="kendoDatePicker: {
+                                        value: alertSum.trendMonth,
+                                        start: 'year',
+                                        depth: 'year',
+                                        format: 'MMMM yyyy'
+                                    }" id="alertTrendMonthPicker" />
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="summary-box">
+                                            <span class="score" data-bind="text: alertSum.currentData('countApproved')"></span>
+                                            <i data-bind="attr: { class: alertSum.seriesChangeFa('countApproved') }" aria-hidden="true"></i>
+                                            <span class="box-label blue">Approved</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="summary-box">
+                                            <span class="score" data-bind="text: alertSum.currentData('countRejected')"></span>
+                                            <i data-bind="attr: { class: alertSum.seriesChangeFa('countRejected') }" aria-hidden="true"></i>
+                                            <span class="box-label red">Rejected</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="summary-box">
+                                            <span class="score" data-bind="text: alertSum.currentData('amountApproved', 7, 1)"></span><span class="score unit"> cr.</span>
+                                            <i data-bind="attr: { class: alertSum.seriesChangeFa('amountApproved') }" aria-hidden="true"></i>
+                                            <span class="box-label blue">Deal Amount</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="summary-box">
+                                            <span class="score" data-bind="text: alertSum.currentData('amountRejected', 7, 1)"></span><span class="score unit"> cr.</span>
+                                            <i data-bind="attr: { class: alertSum.seriesChangeFa('amountRejected') }" aria-hidden="true"></i>
+                                            <span class="box-label red">Deal Amount</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                    </div>
+                                    <div class="col-sm-6">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-8">
+                        <span class="pull-right">
+                            <div data-bind="kendoDropDownList: {
+                                data: alertSum.trendDataLengthOptions,
+                                value: alertSum.trendDataLength,
+                                dataTextField: 'text',
+                                dataValueField: 'value'
+                            }">
+                            </div>
+                        </span>
+                        <h5 style="font-size: 12px">Trend: Last <span data-bind="text: alertSum.trendDataLengthTitle"></span></h5>
+                        <div id="alert" data-bind="kendoChart: {
+                            data: alertSum.trendDataSeries,
+                            series: alertSum.trendDataConfig,
+                            title:{
+                                font: 'bold 9px Arial,Helvetica,Sans-Serif',
+                            },
+                            chartArea:{
+                                height: 175,
+                                background: '#f0f3f4',
+                                font: '10px Arial,Helvetica,Sans-Serif',
+                            },
+                            categoryAxis: {
+                                categories: alertSum.trendDataMonths,
+                            },
+                            legend:{
+                                position: 'bottom',
+                                labels:{
+                                    font: '9px Arial,Helvetica,Sans-Serif',
+                                },
+                                font: '8px Arial,Helvetica,Sans-Serif'
+                            },
+                            valueAxes: alertSum.trendDataAxes,
+                        }">
+                        </div>
+                        <!-- <div id="alertsum"></div> -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

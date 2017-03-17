@@ -104,7 +104,7 @@ ttrack.renderChart = function(datas){
 			$("#timeTrackerChart").kendoChart({
                 title: { 
                     text: "Deal-time Tracking",
-                    font:  "bold 14px Arial,Helvetica,Sans-Serif",
+                    font:  "bold 12px Arial,Helvetica,Sans-Serif",
                     align: "left",
                     color: "#58666e",
                 },
@@ -116,6 +116,7 @@ ttrack.renderChart = function(datas){
                     name: "#= group.value.split('*')[1] #"
                 }],
                 chartArea:{
+                    height: 170,
                     background: "#f0f3f4"
                 },
                 seriesClick : function(e){
@@ -141,7 +142,10 @@ ttrack.renderChart = function(datas){
                     }
                 },
                 legend: {
-                    position: "right"
+                    position: "right",
+                    labels:{
+                        font: "10px Arial,Helvetica,Sans-Serif"
+                    }
                 },
                 seriesColors : ttrack.chartcolors,
                 valueAxis: {
@@ -313,8 +317,29 @@ ttrack.loadDealGrid = function(){
 
     $("#Deals").modal('show');
 }
+ttrack.accordion = function(){
+    $(".toggle1").click(function(e){
+        e.preventDefault();
+
+        var $this = $(this);
+        if($this.next().children().hasClass('show')){
+            $this.next().children().removeClass('show');
+            $this.next().children().slideUp(500);
+            $this.find("h4>").removeClass("fa-chevron-down");
+            $this.find("h4>").addClass("fa-chevron-up");
+
+        }else{
+            $this.next().children().removeClass('hide');
+            $this.next().children().slideDown(500);
+            $this.next().children().addClass("show");
+            $this.find("h4>").addClass("fa-chevron-down");
+            $this.find("h4>").removeClass("fa-chevron-up");
+        }
+    })
+}
 
 
 $(document).ready(function(){
 	ttrack.getData();
+    ttrack.accordion();
 })

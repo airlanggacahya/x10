@@ -1161,7 +1161,7 @@
             function toggle() {
               menumarginleft = 0
               if( ! openx ){
-                if(model.currentTitle() === 'Dashboard'){
+                if(model.currentTitle() === 'Alerts & Updates' || model.currentTitle() === 'Turnaround Time' || model.currentTitle() === 'Conversion Rate' || model.currentTitle() === 'Deal Profile Metrics' || model.currentTitle() === 'Custom Analysis'){
                   $(".sidebar-top").addClass("toggled-title")
                   $(".sidebar-toggle").addClass("pull-right")
                   $("#sidebar-wrapper").show()

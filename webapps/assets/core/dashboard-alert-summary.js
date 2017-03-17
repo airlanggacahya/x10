@@ -61,7 +61,8 @@ alertSum.prepareTrendData = function (data, start, length) {
         ret.push({
             month: cur.month(),
             year: cur.year(),
-            totalAmount: obj.totalAmount,
+            // convert to CR
+            totalAmount: obj.totalAmount / 10000000,
             totalCount: obj.totalCount
         })
     })
@@ -111,7 +112,6 @@ alertSum.trendDataAjaxRefresh = function() {
                 //normalize data
                 _.map(body.Data, function (val) {
                     val.data = alertSum.prepareTrendData(val.data, start, len + 1)
-                    return val
                 })
                 //merge data
                 var merge = alertSum.mergeTrendData(body.Data)
@@ -187,12 +187,14 @@ alertSum.trendDataAxes = ko.computed(function () {
         name: 'cr',
         title: { text: 'cr' },
         min: 0,
-        max: alertSum.seriesMax(['countApproved', 'countRejected']) + 5000
+        max: Math.ceil(alertSum.seriesMax(['countApproved', 'countRejected']) + 2),
+        majorUnit: 1
     },{
         name: 'count',
         title: { text: 'count' },
         min: 0,
-        max: alertSum.seriesMax(['countApproved', 'countRejected']) + 5
+        max: alertSum.seriesMax(['countApproved', 'countRejected']) + 2,
+        majorUnit: 1
     }]
 })
 

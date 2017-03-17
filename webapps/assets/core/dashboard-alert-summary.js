@@ -188,7 +188,7 @@ alertSum.trendDataAxes = ko.computed(function () {
         title: { 
             text: 'Deal Amount',
             font: '11px sans-serif',
-            color: 'blue' 
+            color: '#4472C4' 
         },
         min: 0,
         max: Math.ceil(alertSum.seriesMax(['countApproved', 'countRejected']) + 2),
@@ -199,7 +199,7 @@ alertSum.trendDataAxes = ko.computed(function () {
         title: { 
             text: 'Deal Account',
             font: '11px sans-serif',
-            color: 'blue'
+            color: '#4472C4'
         },
         min: 0,
         max: alertSum.seriesMax(['countApproved', 'countRejected']) + 2,

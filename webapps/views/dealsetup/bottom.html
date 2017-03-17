@@ -415,7 +415,7 @@
 					    <!-- <div class="panel-body"> -->
 					     <div class="row">
 					        <div class="col-sm-12" style="margin-left: 10px;">
-					          <div class="col-sm-4 well well-sm" data-bind="with: registeredaddress">
+					          <div class="col-sm-6 well well-sm" data-bind="with: registeredaddress">
 					            <img src="/static/img/sign-check.svg" class="pull-right" style="padding-top: 5px;height: 23px;" data-bind="visible:setup.applicantdetail.registeredaddress.CorrespondeceAddress().toUpperCase() == 'YES'"><h5 style="font-weight: bold;">Registered</h5>
 					            <div class="form-group col-sm-12">
 					              <label for="inputEmail3" disabled class="col-sm-4 form-control-label">Address :</label>
@@ -494,7 +494,7 @@
 					              </div>
 					            </div>
 					          </div>
-					          <div class="col-sm-4 well well-sm" data-bind="with: addresscorrespondence">
+					          <div class="col-sm-4 well well-sm" data-bind="with: addresscorrespondence,visible:false">
 					            <img src="/static/img/sign-check.svg" class="pull-right" style="padding-top: 5px;height: 23px;" data-bind="visible:setup.applicantdetail.addresscorrespondence.CorrespondeceAddress().toUpperCase() == 'YES'"><h5 style="font-weight: bold;">Residence</h5>
 
 					            <div class="form-group col-sm-12">
@@ -574,7 +574,7 @@
 					              </div>
 					            </div>
 					          </div>
-					          <div class="col-sm-4 well well-sm" data-bind="with: siteworkaddress">
+					          <div class="col-sm-6 well well-sm" data-bind="with: siteworkaddress">
 					            <img src="/static/img/sign-check.svg" class="pull-right" style="padding-top: 5px;height: 23px;" data-bind="visible:setup.applicantdetail.siteworkaddress.CorrespondeceAddress().toUpperCase() == 'YES'"><h5 style="font-weight: bold;">Site/Work</h5>
 
 					            <div class="form-group col-sm-12">

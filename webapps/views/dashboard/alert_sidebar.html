@@ -19,6 +19,11 @@
     .sidebar.sidebar-box.system-notif ul li {
         list-style: disc;
         margin-bottom: 2px;
+
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        -ms-word-break: break-all;
+        word-break: break-word;
     }
     /* TODO */
     .sidebar.sidebar-box.system-todo ul {
@@ -115,6 +120,8 @@
 
             <ul class="messages" data-bind="foreach: alertSide.todoData, visible: alertSide.todoEditState() == 'READ'">
                 <li>
+                    <!-- workaround, we listen to click to notify save on backend -->
+                    <!-- wa can't use subscribe, Since editing is also using the same observable -->
                     <input class="todo-checkbox" type="checkbox" data-bind="checked: Checked, attr: {id: 'todo' + $index()}, click: alertSide.todoSaveDelay" />
                     <label class="todo" data-bind="attr: {for: 'todo' + $index()}">
                         <a class="remove pull-right" data-bind="click: alertSide.todoRemove.bind($data, $index())">

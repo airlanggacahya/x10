@@ -186,7 +186,7 @@ func (c *DashboardController) GetFilter(k *knot.WebContext) interface{} {
 		return c.SetResultInfo(true, "data not found", nil)
 	}
 
-	return c.SetResultInfo(false, "success", &result)
+	return c.SetResultInfo(false, "success", result[0])
 }
 
 func (c *DashboardController) GetNotification(k *knot.WebContext) interface{} {
@@ -675,16 +675,14 @@ func (c *DashboardController) SaveFilter(k *knot.WebContext) interface{} {
 	payload := DashboardFilterModel{}
 	k.GetPayload(&payload)
 
-	if payload.Id == "" {
-		payload.Id = k.Session("username").(string)
-	}
+	// Force id to prevent cross user editing
+	payload.Id = k.Session("username").(string)
 
 	if err := c.Ctx.Save(&payload); err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
 	return c.SetResultInfo(false, "success", nil)
-
 }
 
 func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {

@@ -3,12 +3,15 @@ package controllers
 import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/helper"
+	"eaciit/x10/webapps/models"
+
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	// "net/http"
 	"fmt"
+	"strings"
 )
 
 type DataBrowserController struct {
@@ -380,7 +383,7 @@ func AttachAccountDetail(conn dbox.IConnection, val tk.M) {
 	qprofile, err := conn.NewQuery().
 		From("AccountDetails").
 		Where(dbox.Eq("_id", fmt.Sprintf("%d|%s", val["customer_id"], val["deal_no"]))).
-		Select("_id", "accountsetupdetails").
+		Select("_id", "accountsetupdetails", "loandetails").
 		Cursor(nil)
 	if err != nil {
 		return
@@ -396,6 +399,58 @@ func AttachAccountDetail(conn dbox.IConnection, val tk.M) {
 	val["_accountdetails"] = resProfile[0]
 }
 
+func AttachCreditScoreCard(conn dbox.IConnection, val tk.M) {
+	// tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
+	qprofile, err := conn.NewQuery().
+		From("CreditScorecard").
+		Where(dbox.And(
+			dbox.Eq("CustomerId", val.GetString("customer_id")),
+			dbox.Eq("DealNo", val.GetString("deal_no")),
+		)).
+		Select("FinalScore", "FinalScoreDob").
+		Cursor(nil)
+	if err != nil {
+		return
+	}
+
+	resProfile := []tk.M{}
+	qprofile.Fetch(&resProfile, 0, false)
+
+	if len(resProfile) == 0 {
+		return
+	}
+
+	val["_creditscorecard"] = resProfile[0]
+}
+
+func tkWalk(obj tk.M, path string) interface{} {
+	pathlist := strings.Split(path, ".")
+	pathdone := []string{}
+	var curobj interface{}
+	curobj = obj
+	for _, nextpath := range pathlist {
+		curobj = curobj.(tk.M)[nextpath]
+		pathdone = append(pathdone, nextpath)
+	}
+
+	return curobj
+}
+
+func AttachBranchDetail(branch map[string]tk.M, val tk.M) {
+	// tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
+	branchid, ok := tkWalk(val, "_profile.applicantdetail.registeredaddress.CityRegistered").(string)
+	if !ok {
+		return
+	}
+
+	br, ok := branch[branchid]
+	if !ok {
+		return
+	}
+
+	val["_branch"] = br
+}
+
 func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
@@ -406,13 +461,6 @@ func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} 
 	defer conn.Close()
 
 	resCust := []tk.M{}
-	// qcust, err := conn.NewQuery().From("MasterCustomer").Cursor(nil)
-	// if err != nil {
-	// 	return CreateResult(false, nil, err.Error())
-	// }
-
-	// defer qcust.Close()
-	// qcust.Fetch(&resCust, 0, false)
 
 	if k.Session("CustomerProfileData") != nil {
 		arrSes := k.Session("CustomerProfileData").([]tk.M)
@@ -425,9 +473,28 @@ func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} 
 		}
 	}
 
+	// Fetch branch data
+	acc, err := models.GetMasterAccountDetailv2()
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	branch := make(map[string]tk.M)
+	if br, found := acc["Branch"]; found {
+		for _, briter := range br.([]tk.M) {
+			key := briter.GetString("name")
+			branch[key] = briter
+		}
+	} else {
+		return CreateResult(false, nil, "Master Omnifin Branch Not Found")
+	}
+
+	// Combine
 	for _, val := range resCust {
 		AttachCustomerProfile(conn, val)
 		AttachAccountDetail(conn, val)
+		AttachBranchDetail(branch, val)
+		AttachCreditScoreCard(conn, val)
 	}
 
 	return CreateResult(true, resCust, "")

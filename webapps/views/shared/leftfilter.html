@@ -37,124 +37,243 @@
     <li>
       <div class="col-md-12">
         <span class="col-md-6" id="all" style="margin-left: -16px;cursor:pointer;color:#eb8131;"><h5>Show All</h5></span>
-        <span class="col-md-6" id="reset" style="cursor:pointer;color:#eb8131;float: right;margin-right: -14px;" data-bind="click: dash.reset"><h5>Reset</h5></span>
+        <span class="col-md-6" id="reset" style="cursor:pointer;color:#eb8131;float: right;margin-right: -14px;" data-bind="click: dash.ResetFilter"><h5>Reset</h5></span>
       </div>
     </li>
-    <li>
-      <div class="panel show col-md-12" style="background-color: #202935;">
-         <div class="form-group fg">
-          <label class="cnt">Time Period</label>
-          <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+    <li data-bind="visible: dash.TimePeriodShowMe">
+      <div class="panel show" style="background-color: #202935;">
+        <div class="col-md-12">
+          <div class="form-group fg" data-bind="visible: dash.TimePeriodShowMe">
+            <label class="cnt">Time Period</label>
+            <select name="page" id="timeperiodFilter" style="width: 84%;" data-bind="
+              kendoDropDownList: {
+                data: dash.TimePeriodDS,
+                value: dash.TimePeriodVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+            <span style="color: #1586f0;" class="fa fa-times" aria-hidden="true" data-bind="click: dash.TimePeriodShowMe.bind(dash, false)"></span>
+          </div>
+          <hr style="border-top: 1px solid #1586f0;"/>
         </div>
-        <hr style="border-top: 1px solid #1586f0;"/>
       </div>
     </li>
-    <li data-bind="visible: (dash.countLocation() != 2)">
+    <li data-bind="visible: (dash.RegionShowMe() || dash.BranchShowMe())">
       <div type="button" href="javascript:void(0)" class="toggle col-md-12"  style="background-color: #202935;color: #1586f0; margin-top: -35px;"><h5>Location Filters <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
       <div class="panel show" id="acc0" style="background-color: #202935;color: white;">
         <div class="col-md-12">
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[0].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.RegionShowMe">
             <label class="cnt">Region</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:dash.Region, value:dash.RegionVal,  optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl0" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.RegionDS,
+                value: dash.RegionVal,
+                optionLabel: 'Select One',
+                dataValueField: 'value',
+                dataTextField: 'text',
+                filter:'contains'
+              }" ></select>
+            <span style="color: #1586f0;" class="fa fa-times cl cl0" aria-hidden="true" data-bind="click: dash.RegionShowMe.bind(dash, false)"></span>
           </div>
-           <div class="form-group fg" data-bind="visible:(dash.FilterField()[1].ShowMe == true)">
+           <div class="form-group fg" data-bind="visible: dash.BranchShowMe">
             <label class="cnt">Branch</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:dash.Branch, value:dash.BranchVal, optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl0" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data:dash.BranchDS,
+                value:dash.BranchVal,
+                optionLabel: 'Select One',
+                dataValueField: 'value',
+                dataTextField: 'text',
+                filter:'contains'
+              }" ></select>
+              <span style="color: #1586f0;" class="fa fa-times cl cl0" aria-hidden="true" data-bind="click: dash.BranchShowMe.bind(dash, false)"></span>
           </div>
           <hr style="border-top: 1px solid #1586f0;"/>
         </div>
       </div>
     </li>
-    <li data-bind="visible: (dash.countVertical() != 2)">
+    <li data-bind="visible: (dash.ProductShowMe() || dash.SchemeShowMe())">
       <div type="button" href="javascript:void(0)" class="toggle col-md-12"  style="background-color: #202935;color: #1586f0;margin-top: -10px;"><h5>Verticals <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
       <div class="panel show" id="acc1" style="display: block;background-color: #202935;color: white;">
         <div class="col-md-12">
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[2].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.ProductShowMe">
             <label class="cnt">Product</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:dash.product, value:dash.productVal, optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl1" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.ProductDS,
+                value: dash.ProductVal,
+                optionLabel: 'Select One',
+                dataValueField: 'value',
+                dataTextField: 'text',
+                filter:'contains'
+              }" ></select>
+              <span style="color: #1586f0;" class="fa fa-times cl cl1" aria-hidden="true" data-bind="click: dash.ProductShowMe.bind(dash, false)"></span>
           </div>
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[3].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.SchemeShowMe">
             <label class="cnt">Scheme</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:dash.scheme, value:dash.schemeVal, optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl1" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.SchemeDS,
+                value: dash.schemeVal,
+                optionLabel: 'Select One',
+                dataValueField: 'value',
+                dataTextField: 'text',
+                filter:'contains'
+              }" ></select>
+              <span style="color: #1586f0;" class="fa fa-times cl cl1" aria-hidden="true" data-bind="click: dash.SchemeShowMe.bind(dash, false)"></span>
           </div>
           <hr style="border-top: 1px solid #1586f0;"/>
         </div>
       </div>
     </li>
-    <li data-bind="visible: (dash.countClients() != 4)">
+    <li data-bind="visible: true">
       <div type="button" href="javascript:void(0)" class="toggle col-md-12" style="background-color: #202935;color: #1586f0;margin-top: -10px;"><h5>Client Filters <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
       <div class="panel show" id="acc2" style="display: block;background-color: #202935;color: white;">
         <div class="col-md-12">
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[4].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.ClientTypeShowMe">
             <label class="cnt">Client Type</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl2" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.ClientTypeDS,
+                value: dash.ClientTypeVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+            <span style="color: #1586f0;" class="fa fa-times cl cl2" aria-hidden="true" data-bind="click: dash.ClientTypeShowMe.bind(dash, false)"></span>
           </div>
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[5].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.ClientTurnoverShowMe">
             <label class="cnt">Client Turnover</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl2" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.ClientTurnoverDS,
+                value: dash.ClientTurnoverVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }"></select>
+              <span style="color: #1586f0;" class="fa fa-times cl cl2" aria-hidden="true" data-bind="click: dash.ClientTurnoverShowMe.bind(dash, false)"></span>
           </div>
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[6].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.CustomerShowMe">
             <label class="cnt">Customer Name</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:dash.cutomerName, value:dash.cutomerNameVal, optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl2" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.CustomerDS,
+                value: dash.CustomerVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+              <span style="color: #1586f0;" class="fa fa-times cl cl2" aria-hidden="true" data-bind="click: dash.CustomerShowMe.bind(dash, false)"></span>
           </div>
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[7].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.DealNoShowMe">
             <label class="cnt">Deal Number</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:dash.DealNo, value:dash.DealNoVal, optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl2" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.DealNoDS,
+                value: dash.DealNoVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+              <span style="color: #1586f0;" class="fa fa-times cl cl2" aria-hidden="true" data-bind="click: dash.DealNoShowMe.bind(dash, false)"></span>
           </div>
           <hr style="border-top: 1px solid #1586f0;"/>
         </div>
       </div>
     </li>
-     <li data-bind="visible: (dash.countDeals() != 5)">
+     <li data-bind="visible: true">
       <div type="button" href="javascript:void(0)" class="toggle col-md-12" style="background-color: #202935;color: #1586f0;margin-top: -10px;"><h5>Deal Filters <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
       <div class="panel show" id="acc2" style="display: block;background-color: #202935;color: white;">
         <div class="col-md-12">
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[8].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.IRShowMe">
             <label class="cnt">Internal Rating</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:irdata, value: dash.irdataVal, dataValueField: 'value', dataTextField: 'text', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.IRDS,
+                value: dash.IRVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+            <span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true" data-bind="click: dash.IRShowMe.bind(dash, false)"></span>
           </div>
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[9].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.StatusShowMe">
             <label class="cnt">Status</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.StatusDS,
+                value: dash.StatusVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+            <span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true" data-bind="click: dash.StatusShowMe.bind(dash, false)"></span>
           </div>
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[10].ShowMe == true)">
-            <label class="cnt">CA &nbsp  &nbsp</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:dash.CA, value:dash.CAVal, optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true"></span>
+          <div class="form-group fg" data-bind="visible: dash.CAShowMe">
+            <label class="cnt">CA &nbsp;</label>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.CADS,
+                value: dash.CAVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+            <span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true" data-bind="click: dash.CAShowMe.bind(dash, false)"></span>
           </div>
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[11].ShowMe == true)">
-            <label class="cnt">RM   &nbsp &nbsp</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:dash.RM, value:dash.RMVal, optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true"></span>
+          <div class="form-group fg" data-bind="visible: dash.RMShowMe">
+            <label class="cnt">RM &nbsp;</label>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.RMDS,
+                value: dash.RMVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+            <span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true" data-bind="click: dash.RMShowMe.bind(dash, false)"></span>
           </div>
-          <div class="form-group fg" data-bind="visible:(dash.FilterField()[12].ShowMe == true)">
+          <div class="form-group fg" data-bind="visible: dash.LoanValueTypeShowMe">
             <label class="cnt">Loan Value Type</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.LoanValueTypeDS,
+                value: dash.LoanValueTypeVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+            <span style="color: #1586f0;" class="fa fa-times cl cl3" aria-hidden="true" data-bind="click: dash.LoanValueTypeShowMe.bind(dash, false)"></span>
           </div>
-          <div class="form-group fg">
+          <div class="form-group fg" data-bind="visible: dash.RangeShowMe">
             <label class="cnt">Range</label>
-            <select name="page" id="customer" style="width: 84%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
+            <select name="page" id="customer" style="width: 84%;"  data-bind="
+              kendoDropDownList: {
+                data: dash.RangeDS,
+                value: dash.StatusVal,
+                dataValueField: 'value',
+                dataTextField: 'text',
+                optionLabel: 'Select One',
+                filter:'contains'
+              }" ></select>
+            <span style="color: #1586f0;" class="fa fa-times" aria-hidden="true" data-bind="click: dash.RangeShowMe.bind(dash, false)"></span>
           </div>
           <hr style="border-top: 1px solid #1586f0;"/>
         </div>
       </div>
     </li>
-    <!-- <li>
-      <div type="button" href="javascript:void(0)" class="accordion col-md-12 active" style="background-color: #202935;color: #1586f0;"><h5>satu <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
-      <div class="panel show" style="display: block;background-color: #202935;color: white;">
-        <div class="col-md-12">
-          <div class="form-group">
-            <label class="cnt">dicoba :</label>
-            <select name="page" id="customer" style="width: 87%;"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select><span style="color: #1586f0;" class="fa fa-times" aria-hidden="true"></span>
-          </div>
-          <hr style="border-top: 1px solid #1586f0;"/>
-        </div>
-      </div>
-    </li> -->
-    <!-- <li>
-      <div class="mgtop10">
-          <button type="button" id="add" class="btn btn-sm btn-success side-reset"><span class="glyphicon glyphicon-repeat"></span> Reset</button>
-           <button type="button" id="add" class="btn btn-sm btn-primary side-refresh "><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
-      </div>
-    </li> -->
 </ul>
 </div>
 

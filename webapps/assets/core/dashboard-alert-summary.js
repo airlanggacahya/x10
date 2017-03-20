@@ -11,6 +11,12 @@ alertSum.trendMonth.subscribe(function () {
     alertSum.trendDataAjaxRefresh()
 })
 
+// Hook to filter value changes
+dash.FilterValue.subscribe(function (val) {
+    alertSum.trendDataAjaxRefresh()
+    console.log(val)
+})
+
 alertSum.trendDataLengthOptions = ko.observableArray([
     {
         text: "3 months",
@@ -113,7 +119,11 @@ alertSum.trendDataAjaxRefresh = function() {
     var start = moment(alertSum.trendMonth()).format('MMMM YYYY');
     $.ajax("/dashboard/summarytrends", {
         method: "post",
-        data: JSON.stringify({month: start, length: len + 1}),
+        data: JSON.stringify({
+            month: start,
+            length: len + 1,
+            filter: dash.FilterValue()
+        }),
         contentType: "application/json",
         success: function(body) {
             if (body.Status == "") {

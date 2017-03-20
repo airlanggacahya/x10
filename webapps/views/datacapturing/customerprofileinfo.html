@@ -866,6 +866,9 @@ function confirmorverify(status,lable){
   }else if (status == 2){
     customerprofile().Status(status);
     info.getFreeze();
+  }else if(lable == "unfreeze"){
+    customerprofile().Status(status);
+    info.getConfirmed();
   }else{
     customerprofile().Status(0);
     info.getReEnter();
@@ -981,6 +984,9 @@ function validateConfirm(){
 
 // SHORT FUNCTION TO CONVERT BETWEEN Date
 function validateDateUTC(tgl,format) {
+  try{
+  var e;
+  if (typeof tgl === 'string'){
   if(format == undefined){
     format = "DD-MM-YYYY"
   }
@@ -1004,6 +1010,9 @@ function validateDateUTC(tgl,format) {
 
   if (!e.isValid())
     return ""
+  }else{
+  e = moment(tgl)
+  }
 
   // reparse to avoid any timezone from previous parse
   // this is hackis, fix should be on datetime widget
@@ -1017,6 +1026,10 @@ function validateDateUTC(tgl,format) {
   d.millisecond(0)
 
   return d
+}catch(e){
+  swal("Error","Error converting date","error")
+}
+
 }
 
 function validateDateUTCISO(tgl,format) {
@@ -1048,7 +1061,7 @@ function save1(){
       NameOfBanks: data.NameOfBanks,
       SrNo: data.SrNo,
       TypeOfAc : (data.TypeOfAc).toString(),
-      YearOpening: (data.YearOpening != null || data.YearOpening != undefined || data.YearOpening != "" || !isNaN(data.YearOpening))? parseInt(moment(data.YearOpening).format("YYYY")):""
+      YearOpening: (data.YearOpening != null || data.YearOpening != undefined || data.YearOpening != "" || !isNaN(data.YearOpening))? typeof data.YearOpening === 'number' ? data.YearOpening : parseInt(moment(data.YearOpening).format("YYYY")):""
     })
   });
   
@@ -1137,7 +1150,7 @@ function save(){
       NameOfBanks: data.NameOfBanks,
       SrNo: data.SrNo,
       TypeOfAc : data.TypeOfAc,
-      YearOpening: (data.YearOpening != null || data.YearOpening != undefined || data.YearOpening != "" || !isNaN(data.YearOpening))? parseInt(moment(data.YearOpening).format("YYYY")):""
+      YearOpening: (data.YearOpening != null || data.YearOpening != undefined || data.YearOpening != "" || !isNaN(data.YearOpening))? typeof data.YearOpening === 'number' ? data.YearOpening : parseInt(moment(data.YearOpening).format("YYYY")):""
     })
   });
   
@@ -1309,9 +1322,9 @@ input[disabled]{
   color: #676767;
 }
 
-.multifield .k-state-disabled span, .k-state-disabled input {
+/*.multifield .k-state-disabled span, .k-state-disabled input {
   color: #ffffff !important;
-}
+}*/
 </style>
 
 

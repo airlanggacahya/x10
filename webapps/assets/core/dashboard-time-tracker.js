@@ -306,16 +306,22 @@ ttrack.loadDealGrid = function(){
 
             },
             {
-                field: "",
                 title: "Details",
                 headerAttributes: {style: "background: red; color: white"},
                 width: 120,
+                template: function(e){
+                    return "<a onclick='ttrack.showMore()' style='text-decoration:none; cursor: pointer;'>Show More</a>";
+                }
 
             },
         ]
     });
 
     $("#Deals").modal('show');
+}
+
+ttrack.showMore = function(){
+    window.open("/dealsetup/default");//?customerid="+ids[0]+"&dealno="+ids[1]+"&scrolltoinp="+name
 }
 ttrack.accordion = function(){
     $(".toggle1").click(function(e){

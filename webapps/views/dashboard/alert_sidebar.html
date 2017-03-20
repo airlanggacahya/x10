@@ -88,12 +88,12 @@
 </style>
 
 <div class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-12 gap-from-menu">
         <div class="sidebar sidebar-box system-notif">
            <!--  <button class="pull-right"  style="margin-top: 3px" data-toggle="collapse" data-target="#dashboard-summary-trend">
                 <i class="fa fa-external-link"></i>
             </button> -->
-            <h5>System Notifications</h5>
+            <h5 class="title-dashboard"><span class="fa fa-envelope"> &nbsp; </span>System Notifications</h5>
             <div class="collapse in">
                 <ul data-bind="foreach: alertSide.notifData">
                     <li data-bind="text: $data"></li>
@@ -111,7 +111,7 @@
                 <button data-bind="click: alertSide.todoSave, visible: alertSide.todoEditState() == 'EDIT'"><i class="fa fa-floppy-o"></i></button>
                 <button data-bind="click: alertSide.todoAdd"><i class="fa fa-plus"></i></button>
             </div>
-            <h5>To Do Checkboard</h5>
+            <h5 class="title-dashboard"><span class="fa fa-list-ul"> &nbsp; </span>To Do Checkboard</h5>
 
             <ul class="messages" data-bind="foreach: alertSide.todoData, visible: alertSide.todoEditState() == 'READ'">
                 <li>

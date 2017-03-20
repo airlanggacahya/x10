@@ -87,6 +87,8 @@ ttrack.renderModalChart = function(datas){
 ttrack.renderChart = function(datas){
 			datas = ttrack.normalisasiData(datas)
 
+            var myHeight = ($(window).height() - 90)/3
+
 			datas = _.sortBy(datas,["status"])
 
 			var stocksDataSource = new kendo.data.DataSource({
@@ -116,7 +118,7 @@ ttrack.renderChart = function(datas){
                     name: "#= group.value.split('*')[1] #"
                 }],
                 chartArea:{
-                    height: 170,
+                    height: myHeight,
                     background: "#f0f3f4"
                 },
                 seriesClick : function(e){

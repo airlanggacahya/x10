@@ -18,15 +18,38 @@
     .fa-font-red {
         color: #ff0000;
     }
+
+    .title-dashboard{
+        text-decoration: underline;
+        background-color: #f0f3f4;
+        cursor: pointer;
+    }
+
+    .gap-from-menu{
+        margin-top: 23px;
+    }
+    .border-dashboard-left{
+        border-left: 1px #dbdbdb solid;
+    }
+
+      .border-dashboard-bottom{
+        border-bottom: 1px #dbdbdb solid;
+    }
+
+    .clean-border{
+        border-color: #f0f3f4;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
 </style>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-3">
-            <h4>Hello <span data-bind="text: model.User"></span></h4>
+            <!-- <h4>Hello <span data-bind="text: model.User"></span></h4> -->
             {{template "alert_sidebar.html"}}
         </div>
-        <div class="col-sm-9">
+        <div class="col-sm-9 border-dashboard-left">
             {{template "alert_summary.html"}}
             {{template "time_tracker.html"}}
         </div>

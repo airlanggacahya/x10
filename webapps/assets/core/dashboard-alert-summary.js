@@ -1,5 +1,11 @@
 
 alertSum = {}
+
+alertSum.height = function(){
+          var myHeight = ($(window).height() - 90)/3
+            return myHeight;
+}
+
 alertSum.trendMonth = ko.observable(moment().format('MMMM YYYY'));
 alertSum.trendMonth.subscribe(function () {
     alertSum.trendDataAjaxRefresh()
@@ -98,6 +104,9 @@ alertSum.generateMonths = function (start, length) {
 
     return ret
 }
+
+
+
 
 alertSum.trendDataAjaxRefresh = function() {
     var len = alertSum.trendDataLength();

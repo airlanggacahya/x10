@@ -234,6 +234,7 @@ setup.resetDealSetup = function(){
 }
 
 setup.filterChange = function(){
+  // setup.readUrlParam()
   var val = _.filter(setup.AllCP(), function(dt){
     return dt.CustomerName == setup.searchValueCustomerName()
   })
@@ -282,7 +283,38 @@ window.resetFilter = function() {
   setup.createGrid()
 }
 
+setup.readUrlParam = function(){
+    setup.filterChange()
+    var q_str = {};
+    var q = window.location.search.substring(1);
+    var vr = q.split("&");
+    if(vr.length != 1 && vr[0] != ""){
+        $.each(vr, function(i, item){
+            var p = item.split("=");
+            if(typeof q_str[p[0]] == "undefined"){
+                q_str[p[0]] = decodeURIComponent(p[1]);
+            }else if(typeof q_str[p[0]] == "string"){
+                var ar = [q_str[p[0], decodeURIComponent(p[1])]]
+                q_str[p[0]] = ar
+            }else{
+                q_str[p[0].push(decodeURIComponent(p[1]))]
+            }
+        })
+        // console.log("-------------->>>", q_str.dealno)
+        setup.searchValueCustomerName(q_str.customername)
+        setTimeout(function(){
+          setup.searchValueDealNo(q_str.dealno)
+        }, 200)
+        
+    }
+
+}
 
 $(function(){
-	setup.createGrid()
+  // setup.filterChange(
+  setTimeout(function(){
+    setup.readUrlParam()
+    setup.createGrid()
+  }, 500)
+	
 }) 

@@ -1,0 +1,51 @@
+{{template "dataaccess.html" .}}
+<script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+<script>document.write('<script src="/static/core/turnaroundtime.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+{{template "leftfilter.html"}}
+<style type="text/css">
+	.top{
+		margin-top: 45px;
+	}
+	.ket{
+		margin-bottom: -5px;
+    	margin-left: -14px;
+	}
+	#square1, #square2, #square3, #square4{
+		width: 7px;
+		height: 7px;
+		display: inline-block;
+	}
+	#square1{
+		background-color: #ff2929;
+	}
+	#square2{
+		background-color: #ffc000;
+	}
+	#square3{
+		background-color: #92d050;
+	}
+	#square4{
+		background-color: #2e75b6;
+	}
+</style>
+<div class="col-md-12 top">
+	<div class="col-md-12">
+		<h5>Helo Pooja</h5>
+	</div>
+	<div class="col-md-12">
+		<div class="col-md-6">
+			<div id="movingtat"></div>
+		</div>
+		<div class="col-md-6">
+			<div id="historytat"></div>
+		</div>
+	</div>
+	<center>
+		<div class="col-md-12" style="display: inline;">
+			<span id="square1"></span> 15 + Days &nbsp
+			<span id="square2"></span> 11 - 15 Days &nbsp
+			<span id="square3"></span> 6 - 10 Days &nbsp
+			<span id="square4"></span> 0 - 5 Days &nbsp
+	</center>
+	
+</div>

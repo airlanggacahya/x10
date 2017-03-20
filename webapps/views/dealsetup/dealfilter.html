@@ -61,9 +61,9 @@
 
     <div class="jf-tbl col-md-8" style="display: none;">
        
-        <select class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:setup.ListCustomerName, value:setup.searchValueCustomerName , dataBound: setup.filterChange, optionLabel: 'Choose Customer' , filter:'contains'}"></select>
+        <select id="name" class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:setup.ListCustomerName, value:setup.searchValueCustomerName , dataBound: setup.filterChange, optionLabel: 'Choose Customer' , filter:'contains'}"></select>
         
-        <select class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:setup.ListDealNo, value:setup.searchValueDealNo , select: setup.filterChange , optionLabel: 'Choose DealNo' , filter:'contains'}"></select>
+        <select id="dealno" class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:setup.ListDealNo, value:setup.searchValueDealNo , select: setup.filterChange , optionLabel: 'Choose DealNo' , filter:'contains'}"></select>
       <!-- </div> -->
       <div class="pull-left">
         <button class="btn btn-sm filter-font filter-button button-refresh" type="button" id="refresh" btn-sm onclick="refreshFilter()"> 

@@ -128,9 +128,9 @@ ttrack.renderChart = function(datas){
                     }else if( status == "New"){
                         ttrack.popupchartcolor(["#4472C4"]);
                     }else if(status == "Getting due"){
-                        ttrack.popupchartcolor(["#70AD47"]);
+                        ttrack.popupchartcolor(["#FFC000"]);
                     }else if(status == "In time"){
-                        ttrack.popupchartcolor(["#FFC000"])
+                        ttrack.popupchartcolor(["#70AD47"])
                     }
                     var str = e.dataItem.status+" : "+status+" Deals accross Stages";
                     var gstr = "In Queue : "+ status+ " Deals"

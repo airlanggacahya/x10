@@ -525,17 +525,17 @@ func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interfa
 		mystatus := val.GetString("status")
 		periodMe := period.Get(mystatus).([]int)
 
+		if regionName != "" {
+			mystatus, err = GetRegionName(mystatus, k)
+			if err != nil {
+				return res.SetError(err)
+			}
+		}
+
 		for idx, peri := range periodMe {
 			// id := val.Get("_id").(tk.M)
 			mydate := cast.String2Date(val.GetString("date"), "yyyy-MM-dd")
 			// mystatus := val.GetString("status")
-
-			if regionName != "" {
-				mystatus, err = GetRegionName(mystatus, k)
-				if err != nil {
-					return res.SetError(err)
-				}
-			}
 
 			currPeriod := today.AddDate(0, 0, peri)
 
@@ -665,7 +665,7 @@ func GetRegionName(id string, k *knot.WebContext) (string, error) {
 			break
 		}
 	}
-	// tk.Println("-------------", res)
+	// tk.Println("-------------", id, res, items)
 	return res, nil
 }
 
@@ -800,15 +800,15 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 			periodMe = period.Get(mystatus).([]int)
 		}
 
+		if groupBy == "region" {
+			mystatus, err = GetRegionName(mystatus, k)
+			if err != nil {
+				return res.SetError(err)
+			}
+		}
+
 		for idx, peri := range periodMe {
 			mydate := cast.String2Date(id.GetString("date"), "yyyy-MM-dd")
-
-			if groupBy == "region" {
-				mystatus, err = GetRegionName(mystatus, k)
-				if err != nil {
-					return res.SetError(err)
-				}
-			}
 
 			currPeriod := today.AddDate(0, 0, peri)
 

@@ -215,98 +215,15 @@ function applyFilterDealNoDS() {
 	})
 }
 
-function applyDisableFilter() {
-	/*
-		TEMPORARY DISABLE function
-		ON ROHITA REQUEST
-
-		WILL BE DELETED LATER - 31/01/2017
-	*/
-	/*
-	var input = [
-		filters.ProductVal(),
-		filters.BRHeadVal(),
-		filters.SchemeVal(),
-		filters.RMVal(),
-		filters.CAVal(),
-		filters.CustomerVal(),
-		filters.DealNoVal()
-	]
-	var target = [
-		"multiCity",
-		"multiProduct",
-		"multiBRHead",
-		"multiScheme",
-		"multiRM",
-		"multiCA",
-		"multiCustomer"
-	]
-	var position = []
-
-	for(var i = 0; i < target.length; i++) {
-		position.push(true)
-	}
-
-	for(var i = 0; i < input.length; i++) {
-		if (input[i].length == 0)
-			continue
-		for(var j = 0; j < target.length && j <= i; j++) {
-			position[j] = false
-		}
-	}
-
-	for(var i = 0; i < position.length; i++) {
-		$("#" + target[i]).data("kendoMultiSelect").enable(position[i])
-	}
-
-	// special case for customer and DealNo
-	// we clear loanRange and IrRange
-	// and reset value on them
-	var v = filters.CustomerVal().length || filters.DealNoVal().length
-	if (v) {
-		filters.ddRLARangesVal("")
-		$("#ddRLARanges").data("kendoDropDownList").value("");
-
-		filters.inputRLARangeVal("")
-
-		filters.ddIRRangesVal("")
-		$("#ddIR").data("kendoDropDownList").value("");
-
-		filters.inputIRRangeVal("")
-	}
-
-	$("#ddRLARanges").data("kendoDropDownList").enable(!v)
-	$("#ddIR").data("kendoDropDownList").enable(!v)
-	$("#inputRLARange").data("kendoNumericTextBox").enable(!v)
-	*/
-}
-
 function reapplyFilter(without) {
-	// if (without != CITY)
 	applyFilterCityDS()
-	
-	// if (without != PRODUCT)
 	applyFilterProductDS()
-	
-	// if (without != BRHEAD)
 	applyFilterBRHeadDS()
-	
-	// if (without != SCHEME)
 	applyFilterSchemeDS()
-	
-	// if (without != RM)
 	applyFilterRMDS()
-	
-	// if (without != CA)
 	applyFilterCADS()
-	
-	// if (without != CUSTOMER)
 	applyFilterCustDS()
-
-	// if (without != DEALNO)
 	applyFilterDealNoDS()
-
-	applyDisableFilter()
 }
 
 filters.MasterDS = ko.observableArray()
@@ -389,14 +306,10 @@ filters.dataRating = ko.observable('');
 filters.loginDateVal = ko.observable();
 
 var refreshFilter = function() {
-	// rangeIR();
 	databrowser.GetDataGrid();
 }
 
 var resetFilter = function(){
-	// _.each($(".k-button > .k-select > .k-icon.k-i-close"), function(e) {
-	// 	$(e).trigger("click")
-	// })
 	filters.DealNoVal.removeAll()
 	filters.CustomerVal.removeAll()
 	filters.CAVal.removeAll()

@@ -586,6 +586,7 @@ setup.setAccept = function(param){
 				cancelButtonColor: '#d33',
 			}).then(function () {
 				str = "Customer Name :  | Dealno : ";
+   				showFilter(true);
 				setup.title(str)
 				setup.createGrid()
 				setup.detailIsShow(false)
@@ -671,6 +672,7 @@ setup.getSendBack = function(){
 					setup.detailIsShow(false)
 					setup.createGrid()
 					str = "Customer Name :  | Dealno : ";
+					showFilter(true);
 					setup.title(str);
 					setup.searchValueDealNo("") 
 					setup.searchValueCustomerName("")

@@ -83,6 +83,12 @@
 
 
 function showFilter(show) {
+  if(!show){
+    if(setup.searchValueCustomerName() == ""){
+      show = true;
+    }
+  }
+
   $(document).unbind("scroll");
   $(".app-title").removeAttr('css');
   $(".jf-tbl")[show ? 'show' : 'hide']()

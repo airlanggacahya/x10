@@ -268,6 +268,7 @@ window.refreshFilter = function(){
   }
   setup.createGrid()
    str = "Customer Name : "+ setup.searchValueCustomerName() +" | Dealno : "+ setup.searchValueDealNo();
+   showFilter(true);
    setup.title(str)
 }
 
@@ -276,6 +277,8 @@ window.resetFilter = function() {
   setup.searchValueDealNo("");
   str = "Customer Name :  | Dealno : ";
   setup.title(str)
+   showFilter(true);
+  
   setup.createGrid()
 }
 

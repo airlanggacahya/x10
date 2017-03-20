@@ -331,15 +331,15 @@ ttrack.accordion = function(){
         if($this.next().children().hasClass('show')){
             $this.next().children().removeClass('show');
             $this.next().children().slideUp(500);
-            $this.find("h4>").removeClass("fa-chevron-down");
-            $this.find("h4>").addClass("fa-chevron-up");
+            $this.find("h5>").removeClass("fa-chevron-down");
+            $this.find("h5>").addClass("fa-chevron-up");
 
         }else{
             $this.next().children().removeClass('hide');
             $this.next().children().slideDown(500);
             $this.next().children().addClass("show");
-            $this.find("h4>").addClass("fa-chevron-down");
-            $this.find("h4>").removeClass("fa-chevron-up");
+            $this.find("h5>").addClass("fa-chevron-down");
+            $this.find("h5>").removeClass("fa-chevron-up");
         }
     })
 }

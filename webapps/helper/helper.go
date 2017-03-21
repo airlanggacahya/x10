@@ -175,3 +175,17 @@ func CheckArraytkM(dt interface{}) []tk.M {
 
 	return []tk.M{}
 }
+
+func TkWalk(obj tk.M, path string) interface{} {
+	pathlist := strings.Split(path, ".")
+	pathdone := []string{}
+	var curobj interface{}
+	curobj = obj
+	for _, nextpath := range pathlist {
+		curobj = curobj.(tk.M)[nextpath]
+		pathdone = append(pathdone, nextpath)
+		// toolkit.Printfn(">>>>>> %v \n <<<<  %v\n", curobj, pathdone)
+	}
+
+	return curobj
+}

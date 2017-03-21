@@ -4,13 +4,15 @@ import (
 	"time"
 
 	. "eaciit/x10/webapps/connection"
+	hp "eaciit/x10/webapps/helper"
 	"fmt"
+	"strconv"
+
 	"github.com/eaciit/crowd"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/orm"
 	"github.com/eaciit/toolkit"
 	"gopkg.in/mgo.v2/bson"
-	"strconv"
 )
 
 func NewAccountDetail() *AccountDetail {
@@ -572,4 +574,231 @@ func (a *AccountDetail) Where(filter []*dbox.Filter) ([]AccountDetail, error) {
 	}
 
 	return res, err
+}
+
+func filterEqual(path string, val string) []toolkit.M {
+	return []toolkit.M{{path: val}}
+}
+
+func filterBool(path string, val string) []toolkit.M {
+	if val == "true" {
+		return []toolkit.M{{path: true}}
+	}
+
+	if val == "false" {
+		return []toolkit.M{{path: false}}
+	}
+
+	return []toolkit.M{}
+}
+
+func filterIr(path string, val string) []toolkit.M {
+	return []toolkit.M{}
+}
+
+type filterMap struct {
+	path   string
+	filter func(string, string) []toolkit.M
+}
+
+func compileFilter(fields map[string]filterMap, filter []toolkit.M) []toolkit.M {
+	match := []toolkit.M{}
+	for _, val := range filter {
+		// Length 0
+		if len(val.GetString("Value")) == 0 {
+			continue
+		}
+
+		field, ok := fields[val.GetString("FieldName")]
+		if !ok {
+			continue
+		}
+
+		match = append(match, field.filter(field.path, val.GetString("Value"))...)
+	}
+
+	return match
+}
+
+func wrapMatch(match []toolkit.M) toolkit.M {
+	if len(match) == 0 {
+		return toolkit.M{
+			"$match": toolkit.M{},
+		}
+	}
+
+	return toolkit.M{
+		"$match": toolkit.M{
+			"$and": match,
+		},
+	}
+}
+
+func GetBranchByFilter(filter []toolkit.M) ([]string, error) {
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	pipe := []toolkit.M{}
+	pipe = append(pipe, toolkit.M{"$unwind": toolkit.M{
+		"path": "$Data",
+	}})
+	pipe = append(pipe, toolkit.M{"$match": toolkit.M{
+		"Data.Field": "Branch",
+	}})
+	pipe = append(pipe, toolkit.M{"$unwind": toolkit.M{
+		"path": "$Data.Items",
+	}})
+
+	field := map[string]filterMap{
+		"Region": {"Data.Items.region.name", filterEqual},
+		"Branch": {"Data.Items.name", filterEqual},
+	}
+
+	match := compileFilter(field, filter)
+	if len(match) == 0 {
+		return nil, nil
+	}
+
+	pipe = append(pipe, wrapMatch(match))
+
+	csr, err := conn.
+		NewQuery().
+		Command("pipe", pipe).
+		From("MasterAccountDetail").
+		Cursor(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer csr.Close()
+
+	retRaw := []toolkit.M{}
+	err = csr.Fetch(&retRaw, 0, false)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := []string{}
+	for _, r := range retRaw {
+		name, ok := hp.TkWalk(r, "Data.Items.name").(string)
+		if !ok {
+			continue
+		}
+		ret = append(ret, name)
+	}
+
+	return ret, nil
+}
+
+func GetDealNoList(ids []toolkit.M) []string {
+	ret := []string{}
+	for _, val := range ids {
+		ret = append(ret, hp.TkWalk(val, "applicantdetail.DealNo").(string))
+	}
+
+	return ret
+}
+
+// Filter ad by filter, used in dashboard.
+// Return, list of all element matched
+func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
+	conn, err := GetConnection()
+	defer conn.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	pipe := []toolkit.M{}
+	// Filter stage 1
+	field := map[string]filterMap{
+		"Product":    {"accountsetupdetails.product", filterEqual},
+		"Scheme":     {"accountsetupdetails.scheme", filterEqual},
+		"CA":         {"accountsetupdetails.creditanalyst", filterEqual},
+		"RM":         {"accountsetupdetails.rmname", filterEqual},
+		"ClientType": {"loandetails.ifexistingcustomer", filterBool},
+	}
+	dealnolist := GetDealNoList(ids)
+	match := compileFilter(field, filter)
+	match = append(match, toolkit.M{
+		"dealno": toolkit.M{
+			"$in": dealnolist,
+		},
+	})
+	pipe = append(pipe, wrapMatch(match))
+	// Join Credit Score Card
+	pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
+		"from":         "CreditScorecard",
+		"localField":   "dealno",
+		"foreignField": "DealNo",
+		"as":           "_creditscorecard",
+	}})
+	pipe = append(pipe, toolkit.M{"$unwind": toolkit.M{
+		"path": "$_creditscorecard",
+		"preserveNullAndEmptyArrays": true,
+	}})
+	// Join CustomerProfile, for region and branch filtering
+	pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
+		"from":         "CustomerProfile",
+		"localField":   "dealno",
+		"foreignField": "applicantdetail.DealNo",
+		"as":           "_profile",
+	}})
+	// Match stage 2
+	field = map[string]filterMap{
+		"IR": {"_creditscorecard.FinalScoreDob", filterIr},
+	}
+	// data filtered branch and region
+	branches, err := GetBranchByFilter(filter)
+	if err != nil {
+		return nil, err
+	}
+	match = compileFilter(field, filter)
+	if branches != nil {
+		match = append(match, toolkit.M{
+			"_profile.applicantdetail.registeredaddress.CityRegistered": toolkit.M{
+				"$in": branches,
+			},
+		})
+	}
+	pipe = append(pipe, wrapMatch(match))
+
+	// debug, _ := json.Marshal(pipe)
+	// toolkit.Printfn("PIPE %s", debug)
+
+	csr, err := conn.
+		NewQuery().
+		Command("pipe", pipe).
+		From("AccountDetails").
+		Cursor(nil)
+	if err != nil {
+		return nil, err
+	}
+	defer csr.Close()
+
+	result := []toolkit.M{}
+	err = csr.Fetch(&result, 0, false)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, err
+}
+
+func FiltersAD2DealNo(ids, filter []toolkit.M) ([]string, error) {
+	result, err := FiltersAD(ids, filter)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ret := []string{}
+	for _, val := range result {
+		ret = append(ret, val.GetString("dealno"))
+	}
+
+	return ret, nil
 }

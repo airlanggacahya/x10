@@ -2,8 +2,8 @@
 alertSum = {}
 
 alertSum.height = function(){
-          var myHeight = ($(window).height() - 90)/3
-            return myHeight;
+    var myHeight = ($(window).height() - 90)/3
+    return myHeight;
 }
 
 alertSum.trendMonth = ko.observable(moment().format('MMMM YYYY'));
@@ -14,7 +14,6 @@ alertSum.trendMonth.subscribe(function () {
 // Hook to filter value changes
 dash.FilterValue.subscribe(function (val) {
     alertSum.trendDataAjaxRefresh()
-    console.log(val)
 })
 
 alertSum.trendDataLengthOptions = ko.observableArray([
@@ -110,9 +109,6 @@ alertSum.generateMonths = function (start, length) {
 
     return ret
 }
-
-
-
 
 alertSum.trendDataAjaxRefresh = function() {
     var len = alertSum.trendDataLength();

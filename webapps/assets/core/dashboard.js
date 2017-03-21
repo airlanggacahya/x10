@@ -1,7 +1,5 @@
 var dash = {}
 
-dash.FilterValue = ko.observable()
-
 function fetchAllDS() {
 	var defer = $.Deferred();
 
@@ -286,9 +284,11 @@ dash.MasterDS.subscribe(function(values) {
 	reapplyFilter();
 })
 
+// List of all filter field initialized by initDashVal
+// Used for compile and parsing filter value
 dash.FilterList = []
 
-function initDashVal(name, path, options) {
+dash.initDashVal = function(name, path, options) {
 	dash.FilterList.push(name)
 
 	dash[name + "Val"] = ko.observable("")
@@ -302,40 +302,32 @@ function initDashVal(name, path, options) {
 	})
 }
 
-initDashVal("TimePeriod", undefined, [])
-initDashVal("Region", REGION, [])
-initDashVal("Branch", BRANCH, [])
-initDashVal("Product", PRODUCT, [])
-initDashVal("Scheme", SCHEME, [])
-initDashVal("ClientType", CLIENTTYPE, [])
-initDashVal("ClientTurnover", undefined, [])
-initDashVal("Customer", CUSTOMER, [])
-initDashVal("DealNo", DEALNO, [])
-initDashVal("IR", IR, [
+dash.initDashVal("TimePeriod", undefined, [])
+dash.initDashVal("Region", REGION, [])
+dash.initDashVal("Branch", BRANCH, [])
+dash.initDashVal("Product", PRODUCT, [])
+dash.initDashVal("Scheme", SCHEME, [])
+dash.initDashVal("ClientType", CLIENTTYPE, [])
+dash.initDashVal("ClientTurnover", undefined, [])
+dash.initDashVal("Customer", CUSTOMER, [])
+dash.initDashVal("DealNo", DEALNO, [])
+dash.initDashVal("IR", IR, [
 	{text: 'XFL-5', value:'<= 4.5'},
 	{text: 'XFL-4', value:'> 4.5 < 6'},
 	{text: 'XFL-3', value:'>= 6 < 7'},
 	{text: 'XFL-2', value:'>= 7 <= 8.5'},
 	{text: 'XFL-1', value:'> 8.5'},
 ])
-initDashVal("Status", undefined, [])
-initDashVal("CA", CA, [])
-initDashVal("RM", RM, [])
-initDashVal("LoanValueType", undefined, [])
-initDashVal("Range", undefined, [])
+dash.initDashVal("Status", undefined, [])
+dash.initDashVal("CA", CA, [])
+dash.initDashVal("RM", RM, [])
+dash.initDashVal("LoanValueType", undefined, [])
+dash.initDashVal("Range", undefined, [])
 
 dash.CompileFilter = function () {
-	// Id            string
-	// Filters       []struct {
-	// 	FilterName string
-	// 	ShowMe     bool
-	// 	Value      string
-	// }
-
-	var param = {}
-	param.Filters = []
+	var param = []
 	_.each(dash.FilterList, function (val) {		
-		param.Filters.push({
+		param.push({
 			"FilterName": val,
 			"ShowMe": dash[val + "ShowMe"](),
 			"Value": dash[val + "Val"]()
@@ -354,12 +346,28 @@ dash.ParseFilter = function (data) {
 	})
 }
 
+// Child module please subscribe here for filter changes notification
+// Will be triggered by SaveFilter_
+dash.FilterValue = ko.observable()
+
 dash.SaveFilter_ = function() {
 	if (!dash.InitComplete) {
 		return
 	}
 
-	var param = dash.CompileFilter()
+	var param = {}
+	// Id            string
+	// Filters       []struct {
+	// 	FilterName string
+	// 	ShowMe     bool
+	// 	Value      string
+	// }
+
+	param.Filters = dash.CompileFilter()
+	
+	// Notify subscribed chart first
+	dash.FilterValue(param.Filters)
+
 	ajaxPost("/dashboard/savefilter", param, function(res){
 		if (res.IsError) {
 			swal("Error", res.Message, "error")
@@ -367,7 +375,7 @@ dash.SaveFilter_ = function() {
 	})
 }
 
-// We delay 200ms before saving to prevent doble request every propagated changes
+// We delay 200ms before saving to prevent double request every propagated changes
 dash.SaveTimerDelay = null
 dash.SaveFilter = function() {
 	if (dash.SaveTimerDelay) {

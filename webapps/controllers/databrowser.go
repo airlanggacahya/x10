@@ -11,7 +11,6 @@ import (
 	tk "github.com/eaciit/toolkit"
 	// "net/http"
 	"fmt"
-	"strings"
 )
 
 type DataBrowserController struct {
@@ -423,22 +422,9 @@ func AttachCreditScoreCard(conn dbox.IConnection, val tk.M) {
 	val["_creditscorecard"] = resProfile[0]
 }
 
-func tkWalk(obj tk.M, path string) interface{} {
-	pathlist := strings.Split(path, ".")
-	pathdone := []string{}
-	var curobj interface{}
-	curobj = obj
-	for _, nextpath := range pathlist {
-		curobj = curobj.(tk.M)[nextpath]
-		pathdone = append(pathdone, nextpath)
-	}
-
-	return curobj
-}
-
 func AttachBranchDetail(branch map[string]tk.M, val tk.M) {
 	// tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
-	branchid, ok := tkWalk(val, "_profile.applicantdetail.registeredaddress.CityRegistered").(string)
+	branchid, ok := TkWalk(val, "_profile.applicantdetail.registeredaddress.CityRegistered").(string)
 	if !ok {
 		return
 	}
@@ -462,6 +448,7 @@ func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} 
 
 	resCust := []tk.M{}
 
+	// Filter based on ID
 	if k.Session("CustomerProfileData") != nil {
 		arrSes := k.Session("CustomerProfileData").([]tk.M)
 		for _, val := range arrSes {

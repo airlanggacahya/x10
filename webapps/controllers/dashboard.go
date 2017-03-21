@@ -3,6 +3,7 @@ package controllers
 import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
+	"encoding/json"
 	"strings"
 	"time"
 
@@ -315,22 +316,38 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
-	payload := tk.M{}
+	payload := struct {
+		Month  string
+		Length int
+		Filter []tk.M
+	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return res.SetError(err)
 	}
 
-	month := payload.GetString("month") // "February 2017"
-	length := payload.GetInt("length")  // How far we look back
-	currDate, err := time.Parse("2 January 2006 (MST)", "1 "+month+" (UTC)")
+	currDate, err := time.Parse("2 January 2006 (MST)", "1 "+payload.Month+" (UTC)")
 	if err != nil {
 		return res.SetError(err)
 	}
 	nextDate := currDate.AddDate(0, 1, 0)
-	pastDate := currDate.AddDate(0, 1-length, 0)
+	pastDate := currDate.AddDate(0, 1-payload.Length, 0)
+
+	ids, err := FiltersAD2DealNo(
+		k.Session("CustomerProfileData").([]tk.M),
+		payload.Filter,
+	)
+	if err != nil {
+		return res.SetError(err)
+	}
+	tk.Printfn("------------- FILTERSAD2DEALNO \n%v", ids)
 
 	pipe := []tk.M{}
+	pipe = append(pipe, tk.M{"$match": tk.M{
+		"accountdetails.dealno": tk.M{
+			"$in": ids,
+		},
+	}})
 	pipe = append(pipe, tk.M{"$lookup": tk.M{
 		"from":         "DCFinalSanction",
 		"localField":   "accountdetails.dealno",
@@ -387,6 +404,9 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 			},
 		},
 	}})
+
+	debug, _ := json.Marshal(pipe)
+	tk.Printfn("PIPE %s", debug)
 
 	csr, err := c.Ctx.Connection.
 		NewQuery().

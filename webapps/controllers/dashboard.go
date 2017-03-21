@@ -9,10 +9,10 @@ import (
 	"github.com/eaciit/cast"
 
 	"errors"
-
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
+	"sort"
 )
 
 type DashboardController struct {
@@ -934,20 +934,26 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
+	whsx := []*dbox.Filter{}
+
+	if len(whs) > 0 {
+		whsx = append(whsx, dbox.Or(whs...))
+	}
+
 	query := cn.NewQuery().
 		From("DealSetup").
-		Where(dbox.And(whs...))
+		Where(dbox.And(whsx...))
 
-	csr, e := query.Cursor(nil)
+	csr, err := query.Cursor(nil)
 
-	if e != nil {
+	if err != nil {
 		return res.SetError(err)
 	}
 	defer csr.Close()
 
 	results := make([]tk.M, 0)
-	e = csr.Fetch(&results, 0, false)
-	if e != nil {
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
 		return res.SetError(err)
 	}
 
@@ -1009,6 +1015,184 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 	return res
 }
 
+func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	payload := tk.M{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	trendFilt := payload.GetString("trend")
+	periodFilt := payload.GetString("period")
+	groupBy := payload.GetString("groupby")
+	groupByDate := time.Now()
+	groupByDates := []time.Time{}
+
+	if periodFilt == "" {
+		periodFilt = cast.Date2String(time.Now(), "MMM-yyyy")
+	}
+
+	if groupBy == "" || groupBy == "period" {
+		groupByDate = cast.String2Date("01-"+periodFilt+" 00:00:00", "dd-MMM-yyyy HH:mm:ss").AddDate(0, 1, 0)
+	}
+
+	if trendFilt == "" {
+		trendFilt = "total"
+	}
+
+	groupByDateClon := groupByDate
+
+	for i := -6; i == 0; {
+		groupByDates = append(groupByDates, groupByDateClon)
+		groupByDateClon = groupByDateClon.AddDate(0, 0, i)
+		i += 1
+	}
+
+	cn, err := GetConnection()
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer cn.Close()
+
+	whs, err := GenerateRoleCondition(k)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	whsx := []*dbox.Filter{}
+
+	if len(whs) > 0 {
+		whsx = append(whsx, dbox.Or(whs...))
+	}
+
+	// tk.Println(groupByDate, "-------DATE")
+	whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gt("info.myInfo.updateTime", groupByDate.AddDate(0, -7, 0))))
+
+	query := cn.NewQuery().
+		From("DealSetup").
+		Select("info").
+		Where(dbox.And(whsx...))
+
+	csr, err := query.Cursor(nil)
+
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer csr.Close()
+
+	results := make([]tk.M, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	// tk.Println("Result ----------", results)
+
+	lib := tk.M{"decision": []string{Approve, Reject}, "action": []string{Approve, Reject, Cancel, SendBackOmnifin}, "processing": []string{SendToDecision}, "acceptance": []string{UnderProcess}, "total": []string{}}
+	// textRange := []string{"15 + Days", "11 - 15 Days", "6 - 10 Days", "0 - 5 Days"}
+	// statusAlias := tk.M{SendBackOmnifin: "Re-Processed", Cancel: "Re-Processed", SendToDecision: "Processed", UnderProcess: "Accepted"}
+
+	mapRes := tk.M{}
+	mapResDays := tk.M{}
+	mapResMaxDays := tk.M{}
+	mapResMinDays := tk.M{}
+
+	for _, val := range results {
+		info := val.Get("info").(tk.M)
+		myInfo := CheckArray(info.Get("myInfo"))
+		if len(myInfo) > 1 {
+			for idx, inf := range myInfo {
+				if idx+1 == len(myInfo) {
+					continue
+				}
+
+				status := myInfo[idx+1].GetString("status")
+				// tk.Println(trendFilt)
+				trend := lib.Get(trendFilt).([]string)
+				a := sort.StringSlice(trend[0:])
+				sort.Sort(a)
+				pos := sort.SearchStrings(a, status)
+
+				if pos == -1 && trendFilt != "total" {
+					continue
+				}
+
+				firstDate := inf.Get("updateTime").(time.Time)
+				secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
+
+				days := 0
+				year, month, day, _, _, _ := Diff(firstDate, secondDate)
+
+				days += day
+				days += month * 31
+				days += year * 12 * 31
+
+				// idxRange := 3
+				// if day > 15 || month > 0 || year > 0 {
+				// 	idxRange = 0
+				// } else if day >= 11 {
+				// 	idxRange = 1
+				// } else if day >= 6 {
+				// 	idxRange = 2
+				// }
+
+				// alias := statusAlias.GetString(status)
+
+				// if alias != "" {
+				// 	status = alias
+				// }
+
+				key := "01-" + cast.Date2String(secondDate, "MMM-yyyy")
+
+				if mapRes.Get(key) == nil {
+					mapRes.Set(key, 0)
+				}
+				mapRes.Set(key, mapRes.GetInt(key)+1)
+
+				if mapResDays.Get(key) == nil {
+					mapResDays.Set(key, 0)
+				}
+				mapResDays.Set(key, mapResDays.GetInt(key)+days)
+
+				if mapResMaxDays.Get(key) == nil {
+					mapResMaxDays.Set(key, 0)
+				}
+				currMaxVal := mapResMaxDays.GetInt(key)
+				if days > currMaxVal {
+					mapResMaxDays.Set(key, days)
+				}
+
+				if mapResMinDays.Get(key) == nil {
+					mapResMinDays.Set(key, 0)
+				}
+				currMinVal := mapResMinDays.GetInt(key)
+				if days < currMinVal || idx == 0 {
+					mapResMinDays.Set(key, days)
+				}
+
+			}
+		}
+	}
+
+	finalRes := []tk.M{}
+	for key, val := range mapRes {
+		re := tk.M{}
+		re.Set("avgdays", tk.Div(float64(mapResDays.GetInt(key)), float64(val.(int))))
+		re.Set("median", mapResMaxDays.GetInt(key)-mapResMinDays.GetInt(key))
+		re.Set("dealcount", val)
+		re.Set("dateStr", key)
+		re.Set("date", cast.String2Date(key, "dd-MMM-yyyy"))
+		finalRes = append(finalRes, re)
+	}
+
+	res.SetData(finalRes)
+
+	return res
+}
+
 func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
@@ -1030,20 +1214,26 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
+	whsx := []*dbox.Filter{}
+
+	if len(whs) > 0 {
+		whsx = append(whsx, dbox.Or(whs...))
+	}
+
 	query := cn.NewQuery().
 		From("DealSetup").
-		Where(dbox.And(whs...))
+		Where(dbox.And(whsx...))
 
-	csr, e := query.Cursor(nil)
+	csr, err := query.Cursor(nil)
 
-	if e != nil {
+	if err != nil {
 		return res.SetError(err)
 	}
 	defer csr.Close()
 
 	results := make([]tk.M, 0)
-	e = csr.Fetch(&results, 0, false)
-	if e != nil {
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
 		return res.SetError(err)
 	}
 

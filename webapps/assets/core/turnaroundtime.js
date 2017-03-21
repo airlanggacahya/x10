@@ -175,8 +175,8 @@ turn.CreateChartMoving = function(ondata){
             labels: {
                 // format: "${0}",
         		font: "10px sans-serif",
-                skip: 4,
-                step: 6
+                skip: 2,
+                step: 2
             },
             title : {
             	text : "No. of Deals",

@@ -54,6 +54,11 @@
 				<div class="col-md-12 vv">
 					<div id="timeTrackerChart"></div>
 				</div>
+				<div class="col-md-12 hidden-chart" style="display: none;">
+						<center data-bind="visible: ttrack.isRegion() == true"><div id="chartRegion"></div></center>
+						<center><h5 data-bind="text: ttrack.modalGridTittle"></h5></center>
+						<div id="dealStatus"></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -61,26 +66,26 @@
 
 </div>
 
-<div id="Deals" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" style="width: 100s%;">
+<!-- <div id="Deals" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" style="width: 100s%;"> -->
 		<!-- <form class="form-add"> -->
-			<div class="modal-content">
+			<!-- <div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<center><h5 class="modal-title"></h5></center>
 				</div>
-				<div class="modal-body" style="margin-top: -25px;">
+				<div class="modal-body" style="margin-top: -25px;"> -->
 					<!-- <div class="col-md-12"> -->
-						<center data-bind="visible: ttrack.isRegion() == true"><div id="chartRegion"></div></center>
+					<!-- 	<center data-bind="visible: ttrack.isRegion() == true"><div id="chartRegion"></div></center>
 						<center><h5 data-bind="text: ttrack.modalGridTittle"></h5></center>
-						<div id="dealStatus"></div>
+						<div id="dealStatus"></div> -->
 					<!-- </div> -->
-				</div>
+				<!-- </div> -->
 				<!-- <div class="modal-footer">
 					<button type="button" class="btn btn-sm btn-flat btn-primary" data-dismiss="modal" data-bind="click: adf.onclickDismissModal">Save</button>
 					<button type="button" class="btn btn-sm btn-flat btn-danger" data-dismiss="modal">Close</button>
 				</div> -->
-			</div>
+			<!-- </div> -->
 		<!-- </form> -->
-	</div>
-</div>
+<!-- 	</div>
+</div> -->

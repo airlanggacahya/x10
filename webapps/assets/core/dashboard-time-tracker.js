@@ -269,6 +269,7 @@ ttrack.normalisasiData = function(data){
 
 ttrack.loadDealGrid = function(){
     $("#dealStatus").html('');
+    var gridColor = ttrack.popupchartcolor()[0];
     $("#dealStatus").kendoGrid({
         dataSource: ttrack.DataGridModal(),
         columns:[
@@ -282,34 +283,34 @@ ttrack.loadDealGrid = function(){
             {
                 field: "custname",
                 title: "Customer Name",
-                headerAttributes: {style: "background: red; color: white"},
+                headerAttributes: {style: "background: "+gridColor+"; color: white"},
                 width: 120,
 
             },
             {
                 field: "dealno",
                 title: "DealNo",
-                headerAttributes: {style: "background: red; color: white"},
+                headerAttributes: {style: "background: "+gridColor+"; color: white"},
                 width: 120,
 
             },
             {
                 field: "caname",
                 title: "CA",
-                headerAttributes: {style: "background: red; color: white"},
+                headerAttributes: {style: "background: "+gridColor+"; color: white"},
                 width: 50,
 
             },
             {
                 field: "rmname",
                 title: "RM",
-                headerAttributes: {style: "background: red; color: white"},
+                headerAttributes: {style: "background: "+gridColor+"; color: white"},
                 width: 50,
 
             },
             {
                 title: "Details",
-                headerAttributes: {style: "background: red; color: white"},
+                headerAttributes: {style: "background: "+gridColor+"; color: white"},
                 width: 120,
                 template: function(e){
                     //\""++"\"
@@ -321,7 +322,24 @@ ttrack.loadDealGrid = function(){
         ]
     });
 
-    $("#Deals").modal('show');
+    if($("#dealStatus:visible").length == 0){
+        $(".hidden-chart").animate({
+              height: "toggle",
+              opacity: "toggle"
+            }, 400 );
+    }else{
+        $(".hidden-chart").animate({
+              height: "toggle",
+              opacity: "toggle"
+            }, 200 );
+        $(".hidden-chart").animate({
+              height: "toggle",
+              opacity: "toggle"
+            }, 400 );
+    }
+    setTimeout(function(){
+        $("body").animate({ scrollTop: $("body").height()}, 2000);
+    },1000);
 }
 
 ttrack.showMore = function(custname, dealno){

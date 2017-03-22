@@ -67,8 +67,9 @@ turn.CreateChartHistory = function(data){
 				// console.log(e.group.category)
 				return e.group.value;
 			},
-			// name : "#= group.value#"
-			// colorField: color",
+			overlay: {
+                gradient: "none"
+            },
 		}],
 		legend: {
 			// position: "bottom"
@@ -112,8 +113,7 @@ turn.CreateChartHistory = function(data){
         	visible: true,
         	template : function(dt){
         		// console.log("------------------>>>",dt)
-        		return "Category : "+dt.category+", Series Day: "+dt.dataItem.dayrange+", Count: "+dt.dataItem.count;
-        	}
+        		return "Deal Stage : "+dt.category+", Processing Days : "+dt.dataItem.dayrange+", Deal Count: "+dt.dataItem.count;
         }
 	});
 
@@ -161,8 +161,10 @@ turn.CreateChartMoving = function(ondata){
 			type: "column",
 			stack: false,
 			field: "count",
-			name : "#= group.value#"
-			// colorField: "color",
+			name : "#= group.value#",
+			overlay: {
+                gradient: "none"
+            },
 		}],
 		legend: {
 			// position: "bottom"
@@ -202,7 +204,7 @@ turn.CreateChartMoving = function(ondata){
         	visible: true,
         	template : function(dt){
         		// console.log("------------------>>>",dt)
-        		return "Category : "+dt.category+", Series Day: "+dt.dataItem.dayrange+", Count: "+dt.dataItem.count;
+        		return "Deal Stage : "+dt.category+", Processing Days : "+dt.dataItem.dayrange+", Deal Count: "+dt.dataItem.count;
         	}
         }
 	})

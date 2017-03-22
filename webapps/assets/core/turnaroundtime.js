@@ -114,6 +114,7 @@ turn.CreateChartHistory = function(data){
         	template : function(dt){
         		// console.log("------------------>>>",dt)
         		return "Deal Stage : "+dt.category+", Processing Days : "+dt.dataItem.dayrange+", Deal Count: "+dt.dataItem.count;
+        	}
         }
 	});
 

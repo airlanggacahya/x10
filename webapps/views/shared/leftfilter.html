@@ -45,21 +45,21 @@
 <div id="sidebar-wrapper">
 <ul class="sidebar-nav">
     <!-- <li class="lilabel">Customer ID | Name</li>
-    <li><select name="page" id="customer"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+    <li><select name="page"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
      <li class="lilabel">Deal Number</li>
     <li><select name="page" id="role"  data-bind="kendoDropDownList: {data:filter().DealNumberSearchList, value:filter().DealNumberSearchVal , optionLabel: 'Select One' , filter:'contains'}"></select></li>
      <li class="lilabel">Relationship Manager</li>
-    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+    <li><select name="page"  data-bind="kendoDropDownList: { dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
      <li class="lilabel">Location</li>
-    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
      <li class="lilabel">Branch</li>
-    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
      <li class="lilabel">Customer Location</li>
-    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
      <li class="lilabel">Turnover</li>
-    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
+    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
      <li class="lilabel">Time Period</li>
-    <li><select name="page" id="customer"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li> -->
+    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li> -->
     <li>
       <div class="col-md-12">
         <span class="col-md-6" id="all" style="margin-left: -16px;cursor:pointer;color:#eb8131;"><h5>Show All</h5></span>
@@ -105,7 +105,7 @@
             <label class="cnt">Region</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl0 pull-right" aria-hidden="true" data-bind="click: dash.RegionShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.RegionDS,
                   value: dash.RegionVal,
@@ -120,7 +120,7 @@
             <label class="cnt">Branch</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl0 pull-right" aria-hidden="true" data-bind="click: dash.BranchShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data:dash.BranchDS,
                   value:dash.BranchVal,
@@ -143,7 +143,7 @@
             <label class="cnt">Product</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl1 pull-right" aria-hidden="true" data-bind="click: dash.ProductShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.ProductDS,
                   value: dash.ProductVal,
@@ -158,7 +158,7 @@
             <label class="cnt">Scheme</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl1 pull-right" aria-hidden="true" data-bind="click: dash.SchemeShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.SchemeDS,
                   value: dash.schemeVal,
@@ -181,7 +181,7 @@
             <label class="cnt">Client Type</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl2 pull-right" aria-hidden="true" data-bind="click: dash.ClientTypeShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.ClientTypeDS,
                   value: dash.ClientTypeVal,
@@ -196,7 +196,7 @@
             <label class="cnt">Client Turnover</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl2 pull-right" aria-hidden="true" data-bind="click: dash.ClientTurnoverShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.ClientTurnoverDS,
                   value: dash.ClientTurnoverVal,
@@ -211,7 +211,7 @@
             <label class="cnt">Customer Name</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl2 pull-right" aria-hidden="true" data-bind="click: dash.CustomerShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.CustomerDS,
                   value: dash.CustomerVal,
@@ -226,7 +226,7 @@
             <label class="cnt">Deal Number</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl2 pull-right" aria-hidden="true" data-bind="click: dash.DealNoShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.DealNoDS,
                   value: dash.DealNoVal,
@@ -249,7 +249,7 @@
             <label class="cnt">Internal Rating</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.IRShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.IRDS,
                   value: dash.IRVal,
@@ -264,7 +264,7 @@
             <label class="cnt">Status</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.StatusShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.StatusDS,
                   value: dash.StatusVal,
@@ -279,7 +279,7 @@
             <label class="cnt">CA &nbsp;</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.CAShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.CADS,
                   value: dash.CAVal,
@@ -294,7 +294,7 @@
             <label class="cnt">RM &nbsp;</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.RMShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.RMDS,
                   value: dash.RMVal,
@@ -309,7 +309,7 @@
             <label class="cnt">Loan Value Type</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.LoanValueTypeShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.LoanValueTypeDS,
                   value: dash.LoanValueTypeVal,
@@ -323,8 +323,8 @@
           <div class="form-group fg" data-bind="visible: dash.RangeShowMe">
             <label class="cnt">Range</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times" aria-hidden="true" data-bind="click: dash.RangeShowMe.bind(dash, false)"></span>
-              <select name="page" id="customer" style="width: 84%;"  data-bind="
+              <span style="color: #1586f0;" class="fa fa-times pull-right" aria-hidden="true" data-bind="click: dash.RangeShowMe.bind(dash, false)"></span>
+              <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.RangeDS,
                   value: dash.StatusVal,

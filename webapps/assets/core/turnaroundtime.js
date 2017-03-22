@@ -2,7 +2,595 @@ var turn = {}
 
 turn.dataMoving = ko.observableArray([])
 turn.dataHistory = ko.observableArray([])
+turn.dataPeriod = ko.observableArray([
+	{text: 'Period', value: 'period'},
+	{text: 'Region', value: 'region'},
+])
+turn.ValueDatePeriod = ko.observable(kendo.toString(new Date(), "MMM-yyyy"));
+turn.ValueDataPeriod = ko.observable('period');
 turn.chartcolors = ["#ff2929","#ffc000","#92d050", "#2e75b6"];
+
+turn.dummyData = ko.observableArray([
+	{"avgdays":2.2,"date":"2016-10-01T00:00:00Z","dateStr":"Oct-2016","dealcount":8,"median":4},
+	{"avgdays":3.3,"date":"2016-11-01T00:00:00Z","dateStr":"Nov-2016","dealcount":5,"median":3},
+	{"avgdays":4.4,"date":"2016-12-01T00:00:00Z","dateStr":"Dec-2016","dealcount":3,"median":5},
+	{"avgdays":2.0,"date":"2017-01-01T00:00:00Z","dateStr":"Jan-2017","dealcount":7,"median":6},
+	{"avgdays":8.0,"date":"2017-02-01T00:00:00Z","dateStr":"Feb-2017","dealcount":9,"median":7},
+	{"avgdays":4.0,"date":"2017-03-01T00:00:00Z","dateStr":"Mar-2017","dealcount":2,"median":8}])
+
+turn.loadAlleverage = function(){
+	var date = kendo.toString(turn.ValueDatePeriod(), "MMM-yyyy");
+	var param ={
+		trend: '',
+		groupby: turn.ValueDataPeriod(),
+		period: date,
+	}
+
+	param.trend = 'acceptance';
+	ajaxPost("/dashboard/snapshottat",param,function(res){ 
+		console.log(res)
+		var data = res.Data[0];
+		var ondata = [];
+		ondata.push(data.avgdays)
+		$("#acceptance").html('')
+		$("#acceptance").kendoChart({
+			theme: "Material",
+            title: { 
+                    text: "Deal-time Tracking",
+                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+                    align: "left",
+                    color: "#58666e",
+                },
+                dataSource: turn.dummyData(),
+                seriesDefaults: {
+                    type: "area",
+                    area: {
+                        line: {
+                            style: "smooth"
+                        }
+                    }
+                },
+                series: [{
+                    // type: "area",
+                    stack : false,
+                    field: "avgdays",
+                    // name: "#= group.value.split('*')[1] #"
+                }],
+                chartArea:{
+                	width: 118,
+                    height: 125,
+                    background: "transparent"
+                },
+                legend: {
+                	visible: false,
+                    position: "right",
+                    labels:{
+                        font: "10px Arial,Helvetica,Sans-Serif"
+                    }
+                },
+                // seriesColors : ttrack.chartcolors,
+                valueAxis: {
+                    labels: {
+                        // format: "${0}",
+                		font: "5px sans-serif",
+                        skip: 2,
+                        step: 2
+                    },
+                    title : {
+                    	text : "No. of Deals",
+                		font: "5px sans-serif",
+                    	visible : false,
+                    	color : "#4472C4"
+                    },
+                    line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:true
+				    }
+                },
+                categoryAxis: {
+                    visible: false,
+                   	line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:false
+				    }
+                },
+                tooltip : {
+                	visible: false,
+                	template : function(dt){
+                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+                	}
+                }
+        });
+        $("#tatgoals").html('')
+        $("#tatgoals").kendoChart({
+           theme: "Material",
+            title: { 
+                    text: "Deal-time Tracking",
+                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+                    align: "left",
+                    color: "#58666e",
+                },
+                dataSource: turn.dummyData(),
+                seriesDefaults: {
+                    type: "area",
+                    area: {
+                        line: {
+                            style: "smooth"
+                        }
+                    }
+                },
+                series: [{
+                    // type: "area",
+                    stack : false,
+                    field: "avgdays",
+                    // name: "#= group.value.split('*')[1] #"
+                }],
+                chartArea:{
+                	width: 118,
+                    height: 125,
+                    background: "transparent"
+                },
+                legend: {
+                	visible: false,
+                    position: "right",
+                    labels:{
+                        font: "10px Arial,Helvetica,Sans-Serif"
+                    }
+                },
+                // seriesColors : ttrack.chartcolors,
+                valueAxis: {
+                    labels: {
+                        // format: "${0}",
+                		font: "5px sans-serif",
+                        skip: 2,
+                        step: 2
+                    },
+                    title : {
+                    	text : "No. of Deals",
+                		font: "5px sans-serif",
+                    	visible : false,
+                    	color : "#4472C4"
+                    },
+                    line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:true
+				    }
+                },
+                categoryAxis: {
+                    visible: false,
+                   	line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:false
+				    }
+                },
+                tooltip : {
+                	visible: false,
+                	template : function(dt){
+                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+                	}
+                }
+        });  
+	});
+
+	param.trend = 'total';
+	ajaxPost("/dashboard/snapshottat",param,function(res){ 
+		console.log(res)
+		var data = res.Data[0];
+		var ondata = [];
+		ondata.push(data.avgdays)
+		$("#total").html('')
+		$("#total").kendoChart({
+           theme: "Material",
+            title: { 
+                    text: "Deal-time Tracking",
+                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+                    align: "left",
+                    color: "#58666e",
+                },
+                dataSource: turn.dummyData(),
+                seriesDefaults: {
+                    type: "area",
+                    area: {
+                        line: {
+                            style: "smooth"
+                        }
+                    }
+                },
+                series: [{
+                    // type: "area",
+                    stack : false,
+                    field: "avgdays",
+                    // name: "#= group.value.split('*')[1] #"
+                }],
+                chartArea:{
+                	width: 118,
+                    height: 125,
+                    background: "transparent"
+                },
+                legend: {
+                	visible: false,
+                    position: "right",
+                    labels:{
+                        font: "10px Arial,Helvetica,Sans-Serif"
+                    }
+                },
+                // seriesColors : ttrack.chartcolors,
+                valueAxis: {
+                    labels: {
+                        // format: "${0}",
+                		font: "5px sans-serif",
+                        skip: 2,
+                        step: 2
+                    },
+                    title : {
+                    	text : "No. of Deals",
+                		font: "5px sans-serif",
+                    	visible : false,
+                    	color : "#4472C4"
+                    },
+                    line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:true
+				    }
+                },
+                categoryAxis: {
+                    visible: false,
+                   	line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:false
+				    }
+                },
+                tooltip : {
+                	visible: false,
+                	template : function(dt){
+                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+                	}
+                }
+        });    
+	});
+
+	param.trend = 'processing';
+	ajaxPost("/dashboard/snapshottat",param,function(res){ 
+		console.log(res)
+		var data = res.Data[0];
+		var ondata = [];
+		ondata.push(data.avgdays)
+		$("#processing").html('')
+		$("#processing").kendoChart({
+            theme: "Material",
+            title: { 
+                    text: "Deal-time Tracking",
+                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+                    align: "left",
+                    color: "#58666e",
+                },
+                dataSource: turn.dummyData(),
+                seriesDefaults: {
+                    type: "area",
+                    area: {
+                        line: {
+                            style: "smooth"
+                        }
+                    }
+                },
+                series: [{
+                    // type: "area",
+                    stack : false,
+                    field: "avgdays",
+                    // name: "#= group.value.split('*')[1] #"
+                }],
+                chartArea:{
+                	width: 118,
+                    height: 125,
+                    background: "transparent"
+                },
+                legend: {
+                	visible: false,
+                    position: "right",
+                    labels:{
+                        font: "10px Arial,Helvetica,Sans-Serif"
+                    }
+                },
+                // seriesColors : ttrack.chartcolors,
+                valueAxis: {
+                    labels: {
+                        // format: "${0}",
+                		font: "5px sans-serif",
+                        skip: 2,
+                        step: 2
+                    },
+                    title : {
+                    	text : "No. of Deals",
+                		font: "5px sans-serif",
+                    	visible : false,
+                    	color : "#4472C4"
+                    },
+                    line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:true
+				    }
+                },
+                categoryAxis: {
+                    visible: false,
+                   	line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:false
+				    }
+                },
+                tooltip : {
+                	visible: false,
+                	template : function(dt){
+                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+                	}
+                }
+        });  
+	});
+	param.trend = 'decision';
+	ajaxPost("/dashboard/snapshottat",param,function(res){ 
+		console.log(res)
+		var data = res.Data;
+		console.log(JSON.stringify(data))
+		$("#decision").html('')
+		$("#decision").kendoChart({
+            theme: "Material",
+            title: { 
+                    text: "Deal-time Tracking",
+                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+                    align: "left",
+                    color: "#58666e",
+                },
+                dataSource: turn.dummyData(),
+                seriesDefaults: {
+                    type: "area",
+                    area: {
+                        line: {
+                            style: "smooth"
+                        }
+                    }
+                },
+                series: [{
+                    // type: "area",
+                    stack : false,
+                    field: "avgdays",
+                    // name: "#= group.value.split('*')[1] #"
+                }],
+                chartArea:{
+                	width: 118,
+                    height: 125,
+                    background: "transparent"
+                },
+                legend: {
+                	visible: false,
+                    position: "right",
+                    labels:{
+                        font: "10px Arial,Helvetica,Sans-Serif"
+                    }
+                },
+                // seriesColors : ttrack.chartcolors,
+                valueAxis: {
+                    labels: {
+                        // format: "${0}",
+                		font: "5px sans-serif",
+                        skip: 2,
+                        step: 2
+                    },
+                    title : {
+                    	text : "No. of Deals",
+                		font: "5px sans-serif",
+                    	visible : false,
+                    	color : "#4472C4"
+                    },
+                    line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:true
+				    }
+                },
+                categoryAxis: {
+                    visible: false,
+                   	line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:false
+				    }
+                },
+                tooltip : {
+                	visible: false,
+                	template : function(dt){
+                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+                	}
+                }
+        });  
+	});
+
+	param.trend = 'action';
+	ajaxPost("/dashboard/snapshottat",param,function(res){ 
+		console.log(res)
+		var data = res.Data;
+		turn.loadChartContainer(turn.dummyData());
+		$("#action").html('')
+		$("#action").kendoChart({
+            theme: "Material",
+            title: { 
+                    text: "Deal-time Tracking",
+                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+                    align: "left",
+                    color: "#58666e",
+                },
+                dataSource: turn.dummyData(),
+                seriesDefaults: {
+                    type: "area",
+                    area: {
+                        line: {
+                            style: "smooth"
+                        }
+                    }
+                },
+                series: [{
+                    // type: "area",
+                    stack : false,
+                    field: "avgdays",
+                    // name: "#= group.value.split('*')[1] #"
+                }],
+                chartArea:{
+                	width: 118,
+                    height: 125,
+                    background: "transparent"
+                },
+                legend: {
+                	visible: false,
+                    position: "right",
+                    labels:{
+                        font: "10px Arial,Helvetica,Sans-Serif"
+                    }
+                },
+                // seriesColors : ttrack.chartcolors,
+                valueAxis: {
+                    labels: {
+                        // format: "${0}",
+                		font: "5px sans-serif",
+                        skip: 2,
+                        step: 2
+                    },
+                    title : {
+                    	text : "No. of Deals",
+                		font: "5px sans-serif",
+                    	visible : false,
+                    	color : "#4472C4"
+                    },
+                    line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:true
+				    }
+                },
+                categoryAxis: {
+                    visible: false,
+                   	line: {
+				        visible: true
+				    },
+				    majorGridLines:{
+				        visible:false
+				    }
+                },
+                tooltip : {
+                	visible: false,
+                	template : function(dt){
+                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+                	}
+                }
+        });   
+	});
+}
+
+turn.loadChartContainer = function(data){
+	console.log("_________________,,,,", data)
+	$("#chartContainer").html('')
+	$("#chartContainer").kendoChart({
+        // theme: "Material",
+            title: { 
+                    text: "Deal-time Tracking",
+                    font:  "bold 12px Arial,Helvetica,Sans-Serif",
+                    align: "left",
+                    color: "#58666e",
+                },
+                dataSource: turn.dummyData(),
+                series: [
+                {
+                    type: "column",
+                    stack : false,
+                    field: "avgdays",
+                    // name: "#= group.value.split('*')[1] #"
+                },
+                {
+                    type: "column",
+                    stack : false,
+                    field: "median",
+                    // name: "#= group.value.split('*')[1] #"
+                },
+                ],
+                chartArea:{
+                	height: 250,
+                    background: "transparent"
+                },
+                legend: {
+                	visible: false,
+                    position: "right",
+                    labels:{
+                        font: "10px Arial,Helvetica,Sans-Serif"
+                    }
+                },
+                // seriesColors : ttrack.chartcolors,
+                valueAxis: {
+                    labels: {
+                        format: "N0",
+                		font: "10px sans-serif",
+                        skip: 2,
+                        step: 2
+                    },
+                    title : {
+                    	text : "No. of Deals",
+                		font: "10px sans-serif",
+                    	visible : true,
+                    	color : "#4472C4"
+                    },
+                    // majorUnit: 10000,
+                    // plotBands: [{
+                    //     from: 10000,
+                    //     to: 30000,
+                    //     color: "#c00",
+                    //     opacity: 0.3
+                    // }, {
+                    //     from: 30000,
+                    //     to: 30500,
+                    //     color: "#c00",
+                    //     opacity: 0.8
+                    // }],
+                    // max: 70000,
+                    // line: {
+                    //     visible: false
+                    // }
+                    
+                },
+                categoryAxis: {
+                	field: "dateStr",
+                	title : {
+                    	 text : "Deal Stages",
+                		font: "11px sans-serif",
+                    	visible : true,
+                    	color : "#4472C4"
+                    },
+                    labels : {
+                		font: "10px sans-serif",
+                    }
+                },
+                tooltip : {
+                	visible: false,
+                	template : function(dt){
+                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+                	}
+                }
+    });
+}
 
 turn.loadData = function(){
 	turn.dataMoving([]);
@@ -253,5 +841,6 @@ turn.normalisasiData = function(data){
 }
 
 $(function(){
-	turn.loadData()
+	turn.loadData();
+	turn.loadAlleverage();
 });

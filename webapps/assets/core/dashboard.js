@@ -340,6 +340,8 @@ dash.CompileFilter = function () {
 dash.ParseFilter = function (data) {
 	_.each(data, function (val) {
 		var name = val.FilterName
+		if (_.indexOf(dash.FilterList, name) == -1)
+			return
 
 		dash[name + "ShowMe"](val.ShowMe)
 		dash[name + "Val"](val.Value)

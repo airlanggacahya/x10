@@ -302,7 +302,13 @@ dash.initDashVal = function(name, path, options) {
 	})
 }
 
-dash.initDashVal("TimePeriod", undefined, [])
+dash.initDashVal("TimePeriod", undefined, [
+	{text: 'Calendar', value:'calendar'},
+	{text: '10 Day Selection', value:'10day'},
+	{text: '1 Month Selection', value:'1month'},
+	{text: 'Annual Selection', value:'1year'}
+])
+dash.initDashVal("TimePeriodCalendar", undefined, [])
 dash.initDashVal("Region", REGION, [])
 dash.initDashVal("Branch", BRANCH, [])
 dash.initDashVal("Product", PRODUCT, [])
@@ -321,8 +327,52 @@ dash.initDashVal("IR", IR, [
 dash.initDashVal("Status", undefined, [])
 dash.initDashVal("CA", CA, [])
 dash.initDashVal("RM", RM, [])
-dash.initDashVal("LoanValueType", undefined, [])
+dash.initDashVal("LoanValueType", undefined, [
+	{text: 'Requested Amount', value:'reqs'},
+	{text: 'Proposed Amount', value:'prop'},
+	{text: 'Recommended Amount', value:'recm'},
+	{text: 'Sanctioned Amount', value:'sanc'},
+])
 dash.initDashVal("Range", undefined, [])
+
+// TimePeriodCalendar
+dash.TimePeriodCalendarFormat = ko.computed(function () {
+	switch (dash.TimePeriodVal()) {
+	case "1month":
+		return "MMM yyyy";
+	case "1year":
+		return "yyyy";
+	case "calendar":
+	case "10day":
+	default:
+		return "dd MMM yyyy";
+	}
+})
+dash.TimePeriodCalendarFormat.subscribe(function (val) {
+	$("#timeperiodCalendar").data("kendoDatePicker").setOptions({
+		format: val
+	})
+})
+
+dash.TimePeriodCalendarScale = ko.computed(function () {
+	switch (dash.TimePeriodVal()) {
+	case "1month":
+		return "year";
+	case "1year":
+		return "decade";
+	case "calendar":
+	case "10day":
+	default:
+		return "month";
+	}
+})
+dash.TimePeriodCalendarScale.subscribe(function (val) {
+	console.log(val)
+	$("#timeperiodCalendar").data("kendoDatePicker").setOptions({
+		depth: val,
+		start: val
+	})
+})
 
 dash.CompileFilter = function () {
 	var param = []
@@ -340,6 +390,8 @@ dash.CompileFilter = function () {
 dash.ParseFilter = function (data) {
 	_.each(data, function (val) {
 		var name = val.FilterName
+		if (_.indexOf(dash.FilterList, name) == -1)
+			return
 
 		dash[name + "ShowMe"](val.ShowMe)
 		dash[name + "Val"](val.Value)

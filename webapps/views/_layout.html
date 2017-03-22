@@ -1160,14 +1160,15 @@
 
             function toggle() {
               menumarginleft = 0
-              if( ! openx ){
+              if( !openx ){
                 if(model.currentTitle() === 'Alerts & Updates' || model.currentTitle() === 'Turnaround Time' || model.currentTitle() === 'Conversion Rate' || model.currentTitle() === 'Deal Profile Metrics' || model.currentTitle() === 'Custom Analysis'){
                   $(".sidebar-top").addClass("toggled-title")
                   $(".sidebar-toggle").addClass("pull-right")
                   $("#sidebar-wrapper").show()
                   // $("#sidebar-title").show()
                   $(".sidebar-nav").show()
-                  $("#sidebar-wrapper").width('16.66666667%')
+                  $("#sidebar-wrapper").css("min-width", "255px");
+                  $("#sidebar-wrapper").css("width", "16.66666667%");
                   menumarginleft = $("#toggle-toggle").outerWidth(false)
                   vm.open(true);
                 } else {
@@ -1180,7 +1181,8 @@
                 // $("#sidebar-title").hide()
                 vm.open(false);
                 $(".sidebar-nav").hide()
-                $("#sidebar-wrapper").width(0);
+                $("#sidebar-wrapper").css("width", "0px");
+                $("#sidebar-wrapper").css("min-width", "0px");
                 menumarginleft = $("#toggle-toggle").outerWidth(false)
               }
               setTimeout(function() {
@@ -1189,6 +1191,8 @@
               setSubmenu()
               openx = !openx
             }
+
+            toggle()
             </script>
 
             <script id="template-menu" type="text/html">

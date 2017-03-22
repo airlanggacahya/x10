@@ -303,12 +303,13 @@ dash.initDashVal = function(name, path, options) {
 }
 
 dash.initDashVal("TimePeriod", undefined, [
-	{text: 'Calendar', value:'calendar'},
-	{text: '10 Day Selection', value:'10day'},
-	{text: '1 Month Selection', value:'1month'},
-	{text: 'Annual Selection', value:'1year'}
+	{text: 'Last 10 days', value:'10day'},
+	{text: 'Month', value:'1month'},
+	{text: 'Financial Year', value:'1year'},
+	{text: 'From - Till', value: 'fromtill'}
 ])
 dash.initDashVal("TimePeriodCalendar", undefined, [])
+dash.initDashVal("TimePeriodCalendar2", undefined, [])
 dash.initDashVal("Region", REGION, [])
 dash.initDashVal("Branch", BRANCH, [])
 dash.initDashVal("Product", PRODUCT, [])
@@ -336,22 +337,20 @@ dash.initDashVal("LoanValueType", undefined, [
 dash.initDashVal("Range", undefined, [])
 
 // TimePeriodCalendar
-dash.TimePeriodCalendarFormat = ko.computed(function () {
+dash.TimePeriodCalendarValFormat = ko.computed(function () {
 	switch (dash.TimePeriodVal()) {
 	case "1month":
-		return "MMM yyyy";
+		return moment(dash.TimePeriodCalendarVal()).format("MMMM YYYY");
 	case "1year":
-		return "yyyy";
-	case "calendar":
+		return moment(dash.TimePeriodCalendarVal()).format("YYYY") + " - " + moment(dash.TimePeriodCalendarVal()).add(1, "year").format("YYYY");
+	case "fromtill":
 	case "10day":
 	default:
-		return "dd MMM yyyy";
+		return moment(dash.TimePeriodCalendarVal()).format("D MMM YYYY");
 	}
 })
-dash.TimePeriodCalendarFormat.subscribe(function (val) {
-	$("#timeperiodCalendar").data("kendoDatePicker").setOptions({
-		format: val
-	})
+dash.TimePeriodCalendar2ValFormat = ko.computed(function () {
+	return moment(dash.TimePeriodCalendar2Val()).format("D MMM YYYY");
 })
 
 dash.TimePeriodCalendarScale = ko.computed(function () {
@@ -360,14 +359,13 @@ dash.TimePeriodCalendarScale = ko.computed(function () {
 		return "year";
 	case "1year":
 		return "decade";
-	case "calendar":
+	case "fromtill":
 	case "10day":
 	default:
 		return "month";
 	}
 })
 dash.TimePeriodCalendarScale.subscribe(function (val) {
-	console.log(val)
 	$("#timeperiodCalendar").data("kendoDatePicker").setOptions({
 		depth: val,
 		start: val

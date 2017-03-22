@@ -327,7 +327,12 @@ dash.initDashVal("IR", IR, [
 dash.initDashVal("Status", undefined, [])
 dash.initDashVal("CA", CA, [])
 dash.initDashVal("RM", RM, [])
-dash.initDashVal("LoanValueType", undefined, [])
+dash.initDashVal("LoanValueType", undefined, [
+	{text: 'Requested Amount', value:'reqs'},
+	{text: 'Proposed Amount', value:'prop'},
+	{text: 'Recommended Amount', value:'recm'},
+	{text: 'Sanctioned Amount', value:'sanc'},
+])
 dash.initDashVal("Range", undefined, [])
 
 // TimePeriodCalendar

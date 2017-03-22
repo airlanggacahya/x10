@@ -7,6 +7,20 @@
     color:#eb8131 !important;
   }
 
+  .sidebar-nav .k-widget.k-datepicker .k-picker-wrap .k-input {
+    background: rgb(226, 226, 226);
+    margin-left: -20px !important;
+    text-align: center;
+  }
+
+  .sidebar-nav .k-widget.k-datepicker .k-picker-wrap .k-select {
+    border: none;
+  }
+
+  .sidebar-nav .k-widget.k-datepicker .k-picker-wrap .k-select .k-icon {
+    margin-left: -30px;
+  }
+
   .sidebar-nav .fa-times{
     cursor: pointer;
   }
@@ -68,6 +82,15 @@
                   optionLabel: 'Select One',
                   filter:'contains'
                 }" ></select>
+              <div data-bind="visible: dash.TimePeriodVal() != ''">
+                <input data-bind="
+                  kendoDatePicker: {
+                    value: dash.TimePeriodCalendarVal,
+                    format: dash.TimePeriodCalendarFormat,
+                    depth: dash.TimePeriodCalendarScale,
+                    start: dash.TimePeriodCalendarScale
+                  }" id="timeperiodCalendar" style="width: 84%">
+              </div>
             </div>
           </div>
           <hr style="border-top: 1px solid #1586f0;"/>

@@ -1167,8 +1167,8 @@
                   $("#sidebar-wrapper").show()
                   // $("#sidebar-title").show()
                   $(".sidebar-nav").show()
-                  $("#sidebar-wrapper").width("16.66666667%");
                   $("#sidebar-wrapper").css("min-width", "255px");
+                  $("#sidebar-wrapper").css("width", "16.66666667%");
                   menumarginleft = $("#toggle-toggle").outerWidth(false)
                   vm.open(true);
                 } else {
@@ -1181,7 +1181,7 @@
                 // $("#sidebar-title").hide()
                 vm.open(false);
                 $(".sidebar-nav").hide()
-                $("#sidebar-wrapper").width("0");
+                $("#sidebar-wrapper").css("width", "0px");
                 $("#sidebar-wrapper").css("min-width", "0px");
                 menumarginleft = $("#toggle-toggle").outerWidth(false)
               }

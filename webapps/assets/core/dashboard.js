@@ -302,7 +302,13 @@ dash.initDashVal = function(name, path, options) {
 	})
 }
 
-dash.initDashVal("TimePeriod", undefined, [])
+dash.initDashVal("TimePeriod", undefined, [
+	{text: 'Calendar', value:'calendar'},
+	{text: '10 Day Selection', value:'10day'},
+	{text: '1 Month Selection', value:'1month'},
+	{text: 'Annual Selection', value:'1year'}
+])
+dash.initDashVal("TimePeriodCalendar", undefined, [])
 dash.initDashVal("Region", REGION, [])
 dash.initDashVal("Branch", BRANCH, [])
 dash.initDashVal("Product", PRODUCT, [])
@@ -323,6 +329,45 @@ dash.initDashVal("CA", CA, [])
 dash.initDashVal("RM", RM, [])
 dash.initDashVal("LoanValueType", undefined, [])
 dash.initDashVal("Range", undefined, [])
+
+// TimePeriodCalendar
+dash.TimePeriodCalendarFormat = ko.computed(function () {
+	switch (dash.TimePeriodVal()) {
+	case "1month":
+		return "MMM yyyy";
+	case "1year":
+		return "yyyy";
+	case "calendar":
+	case "10day":
+	default:
+		return "dd MMM yyyy";
+	}
+})
+dash.TimePeriodCalendarFormat.subscribe(function (val) {
+	$("#timeperiodCalendar").data("kendoDatePicker").setOptions({
+		format: val
+	})
+})
+
+dash.TimePeriodCalendarScale = ko.computed(function () {
+	switch (dash.TimePeriodVal()) {
+	case "1month":
+		return "year";
+	case "1year":
+		return "decade";
+	case "calendar":
+	case "10day":
+	default:
+		return "month";
+	}
+})
+dash.TimePeriodCalendarScale.subscribe(function (val) {
+	console.log(val)
+	$("#timeperiodCalendar").data("kendoDatePicker").setOptions({
+		depth: val,
+		start: val
+	})
+})
 
 dash.CompileFilter = function () {
 	var param = []

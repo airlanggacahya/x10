@@ -113,7 +113,9 @@ turn.CreateChartHistory = function(data){
         	visible: true,
         	template : function(dt){
         		// console.log("------------------>>>",dt)
-        		return "Deal Stage : "+dt.category+", Processing Days : "+dt.dataItem.dayrange+", Deal Count: "+dt.dataItem.count;
+        		return "<div class='left'>Deal Stage : "+dt.category+"<br>"+
+        				"Processing Days : "+dt.dataItem.dayrange+"<br>"+
+        				" Deal Count: "+dt.dataItem.count+"</div>";
         	}
         }
 	});
@@ -205,7 +207,9 @@ turn.CreateChartMoving = function(ondata){
         	visible: true,
         	template : function(dt){
         		// console.log("------------------>>>",dt)
-        		return "Deal Stage : "+dt.category+", Processing Days : "+dt.dataItem.dayrange+", Deal Count: "+dt.dataItem.count;
+        		return "<div class='left'>Deal Stage : "+dt.category+"<br>"+
+        				"Processing Days : "+dt.dataItem.dayrange+"<br>"+
+        				" Deal Count: "+dt.dataItem.count+"</div>";
         	}
         }
 	})

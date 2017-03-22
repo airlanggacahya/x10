@@ -1073,10 +1073,8 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 
 	groupByDateClon := groupByDate
 
-	for i := -6; i == 0; {
-		groupByDates = append(groupByDates, groupByDateClon)
-		groupByDateClon = groupByDateClon.AddDate(0, 0, i)
-		i += 1
+	for i := -6; i < 0; i++ {
+		groupByDates = append(groupByDates, groupByDateClon.AddDate(0, i, 0))
 	}
 
 	cn, err := GetConnection()
@@ -1202,6 +1200,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	}
 
 	finalRes := []tk.M{}
+	months := tk.M{}
 	for key, val := range mapRes {
 		re := tk.M{}
 		re.Set("avgdays", tk.Div(float64(mapResDays.GetInt(key)), float64(val.(int))))
@@ -1209,7 +1208,23 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		re.Set("dealcount", val)
 		re.Set("dateStr", key)
 		re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
+		months.Set(key, "")
 		finalRes = append(finalRes, re)
+	}
+
+	for _, val := range groupByDates {
+		valStr := cast.Date2String(val, "MMM-yyyy")
+		tk.Println(months.Get(valStr))
+		tk.Println(valStr)
+		if months.Get(valStr) == nil {
+			re := tk.M{}
+			re.Set("avgdays", nil)
+			re.Set("median", nil)
+			re.Set("dealcount", nil)
+			re.Set("dateStr", valStr)
+			re.Set("date", val)
+			finalRes = append(finalRes, re)
+		}
 	}
 
 	res.SetData(finalRes)

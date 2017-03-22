@@ -287,6 +287,7 @@ intrtr.loadGrid = function(){
 			        	title: "Avg DPD Days",
 			        	width: 70,
 			        	attributes: { style: 'background: rgb(238, 238, 238);text-align: right;' },
+			        	template : function(e){ return kendo.toString(e.AVGDPDDays,'n2') }
 			        },
 				]
 			}
@@ -341,14 +342,14 @@ intrtr.loadGrid = function(){
 			        	title: "Deal Approval Date",
 			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
-			        	template:function(e){ return kendo.toString(new Date(e.AgreementDate), "dd-MMM-yyyy");}
+			        	template:function(e){ return e.AgreementDate != "" ?kendo.toString(new Date(e.AgreementDate), "dd-MMM-yyyy"):"";}
 			        },
 			        {
 			        	field:"DealSanctionTillValidate",
 			        	title: "Deal Validity Date",
 			        	width:150,
 			        	attributes: { style: 'background: rgb(238, 238, 238)' },
-			        	template:function(e){ return kendo.toString(new Date(e.DealSanctionTillValidate), "dd-MMM-yyyy");}
+			        	template:function(e){ return e.DealSanctionTillValidate != "" ? kendo.toString(new Date(e.DealSanctionTillValidate), "dd-MMM-yyyy") : "";}
 			        },
 			        {
 			        	field:"TotalLoanAmount",

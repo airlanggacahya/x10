@@ -2,6 +2,7 @@ package controllers
 
 import (
 	. "eaciit/x10/webapps/connection"
+	hp "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"encoding/json"
 	"strings"
@@ -13,7 +14,7 @@ import (
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
-	"sort"
+	// "sort"
 )
 
 type DashboardController struct {
@@ -978,22 +979,27 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 	}
 
 	textRange := []string{"15 + Days", "11 - 15 Days", "6 - 10 Days", "0 - 5 Days"}
-	statusAlias := tk.M{SendBackOmnifin: "Re-Processed", Cancel: "Re-Processed", SendToDecision: "Processed", UnderProcess: "Accepted"}
+	statusAlias := tk.M{SendToDecision: "Processed", UnderProcess: "Accepted"}
 	mapRes := tk.M{}
 	for _, val := range results {
 		info := val.Get("info").(tk.M)
 		myInfo := CheckArray(info.Get("myInfo"))
 		if len(myInfo) > 1 {
-			for idx, inf := range myInfo {
+			for idx, _ := range myInfo {
 				if idx+1 == len(myInfo) {
 					continue
 				}
 
-				firstDate := inf.Get("updateTime").(time.Time)
-				secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
 				status := myInfo[idx+1].GetString("status")
 
-				year, month, day, _, _, _ := Diff(firstDate, secondDate)
+				if status == Cancel || status == SendBackOmnifin {
+					continue
+				}
+
+				// firstDate := inf.Get("updateTime").(time.Time)
+				// secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
+
+				year, month, day, _, _, _ := calcDiffInfoDate(idx, myInfo)
 				idxRange := 3
 				if day > 15 || month > 0 || year > 0 {
 					idxRange = 0
@@ -1055,8 +1061,10 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		periodFilt = cast.Date2String(time.Now(), "MMM-yyyy")
 	}
 
-	if groupBy == "" || groupBy == "period" {
-		groupByDate = cast.String2Date("01-"+periodFilt+" 00:00:00", "dd-MMM-yyyy HH:mm:ss").AddDate(0, 1, 0)
+	groupByDate = cast.String2Date("01-"+periodFilt+" 00:00:00", "dd-MMM-yyyy HH:mm:ss").AddDate(0, 1, 0)
+
+	if groupBy == "" {
+		groupBy = "period"
 	}
 
 	if trendFilt == "" {
@@ -1093,7 +1101,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 
 	query := cn.NewQuery().
 		From("DealSetup").
-		Select("info").
+		Select("info", "accountdetails.accountsetupdetails.citynameid").
 		Where(dbox.And(whsx...))
 
 	csr, err := query.Cursor(nil)
@@ -1124,49 +1132,45 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		info := val.Get("info").(tk.M)
 		myInfo := CheckArray(info.Get("myInfo"))
 		if len(myInfo) > 1 {
-			for idx, inf := range myInfo {
+			for idx, _ := range myInfo {
 				if idx+1 == len(myInfo) {
 					continue
 				}
 
 				status := myInfo[idx+1].GetString("status")
-				// tk.Println(trendFilt)
 				trend := lib.Get(trendFilt).([]string)
-				a := sort.StringSlice(trend[0:])
-				sort.Sort(a)
-				pos := sort.SearchStrings(a, status)
 
+				pos := IndexOfString(status, trend)
+				// tk.Println(trendFilt)
+				// tk.Println(pos, "--------POSITION")
+				// tk.Println(trend, "--------TREND")
+				// tk.Println(status, "--------STATUS")
 				if pos == -1 && trendFilt != "total" {
 					continue
 				}
 
-				firstDate := inf.Get("updateTime").(time.Time)
+				// firstDate := inf.Get("updateTime").(time.Time)
 				secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
 
 				days := 0
-				year, month, day, _, _, _ := Diff(firstDate, secondDate)
+				year, month, day, hour, min, sec := calcDiffInfoDate(idx, myInfo)
 
+				if hour > 0 || min > 0 || sec > 0 {
+					days += 1
+				}
 				days += day
 				days += month * 31
 				days += year * 12 * 31
 
-				// idxRange := 3
-				// if day > 15 || month > 0 || year > 0 {
-				// 	idxRange = 0
-				// } else if day >= 11 {
-				// 	idxRange = 1
-				// } else if day >= 6 {
-				// 	idxRange = 2
-				// }
-
-				// alias := statusAlias.GetString(status)
-
-				// if alias != "" {
-				// 	status = alias
-				// }
-
-				key := "01-" + cast.Date2String(secondDate, "MMM-yyyy")
-
+				key := ""
+				if groupBy == "period" {
+					key = cast.Date2String(secondDate, "MMM-yyyy")
+				} else {
+					key, err = GetRegionName(hp.TkWalk(val, "accountdetails.accountsetupdetails.citynameid").(string), k)
+					if err != nil {
+						return res.SetError(err)
+					}
+				}
 				if mapRes.Get(key) == nil {
 					mapRes.Set(key, 0)
 				}
@@ -1204,7 +1208,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		re.Set("median", mapResMaxDays.GetInt(key)-mapResMinDays.GetInt(key))
 		re.Set("dealcount", val)
 		re.Set("dateStr", key)
-		re.Set("date", cast.String2Date(key, "dd-MMM-yyyy"))
+		re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
 		finalRes = append(finalRes, re)
 	}
 
@@ -1265,11 +1269,11 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 
 		inf := myInfo[len(myInfo)-1]
 
-		firstDate := inf.Get("updateTime").(time.Time)
-		secondDate := time.Now()
+		// firstDate := inf.Get("updateTime").(time.Time)
+		// secondDate := time.Now()
 		status := inf.GetString("status")
 
-		year, month, day, _, _, _ := Diff(firstDate, secondDate)
+		year, month, day, _, _, _ := calcDiffInfoDateHistory(myInfo) //Diff(firstDate, secondDate)
 		idxRange := 3
 		if day > 15 || month > 0 || year > 0 {
 			idxRange = 0
@@ -1315,4 +1319,39 @@ func (c *DashboardController) TurnaroundTime(k *knot.WebContext) interface{} {
 	}
 
 	return DataAccess
+}
+
+func IndexOfString(val string, arr []string) int {
+	for idx, v := range arr {
+		if v == val {
+			return idx
+		}
+	}
+
+	return -1
+}
+
+func calcDiffInfoDate(idx int, myInfo []tk.M) (int, int, int, int, int, int) {
+	firstDate := myInfo[idx].Get("updateTime").(time.Time)
+	secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
+
+	firstStatus := myInfo[idx].GetString("status")
+	if firstStatus == OnHold {
+		firstDate = myInfo[idx-1].Get("updateTime").(time.Time)
+	}
+	return Diff(firstDate, secondDate)
+}
+
+func calcDiffInfoDateHistory(myInfo []tk.M) (int, int, int, int, int, int) {
+	inf := myInfo[len(myInfo)-1]
+	idx := len(myInfo) - 1
+
+	firstDate := inf.Get("updateTime").(time.Time)
+	secondDate := time.Now()
+
+	firstStatus := inf.GetString("status")
+	if firstStatus == OnHold {
+		firstDate = myInfo[idx-1].Get("updateTime").(time.Time)
+	}
+	return Diff(firstDate, secondDate)
 }

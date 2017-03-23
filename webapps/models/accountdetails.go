@@ -666,7 +666,7 @@ func compileFilter(fields map[string]filterMap, filter []toolkit.M) []toolkit.M 
 			continue
 		}
 
-		field, ok := fields[val.GetString("FieldName")]
+		field, ok := fields[val.GetString("FilterName")]
 		if !ok {
 			continue
 		}
@@ -808,12 +808,12 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	field = map[string]filterMap{
 		"IR": {"_creditscorecard.FinalScoreDob", filterIr},
 	}
+	match = compileFilter(field, filter)
 	// data filtered branch and region
 	branches, err := GetBranchByFilter(filter)
 	if err != nil {
 		return nil, err
 	}
-	match = compileFilter(field, filter)
 	if branches != nil {
 		match = append(match, toolkit.M{
 			"_profile.applicantdetail.registeredaddress.CityRegistered": toolkit.M{

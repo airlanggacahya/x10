@@ -1,7 +1,7 @@
 package models
 
 import (
-	// "encoding/json"
+	"encoding/json"
 	"regexp"
 	"time"
 
@@ -772,14 +772,13 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	pipe := []toolkit.M{}
 	// Filter stage 1
 	field := map[string]filterMap{
-		"Product":        {"accountdetails.accountsetupdetails.product", filterEqual},
-		"Scheme":         {"accountdetails.accountsetupdetails.scheme", filterEqual},
-		"CA":             {"accountdetails.accountsetupdetails.creditanalyst", filterEqual},
-		"RM":             {"accountdetails.accountsetupdetails.rmname", filterEqual},
-		"ClientType":     {"accountdetails.loandetails.ifexistingcustomer", filterBool},
-		"DealNo":         {"accountdetails.dealno", filterEqual},
-		"Customer":       {"accountdetails.customerid", filterEqual},
-		"ClientTurnover": {"customerprofile.applicantdetail.AnnualTurnOver", filterFormula},
+		"Product":    {"accountdetails.accountsetupdetails.product", filterEqual},
+		"Scheme":     {"accountdetails.accountsetupdetails.scheme", filterEqual},
+		"CA":         {"accountdetails.accountsetupdetails.creditanalyst", filterEqual},
+		"RM":         {"accountdetails.accountsetupdetails.rmname", filterEqual},
+		"ClientType": {"accountdetails.loandetails.ifexistingcustomer", filterBool},
+		"DealNo":     {"accountdetails.dealno", filterEqual},
+		"Customer":   {"accountdetails.customerid", filterEqual},
 	}
 	// dealnolist := GetDealNoList(ids)
 	match := compileFilter(field, filter)
@@ -801,15 +800,16 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 		"preserveNullAndEmptyArrays": true,
 	}})
 	// Join CustomerProfile, for region and branch filtering
-	// pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
-	// 	"from":         "CustomerProfile",
-	// 	"localField":   "accountdetails.dealno",
-	// 	"foreignField": "applicantdetail.DealNo",
-	// 	"as":           "_profile",
-	// }})
+	pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
+		"from":         "CustomerProfile",
+		"localField":   "accountdetails.dealno",
+		"foreignField": "applicantdetail.DealNo",
+		"as":           "_profile",
+	}})
 	// Match stage 2
 	field = map[string]filterMap{
-		"IR": {"_creditscorecard.FinalScoreDob", filterFormula},
+		"IR":             {"_creditscorecard.FinalScoreDob", filterFormula},
+		"ClientTurnover": {"_profile.applicantdetail.AnnualTurnOver", filterFormula},
 	}
 	match = compileFilter(field, filter)
 	// data filtered branch and region
@@ -826,8 +826,8 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	}
 	pipe = append(pipe, wrapMatch(match))
 
-	// debug, _ := json.Marshal(pipe)
-	// toolkit.Printfn("PIPEX\n%s", debug)
+	debug, _ := json.MarshalIndent(pipe, "", "  ")
+	toolkit.Printfn("PIPEX\n%s", debug)
 
 	csr, err := conn.
 		NewQuery().
@@ -845,7 +845,7 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 		return nil, err
 	}
 
-	// toolkit.Println("RESULTX", result)
+	toolkit.Println("RESULTX", result)
 
 	return result, err
 }

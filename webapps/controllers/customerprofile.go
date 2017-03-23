@@ -371,6 +371,8 @@ func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) 
 	p.LastUpdate = time.Now()
 	p.UpdatedBy = Username
 
+	p.ApplicantDetail.AnnualTurnOver = cast.ToF64(p.ApplicantDetail.AnnualTurnOver, 2, cast.RoundingAuto)
+
 	custstring := cast.ToString(p.ApplicantDetail.CustomerID)
 	dealstring := cast.ToString(p.ApplicantDetail.DealNo)
 	// p.Status

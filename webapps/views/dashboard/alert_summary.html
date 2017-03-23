@@ -70,76 +70,6 @@
 </div> -->
 
 <div class="row">
-    <!-- <div class="col-sm-3">
-        <div>
-            <input data-bind="kendoDatePicker: {
-                value: alertSum.trendMonth,
-                start: 'year',
-                depth: 'year',
-                format: 'MMMM yyyy'
-            }" id="alertTrendMonthPicker" />
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.currentData('countApproved')"></span>
-                    <i data-bind="attr: { class: alertSum.seriesChangeFa('countApproved') }" aria-hidden="true"></i>
-                    <span class="box-label blue">Approved</span>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.currentData('countRejected')"></span>
-                    <i data-bind="attr: { class: alertSum.seriesChangeFa('countRejected') }" aria-hidden="true"></i>
-                    <span class="box-label red">Rejected</span>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.currentData('amountApproved', 7, 1)"></span><span class="score unit"> cr.</span>
-                    <i data-bind="attr: { class: alertSum.seriesChangeFa('amountApproved') }" aria-hidden="true"></i>
-                    <span class="box-label blue">Deal Amount</span>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="summary-box">
-                    <span class="score" data-bind="text: alertSum.currentData('amountRejected', 7, 1)"></span><span class="score unit"> cr.</span>
-                    <i data-bind="attr: { class: alertSum.seriesChangeFa('amountRejected') }" aria-hidden="true"></i>
-                    <span class="box-label red">Deal Amount</span>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
-            </div>
-            <div class="col-sm-6">
-            </div>
-        </div>
-    </div>
-
-    <div class="col-sm-9">
-        <span class="pull-right">
-            <div data-bind="kendoDropDownList: {
-                data: alertSum.trendDataLengthOptions,
-                value: alertSum.trendDataLength,
-                dataTextField: 'text',
-                dataValueField: 'value'
-            }">
-            </div>
-        </span>
-        <h5>Trend: Last <span data-bind="text: alertSum.trendDataLengthTitle"></span></h5>
-        <div data-bind="kendoChart: {
-            data: alertSum.trendDataSeries,
-            series: alertSum.trendDataConfig,
-            categoryAxis: {
-                categories: alertSum.trendDataMonths
-            },
-            valueAxes: alertSum.trendDataAxes
-        }">
-        </div>
-    </div> -->
     <div class="col-md-12 gap-from-menu border-dashboard-bottom" >
         <div class="panel pn clean-border" style="border-bottom: 0px !important;background-color: #f0f3f4;">
             <div class="panel-heading hd toggle1">
@@ -150,16 +80,10 @@
             <div class="panel-body bd">
                 <div class="panel show" style="background-color: #f0f3f4 !important;border: 0px;">
                     <div class="col-md-4">
-                        
                         <div class="panel" style="background-color: #f0f3f4 !important;">
                             <div class="panel-body mm">
                                 <div>
-                                    <input data-bind="kendoDatePicker: {
-                                        value: alertSum.trendMonth,
-                                        start: 'year',
-                                        depth: 'year',
-                                        format: 'MMMM yyyy'
-                                    }" id="alertTrendMonthPicker" />
+                                    <h5 data-bind="text: alertSum.titleText()"></h5>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
@@ -205,8 +129,8 @@
 
                     <div class="col-md-8">
                         <span class="pull-right">
-                            <div class="col-md-12">
-                                <div class="col-md-6" style="margin-top: 5px;">
+                            <div class="col-md-12" width="220px">
+                                <div class="col-md-6" style="margin-top: 5px; padding-right: 0px;">
                                     <label>View Trend for</label>
                                 </div>
                                 <div class="col-md-6">

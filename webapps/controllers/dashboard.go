@@ -11,6 +11,7 @@ import (
 	"github.com/eaciit/cast"
 
 	"errors"
+
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -185,7 +186,7 @@ func (c *DashboardController) GetFilter(k *knot.WebContext) interface{} {
 	}
 
 	if len(result) == 0 {
-		return c.SetResultInfo(true, "data not found", nil)
+		return c.SetResultInfo(false, "success", DashboardFilterModel{})
 	}
 
 	return c.SetResultInfo(false, "success", result[0])
@@ -327,6 +328,9 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
+	// DEBUG - HOLD break
+	payload.Month = "February 2017"
+	//
 	currDate, err := time.Parse("2 January 2006 (MST)", "1 "+payload.Month+" (UTC)")
 	if err != nil {
 		return res.SetError(err)
@@ -1068,7 +1072,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	}
 
 	if trendFilt == "" {
-		trendFilt = "total"
+		trendFilt = "conversion"
 	}
 
 	groupByDateClon := groupByDate
@@ -1095,7 +1099,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	}
 
 	// tk.Println(groupByDate, "-------DATE")
-	whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gt("info.myInfo.updateTime", groupByDate.AddDate(0, -7, 0))))
+	whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gte("info.myInfo.updateTime", groupByDate.AddDate(0, -6, 0))))
 
 	query := cn.NewQuery().
 		From("DealSetup").
@@ -1117,41 +1121,103 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 
 	// tk.Println("Result ----------", results)
 
-	lib := tk.M{"decision": []string{Approve, Reject}, "action": []string{Approve, Reject, Cancel, SendBackOmnifin}, "processing": []string{SendToDecision}, "acceptance": []string{UnderProcess}, "total": []string{}}
-	// textRange := []string{"15 + Days", "11 - 15 Days", "6 - 10 Days", "0 - 5 Days"}
-	// statusAlias := tk.M{SendBackOmnifin: "Re-Processed", Cancel: "Re-Processed", SendToDecision: "Processed", UnderProcess: "Accepted"}
+	lib := tk.M{"decision": []string{Approve, Reject}, "action": []string{Approve, Reject, Cancel, SendBackOmnifin}, "processing": []string{SendToDecision}, "acceptance": []string{UnderProcess}, "conversion": []string{}}
 
 	mapRes := tk.M{}
 	mapResDays := tk.M{}
 	mapResMaxDays := tk.M{}
 	mapResMinDays := tk.M{}
 
+	trend := lib.Get(trendFilt).([]string)
+
 	for _, val := range results {
 		info := val.Get("info").(tk.M)
 		myInfo := CheckArray(info.Get("myInfo"))
 		if len(myInfo) > 1 {
-			for idx, _ := range myInfo {
-				if idx+1 == len(myInfo) {
-					continue
+			laststatus := myInfo[len(myInfo)-1].GetString("status")
+			poslast := IndexOfString(laststatus, trend)
+
+			if trendFilt != "conversion" && poslast > -1 {
+				for idx, _ := range myInfo {
+					if idx+1 == len(myInfo) {
+						continue
+					}
+
+					status := myInfo[idx+1].GetString("status")
+
+					pos := IndexOfString(status, trend)
+					// tk.Println(trendFilt)
+					// tk.Println(pos, "--------POSITION")
+					// tk.Println(trend, "--------TREND")
+					// tk.Println(status, "--------STATUS")
+					if pos == -1 {
+						continue
+					}
+
+					// firstDate := inf.Get("updateTime").(time.Time)
+					secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
+
+					days := 0
+					year, month, day, hour, min, sec := calcDiffInfoDate(idx, myInfo)
+
+					if hour > 0 || min > 0 || sec > 0 {
+						days += 1
+					}
+					days += day
+					days += month * 31
+					days += year * 12 * 31
+
+					key := ""
+					if groupBy == "period" {
+						key = cast.Date2String(secondDate, "MMM-yyyy")
+					} else {
+						key, err = GetRegionName(hp.TkWalk(val, "accountdetails.accountsetupdetails.citynameid").(string), k)
+						if err != nil {
+							return res.SetError(err)
+						}
+					}
+					if mapRes.Get(key) == nil {
+						mapRes.Set(key, 0)
+					}
+					mapRes.Set(key, mapRes.GetInt(key)+1)
+
+					if mapResDays.Get(key) == nil {
+						mapResDays.Set(key, 0)
+					}
+					mapResDays.Set(key, mapResDays.GetInt(key)+days)
+
+					if mapResMaxDays.Get(key) == nil {
+						mapResMaxDays.Set(key, 0)
+					}
+					currMaxVal := mapResMaxDays.GetInt(key)
+					if days > currMaxVal {
+						mapResMaxDays.Set(key, days)
+					}
+
+					if mapResMinDays.Get(key) == nil {
+						mapResMinDays.Set(key, 0)
+					}
+					currMinVal := mapResMinDays.GetInt(key)
+					if days < currMinVal || idx == 0 {
+						mapResMinDays.Set(key, days)
+					}
+
 				}
+			} else if trendFilt == "conversion" && (laststatus == Approve || laststatus == Reject) {
+				lasttime := myInfo[len(myInfo)-1].Get("updateTime").(time.Time)
 
-				status := myInfo[idx+1].GetString("status")
-				trend := lib.Get(trendFilt).([]string)
+				timex := myInfo[0].Get("updateTime").(time.Time)
 
-				pos := IndexOfString(status, trend)
 				// tk.Println(trendFilt)
 				// tk.Println(pos, "--------POSITION")
 				// tk.Println(trend, "--------TREND")
 				// tk.Println(status, "--------STATUS")
-				if pos == -1 && trendFilt != "total" {
-					continue
-				}
-
-				// firstDate := inf.Get("updateTime").(time.Time)
-				secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
+				// if pos == -1 {
+				// 	continue
+				// }
 
 				days := 0
-				year, month, day, hour, min, sec := calcDiffInfoDate(idx, myInfo)
+				year, month, day, hour, min, sec := Diff(timex, lasttime)
 
 				if hour > 0 || min > 0 || sec > 0 {
 					days += 1
@@ -1162,7 +1228,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 
 				key := ""
 				if groupBy == "period" {
-					key = cast.Date2String(secondDate, "MMM-yyyy")
+					key = cast.Date2String(lasttime, "MMM-yyyy")
 				} else {
 					key, err = GetRegionName(hp.TkWalk(val, "accountdetails.accountsetupdetails.citynameid").(string), k)
 					if err != nil {
@@ -1191,10 +1257,9 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 					mapResMinDays.Set(key, 0)
 				}
 				currMinVal := mapResMinDays.GetInt(key)
-				if days < currMinVal || idx == 0 {
+				if days < currMinVal {
 					mapResMinDays.Set(key, days)
 				}
-
 			}
 		}
 	}
@@ -1212,18 +1277,20 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		finalRes = append(finalRes, re)
 	}
 
-	for _, val := range groupByDates {
-		valStr := cast.Date2String(val, "MMM-yyyy")
-		tk.Println(months.Get(valStr))
-		tk.Println(valStr)
-		if months.Get(valStr) == nil {
-			re := tk.M{}
-			re.Set("avgdays", nil)
-			re.Set("median", nil)
-			re.Set("dealcount", nil)
-			re.Set("dateStr", valStr)
-			re.Set("date", val)
-			finalRes = append(finalRes, re)
+	if groupBy == "period" {
+		for _, val := range groupByDates {
+			valStr := cast.Date2String(val, "MMM-yyyy")
+			tk.Println(months.Get(valStr))
+			tk.Println(valStr)
+			if months.Get(valStr) == nil {
+				re := tk.M{}
+				re.Set("avgdays", nil)
+				re.Set("median", nil)
+				re.Set("dealcount", nil)
+				re.Set("dateStr", valStr)
+				re.Set("date", val)
+				finalRes = append(finalRes, re)
+			}
 		}
 	}
 
@@ -1369,4 +1436,170 @@ func calcDiffInfoDateHistory(myInfo []tk.M) (int, int, int, int, int, int) {
 		firstDate = myInfo[idx-1].Get("updateTime").(time.Time)
 	}
 	return Diff(firstDate, secondDate)
+}
+
+func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	payload := tk.M{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	cn, err := GetConnection()
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer cn.Close()
+
+	trendFilt := payload.GetString("trend")
+	periodFilt := payload.GetString("period")
+	regionName := payload.GetString("region")
+	groupByDate := time.Now()
+	whsx := []*dbox.Filter{}
+	branchIds := []string{}
+
+	if periodFilt == "" {
+		periodFilt = cast.Date2String(time.Now(), "MMM-yyyy")
+	}
+
+	if periodFilt != "" {
+		groupByDate = cast.String2Date("01-"+periodFilt+" 00:00:00", "dd-MMM-yyyy HH:mm:ss").AddDate(0, 1, 0)
+		tk.Println(groupByDate)
+		tk.Println(groupByDate.AddDate(0, -1, 0))
+		whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gte("info.myInfo.updateTime", groupByDate.AddDate(0, -1, 0))))
+	} else {
+		if regionName != "" {
+			branchIds, err = GetBranchId(regionName)
+			if err != nil {
+				return res.SetError(err)
+			}
+			arrInt := []interface{}{}
+			for _, vvl := range branchIds {
+				arrInt = append(arrInt, vvl)
+			}
+			whsx = append(whsx, dbox.In("accountdetails.accountsetupdetails.citynameid", arrInt))
+		}
+	}
+
+	whs, err := GenerateRoleCondition(k)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	if len(whs) > 0 {
+		whsx = append(whsx, dbox.Or(whs...))
+	}
+
+	query := cn.NewQuery().
+		From("DealSetup").
+		Select("info", "accountdetails.accountsetupdetails.citynameid", "accountdetails.accountsetupdetails.rmname", "accountdetails.accountsetupdetails.creditanalyst", "accountdetails.accountsetupdetails.dealno", "customerprofile.applicantdetail.CustomerName").
+		Where(dbox.And(whsx...))
+
+	csr, err := query.Cursor(nil)
+
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer csr.Close()
+
+	results := make([]tk.M, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	// tk.Println("Result ----------", results)
+
+	lib := tk.M{"decision": []string{Approve, Reject}, "action": []string{Approve, Reject, Cancel, SendBackOmnifin}, "processing": []string{SendToDecision}, "acceptance": []string{UnderProcess}, "conversion": []string{}}
+	statusAlias := tk.M{SendToDecision: []string{"Processing"}, UnderProcess: []string{"Acceptance"}, Approve: []string{"Action", "Decision"}, Reject: []string{"Action", "Decision"}, Cancel: []string{"Action"}, SendBackAnalysis: []string{"Action"}}
+
+	finalRes := []tk.M{}
+
+	trend := lib.Get(trendFilt).([]string)
+
+	for _, val := range results {
+		val.Set("Acceptance", nil)
+		val.Set("Action", nil)
+		val.Set("Decision", nil)
+		val.Set("Processing", nil)
+		val.Set("Conversion", nil)
+
+		info := val.Get("info").(tk.M)
+		myInfo := CheckArray(info.Get("myInfo"))
+		if len(myInfo) > 1 {
+			laststatus := myInfo[len(myInfo)-1].GetString("status")
+			poslast := IndexOfString(laststatus, trend)
+
+			if poslast > -1 || (trendFilt == "conversion" && (laststatus == Approve || laststatus == Reject)) {
+				for idx, _ := range myInfo {
+					if idx+1 == len(myInfo) {
+						continue
+					}
+
+					status := myInfo[idx+1].GetString("status")
+
+					days := 0
+					year, month, day, hour, min, sec := calcDiffInfoDate(idx, myInfo)
+
+					if hour > 0 || min > 0 || sec > 0 {
+						days += 1
+					}
+					days += day
+					days += month * 31
+					days += year * 12 * 31
+					alias := []string{}
+
+					if statusAlias.Get(status) == nil {
+						continue
+					} else {
+						alias = statusAlias.Get(status).([]string)
+					}
+
+					for _, vlia := range alias {
+						val.Set(vlia, days)
+					}
+
+				}
+
+				if trendFilt != "conversion" {
+					finalRes = append(finalRes, val)
+
+				}
+			}
+			if trendFilt == "conversion" && (laststatus == Approve || laststatus == Reject) {
+				lasttime := myInfo[len(myInfo)-1].Get("updateTime").(time.Time)
+
+				timex := myInfo[0].Get("updateTime").(time.Time)
+
+				// tk.Println(trendFilt)
+				// tk.Println(pos, "--------POSITION")
+				// tk.Println(trend, "--------TREND")
+				// tk.Println(status, "--------STATUS")
+				// if pos == -1 {
+				// 	continue
+				// }
+
+				days := 0
+				year, month, day, hour, min, sec := Diff(timex, lasttime)
+
+				if hour > 0 || min > 0 || sec > 0 {
+					days += 1
+				}
+				days += day
+				days += month * 31
+				days += year * 12 * 31
+
+				val.Set("Conversion", days)
+				finalRes = append(finalRes, val)
+
+			}
+		}
+	}
+
+	res.SetData(finalRes)
+
+	return res
 }

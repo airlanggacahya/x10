@@ -1,6 +1,8 @@
 package models
 
 import (
+	"encoding/json"
+	"regexp"
 	"time"
 
 	. "eaciit/x10/webapps/connection"
@@ -592,8 +594,63 @@ func filterBool(path string, val string) []toolkit.M {
 	return []toolkit.M{}
 }
 
+var irRegex = regexp.MustCompile(`^\s*((?:>|=|<)=?)\s*(-?[0-9]+(?:\.[0-9]*)?)\s*`)
+
 func filterIr(path string, val string) []toolkit.M {
-	return []toolkit.M{}
+	reg := irRegex.Copy()
+	ret := []toolkit.M{}
+
+	for {
+		length := len(val)
+		if length == 0 {
+			break
+		}
+
+		match := reg.FindStringSubmatch(val)
+		if match == nil {
+			break
+		}
+
+		fval, err := strconv.ParseFloat(match[2], 64)
+		if err != nil {
+			break
+		}
+
+		switch match[1] {
+		case "<":
+			ret = append(ret, toolkit.M{
+				path: toolkit.M{"$lt": fval},
+			})
+		case "<=":
+			ret = append(ret, toolkit.M{
+				path: toolkit.M{"$lte": fval},
+			})
+		case ">":
+			ret = append(ret, toolkit.M{
+				path: toolkit.M{"$gt": fval},
+			})
+		case ">=":
+			ret = append(ret, toolkit.M{
+				path: toolkit.M{"$gte": fval},
+			})
+		case "=":
+		case "==":
+			ret = append(ret, toolkit.M{
+				path: toolkit.M{"$eq": fval},
+			})
+		default:
+			goto error
+		}
+
+		if len(match[0]) == length {
+			break
+		}
+
+		val = val[len(match[0]):]
+	}
+error:
+
+	return ret
 }
 
 type filterMap struct {
@@ -609,7 +666,7 @@ func compileFilter(fields map[string]filterMap, filter []toolkit.M) []toolkit.M 
 			continue
 		}
 
-		field, ok := fields[val.GetString("FieldName")]
+		field, ok := fields[val.GetString("FilterName")]
 		if !ok {
 			continue
 		}
@@ -751,12 +808,12 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	field = map[string]filterMap{
 		"IR": {"_creditscorecard.FinalScoreDob", filterIr},
 	}
+	match = compileFilter(field, filter)
 	// data filtered branch and region
 	branches, err := GetBranchByFilter(filter)
 	if err != nil {
 		return nil, err
 	}
-	match = compileFilter(field, filter)
 	if branches != nil {
 		match = append(match, toolkit.M{
 			"_profile.applicantdetail.registeredaddress.CityRegistered": toolkit.M{
@@ -766,8 +823,8 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	}
 	pipe = append(pipe, wrapMatch(match))
 
-	// debug, _ := json.Marshal(pipe)
-	// toolkit.Printfn("PIPE %s", debug)
+	debug, _ := json.Marshal(pipe)
+	toolkit.Printfn("PIPE\n%s", debug)
 
 	csr, err := conn.
 		NewQuery().

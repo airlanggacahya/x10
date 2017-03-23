@@ -168,15 +168,10 @@ alertSum.generateXAxis = function (type, start, end, length) {
     return ret
 }
 
-alertSum.DiscardTimezone = function(date) {
-    var newdate = moment(date)
-    return newdate.format("YYYY-MM-DDT00:00:00") + "Z"
-}
-
 alertSum.trendDataAjaxRefresh = function() {
     var len = alertSum.trendDataLength();
-    var start = alertSum.DiscardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"))
-    var end = alertSum.DiscardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+    var start = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2"))
     var type = dash.FilterValue.GetVal("TimePeriod")
 
     $.ajax("/dashboard/summarytrends", {

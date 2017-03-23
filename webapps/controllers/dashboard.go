@@ -1124,20 +1124,22 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	mapResMaxDays := tk.M{}
 	mapResMinDays := tk.M{}
 
+	trend := lib.Get(trendFilt).([]string)
+
 	for _, val := range results {
 		info := val.Get("info").(tk.M)
 		myInfo := CheckArray(info.Get("myInfo"))
 		if len(myInfo) > 1 {
 			laststatus := myInfo[len(myInfo)-1].GetString("status")
+			poslast := IndexOfString(laststatus, trend)
 
-			if trendFilt != "conversion" {
+			if trendFilt != "conversion" && poslast > -1 {
 				for idx, _ := range myInfo {
 					if idx+1 == len(myInfo) {
 						continue
 					}
 
 					status := myInfo[idx+1].GetString("status")
-					trend := lib.Get(trendFilt).([]string)
 
 					pos := IndexOfString(status, trend)
 					// tk.Println(trendFilt)

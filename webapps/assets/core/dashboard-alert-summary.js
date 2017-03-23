@@ -118,8 +118,8 @@ alertSum.mergeTrendData = function(data) {
 }
 
 alertSum.generateXAxis = function (type, start, end, length) {
-    var cur = moment(alertSum.DiscardTimezone(start))
-    var till = moment(alertSum.DiscardTimezone(end))
+    var cur = cleanMoment(start)
+    var till = cleanMoment(end)
     var ret = []
 
     switch (type) {
@@ -168,15 +168,10 @@ alertSum.generateXAxis = function (type, start, end, length) {
     return ret
 }
 
-alertSum.DiscardTimezone = function(date) {
-    var newdate = moment(date)
-    return newdate.format("YYYY-MM-DDT00:00:00") + "Z"
-}
-
 alertSum.trendDataAjaxRefresh = function() {
     var len = alertSum.trendDataLength();
-    var start = alertSum.DiscardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"))
-    var end = alertSum.DiscardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+    var start = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2"))
     var type = dash.FilterValue.GetVal("TimePeriod")
 
     $.ajax("/dashboard/summarytrends", {
@@ -270,7 +265,7 @@ alertSum.trendDataAxes = ko.computed(function () {
             color: '#4472C4' 
         },
         min: 0,
-        max: Math.ceil(alertSum.seriesMax(['countApproved', 'countRejected']) + 2),
+        max: Math.ceil(alertSum.seriesMax(['amountApproved', 'amountRejected']) + 1),
         majorUnit: 1,
         
     },{
@@ -284,6 +279,15 @@ alertSum.trendDataAxes = ko.computed(function () {
         max: alertSum.seriesMax(['countApproved', 'countRejected']) + 2,
         majorUnit: 1,
     }]
+})
+alertSum.trendDataAxes.subscribe(function (val) {
+    var el = $("#alert-summary").data("kendoChart");
+    if (typeof(el) === "undefined")
+        return
+    
+    el.setOptions({
+        valueAxes: val
+    })
 })
 
 alertSum.seriesChange = function(section) {
@@ -300,13 +304,10 @@ alertSum.seriesChangeFa = function(section) {
     })
 }
 
-alertSum.currentData = function(section, div = 0, rounding = 0) {
+alertSum.currentData = function(section, rounding = 0) {
     return ko.computed(function () {
         var num = _.get(alertSum.trendDataCurrent(), section, 0)
 
-        if (div > 0) {
-            num = num / Math.pow(10, div)
-        }
 
         return kendo.toString(num, "n" + rounding);
     })

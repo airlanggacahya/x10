@@ -139,6 +139,10 @@ function applyFilterUpstream(level, vals) {
 		vals = _.filter(vals, createFilterUpstream(dash.CustomerVal(), CUSTOMER))
 	}
 
+	if (level != DEALNO) {
+		vals = _.filter(vals, createFilterUpstream(dash.DealNoVal(), DEALNO))
+	}
+
 	return vals
 }
 

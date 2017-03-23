@@ -594,10 +594,10 @@ func filterBool(path string, val string) []toolkit.M {
 	return []toolkit.M{}
 }
 
-var irRegex = regexp.MustCompile(`^\s*((?:>|=|<)=?)\s*(-?[0-9]+(?:\.[0-9]*)?)\s*`)
+var formulaRegex = regexp.MustCompile(`^\s*((?:>|=|<)=?)\s*(-?[0-9]+(?:\.[0-9]*)?)\s*`)
 
-func filterIr(path string, val string) []toolkit.M {
-	reg := irRegex.Copy()
+func filterFormula(path string, val string) []toolkit.M {
+	reg := formulaRegex.Copy()
 	ret := []toolkit.M{}
 
 	for {
@@ -772,13 +772,14 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	pipe := []toolkit.M{}
 	// Filter stage 1
 	field := map[string]filterMap{
-		"Product":    {"accountdetails.accountsetupdetails.product", filterEqual},
-		"Scheme":     {"accountdetails.accountsetupdetails.scheme", filterEqual},
-		"CA":         {"accountdetails.accountsetupdetails.creditanalyst", filterEqual},
-		"RM":         {"accountdetails.accountsetupdetails.rmname", filterEqual},
-		"ClientType": {"accountdetails.loandetails.ifexistingcustomer", filterBool},
-		"DealNo":     {"accountdetails.dealno", filterEqual},
-		"Customer":   {"accountdetails.customerid", filterEqual},
+		"Product":        {"accountdetails.accountsetupdetails.product", filterEqual},
+		"Scheme":         {"accountdetails.accountsetupdetails.scheme", filterEqual},
+		"CA":             {"accountdetails.accountsetupdetails.creditanalyst", filterEqual},
+		"RM":             {"accountdetails.accountsetupdetails.rmname", filterEqual},
+		"ClientType":     {"accountdetails.loandetails.ifexistingcustomer", filterBool},
+		"DealNo":         {"accountdetails.dealno", filterEqual},
+		"Customer":       {"accountdetails.customerid", filterEqual},
+		"ClientTurnover": {"customerprofile.applicantdetail.AnnualTurnOver", filterFormula},
 	}
 	// dealnolist := GetDealNoList(ids)
 	match := compileFilter(field, filter)
@@ -808,7 +809,7 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	// }})
 	// Match stage 2
 	field = map[string]filterMap{
-		"IR": {"_creditscorecard.FinalScoreDob", filterIr},
+		"IR": {"_creditscorecard.FinalScoreDob", filterFormula},
 	}
 	match = compileFilter(field, filter)
 	// data filtered branch and region

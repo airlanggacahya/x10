@@ -104,14 +104,14 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="summary-box">
-                                            <span class="score" data-bind="text: alertSum.currentData('amountApproved', 7, 1)"></span><span class="score unit"> cr.</span>
+                                            <span class="score" data-bind="text: alertSum.currentData('amountApproved', 1)"></span><span class="score unit"> cr.</span>
                                             <i data-bind="attr: { class: alertSum.seriesChangeFa('amountApproved') }" aria-hidden="true"></i>
                                             <span class="box-label blue">Deal Amount</span>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="summary-box">
-                                            <span class="score" data-bind="text: alertSum.currentData('amountRejected', 7, 1)"></span><span class="score unit"> cr.</span>
+                                            <span class="score" data-bind="text: alertSum.currentData('amountRejected', 1)"></span><span class="score unit"> cr.</span>
                                             <i data-bind="attr: { class: alertSum.seriesChangeFa('amountRejected') }" aria-hidden="true"></i>
                                             <span class="box-label red">Deal Amount</span>
                                         </div>
@@ -145,7 +145,7 @@
                             </div>
                         </span>
                         <div style="font-size: 12px;font-family:Arial,Helvetica,Sans-Serif;font-weight: bold !important;">Trend: Last <span data-bind="text: alertSum.trendDataLengthTitle"></span></div>
-                        <div id="alert" data-bind="kendoChart: {
+                        <div id="alert-summary" data-bind="kendoChart: {
                             data: alertSum.trendDataSeries,
                             series: alertSum.trendDataConfig,
                             axisDefaults: {

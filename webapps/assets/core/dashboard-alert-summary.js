@@ -6,6 +6,27 @@ alertSum.height = function(){
     return myHeight;
 }
 
+alertSum.titleText = ko.computed(function () {
+    var type = dash.FilterValue.GetVal("TimePeriod")
+    var start = moment(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = moment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+
+    if (!start.isValid())
+        return "-"
+
+    switch (type) {
+    case "10day":
+        return start.clone().subtract(10, "day").format("DD MMM YYYY") + " - " + start.format("DD MMM YYYY")
+    case "":
+    case "1month":
+        return start.format("MMMM YYYY")
+    case "1year":
+        return start.format("YYYY")
+    case "fromtill":
+        return start.format("DD MMM YYYY") + " - " + end.format("DD MMM YYYY")
+    }
+})
+
 alertSum.trendMonth = ko.observable(moment().format('MMMM YYYY'));
 alertSum.trendMonth.subscribe(function () {
     alertSum.trendDataAjaxRefresh()
@@ -16,24 +37,29 @@ dash.FilterValue.subscribe(function (val) {
     alertSum.trendDataAjaxRefresh()
 })
 
-alertSum.trendDataLengthOptions = ko.observableArray([
-    {
-        text: "3 months",
-        value: 3
-    },
-    {
-        text: "4 months",
-        value: 4
-    },
-    {
-        text: "6 months",
-        value: 6
-    },
-    {
-        text: "12 months",
-        value: 12
+alertSum.trendDataLengthOptions = ko.computed(function () {
+    var unit = dash.FilterValue.GetVal("TimePeriod")
+    switch (unit) {
+    case "":
+    case "1month":
+        unit = "months"
+        break;
+    case "1year":
+        unit = "years"
+        break;
+    default:
+        unit = "period"
     }
-]);
+    var ret =  _.map([3, 4, 6, 12], function (val) {
+        return {
+            text: "" + val + " " + unit,
+            value: val
+        }
+    });
+
+    return ret;
+});
+
 alertSum.trendDataLength = ko.observable(6);
 alertSum.trendDataLength.subscribe(function () {
     alertSum.trendDataAjaxRefresh()
@@ -99,24 +125,57 @@ alertSum.mergeTrendData = function(data) {
     return ret
 }
 
-alertSum.generateMonths = function (start, length) {
+alertSum.generateXAxis = function (type, start, end, length) {
     var cur = moment(start)
+    var till = moment(end)
     var ret = []
-    _.times(length, function() {
-        ret.push(cur.format('MMM `YY'))
-        cur.subtract(1, 'months')
-    })
+
+    switch (type) {
+    case "":
+    case "1month":
+        cur.day(1);
+        _.times(length, function() {
+            ret.push(cur.format('MMM `YY'))
+            cur.subtract(1, 'months')
+        })
+        break;
+    case "1year":
+        cur.day(1);
+        cur.month(4);
+        _.times(length, function() {
+            ret.push(cur.format('YYYY'))
+            cur.subtract(1, 'year')
+        })
+        break;
+    case "fromtill":
+    case "10day":
+        _.times(length, function(idx) {
+            ret.push("" + idx);
+        })
+        break;
+    default:
+        _.times(length, function(idx) {
+            ret.push("");
+        })
+        break;
+    }
+
 
     return ret
 }
 
 alertSum.trendDataAjaxRefresh = function() {
     var len = alertSum.trendDataLength();
-    var start = moment(alertSum.trendMonth()).format('MMMM YYYY');
+    var start = dash.FilterValue.GetVal("TimePeriodCalendar")
+    var end = dash.FilterValue.GetVal("TimePeriodCalendar2")
+    var type = dash.FilterValue.GetVal("TimePeriod")
+
     $.ajax("/dashboard/summarytrends", {
         method: "post",
         data: JSON.stringify({
-            month: start,
+            type: type,
+            start: start,
+            end: end,
             length: len + 1,
             filter: dash.FilterValue()
         }),
@@ -132,7 +191,7 @@ alertSum.trendDataAjaxRefresh = function() {
                 var merge = alertSum.mergeTrendData(body.Data)
                 alertSum.trendDataSeries(merge)
                 //generate label
-                var months = alertSum.generateMonths(start, len + 1)
+                var months = alertSum.generateXAxis(type, start, end, len + 1)
                 months.shift()
                 alertSum.trendDataMonths(months)
                 return
@@ -140,10 +199,6 @@ alertSum.trendDataAjaxRefresh = function() {
         }
     })
 }
-
-$(function () {
-    alertSum.trendDataAjaxRefresh();
-})
 
 alertSum.trendDataConfig = [
     {

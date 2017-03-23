@@ -338,6 +338,13 @@ dash.initDashVal("LoanValueType", undefined, [
 ])
 dash.initDashVal("Range", undefined, [])
 
+// Update to now
+dash.TimePeriodVal.subscribe(function (val) {
+	if (val == "10day") {
+		dash.TimePeriodCalendarVal(moment().toDate())
+	}
+})
+
 // TimePeriodCalendar
 dash.TimePeriodCalendarValFormat = ko.computed(function () {
 	switch (dash.TimePeriodVal()) {

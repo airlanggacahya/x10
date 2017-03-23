@@ -11,6 +11,7 @@ import (
 	"github.com/eaciit/cast"
 
 	"errors"
+
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -185,7 +186,7 @@ func (c *DashboardController) GetFilter(k *knot.WebContext) interface{} {
 	}
 
 	if len(result) == 0 {
-		return c.SetResultInfo(true, "data not found", nil)
+		return c.SetResultInfo(false, "success", DashboardFilterModel{})
 	}
 
 	return c.SetResultInfo(false, "success", result[0])
@@ -327,6 +328,9 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
+	// DEBUG - HOLD break
+	payload.Month = "February 2017"
+	//
 	currDate, err := time.Parse("2 January 2006 (MST)", "1 "+payload.Month+" (UTC)")
 	if err != nil {
 		return res.SetError(err)

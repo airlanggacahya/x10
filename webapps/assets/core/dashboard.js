@@ -288,7 +288,7 @@ dash.MasterDS.subscribe(function(values) {
 // Used for compile and parsing filter value
 dash.FilterList = []
 
-dash.initDashVal = function(name, path, options) {
+dash.initDashVal = function(name, path, options, def) {
 	dash.FilterList.push(name)
 
 	dash[name + "Val"] = ko.observable("")
@@ -300,6 +300,8 @@ dash.initDashVal = function(name, path, options) {
 	dash[name + "ShowMe"].subscribe(function (values) {
 		dash.SaveFilter()
 	})
+	// if default not defined, put default as empty string
+	dash[name + "Default"] = (typeof(def) == "undefined" ? "" : _.cloneDeep(def))
 }
 
 dash.initDashVal("TimePeriod", undefined, [
@@ -308,8 +310,8 @@ dash.initDashVal("TimePeriod", undefined, [
 	{text: 'Financial Year', value:'1year'},
 	{text: 'From - Till', value: 'fromtill'}
 ])
-dash.initDashVal("TimePeriodCalendar", undefined, [])
-dash.initDashVal("TimePeriodCalendar2", undefined, [])
+dash.initDashVal("TimePeriodCalendar", undefined, [], moment().toDate())
+dash.initDashVal("TimePeriodCalendar2", undefined, [], moment().toDate())
 dash.initDashVal("Region", REGION, [])
 dash.initDashVal("Branch", BRANCH, [])
 dash.initDashVal("Product", PRODUCT, [])
@@ -386,9 +388,17 @@ dash.CompileFilter = function () {
 }
 
 dash.ParseFilter = function (data) {
+	// fill default
+	_.each(dash.FilterList, function (name) {
+		dash[name + "Val"](dash[name + "Default"])
+	})
+
+	// put data from db
 	_.each(data, function (val) {
 		var name = val.FilterName
 		if (_.indexOf(dash.FilterList, name) == -1)
+			return
+		if (val.Value == "")
 			return
 
 		dash[name + "ShowMe"](val.ShowMe)
@@ -399,6 +409,16 @@ dash.ParseFilter = function (data) {
 // Child module please subscribe here for filter changes notification
 // Will be triggered by SaveFilter_
 dash.FilterValue = ko.observable()
+dash.FilterValue.GetVal = function (field) {
+	var ret = _.find(dash.FilterValue(), function (val) {
+		return (val.FilterName === field)
+	})
+
+	if (typeof(ret) === "undefined")
+		return ""
+	
+	return _.cloneDeep(ret.Value)
+}
 
 dash.SaveFilter_ = function() {
 	if (!dash.InitComplete) {

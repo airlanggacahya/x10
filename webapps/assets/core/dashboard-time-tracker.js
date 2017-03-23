@@ -224,8 +224,8 @@ ttrack.loadDataStages = function(d){
 
 
 ttrack.getData = function(){
-    var start = dash.FilterValue.GetVal("TimePeriodCalendar")
-    var end = dash.FilterValue.GetVal("TimePeriodCalendar2")
+    var start = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
     var type = dash.FilterValue.GetVal("TimePeriod")
 
     var param = {
@@ -376,7 +376,7 @@ ttrack.accordion = function(){
 
 
 $(document).ready(function(){
-	ttrack.getData();
+	// ttrack.getData();
     ttrack.accordion();
 })
 

@@ -4,7 +4,7 @@ import (
 	. "eaciit/x10/webapps/connection"
 	hp "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
-	"encoding/json"
+	// "encoding/json"
 	"strings"
 	"time"
 
@@ -555,8 +555,8 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 		return res.SetError(errors.New("Not Implemented"))
 	}
 
-	debug, _ := json.MarshalIndent(pipe, "", "  ")
-	tk.Printfn("PIPE Summary\n%s", debug)
+	// debug, _ := json.MarshalIndent(pipe, "", "  ")
+	// tk.Printfn("PIPE Summary\n%s", debug)
 
 	csr, err := c.Ctx.Connection.
 		NewQuery().
@@ -626,7 +626,7 @@ func (c *DashboardController) TimeTrackerGridDetails(k *knot.WebContext) interfa
 	timeStatus := payload.GetString("timestatus")
 	stageName := payload.GetString("stagename")
 
-	tk.Println("PAYLOAD", payload)
+	// tk.Println("PAYLOAD", payload)
 
 	branchIds := []string{}
 
@@ -909,6 +909,18 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	timeStatus := payload.GetString("timestatus")
 	branchIds := []string{}
 
+	timeType := payload.GetString("type")
+	timeStr := strings.Split(payload.GetString("start"), "T")[0]
+	timeStrTwo := strings.Split(payload.GetString("end"), "T")[0]
+
+	if timeType == "" {
+		timeStr = cast.Date2String(time.Date(time.Now().Year(), time.Now().Month(), 1, 0, 0, 0, 0, time.UTC), "yyyy-MM-dd")
+		timeStrTwo = cast.Date2String(time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC), "yyyy-MM-dd")
+	}
+
+	timeStart := cast.String2Date(timeStr, "yyyy-MM-dd")
+	timeEnd := cast.String2Date(timeStrTwo, "yyyy-MM-dd")
+
 	if regionName != "" {
 		branchIds, err = GetBranchId(regionName)
 		if err != nil {
@@ -924,15 +936,56 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	}
 
 	Fwh := tk.M{}.Set("$or", whRoles)
-	FwhX := tk.M{
-		"$and": []tk.M{
-			Fwh,
-			tk.M{"customerprofile.applicantdetail.DealNo": tk.M{
-				"$in": ids,
-			},
-			},
+	FwhY := []tk.M{
+		Fwh,
+		tk.M{"customerprofile.applicantdetail.DealNo": tk.M{
+			"$in": ids,
+		},
 		},
 	}
+
+	FwhX := tk.M{
+		"$and": FwhY,
+	}
+
+	FwhZ := []tk.M{}
+	startDateWh := tk.M{}
+	endDateWh := tk.M{}
+
+	switch timeType {
+	case "10day", "fromtill":
+		if timeType == "10day" {
+			startDate := time.Date(timeStart.Year(), timeStart.Month(), timeStart.Day(), 0, 0, 0, 0, time.UTC)
+			endDate := startDate.AddDate(0, 0, -10)
+
+			startDateWh = tk.M{"lastDate": tk.M{"$lte": startDate}}
+			endDateWh = tk.M{"lastDate": tk.M{"$gte": endDate}}
+		} else {
+			startDate := time.Date(timeStart.Year(), timeStart.Month(), timeStart.Day(), 0, 0, 0, 0, time.UTC)
+			endDate := time.Date(timeEnd.Year(), timeEnd.Month(), timeEnd.Day(), 0, 0, 0, 0, time.UTC)
+
+			startDateWh = tk.M{"lastDate": tk.M{"$gte": startDate}}
+			endDateWh = tk.M{"lastDate": tk.M{"$lte": endDate}}
+		}
+	case "", "1month":
+		startDate := time.Date(timeStart.Year(), timeStart.Month(), 1, 0, 0, 0, 0, time.UTC)
+		endDate := time.Date(timeStart.Year(), timeStart.AddDate(0, 1, 0).Month(), 1, 0, 0, 0, 0, time.UTC)
+
+		startDateWh = tk.M{"lastDate": tk.M{"$gte": startDate}}
+		endDateWh = tk.M{"lastDate": tk.M{"$lt": endDate}}
+	case "1year":
+		startDate := time.Date(timeStart.Year(), 4, 1, 0, 0, 0, 0, time.UTC)
+		endDate := startDate.AddDate(1, 0, 0)
+
+		startDateWh = tk.M{"lastDate": tk.M{"$gte": startDate}}
+		endDateWh = tk.M{"lastDate": tk.M{"$lt": endDate}}
+	}
+
+	FwhZ = append(FwhZ, startDateWh)
+	FwhZ = append(FwhZ, endDateWh)
+
+	tk.Println("-------DATES", FwhZ)
+
 	pipe = append(pipe, tk.M{}.Set("$match", FwhX))
 
 	projfirst := tk.M{}
@@ -949,6 +1002,10 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	pipe = append(pipe, tk.M{"$project": projfirst})
 
 	pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("laststatus", tk.M{}.Set("$in", []interface{}{Inque, UnderProcess, OnHold, SendToDecision}))))
+
+	pipe = append(pipe, tk.M{}.Set("$match", tk.M{
+		"$and": FwhZ,
+	}))
 
 	if len(branchIds) > 0 {
 		pipe = append(pipe, tk.M{}.Set("$match", tk.M{}.Set("branch", tk.M{"$in": branchIds})))
@@ -983,7 +1040,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	}
 	defer csr.Close()
 
-	tk.Println(pipe)
+	// tk.Println(pipe)
 
 	results := []tk.M{}
 	err = csr.Fetch(&results, 0, false)
@@ -991,7 +1048,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	tk.Println("Result ---------+", results)
+	// tk.Println("Result ---------+", results)
 
 	period := tk.M{}
 	period.Set(Inque, []int{-5, -4, 0})
@@ -1473,8 +1530,8 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	if groupBy == "period" {
 		for _, val := range groupByDates {
 			valStr := cast.Date2String(val, "MMM-yyyy")
-			tk.Println(months.Get(valStr))
-			tk.Println(valStr)
+			// tk.Println(months.Get(valStr))
+			// tk.Println(valStr)
 			if months.Get(valStr) == nil {
 				re := tk.M{}
 				re.Set("avgdays", nil)
@@ -1660,8 +1717,8 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 
 	if periodFilt != "" {
 		groupByDate = cast.String2Date("01-"+periodFilt+" 00:00:00", "dd-MMM-yyyy HH:mm:ss").AddDate(0, 1, 0)
-		tk.Println(groupByDate)
-		tk.Println(groupByDate.AddDate(0, -1, 0))
+		// tk.Println(groupByDate)
+		// tk.Println(groupByDate.AddDate(0, -1, 0))
 		whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gte("info.myInfo.updateTime", groupByDate.AddDate(0, -1, 0))))
 	} else {
 		if regionName != "" {

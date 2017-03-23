@@ -1,7 +1,7 @@
 package models
 
 import (
-	"encoding/json"
+	// "encoding/json"
 	"regexp"
 	"time"
 
@@ -800,12 +800,12 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 		"preserveNullAndEmptyArrays": true,
 	}})
 	// Join CustomerProfile, for region and branch filtering
-	pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
-		"from":         "CustomerProfile",
-		"localField":   "accountdetails.dealno",
-		"foreignField": "applicantdetail.DealNo",
-		"as":           "_profile",
-	}})
+	// pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
+	// 	"from":         "CustomerProfile",
+	// 	"localField":   "accountdetails.dealno",
+	// 	"foreignField": "applicantdetail.DealNo",
+	// 	"as":           "_profile",
+	// }})
 	// Match stage 2
 	field = map[string]filterMap{
 		"IR": {"_creditscorecard.FinalScoreDob", filterIr},
@@ -818,15 +818,15 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	}
 	if branches != nil {
 		match = append(match, toolkit.M{
-			"_profile.applicantdetail.registeredaddress.CityRegistered": toolkit.M{
+			"accountdetails.accountsetupdetails.cityname": toolkit.M{
 				"$in": branches,
 			},
 		})
 	}
 	pipe = append(pipe, wrapMatch(match))
 
-	debug, _ := json.Marshal(pipe)
-	toolkit.Printfn("PIPEX\n%s", debug)
+	// debug, _ := json.Marshal(pipe)
+	// toolkit.Printfn("PIPEX\n%s", debug)
 
 	csr, err := conn.
 		NewQuery().
@@ -844,7 +844,7 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 		return nil, err
 	}
 
-	toolkit.Println("RESULTX", result)
+	// toolkit.Println("RESULTX", result)
 
 	return result, err
 }

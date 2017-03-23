@@ -118,8 +118,8 @@ alertSum.mergeTrendData = function(data) {
 }
 
 alertSum.generateXAxis = function (type, start, end, length) {
-    var cur = moment(start)
-    var till = moment(end)
+    var cur = moment(alertSum.DiscardTimezone(start))
+    var till = moment(alertSum.DiscardTimezone(end))
     var ret = []
 
     switch (type) {
@@ -140,7 +140,9 @@ alertSum.generateXAxis = function (type, start, end, length) {
         })
         break;
     case "fromtill":
-        var days = cur.diff(till, "days") + 1
+        var days = till.diff(cur, "days") + 1
+
+        console.log(days)
 
         _.times(length, function() {
             ret.push(
@@ -168,10 +170,15 @@ alertSum.generateXAxis = function (type, start, end, length) {
     return ret
 }
 
+alertSum.DiscardTimezone = function(date) {
+    var newdate = moment(date)
+    return newdate.format("YYYY-MM-DDT00:00:00") + "Z"
+}
+
 alertSum.trendDataAjaxRefresh = function() {
     var len = alertSum.trendDataLength();
-    var start = dash.FilterValue.GetVal("TimePeriodCalendar")
-    var end = dash.FilterValue.GetVal("TimePeriodCalendar2")
+    var start = alertSum.DiscardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = alertSum.DiscardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2"))
     var type = dash.FilterValue.GetVal("TimePeriod")
 
     $.ajax("/dashboard/summarytrends", {

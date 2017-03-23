@@ -342,6 +342,7 @@ dash.initDashVal("Range", undefined, [])
 dash.TimePeriodVal.subscribe(function (val) {
 	if (val == "10day") {
 		dash.TimePeriodCalendarVal(moment().toDate())
+		dash.TimePeriodCalendar2Val(moment().toDate())
 	}
 })
 

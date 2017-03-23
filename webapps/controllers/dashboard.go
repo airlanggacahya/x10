@@ -314,29 +314,27 @@ func fetchNotification(days int, formtype string, k *knot.WebContext) ([]string,
 	return res, nil
 }
 
+type SummaryResult struct {
+	TotalAmount float64 `json:"totalAmount"`
+	TotalCount  float64 `json:"totalCount"`
+	Idx         int     `json:"idx"`
+}
+
 func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
 	payload := struct {
-		Month  string
+		Start  time.Time
+		End    time.Time
 		Length int
+		Type   string
 		Filter []tk.M
 	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return res.SetError(err)
 	}
-
-	// DEBUG - HOLD break
-	payload.Month = "February 2017"
-	//
-	currDate, err := time.Parse("2 January 2006 (MST)", "1 "+payload.Month+" (UTC)")
-	if err != nil {
-		return res.SetError(err)
-	}
-	nextDate := currDate.AddDate(0, 1, 0)
-	pastDate := currDate.AddDate(0, 1-payload.Length, 0)
 
 	ids, err := FiltersAD2DealNo(
 		k.Session("CustomerProfileData").([]tk.M),
@@ -345,7 +343,7 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	if err != nil {
 		return res.SetError(err)
 	}
-	tk.Printfn("------------- FILTERSAD2DEALNO \n%v", ids)
+	// tk.Printfn("------------- FILTERSAD2DEALNO \n%v", ids)
 
 	pipe := []tk.M{}
 	pipe = append(pipe, tk.M{"$match": tk.M{
@@ -379,39 +377,186 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 		"info":   "$info",
 		"amount": tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
 	}})
-	pipe = append(pipe, tk.M{"$match": tk.M{
-		"info.updateTime": tk.M{
-			"$gte": pastDate,
-			"$lt":  nextDate,
-		},
-	}})
-	pipe = append(pipe, tk.M{"$group": tk.M{
-		"_id": tk.M{
-			"status": "$info.status",
-			"month":  tk.M{"$month": "$info.updateTime"},
-			"year":   tk.M{"$year": "$info.updateTime"},
-		},
-		"totalAmount": tk.M{"$sum": "$amount"},
-		"totalCount":  tk.M{"$sum": 1},
-	}})
-	pipe = append(pipe, tk.M{"$sort": tk.M{
-		"_id.year":  -1,
-		"_id.month": -1,
-	}})
-	pipe = append(pipe, tk.M{"$group": tk.M{
-		"_id": tk.M{"status": "$_id.status"},
-		"data": tk.M{
-			"$push": tk.M{
-				"totalAmount": "$totalAmount",
-				"totalCount":  "$totalCount",
-				"month":       "$_id.month",
-				"year":        "$_id.year",
-			},
-		},
-	}})
+	// Time Scope
+	period := 1
+	var currDate, endDate time.Time
 
-	debug, _ := json.Marshal(pipe)
-	tk.Printfn("PIPE %s", debug)
+	switch payload.Type {
+	case "10day", "fromtill":
+		if payload.Type == "10day" {
+			endDate = time.Date(payload.Start.Year(), payload.Start.Month(), payload.Start.Day(), 0, 0, 0, 0, time.UTC)
+			currDate = endDate.AddDate(0, 0, -10)
+
+			period = 10
+		} else {
+			currDate = time.Date(payload.Start.Year(), payload.Start.Month(), payload.Start.Day(), 0, 0, 0, 0, time.UTC)
+			endDate = time.Date(payload.End.Year(), payload.End.Month(), payload.End.Day(), 0, 0, 0, 0, time.UTC)
+
+			period = int(endDate.Sub(currDate).Hours()/24) + 1
+		}
+
+		// tk.Printfn("PERIOD %v %v [%d days]", endDate, currDate, period)
+
+		if err != nil {
+			return res.SetError(err)
+		}
+		nextDate := endDate.AddDate(0, 0, 1)
+		pastDate := currDate.AddDate(0, 0, -period*(payload.Length-1))
+
+		pipe = append(pipe, tk.M{"$match": tk.M{
+			"info.updateTime": tk.M{
+				"$gte": pastDate,
+				"$lt":  nextDate,
+			},
+		}})
+		pipe = append(pipe, tk.M{"$group": tk.M{
+			"_id": tk.M{
+				"status": "$info.status",
+				"day":    tk.M{"$dayOfMonth": "$info.updateTime"},
+				"month":  tk.M{"$month": "$info.updateTime"},
+				"year":   tk.M{"$year": "$info.updateTime"},
+			},
+			"totalAmount": tk.M{"$sum": "$amount"},
+			"totalCount":  tk.M{"$sum": 1},
+		}})
+		pipe = append(pipe, tk.M{"$sort": tk.M{
+			"_id.year":  -1,
+			"_id.month": -1,
+			"_id.day":   -1,
+		}})
+		pipe = append(pipe, tk.M{"$group": tk.M{
+			"_id": tk.M{"status": "$_id.status"},
+			"data": tk.M{
+				"$push": tk.M{
+					"totalAmount": "$totalAmount",
+					"totalCount":  "$totalCount",
+					"idx": tk.M{
+						"$concat": []interface{}{
+							tk.M{"$substr": []interface{}{"$_id.year", 0, 4}},
+							"-",
+							tk.M{"$substr": []interface{}{"$_id.month", 0, 2}},
+							"-",
+							tk.M{"$substr": []interface{}{"$_id.day", 0, 2}},
+						},
+					},
+				},
+			},
+		}})
+	case "", "1month":
+		currDate = time.Date(payload.Start.Year(), payload.Start.Month(), 1, 0, 0, 0, 0, time.UTC)
+		if err != nil {
+			return res.SetError(err)
+		}
+		nextDate := currDate.AddDate(0, 1, 0)
+		pastDate := currDate.AddDate(0, 1-payload.Length, 0)
+
+		baseMonth := int(currDate.Month()) + currDate.Year()*12
+
+		pipe = append(pipe, tk.M{"$match": tk.M{
+			"info.updateTime": tk.M{
+				"$gte": pastDate,
+				"$lt":  nextDate,
+			},
+		}})
+		pipe = append(pipe, tk.M{"$group": tk.M{
+			"_id": tk.M{
+				"status": "$info.status",
+				"month":  tk.M{"$month": "$info.updateTime"},
+				"year":   tk.M{"$year": "$info.updateTime"},
+			},
+			"totalAmount": tk.M{"$sum": "$amount"},
+			"totalCount":  tk.M{"$sum": 1},
+		}})
+		pipe = append(pipe, tk.M{"$sort": tk.M{
+			"_id.year":  -1,
+			"_id.month": -1,
+		}})
+		pipe = append(pipe, tk.M{"$group": tk.M{
+			"_id": tk.M{"status": "$_id.status"},
+			"data": tk.M{
+				"$push": tk.M{
+					"totalAmount": "$totalAmount",
+					"totalCount":  "$totalCount",
+					"idx": tk.M{
+						"$abs": tk.M{
+							"$add": []interface{}{
+								"$_id.month",
+								tk.M{"$multiply": []interface{}{"$_id.year", 12}},
+								-baseMonth,
+							},
+						},
+					},
+				},
+			},
+		}})
+	case "1year":
+		currDate = time.Date(payload.Start.Year(), 4, 1, 0, 0, 0, 0, time.UTC)
+		if err != nil {
+			return res.SetError(err)
+		}
+		nextDate := currDate.AddDate(1, 0, 0)
+		pastDate := currDate.AddDate(1-payload.Length, 0, 0)
+
+		baseYear := currDate.Year()
+
+		pipe = append(pipe, tk.M{"$match": tk.M{
+			"info.updateTime": tk.M{
+				"$gte": pastDate,
+				"$lt":  nextDate,
+			},
+		}})
+		pipe = append(pipe, tk.M{"$group": tk.M{
+			"_id": tk.M{
+				"status": "$info.status",
+				"year": tk.M{
+					"$floor": tk.M{
+						"$divide": []interface{}{
+							tk.M{
+								"$add": []interface{}{
+									tk.M{"$month": "$info.updateTime"},
+									-4,
+									tk.M{
+										"$multiply": []interface{}{
+											tk.M{"$year": "$info.updateTime"},
+											12,
+										},
+									},
+								},
+							},
+							12,
+						},
+					},
+				},
+			},
+			"totalAmount": tk.M{"$sum": "$amount"},
+			"totalCount":  tk.M{"$sum": 1},
+		}})
+		pipe = append(pipe, tk.M{"$sort": tk.M{
+			"_id.year": -1,
+		}})
+		pipe = append(pipe, tk.M{"$group": tk.M{
+			"_id": tk.M{"status": "$_id.status"},
+			"data": tk.M{
+				"$push": tk.M{
+					"totalAmount": "$totalAmount",
+					"totalCount":  "$totalCount",
+					"idx": tk.M{
+						"$abs": tk.M{
+							"$add": []interface{}{
+								"$_id.year",
+								-baseYear,
+							},
+						},
+					},
+				},
+			},
+		}})
+	default:
+		return res.SetError(errors.New("Not Implemented"))
+	}
+
+	debug, _ := json.MarshalIndent(pipe, "", "  ")
+	tk.Printfn("PIPE Summary\n%s", debug)
 
 	csr, err := c.Ctx.Connection.
 		NewQuery().
@@ -426,8 +571,7 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	// dbdata := []struct {
 	// 	ID   string `json:"_id"`
 	// 	Data []struct {
-	// 		Month       int     `json:"month"`
-	// 		Year        int     `json:"year"`
+	//		Idx         int     `json:"idx"`
 	// 		TotalAmount float64 `json:"totalAmount"`
 	// 		TotalCount  float64 `json:"totalCount"`
 	// 	} `json:"data"`
@@ -435,6 +579,32 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	dbdata := []tk.M{}
 	if err := csr.Fetch(&dbdata, 0, false); err != nil {
 		return res.SetError(err)
+	}
+
+	if payload.Type == "fromtill" || payload.Type == "10day" {
+		// Manual grouping for fromtill and 10days
+		for _, data := range dbdata {
+			series := data["data"].([]interface{})
+			newseries := make([]SummaryResult, payload.Length+1)
+			for k := range newseries {
+				newseries[k].Idx = k
+			}
+			for _, v := range series {
+				val := v.(tk.M)
+				date, err := time.Parse("2006-1-2", val.GetString("idx"))
+				if err != nil {
+					return res.SetError(err)
+				}
+				idx := int(endDate.Sub(date).Hours()) / 24 / period
+				// tk.Printfn("IDX TRANSFORMATION %v %d", date, idx)
+
+				newseries[idx].Idx = idx
+				newseries[idx].TotalAmount = newseries[idx].TotalAmount + val.GetFloat64("totalAmount")
+				newseries[idx].TotalCount = newseries[idx].TotalCount + val.GetFloat64("totalCount")
+			}
+
+			data["data"] = newseries
+		}
 	}
 
 	res.SetData(dbdata)
@@ -932,9 +1102,9 @@ func GenerateRoleConditionTkM(k *knot.WebContext) ([]tk.M, error) {
 				dbFilterTemp = append(dbFilterTemp, tk.M{"$and": []tk.M{tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$gte": var1}}, tk.M{"accountdetails.loandetails.proposedloanamount": tk.M{"$lte": var2}}}})
 			}
 		}
-		tk.Printf("--------- DV %v ----------- \n", Dv)
-		tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
-		tk.Printf("--------- USERID %v ----------- \n", userid)
+		// tk.Printf("--------- DV %v ----------- \n", Dv)
+		// tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
+		// tk.Printf("--------- USERID %v ----------- \n", userid)
 		switch strings.ToUpper(Type) {
 		case "CA":
 			dbFilterTemp = append(dbFilterTemp, tk.M{"accountdetails.accountsetupdetails.CreditAnalystId": tk.M{"$eq": userid}})

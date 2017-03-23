@@ -2,7 +2,9 @@
 alertSum = {}
 
 alertSum.height = function(){
-    var myHeight = ($(window).height() - 90)/3
+    var myHeight = ($(window).height() - 90) / 3
+    if (myHeight < 230)
+        return 230;
     return myHeight;
 }
 
@@ -25,11 +27,6 @@ alertSum.titleText = ko.computed(function () {
     case "fromtill":
         return start.format("DD MMM YYYY") + " - " + end.format("DD MMM YYYY")
     }
-})
-
-alertSum.trendMonth = ko.observable(moment().format('MMMM YYYY'));
-alertSum.trendMonth.subscribe(function () {
-    alertSum.trendDataAjaxRefresh()
 })
 
 // Hook to filter value changes
@@ -74,20 +71,15 @@ alertSum.trendDataSeries = ko.observableArray([]);
 alertSum.trendDataCurrent = ko.observable();
 
 alertSum.prepareTrendData = function (data, start, length) {
-    var cur = moment(start)
-    cur.add(1, 'months')
-
     var ret = []
-    _.times(length, function() {
-        cur.subtract(1, 'months')
+    _.times(length, function(idx) {
         var obj = _.find(data, function(val) {
-            return val.year == cur.year() && val.month == (cur.month() + 1)
+            return val.idx == idx
         })
 
         if (typeof(obj) == "undefined") {
             ret.push({
-                month: cur.month(),
-                year: cur.year(),
+                idx: idx,
                 totalAmount: 0,
                 totalCount: 0
             })
@@ -96,13 +88,13 @@ alertSum.prepareTrendData = function (data, start, length) {
         }
 
         ret.push({
-            month: cur.month(),
-            year: cur.year(),
+            idx: obj.idx,
             // convert to CR
             totalAmount: obj.totalAmount / 10000000,
             totalCount: obj.totalCount
         })
     })
+
     return ret
 }
 
@@ -126,8 +118,8 @@ alertSum.mergeTrendData = function(data) {
 }
 
 alertSum.generateXAxis = function (type, start, end, length) {
-    var cur = moment(start)
-    var till = moment(end)
+    var cur = moment(alertSum.DiscardTimezone(start))
+    var till = moment(alertSum.DiscardTimezone(end))
     var ret = []
 
     switch (type) {
@@ -148,26 +140,43 @@ alertSum.generateXAxis = function (type, start, end, length) {
         })
         break;
     case "fromtill":
+        var days = till.diff(cur, "days") + 1
+
+        _.times(length, function() {
+            ret.push(
+                cur.format('DD/MM') + " - " + till.format('DD/MM')
+            );
+            cur.subtract(days, "days")
+            till.subtract(days, "days")
+        })
+        break;
     case "10day":
-        _.times(length, function(idx) {
-            ret.push("" + idx);
+        _.times(length, function() {
+            ret.push(
+                cur.format('DD/MM/YY') + " - " + cur.clone().subtract(10, "days").format('DD/MM/YY')
+            );
+            cur.subtract(10, "days")
         })
         break;
     default:
-        _.times(length, function(idx) {
+        _.times(length, function() {
             ret.push("");
         })
         break;
     }
 
-
     return ret
+}
+
+alertSum.DiscardTimezone = function(date) {
+    var newdate = moment(date)
+    return newdate.format("YYYY-MM-DDT00:00:00") + "Z"
 }
 
 alertSum.trendDataAjaxRefresh = function() {
     var len = alertSum.trendDataLength();
-    var start = dash.FilterValue.GetVal("TimePeriodCalendar")
-    var end = dash.FilterValue.GetVal("TimePeriodCalendar2")
+    var start = alertSum.DiscardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = alertSum.DiscardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2"))
     var type = dash.FilterValue.GetVal("TimePeriod")
 
     $.ajax("/dashboard/summarytrends", {

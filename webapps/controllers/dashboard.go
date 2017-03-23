@@ -720,6 +720,20 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
+	ids, err := FiltersAD2DealNo(
+		k.Session("CustomerProfileData").([]tk.M),
+		CheckArray(payload.Get("filter")),
+	)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	// arrInt := []interface{}{}
+
+	// for _, val := range arrInt {
+	// 	arrInt = append(arrInt, val)
+	// }
+
 	groupBy := payload.GetString("groupby")
 	regionName := payload.GetString("regionname")
 	timeStatus := payload.GetString("timestatus")
@@ -739,8 +753,17 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	Fwh := tk.M{}.Set("$and", whRoles)
-	pipe = append(pipe, tk.M{}.Set("$match", Fwh))
+	Fwh := tk.M{}.Set("$or", whRoles)
+	FwhX := tk.M{
+		"$and": []tk.M{
+			Fwh,
+			tk.M{"customerprofile.applicantdetail.DealNo": tk.M{
+				"$in": ids,
+			},
+			},
+		},
+	}
+	pipe = append(pipe, tk.M{}.Set("$match", FwhX))
 
 	projfirst := tk.M{}
 	projfirst.Set("laststatus", tk.M{"$arrayElemAt": []interface{}{"$info.myInfo.status", -1}})
@@ -790,7 +813,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	}
 	defer csr.Close()
 
-	// tk.Println(pipe)
+	tk.Println(pipe)
 
 	results := []tk.M{}
 	err = csr.Fetch(&results, 0, false)
@@ -798,7 +821,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	// tk.Println("Result ---------+", results)
+	tk.Println("Result ---------+", results)
 
 	period := tk.M{}
 	period.Set(Inque, []int{-5, -4, 0})

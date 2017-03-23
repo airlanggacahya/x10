@@ -3,7 +3,7 @@ var dash = {}
 function fetchAllDS() {
 	var defer = $.Deferred();
 
-	$.ajax("/databrowser/getcombineddata", {
+	$.ajax("/databrowser/getcombineddatanew", {
 		success: function(body) {
 			dash.MasterDS(body.data);
 			defer.resolve();

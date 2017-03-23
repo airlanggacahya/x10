@@ -142,8 +142,6 @@ alertSum.generateXAxis = function (type, start, end, length) {
     case "fromtill":
         var days = till.diff(cur, "days") + 1
 
-        console.log(days)
-
         _.times(length, function() {
             ret.push(
                 cur.format('DD/MM') + " - " + till.format('DD/MM')

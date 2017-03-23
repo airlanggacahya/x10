@@ -317,7 +317,13 @@ dash.initDashVal("Branch", BRANCH, [])
 dash.initDashVal("Product", PRODUCT, [])
 dash.initDashVal("Scheme", SCHEME, [])
 dash.initDashVal("ClientType", CLIENTTYPE, [])
-dash.initDashVal("ClientTurnover", undefined, [])
+dash.initDashVal("ClientTurnover", undefined, [
+	{text: '5cr - 10cr', value:'> 50000000 <= 100000000'},
+	{text: '10cr - 25cr', value:'> 100000000 <= 250000000'},
+	{text: '25cr - 50cr', value:'> 250000000 <= 500000000'},
+	{text: '50cr - 100cr', value:'> 500000000 <= 1000000000'},
+	{text: '> 100cr', value:'> 1000000000'},
+])
 dash.initDashVal("Customer", CUSTOMER, [])
 dash.initDashVal("DealNo", DEALNO, [])
 dash.initDashVal("IR", IR, [
@@ -345,6 +351,23 @@ dash.TimePeriodVal.subscribe(function (val) {
 		dash.TimePeriodCalendar2Val(moment().toDate())
 	}
 })
+dash.TimePeriodCalendarVal.subscribe(function (val) {
+	var a = cleanMoment(dash.TimePeriodCalendarVal());
+	var b = cleanMoment(dash.TimePeriodCalendar2Val());
+
+	if (a.isAfter(b)) {
+		dash.TimePeriodCalendar2Val(a);
+	}
+})
+
+function discardTimezone(date) {
+    var newdate = moment(date)
+    return newdate.format("YYYY-MM-DDT00:00:00") + "Z"
+}
+
+function cleanMoment(date) {
+	return moment(discardTimezone(date))
+}
 
 // TimePeriodCalendar
 dash.TimePeriodCalendarValFormat = ko.computed(function () {

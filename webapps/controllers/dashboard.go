@@ -1327,7 +1327,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 
 	groupByDateClon := groupByDate
 
-	for i := -6; i < 0; i++ {
+	for i := -7; i < 0; i++ {
 		groupByDates = append(groupByDates, groupByDateClon.AddDate(0, i, 0))
 	}
 
@@ -1349,7 +1349,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	}
 
 	// tk.Println(groupByDate, "-------DATE")
-	whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gte("info.myInfo.updateTime", groupByDate.AddDate(0, -6, 0))))
+	whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gte("info.myInfo.updateTime", groupByDate.AddDate(0, -7, 0))))
 
 	query := cn.NewQuery().
 		From("DealSetup").

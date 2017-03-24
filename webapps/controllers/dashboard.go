@@ -337,7 +337,7 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	}
 
 	ids, err := FiltersAD2DealNo(
-		k.Session("CustomerProfileData").([]tk.M),
+		nil,
 		payload.Filter,
 	)
 	if err != nil {
@@ -891,7 +891,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	}
 
 	ids, err := FiltersAD2DealNo(
-		k.Session("CustomerProfileData").([]tk.M),
+		nil,
 		CheckArray(payload.Get("filter")),
 	)
 	if err != nil {

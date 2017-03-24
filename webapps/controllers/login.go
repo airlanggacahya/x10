@@ -4,6 +4,7 @@ import (
 	. "eaciit/x10/webapps/connection"
 	"eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
+	"errors"
 	"strings"
 	"time"
 
@@ -26,6 +27,62 @@ func (c *LoginController) Default(k *knot.WebContext) interface{} {
 	return ""
 }
 
+func loginError(message string) interface{} {
+	return tk.M{}.Set("Valid", false).Set("Message", message)
+}
+
+func (c *LoginController) loadUserSessionData(k *knot.WebContext, resUser NewUser) error {
+	resroles := make([]SysRolesModel, 0)
+	wh := []*db.Filter{}
+
+	for _, valx := range resUser.Catrole {
+		wh = append(wh, db.And(db.Eq("name", valx), db.Eq("status", true)))
+	}
+
+	//resroles := make([]SysRolesModel, 0)
+	crsR, errR := c.Ctx.Find(new(SysRolesModel), tk.M{}.Set("where", db.Or(wh...)))
+	if errR != nil {
+		return errR
+	}
+	errR = crsR.Fetch(&resroles, 0, false)
+	if errR != nil {
+		return errR
+	}
+	defer crsR.Close()
+
+	if len(resroles) == 0 {
+		return errors.New("Your Role is Inactive")
+	}
+
+	//Get Customer
+	k.SetSession("CustomerProfileData", nil)
+	for _, valx := range resroles {
+		if valx.Status {
+			c.GetListUsersByRole(k, valx, resUser.Userid)
+		}
+	}
+
+	k.SetSession("userid", resUser.Id)
+	k.SetSession("username", resUser.Userid)
+	k.SetSession("fullname", resUser.Username)
+	k.SetSession("usermodel", resUser)
+	k.SetSession("roles", resroles)
+	k.SetSession("rolesid", resroles[0].Id.Hex())
+	k.SetSession("stime", time.Now())
+
+	isCustomRole := false
+
+	for _, valx := range resroles {
+		if strings.ToUpper(valx.Roletype) == "CUSTOM" {
+			isCustomRole = true
+			break
+		}
+	}
+	k.SetSession("isCustomRole", isCustomRole)
+
+	return nil
+}
+
 func (c *LoginController) Do(k *knot.WebContext) interface{} {
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputJson
@@ -34,104 +91,61 @@ func (c *LoginController) Do(k *knot.WebContext) interface{} {
 		Password   string
 		RememberMe bool
 	}{}
-	message := ""
-	isValid := false
 	err := k.GetPayload(&formData)
 	if err != nil {
-		c.WriteLog(err)
-		message = "Backend Error " + err.Error()
+		return loginError("Payload Error")
 	}
+
 	q := tk.M{}.Set("where", db.Eq("userid", formData.UserName))
 	cur, err := c.Ctx.Find(new(NewUser), q)
 	if err != nil {
-		return tk.M{}.Set("Valid", false).Set("Message", err.Error())
+		return loginError(err.Error())
 	}
 	res := make([]NewUser, 0)
-	resroles := make([]SysRolesModel, 0)
-	resurl := []tk.M{}
-	//	defer c.Ctx.Close()
 	defer cur.Close()
 	err = cur.Fetch(&res, 0, false)
 	if err != nil {
-		return tk.M{}.Set("Valid", false).Set("Message", err.Error())
+		return loginError(err.Error())
 	}
-	if len(res) > 0 {
-		resUser := res[0]
-		if helper.GetMD5Hash(formData.Password) == resUser.Catpassword {
-			if resUser.Catstatus == "Enable" {
-				wh := []*db.Filter{}
 
-				for _, valx := range resUser.Catrole {
-					wh = append(wh, db.And(db.Eq("name", valx), db.Eq("status", true)))
-				}
-
-				//resroles := make([]SysRolesModel, 0)
-				crsR, errR := c.Ctx.Find(new(SysRolesModel), tk.M{}.Set("where", db.Or(wh...)))
-				if errR != nil {
-					return c.SetResultInfo(true, errR.Error(), nil)
-				}
-				errR = crsR.Fetch(&resroles, 0, false)
-				if errR != nil {
-					return c.SetResultInfo(true, errR.Error(), nil)
-				}
-				defer crsR.Close()
-
-				if len(resroles) == 0 {
-					return tk.M{}.Set("Valid", false).Set("Message", "Your Role is Inactive")
-
-				}
-
-				//Get Customer
-				k.SetSession("CustomerProfileData", nil)
-				for _, valx := range resroles {
-					if valx.Status {
-						c.GetListUsersByRole(k, valx, resUser.Userid)
-					}
-				}
-
-				k.SetSession("userid", resUser.Id)
-				k.SetSession("username", resUser.Userid)
-				k.SetSession("fullname", resUser.Username)
-				k.SetSession("usermodel", resUser)
-				k.SetSession("roles", resroles)
-				k.SetSession("rolesid", resroles[0].Id.Hex())
-				k.SetSession("stime", time.Now())
-
-				isCustomRole := false
-
-				for _, valx := range resroles {
-					if strings.ToUpper(valx.Roletype) == "CUSTOM" {
-						isCustomRole = true
-						break
-					}
-				}
-				k.SetSession("isCustomRole", isCustomRole)
-
-				isValid = true
-
-				cursor, e := c.Ctx.Connection.NewQuery().Select().From("TopMenu").Where(db.Eq("Title", resroles[0].Landing)).Cursor(nil)
-				if e != nil {
-					return c.SetResultInfo(true, e.Error(), nil)
-				}
-
-				e = cursor.Fetch(&resurl, 0, false)
-				defer cursor.Close()
-
-			} else {
-				//c.InsertActivityLog("Login", "Login DISABLED", k)
-				message = "Your account is disabled, please contact administrator to enable it."
-			}
-		} else {
-			//c.InsertActivityLog("Login", "Login FAILED", k)
-			message = "Invalid Username or password!"
-		}
-	} else {
-
-		//c.InsertActivityLog("Login", "Login FAILED", k)
-		return "Invalid Username or password!"
+	if len(res) == 0 {
+		return loginError("Invalid Username or password!")
 	}
-	//c.InsertActivityLog("Login", "Login", k)
-	return tk.M{}.Set("Valid", isValid).Set("Message", message).Set("Roles", resurl)
+
+	resUser := res[0]
+	if helper.GetMD5Hash(formData.Password) != resUser.Catpassword {
+		return loginError("Invalid Username or password!")
+	}
+
+	if resUser.Catstatus != "Enable" {
+		return loginError("Your account is disabled, please contact administrator to enable it.")
+	}
+
+	err = c.loadUserSessionData(k, resUser)
+	if err != nil {
+		return loginError(err.Error())
+	}
+
+	cursor, err := c.Ctx.Connection.
+		NewQuery().
+		Select().
+		From("TopMenu").
+		Where(
+			db.Eq(
+				"Title",
+				k.Session("roles").([]SysRolesModel)[0].Landing),
+		).
+		Cursor(nil)
+
+	if err != nil {
+		return loginError(err.Error())
+	}
+
+	resurl := []tk.M{}
+	err = cursor.Fetch(&resurl, 0, false)
+	defer cursor.Close()
+
+	return tk.M{}.Set("Valid", true).Set("Message", "").Set("Roles", resurl)
 }
 
 func (b *LoginController) SessionCheckTimeOut(k *knot.WebContext) interface{} {

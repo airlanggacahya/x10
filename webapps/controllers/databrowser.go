@@ -422,6 +422,21 @@ func AttachCreditScoreCard(conn dbox.IConnection, val tk.M) {
 	val["_creditscorecard"] = resProfile[0]
 }
 
+func AttachBranchDetailNew(branch map[string]tk.M, val tk.M) {
+	// tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
+	branchid, ok := TkWalk(val, "_accountdetails.accountsetupdetails.cityname").(string)
+	if !ok {
+		return
+	}
+
+	br, ok := branch[branchid]
+	if !ok {
+		return
+	}
+
+	val["_branch"] = br
+}
+
 func AttachBranchDetail(branch map[string]tk.M, val tk.M) {
 	// tk.Printfn("%d|%s", val["customer_id"], val["deal_no"])
 	branchid, ok := TkWalk(val, "_profile.applicantdetail.registeredaddress.CityRegistered").(string)
@@ -481,6 +496,98 @@ func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} 
 		AttachCustomerProfile(conn, val)
 		AttachAccountDetail(conn, val)
 		AttachBranchDetail(branch, val)
+		AttachCreditScoreCard(conn, val)
+	}
+
+	return CreateResult(true, resCust, "")
+}
+
+func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	conn, err := GetConnection()
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+	defer conn.Close()
+
+	resCust := []tk.M{}
+
+	dbf, err := GenerateRoleCondition(k)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	keys := []*dbox.Filter{}
+
+	keys = append(keys, dbox.Or(dbf...))
+
+	query1 := conn.NewQuery().
+		From("DealSetup")
+
+	if len(keys) > 0 {
+		query1 = query1.Where(dbox.And(keys...))
+	}
+
+	csr, err := query1.Cursor(nil)
+
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+	defer csr.Close()
+
+	results1 := make([]tk.M, 0)
+	err = csr.Fetch(&results1, 0, false)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	for _, val := range results1 {
+		appdet := tk.M{}
+		appdet.Set("CustomerID", TkWalk(val, "customerprofile.applicantdetail.CustomerID").(int))
+		appdet.Set("customer_id", TkWalk(val, "customerprofile.applicantdetail.CustomerID").(int))
+		appdet.Set("CustomerName", TkWalk(val, "customerprofile.applicantdetail.CustomerName").(string))
+		appdet.Set("customer_name", TkWalk(val, "customerprofile.applicantdetail.CustomerName").(string))
+		appdet.Set("DealNo", TkWalk(val, "customerprofile.applicantdetail.DealNo").(string))
+		appdet.Set("deal_no", TkWalk(val, "customerprofile.applicantdetail.DealNo").(string))
+		appdet.Set("_profile", TkWalk(val, "customerprofile").(tk.M))
+		appdet.Set("_accountdetails", TkWalk(val, "accountdetails").(tk.M))
+		resCust = append(resCust, appdet)
+	}
+
+	// Filter based on ID
+	// if k.Session("CustomerProfileData") != nil {
+	// 	arrSes := k.Session("CustomerProfileData").([]tk.M)
+	// 	for _, val := range arrSes {
+	// 		appdet := val.Get("applicantdetail").(tk.M)
+	// 		appdet.Set("customer_id", cast.ToInt(appdet.GetString("CustomerID"), cast.RoundingAuto))
+	// 		appdet.Set("deal_no", appdet.GetString("DealNo"))
+	// 		appdet.Set("customer_name", appdet.GetString("CustomerName"))
+	// 		resCust = append(resCust, appdet)
+	// 	}
+	// }
+
+	// Fetch branch data
+	acc, err := models.GetMasterAccountDetailv2()
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	}
+
+	branch := make(map[string]tk.M)
+	if br, found := acc["Branch"]; found {
+		for _, briter := range br.([]tk.M) {
+			key := briter.GetString("name")
+			branch[key] = briter
+		}
+	} else {
+		return CreateResult(false, nil, "Master Omnifin Branch Not Found")
+	}
+
+	// Combine
+	for _, val := range resCust {
+		// AttachCustomerProfile(conn, val)
+		// AttachAccountDetail(conn, val)
+		AttachBranchDetailNew(branch, val)
 		AttachCreditScoreCard(conn, val)
 	}
 

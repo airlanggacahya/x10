@@ -108,7 +108,8 @@
                 <span class="calendar-label" data-bind="text: dash.TimePeriodCalendar2ValFormat"></span>
                 <input data-bind="
                   kendoDatePicker: {
-                    value: dash.TimePeriodCalendar2Val
+                    value: dash.TimePeriodCalendar2Val,
+                    min: dash.TimePeriodCalendarVal,
                   }" id="timeperiodCalendar2" style="width: 84%">
               </div>
             </div>
@@ -181,7 +182,7 @@
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.SchemeDS,
-                  value: dash.schemeVal,
+                  value: dash.SchemeVal,
                   optionLabel: 'Select One',
                   dataValueField: 'value',
                   dataTextField: 'text',
@@ -280,7 +281,7 @@
                 }" ></select>
             </div>
           </div>
-          <div class="form-group fg" data-bind="visible: dash.StatusShowMe">
+         <!--  <div class="form-group fg" data-bind="visible: dash.StatusShowMe">
             <label class="cnt">Status</label>
             <div>
               <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.StatusShowMe.bind(dash, false)"></span>
@@ -294,7 +295,7 @@
                   filter:'contains'
                 }" ></select>
             </div>
-          </div>
+          </div> -->
           <div class="form-group fg" data-bind="visible: dash.CAShowMe">
             <label class="cnt">CA &nbsp;</label>
             <div>

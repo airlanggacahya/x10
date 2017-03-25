@@ -594,10 +594,10 @@ func filterBool(path string, val string) []toolkit.M {
 	return []toolkit.M{}
 }
 
-var irRegex = regexp.MustCompile(`^\s*((?:>|=|<)=?)\s*(-?[0-9]+(?:\.[0-9]*)?)\s*`)
+var formulaRegex = regexp.MustCompile(`^\s*((?:>|=|<)=?)\s*(-?[0-9]+(?:\.[0-9]*)?)\s*`)
 
-func filterIr(path string, val string) []toolkit.M {
-	reg := irRegex.Copy()
+func filterFormula(path string, val string) []toolkit.M {
+	reg := formulaRegex.Copy()
 	ret := []toolkit.M{}
 
 	for {
@@ -772,24 +772,26 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	pipe := []toolkit.M{}
 	// Filter stage 1
 	field := map[string]filterMap{
-		"Product":    {"accountsetupdetails.product", filterEqual},
-		"Scheme":     {"accountsetupdetails.scheme", filterEqual},
-		"CA":         {"accountsetupdetails.creditanalyst", filterEqual},
-		"RM":         {"accountsetupdetails.rmname", filterEqual},
-		"ClientType": {"loandetails.ifexistingcustomer", filterBool},
+		"Product":    {"accountdetails.accountsetupdetails.product", filterEqual},
+		"Scheme":     {"accountdetails.accountsetupdetails.scheme", filterEqual},
+		"CA":         {"accountdetails.accountsetupdetails.creditanalyst", filterEqual},
+		"RM":         {"accountdetails.accountsetupdetails.rmname", filterEqual},
+		"ClientType": {"accountdetails.loandetails.ifexistingcustomer", filterBool},
+		"DealNo":     {"accountdetails.dealno", filterEqual},
+		"Customer":   {"accountdetails.customerid", filterEqual},
 	}
-	dealnolist := GetDealNoList(ids)
+	// dealnolist := GetDealNoList(ids)
 	match := compileFilter(field, filter)
-	match = append(match, toolkit.M{
-		"dealno": toolkit.M{
-			"$in": dealnolist,
-		},
-	})
+	// match = append(match, toolkit.M{
+	// 	"dealno": toolkit.M{
+	// 		"$in": dealnolist,
+	// 	},
+	// })
 	pipe = append(pipe, wrapMatch(match))
 	// Join Credit Score Card
 	pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
 		"from":         "CreditScorecard",
-		"localField":   "dealno",
+		"localField":   "accountdetails.dealno",
 		"foreignField": "DealNo",
 		"as":           "_creditscorecard",
 	}})
@@ -800,13 +802,14 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	// Join CustomerProfile, for region and branch filtering
 	pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
 		"from":         "CustomerProfile",
-		"localField":   "dealno",
+		"localField":   "accountdetails.dealno",
 		"foreignField": "applicantdetail.DealNo",
 		"as":           "_profile",
 	}})
 	// Match stage 2
 	field = map[string]filterMap{
-		"IR": {"_creditscorecard.FinalScoreDob", filterIr},
+		"IR":             {"_creditscorecard.FinalScoreDob", filterFormula},
+		"ClientTurnover": {"_profile.applicantdetail.AnnualTurnOver", filterFormula},
 	}
 	match = compileFilter(field, filter)
 	// data filtered branch and region
@@ -816,20 +819,20 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	}
 	if branches != nil {
 		match = append(match, toolkit.M{
-			"_profile.applicantdetail.registeredaddress.CityRegistered": toolkit.M{
+			"accountdetails.accountsetupdetails.cityname": toolkit.M{
 				"$in": branches,
 			},
 		})
 	}
 	pipe = append(pipe, wrapMatch(match))
 
-	debug, _ := json.Marshal(pipe)
-	toolkit.Printfn("PIPE\n%s", debug)
+	debug, _ := json.MarshalIndent(pipe, "", "  ")
+	toolkit.Printfn("PIPEX\n%s", debug)
 
 	csr, err := conn.
 		NewQuery().
 		Command("pipe", pipe).
-		From("AccountDetails").
+		From("DealSetup").
 		Cursor(nil)
 	if err != nil {
 		return nil, err
@@ -841,6 +844,8 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	toolkit.Println("RESULTX", result)
 
 	return result, err
 }
@@ -854,7 +859,7 @@ func FiltersAD2DealNo(ids, filter []toolkit.M) ([]string, error) {
 
 	ret := []string{}
 	for _, val := range result {
-		ret = append(ret, val.GetString("dealno"))
+		ret = append(ret, hp.TkWalk(val, "accountdetails.dealno").(string))
 	}
 
 	return ret, nil

@@ -224,8 +224,16 @@ ttrack.loadDataStages = function(d){
 
 
 ttrack.getData = function(){
+    var start = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+    var type = dash.FilterValue.GetVal("TimePeriod")
+
     var param = {
+        type: type,
+        start: start,
+        end: end,
         groupby: ttrack.trackingValue(),
+        filter: dash.FilterValue()
     }
 	ajaxPost("/dashboard/timetracker", param,function(res){
 		   ttrack.renderChart(res.Data)
@@ -368,6 +376,12 @@ ttrack.accordion = function(){
 
 
 $(document).ready(function(){
-	ttrack.getData();
+	// ttrack.getData();
     ttrack.accordion();
+})
+
+
+// Hook to filter value changes
+dash.FilterValue.subscribe(function (val) {
+    ttrack.getData();
 })

@@ -1,10 +1,13 @@
 {{template "dataaccess.html" .}}
 <script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 <script>document.write('<script src="/static/core/turnaroundtime.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+<!-- <script type="text/javascript" src="/static/material/dist/ripple.min.js"></script> -->
 {{template "leftfilter.html"}}
+
+<link rel="stylesheet" href="/static/material/dist/ripple.min.css" />
 <style type="text/css">
 	.top{
-		margin-top: 45px;
+		margin-top: 26px;
 	}
 	.left{
 		text-align: left;
@@ -30,22 +33,210 @@
 	#square4{
 		background-color: #2e75b6;
 	}
+	#butt{
+		/*padding-left: 24%;*/
+		padding-top: 2%;
+	}
+	.dl{
+		cursor: pointer;
+		display:block;
+		background-color: white;
+		margin-top: 0px !important;
+	}
+	.dl:hover{
+		background-color: rgba(0,0,0,0.1);
+		border: 3px solid #2f528f;
+	}
+
+	.active{
+		/*background-color: rgba(0,0,0,0.1);*/
+		border: 3px solid #2f528f;
+	}
+	.wl{
+		padding-left: 10px !important;
+    	padding-right: 0px !important;
+	}
+	#ti{
+		font-family: Arial,Helvetica,sans-serif;
+	    font-size: 10px;
+	    font-weight: bold !important;
+	    margin-top: 12px;
+    	margin-left: 17px;
+	}
+	.avg{
+		text-align: center;
+	    font-size: 30px;
+	    font-weight: bolder !important;
+	}
+	#conv, #dec, #proc, #acc{
+		text-align: center;
+    	color: green;
+    	margin-top: -11px;
+	}
+	.material-ripple>.panel {
+		position: relative;
+		display: block;
+	}
+	.con{
+		margin-top: 0px !important;
+		background-color: white;
+	}
+	#tit{
+		font-size: 12px;
+		font-family: Arial,Helvetica,Sans-Serif;
+		font-weight: bold !important;
+	}
+	.aol{
+		background-color: white;
+		margin-top: -1% !important;
+	}
+	.aul{
+		margin-top:-0.5% !important;
+	}
+
 </style>
 <div class="col-md-12 top">
-	<div class="col-md-12">
-		<div class="col-md-6">
-			<div id="movingtat"></div>
+	<!-- <div class="col-md-6">
+		<div class="col-md-3">
+			<input type="text" data-bind="kendoDatePicker:{value: turn.ValueDatePeriod, start: 'year', depth: 'year', format: 'MMM-yyyy' }" placeholder="Select Period">
 		</div>
-		<div class="col-md-6">
-			<div id="historytat"></div>
+		<div class="col-md-3">
+			<select data-bind="kendoDropDownList: {data: turn.dataPeriod(), value: turn.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}" style="width: 100%;"></select>
+		</div>
+	</div> -->
+	<div class="col-md-12">
+		<!-- <div class="col-sm-2"></div> -->
+		<div class="col-sm-12" style="width: 122%;margin-left: -1.5%;">
+			<div id="butt">
+				<div class="col-sm-2 wl">
+					<div class="panel panel-body material-ripple dl active" style="height: 242px">
+						<h4 style="text-align: center;">TAT Target</h4>
+						<center><div id="tatgoals"></div></center>
+					</div>
+				</div>
+				<div class="col-sm-2 wl ">
+					<div class="panel panel-body dl material-ripple">
+						<h4 style="text-align: center;">Average Conversion TAT</h4>
+						<div class="avg" data-bind="text: turn.averageConversion">10</div>
+						<div id="conv"><span class="fa fa-arrow-up"></span> 10</div>
+						<div id="action"></div>
+						<div class="col-sm-12" style="margin-top: -10px;">
+							<div class="col-sm-6">
+								<p>Deal Count<br>
+								<span>10</span> <span class="fa fa-arrow-up"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2 wl">
+					<div class="panel panel-body dl material-ripple">
+						<h4 style="text-align: center;">Average Decision TAT</h4>
+						<div class="avg" data-bind="text: turn.averageDecision">10</div>
+						<div id="dec"><span class="fa fa-arrow-up"></span> 10</div>
+						<div id="decision"></div>
+						<div style="margin-top: -10px;">
+							<div class="col-sm-6">
+								<p>Deal Count<br>
+								<span>10</span> <span class="fa fa-arrow-up"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2 wl">
+					<div class="panel panel-body dl material-ripple">
+						<h4 style="text-align: center;">Average Processing TAT</h4>
+						<div class="avg" data-bind="text: turn.averageProcessing">10</div>
+						<div id="proc"><span class="fa fa-arrow-up"></span> 10</div>
+						<div id="processing"></div>
+						<div class="col-sm-12" style="margin-top: -10px;">
+							<div class="col-sm-6">
+								<p>Deal Count<br>
+								<span>10</span> <span class="fa fa-arrow-up"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-2 wl">
+					<div class="panel panel-body dl material-ripple">
+						<h4 style="text-align: center;">Average Acceptance TAT</h4>
+						<div class="avg" data-bind="text: turn.averageAcceptance">10</div>
+						<div id="acc"><span class="fa fa-arrow-up"></span> 10</div>
+						<div id="acceptance"></div>
+						<div class="col-sm-12" style="margin-top: -10px;">
+							<div class="col-sm-6">
+								<p>Deal Count<br>
+								<span>10</span> <span class="fa fa-arrow-up"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- <div class="col-sm-2 wl">
+					<div class="panel panel-body z-depth-2 dl material-ripple">
+						<div id="total"></div>
+					</div>
+				</div> -->
+			</div>
+		</div>
+		<!-- <div class="col-sm-2"></div> -->
+		<div class="col-md-12 panel" style="background-color: white; margin-top: -0.5%">
+			<div class="panel panel-body con">
+				<div class="panel-heading">
+					<div class="col-md-12">
+						<div class="col-sm-6" id="tit">Average Conversion TAT</div>
+						<div class="col-sm-6">
+							<div class="col-md-12">
+								<div class="col-md-8" style="float: right;margin-right: -30%;">
+									<div class="form-group">
+										<div class="col-md-3">
+											<label style="margin-top: 5px;">View Accros</label>
+										</div>
+										<div class="col-sm-5">
+											<select data-bind="kendoDropDownList: {data: turn.dataPeriod(), value: turn.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}" style="width: 100%;"></select>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+				<div id="chartContainer"></div>
+			</div>
 		</div>
 	</div>
-	<center>
-		<div class="col-md-12" style="display: inline;">
-			<span id="square1"></span> 15 + Days &nbsp
-			<span id="square2"></span> 11 - 15 Days &nbsp
-			<span id="square3"></span> 6 - 10 Days &nbsp
-			<span id="square4"></span> 0 - 5 Days &nbsp
-	</center>
 	
+	<div>
+		<div class="col-md-6">
+			<div class="panel panel-body aol">
+				<div id="movingtat"></div>
+				<center>
+					<div class="col-md-12" style="display: inline;">
+						<span id="square1"></span> 15 + Days &nbsp
+						<span id="square2"></span> 11 - 15 Days &nbsp
+						<span id="square3"></span> 6 - 10 Days &nbsp
+						<span id="square4"></span> 0 - 5 Days &nbsp
+					</div>
+				</center>	
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-body aol">
+				<div id="historytat"></div>
+				<center>
+					<div class="col-md-12" style="display: inline;">
+						<span id="square1"></span> 15 + Days &nbsp
+						<span id="square2"></span> 11 - 15 Days &nbsp
+						<span id="square3"></span> 6 - 10 Days &nbsp
+						<span id="square4"></span> 0 - 5 Days &nbsp
+					</div>
+				</center>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="panel panel-body aul">
+			<div class="cater"></div>
+		</div>
+	</div>
 </div>
+<script>document.write('<script src="/static/material/dist/ripple.min.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>

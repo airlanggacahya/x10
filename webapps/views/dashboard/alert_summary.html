@@ -61,6 +61,45 @@
         font-weight: bold;
         margin-top: 1px;
     }
+    .line{
+        margin-top: 6px;
+        margin-bottom: 20px;
+        border: 1px solid #dbdbdb;
+        border-top: 1px solid #eee;
+    }
+    .pane{
+        margin-top: 0px !important;
+        padding: 0px !important;
+    }
+    .thumb-down{
+        -moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        transform: scaleX(-1);
+        -ms-filter: fliph; /*IE*/
+        filter: fliph; /*IE*/
+        margin-left: 12px;
+        margin-top: 11px;
+    }
+
+    .thumb-up{
+        margin-left: 12px;
+        margin-top: 11px;
+    }
+    .rest{
+        font-size: 48px;
+        margin-top: -22px;
+        text-align: center;
+        font-weight: bold !important;
+    }
+    .rad{
+        font-size: 25px;
+        color: black;
+        border-radius: 50%; 
+        height: 50px;
+        width: 48px;
+        background-color: #498fcd;
+    }
 </style>
 
 <!-- <div class="row">
@@ -79,6 +118,54 @@
             </div>
             <div class="panel-body bd">
                 <div class="panel show" style="background-color: #f0f3f4 !important;border: 0px;">
+                    <div class="col-sm-12">
+                        <hr class="line">
+                        <div class="col-md-3 panel" style="margin-right: 30px;width: 22.5%;">
+                            <div class="panel-body pane">
+                                <h5>Deal Count</h5>
+                                <div class="col-md-6">
+                                    <div class="rad"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="rest">30</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 panel" style="margin-right: 30px;width: 22.5%;">
+                            <div class="panel-body pane">
+                                <h5>Deal Count</h5>
+                                <div class="col-md-6">
+                                    <div class="rad"><i class="fa fa-thumbs-o-up thumb-up" style="font-size: 25px;"></i></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="rest">30</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 panel" style="margin-right: 30px;width: 22.5%;">
+                            <div class="panel-body pane">
+                                <h5>Deal Amount</h5>
+                                <div class="col-md-6">
+                                    <div class="rad"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="rest">30</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 panel" style="width: 22.5%">
+                            <div class="panel-body pane">
+                                <h5>Deal Amount</h5>
+                                <div class="col-md-6">
+                                    <div class="rad"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="rest">30</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-4">
                         <div class="panel" style="background-color: #f0f3f4 !important;">
                             <div class="panel-body mm">

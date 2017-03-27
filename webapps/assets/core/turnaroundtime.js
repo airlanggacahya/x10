@@ -10,9 +10,47 @@ turn.ValueDatePeriod = ko.observable(kendo.toString(new Date(), "MMM-yyyy"));
 turn.ValueDataPeriod = ko.observable('period');
 turn.chartcolors = ["#ff2929","#ffc000","#92d050", "#2e75b6"];
 turn.averageConversion = ko.observable(0);
+turn.avgConversion = ko.observable(0);
+turn.dealConversion = ko.observable(0);
+turn.averageConversionData = ko.observableArray([]);
 turn.averageDecision = ko.observable(0);
+turn.dealDecision = ko.observable(0);
+turn.avgDecision = ko.observable(0);
+turn.averageDecisionData = ko.observableArray([]);
 turn.averageProcessing = ko.observable(0);
+turn.avgProcessing = ko.observable(0);
+turn.dealProcessing = ko.observable(0);
+turn.averageProcessingData = ko.observableArray([]);
 turn.averageAcceptance = ko.observable(0);
+turn.avgAcceptance = ko.observable(0);
+turn.dealAcceptance = ko.observable(0);
+turn.averageAcceptanceData = ko.observableArray([]);
+turn.containerTitle = ko.observable("")
+
+turn.titleText = ko.computed(function () {
+    var type = dash.FilterValue.GetVal("TimePeriod")
+    var start = moment(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = moment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+
+    if (!start.isValid())
+        return "-"
+
+    switch (type) {
+    case "10day":
+        return start.clone().subtract(10, "day").format("DD MMM YYYY") + " - " + start.format("DD MMM YYYY")
+    case "":
+    case "1month":
+        return start.format("MMMM YYYY")
+    case "1year":
+        return start.format("YYYY")
+    case "fromtill":
+        return start.format("DD MMM YYYY") + " - " + end.format("DD MMM YYYY")
+    }
+
+    turn.loadAlleverage();
+    // alert("masuk")
+})
+
 
 turn.dummyData = ko.observableArray([
 	{"avgdays":2.2,"date":"2016-10-01T00:00:00Z","dateStr":"Oct-2016","dealcount":8,"median":4},
@@ -22,571 +60,697 @@ turn.dummyData = ko.observableArray([
 	{"avgdays":8.0,"date":"2017-02-01T00:00:00Z","dateStr":"Feb-2017","dealcount":9,"median":7},
 	{"avgdays":4.0,"date":"2017-03-01T00:00:00Z","dateStr":"Mar-2017","dealcount":2,"median":8}])
 
+dash.FilterValue.subscribe(function (val) {
+    turn.loadAlleverage()
+})
+turn.averageConversionClick = function(){
+	$(".dl").removeClass("active");
+	$("#conv").addClass("active");
+	turn.containerTitle("Average Conversion TAT");
+	turn.loadChartContainer(turn.averageConversionData());
+}
+
+turn.averageDecisionClick = function(){
+	$(".dl").removeClass("active");
+	$("#dec").addClass("active");
+	turn.containerTitle("Average Decision TAT");
+	turn.loadChartContainer(turn.averageDecisionData());
+} 
+
+turn.averageProcessingClick = function(){
+	$(".dl").removeClass("active");
+	$("#process").addClass("active");
+	turn.containerTitle("Average Processing TAT");
+	turn.loadChartContainer(turn.averageProcessingData());
+}
+
+turn.averageAcceptanceClick = function(){
+	$(".dl").removeClass("active");
+	$("#acep").addClass("active");
+	turn.containerTitle("Average Acceptance TAT");
+	setTimeout(function(){
+		turn.loadChartContainer(turn.averageAcceptanceData())
+	}, 1000)
+}
+
+// turn.loadFirst = function(){
+// 	$(".dl").removeClass("active");
+// 	$("#acep").addClass("active");
+// 	turn.containerTitle("Average Acceptance TAT");
+// 	if((turn.averageAcceptanceData()).length != 0){
+// 		turn.loadChartContainer(turn.averageAcceptanceData())
+// 	}
+// }
+
 turn.loadAlleverage = function(){
-	var date = kendo.toString(turn.ValueDatePeriod(), "MMM-yyyy");
-	var param ={
-		trend: '',
-		groupby: turn.ValueDataPeriod(),
-		period: date,
+	setTimeout(function(){
+		var date = kendo.toString(new Date(turn.titleText()), "MMM-yyyy");
+		var param ={
+			trend: '',
+			groupby: turn.ValueDataPeriod(),
+			period: date,
+		}
+
+		param.trend = 'acceptance';
+		ajaxPost("/dashboard/snapshottat",param,function(res){ 
+			var acce = [];
+			$.each(res.Data, function(i, item){
+				if(i != 0){
+					acce.push(item)
+				}
+			})
+			var days = turn.lastMonth("ace", "avgdays", res.Data)
+			var deals = turn.lastMonth("dealacc", "dealcount", res.Data)
+			turn.averageAcceptanceData(acce);
+			if(res.Data[0].avgdays != null || res.Data[0].dealcount != null){
+				rest = kendo.toString(res.Data[0].avgdays, "n0");
+				turn.averageAcceptance(rest)
+				turn.avgAcceptance(days)
+				turn.dealAcceptance(deals)
+			}else{
+				turn.averageAcceptance(0)
+				turn.avgAcceptance(0)
+				turn.dealAcceptance(0)
+			}
+			turn.lastMonth("ace", "avgdays", res.Data)
+			$("#acceptance").html('')
+			$("#acceptance").kendoChart({
+				theme: "Material",
+	            title: { 
+	                    // text: "Processing TAT",
+	                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+	                    align: "left",
+	                    color: "#58666e",
+	                },
+	                dataSource: turn.averageConversionData(),
+	                seriesDefaults: {
+	                    type: "area",
+	                    area: {
+	                        line: {
+	                            style: "smooth"
+	                        }
+	                    }
+	                },
+	                series: [{
+	                    // type: "area",
+	                    stack : false,
+	                    field: "avgdays",
+	                    // name: "#= group.value.split('*')[1] #"
+	                }],
+	                chartArea:{
+	                	// width: 250,
+	                    height: 100,
+	                    background: "transparent"
+	                },
+	                legend: {
+	                	visible: false,
+	                    position: "right",
+	                    labels:{
+	                        font: "10px Arial,Helvetica,Sans-Serif"
+	                    }
+	                },
+	                // seriesColors : ttrack.chartcolors,
+	                valueAxis: {
+	                    labels: {
+	                        // format: "${0}",
+	                		font: "5px sans-serif",
+	                        skip: 2,
+	                        step: 2
+	                    },
+	                    title : {
+	                    	text : "No. of Deals",
+	                		font: "5px sans-serif",
+	                    	visible : false,
+	                    	color : "#4472C4"
+	                    },
+	                    line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                categoryAxis: {
+	                    visible: true,
+	                   	line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                tooltip : {
+	                	visible: false,
+	                	template : function(dt){
+	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+	                	}
+	                }
+	        });
+	        $("#tatgoals").html('')
+	        $("#tatgoals").kendoRadialGauge({
+	           pointer: {
+	                            value: 65
+	                        },
+
+	                        scale: {
+	                            minorUnit: 5,
+	                            startAngle: -30,
+	                            endAngle: 210,
+	                            max: 180,
+	                            labels: {
+	                                position: "outside	"
+	                            },
+	                            ranges: [
+	                                {
+	                                    from: 80,
+	                                    to: 120,
+	                                    color: "#ffc700"
+	                                }, {
+	                                    from: 120,
+	                                    to: 150,
+	                                    color: "#ff7a00"
+	                                }, {
+	                                    from: 150,
+	                                    to: 180,
+	                                    color: "#c20000"
+	                                }
+	                            ]
+	                        }
+	        }); 
+	        $("#tatgoals")
+		       .css({ width: "150px", height: "125px", marginTop: "19px"})
+		       .data("kendoRadialGauge").resize(); 
+		});
+
+		param.trend = 'total';
+		// ajaxPost("/dashboard/snapshottat",param,function(res){ 
+			// console.log(res)
+			// var data = res.Data[0];
+			var ondata = [];
+			// ondata.push(data.avgdays)
+			$("#total").html('')
+			$("#total").kendoChart({
+	           theme: "Material",
+	            title: { 
+	                    // text: "Processing TAT",
+	                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+	                    align: "left",
+	                    color: "#58666e",
+	                },
+	                dataSource: turn.dummyData(),
+	                seriesDefaults: {
+	                    type: "area",
+	                    area: {
+	                        line: {
+	                            style: "smooth"
+	                        }
+	                    }
+	                },
+	                series: [{
+	                    // type: "area",
+	                    stack : false,
+	                    field: "avgdays",
+	                    // name: "#= group.value.split('*')[1] #"
+	                }],
+	                chartArea:{
+	                	// width: 250,
+	                    height: 100,
+	                    background: "transparent"
+	                },
+	                legend: {
+	                	visible: false,
+	                    position: "right",
+	                    labels:{
+	                        font: "10px Arial,Helvetica,Sans-Serif"
+	                    }
+	                },
+	                // seriesColors : ttrack.chartcolors,
+	                valueAxis: {
+	                    labels: {
+	                        // format: "${0}",
+	                		font: "5px sans-serif",
+	                        skip: 2,
+	                        step: 2
+	                    },
+	                    title : {
+	                    	text : "No. of Deals",
+	                		font: "5px sans-serif",
+	                    	visible : false,
+	                    	color : "#4472C4"
+	                    },
+	                    line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                categoryAxis: {
+	                    visible: true,
+	                   	line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                tooltip : {
+	                	visible: false,
+	                	template : function(dt){
+	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+	                	}
+	                }
+	        });    
+		// });
+
+		param.trend = 'processing';
+		ajaxPost("/dashboard/snapshottat",param,function(res){ 
+			var proc = [];
+			$.each(res.Data, function(i, item){
+				if(i != 0){
+					proc.push(item)
+				}
+				
+			});
+			var days = turn.lastMonth("proce", "avgdays", res.Data)
+			var deals = turn.lastMonth("proces", "dealcount", res.Data)
+			turn.averageProcessingData(proc);
+			if(res.Data[0].avgdays != null || res.Data[0].dealcount != null){
+				rest = kendo.toString(res.Data[0].avgdays, "n0");
+				turn.averageProcessing(rest)
+				turn.avgProcessing(days)
+				turn.dealProcessing(deals)
+			}else{
+				turn.averageProcessing(0)
+				turn.avgProcessing(0)
+				turn.dealProcessing(0)
+			}
+			$("#processing").html('')
+			$("#processing").kendoChart({
+	            theme: "Material",
+	            title: { 
+	                    // text: "Processing TAT",
+	                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+	                    align: "left",
+	                    color: "#58666e",
+	                },
+	                dataSource: turn.averageProcessingData(),
+	                seriesDefaults: {
+	                    type: "area",
+	                    area: {
+	                        line: {
+	                            style: "smooth"
+	                        }
+	                    }
+	                },
+	                series: [{
+	                    // type: "area",
+	                    stack : false,
+	                    field: "avgdays",
+	                    // name: "#= group.value.split('*')[1] #"
+	                }],
+	                chartArea:{
+	                	// width: 250,
+	                    height: 100,
+	                    background: "transparent"
+	                },
+	                legend: {
+	                	visible: false,
+	                    position: "right",
+	                    labels:{
+	                        font: "10px Arial,Helvetica,Sans-Serif"
+	                    }
+	                },
+	                // seriesColors : ttrack.chartcolors,
+	                valueAxis: {
+	                    labels: {
+	                        // format: "${0}",
+	                		font: "5px sans-serif",
+	                        skip: 2,
+	                        step: 2
+	                    },
+	                    title : {
+	                    	text : "No. of Deals",
+	                		font: "5px sans-serif",
+	                    	visible : false,
+	                    	color : "#4472C4"
+	                    },
+	                    line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                categoryAxis: {
+	                    visible: true,
+	                   	line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                tooltip : {
+	                	visible: false,
+	                	template : function(dt){
+	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+	                	}
+	                }
+	        });  
+		});
+		param.trend = 'decision';
+		ajaxPost("/dashboard/snapshottat",param,function(res){ 
+			var dec = [];
+			$.each(res.Data, function(i, item){
+				if(i != 0){
+					dec.push(item)
+				}
+			})
+			var days = turn.lastMonth("deci", "avgdays", res.Data)
+			var deals = turn.lastMonth("dealdeci", "dealcount", res.Data)
+			turn.averageDecisionData(dec);
+			if(res.Data[0].avgdays != null || res.Data[0].dealcount != null){
+				rest = kendo.toString(res.Data[0].avgdays, "n0");
+				turn.averageDecision(rest)
+				turn.avgDecision(days)
+				turn.avgDecision(deals)
+			}else{
+				turn.averageDecision(0)
+				turn.avgDecision(days)
+				turn.avgDecision(deals)
+			}
+			$("#decision").html('')
+			$("#decision").kendoChart({
+	            theme: "Material",
+	            title: { 
+	                    // text: "Processing TAT",
+	                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+	                    align: "left",
+	                    color: "#58666e",
+	                },
+	                dataSource: turn.averageDecisionData(),
+	                seriesDefaults: {
+	                    type: "area",
+	                    area: {
+	                        line: {
+	                            style: "smooth"
+	                        }
+	                    }
+	                },
+	                series: [{
+	                    // type: "area",
+	                    stack : false,
+	                    field: "avgdays",
+	                    // name: "#= group.value.split('*')[1] #"
+	                }],
+	                chartArea:{
+	                	// width: 245,
+	                    height: 100,
+	                    background: "transparent"
+	                },
+	                legend: {
+	                	visible: false,
+	                    position: "right",
+	                    labels:{
+	                        font: "10px Arial,Helvetica,Sans-Serif"
+	                    }
+	                },
+	                // seriesColors : ttrack.chartcolors,
+	                valueAxis: {
+	                    labels: {
+	                        // format: "${0}",
+	                		font: "5px sans-serif",
+	                        skip: 2,
+	                        step: 2
+	                    },
+	                    title : {
+	                    	text : "No. of Deals",
+	                		font: "5px sans-serif",
+	                    	visible : false,
+	                    	color : "#4472C4"
+	                    },
+	                    line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                categoryAxis: {
+	                    visible: true,
+	                   	line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                tooltip : {
+	                	visible: false,
+	                	template : function(dt){
+	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+	                	}
+	                }
+	        });  
+		});
+
+		param.trend = 'conversion';
+		ajaxPost("/dashboard/snapshottat",param,function(res){ 
+			var conv = [];
+			$.each(res.Data, function(i, item){
+				if(i != 0){
+					conv.push(item)
+				}
+			})
+			var days = turn.lastMonth("conve", "avgdays", res.Data)
+			var days = turn.lastMonth("convers", "dealcount", res.Data)
+			turn.averageConversionData(conv)
+			if(res.Data[0].avgdays != null || res.Data[0].avgdays != null){
+				rest = kendo.toString(res.Data[0].avgdays, "n0");
+				turn.averageConversion(rest)
+				turn.avgConversion(days)
+				turn.dealConversion(deals)
+			}else{
+				turn.averageConversion(0)
+				turn.avgConversion(0)
+				turn.dealConversion(0)
+			}
+			
+			$("#conversion").html('')
+			$("#conversion").kendoChart({
+	            theme: "Material",
+	            title: { 
+	                    // text: "Processing TAT",
+	                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
+	                    align: "left",
+	                    color: "#58666e",
+	                },
+	                dataSource: turn.averageConversionData(),
+	                seriesDefaults: {
+	                    type: "area",
+	                    area: {
+	                        line: {
+	                            style: "smooth"
+	                        }
+	                    }
+	                },
+	                series: [{
+	                    // type: "area",
+	                    stack : false,
+	                    field: "avgdays",
+	                    // name: "#= group.value.split('*')[1] #"
+	                }],
+	                chartArea:{
+	                	// width: 250,
+	                    height: 100,
+	                    background: "transparent"
+	                },
+	                legend: {
+	                	visible: false,
+	                    position: "right",
+	                    labels:{
+	                        font: "10px Arial,Helvetica,Sans-Serif"
+	                    }
+	                },
+	                // seriesColors : ttrack.chartcolors,
+	                valueAxis: {
+	                    labels: {
+	                        // format: "${0}",
+	                		font: "5px sans-serif",
+	                        skip: 2,
+	                        step: 2
+	                    },
+	                    title : {
+	                    	text : "No. of Deals",
+	                		font: "5px sans-serif",
+	                    	visible : false,
+	                    	color : "#4472C4"
+	                    },
+	                    line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                categoryAxis: {
+	                    visible: true,
+	                   	line: {
+					        visible: true
+					    },
+					    majorGridLines:{
+					        visible:true
+					    }
+	                },
+	                tooltip : {
+	                	visible: false,
+	                	template : function(dt){
+	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+	                	}
+	                }
+	        });   
+		});
+	}, 500)
+}
+
+turn.lastMonth = function(id, field, data){
+	$("#"+id)
+		.removeClass('fa-arrow-up')
+		.removeClass('fa-arrow-down');
+
+	if(field == "avgdays"){
+		if(data[0].avgdays > data[1].avgdays){
+			$("#"+id)
+				.addClass('fa-arrow-up')
+				.css("color", "green");
+		}else{
+			$("#"+id)
+				.addClass('fa-arrow-down')
+				.css("color", "red")
+		}
+		var days = data[0].avgdays - data[1].avgdays
+		return days
+	}else if(field == "dealcount"){
+		if(data[0].dealcount > data[1].dealcount){
+			$("#"+id)
+				.addClass('fa-arrow-up')
+				.css("color", "green");
+		}else{
+			$("#"+id)
+				.addClass('fa-arrow-down')
+				.css("color", "red")
+		}
+		var deals = data[0].dealcount - data[1].dealcount
+		return deals
 	}
-
-	param.trend = 'acceptance';
-	ajaxPost("/dashboard/snapshottat",param,function(res){ 
-		// console.log(res)
-		var data = res.Data[0];
-		var data = turn.dummyData();
-		var sum = _.sumBy(data, 'avgdays');
-		var res = kendo.toString(sum/data.length, 'n2')
-		// var d = new Date("Apr-2017");
-		// d.setMonth(d.getMonth() - 1);
-		// turn.averageAcceptance(res)
-		var ondata = [];
-		ondata.push(data.avgdays)
-		$("#acceptance").html('')
-		$("#acceptance").kendoChart({
-			theme: "Material",
-            title: { 
-                    // text: "Processing TAT",
-                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
-                    align: "left",
-                    color: "#58666e",
-                },
-                dataSource: turn.dummyData(),
-                seriesDefaults: {
-                    type: "area",
-                    area: {
-                        line: {
-                            style: "smooth"
-                        }
-                    }
-                },
-                series: [{
-                    // type: "area",
-                    stack : false,
-                    field: "avgdays",
-                    // name: "#= group.value.split('*')[1] #"
-                }],
-                chartArea:{
-                	// width: 250,
-                    height: 100,
-                    background: "transparent"
-                },
-                legend: {
-                	visible: false,
-                    position: "right",
-                    labels:{
-                        font: "10px Arial,Helvetica,Sans-Serif"
-                    }
-                },
-                // seriesColors : ttrack.chartcolors,
-                valueAxis: {
-                    labels: {
-                        // format: "${0}",
-                		font: "5px sans-serif",
-                        skip: 2,
-                        step: 2
-                    },
-                    title : {
-                    	text : "No. of Deals",
-                		font: "5px sans-serif",
-                    	visible : false,
-                    	color : "#4472C4"
-                    },
-                    line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                categoryAxis: {
-                    visible: true,
-                   	line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                tooltip : {
-                	visible: false,
-                	template : function(dt){
-                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-                	}
-                }
-        });
-        $("#tatgoals").html('')
-        $("#tatgoals").kendoRadialGauge({
-           pointer: {
-                            value: 65
-                        },
-
-                        scale: {
-                            minorUnit: 5,
-                            startAngle: -30,
-                            endAngle: 210,
-                            max: 180,
-                            labels: {
-                                position: "outside	"
-                            },
-                            ranges: [
-                                {
-                                    from: 80,
-                                    to: 120,
-                                    color: "#ffc700"
-                                }, {
-                                    from: 120,
-                                    to: 150,
-                                    color: "#ff7a00"
-                                }, {
-                                    from: 150,
-                                    to: 180,
-                                    color: "#c20000"
-                                }
-                            ]
-                        }
-        }); 
-        $("#tatgoals")
-	       .css({ width: "150px", height: "125px", marginTop: "19px"})
-	       .data("kendoRadialGauge").resize(); 
-	});
-
-	param.trend = 'total';
-	// ajaxPost("/dashboard/snapshottat",param,function(res){ 
-		// console.log(res)
-		// var data = res.Data[0];
-		var ondata = [];
-		// ondata.push(data.avgdays)
-		$("#total").html('')
-		$("#total").kendoChart({
-           theme: "Material",
-            title: { 
-                    // text: "Processing TAT",
-                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
-                    align: "left",
-                    color: "#58666e",
-                },
-                dataSource: turn.dummyData(),
-                seriesDefaults: {
-                    type: "area",
-                    area: {
-                        line: {
-                            style: "smooth"
-                        }
-                    }
-                },
-                series: [{
-                    // type: "area",
-                    stack : false,
-                    field: "avgdays",
-                    // name: "#= group.value.split('*')[1] #"
-                }],
-                chartArea:{
-                	// width: 250,
-                    height: 100,
-                    background: "transparent"
-                },
-                legend: {
-                	visible: false,
-                    position: "right",
-                    labels:{
-                        font: "10px Arial,Helvetica,Sans-Serif"
-                    }
-                },
-                // seriesColors : ttrack.chartcolors,
-                valueAxis: {
-                    labels: {
-                        // format: "${0}",
-                		font: "5px sans-serif",
-                        skip: 2,
-                        step: 2
-                    },
-                    title : {
-                    	text : "No. of Deals",
-                		font: "5px sans-serif",
-                    	visible : false,
-                    	color : "#4472C4"
-                    },
-                    line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                categoryAxis: {
-                    visible: true,
-                   	line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                tooltip : {
-                	visible: false,
-                	template : function(dt){
-                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-                	}
-                }
-        });    
-	// });
-
-	param.trend = 'processing';
-	ajaxPost("/dashboard/snapshottat",param,function(res){ 
-		// console.log(res)
-		var data = res.Data[0];
-		var data = turn.dummyData();
-		var sum = _.sumBy(data, 'avgdays');
-		var res = kendo.toString(sum/data.length, 'n2')
-		turn.averageProcessing(res)
-		var ondata = [];
-		ondata.push(data.avgdays)
-		$("#processing").html('')
-		$("#processing").kendoChart({
-            theme: "Material",
-            title: { 
-                    // text: "Processing TAT",
-                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
-                    align: "left",
-                    color: "#58666e",
-                },
-                dataSource: turn.dummyData(),
-                seriesDefaults: {
-                    type: "area",
-                    area: {
-                        line: {
-                            style: "smooth"
-                        }
-                    }
-                },
-                series: [{
-                    // type: "area",
-                    stack : false,
-                    field: "avgdays",
-                    // name: "#= group.value.split('*')[1] #"
-                }],
-                chartArea:{
-                	// width: 250,
-                    height: 100,
-                    background: "transparent"
-                },
-                legend: {
-                	visible: false,
-                    position: "right",
-                    labels:{
-                        font: "10px Arial,Helvetica,Sans-Serif"
-                    }
-                },
-                // seriesColors : ttrack.chartcolors,
-                valueAxis: {
-                    labels: {
-                        // format: "${0}",
-                		font: "5px sans-serif",
-                        skip: 2,
-                        step: 2
-                    },
-                    title : {
-                    	text : "No. of Deals",
-                		font: "5px sans-serif",
-                    	visible : false,
-                    	color : "#4472C4"
-                    },
-                    line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                categoryAxis: {
-                    visible: true,
-                   	line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                tooltip : {
-                	visible: false,
-                	template : function(dt){
-                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-                	}
-                }
-        });  
-	});
-	param.trend = 'decision';
-	ajaxPost("/dashboard/snapshottat",param,function(res){ 
-		console.log(res)
-		var data = res.Data;
-		var data = turn.dummyData();
-		var sum = _.sumBy(data, 'avgdays');
-		var res = kendo.toString(sum/data.length, 'n2')
-		turn.averageDecision(res);
-		console.log(JSON.stringify(data))
-		$("#decision").html('')
-		$("#decision").kendoChart({
-            theme: "Material",
-            title: { 
-                    // text: "Processing TAT",
-                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
-                    align: "left",
-                    color: "#58666e",
-                },
-                dataSource: turn.dummyData(),
-                seriesDefaults: {
-                    type: "area",
-                    area: {
-                        line: {
-                            style: "smooth"
-                        }
-                    }
-                },
-                series: [{
-                    // type: "area",
-                    stack : false,
-                    field: "avgdays",
-                    // name: "#= group.value.split('*')[1] #"
-                }],
-                chartArea:{
-                	// width: 245,
-                    height: 100,
-                    background: "transparent"
-                },
-                legend: {
-                	visible: false,
-                    position: "right",
-                    labels:{
-                        font: "10px Arial,Helvetica,Sans-Serif"
-                    }
-                },
-                // seriesColors : ttrack.chartcolors,
-                valueAxis: {
-                    labels: {
-                        // format: "${0}",
-                		font: "5px sans-serif",
-                        skip: 2,
-                        step: 2
-                    },
-                    title : {
-                    	text : "No. of Deals",
-                		font: "5px sans-serif",
-                    	visible : false,
-                    	color : "#4472C4"
-                    },
-                    line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                categoryAxis: {
-                    visible: true,
-                   	line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                tooltip : {
-                	visible: false,
-                	template : function(dt){
-                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-                	}
-                }
-        });  
-	});
-
-	param.trend = 'action';
-	// ajaxPost("/dashboard/snapshottat",param,function(res){ 
-		// console.log(res)
-		// var data = res.Data;
-		var data = turn.dummyData();
-		var sum = _.sumBy(data, 'avgdays');
-		var res = kendo.toString(sum/data.length, 'n2')
-		turn.averageConversion(res);
-		turn.loadChartContainer(turn.dummyData());
-		$("#action").html('')
-		$("#action").kendoChart({
-            theme: "Material",
-            title: { 
-                    // text: "Processing TAT",
-                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
-                    align: "left",
-                    color: "#58666e",
-                },
-                dataSource: turn.dummyData(),
-                seriesDefaults: {
-                    type: "area",
-                    area: {
-                        line: {
-                            style: "smooth"
-                        }
-                    }
-                },
-                series: [{
-                    // type: "area",
-                    stack : false,
-                    field: "avgdays",
-                    // name: "#= group.value.split('*')[1] #"
-                }],
-                chartArea:{
-                	// width: 250,
-                    height: 100,
-                    background: "transparent"
-                },
-                legend: {
-                	visible: false,
-                    position: "right",
-                    labels:{
-                        font: "10px Arial,Helvetica,Sans-Serif"
-                    }
-                },
-                // seriesColors : ttrack.chartcolors,
-                valueAxis: {
-                    labels: {
-                        // format: "${0}",
-                		font: "5px sans-serif",
-                        skip: 2,
-                        step: 2
-                    },
-                    title : {
-                    	text : "No. of Deals",
-                		font: "5px sans-serif",
-                    	visible : false,
-                    	color : "#4472C4"
-                    },
-                    line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                categoryAxis: {
-                    visible: true,
-                   	line: {
-				        visible: true
-				    },
-				    majorGridLines:{
-				        visible:true
-				    }
-                },
-                tooltip : {
-                	visible: false,
-                	template : function(dt){
-                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-                	}
-                }
-        });   
-	// });
 }
 
 turn.loadChartContainer = function(data){
-	$("#chartContainer").html('')
-	$("#chartContainer").kendoChart({
-        // theme: "Material",
-            // title: { 
-            //         // text: "Average Conversion TAT",
-            //         font:  "bold 12px Arial,Helvetica,Sans-Serif",
-            //         align: "left",
-            //         color: "#58666e",
-            //     },
-                dataSource: turn.dummyData(),
-                series: [
-                {
-                    type: "column",
-                    stack : false,
-                    field: "avgdays",
-                    color: '#2e75b6',
-                    overlay: {
-		                gradient: "none"
-		            },
-                    name: "Avgdays"
-                },
-                {
-                    type: "column",
-                    stack : false,
-                    field: "median",
-                    color: '#00b0f0',
-                    overlay: {
-		                gradient: "none"
-		            },
-                    name: "Median"
-                },
-                {
-                    type: "line",
-                    stack : false,
-                    field: "dealcount",
-                    axis: "dc",
-                    dashType: "dot",
-                    color: '#ffc000',
-                    name: "Deal Count"
-                },
-                {
-                    // field: "wind",
-                    name: "Target TAT"
-                }
-                ],
-                chartArea:{
-                	height: 250,
-                    background: "white"
-                },
-                legend: {
-                	visible: true,
-                    position: "bottom",
-                    labels:{
-                        font: "10px Arial,Helvetica,Sans-Serif"
-                    }
-                },
-     			valueAxes: [{
-     				title: { 
-     					text: "Days",
-     					font: "11px sans-serif",
-     					color : "#4472C4" 
-     				},
-                    min: 0,
-                    max: 10,
-                    plotBands: [{
-						from: 3.0,
-						to: 3.5,
-						color: "#70ad47",
-						name: "Target"
-					}]
-     			},{
-     				name: "dc",
-     				title: { 
-     					text: "Deal Count",
-     					font: "11px sans-serif",
-     					color : "#4472C4" 
-     				},
-                    min: 0,
-                    max: 10
-     			}
-     			],
-                categoryAxis: {
-                	field: "dateStr",
-                	title : {
-                    	 text : "Deal Stages",
-                		font: "11px sans-serif",
-                    	visible : true,
-                    	color : "#4472C4"
-                    },
-                    labels : {
-                		font: "10px sans-serif",
-                    },
-                    axisCrossingValues: [0, 7]
-                },
-                tooltip : {
-                	visible: false,
-                	template : function(dt){
-                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-                	}
-                }
-    });
+	setTimeout(function(){
+		$("#chartContainer").html('')
+		$("#chartContainer").kendoChart({
+	        // theme: "Material",
+	            // title: { 
+	            //         // text: "Average Conversion TAT",
+	            //         font:  "bold 12px Arial,Helvetica,Sans-Serif",
+	            //         align: "left",
+	            //         color: "#58666e",
+	            //     },
+	                dataSource: data,
+	                series: [
+	                {
+	                    type: "column",
+	                    stack : false,
+	                    field: "avgdays",
+	                    color: '#2e75b6',
+	                    overlay: {
+			                gradient: "none"
+			            },
+	                    name: "Avgdays"
+	                },
+	                {
+	                    type: "column",
+	                    stack : false,
+	                    field: "median",
+	                    color: '#00b0f0',
+	                    overlay: {
+			                gradient: "none"
+			            },
+	                    name: "Median"
+	                },
+	                {
+	                    type: "line",
+	                    stack : false,
+	                    field: "dealcount",
+	                    axis: "dc",
+	                    dashType: "dot",
+	                    color: '#ffc000',
+	                    name: "Deal Count"
+	                },
+	                {
+	                    // field: "wind",
+	                    name: "Target TAT"
+	                }
+	                ],
+	                chartArea:{
+	                	height: 250,
+	                    background: "white"
+	                },
+	                legend: {
+	                	visible: true,
+	                    position: "bottom",
+	                    labels:{
+	                        font: "10px Arial,Helvetica,Sans-Serif"
+	                    }
+	                },
+	     			valueAxes: [{
+	     				title: { 
+	     					text: "Days",
+	     					font: "11px sans-serif",
+	     					color : "#4472C4" 
+	     				},
+	                    min: 0,
+	                    max: 10,
+	                    plotBands: [{
+							from: 3.0,
+							to: 3.5,
+							color: "#70ad47",
+							name: "Target"
+						}]
+	     			},{
+	     				name: "dc",
+	     				title: { 
+	     					text: "Deal Count",
+	     					font: "11px sans-serif",
+	     					color : "#4472C4" 
+	     				},
+	                    min: 0,
+	                    max: 10
+	     			}
+	     			],
+	                categoryAxis: {
+	                	field: "dateStr",
+	                	title : {
+	                    	 text : "Deal Stages",
+	                		font: "11px sans-serif",
+	                    	visible : true,
+	                    	color : "#4472C4"
+	                    },
+	                    labels : {
+	                		font: "10px sans-serif",
+	                    },
+	                    axisCrossingValues: [0, 7]
+	                },
+	                tooltip : {
+	                	visible: false,
+	                	template : function(dt){
+	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+	                	}
+	                }
+	    });
+	},200)
+
 }
 
 turn.loadData = function(){
@@ -840,6 +1004,13 @@ turn.normalisasiData = function(data){
 turn.loadChaterChart = function(){
 	$(".cater").html("");
 	$(".cater").kendoChart({
+		title:{
+			text: "Conversion TAT VS Deal Amount",
+			font:  "bold 12px Arial,Helvetica,Sans-Serif",
+            align: "left",
+            color: "#58666e",
+
+		},
         seriesDefaults: {
         	type: "scatter",
             labels: {
@@ -854,16 +1025,19 @@ turn.loadChaterChart = function(){
 	    },{
 	        name: "January 2009",
 	        data: [[10, 10], [15, 20], [20, 25], [32, 40], [39, 33], [40, 38]
-                [11, 33], [38, 22], [35, 22], [33, 35], [10, 12], [10, 32], [10, 35]
+                [11, 33], [38, 22], [35, 22], [33, 35], [10, 12], [10, 32], [10, 35], [22, 43]
             ],
 	    },{
 	        name: "January 2010",
 	        data: [[10, 10], [15, 20], [20, 25], [32, 40], [39, 33], [40, 38]
-                [11, 33], [38, 22], [35, 22], [33, 35], [10, 12], [10, 32], [10, 35]
+                [11, 33], [38, 22], [35, 22], [33, 35], [10, 12], [10, 32], [10, 35], [30, 45]
             ],
 	    }],
+	    legend: {
+	    	visible: false,
+	    },
         xAxis: {
-            max: 40,
+            max: 50,
             labels: {
 				template: "#= changeLabels()#",
 				skip: 1,
@@ -887,7 +1061,10 @@ turn.loadChaterChart = function(){
         yAxis: {
             min: 0,
             title: {
-                text: "Deal Amount"
+                text: "Deal Amount",
+                font: "11px sans-serif",
+            	visible : true,
+            	color : "#4472C4"
             },
             labels: {
                 format: "{0}%"
@@ -896,16 +1073,19 @@ turn.loadChaterChart = function(){
     });
 }
 
-var categories =  ["<=10", "<=20", "<=30", "<=40", "<=50", "<=60", "<=70", "<=80", "<=90", "<=100"],
+var categories =  ["<=10", "<=20", "<=30", "<=40", "", "<=60", "<=70", "<=80", "<=90", "<=100"],
 					categoriesIndex = 0;
 				
-				function changeLabels() {
-					return categories[categoriesIndex++];
-				}
+function changeLabels() {
+	return categories[categoriesIndex++];
+}
+
 
 $(function(){
 	turn.loadData();
-	turn.loadAlleverage();
+	setTimeout(function(){turn.loadAlleverage();turn.averageAcceptanceClick();}, 500)
 	turn.loadChaterChart()
+	turn.titleText()
+	
 	
 });

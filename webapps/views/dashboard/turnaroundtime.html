@@ -5,7 +5,7 @@
 {{template "leftfilter.html"}}
 <style type="text/css">
 	.top{
-		margin-top: 26px;
+		margin-top: 50px;
 	}
 	.left{
 		text-align: left;
@@ -102,6 +102,33 @@
 		font-weight: bold;
 		font-family: Cambria, Helvetica, Arial;
 	}
+	.line{
+        /*margin-top: 6px;
+        margin-bottom: 20px;*/
+        border: 1px solid #4472c4;
+        border-top: 0px solid #eee;
+        margin-top: -3px;
+    }
+    .acc-down{
+		float: right;
+		font-size: 14px;
+		color:grey;
+		-ms-transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        transform: rotate(180deg);
+	}
+	.acc-up{
+		font-size: 14px;
+		color:grey;
+		-moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        transform: scaleX(-1);
+        -ms-filter: fliph;
+	}
+	.toggle1{
+		cursor: pointer;
+	}
 
 </style>
 <div class="col-md-12 top turnaroundtime">
@@ -114,8 +141,10 @@
 		</div>
 	</div> -->
 	<div class="col-md-12">
+		<h5>Summary : <span data-bind="text: turn.setTitle()"></span></h5>
+		<hr class="line">
 		<!-- <div class="col-sm-2"></div> -->
-		<div class="col-sm-12" style="width: 122%;margin-left: -1.5%;">
+		<div class="col-sm-12" style="width: 122%;margin-left: -1.5%;margin-top: -32px;">
 			<div id="butt">
 				<div class="col-sm-2 wl">
 					<div class="panel panel-body dl" id="target" style="height: 242px">
@@ -187,8 +216,12 @@
 			</div>
 		</div>
 		<!-- <div class="col-sm-2"></div> -->
-		<div class="col-md-12 panel" style="background-color: white; margin-top: -0.5%">
-			<div class="panel panel-body con">
+		<div class="col-md-12 toggle1">
+			<h5>Trend : <span data-bind="text: turn.setTitle()"></span> <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5>
+			<hr class="line">
+		</div>
+		<div class="col-md-12" style="margin-top: -0.5%">
+			<div class="panel panel-body con show" style="background-color: white;">
 				<div class="panel-heading">
 					<div class="col-md-12">
 						<div class="col-sm-6" id="tit" data-bind="text: turn.containerTitle">Average Conversion TAT</div>
@@ -212,49 +245,60 @@
 				<div id="chartContainer"></div>
 			</div>
 		</div>
+		<div>
+			<div class="col-md-12 toggle1">
+				<h5>Moving & History : <span data-bind="text: turn.setTitle()"></span> <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5>
+				<hr class="line">
+			</div>
+			<div class="show">
+				<div class="col-md-6">
+					<div class="panel panel-body aol">
+						<div id="movingtat"></div>
+						<center>
+							<div class="col-md-12" style="display: inline;">
+								<span id="square1"></span> 15 + Days &nbsp
+								<span id="square2"></span> 11 - 15 Days &nbsp
+								<span id="square3"></span> 6 - 10 Days &nbsp
+								<span id="square4"></span> 0 - 5 Days &nbsp
+							</div>
+						</center>	
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="panel panel-body aol">
+						<div id="historytat"></div>
+						<center>
+							<div class="col-md-12" style="display: inline;">
+								<span id="square1"></span> 15 + Days &nbsp
+								<span id="square2"></span> 11 - 15 Days &nbsp
+								<span id="square3"></span> 6 - 10 Days &nbsp
+								<span id="square4"></span> 0 - 5 Days &nbsp
+							</div>
+						</center>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12 toggle1">
+			<h5>Conversion TAT & Deal Amount : <span data-bind="text: turn.setTitle()"></span> <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5>
+			<hr class="line">
+		</div>
+		<div class="col-md-12">
+			<div class="panel panel-body aul show">
+				<div class="cater"></div>
+				<table id="tabl">
+					<tr>
+						<td class="le" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">0 - 10 Days</td>
+						<td class="le" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">11 - 10 Days</td>
+						<td class="le" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">21 - 30 Days</td>
+						<td class="le" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">30 - 40 Days</td>
+						<td class="le" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">40 + Days</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
 	
-	<div>
-		<div class="col-md-6">
-			<div class="panel panel-body aol">
-				<div id="movingtat"></div>
-				<center>
-					<div class="col-md-12" style="display: inline;">
-						<span id="square1"></span> 15 + Days &nbsp
-						<span id="square2"></span> 11 - 15 Days &nbsp
-						<span id="square3"></span> 6 - 10 Days &nbsp
-						<span id="square4"></span> 0 - 5 Days &nbsp
-					</div>
-				</center>	
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="panel panel-body aol">
-				<div id="historytat"></div>
-				<center>
-					<div class="col-md-12" style="display: inline;">
-						<span id="square1"></span> 15 + Days &nbsp
-						<span id="square2"></span> 11 - 15 Days &nbsp
-						<span id="square3"></span> 6 - 10 Days &nbsp
-						<span id="square4"></span> 0 - 5 Days &nbsp
-					</div>
-				</center>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-12">
-		<div class="panel panel-body aul">
-			<div class="cater"></div>
-			<table id="tabl">
-				<tr>
-					<td class="le" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">0 - 10 Days</td>
-					<td class="le" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">11 - 10 Days</td>
-					<td class="le" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">21 - 30 Days</td>
-					<td class="le" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">30 - 40 Days</td>
-					<td class="le" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">40 + Days</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+	
 </div>
 

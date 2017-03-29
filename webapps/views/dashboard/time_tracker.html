@@ -24,20 +24,21 @@
 		margin-top: -2px;
 	}
 	.acc-down{
-		background-image: url("/static/img/acordion/down.png");
-		display: block;
-		/*position: relative;*/
-		width: 14px;
-		height: 14px;
-		float: right
+		float: right;
+		font-size: 14px;
+		color:grey;
+		-ms-transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        transform: rotate(180deg);
 	}
 	.acc-up{
-		background-image: url("/static/img/acordion/up.png");
-		display: block;
-		/*position: relative;*/
-		width: 14px;
-		height: 14px;
-		float: right
+		font-size: 14px;
+		color:grey;
+		-moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        transform: scaleX(-1);
+        -ms-filter: fliph;
 	}
 	.panetime{
 		margin-top: 0px !important;
@@ -54,7 +55,7 @@
 	<div class="panel pn clean-border" style="background-color: #f0f3f4;">
 		<div class="panel-heading hd toggle1">
 			<div class="col-md-12">
-				<h5 class="hed title-dashboard"><span class="fa fa-bar-chart"> &nbsp; </span>To be Actioned Deals : Tracker <span class="ic acc-down"></span></h5>
+				<h5 class="hed title-dashboard"><span class="fa fa-bar-chart"> &nbsp; </span>To be Actioned Deals : Tracker <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5>
 			</div>
 		</div>
 		<div class="panel-body bd">

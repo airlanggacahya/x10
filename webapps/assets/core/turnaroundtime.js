@@ -1082,8 +1082,35 @@ function changeLabels() {
 	return categories[categoriesIndex++];
 }
 
+turn.accordion = function(){
+    $(".toggle1").click(function(e){
+        e.preventDefault();
+
+        var $this = $(this);
+        if($this.next().children().hasClass('show')){
+            $this.next().children().removeClass('show');
+            $this.next().children().slideUp(500);
+            $this.find("h5>.ic").removeClass("acc-down");
+            $this.find("h5>.ic").addClass("acc-up");
+
+        }else{
+            $this.next().children().removeClass('hide');
+            $this.next().children().slideDown(500);
+            $this.next().children().addClass("show");
+            $this.find("h5>.ic").addClass("acc-down");
+            $this.find("h5>.ic").removeClass("acc-up");
+        }
+    })
+}
+
+turn.setTitle = function(){
+	var title = kendo.toString(new Date(turn.titleText()), "MMM 'yy");
+	return title;
+}
+
 
 $(function(){
+	turn.accordion();
 	turn.loadData();
 	setTimeout(function(){turn.loadAlleverage();turn.averageAcceptanceClick();}, 500)
 	turn.loadChaterChart()

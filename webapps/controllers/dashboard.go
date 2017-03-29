@@ -986,7 +986,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	FwhZ = append(FwhZ, startDateWh)
 	FwhZ = append(FwhZ, endDateWh)
 
-	tk.Println("-------DATES", FwhZ)
+	// tk.Println("-------DATES", FwhZ)
 
 	pipe = append(pipe, tk.M{}.Set("$match", FwhX))
 
@@ -1330,7 +1330,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	periodType := payload.GetString("type")
 
 	period := 1
-	periodLength := 7
+	periodLength := 6
 	var currDate, endDate, nextDate, pastDate time.Time
 	var periodKey func(time.Time) string
 	switch periodType {
@@ -1362,7 +1362,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		pastDate = currDate.AddDate(0, 1-periodLength, 0)
 
 		periodKey = func(val time.Time) string {
-			count := int(val.Month()) + ((val.Year() * 12) / 12)
+			count := int(val.Month()) + val.Year()*12
 			count = periodStart.Year()*12 + int(periodStart.Month()) - count
 			return strconv.Itoa(count)
 		}
@@ -1413,13 +1413,17 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	if err != nil {
 		return res.SetError(err)
 	}
-	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", ids))
 
-	// tk.Println(groupByDate, "-------DATE")
+	filterids := []interface{}{}
+	for _, id := range ids {
+		filterids = append(filterids, id)
+	}
+
 	whsx = append(whsx,
 		dbox.And(
 			dbox.Lt("info.myInfo.updateTime", nextDate),
 			dbox.Gte("info.myInfo.updateTime", pastDate),
+			dbox.In("customerprofile.applicantdetail.DealNo", filterids...),
 		),
 	)
 
@@ -1427,6 +1431,11 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		From("DealSetup").
 		Select("info", "accountdetails.accountsetupdetails.citynameid").
 		Where(dbox.And(whsx...))
+
+	// fbuilder := dbox.NewFilterBuilder(new(mongo.FilterBuilder))
+	// filterdebug, _ := fbuilder.BuildFilter(dbox.And(whsx...))
+	// debug, _ := json.Marshal(filterdebug)
+	// tk.Printfn("%s", string(debug))
 
 	csr, err := query.Cursor(nil)
 
@@ -1441,7 +1450,8 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	// tk.Println("Result ----------", results)
+	// debug, _ := json.Marshal(results)
+	// tk.Printfn("Result %s", string(debug))
 
 	lib := tk.M{
 		"decision":   []string{Approve, Reject},
@@ -1490,6 +1500,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 					key := ""
 					if groupBy == "period" {
 						key = periodKey(secondDate)
+						// tk.Printfn("%v SNAPSHOTTAT CONVERSION", key)
 					} else {
 						key, err = GetRegionName(hp.TkWalk(val, "accountdetails.accountsetupdetails.citynameid").(string), k)
 						if err != nil {
@@ -1550,6 +1561,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 				key := ""
 				if groupBy == "period" {
 					key = periodKey(lasttime)
+					// tk.Printfn("%v SNAPSHOTTAT", key)
 				} else {
 					key, err = GetRegionName(hp.TkWalk(val, "accountdetails.accountsetupdetails.citynameid").(string), k)
 					if err != nil {
@@ -1585,7 +1597,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		}
 	}
 
-	finalRes := []tk.M{}
+	finalRes := make([]tk.M, periodLength+1)
 	months := tk.M{}
 	for key, val := range mapRes {
 		re := tk.M{}
@@ -1595,11 +1607,12 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		re.Set("idx", key)
 		// re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
 		months.Set(key, "")
-		finalRes = append(finalRes, re)
+		keyInt, _ := strconv.Atoi(key)
+		finalRes[keyInt] = re
 	}
 
 	if groupBy == "period" {
-		for val := 0; val < periodLength; val++ {
+		for val := 0; val <= periodLength; val++ {
 			valStr := strconv.Itoa(val)
 
 			if months.Get(valStr) == nil {
@@ -1609,7 +1622,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 				re.Set("dealcount", nil)
 				re.Set("idx", valStr)
 				// re.Set("date", val)
-				finalRes = append(finalRes, re)
+				finalRes[val] = re
 			}
 		}
 	}

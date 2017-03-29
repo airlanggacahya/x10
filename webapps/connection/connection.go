@@ -2,13 +2,13 @@ package connection
 
 import (
 	"bufio"
-	"github.com/eaciit/dbox"
-	_ "github.com/eaciit/dbox/dbc/json"
-	_ "github.com/eaciit/dbox/dbc/mongo"
-	tk "github.com/eaciit/toolkit"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/eaciit/dbox"
+	_ "github.com/eaciit/dbox/dbc/json"
+	_ "github.com/eaciit/dbox/dbc/mongo"
 )
 
 type Connection struct {
@@ -36,7 +36,7 @@ func GetConnection() (dbox.IConnection, error) {
 	// c := Connection{}
 	// c.GetDBConfig()
 	c := ReadConfig()
-	tk.Println("Connection: ", c)
+	// tk.Println("Connection: ", c)
 	ci := &dbox.ConnectionInfo{c["host"], c["database"], c["username"], c["password"], nil}
 	conn, e := dbox.NewConnection("mongo", ci)
 	e = conn.Connect()

@@ -4,7 +4,6 @@ import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/models"
 	"errors"
-	"fmt"
 
 	"time"
 
@@ -277,7 +276,7 @@ func (c *AccountDetailController) SaveSectionAccount(k *knot.WebContext) interfa
 			return res
 		}
 
-		fmt.Printf("--------- data", data.AccountSetupDetails)
+		// fmt.Printf("--------- data", data.AccountSetupDetails)
 		data.AccountSetupDetails = payload.AccountSetupDetails
 
 		if err := c.Ctx.Save(data); err != nil {

@@ -200,9 +200,9 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 			dbFilter = append(dbFilter, db.And(db.Gte("loandetails.proposedloanamount", var1), db.Lte("loandetails.proposedloanamount", var2)))
 		}
 	}
-	tk.Printf("--------- DV %v ----------- \n", Dv)
-	tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
-	tk.Printf("--------- USERID %v ----------- \n", userid)
+	// tk.Printf("--------- DV %v ----------- \n", Dv)
+	// tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
+	// tk.Printf("--------- USERID %v ----------- \n", userid)
 	switch strings.ToUpper(Type) {
 	case "CA":
 		dbFilter = append(dbFilter, db.Eq("accountsetupdetails.CreditAnalystId", userid))
@@ -248,14 +248,14 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 	}
 
 	cur.Fetch(&ret, 0, true)
-	tk.Printf("-------- AD %v -------- \n", ret)
+	// tk.Printf("-------- AD %v -------- \n", ret)
 
 	customerids := []interface{}{}
 	for _, val := range ret {
 		customerids = append(customerids, val.GetString("_id"))
 	}
 
-	tk.Printf("---- IDS %v ----\n", customerids)
+	// tk.Printf("---- IDS %v ----\n", customerids)
 
 	var caFilter []*db.Filter
 	if len(ret) > 0 {
@@ -298,7 +298,7 @@ func (d *LoginController) GetListUsersByRole(k *knot.WebContext, Role SysRolesMo
 		k.SetSession("CustomerProfileData", currSess)
 	}
 
-	tk.Printf("------------ CP -- %v -- CP ---------------\n", k.Session("CustomerProfileData"))
+	// tk.Printf("------------ CP -- %v -- CP ---------------\n", k.Session("CustomerProfileData"))
 
 	return nil
 }
@@ -317,7 +317,7 @@ func (d *LoginController) GetDealValue(id string) ([]tk.M, error) {
 		tk.Println(err.Error())
 		return ret, err
 	}
-	tk.Printf("---- ID ----", id)
+	// tk.Printf("---- ID ----", id)
 	cur, err := cn.
 		NewQuery().
 		Where(db.Eq("_id", bson.ObjectIdHex(id))).

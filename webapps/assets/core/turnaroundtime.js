@@ -104,11 +104,13 @@ turn.averageAcceptanceClick = function(){
 
 turn.loadAlleverage = function(){
 	setTimeout(function(){
-		var date = kendo.toString(new Date(turn.titleText()), "MMM-yyyy");
-		var param ={
+		var param = {
 			trend: '',
 			groupby: turn.ValueDataPeriod(),
-			period: date,
+			start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
+			end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
+			type: dash.FilterValue.GetVal("TimePeriod"),
+			filter: dash.FilterValue()
 		}
 
 		param.trend = 'acceptance';
@@ -524,7 +526,7 @@ turn.loadAlleverage = function(){
 				}
 			})
 			var days = turn.lastMonth("conve", "avgdays", res.Data)
-			var days = turn.lastMonth("convers", "dealcount", res.Data)
+			var deals = turn.lastMonth("convers", "dealcount", res.Data)
 			turn.averageConversionData(conv)
 			if(res.Data[0].avgdays != null || res.Data[0].avgdays != null){
 				rest = kendo.toString(res.Data[0].avgdays, "n0");

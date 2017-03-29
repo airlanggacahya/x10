@@ -7,10 +7,12 @@
         font-size: 14px;
     }
     .sidebar.sidebar-box {
-        border-radius: 8px;
-        border: 1px solid #acacac;
+        border-radius: 1px;
+        border: 1px solid #cdcdcd;
         margin-bottom: 10px;
         padding: 5px 10px;
+        background-color: white;
+        display: block;
     }
     /* NOTIF */
     .sidebar.sidebar-box.system-notif ul {
@@ -90,15 +92,27 @@
         width: 100%;
         background-image:url(/static/img/form/checkbox-green-uncheck.png);
     }
+    .had{
+        margin-top: 36px;
+    }
+    .toggle1{
+        cursor: pointer;
+    }
 </style>
 
 <div class="row">
+    <div class="toggle1 had">
+        <div class="col-md-12" style="margin-bottom: -32px;">
+            <h5 class="hed title-dashboard1"><span class="fa fa-envelope"> &nbsp; </span>System Notification <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5><br>
+            <hr class="line">
+        </div>
+    </div>
     <div class="col-sm-12 gap-from-menu">
-        <div class="sidebar sidebar-box system-notif">
+        <div class="sidebar sidebar-box system-notif show" data-bind="style: { visibility: (alertSide.notifData().length > 0 ? 'initial' : 'hidden') }">
            <!--  <button class="pull-right"  style="margin-top: 3px" data-toggle="collapse" data-target="#dashboard-summary-trend">
                 <i class="fa fa-external-link"></i>
             </button> -->
-            <h5 class="title-dashboard"><span class="fa fa-envelope"> &nbsp; </span>System Notifications</h5>
+            <!-- <h5 class="title-dashboard"><span class="fa fa-envelope"> &nbsp; </span>System Notifications</h5> -->
             <div class="collapse in">
                 <ul data-bind="foreach: alertSide.notifData">
                     <li data-bind="text: $data"></li>
@@ -109,16 +123,22 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-12">
-        <div class="sidebar sidebar-box system-todo">
-            <div class="pull-right" style="margin-top: 3px">
-                <button data-bind="click: alertSide.todoEnableEdit.bind($data, true), visible: alertSide.todoEditState() == 'READ'"><i class="fa fa-pencil"></i></button>
-                <button data-bind="click: alertSide.todoSave, visible: alertSide.todoEditState() == 'EDIT'"><i class="fa fa-floppy-o"></i></button>
-                <button data-bind="click: alertSide.todoAdd"><i class="fa fa-plus"></i></button>
-            </div>
-            <h5 class="title-dashboard"><span class="fa fa-list-ul"> &nbsp; </span>To Do Checkboard</h5>
+    <div class="toggle1">
+        <div class="col-md-12">
+            <h5 class="hed title-dashboard1"><span class="fa fa-list-ul"> &nbsp; </span>To Do Checkboard <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5><br>
+            <hr class="line">
 
-            <ul class="messages" data-bind="foreach: alertSide.todoData, visible: alertSide.todoEditState() == 'READ'">
+        </div>
+    </div>
+    
+    <div class="col-sm-12">  
+        <div class="pull-right show" style="margin-top: -8px;">
+            <button data-bind="click: alertSide.todoEnableEdit.bind($data, true), visible: alertSide.todoEditState() == 'READ'"><i class="fa fa-pencil"></i></button>
+            <button data-bind="click: alertSide.todoSave, visible: alertSide.todoEditState() == 'EDIT'"><i class="fa fa-floppy-o"></i></button>
+            <button data-bind="click: alertSide.todoAdd"><i class="fa fa-plus"></i></button>
+        </div>
+        <div class="sidebar sidebar-box system-todo show" style="margin-top: 27px;" data-bind="style: { visibility: (alertSide.todoData().length > 0 ? 'initial' : 'hidden') }">
+            <ul class="messages" data-bind="foreach: alertSide.todoData, visibility: alertSide.todoEditState() == 'READ'">
                 <li>
                     <!-- workaround, we listen to click to notify save on backend -->
                     <!-- wa can't use subscribe, Since editing is also using the same observable -->

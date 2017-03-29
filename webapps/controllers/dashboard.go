@@ -4,6 +4,8 @@ import (
 	. "eaciit/x10/webapps/connection"
 	hp "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
+	"math"
+	"strconv"
 	// "encoding/json"
 	"strings"
 	"time"
@@ -16,6 +18,7 @@ import (
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	// "sort"
+	"github.com/eaciit/dbox/dbc/mongo"
 )
 
 type DashboardController struct {
@@ -337,7 +340,7 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	}
 
 	ids, err := FiltersAD2DealNo(
-		k.Session("CustomerProfileData").([]tk.M),
+		nil,
 		payload.Filter,
 	)
 	if err != nil {
@@ -880,6 +883,66 @@ func (c *DashboardController) SaveFilter(k *knot.WebContext) interface{} {
 	return c.SetResultInfo(false, "success", nil)
 }
 
+type TimePeriod struct {
+	Start       time.Time
+	End         time.Time
+	TimeType    string
+	PeriodCount int
+
+	Period       int
+	FilterAfter  time.Time
+	FilterBefore time.Time
+
+	GetPeriodID func(time.Time) int
+}
+
+func CalcTimePeriod(input TimePeriod) TimePeriod {
+	var endDate, currDate time.Time
+	switch input.TimeType {
+	case "10day", "fromtill":
+		if input.TimeType == "10day" {
+			endDate = time.Date(input.Start.Year(), input.Start.Month(), input.Start.Day(), 0, 0, 0, 0, time.UTC)
+			currDate = endDate.AddDate(0, 0, -10)
+
+			input.Period = 10
+		} else {
+			currDate = time.Date(input.Start.Year(), input.Start.Month(), input.Start.Day(), 0, 0, 0, 0, time.UTC)
+			endDate = time.Date(input.End.Year(), input.End.Month(), input.End.Day(), 0, 0, 0, 0, time.UTC)
+
+			input.Period = int(endDate.Sub(currDate).Hours()/24) + 1
+		}
+
+		input.FilterBefore = endDate.AddDate(0, 0, 1)
+		input.FilterAfter = currDate.AddDate(0, 0, -input.Period*(input.PeriodCount-1))
+
+		input.GetPeriodID = func(val time.Time) int {
+			return int(endDate.Sub(val).Hours()) / 24 / input.Period
+		}
+	case "", "1month":
+		currDate = time.Date(input.Start.Year(), input.Start.Month(), 1, 0, 0, 0, 0, time.UTC)
+
+		input.FilterBefore = currDate.AddDate(0, 1, 0)
+		input.FilterAfter = currDate.AddDate(0, 1-input.PeriodCount, 0)
+
+		input.GetPeriodID = func(val time.Time) int {
+			count := int(val.Month()) + val.Year()*12
+			return input.Start.Year()*12 + int(input.Start.Month()) - count
+		}
+	case "1year":
+		currDate = time.Date(input.Start.Year(), 4, 1, 0, 0, 0, 0, time.UTC)
+
+		input.FilterBefore = currDate.AddDate(1, 0, 0)
+		input.FilterAfter = currDate.AddDate(1-input.PeriodCount, 0, 0)
+
+		input.GetPeriodID = func(val time.Time) int {
+			count := int(val.Month()) - 4 + ((val.Year() * 12) / 12)
+			return input.Start.Year() - count
+		}
+	}
+
+	return input
+}
+
 func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
@@ -891,7 +954,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	}
 
 	ids, err := FiltersAD2DealNo(
-		k.Session("CustomerProfileData").([]tk.M),
+		nil,
 		CheckArray(payload.Get("filter")),
 	)
 	if err != nil {
@@ -984,7 +1047,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	FwhZ = append(FwhZ, startDateWh)
 	FwhZ = append(FwhZ, endDateWh)
 
-	tk.Println("-------DATES", FwhZ)
+	// tk.Println("-------DATES", FwhZ)
 
 	pipe = append(pipe, tk.M{}.Set("$match", FwhX))
 
@@ -1188,7 +1251,7 @@ func GenerateRoleConditionTkM(k *knot.WebContext) ([]tk.M, error) {
 	return dbFilter, nil
 }
 
-func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
+func (c *DashboardController) HistoryMovingTAT(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
@@ -1215,9 +1278,133 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 		whsx = append(whsx, dbox.Or(whs...))
 	}
 
+	ids, err := FiltersAD2DealNo(
+		nil,
+		CheckArray(payload.Get("filter")),
+	)
+	if err != nil {
+		return res.SetError(err)
+	}
+	filterids := []interface{}{}
+	for _, id := range ids {
+		filterids = append(filterids, id)
+	}
+
+	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
+
+	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whs...))
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	pipe := []tk.M{}
+	pipe = append(pipe, tk.M{
+		"$match": whsMatch,
+	})
+	// Self join
+	pipe = append(pipe, tk.M{
+		"$lookup": tk.M{
+			"from":         "DealSetup",
+			"localField":   "_id",
+			"foreignField": "_id",
+			"as":           "ref",
+		},
+	})
+	// unwind self join to convert array into element
+	pipe = append(pipe, tk.M{
+		"$unwind": "$ref",
+	})
+	// unwind my info to split into individual row
+	pipe = append(pipe, tk.M{
+		"$unwind": tk.M{
+			"path":              "$info.myInfo",
+			"includeArrayIndex": "infoidx",
+		},
+	})
+	// projecting, to pull out last status
+	pipe = append(pipe, tk.M{
+		"$project": tk.M{
+			"status":  "$info.myInfo",
+			"infoidx": "$infoIdx",
+			"nextstatus": tk.M{
+				"$arrayElemAt": []interface{}{
+					"$ref.info.myInfo",
+					tk.M{
+						"$add": []interface{}{
+							"$infoIdx",
+							1,
+						},
+					},
+				},
+			},
+			"laststatus": tk.M{
+				"$arrayElemAt": []interface{}{"$ref.info.myInfo", -1},
+			},
+			"customerprofile": "$customerprofile",
+			"accountdetails":  "$accountdetails",
+		},
+	})
+
+	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	if err != nil {
+		return res.SetError(err)
+	}
+	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	tp := TimePeriod{
+		Start:       periodStart,
+		End:         periodEnd,
+		TimeType:    payload.GetString("type"),
+		PeriodCount: 1,
+	}
+	tp = CalcTimePeriod(tp)
+
+	// whsx = append(whsx,
+	// 	dbox.Lt("info.myInfo.updateTime", tp.FilterBefore),
+	// 	dbox.Gte("info.myInfo.updateTime", tp.FilterAfter))
+	// tk.Printfn("After %v Before %v", tp.FilterAfter, tp.FilterBefore)
+
+	// Filter by timeperiod
+	pipe = append(pipe, tk.M{
+		"$match": tk.M{
+			"$nor": []interface{}{
+				tk.M{
+					"$or": []interface{}{
+						tk.M{
+							"$and": []interface{}{
+								tk.M{
+									"$or": []interface{}{
+										tk.M{"laststatus.status": "Accepted"},
+										tk.M{"laststatus.status": "Rejected"},
+									},
+								},
+								tk.M{
+									"laststatus.updateTime": tk.M{
+										"$lt": tp.FilterAfter,
+									},
+								},
+							},
+						},
+						tk.M{
+							"status.updateTime": tk.M{
+								"$gte": tp.FilterBefore,
+							},
+						},
+					},
+				},
+			},
+		},
+	})
+
+	// debug, _ := json.MarshalIndent(pipe, "", "  ")
+	// tk.Printfn("%s", string(debug))
+
 	query := cn.NewQuery().
-		From("DealSetup").
-		Where(dbox.And(whsx...))
+		Command("pipe", pipe).
+		From("DealSetup")
 
 	csr, err := query.Cursor(nil)
 
@@ -1233,51 +1420,62 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 	}
 
 	textRange := []string{"15 + Days", "11 - 15 Days", "6 - 10 Days", "0 - 5 Days"}
-	statusAlias := tk.M{SendToDecision: "Processed", UnderProcess: "Accepted"}
+
+	statusMap := map[string]string{}
+	if payload.GetString("chart") == "moving" {
+		statusMap = map[string]string{
+			Inque:        "Accepted",
+			UnderProcess: "Processed",
+			Approve:      "Approved",
+			Reject:       "Rejected",
+		}
+	} else if payload.GetString("chart") == "history" {
+		statusMap = map[string]string{
+			Inque:          "In Queue",
+			UnderProcess:   "Processed",
+			SendToDecision: "Awaiting Decision",
+			OnHold:         "On Hold",
+		}
+	}
 	mapRes := tk.M{}
 	for _, val := range results {
-		info := val.Get("info").(tk.M)
-		myInfo := CheckArray(info.Get("myInfo"))
-		if len(myInfo) > 1 {
-			for idx, _ := range myInfo {
-				if idx+1 == len(myInfo) {
-					continue
-				}
+		curStatus := val.Get("status").(tk.M)
+		nextStatus := val.Get("nextstatus")
 
-				status := myInfo[idx+1].GetString("status")
-
-				if status == Cancel || status == SendBackOmnifin {
-					continue
-				}
-
-				// firstDate := inf.Get("updateTime").(time.Time)
-				// secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
-
-				year, month, day, _, _, _ := calcDiffInfoDate(idx, myInfo)
-				idxRange := 3
-				if day > 15 || month > 0 || year > 0 {
-					idxRange = 0
-				} else if day >= 11 {
-					idxRange = 1
-				} else if day >= 6 {
-					idxRange = 2
-				}
-
-				alias := statusAlias.GetString(status)
-
-				if alias != "" {
-					status = alias
-				}
-
-				key := status + "|" + textRange[idxRange]
-
-				if mapRes.Get(key) == nil {
-					mapRes.Set(key, 0)
-				}
-
-				mapRes.Set(key, mapRes.GetInt(key)+1)
+		var nextDate time.Time
+		curDate := curStatus.Get("updateTime").(time.Time)
+		if nextStatus == nil {
+			if tp.End.After(time.Now()) {
+				nextDate = time.Now()
+			} else {
+				nextDate = tp.End
 			}
+		} else {
+			nextDate = nextStatus.(tk.M).Get("updateTime").(time.Time)
 		}
+
+		day := int(math.Ceil(math.Abs(nextDate.Sub(curDate).Hours() / 24)))
+		idxRange := 3
+		if day > 15 {
+			idxRange = 0
+		} else if day >= 11 {
+			idxRange = 1
+		} else if day >= 6 {
+			idxRange = 2
+		}
+
+		status, found := statusMap[curStatus.GetString("status")]
+		if !found {
+			continue
+		}
+
+		key := status + "|" + textRange[idxRange]
+
+		if mapRes.Get(key) == nil {
+			mapRes.Set(key, 0)
+		}
+
+		mapRes.Set(key, mapRes.GetInt(key)+1)
 	}
 
 	finalRes := []tk.M{}
@@ -1306,16 +1504,24 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	}
 
 	trendFilt := payload.GetString("trend")
-	periodFilt := payload.GetString("period")
 	groupBy := payload.GetString("groupby")
-	groupByDate := time.Now()
-	groupByDates := []time.Time{}
 
-	if periodFilt == "" {
-		periodFilt = cast.Date2String(time.Now(), "MMM-yyyy")
+	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	if err != nil {
+		return res.SetError(err)
+	}
+	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	if err != nil {
+		return res.SetError(err)
 	}
 
-	groupByDate = cast.String2Date("01-"+periodFilt+" 00:00:00", "dd-MMM-yyyy HH:mm:ss").AddDate(0, 1, 0)
+	tp := TimePeriod{
+		Start:       periodStart,
+		End:         periodEnd,
+		TimeType:    payload.GetString("type"),
+		PeriodCount: 7,
+	}
+	tp = CalcTimePeriod(tp)
 
 	if groupBy == "" {
 		groupBy = "period"
@@ -1323,12 +1529,6 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 
 	if trendFilt == "" {
 		trendFilt = "conversion"
-	}
-
-	groupByDateClon := groupByDate
-
-	for i := -7; i < 0; i++ {
-		groupByDates = append(groupByDates, groupByDateClon.AddDate(0, i, 0))
 	}
 
 	cn, err := GetConnection()
@@ -1348,13 +1548,36 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		whsx = append(whsx, dbox.Or(whs...))
 	}
 
-	// tk.Println(groupByDate, "-------DATE")
-	whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gte("info.myInfo.updateTime", groupByDate.AddDate(0, -7, 0))))
+	ids, err := FiltersAD2DealNo(
+		nil,
+		CheckArray(payload.Get("filter")),
+	)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	filterids := []interface{}{}
+	for _, id := range ids {
+		filterids = append(filterids, id)
+	}
+
+	whsx = append(whsx,
+		dbox.And(
+			dbox.Lt("info.myInfo.updateTime", tp.FilterBefore),
+			dbox.Gte("info.myInfo.updateTime", tp.FilterAfter),
+			dbox.In("customerprofile.applicantdetail.DealNo", filterids...),
+		),
+	)
 
 	query := cn.NewQuery().
 		From("DealSetup").
 		Select("info", "accountdetails.accountsetupdetails.citynameid").
 		Where(dbox.And(whsx...))
+
+	// fbuilder := dbox.NewFilterBuilder(new(mongo.FilterBuilder))
+	// filterdebug, _ := fbuilder.BuildFilter(dbox.And(whsx...))
+	// debug, _ := json.Marshal(filterdebug)
+	// tk.Printfn("%s", string(debug))
 
 	csr, err := query.Cursor(nil)
 
@@ -1369,9 +1592,16 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	// tk.Println("Result ----------", results)
+	// debug, _ := json.Marshal(results)
+	// tk.Printfn("Result %s", string(debug))
 
-	lib := tk.M{"decision": []string{Approve, Reject}, "action": []string{Approve, Reject, Cancel, SendBackOmnifin}, "processing": []string{SendToDecision}, "acceptance": []string{UnderProcess}, "conversion": []string{}}
+	lib := tk.M{
+		"decision":   []string{Approve, Reject},
+		"action":     []string{Approve, Reject, Cancel, SendBackOmnifin},
+		"processing": []string{SendToDecision},
+		"acceptance": []string{UnderProcess},
+		"conversion": []string{},
+	}
 
 	mapRes := tk.M{}
 	mapResDays := tk.M{}
@@ -1388,7 +1618,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 			poslast := IndexOfString(laststatus, trend)
 
 			if trendFilt != "conversion" && poslast > -1 {
-				for idx, _ := range myInfo {
+				for idx := range myInfo {
 					if idx+1 == len(myInfo) {
 						continue
 					}
@@ -1407,25 +1637,19 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 					// firstDate := inf.Get("updateTime").(time.Time)
 					secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
 
-					days := 0
-					year, month, day, hour, min, sec := calcDiffInfoDate(idx, myInfo)
-
-					if hour > 0 || min > 0 || sec > 0 {
-						days += 1
-					}
-					days += day
-					days += month * 31
-					days += year * 12 * 31
+					days := int(math.Ceil(math.Abs(calcDiffInfoDate(idx, myInfo).Hours() / 24)))
 
 					key := ""
 					if groupBy == "period" {
-						key = cast.Date2String(secondDate, "MMM-yyyy")
+						key = strconv.Itoa(tp.GetPeriodID(secondDate))
+						// tk.Printfn("%v SNAPSHOTTAT CONVERSION", key)
 					} else {
 						key, err = GetRegionName(hp.TkWalk(val, "accountdetails.accountsetupdetails.citynameid").(string), k)
 						if err != nil {
 							return res.SetError(err)
 						}
 					}
+
 					if mapRes.Get(key) == nil {
 						mapRes.Set(key, 0)
 					}
@@ -1478,7 +1702,8 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 
 				key := ""
 				if groupBy == "period" {
-					key = cast.Date2String(lasttime, "MMM-yyyy")
+					key = strconv.Itoa(tp.GetPeriodID(lasttime))
+					// tk.Printfn("%v SNAPSHOTTAT", key)
 				} else {
 					key, err = GetRegionName(hp.TkWalk(val, "accountdetails.accountsetupdetails.citynameid").(string), k)
 					if err != nil {
@@ -1514,32 +1739,37 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		}
 	}
 
-	finalRes := []tk.M{}
+	finalRes := make([]tk.M, tp.PeriodCount+1)
 	months := tk.M{}
 	for key, val := range mapRes {
+		keyInt, _ := strconv.Atoi(key)
+		if keyInt > tp.PeriodCount {
+			continue
+		}
 		re := tk.M{}
 		re.Set("avgdays", tk.Div(float64(mapResDays.GetInt(key)), float64(val.(int))))
 		re.Set("median", mapResMaxDays.GetInt(key)-mapResMinDays.GetInt(key))
 		re.Set("dealcount", val)
-		re.Set("dateStr", key)
-		re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
+		re.Set("idx", key)
+		// re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
 		months.Set(key, "")
-		finalRes = append(finalRes, re)
+
+		finalRes[keyInt] = re
 	}
 
 	if groupBy == "period" {
-		for _, val := range groupByDates {
-			valStr := cast.Date2String(val, "MMM-yyyy")
-			// tk.Println(months.Get(valStr))
-			// tk.Println(valStr)
+		for val := 0; val <= tp.PeriodCount; val++ {
+			valStr := strconv.Itoa(val)
+
 			if months.Get(valStr) == nil {
 				re := tk.M{}
-				re.Set("avgdays", nil)
-				re.Set("median", nil)
-				re.Set("dealcount", nil)
-				re.Set("dateStr", valStr)
-				re.Set("date", val)
-				finalRes = append(finalRes, re)
+				re.Set("avgdays", 0)
+				re.Set("median", 0)
+				re.Set("dealcount", 0)
+				re.Set("idx", valStr)
+				re.Set("empty", true)
+				// re.Set("date", val)
+				finalRes[val] = re
 			}
 		}
 	}
@@ -1576,6 +1806,41 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 		whsx = append(whsx, dbox.Or(whs...))
 	}
 
+	ids, err := FiltersAD2DealNo(
+		nil,
+		CheckArray(payload.Get("filter")),
+	)
+	if err != nil {
+		return res.SetError(err)
+	}
+	filterids := []interface{}{}
+	for _, id := range ids {
+		filterids = append(filterids, id)
+	}
+
+	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
+
+	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	if err != nil {
+		return res.SetError(err)
+	}
+	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	tp := TimePeriod{
+		Start:       periodStart,
+		End:         periodEnd,
+		TimeType:    payload.GetString("type"),
+		PeriodCount: 1,
+	}
+	tp = CalcTimePeriod(tp)
+
+	whsx = append(whsx,
+		dbox.Lt("info.myInfo.updateTime", tp.FilterBefore),
+		dbox.Gte("info.myInfo.updateTime", tp.FilterAfter))
+
 	query := cn.NewQuery().
 		From("DealSetup").
 		Where(dbox.And(whsx...))
@@ -1594,6 +1859,7 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 	}
 
 	textRange := []string{"15 + Days", "11 - 15 Days", "6 - 10 Days", "0 - 5 Days"}
+
 	mapRes := tk.M{}
 	for _, val := range results {
 		info := val.Get("info").(tk.M)
@@ -1639,6 +1905,20 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 	return res
 }
 
+func (c *DashboardController) ConversionTatScatter(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	data := []interface{}{
+		[]int{20, 23},
+		[]int{40, 27},
+	}
+
+	res.Data = data
+
+	return res
+}
+
 func (c *DashboardController) TurnaroundTime(k *knot.WebContext) interface{} {
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
@@ -1663,7 +1943,7 @@ func IndexOfString(val string, arr []string) int {
 	return -1
 }
 
-func calcDiffInfoDate(idx int, myInfo []tk.M) (int, int, int, int, int, int) {
+func calcDiffInfoDate(idx int, myInfo []tk.M) time.Duration {
 	firstDate := myInfo[idx].Get("updateTime").(time.Time)
 	secondDate := myInfo[idx+1].Get("updateTime").(time.Time)
 
@@ -1671,7 +1951,8 @@ func calcDiffInfoDate(idx int, myInfo []tk.M) (int, int, int, int, int, int) {
 	if firstStatus == OnHold {
 		firstDate = myInfo[idx-1].Get("updateTime").(time.Time)
 	}
-	return Diff(firstDate, secondDate)
+
+	return secondDate.Sub(firstDate)
 }
 
 func calcDiffInfoDateHistory(myInfo []tk.M) (int, int, int, int, int, int) {
@@ -1791,15 +2072,8 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 
 					status := myInfo[idx+1].GetString("status")
 
-					days := 0
-					year, month, day, hour, min, sec := calcDiffInfoDate(idx, myInfo)
+					days := int(math.Ceil(math.Abs(calcDiffInfoDate(idx, myInfo).Hours() / 24)))
 
-					if hour > 0 || min > 0 || sec > 0 {
-						days += 1
-					}
-					days += day
-					days += month * 31
-					days += year * 12 * 31
 					alias := []string{}
 
 					if statusAlias.Get(status) == nil {

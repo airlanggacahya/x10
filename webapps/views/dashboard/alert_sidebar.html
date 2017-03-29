@@ -8,7 +8,7 @@
     }
     .sidebar.sidebar-box {
         border-radius: 1px;
-        /* border: 1px solid #acacac; */
+        border: 1px solid #cdcdcd;
         margin-bottom: 10px;
         padding: 5px 10px;
         background-color: white;
@@ -108,7 +108,7 @@
         </div>
     </div>
     <div class="col-sm-12 gap-from-menu">
-        <div class="sidebar sidebar-box system-notif show">
+        <div class="sidebar sidebar-box system-notif show" data-bind="style: { visibility: (alertSide.notifData().length > 0 ? 'initial' : 'hidden') }">
            <!--  <button class="pull-right"  style="margin-top: 3px" data-toggle="collapse" data-target="#dashboard-summary-trend">
                 <i class="fa fa-external-link"></i>
             </button> -->
@@ -137,8 +137,8 @@
             <button data-bind="click: alertSide.todoSave, visible: alertSide.todoEditState() == 'EDIT'"><i class="fa fa-floppy-o"></i></button>
             <button data-bind="click: alertSide.todoAdd"><i class="fa fa-plus"></i></button>
         </div>
-        <div class="sidebar sidebar-box system-todo show" style="margin-top: 27px;">
-            <ul class="messages" data-bind="foreach: alertSide.todoData, visible: alertSide.todoEditState() == 'READ'">
+        <div class="sidebar sidebar-box system-todo show" style="margin-top: 27px;" data-bind="style: { visibility: (alertSide.todoData().length > 0 ? 'initial' : 'hidden') }">
+            <ul class="messages" data-bind="foreach: alertSide.todoData, visibility: alertSide.todoEditState() == 'READ'">
                 <li>
                     <!-- workaround, we listen to click to notify save on backend -->
                     <!-- wa can't use subscribe, Since editing is also using the same observable -->

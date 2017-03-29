@@ -61,7 +61,8 @@ turn.dummyData = ko.observableArray([
 	{"avgdays":4.0,"date":"2017-03-01T00:00:00Z","dateStr":"Mar-2017","dealcount":2,"median":8}])
 
 dash.FilterValue.subscribe(function (val) {
-    turn.loadAlleverage()
+	turn.loadAlleverage()
+    turn.loadData()
 })
 turn.averageConversionClick = function(){
 	$(".dl").removeClass("active");
@@ -756,19 +757,44 @@ turn.loadChartContainer = function(data){
 }
 
 turn.loadData = function(){
-	turn.dataMoving([]);
 	turn.dataHistory([]);
-	ajaxPost("/dashboard/historytat", {}, function(res){
+	ajaxPost("/dashboard/historymovingtat", {
+		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
+		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
+		type: dash.FilterValue.GetVal("TimePeriod"),
+		filter: dash.FilterValue(),
+		chart: "history"
+	}, function(res){
 		if(res.Data != null){
 			turn.dataHistory(res.Data);
 			turn.CreateChartHistory(res.Data);
 		}
 	});
-	ajaxPost("/dashboard/movingtat", {}, function(rest){
+
+	turn.dataMoving([]);
+	ajaxPost("/dashboard/historymovingtat", {
+		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
+		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
+		type: dash.FilterValue.GetVal("TimePeriod"),
+		filter: dash.FilterValue(),
+		chart: "moving"
+	}, function(rest){
 		if(rest.Data != null){
 			turn.dataMoving(rest.Data);
 			// turn.setUpData(rest.Data)
 			turn.CreateChartMoving(rest.Data);
+		}
+	})
+
+	turn.dataScatter([]);
+	ajaxPost("/dashboard/conversiontatscatter", {
+		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
+		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
+		type: dash.FilterValue.GetVal("TimePeriod"),
+		filter: dash.FilterValue()
+	}, function(rest) {
+		if (rest.Data != null) {
+			turn.dataScatter(rest.Data)
 		}
 	})
 }
@@ -1003,6 +1029,11 @@ turn.normalisasiData = function(data){
     return data
 }
 
+turn.dataScatter = ko.observableArray([]);
+turn.dataScatter.subscribe(function (val) {
+	turn.loadChaterChart();
+})
+
 turn.loadChaterChart = function(){
 	$(".cater").html("");
 	$(".cater").kendoChart({
@@ -1020,20 +1051,8 @@ turn.loadChaterChart = function(){
             }
         },
         series: [{
-	        name: "January 2008",
-	        data: [[10, 10], [15, 20], [20, 25], [32, 40], [39, 33], [40, 38]
-                [11, 33], [38, 22], [35, 22], [33, 35], [10, 12], [10, 32], [10, 35]
-            ],
-	    },{
-	        name: "January 2009",
-	        data: [[10, 10], [15, 20], [20, 25], [32, 40], [39, 33], [40, 38]
-                [11, 33], [38, 22], [35, 22], [33, 35], [10, 12], [10, 32], [10, 35], [22, 43]
-            ],
-	    },{
-	        name: "January 2010",
-	        data: [[10, 10], [15, 20], [20, 25], [32, 40], [39, 33], [40, 38]
-                [11, 33], [38, 22], [35, 22], [33, 35], [10, 12], [10, 32], [10, 35], [30, 45]
-            ],
+	        name: "Data",
+	        data: turn.dataScatter()
 	    }],
 	    legend: {
 	    	visible: false,
@@ -1041,7 +1060,7 @@ turn.loadChaterChart = function(){
         xAxis: {
             max: 50,
             labels: {
-				template: "#= changeLabels()#",
+				template: "&lt;= #= value #",
 				skip: 1,
 				step: 1
 			},
@@ -1067,23 +1086,20 @@ turn.loadChaterChart = function(){
                 font: "11px sans-serif",
             	visible : true,
             	color : "#4472C4"
-            },
-            labels: {
-                format: "{0}%"
             }
         }
     });
 }
-
-var categories =  ["<=10", "<=20", "<=30", "<=40", "", "<=60", "<=70", "<=80", "<=90", "<=100"],
-					categoriesIndex = 0;
 				
-function changeLabels() {
-	return categories[categoriesIndex++];
+function changeLabels(val) {
+	if (val >= 50)
+		return "";
+	return "&lt;= " + val;
 }
 
 turn.accordion = function(){
     $(".toggle1").click(function(e){
+		console.log("lala");
         e.preventDefault();
 
         var $this = $(this);
@@ -1110,11 +1126,7 @@ turn.setTitle = function(){
 
 
 $(function(){
-	turn.accordion();
-	turn.loadData();
 	setTimeout(function(){turn.loadAlleverage();turn.averageAcceptanceClick();}, 500)
 	turn.loadChaterChart()
-	turn.titleText()
-	
-	
+	turn.accordion()
 });

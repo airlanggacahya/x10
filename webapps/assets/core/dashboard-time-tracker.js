@@ -119,7 +119,7 @@ ttrack.renderChart = function(datas){
                 }],
                 chartArea:{
                     height: myHeight,
-                    background: "#f0f3f4"
+                    background: "white"
                 },
                 seriesClick : function(e){
                     var status = e.dataItem.timestatus.split("*")[1];

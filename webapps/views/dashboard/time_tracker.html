@@ -39,6 +39,10 @@
 		height: 14px;
 		float: right
 	}
+	.panetime{
+		margin-top: 0px !important;
+    	background-color: white;
+	}
 </style>
 <div class="row">
 
@@ -50,30 +54,87 @@
 			</div>
 		</div>
 		<div class="panel-body bd">
-			<div class="panel show" style="background-color: #f0f3f4;border: 0px;">
-				<div class="col-md-8 vv" >
-					<div class="form-group">
-						<div class="col-md-12">
-							<div class="col-md-2">
-								<label class="form-label">View Accross</label>
+			<div class="panel show" style="background-color: white;border: 0px;">
+				<div class="col-sm-12">
+                    <hr class="line">
+                    <div class="col-md-3 panel" style="margin-right: 5%;width: 20%;">
+                        <div class="panel-body pane">
+                            <h5>Deal Count</h5>
+                            <div class="col-md-6">
+                                <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="rest">30</div>
+                                <span class="arrow-up"><i class="fa fa-arrow-up"></i> 10.15%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 panel" style="margin-right: 7%;width: 20%;">
+                        <div class="panel-body pane">
+                            <h5>Deal Count</h5>
+                            <div class="col-md-6">
+                                <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="rest">30</div>
+                                <span class="arrow-down"><i class="fa fa-arrow-down"></i> 10.15%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 panel" style="margin-right: 7%;width: 20%;">
+                        <div class="panel-body pane">
+                            <h5>Deal Amount</h5>
+                            <div class="col-md-6">
+                                <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up" style="font-size: 25px;"></i></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="rest">30</div>
+                                <span class="arrow-up"><i class="fa fa-arrow-up"></i> 10.15%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 panel" style="width: 20%">
+                        <div class="panel-body pane">
+                            <h5>Deal Amount</h5>
+                            <div class="col-md-6">
+                                <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="rest">30</div>
+                                <span class="arrow-down"><i class="fa fa-arrow-down"></i> 10.15%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<div class="col-md-12">
+					<div class="panel">
+						<div class="panel-body panetime">
+							<div class="col-md-8 vv" >
+								<div class="form-group">
+									<div class="col-md-12">
+										<div class="col-md-2">
+											<label class="form-label">View Accross</label>
+										</div>
+										<div class="col-md-3">
+											<select data-bind="kendoDropDownList: {data: ttrack.trackingList, value: ttrack.trackingValue, dataTextField: 'text', dataValueField: 'value'}" style="width: 100%;"></select>
+										</div>
+										<div class="col-md-2">
+											<div type="button" class="btn btn-sm btn-flat btn-primary" data-bind="click: ttrack.getData"><span class="fa fa-refresh"></span> Search</div>
+										</div>
+									</div>
+
+								</div>
 							</div>
-							<div class="col-md-3">
-								<select data-bind="kendoDropDownList: {data: ttrack.trackingList, value: ttrack.trackingValue, dataTextField: 'text', dataValueField: 'value'}" style="width: 100%;"></select>
+							<div class="col-md-12 vv">
+								<div id="timeTrackerChart"></div>
 							</div>
-							<div class="col-md-2">
-								<div type="button" class="btn btn-sm btn-flat btn-primary" data-bind="click: ttrack.getData"><span class="fa fa-refresh"></span> Search</div>
+							<div class="col-md-12 hidden-chart" style="display: none;">
+									<center data-bind="visible: ttrack.isRegion() == true"><div id="chartRegion"></div></center>
+									<center><h5 data-bind="text: ttrack.modalGridTittle"></h5></center>
+									<div id="dealStatus"></div>
 							</div>
 						</div>
-
 					</div>
-				</div>
-				<div class="col-md-12 vv">
-					<div id="timeTrackerChart"></div>
-				</div>
-				<div class="col-md-12 hidden-chart" style="display: none;">
-						<center data-bind="visible: ttrack.isRegion() == true"><div id="chartRegion"></div></center>
-						<center><h5 data-bind="text: ttrack.modalGridTittle"></h5></center>
-						<div id="dealStatus"></div>
 				</div>
 			</div>
 		</div>

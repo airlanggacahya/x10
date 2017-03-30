@@ -1251,7 +1251,7 @@ func GenerateRoleConditionTkM(k *knot.WebContext) ([]tk.M, error) {
 	return dbFilter, nil
 }
 
-func (c *DashboardController) HistoryMovingTAT(k *knot.WebContext) interface{} {
+func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
@@ -1326,19 +1326,16 @@ func (c *DashboardController) HistoryMovingTAT(k *knot.WebContext) interface{} {
 		"$project": tk.M{
 			"status":  "$info.myInfo",
 			"infoidx": "$infoIdx",
-			"nextstatus": tk.M{
+			"prevstatus": tk.M{
 				"$arrayElemAt": []interface{}{
 					"$ref.info.myInfo",
 					tk.M{
 						"$add": []interface{}{
-							"$infoIdx",
-							1,
+							"$infoidx",
+							-1,
 						},
 					},
 				},
-			},
-			"laststatus": tk.M{
-				"$arrayElemAt": []interface{}{"$ref.info.myInfo", -1},
 			},
 			"customerprofile": "$customerprofile",
 			"accountdetails":  "$accountdetails",
@@ -1362,37 +1359,18 @@ func (c *DashboardController) HistoryMovingTAT(k *knot.WebContext) interface{} {
 	}
 	tp = CalcTimePeriod(tp)
 
-	// whsx = append(whsx,
-	// 	dbox.Lt("info.myInfo.updateTime", tp.FilterBefore),
-	// 	dbox.Gte("info.myInfo.updateTime", tp.FilterAfter))
-	// tk.Printfn("After %v Before %v", tp.FilterAfter, tp.FilterBefore)
-
 	// Filter by timeperiod
 	pipe = append(pipe, tk.M{
 		"$match": tk.M{
-			"$nor": []interface{}{
+			"$and": []interface{}{
 				tk.M{
-					"$or": []interface{}{
-						tk.M{
-							"$and": []interface{}{
-								tk.M{
-									"$or": []interface{}{
-										tk.M{"laststatus.status": "Accepted"},
-										tk.M{"laststatus.status": "Rejected"},
-									},
-								},
-								tk.M{
-									"laststatus.updateTime": tk.M{
-										"$lt": tp.FilterAfter,
-									},
-								},
-							},
-						},
-						tk.M{
-							"status.updateTime": tk.M{
-								"$gte": tp.FilterBefore,
-							},
-						},
+					"status.updateTime": tk.M{
+						"$lt": tp.FilterBefore,
+					},
+				},
+				tk.M{
+					"status.updateTime": tk.M{
+						"$gte": tp.FilterAfter,
 					},
 				},
 			},
@@ -1421,40 +1399,28 @@ func (c *DashboardController) HistoryMovingTAT(k *knot.WebContext) interface{} {
 
 	textRange := []string{"15 + Days", "11 - 15 Days", "6 - 10 Days", "0 - 5 Days"}
 
-	statusMap := map[string]string{}
-	if payload.GetString("chart") == "moving" {
-		statusMap = map[string]string{
-			Inque:        "Accepted",
-			UnderProcess: "Processed",
-			Approve:      "Approved",
-			Reject:       "Rejected",
-		}
-	} else if payload.GetString("chart") == "history" {
-		statusMap = map[string]string{
-			Inque:          "In Queue",
-			UnderProcess:   "Processed",
-			SendToDecision: "Awaiting Decision",
-			OnHold:         "On Hold",
-		}
+	statusMap := map[string]string{
+		UnderProcess:   "Accepted",
+		SendToDecision: "Processed",
+		Approve:        "Approved",
+		Reject:         "Rejected",
 	}
 	mapRes := tk.M{}
 	for _, val := range results {
 		curStatus := val.Get("status").(tk.M)
-		nextStatus := val.Get("nextstatus")
 
-		var nextDate time.Time
-		curDate := curStatus.Get("updateTime").(time.Time)
-		if nextStatus == nil {
-			if tp.End.After(time.Now()) {
-				nextDate = time.Now()
-			} else {
-				nextDate = tp.End
-			}
-		} else {
-			nextDate = nextStatus.(tk.M).Get("updateTime").(time.Time)
+		// Skip out not needed
+		status, found := statusMap[curStatus.GetString("status")]
+		if !found {
+			continue
 		}
 
-		day := int(math.Ceil(math.Abs(nextDate.Sub(curDate).Hours() / 24)))
+		prevStatus := val.Get("prevstatus").(tk.M)
+
+		curDate := curStatus.Get("updateTime").(time.Time)
+		prevDate := prevStatus.Get("updateTime").(time.Time)
+
+		day := int(math.Ceil(math.Abs(curDate.Sub(prevDate).Hours() / 24)))
 		idxRange := 3
 		if day > 15 {
 			idxRange = 0
@@ -1462,11 +1428,6 @@ func (c *DashboardController) HistoryMovingTAT(k *knot.WebContext) interface{} {
 			idxRange = 1
 		} else if day >= 6 {
 			idxRange = 2
-		}
-
-		status, found := statusMap[curStatus.GetString("status")]
-		if !found {
-			continue
 		}
 
 		key := status + "|" + textRange[idxRange]
@@ -1820,6 +1781,11 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 
 	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
 
+	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whs...))
+	if err != nil {
+		return res.SetError(err)
+	}
+
 	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
 	if err != nil {
 		return res.SetError(err)
@@ -1837,13 +1803,45 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 	}
 	tp = CalcTimePeriod(tp)
 
-	whsx = append(whsx,
-		dbox.Lt("info.myInfo.updateTime", tp.FilterBefore),
-		dbox.Gte("info.myInfo.updateTime", tp.FilterAfter))
+	pipe := []tk.M{}
+	pipe = append(pipe, tk.M{
+		"$match": whsMatch,
+	})
+	// projecting, filter
+	pipe = append(pipe, tk.M{
+		"$project": tk.M{
+			"status": tk.M{
+				"$filter": tk.M{
+					"input": "$info.myInfo",
+					"as":    "myInfo",
+					"cond": tk.M{
+						"$and": []interface{}{
+							tk.M{"$lt": []interface{}{"$$myInfo.updateTime", tp.FilterBefore}},
+						},
+					},
+				},
+			},
+			"customerprofile": "$customerprofile",
+			"accountdetails":  "$accountdetails",
+		},
+	})
+	// projecting, pull out last status
+	pipe = append(pipe, tk.M{
+		"$project": tk.M{
+			"status": tk.M{
+				"$arrayElemAt": []interface{}{"$status", -1},
+			},
+			"customerprofile": "$customerprofile",
+			"accountdetails":  "$accountdetails",
+		},
+	})
+
+	// debug, _ := json.MarshalIndent(pipe, "", "  ")
+	// tk.Printfn("%s", string(debug))
 
 	query := cn.NewQuery().
-		From("DealSetup").
-		Where(dbox.And(whsx...))
+		Command("pipe", pipe).
+		From("DealSetup")
 
 	csr, err := query.Cursor(nil)
 
@@ -1860,20 +1858,36 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 
 	textRange := []string{"15 + Days", "11 - 15 Days", "6 - 10 Days", "0 - 5 Days"}
 
+	statusMap := map[string]string{
+		Inque:          "In Queue",
+		UnderProcess:   "Under Process",
+		SendToDecision: "Awaiting Decision",
+		OnHold:         "On Hold",
+	}
 	mapRes := tk.M{}
+
+	endDate := time.Now()
+	if endDate.After(tp.End) {
+		endDate = tp.End
+	}
 	for _, val := range results {
-		info := val.Get("info").(tk.M)
-		myInfo := CheckArray(info.Get("myInfo"))
+		if val.Get("status") == nil {
+			continue
+		}
 
-		inf := myInfo[len(myInfo)-1]
+		curStatus := val.Get("status").(tk.M)
 
-		// firstDate := inf.Get("updateTime").(time.Time)
-		// secondDate := time.Now()
-		status := inf.GetString("status")
+		// Skip out not needed
+		status, found := statusMap[curStatus.GetString("status")]
+		if !found {
+			continue
+		}
 
-		year, month, day, _, _, _ := calcDiffInfoDateHistory(myInfo) //Diff(firstDate, secondDate)
+		statusDate := curStatus.Get("updateTime").(time.Time)
+
+		day := int(math.Ceil(math.Abs(endDate.Sub(statusDate).Hours() / 24)))
 		idxRange := 3
-		if day > 15 || month > 0 || year > 0 {
+		if day > 15 {
 			idxRange = 0
 		} else if day >= 11 {
 			idxRange = 1

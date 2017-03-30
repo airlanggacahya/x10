@@ -758,12 +758,11 @@ turn.loadChartContainer = function(data){
 
 turn.loadData = function(){
 	turn.dataHistory([]);
-	ajaxPost("/dashboard/historymovingtat", {
+	ajaxPost("/dashboard/historytat", {
 		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
 		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
 		type: dash.FilterValue.GetVal("TimePeriod"),
-		filter: dash.FilterValue(),
-		chart: "history"
+		filter: dash.FilterValue()
 	}, function(res){
 		if(res.Data != null){
 			turn.dataHistory(res.Data);
@@ -772,12 +771,11 @@ turn.loadData = function(){
 	});
 
 	turn.dataMoving([]);
-	ajaxPost("/dashboard/historymovingtat", {
+	ajaxPost("/dashboard/movingtat", {
 		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
 		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
 		type: dash.FilterValue.GetVal("TimePeriod"),
-		filter: dash.FilterValue(),
-		chart: "moving"
+		filter: dash.FilterValue()
 	}, function(rest){
 		if(rest.Data != null){
 			turn.dataMoving(rest.Data);

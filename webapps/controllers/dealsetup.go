@@ -271,9 +271,9 @@ func GenerateRoleCondition(k *knot.WebContext) ([]*dbox.Filter, error) {
 				dbFilterTemp = append(dbFilterTemp, dbox.And(dbox.Gte("accountdetails.loandetails.proposedloanamount", var1), dbox.Lte("accountdetails.loandetails.proposedloanamount", var2)))
 			}
 		}
-		tk.Printf("--------- DV %v ----------- \n", Dv)
-		tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
-		tk.Printf("--------- USERID %v ----------- \n", userid)
+		// tk.Printf("--------- DV %v ----------- \n", Dv)
+		// tk.Printf("--------- ROLETYPE %v ----------- \n", Type)
+		// tk.Printf("--------- USERID %v ----------- \n", userid)
 		switch strings.ToUpper(Type) {
 		case "CA":
 			dbFilterTemp = append(dbFilterTemp, dbox.Eq("accountdetails.accountsetupdetails.CreditAnalystId", userid))

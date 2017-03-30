@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"regexp"
 	"time"
 
@@ -826,8 +825,8 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	}
 	pipe = append(pipe, wrapMatch(match))
 
-	debug, _ := json.MarshalIndent(pipe, "", "  ")
-	toolkit.Printfn("PIPEX\n%s", debug)
+	// debug, _ := json.MarshalIndent(pipe, "", "  ")
+	// toolkit.Printfn("PIPEX\n%s", debug)
 
 	csr, err := conn.
 		NewQuery().
@@ -845,7 +844,7 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 		return nil, err
 	}
 
-	toolkit.Println("RESULTX", result)
+	// toolkit.Println("RESULTX", result)
 
 	return result, err
 }

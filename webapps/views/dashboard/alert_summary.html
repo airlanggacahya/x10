@@ -59,7 +59,80 @@
     .hed{
         font-size: 14px;
         font-weight: bold;
-        margin-top: 1px;
+        margin-top: 5px;
+        margin-bottom: -15px;
+    }
+    .line{
+        margin-top: 6px;
+        margin-bottom: 20px;
+        border: 1px solid #4472c4;
+        border-top: 0px solid #eee;
+    }
+    .pane{
+        margin-top: 0px !important;
+        padding: 0px !important;
+    }
+    .thumb-down{
+        -moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        transform: scaleX(-1);
+        -ms-filter: fliph; /*IE*/
+        filter: fliph; /*IE*/
+        margin-left: 18px;
+        margin-top: 18px;
+    }
+
+    .thumb-up{
+        margin-left: 18px;
+        margin-top: 18px;
+    }
+    .rest{
+        font-size: 62px;
+        margin-top: -23px;
+        text-align: center;
+        font-weight: bold !important;
+        margin-bottom: -21px;
+    }
+    .rad-up{
+        font-size: 25px;
+        color: black;
+        border-radius: 50%; 
+        height: 59px;
+        width: 57px;
+        background-color: #498fcd;
+        margin-left: 14px;
+        margin-right: 11px;
+        margin-bottom: 7px !important;
+        margin-left: 5px;
+
+    }
+    .rad-down{
+        font-size: 25px;
+        color: black;
+        border-radius: 50%; 
+        height: 59px;
+        width: 57px;
+        background-color: #ed7d31;
+        margin-left: 14px;
+        margin-right: 11px;
+        margin-bottom: 7px !important;
+        margin-left: 5px;
+
+    }
+    .arrow-down{
+        color: red;
+        font-size: 10px;
+        margin-left: 14px;
+    }
+    .arrow-up{
+        color: green;
+        font-size: 10px;
+        margin-left: 14px;
+    }
+    .panechart{
+        margin-top: 0px !important;
+        background-color: white;
     }
 </style>
 
@@ -74,12 +147,64 @@
         <div class="panel pn clean-border" style="border-bottom: 0px !important;background-color: #f0f3f4;">
             <div class="panel-heading hd toggle1">
                 <div type="button" class="col-md-12" >
-                    <h5 class="hed title-dashboard" ><span class="fa fa-bar-chart"> &nbsp; </span>Actioned Deals: Summary and Trends <span style="float: right" class="ic fa fa-chevron-down"></span></h5>
+                    <h5 class="hed title-dashboard" ><span class="fa fa-bar-chart"> &nbsp; </span>Actioned Deals: Summary and Trends <span style="float: right" class="ic acc-down"><i class="fa fa-external-link-square"></i></span></h5>
                 </div>
             </div>
             <div class="panel-body bd">
                 <div class="panel show" style="background-color: #f0f3f4 !important;border: 0px;">
-                    <div class="col-md-4">
+                    <div class="col-sm-12">
+                        <hr class="line">
+                        <div class="col-md-3 panel" style="margin-right: 5%;width: 20%;">
+                            <div class="panel-body pane">
+                                <h6>Deal Count</h6>
+                                <div class="col-md-6">
+                                    <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="rest">30</div>
+                                    <span class="arrow-up"><i class="fa fa-arrow-up"></i> 10.15%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 panel" style="margin-right: 7%;width: 20%;">
+                            <div class="panel-body pane">
+                                <h6>Deal Count</h6>
+                                <div class="col-md-6">
+                                    <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="rest">30</div>
+                                    <span class="arrow-down"><i class="fa fa-arrow-down"></i> 10.15%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 panel" style="margin-right: 7%;width: 20%;">
+                            <div class="panel-body pane">
+                                <h6>Deal Amount</h6>
+                                <div class="col-md-6">
+                                    <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up" style="font-size: 25px;"></i></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="rest">30</div>
+                                    <span class="arrow-up"><i class="fa fa-arrow-up"></i> 10.15%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 panel" style="width: 20%">
+                            <div class="panel-body pane">
+                                <h6>Deal Amount</h6>
+                                <div class="col-md-6">
+                                    <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="rest">30</div>
+                                    <span class="arrow-down"><i class="fa fa-arrow-down"></i> 10.15%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   <!--  <div class="col-md-4">
                         <div class="panel" style="background-color: #f0f3f4 !important;">
                             <div class="panel-body mm">
                                 <div>
@@ -125,56 +250,60 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <div class="col-md-8">
-                        <span class="pull-right">
-                            <div class="col-md-12" width="220px">
-                                <div class="col-md-6" style="margin-top: 5px; padding-right: 0px;">
-                                    <label>View Trend for</label>
-                                </div>
-                                <div class="col-md-6">
-                                    <div style="width: 110%;" data-bind="kendoDropDownList: {
-                                        data: alertSum.trendDataLengthOptions,
-                                        value: alertSum.trendDataLength,
-                                        dataTextField: 'text',
-                                        dataValueField: 'value'
-                                    }">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-body panechart">
+                                <span class="pull-right">
+                                    <div class="col-md-12">
+                                        <div class="col-md-6" style="margin-top: 5px; padding-right: 0px;">
+                                            <label>View Trend for</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div style="width: 110%;" data-bind="kendoDropDownList: {
+                                                data: alertSum.trendDataLengthOptions,
+                                                value: alertSum.trendDataLength,
+                                                dataTextField: 'text',
+                                                dataValueField: 'value'
+                                            }">
+                                            </div>
+                                        </div>
                                     </div>
+                                </span>
+                                <div style="font-size: 12px;font-family:Arial,Helvetica,Sans-Serif;font-weight: bold !important;">Trend: Last <span data-bind="text: alertSum.trendDataLengthTitle"></span></div>
+                                <div id="alert-summary" data-bind="kendoChart: {
+                                    data: alertSum.trendDataSeries,
+                                    series: alertSum.trendDataConfig,
+                                    axisDefaults: {
+                                        labels: {
+                                            font: '10px Sans-Serif'
+                                        }
+                                    },
+                                    title:{
+                                        font: 'bold 10px Arial,Helvetica,Sans-Serif',
+                                    },
+                                    chartArea:{
+                                        height: alertSum.height(),
+                                        background: 'white',
+                                        font: '10px Arial,Helvetica,Sans-Serif',
+                                    },
+                                    categoryAxis: {
+                                        categories: alertSum.trendDataMonths,
+                                        axisCrossingValue: [0, 13],
+                                    },
+                                    legend:{
+                                        position: 'bottom',
+                                        labels:{
+                                            font: '10px Arial,Helvetica,Sans-Serif',
+                                        },
+                                    },
+                                    valueAxes: alertSum.trendDataAxes,
+                                }">
                                 </div>
-                            </div>
-                        </span>
-                        <div style="font-size: 12px;font-family:Arial,Helvetica,Sans-Serif;font-weight: bold !important;">Trend: Last <span data-bind="text: alertSum.trendDataLengthTitle"></span></div>
-                        <div id="alert-summary" data-bind="kendoChart: {
-                            data: alertSum.trendDataSeries,
-                            series: alertSum.trendDataConfig,
-                            axisDefaults: {
-                                labels: {
-                                    font: '10px Sans-Serif'
-                                }
-                            },
-                            title:{
-                                font: 'bold 10px Arial,Helvetica,Sans-Serif',
-                            },
-                            chartArea:{
-                                height: alertSum.height(),
-                                background: '#f0f3f4',
-                                font: '10px Arial,Helvetica,Sans-Serif',
-                            },
-                            categoryAxis: {
-                                categories: alertSum.trendDataMonths,
-                                axisCrossingValue: [0, 13],
-                            },
-                            legend:{
-                                position: 'bottom',
-                                labels:{
-                                    font: '10px Arial,Helvetica,Sans-Serif',
-                                },
-                            },
-                            valueAxes: alertSum.trendDataAxes,
-                        }">
-                        </div>
                         <!-- <div id="alertsum"></div> -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -375,39 +375,10 @@ func (c *MenuSettingController) DeleteMenuTop(k *knot.WebContext) interface{} {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
-	result := c.DeleteChildRecursive(payLoad.Id)
-
-	//--------------- Delete SysRole -----------------
-	data := make([]SysRolesModel, 0)
-	crsData, errData := c.Ctx.Find(NewSysRolesModel(), nil)
-	defer crsData.Close()
-	if errData != nil {
-		return c.SetResultInfo(true, errData.Error(), nil)
-	}
-	errData = crsData.Fetch(&data, 0, false)
-	if errData != nil {
-		return c.SetResultInfo(true, errData.Error(), nil)
-	}
-	for _, dt := range data {
-		NewMenu := []Detailsmenu{}
-		ModelRole := NewSysRolesModel()
-		ModelRole.Id = dt.Id
-		ModelRole.Name = dt.Name
-		for _, arrMenu := range dt.Menu {
-			mVal, _ := tk.ToM(arrMenu)
-			Menuid := mVal["Menuid"].(string)
-
-			check := c.CheckAnyId(result, Menuid)
-
-			if check {
-				NewMenu = append(NewMenu, arrMenu)
-			}
-		}
-
-		ModelRole.Menu = NewMenu
-		ModelRole.Status = dt.Status
-		ModelRole.Landing = dt.Landing
-		c.Ctx.Save(ModelRole)
+	c.DeleteChildRecursive(payLoad.Id)
+	err = RoleMenuSync()
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
 	return c.SetResultInfo(false, "Menu has been successfully created.", nil)
@@ -424,7 +395,6 @@ func (c *MenuSettingController) CheckAnyId(ids []string, id string) bool {
 }
 
 func (c *MenuSettingController) DeleteChildRecursive(ids string) []string {
-
 	var (
 		query  []*db.Filter
 		result []string
@@ -499,67 +469,13 @@ func (c *MenuSettingController) UpdateMenuTop(k *knot.WebContext) interface{} {
 	mt.IndexMenu = payLoad.IndexMenu
 	mt.Enable = payLoad.Enable
 	c.Ctx.Save(mt)
-	//--------------- Delete Update -----------------
-	data := make([]SysRolesModel, 0)
-	crsData, errData := c.Ctx.Find(NewSysRolesModel(), nil)
-	defer crsData.Close()
-	if errData != nil {
-		return c.SetResultInfo(true, errData.Error(), nil)
-	}
-	errData = crsData.Fetch(&data, 0, false)
-	if errData != nil {
-		return c.SetResultInfo(true, errData.Error(), nil)
-	}
-	for _, dt := range data {
-		NewMenu := []Detailsmenu{}
-		ModelRole := NewSysRolesModel()
-		ModelRole.Id = dt.Id
-		ModelRole.Name = dt.Name
-		for _, arrMenu := range dt.Menu {
-			mVal, _ := tk.ToM(arrMenu)
-			Menuid := mVal["Menuid"].(string)
-			if Menuid != payLoad.Id {
-				NewMenu = append(NewMenu, arrMenu)
-			} else {
-				UpdateMenu := Detailsmenu{
-					Menuid:   mVal["Menuid"].(string),
-					Menuname: payLoad.Title,
-					Access:   mVal["Access"].(bool),
-					View:     mVal["View"].(bool),
-					Create:   mVal["Create"].(bool),
-					Approve:  mVal["Approve"].(bool),
-					Delete:   mVal["Delete"].(bool),
-					Process:  mVal["Process"].(bool),
-					Edit:     mVal["Edit"].(bool),
-					Parent:   payLoad.Parent,
-					Haschild: mVal["Haschild"].(bool),
-					Enable:   payLoad.Enable,
-					Url:      payLoad.Url,
-					Checkall: mVal["Checkall"].(bool),
-				}
-				NewMenu = append(NewMenu, UpdateMenu)
-			}
-		}
-		ModelRole.Menu = NewMenu
-		ModelRole.Status = dt.Status
-		ModelRole.Landing = dt.Landing
-		c.Ctx.Save(ModelRole)
-	}
 
-	data1 := make([]SysRolesModel, 0)
-	crsData1, errData1 := c.Ctx.Find(NewSysRolesModel(), nil)
-	defer crsData1.Close()
-	if errData1 != nil {
-		return c.SetResultInfo(true, errData1.Error(), nil)
-	}
-	errData1 = crsData1.Fetch(&data1, 0, false)
-	if errData1 != nil {
-		return c.SetResultInfo(true, errData1.Error(), nil)
-	}
-
-	k.SetSession("roles", data1)
-	k.SetSession("rolesid", data1[0].Id.Hex())
 	k.SetSession("stime", time.Now())
+
+	err = RoleMenuSync()
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
 
 	return c.SetResultInfo(false, "Menu has been successfully update.", nil)
 }

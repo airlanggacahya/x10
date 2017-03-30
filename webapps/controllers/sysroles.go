@@ -287,6 +287,94 @@ func defaultDetailsMenu(conn db.IConnection, menuid string) (Detailsmenu, error)
 	return dtl, nil
 }
 
+func GetTopMenuSet() (map[string]TopMenuModel, error) {
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	csr, err := cn.NewQuery().
+		From("TopMenu").
+		Cursor(nil)
+
+	defer csr.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	val := []TopMenuModel{}
+	err = csr.Fetch(&val, 0, true)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[string]TopMenuModel)
+	for _, menu := range val {
+		result[menu.Id] = menu
+	}
+
+	return result, nil
+}
+
+func RoleMenuSync() error {
+	cn, _ := GetConnection()
+	defer cn.Close()
+
+	csr, err := cn.NewQuery().
+		From("SysRoles").
+		Cursor(nil)
+
+	defer csr.Close()
+	if err != nil {
+		return err
+	}
+
+	val := []SysRolesModel{}
+	err = csr.Fetch(&val, 0, true)
+	if err != nil {
+		return err
+	}
+
+	// Create new cursor
+	qInsert := cn.
+		NewQuery().
+		From("SysRoles").
+		SetConfig("multiexec", true).
+		Save()
+	// Make sure q is closed when exiting function
+	defer qInsert.Close()
+
+	menuList, err := GetTopMenuSet()
+	if err != nil {
+		return err
+	}
+	for roleIdx := range val {
+		newmenu := []Detailsmenu{}
+		for menuIdx := range val[roleIdx].Menu {
+			menu, found := menuList[val[roleIdx].Menu[menuIdx].Menuid]
+			if !found {
+				continue
+			}
+
+			val[roleIdx].Menu[menuIdx].Url = menu.Url
+			val[roleIdx].Menu[menuIdx].Enable = menu.Enable
+			val[roleIdx].Menu[menuIdx].Parent = menu.Parent
+			newmenu = append(newmenu, val[roleIdx].Menu[menuIdx])
+		}
+
+		val[roleIdx].Menu = newmenu
+
+		// Wrap data query
+		newdata := map[string]interface{}{"data": val[roleIdx]}
+
+		// Execute update
+		err = qInsert.Exec(newdata)
+		if err != nil {
+			panic("Query Failed")
+		}
+	}
+
+	return nil
+}
+
 func regionToBranch(regions []int) []int {
 	// transform array to set
 	regionSets := make(map[int]bool)

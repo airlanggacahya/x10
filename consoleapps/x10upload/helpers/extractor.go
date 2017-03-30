@@ -791,6 +791,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 		tk.Println(reportobj.Profile)
 		filename := strings.TrimRight(FName, ".pdf")
 		timestamp := time.Now().UTC().Add(time.Duration(5.5*60) * time.Minute)
+		reportobj.CreatedDate = timestamp
 		datestr := timestamp.String()
 		dates := strings.Split(datestr, " ")
 		times := strings.Split(dates[1], ".")
@@ -930,6 +931,8 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 
 		filename := strings.TrimRight(FName, ".pdf")
 		timestamp := time.Now().UTC().Add(time.Duration(5.5*60) * time.Minute)
+		reportobj.CreatedDate = timestamp
+
 		datestr := timestamp.String()
 		dates := strings.Split(datestr, " ")
 		times := strings.Split(dates[1], ".")
@@ -942,6 +945,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 		exsfilter = append(exsfilter, dbox.Eq("DateOfReport", reportobj.DateOfReport))
 		exsfilter = append(exsfilter, dbox.Eq("TimeOfReport", reportobj.TimeOfReport))
 		exsfilter = append(exsfilter, dbox.Eq("CibilScore", reportobj.CibilScore))
+		exsfilter = append(exsfilter, dbox.Eq("IsMatch", true))
 		existdatarep := []tk.M{}
 
 		csr, err := conn.NewQuery().Select().From("CibilReportPromotorFinal").Where(exsfilter...).Cursor(nil)
@@ -1001,10 +1005,10 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						tk.Println(similar)
 
 						if isdate {
-							if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == dob.UTC() {
+							if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
 								isMatch = true
 								break
-							} else if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
+							} else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == dob.UTC() {
 								isMatch = true
 								break
 							}
@@ -1018,10 +1022,10 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 							if err != nil {
 								tk.Println(err)
 							} else {
-								if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == t {
+								if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
 									isMatch = true
 									break
-								} else if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
+								} else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == t {
 									isMatch = true
 									break
 								}

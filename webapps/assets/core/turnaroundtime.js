@@ -787,14 +787,15 @@ turn.loadData = function(){
 	})
 
 	turn.dataScatter([]);
-	ajaxPost("/dashboard/conversiontatscatter", {
+	ajaxPost("/dashboard/griddetailstat", {
 		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
 		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
 		type: dash.FilterValue.GetVal("TimePeriod"),
 		filter: dash.FilterValue()
 	}, function(rest) {
 		if (rest.Data != null) {
-			turn.dataScatter(rest.Data)
+			turn.dataScatter(rest.Data);
+			turn.loadChaterChart();
 		}
 	})
 }
@@ -1047,12 +1048,15 @@ turn.loadChaterChart = function(){
         seriesDefaults: {
         	type: "scatter",
             labels: {
-                visible: true
+                visible: false,
             }
         },
+        dataSource: {
+                    data: turn.dataScatter()
+        },
         series: [{
-	        name: "Data",
-	        data: turn.dataScatter()
+	        xField: "Conversion",
+            yField: "customerprofile.applicantdetail.AmountLoan"
 	    }],
 	    legend: {
 	    	visible: false,
@@ -1062,7 +1066,8 @@ turn.loadChaterChart = function(){
             labels: {
 				template: "&lt;= #= value #",
 				skip: 1,
-				step: 1
+				step: 1,
+				 font: "11px sans-serif",
 			},
 			majorUnit: 10,
 			minorUnit: 20,
@@ -1082,11 +1087,30 @@ turn.loadChaterChart = function(){
         yAxis: {
             min: 0,
             title: {
-                text: "Deal Amount",
+                text: "Deal Amount (Rs. Lacs)",
                 font: "11px sans-serif",
             	visible : true,
             	color : "#4472C4"
+            },
+            labels : {
+            	template : "#: kendo.toString( value/100000 , 'n0')#",
+            	 font: "11px sans-serif",
             }
+        },
+        tooltip : {
+        	visible : true,
+        	template : function(x){
+        		console.log(x)
+        		return "<div style='text-align: left;'>"+
+        			"Deal No : " + x.dataItem.accountdetails.accountsetupdetails.dealno + "</br>" +
+        			"Customer : " + x.dataItem.customerprofile.applicantdetail.CustomerName + "</br>" +
+        			"Deal Amount : " + app.formatnum(x.dataItem.customerprofile.applicantdetail.AmountLoan) + "</br>" +
+        			"Acceptance : " + x.dataItem.Acceptance + "</br>" +
+        			"Processing : " + x.dataItem.Processing + "</br>" +
+        			"Decisioning : " + x.dataItem.Decision + "</br>" + 
+        			"Conversion : " + x.dataItem.Conversion + "</div>"
+        	},
+        	 font: "11px sans-serif",
         }
     });
 }
@@ -1127,6 +1151,6 @@ turn.setTitle = function(){
 
 $(function(){
 	setTimeout(function(){turn.loadAlleverage();turn.averageAcceptanceClick();}, 500)
-	turn.loadChaterChart()
+	// turn.loadChaterChart()
 	turn.accordion()
 });

@@ -537,6 +537,16 @@ r.setData = function() {
     r.promotorsOnList.push(itemData);
   })
 
+  // if(cibil.reportDraft().Id == ""){
+  //  var cibilfilt =  _.filter(r.reportCibilList(),function(xx){ 
+  //     var timenow = new Date();
+  //     var savedate = moment(xx.CreatedDate).add(2,'months').toDate();
+  //      return  timenow <= savedate
+  //   })
+  //  r.reportCibilList(cibilfilt);
+  //   // console.log("-----",test)
+  // } 
+
   if(r.reportCibilList().length > 1) {
     if(cibil.reportDraft().Status == 1 || cibil.reportDraft().Status == 2|| cibil.reportDraft().Status == 3|| cibil.reportDraft().Status == -3) {
         $.each(cibil.reportDraft().CreditTypeSummary, function(key2, val2){

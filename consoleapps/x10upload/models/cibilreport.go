@@ -93,4 +93,5 @@ type CibilReportModel struct {
 	Detail            []ReportSummaryDetail `bson:"DetailReportSummary"`
 	CreditTypeSummary []CreditTypeSummary   `bson:"CreditTypeSummary"`
 	EnquirySummary    EnquirySummary        `bson:"EnquirySummary"`
+	CreatedDate       time.Time             `bson:"CreatedDate"`
 }

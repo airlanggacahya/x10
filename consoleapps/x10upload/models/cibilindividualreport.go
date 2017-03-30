@@ -45,6 +45,7 @@ type ReportData struct {
 	TotalEnquiries           int               `bson:"TotalEnquiries"`
 	TotalEnquiries30Days     int               `bson:"TotalEnquiries30Days"`
 	RecentEnquiriesDates     time.Time         `bson:"RecentEnquiriesDates"`
+	CreatedDate              time.Time         `bson:"CreatedDate"`
 }
 
 type ReportTelephone struct {

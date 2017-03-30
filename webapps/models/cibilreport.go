@@ -91,6 +91,7 @@ type CibilReportModel struct {
 	AllConfirmTime      time.Time             `bson:"AllConfirmTime,omitempty"`
 	IsFreeze            bool                  `bson:"isFreeze,omitempty"`
 	IsConfirm           int                   `bson:"isConfirm,omitempty"`
+	CreatedDate         time.Time             `bson:"CreatedDate,omitempty"`
 }
 
 type CibilMap struct {

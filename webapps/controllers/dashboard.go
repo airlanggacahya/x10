@@ -1985,35 +1985,59 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	}
 	defer cn.Close()
 
+	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	if err != nil {
+		periodStart = time.Now()
+		// return res.SetError(err)
+	}
+	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	if err != nil {
+		periodEnd = time.Now()
+		// return res.SetError(err)
+	}
+
+	tp := TimePeriod{
+		Start:       periodStart,
+		End:         periodEnd,
+		TimeType:    payload.GetString("type"),
+		PeriodCount: 1,
+	}
+	tp = CalcTimePeriod(tp)
+
 	trendFilt := payload.GetString("trend")
-	periodFilt := payload.GetString("period")
-	regionName := payload.GetString("region")
-	groupByDate := time.Now()
+	// periodFilt := payload.GetString("period")
+	// regionName := payload.GetString("region")
+	// groupByDate := time.Now()
 	whsx := []*dbox.Filter{}
-	branchIds := []string{}
+	// branchIds := []string{}
 
-	if periodFilt == "" {
-		periodFilt = cast.Date2String(time.Now(), "MMM-yyyy")
+	tk.Println("PERIOD -------- ", tp)
+	if trendFilt == "" {
+		trendFilt = "conversion"
 	}
 
-	if periodFilt != "" {
-		groupByDate = cast.String2Date("01-"+periodFilt+" 00:00:00", "dd-MMM-yyyy HH:mm:ss").AddDate(0, 1, 0)
-		// tk.Println(groupByDate)
-		// tk.Println(groupByDate.AddDate(0, -1, 0))
-		whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gte("info.myInfo.updateTime", groupByDate.AddDate(0, -1, 0))))
-	} else {
-		if regionName != "" {
-			branchIds, err = GetBranchId(regionName)
-			if err != nil {
-				return res.SetError(err)
-			}
-			arrInt := []interface{}{}
-			for _, vvl := range branchIds {
-				arrInt = append(arrInt, vvl)
-			}
-			whsx = append(whsx, dbox.In("accountdetails.accountsetupdetails.citynameid", arrInt))
-		}
-	}
+	// if periodFilt == "" {
+	// 	periodFilt = cast.Date2String(time.Now(), "MMM-yyyy")
+	// }
+
+	// if periodFilt != "" {
+	// 	groupByDate = cast.String2Date("01-"+periodFilt+" 00:00:00", "dd-MMM-yyyy HH:mm:ss").AddDate(0, 1, 0)
+	// 	// tk.Println(groupByDate)
+	// 	// tk.Println(groupByDate.AddDate(0, -1, 0))
+	// 	whsx = append(whsx, dbox.And(dbox.Lt("info.myInfo.updateTime", groupByDate), dbox.Gte("info.myInfo.updateTime", groupByDate.AddDate(0, -1, 0))))
+	// } else {
+	// 	if regionName != "" {
+	// 		branchIds, err = GetBranchId(regionName)
+	// 		if err != nil {
+	// 			return res.SetError(err)
+	// 		}
+	// 		arrInt := []interface{}{}
+	// 		for _, vvl := range branchIds {
+	// 			arrInt = append(arrInt, vvl)
+	// 		}
+	// 		whsx = append(whsx, dbox.In("accountdetails.accountsetupdetails.citynameid", arrInt))
+	// 	}
+	// }
 
 	whs, err := GenerateRoleCondition(k)
 	if err != nil {
@@ -2024,9 +2048,30 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 		whsx = append(whsx, dbox.Or(whs...))
 	}
 
+	ids, err := FiltersAD2DealNo(
+		nil,
+		CheckArray(payload.Get("filter")),
+	)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	filterids := []interface{}{}
+	for _, id := range ids {
+		filterids = append(filterids, id)
+	}
+
+	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
+
+	// tk.Println("FILTER ----------- ", filterids)
+
+	// if trendFilt == "conversion" {
+	// 	whsx = append(whsx, dbox.In("info.myInfo.status", []interface{}{Approve, Reject}))
+	// }
+
 	query := cn.NewQuery().
 		From("DealSetup").
-		Select("info", "accountdetails.accountsetupdetails.citynameid", "accountdetails.accountsetupdetails.rmname", "accountdetails.accountsetupdetails.creditanalyst", "accountdetails.accountsetupdetails.dealno", "customerprofile.applicantdetail.CustomerName").
+		Select("info", "customerprofile.applicantdetail.AmountLoan", "accountdetails.accountsetupdetails.citynameid", "accountdetails.accountsetupdetails.rmname", "accountdetails.accountsetupdetails.creditanalyst", "accountdetails.accountsetupdetails.dealno", "customerprofile.applicantdetail.CustomerName").
 		Where(dbox.And(whsx...))
 
 	csr, err := query.Cursor(nil)
@@ -2042,7 +2087,7 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	// tk.Println("Result ----------", results)
+	tk.Println("Result ----------", results)
 
 	lib := tk.M{"decision": []string{Approve, Reject}, "action": []string{Approve, Reject, Cancel, SendBackOmnifin}, "processing": []string{SendToDecision}, "acceptance": []string{UnderProcess}, "conversion": []string{}}
 	statusAlias := tk.M{SendToDecision: []string{"Processing"}, UnderProcess: []string{"Acceptance"}, Approve: []string{"Action", "Decision"}, Reject: []string{"Action", "Decision"}, Cancel: []string{"Action"}, SendBackAnalysis: []string{"Action"}}
@@ -2052,16 +2097,17 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	trend := lib.Get(trendFilt).([]string)
 
 	for _, val := range results {
-		val.Set("Acceptance", nil)
-		val.Set("Action", nil)
-		val.Set("Decision", nil)
-		val.Set("Processing", nil)
-		val.Set("Conversion", nil)
+		val.Set("Acceptance", 0)
+		val.Set("Action", 0)
+		val.Set("Decision", 0)
+		val.Set("Processing", 0)
+		val.Set("Conversion", 0)
 
 		info := val.Get("info").(tk.M)
 		myInfo := CheckArray(info.Get("myInfo"))
 		if len(myInfo) > 1 {
 			laststatus := myInfo[len(myInfo)-1].GetString("status")
+			lasttime := myInfo[len(myInfo)-1].Get("updateTime").(time.Time)
 			poslast := IndexOfString(laststatus, trend)
 
 			if poslast > -1 || (trendFilt == "conversion" && (laststatus == Approve || laststatus == Reject)) {
@@ -2088,13 +2134,13 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 
 				}
 
-				if trendFilt != "conversion" {
+				if trendFilt != "conversion" && checkMyDate(tp, lasttime) {
 					finalRes = append(finalRes, val)
 
 				}
 			}
-			if trendFilt == "conversion" && (laststatus == Approve || laststatus == Reject) {
-				lasttime := myInfo[len(myInfo)-1].Get("updateTime").(time.Time)
+			if trendFilt == "conversion" && (laststatus == Approve || laststatus == Reject) && checkMyDate(tp, lasttime) {
+				// lasttime := myInfo[len(myInfo)-1].Get("updateTime").(time.Time)
 
 				timex := myInfo[0].Get("updateTime").(time.Time)
 
@@ -2102,9 +2148,6 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 				// tk.Println(pos, "--------POSITION")
 				// tk.Println(trend, "--------TREND")
 				// tk.Println(status, "--------STATUS")
-				// if pos == -1 {
-				// 	continue
-				// }
 
 				days := 0
 				year, month, day, hour, min, sec := Diff(timex, lasttime)
@@ -2126,4 +2169,19 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	res.SetData(finalRes)
 
 	return res
+}
+
+func checkMyDate(tp TimePeriod, date time.Time) bool {
+
+	tk.Println("CHECK DATE", tp, date)
+
+	if tp.TimeType == "" {
+		return true
+	}
+
+	if tp.FilterBefore.After(date) && tp.FilterAfter.Before(date) {
+		return true
+	}
+
+	return false
 }

@@ -1167,7 +1167,27 @@ turn.accordion = function(){
 }
 
 turn.setTitle = function(){
-	var title = kendo.toString(new Date(turn.titleText()), "MMM 'yy");
+	var start = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar")) 
+	var end = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+	var type = dash.FilterValue.GetVal("TimePeriod")
+	var title = "All";
+
+	if(type == "10day"){
+		title = "Last 10 Days"
+	}else if (type == "1month"){
+		start = moment(start).format("MMM-YYYY")
+		end = moment(end).format("MMM-YYYY")
+		title = start 
+	}else if (type == "1year"){
+		start = moment(start).format("YYYY")
+		end = moment(start).add(1,"years").format("YYYY")
+		title = start + " - " + end
+	}else if (type == "fromtill"){
+		start = moment(start).format("DD-MMM-YYYY")
+		end = moment(end).format("DD-MMM-YYYY")
+		title = start + " - " + end
+	}
+
 	return title;
 }
 

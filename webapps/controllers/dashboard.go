@@ -2127,3 +2127,17 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 
 	return res
 }
+
+func (c *DashboardController) DealProfilMetrics(k *knot.WebContext) interface{} {
+	k.Config.NoLog = true
+	k.Config.OutputType = knot.OutputTemplate
+	DataAccess := c.NewPrevilege(k)
+
+	k.Config.IncludeFiles = []string{
+		"shared/dataaccess.html",
+		"shared/loading.html",
+		"shared/leftfilter.html",
+	}
+
+	return DataAccess
+}

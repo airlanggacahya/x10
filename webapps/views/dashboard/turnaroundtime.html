@@ -129,7 +129,9 @@
 	.toggle1{
 		cursor: pointer;
 	}
-
+	#griddb{
+		margin-top: 20px;
+	}
 </style>
 <div class="col-md-12 top turnaroundtime">
 	<!-- <div class="col-md-6">
@@ -295,6 +297,66 @@
 						<td class="le" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">40 + Days</td>
 					</tr>
 				</table>
+				 <div class="col-md-12">
+                        </div>
+				 
+                  <div id="griddb" style="border: none;" class="k-grid k-widget" data-bind="visible:turn.listscatter().length > 0" >
+                     <div class="k-grid-header">
+                        <div class="k-grid-header-wrap">
+                           <table role="grid" width="100%">
+                              <thead role="rowgroup">
+                                 <tr role="row" >
+                                    <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">Deal No</th>
+                                    <th style="width:20%" scope="col" role="columnheader" class="k-header header-bgcolor">Customer Name</th>
+                                    <th style="width:20%" scope="col" role="columnheader" class="k-header header-bgcolor">CA</th>
+                                    <th style="width:20%" scope="col" role="columnheader" class="k-header header-bgcolor">RM</th>
+                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Acceptance TAT</th>
+                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Processing TAT</th>
+                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Action TAT</th>
+                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Decision TAT</th>
+                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Conversion TAT</th>
+                                        <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor"></th>
+                                 </tr>
+                              </thead>
+                              <tbody role="rowgroup" data-bind="foreach: turn.listscatter()">
+                                 <tr role="row">
+                                    <td role="gridcell">
+                                      <label data-bind="text: accountdetails.accountsetupdetails.dealno"></label>
+                                    </td>
+                                    <td role="gridcell">
+                                      <label data-bind="text: customerprofile.applicantdetail.CustomerName"></label>
+                                    </td>
+                                     <td role="gridcell">
+                                      <label data-bind="text: accountdetails.accountsetupdetails.creditanalyst"></label>
+                                    </td>
+                                     <td role="gridcell">
+                                      <label data-bind="text: accountdetails.accountsetupdetails.rmname"></label>
+                                    </td>
+                                     <td role="gridcell">
+                                      <label data-bind="text: Acceptance"></label>
+                                    </td>
+                                     <td role="gridcell">
+                                      <label data-bind="text: Processing"></label>
+                                    </td>
+                                      <td role="gridcell">
+                                      <label data-bind="text: Action"></label>
+                                    </td>
+                                     <td role="gridcell">
+                                      <label data-bind="text: Decision"></label>
+                                    </td>
+                                     <td role="gridcell">
+                                      <label data-bind="text: Conversion"></label>
+                                    </td>
+                                    <td role="gridcell">
+                                      <button class="btn btn-flat btn-sm btn-danger noable" data-bind="click: turn.removescatterGrid($index())"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                    
+                                 </tr>
+                              </tbody>
+                           </table>
+                     </div>
+                  </div>
+               </div>
 			</div>
 		</div>
 	</div>

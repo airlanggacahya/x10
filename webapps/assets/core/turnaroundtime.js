@@ -1035,6 +1035,8 @@ turn.dataScatter.subscribe(function (val) {
 	turn.loadChaterChart();
 })
 
+turn.currentscatter = ko.observable({});
+turn.listscatter = ko.observableArray([]);
 turn.loadChaterChart = function(){
 	$(".cater").html("");
 	$(".cater").kendoChart({
@@ -1097,10 +1099,19 @@ turn.loadChaterChart = function(){
             	 font: "11px sans-serif",
             }
         },
+        click : function(val){
+        	console.log(val)
+        },
         tooltip : {
         	visible : true,
         	template : function(x){
-        		console.log(x)
+        		turn.currentscatter(x.dataItem);
+        		$('circle').off('click');
+        		$("circle").click(function(){ 
+        			var fi = _.find(turn.listscatter(),function(xx){ return xx.accountdetails.accountsetupdetails.dealno == x.dataItem.accountdetails.accountsetupdetails.dealno })
+        			if(fi == undefined)
+			    	turn.listscatter.push(turn.currentscatter());
+			     });
         		return "<div style='text-align: left;'>"+
         			"Deal No : " + x.dataItem.accountdetails.accountsetupdetails.dealno + "</br>" +
         			"Customer : " + x.dataItem.customerprofile.applicantdetail.CustomerName + "</br>" +
@@ -1113,6 +1124,18 @@ turn.loadChaterChart = function(){
         	 font: "11px sans-serif",
         }
     });
+	// setTimeout(function(){
+	    
+	// },1000);
+}
+
+turn.removescatterGrid = function(index){
+	return function(){
+	var dt = turn.listscatter().filter(function (d, i) {
+			return i !== index
+		})
+		turn.listscatter(dt)
+	}
 }
 				
 function changeLabels(val) {

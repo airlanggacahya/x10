@@ -129,7 +129,7 @@
 	.toggle1{
 		cursor: pointer;
 	}
-	#griddb{
+	.scatter-title{
 		margin-top: 20px;
 	}
 </style>
@@ -291,15 +291,13 @@
 				<table id="tabl">
 					<tr>
 						<td class="le" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">0 - 10 Days</td>
-						<td class="le" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">11 - 10 Days</td>
+						<td class="le" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">11 - 20 Days</td>
 						<td class="le" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">21 - 30 Days</td>
 						<td class="le" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">30 - 40 Days</td>
 						<td class="le" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">40 + Days</td>
 					</tr>
 				</table>
-				 <div class="col-md-12">
-                        </div>
-				 
+				 <h5 class="scatter-title" data-bind="visible:turn.listscatter().length > 0" >Deal Movement Table </h5>
                   <div id="griddb" style="border: none;" class="k-grid k-widget" data-bind="visible:turn.listscatter().length > 0" >
                      <div class="k-grid-header">
                         <div class="k-grid-header-wrap">
@@ -321,16 +319,16 @@
                               <tbody role="rowgroup" data-bind="foreach: turn.listscatter()">
                                  <tr role="row">
                                     <td role="gridcell">
-                                      <label data-bind="text: accountdetails.accountsetupdetails.dealno"></label>
+                                      <label data-bind="text: dealno"></label>
                                     </td>
                                     <td role="gridcell">
-                                      <label data-bind="text: customerprofile.applicantdetail.CustomerName"></label>
+                                      <label data-bind="text: custname"></label>
                                     </td>
                                      <td role="gridcell">
-                                      <label data-bind="text: accountdetails.accountsetupdetails.creditanalyst"></label>
+                                      <label data-bind="text: caname"></label>
                                     </td>
                                      <td role="gridcell">
-                                      <label data-bind="text: accountdetails.accountsetupdetails.rmname"></label>
+                                      <label data-bind="text: rmname"></label>
                                     </td>
                                      <td role="gridcell">
                                       <label data-bind="text: Acceptance"></label>

@@ -1058,7 +1058,7 @@ turn.loadChaterChart = function(){
         },
         series: [{
 	        xField: "Conversion",
-            yField: "customerprofile.applicantdetail.AmountLoan"
+            yField: "amount"
 	    }],
 	    legend: {
 	    	visible: false,
@@ -1095,7 +1095,7 @@ turn.loadChaterChart = function(){
             	color : "#4472C4"
             },
             labels : {
-            	template : "#: kendo.toString( value/100000 , 'n0')#",
+            	// template : "#: kendo.toString( value/100000 , 'n0')#",
             	 font: "11px sans-serif",
             }
         },
@@ -1108,14 +1108,14 @@ turn.loadChaterChart = function(){
         		turn.currentscatter(x.dataItem);
         		$('circle').off('click');
         		$("circle").click(function(){ 
-        			var fi = _.find(turn.listscatter(),function(xx){ return xx.accountdetails.accountsetupdetails.dealno == x.dataItem.accountdetails.accountsetupdetails.dealno })
+        			var fi = _.find(turn.listscatter(),function(xx){ return xx.dealno == x.dataItem.dealno })
         			if(fi == undefined)
 			    	turn.listscatter.push(turn.currentscatter());
 			     });
         		return "<div style='text-align: left;'>"+
-        			"Deal No : " + x.dataItem.accountdetails.accountsetupdetails.dealno + "</br>" +
-        			"Customer : " + x.dataItem.customerprofile.applicantdetail.CustomerName + "</br>" +
-        			"Deal Amount : " + app.formatnum(x.dataItem.customerprofile.applicantdetail.AmountLoan) + "</br>" +
+        			"Deal No : " + x.dataItem.dealno + "</br>" +
+        			"Customer : " + x.dataItem.custname + "</br>" +
+        			"Deal Amount : " + app.formatnum(x.dataItem.amount) + "</br>" +
         			"Acceptance : " + x.dataItem.Acceptance + "</br>" +
         			"Processing : " + x.dataItem.Processing + "</br>" +
         			"Decisioning : " + x.dataItem.Decision + "</br>" + 

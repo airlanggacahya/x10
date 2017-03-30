@@ -4,9 +4,9 @@ import (
 	. "eaciit/x10/webapps/connection"
 	hp "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
+	"encoding/json"
 	"math"
 	"strconv"
-	// "encoding/json"
 	"strings"
 	"time"
 
@@ -2008,7 +2008,7 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	// periodFilt := payload.GetString("period")
 	// regionName := payload.GetString("region")
 	// groupByDate := time.Now()
-	whsx := []*dbox.Filter{}
+	// whsx := []*dbox.Filter{}
 	// branchIds := []string{}
 
 	tk.Println("PERIOD -------- ", tp)
@@ -2039,14 +2039,14 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	// 	}
 	// }
 
-	whs, err := GenerateRoleCondition(k)
+	whs, err := GenerateRoleConditionTkM(k)
 	if err != nil {
 		return res.SetError(err)
 	}
 
-	if len(whs) > 0 {
-		whsx = append(whsx, dbox.Or(whs...))
-	}
+	// if len(whs) > 0 {
+	// 	whsx = append(whsx, dbox.Or(whs...))
+	// }
 
 	ids, err := FiltersAD2DealNo(
 		nil,
@@ -2056,12 +2056,12 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	filterids := []interface{}{}
-	for _, id := range ids {
-		filterids = append(filterids, id)
-	}
+	// filterids := []interface{}{}
+	// for _, id := range ids {
+	// 	filterids = append(filterids, id)
+	// }
 
-	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
+	// whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
 
 	// tk.Println("FILTER ----------- ", filterids)
 
@@ -2069,17 +2069,72 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	// 	whsx = append(whsx, dbox.In("info.myInfo.status", []interface{}{Approve, Reject}))
 	// }
 
-	query := cn.NewQuery().
+	pipe := []tk.M{}
+	pipe = append(pipe, tk.M{"$match": tk.M{
+		"accountdetails.dealno": tk.M{
+			"$in": ids,
+		},
+		"$or": whs,
+	}})
+	pipe = append(pipe, tk.M{"$lookup": tk.M{
+		"from":         "DCFinalSanction",
+		"localField":   "accountdetails.dealno",
+		"foreignField": "DealNo",
+		"as":           "dc",
+	}})
+
+	pipe = append(pipe, tk.M{"$project": tk.M{
+		"dealno":   "$accountdetails.dealno",
+		"rmname":   "$accountdetails.accountsetupdetails.rmname",
+		"caname":   "$accountdetails.accountsetupdetails.creditanalyst",
+		"custname": "$customerprofile.applicantdetail.CustomerName",
+
+		"dc": tk.M{
+			"$slice": []interface{}{"$dc", -1},
+		},
+		"info": "$info.myInfo",
+	}})
+
+	matchme := []tk.M{tk.M{
+		"info.status": tk.M{
+			"$in": []string{Approve, Reject},
+		},
+	},
+	}
+
+	if tp.TimeType != "" {
+		matchme = append(matchme, tk.M{"$and": []tk.M{
+			tk.M{"info.updateTime": tk.M{"$lt": tp.FilterBefore}},
+			tk.M{"info.updateTime": tk.M{"$gte": tp.FilterAfter}},
+		}})
+	}
+
+	pipe = append(pipe, tk.M{"$match": tk.M{"$and": matchme}})
+
+	debug, _ := json.MarshalIndent(pipe, "", "  ")
+	tk.Printfn("PIPE Summary\n%s", debug)
+
+	csr, err := c.Ctx.Connection.
+		NewQuery().
+		Command("pipe", pipe).
 		From("DealSetup").
-		Select("info", "customerprofile.applicantdetail.AmountLoan", "accountdetails.accountsetupdetails.citynameid", "accountdetails.accountsetupdetails.rmname", "accountdetails.accountsetupdetails.creditanalyst", "accountdetails.accountsetupdetails.dealno", "customerprofile.applicantdetail.CustomerName").
-		Where(dbox.And(whsx...))
-
-	csr, err := query.Cursor(nil)
-
+		Cursor(nil)
 	if err != nil {
 		return res.SetError(err)
 	}
 	defer csr.Close()
+
+	// query := cn.NewQuery().
+	// 	From("DealSetup").
+	// 	Select("info", "customerprofile.applicantdetail.AmountLoan", "accountdetails.accountsetupdetails.citynameid", "accountdetails.accountsetupdetails.rmname", "accountdetails.accountsetupdetails.creditanalyst", "accountdetails.accountsetupdetails.dealno", "customerprofile.applicantdetail.CustomerName").
+	// 	Where(dbox.And(whsx...))
+
+	// csr, err := query.Cursor(nil)
+
+	// if err != nil {
+	// 	return res.SetError(err)
+	// }
+	// defer csr.Close()
 
 	results := make([]tk.M, 0)
 	err = csr.Fetch(&results, 0, false)
@@ -2087,7 +2142,7 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	tk.Println("Result ----------", results)
+	// tk.Println("Result ----------", results)
 
 	lib := tk.M{"decision": []string{Approve, Reject}, "action": []string{Approve, Reject, Cancel, SendBackOmnifin}, "processing": []string{SendToDecision}, "acceptance": []string{UnderProcess}, "conversion": []string{}}
 	statusAlias := tk.M{SendToDecision: []string{"Processing"}, UnderProcess: []string{"Acceptance"}, Approve: []string{"Action", "Decision"}, Reject: []string{"Action", "Decision"}, Cancel: []string{"Action"}, SendBackAnalysis: []string{"Action"}}
@@ -2102,9 +2157,16 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 		val.Set("Decision", 0)
 		val.Set("Processing", 0)
 		val.Set("Conversion", 0)
+		val.Set("amount", 0)
 
-		info := val.Get("info").(tk.M)
-		myInfo := CheckArray(info.Get("myInfo"))
+		// info := val.Get("info").(tk.M)
+		myInfo := CheckArray(val.Get("info"))
+		dc := CheckArray(val.Get("dc"))
+
+		if len(dc) > 0 {
+			val.Set("amount", dc[0].GetFloat64("Amount"))
+		}
+
 		if len(myInfo) > 1 {
 			laststatus := myInfo[len(myInfo)-1].GetString("status")
 			lasttime := myInfo[len(myInfo)-1].Get("updateTime").(time.Time)

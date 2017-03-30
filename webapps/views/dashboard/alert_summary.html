@@ -2,53 +2,24 @@
 <script>document.write('<script src="/static/core/dashboard-alert-summary.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 <style>
-    .summary-box {
-        background: #1F2834;
-        border-radius: 8px;
-        margin-top: 10px;
-        min-height: 70px;
-        color: #ffffff;
-        padding: 10px;
-        font-size: 10px;
+    .fa-font-neutral {
+		font-weight: bold;
+		margin-top: 3px;
+		display: block;
     }
 
-    .summary-box>.score {
-        font-size: 16px;
-        font-weight: bold;
+    .fa-font-green {
+        color: #4cd964;
+		font-weight: bold;
+		margin-top: 3px;
+		display: block;
     }
 
-    .summary-box>.score.unit {
-        font-size: 12px;
-    }
-
-    .summary-box>i.fa {
-        font-size: 16px;
-    }
-
-    .summary-box .box-label {
-        text-align: left;
-        display: block;
-        font-size: 13px;
-        font-weight: bold;
-    }
-
-    .summary-box .box-label.blue {
-        color: #00B0F0;;
-    }
-
-    .summary-box .box-label.red {
-        color: #ff0000;
-    }
-    .summary-box .fa-font-neutral {
-        color: #00B0F0;
-    }
-
-    .summary-box .fa-font-green {
-        color: #92D050;
-    }
-
-    .summary-box .fa-font-red {
-        color: #ff0000;
+    .fa-font-red {
+        color: #ff3b30;
+		font-weight: bold;
+		margin-top: 3px;
+		display: block;
     }
     .mm{
         margin-top: 2px !important;
@@ -118,22 +89,46 @@
         margin-right: 11px;
         margin-bottom: 7px !important;
         margin-left: 5px;
-
-    }
-    .arrow-down{
-        color: red;
-        font-size: 10px;
-        margin-left: 14px;
-    }
-    .arrow-up{
-        color: green;
-        font-size: 10px;
-        margin-left: 14px;
     }
     .panechart{
         margin-top: 0px !important;
         background-color: white;
     }
+
+	.bd .panel {
+		border-radius: 1px;
+		border: 1px solid #cdcdcd;
+		padding-bottom: 10px;
+	}
+
+	.bd .panel-wrapper .panel {
+		margin-top: 0px !important;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	.bd .panel-wrapper .panel h6 {
+		font-weight: bold;
+	}
+
+	.bd .col-md-3.panel-wrapper {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+	.bd .col-md-3.panel-wrapper:first-of-type {
+		padding-left: 0px;
+		padding-right: 10px;
+	}
+
+	.bd .col-md-3.panel-wrapper:last-of-type {
+		padding-left: 10px;
+		padding-right: 0px;
+	}
+
+	.bd .col-md-3.panel-wrapper .panel {
+		min-height: 120px;
+	}
 </style>
 
 <!-- <div class="row">
@@ -150,55 +145,67 @@
                     <h5 class="hed title-dashboard" ><span class="fa fa-bar-chart"> &nbsp; </span>Actioned Deals: Summary and Trends <span style="float: right" class="ic acc-down"><i class="fa fa-external-link-square"></i></span></h5>
                 </div>
             </div>
-            <div class="panel-body bd">
+            <div class="panel-body bd summary-box">
                 <div class="panel show" style="background-color: #f0f3f4 !important;border: 0px;">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12 header">
                         <hr class="line">
-                        <div class="col-md-3 panel" style="margin-right: 5%;width: 20%;">
-                            <div class="panel-body pane">
+                        <div class="col-md-3 panel-wrapper">
+                            <div class="panel-body panel">
                                 <h6>Deal Count</h6>
                                 <div class="col-md-6">
                                     <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="rest">30</div>
-                                    <span class="arrow-up"><i class="fa fa-arrow-up"></i> 10.15%</span>
+                                <div class="col-md-6 text-center">
+                                    <div class="rest" data-bind="text: alertSum.currentData('countApproved')"></div>
+                                    <span data-bind="attr: {class: alertSum.colorClass('countApproved')}">
+										<i data-bind="attr: {class: alertSum.seriesChangeFa('countApproved')}"></i>
+										<span data-bind="text: alertSum.seriesChangePercent('countApproved')"></span>%
+									</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 panel" style="margin-right: 7%;width: 20%;">
-                            <div class="panel-body pane">
+                        <div class="col-md-3 panel-wrapper">
+                            <div class="panel-body panel">
                                 <h6>Deal Count</h6>
                                 <div class="col-md-6">
                                     <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="rest">30</div>
-                                    <span class="arrow-down"><i class="fa fa-arrow-down"></i> 10.15%</span>
+                                <div class="col-md-6 text-center">
+									<div class="rest" data-bind="text: alertSum.currentData('countRejected')"></div>
+                                    <span data-bind="attr: {class: alertSum.colorClass('countRejected')}">
+										<i data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
+										<span data-bind="text: alertSum.seriesChangePercent('countRejected')"></span>%
+									</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 panel" style="margin-right: 7%;width: 20%;">
-                            <div class="panel-body pane">
+                        <div class="col-md-3 panel-wrapper">
+                            <div class="panel-body panel">
                                 <h6>Deal Amount</h6>
                                 <div class="col-md-6">
                                     <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up" style="font-size: 25px;"></i></div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="rest">30</div>
-                                    <span class="arrow-up"><i class="fa fa-arrow-up"></i> 10.15%</span>
+                                <div class="col-md-6 text-center">
+									<div class="rest" data-bind="text: alertSum.currentData('amountApproved')"></div>
+                                    <span data-bind="attr: {class: alertSum.colorClass('amountApproved')}">
+										<i data-bind="attr: {class: alertSum.seriesChangeFa('amountApproved')}"></i>
+										<span data-bind="text: alertSum.seriesChangePercent('amountApproved')"></span>%
+									</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 panel" style="width: 20%">
-                            <div class="panel-body pane">
+                        <div class="col-md-3 panel-wrapper">
+                            <div class="panel-body panel">
                                 <h6>Deal Amount</h6>
                                 <div class="col-md-6">
                                     <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="rest">30</div>
-                                    <span class="arrow-down"><i class="fa fa-arrow-down"></i> 10.15%</span>
+                                <div class="col-md-6 text-center">
+									<div class="rest" data-bind="text: alertSum.currentData('amountRejected')"></div>
+                                    <span data-bind="attr: {class: alertSum.colorClass('amountRejected')}">
+										<i data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></i>
+										<span data-bind="text: alertSum.seriesChangePercent('amountRejected')"></span>%
+									</span>
                                 </div>
                             </div>
                         </div>

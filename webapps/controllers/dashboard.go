@@ -4,7 +4,7 @@ import (
 	. "eaciit/x10/webapps/connection"
 	hp "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
-	"encoding/json"
+	// "encoding/json"
 	"math"
 	"strconv"
 	"strings"
@@ -1292,7 +1292,7 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 
 	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
 
-	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whs...))
+	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whsx...))
 	if err != nil {
 		return res.SetError(err)
 	}
@@ -1781,7 +1781,7 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 
 	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
 
-	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whs...))
+	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whsx...))
 	if err != nil {
 		return res.SetError(err)
 	}
@@ -2025,7 +2025,7 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	// whsx := []*dbox.Filter{}
 	// branchIds := []string{}
 
-	tk.Println("PERIOD -------- ", tp)
+	// tk.Println("PERIOD -------- ", tp)
 	if trendFilt == "" {
 		trendFilt = "conversion"
 	}
@@ -2125,8 +2125,8 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 
 	pipe = append(pipe, tk.M{"$match": tk.M{"$and": matchme}})
 
-	debug, _ := json.MarshalIndent(pipe, "", "  ")
-	tk.Printfn("PIPE Summary\n%s", debug)
+	// debug, _ := json.MarshalIndent(pipe, "", "  ")
+	// tk.Printfn("PIPE Summary\n%s", debug)
 
 	csr, err := c.Ctx.Connection.
 		NewQuery().

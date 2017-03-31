@@ -354,6 +354,12 @@ dash.TimePeriodVal.subscribe(function (val) {
 		dash.TimePeriodCalendarVal(moment().toDate())
 		dash.TimePeriodCalendar2Val(moment().toDate())
 	}
+
+	if (val == ""){
+		var first = moment(moment().add(1,"month").year()+"-"+moment().add(1,"month").format("MMM")+"-01").add(-1,"day").toDate();
+		dash.TimePeriodCalendarVal(first);
+		dash.TimePeriodVal("1month");
+	}
 })
 dash.TimePeriodCalendarVal.subscribe(function (val) {
 	var a = cleanMoment(dash.TimePeriodCalendarVal());

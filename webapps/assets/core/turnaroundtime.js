@@ -65,29 +65,29 @@ dash.FilterValue.subscribe(function (val) {
     turn.loadData()
 })
 turn.averageConversionClick = function(){
-	$(".dl").removeClass("active");
-	$("#conv").addClass("active");
+	$(".dl").removeClass("onactive");
+	$("#conv").addClass("onactive");
 	turn.containerTitle("Average Conversion TAT");
 	turn.loadChartContainer(turn.averageConversionData());
 }
 
 turn.averageDecisionClick = function(){
-	$(".dl").removeClass("active");
-	$("#dec").addClass("active");
+	$(".dl").removeClass("onactive");
+	$("#dec").addClass("onactive");
 	turn.containerTitle("Average Decision TAT");
 	turn.loadChartContainer(turn.averageDecisionData());
 } 
 
 turn.averageProcessingClick = function(){
-	$(".dl").removeClass("active");
-	$("#process").addClass("active");
+	$(".dl").removeClass("onactive");
+	$("#process").addClass("onactive");
 	turn.containerTitle("Average Processing TAT");
 	turn.loadChartContainer(turn.averageProcessingData());
 }
 
 turn.averageAcceptanceClick = function(){
-	$(".dl").removeClass("active");
-	$("#acep").addClass("active");
+	$(".dl").removeClass("onactive");
+	$("#acep").addClass("onactive");
 	turn.containerTitle("Average Acceptance TAT");
 	setTimeout(function(){
 		turn.loadChartContainer(turn.averageAcceptanceData())
@@ -95,8 +95,8 @@ turn.averageAcceptanceClick = function(){
 }
 
 // turn.loadFirst = function(){
-// 	$(".dl").removeClass("active");
-// 	$("#acep").addClass("active");
+// 	$(".dl").removeClass("onactive");
+// 	$("#acep").addClass("onactive");
 // 	turn.containerTitle("Average Acceptance TAT");
 // 	if((turn.averageAcceptanceData()).length != 0){
 // 		turn.loadChartContainer(turn.averageAcceptanceData())
@@ -219,23 +219,23 @@ turn.loadAlleverage = function(){
 	                            minorUnit: 5,
 	                            startAngle: -30,
 	                            endAngle: 210,
-	                            max: 180,
+	                            max: 40,
 	                            labels: {
 	                                position: "outside	"
 	                            },
 	                            ranges: [
 	                                {
-	                                    from: 80,
-	                                    to: 120,
-	                                    color: "#ffc700"
+	                                    from: 0,
+	                                    to: 20,
+	                                    color: "green"
 	                                }, {
-	                                    from: 120,
-	                                    to: 150,
-	                                    color: "#ff7a00"
+	                                    from: 20,
+	                                    to: 30,
+	                                    color: "yellow"
 	                                }, {
-	                                    from: 150,
-	                                    to: 180,
-	                                    color: "#c20000"
+	                                    from: 30,
+	                                    to: 40,
+	                                    color: "red"
 	                                }
 	                            ]
 	                        }

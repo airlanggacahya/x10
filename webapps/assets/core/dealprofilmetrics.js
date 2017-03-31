@@ -11,6 +11,7 @@ pm.loadAllHeadChart = function(){
 	pm.Mount();
 	pm.Interest();
 	pm.Target();
+	pm.Distribution();
 }
 
 pm.dummyData = ko.observableArray([
@@ -32,23 +33,23 @@ pm.Target = function(){
             minorUnit: 5,
             startAngle: -30,
             endAngle: 210,
-            max: 180,
+            max: 40,
             labels: {
                 position: "outside	"
             },
             ranges: [
                 {
-                    from: 80,
-                    to: 120,
-                    color: "#ffc700"
+                    from: 0,
+                    to: 20,
+                    color: "green"
                 }, {
-                    from: 120,
-                    to: 150,
-                    color: "#ff7a00"
+                    from: 20,
+                    to: 30,
+                    color: "yellow"
                 }, {
-                    from: 150,
-                    to: 180,
-                    color: "#c20000"
+                    from: 30,
+                    to: 40,
+                    color: "red"
                 }
             ]
         }
@@ -339,34 +340,35 @@ pm.accordion = function(){
     })
 }
 
-pm.titleText = ko.computed(function () {
-    var type = dash.FilterValue.GetVal("TimePeriod")
-    var start = moment(dash.FilterValue.GetVal("TimePeriodCalendar"))
-    var end = moment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
-
-    if (!start.isValid())
-        return "-"
-
-    switch (type) {
-    case "10day":
-        return start.clone().subtract(10, "day").format("DD MMM YYYY") + " - " + start.format("DD MMM YYYY")
-    case "":
-    case "1month":
-        return start.format("MMMM YYYY")
-    case "1year":
-        return start.format("YYYY")
-    case "fromtill":
-        return start.format("DD MMM YYYY") + " - " + end.format("DD MMM YYYY")
-    }
-
-    turn.loadAlleverage();
-    // alert("masuk")
-})
-
 pm.setTitle = function(){
-	var title = kendo.toString(new Date(pm.titleText()), "MMM 'yy");
+	var start = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar")) 
+	var end = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+	var type = dash.FilterValue.GetVal("TimePeriod")
+	var title = "All";
+
+	if(type == "10day"){
+		title = "Last 10 Days"
+	}else if (type == "1month"){
+		start = moment(start).format("MMM-YYYY")
+		end = moment(end).format("MMM-YYYY")
+		title = start 
+	}else if (type == "1year"){
+		start = moment(start).format("YYYY")
+		end = moment(start).add(1,"years").format("YYYY")
+		title = start + " - " + end
+	}else if (type == "fromtill"){
+		start = moment(start).format("DD-MMM-YYYY")
+		end = moment(end).format("DD-MMM-YYYY")
+		title = start + " - " + end
+	}
+
 	return title;
 }
+
+// pm.setTitle = function(){
+// 	var title = kendo.toString(new Date(pm.titleText()), "MMM 'yy");
+// 	return title;
+// }
 
 pm.loadChaterChart = function(){
 	var data = [[20, 23], [40, 27]];
@@ -428,6 +430,138 @@ pm.loadChaterChart = function(){
             	visible : true,
             	color : "#4472C4"
             }
+        }
+    });
+}
+
+pm.normalisasiData = function(data){
+	var category = [];
+    var comdata = [];
+    var lengcomdata = 0;
+    var group = [];
+    //each category maybe have different number of group, make it all same number
+    for(var i in data){
+        if(category.indexOf(data[i].status)==-1){
+          category.push(data[i].status);
+        }
+        if(group.indexOf(data[i].timestatus)==-1){
+          group.push(data[i].timestatus);
+        }
+    }
+
+     lengcomdata = group.length;
+    //add dummy data if in some category, group number is different 
+     for(var i in category){
+        var d = _.filter(data,function(x){return x.status == category[i]});
+        if(d.length<lengcomdata){
+          for(var x in group){
+              if(_.find(d,function(g){ return g.timestatus == group[x] } ) == undefined){
+                data.push({
+                  "status" : category[i] ,  
+                  "timestatus":group[x] ,
+                  "count":null,
+                });
+              }
+          }
+        }
+      }
+      // console.log(data)
+    return data
+}
+
+pm.Distribution = function(){
+	var data =[{"count":1,"order":1,"status":"Under Process","timestatus":"c*Getting due"}];
+	var datas = pm.normalisasiData(data)
+
+	var myHeight = ($(window).height() - 90)/3
+
+	datas = _.sortBy(datas,["status"])
+
+	var stocksDataSource = new kendo.data.DataSource({
+		data : datas,
+		group: {
+		    field: "timestatus"
+		},
+	});
+	$("#distribution").html("");	
+	$("#distribution").kendoChart({
+        title: { 
+            text: "Deal-time Tracking",
+            font:  "bold 12px Arial,Helvetica,Sans-Serif",
+            align: "left",
+            color: "#58666e",
+        },
+        dataSource: stocksDataSource,
+        series: [{
+            type: "column",
+            stack : true,
+            field: "count",
+            name: "#= group.value.split('*')[1] #"
+        }],
+        chartArea:{
+            height: 150,
+            background: "white"
+        },
+        // seriesClick : function(e){
+        //     var status = e.dataItem.timestatus.split("*")[1];
+        //     if(status == "Over due"){
+        //         ttrack.popupchartcolor(["#FF0000"]);
+        //     }else if( status == "New"){
+        //         ttrack.popupchartcolor(["#4472C4"]);
+        //     }else if(status == "Getting due"){
+        //         ttrack.popupchartcolor(["#FFC000"]);
+        //     }else if(status == "In time"){
+        //         ttrack.popupchartcolor(["#70AD47"])
+        //     }
+        //     var str = e.dataItem.status+" : "+status+" Deals accross Stages";
+        //     var gstr = "In Queue : "+ status+ " Deals"
+        //     ttrack.modalGridTittle(gstr);
+
+        //     ttrack.modalChartTittle(str);
+        //     if(ttrack.trackingValue() == 'stages'){
+        //         ttrack.loadDataStages(e);
+        //     }else if(ttrack.trackingValue() == 'region'){
+        //         ttrack.loadDataRegion(e);
+        //     }
+        // },
+        legend: {
+            position: "right",
+            labels:{
+                font: "10px Arial,Helvetica,Sans-Serif"
+            }
+        },
+        // seriesColors : ttrack.chartcolors,
+        valueAxis: {
+            labels: {
+                // format: "${0}",
+        		font: "10px sans-serif",
+                skip: 2,
+                step: 2
+            },
+            title : {
+            	text : "No. of Deals",
+        		font: "11px sans-serif",
+            	visible : true,
+            	color : "#4472C4"
+            }
+        },
+        categoryAxis: {
+            field: "status",
+           	title : {
+            	 text : "Deal Stages",
+        		font: "11px sans-serif",
+            	visible : true,
+            	color : "#4472C4"
+            },
+            labels : {
+        		font: "10px sans-serif",
+            }
+        },
+        tooltip : {
+        	visible: true,
+        	template : function(dt){
+        		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+        	}
         }
     });
 }

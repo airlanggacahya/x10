@@ -237,9 +237,18 @@ alertSum.summary2fa = function (values) {
     if (values == 0)
         return "fa fa-minus fa-font-white";
     if (values < 0)
-        return "fa fa-angle-double-down fa-font-red";
+        return "fa fa-arrow-down";
     if (values > 0)
-        return "fa fa-angle-double-up fa-font-green";
+        return "fa fa-arrow-up";
+}
+
+alertSum.summary2color = function (values) {
+    if (values == 0)
+        return "fa-font-neutral";
+    if (values < 0)
+        return "fa-font-red";
+    if (values > 0)
+        return "fa-font-green";
 }
 
 alertSum.seriesMax = function (sections) {
@@ -298,9 +307,24 @@ alertSum.seriesChange = function(section) {
         return _.get(alertSum.trendDataCurrent(), section, 0) - _.get(series[0], section, 0);
     })
 }
+alertSum.seriesChangePercent = function(section) {
+    return ko.computed(function() {
+        var series = alertSum.trendDataSeries()
+        if (series.length < 1)
+            return 0;
+        if (_.get(series[0], section, 0) == 0)
+            return _.get(alertSum.trendDataCurrent(), section, 0) * 100;
+        return (_.get(alertSum.trendDataCurrent(), section, 0) - _.get(series[0], section, 0)) / _.get(series[0], section, 0) * 100;
+    })
+}
 alertSum.seriesChangeFa = function(section) {
     return ko.computed(function() {
         return alertSum.summary2fa(alertSum.seriesChange(section)());
+    })
+}
+alertSum.colorClass = function(section) {
+    return ko.computed(function() {
+        return alertSum.summary2color(alertSum.seriesChange(section)());
     })
 }
 

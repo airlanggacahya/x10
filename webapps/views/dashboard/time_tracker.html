@@ -63,51 +63,63 @@
 			<div class="panel show" style="border: 0px;">
 				<div class="col-sm-12" style="background-color: #f0f3f4;">
                     <hr class="line">
-                    <div class="col-md-3 panel" style="margin-right: 5%;width: 20%;">
-                        <div class="panel-body pane">
+                    <div class="col-md-3 panel-wrapper">
+                        <div class="panel-body panel">
                             <h6 >In Queue : Deal Count</h6>
                             <div class="col-md-6">
-                                <img style="height: 75%;width: 75%;" src="/static/img/aicon/play-burger.png">
+                                <img height="60px" src="/static/img/aicon/play-burger.png">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 text-center">
                                 <div class="rest">30</div>
-                                <span class="arrow-up"><i class="fa fa-arrow-up"></i> 10.15%</span>
+								<span data-bind="attr: {class: alertSum.colorClass('countRejected')}">
+									<i data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
+									<span data-bind="text: alertSum.seriesChangePercent('countRejected')"></span>%
+								</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 panel" style="margin-right: 7%;width: 20%;">
-                        <div class="panel-body pane">
+                    <div class="col-md-3 panel-wrapper">
+                        <div class="panel-body panel">
                             <h6>Under Process : Deal Count</h6>
-                            <div class="col-md-6">
-                                <img style="height: 75%;width: 80%;" src="/static/img/aicon/rings.png">
+                            <div class="col-md-6 text-center">
+                                <img height="60px" src="/static/img/aicon/rings.png">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 text-center">
                                 <div class="rest">30</div>
-                                <span class="arrow-down"><i class="fa fa-arrow-down"></i> 10.15%</span>
+								<span data-bind="attr: {class: alertSum.colorClass('countRejected')}">
+									<i data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
+									<span data-bind="text: alertSum.seriesChangePercent('countRejected')"></span>%
+								</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 panel" style="margin-right: 7%;width: 20%;">
-                        <div class="panel-body pane">
+                    <div class="col-md-3 panel-wrapper">
+                        <div class="panel-body panel">
                             <h6>Awaiting Action : Deal Count</h6>
-                            <div class="col-md-6">
-                                <img style="height: 75%;width: 80%;" src="/static/img/aicon/hammer.png">
+                            <div class="col-md-6 text-center">
+                                <img height="60px" src="/static/img/aicon/hammer.png">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 text-center">
                                 <div class="rest">30</div>
-                                <span class="arrow-up"><i class="fa fa-arrow-up"></i> 10.15%</span>
+								<span data-bind="attr: {class: alertSum.colorClass('countRejected')}">
+									<i data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
+									<span data-bind="text: alertSum.seriesChangePercent('countRejected')"></span>%
+								</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 panel" style="width: 20%">
-                        <div class="panel-body pane">
+                    <div class="col-md-3 panel-wrapper">
+                        <div class="panel-body panel">
                             <h6>On Hold : Deal Count</h6>
-                            <div class="col-md-6">
-                                <img style="height: 75%;width: 75%;margin-top: -5px;" src="/static/img/aicon/hand.png">
+                            <div class="col-md-6 text-center">
+                                <img height="60pxmargin-top: -5px;" src="/static/img/aicon/hand.png">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 text-center">
                                 <div class="rest">30</div>
-                                <span class="arrow-down"><i class="fa fa-arrow-down"></i> 10.15%</span>
+								<span data-bind="attr: {class: alertSum.colorClass('countRejected')}">
+									<i data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
+									<span data-bind="text: alertSum.seriesChangePercent('countRejected')"></span>%
+								</span>
                             </div>
                         </div>
                     </div>

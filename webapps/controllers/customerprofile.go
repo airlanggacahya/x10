@@ -257,10 +257,32 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 		return CreateResult(false, nil, "No data found !")
 	}
 
-	csr.Close()
+	csr, e = cn.NewQuery().
+		Where(dbox.And(dbox.Eq("customerid", p.CustomerId), dbox.Eq("dealno", p.DealNo))).
+		From("AccountDetails").
+		Cursor(nil)
+
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(true, nil, "")
+	}
+
+	AD := AccountDetail{}
+	err = csr.Fetch(&AD, 1, true)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	} else if csr == nil {
+		return CreateResult(false, nil, "No data found !")
+	}
+
+	defer csr.Close()
+
+	loginDate := AD.AccountSetupDetails.LoginDate
+	expdate := loginDate.AddDate(0, 2, 0)
 
 	csr, e = cn.NewQuery().
-		Where(dbox.And(dbox.Eq("Profile.customerid", id), dbox.Eq("Profile.dealno", p.DealNo))).
+		Where(dbox.And(dbox.Eq("Profile.customerid", id), dbox.Eq("Profile.dealno", p.DealNo), dbox.Lte("CreatedDate", expdate))).
 		From("CibilReport").
 		Cursor(nil)
 
@@ -279,7 +301,7 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 	}
 
 	csr, e = cn.NewQuery().
-		Where(dbox.And(dbox.Eq("Profile.customerid", id), dbox.Eq("Profile.dealno", p.DealNo))).
+		Where(dbox.And(dbox.Eq("Profile.customerid", id), dbox.Eq("Profile.dealno", p.DealNo), dbox.Lte("CreatedDate", expdate))).
 		From("CibilReport").
 		Cursor(nil)
 

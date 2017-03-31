@@ -2261,3 +2261,17 @@ func checkMyDate(tp TimePeriod, date time.Time) bool {
 
 	return false
 }
+
+func (c *DashboardController) DealProfilMetrics(k *knot.WebContext) interface{} {
+	k.Config.NoLog = true
+	k.Config.OutputType = knot.OutputTemplate
+	DataAccess := c.NewPrevilege(k)
+
+	k.Config.IncludeFiles = []string{
+		"shared/dataaccess.html",
+		"shared/loading.html",
+		"shared/leftfilter.html",
+	}
+
+	return DataAccess
+}

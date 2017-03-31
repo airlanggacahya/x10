@@ -213,40 +213,12 @@ turn.loadAlleverage = function(){
 	                	}
 	                }
 	        });
-	        $("#tatgoals").html('')
-	        $("#tatgoals").kendoRadialGauge({
-	           pointer: {
-	                            value: 65
-	                        },
 
-	                        scale: {
-	                            minorUnit: 5,
-	                            startAngle: -30,
-	                            endAngle: 210,
-	                            max: 40,
-	                            labels: {
-	                                position: "outside	"
-	                            },
-	                            ranges: [
-	                                {
-	                                    from: 0,
-	                                    to: 20,
-	                                    color: "green"
-	                                }, {
-	                                    from: 20,
-	                                    to: 30,
-	                                    color: "yellow"
-	                                }, {
-	                                    from: 30,
-	                                    to: 40,
-	                                    color: "red"
-	                                }
-	                            ]
-	                        }
-	        }); 
-	        $("#tatgoals")
-		       .css({ width: "150px", height: "125px", marginTop: "19px"})
-		       .data("kendoRadialGauge").resize(); 
+	        turn.loadRadialGauge();
+	        
+	        // $("#tatgoals")
+		       // .css({ width: "150px", height: "125px", marginTop: "19px"})
+		       // .data("kendoRadialGauge").resize(); 
 		});
 
 		param.trend = 'total';
@@ -768,6 +740,43 @@ turn.loadChartContainer = function(data){
 	    });
 	},200)
 
+}
+
+turn.loadRadialGauge = function(){
+	$("#tatgoals").html('')
+    $("#tatgoals").kendoRadialGauge({
+       	pointer: {
+            value: parseInt(turn.averageConversion())
+        },
+
+        scale: {
+            minorUnit: 5,
+            startAngle: -30,
+            endAngle: 210,
+            max: 30,
+            majorTicks: {
+	            size: 5
+	        },
+            labels: {
+                position: "inside"
+            },
+            ranges: [
+                {
+                    from: 0,
+                    to: 10,
+                    color: "green"
+                }, {
+                    from: 10,
+                    to: 20,
+                    color: "yellow"
+                }, {
+                    from: 20,
+                    to: 30,
+                    color: "red"
+                }
+            ]
+        }
+    }); 
 }
 
 turn.loadData = function(){

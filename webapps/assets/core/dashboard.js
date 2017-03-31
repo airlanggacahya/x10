@@ -373,6 +373,24 @@ function cleanMoment(date) {
 	return moment(discardTimezone(date))
 }
 
+dash.summary2fa = function (values) {
+    if (values == 0)
+        return "";
+    if (values < 0)
+        return "fa fa-caret-down";
+    if (values > 0)
+        return "fa fa-caret-up";
+}
+
+dash.summary2color = function (values) {
+    if (values == 0)
+        return "fa-font-neutral";
+    if (values < 0)
+        return "fa-font-red";
+    if (values > 0)
+        return "fa-font-green";
+}
+
 // TimePeriodCalendar
 dash.TimePeriodCalendarValFormat = ko.computed(function () {
 	switch (dash.TimePeriodVal()) {
@@ -542,6 +560,43 @@ dash.ResetFilter = function(){
 		dash[val + "ShowMe"](true)
 		dash[val + "Val"]("")
 	})
+}
+
+dash.moveTimePeriod = function(start, end, type, movement) {
+	var start = cleanMoment(start)
+	var end = cleanMoment(end)
+	var type = dash.FilterValue.GetVal("TimePeriod")
+
+	switch (type) {
+	case "":
+	case "1month":
+		start.date(1);
+		end.date(1);
+		start = start.add(movement, "month")
+		end = end.add(movement, "month")
+		break;
+	case "10day":
+		start = start.add(movement * 10, "day")
+		end = end.add(movement * 10, "day")
+		break;
+	case "1year":
+		start.date(1);
+		end.date(1);
+		start = start.add(movement, "year")
+		end = end.add(movement, "year")
+		break;
+	case "fromtill":
+		var dura = end.diff(start) * movement
+		start = start.add(dura)
+		end = end.add(dura)
+		break;
+	}
+
+	return {
+		start: start,
+		end: end,
+		type: type
+	}
 }
 
 $(function(){

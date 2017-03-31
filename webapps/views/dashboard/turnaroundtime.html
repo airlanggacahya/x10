@@ -131,6 +131,22 @@
 	.scatter-title{
 		margin-top: 20px;
 	}
+	#goal-container {
+        background: transparent url("/static/img/gauge-container.png") no-repeat 50% 50%;
+        width: 150px;
+        height: 150px;
+        text-align: center;
+        margin: 0 auto 30px auto;
+    }
+    #tatgoals {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 0;
+    }
+    /*#goal-container .k-slider {
+                    margin-top: -11px;
+                    width: 200px;
+                }*/
 </style>
 <div class="col-md-12 top turnaroundtime">
 	<!-- <div class="col-md-6">
@@ -150,7 +166,11 @@
 				<div class="col-sm-2 wl">
 					<div class="panel panel-body dl" id="target" style="height: 242px">
 						<h4>TAT Target</h4>
-						<center><div id="tatgoals"></div></center>
+						<!-- <center> -->
+							<div id="goal-container">
+								<div id="tatgoals"></div>
+							</div>
+						<!-- </center> -->
 					</div>
 				</div>
 				<div class="col-sm-2 wl " data-bind="click: turn.averageConversionClick">

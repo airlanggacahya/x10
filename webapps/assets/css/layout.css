@@ -1415,6 +1415,9 @@ button:focus {
   color:white!important;
 }
 
+.new-dashboard  h6 {
+    font-weight: bold;
+  }
 /*.bootstrap-switch-handle-on, .bootstrap-switch-primary, .bootstrap-switch-label'{
         width :55px!important
       }

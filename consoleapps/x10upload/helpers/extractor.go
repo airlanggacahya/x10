@@ -880,7 +880,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 
 						recordStatus := 0
 
-						if myRes > 0 {
+						if len(myRes) > 0 {
 							recordStatus = myRes[0].GetInt("isConfirm")
 						}
 

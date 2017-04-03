@@ -1418,6 +1418,13 @@ button:focus {
 .new-dashboard  h6 {
     font-weight: bold;
   }
+
+.new-dashboard .panel {
+    border-radius: 1px;
+    border: 1px solid #cdcdcd;
+    padding-bottom: 10px;
+        background-color: #fff;
+  }
 /*.bootstrap-switch-handle-on, .bootstrap-switch-primary, .bootstrap-switch-label'{
         width :55px!important
       }

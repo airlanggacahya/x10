@@ -656,7 +656,7 @@ turn.loadChartContainer = function(data){
 	                    overlay: {
 			                gradient: "none"
 			            },
-	                    name: "Avgdays"
+	                    name: "Avg Days"
 	                },
 	                {
 	                    type: "column",
@@ -700,7 +700,11 @@ turn.loadChartContainer = function(data){
 	     					color : "#4472C4" 
 	     				},
 	                    min: 0,
-	                    max: 10,
+	                    labels : {
+	                    	step : 2,
+	                    	skip : 2
+	                    },
+	                    // max: 10,
 	                    plotBands: [{
 							from: 3.0,
 							to: 3.5,
@@ -715,26 +719,33 @@ turn.loadChartContainer = function(data){
 	     					color : "#4472C4" 
 	     				},
 	                    min: 0,
-	                    max: 10
+	                    labels : {
+	                    	step : 2,
+	                    	skip : 2
+	                    },
+	                    // max: 10
 	     			}
 	     			],
 	                categoryAxis: {
 	                	field: "dateStr",
+	                	// visible : true,
 	                	title : {
-	                    	 text : "Deal Stages",
+	                    	text : "Deal Stages",
 	                		font: "11px sans-serif",
 	                    	visible : true,
 	                    	color : "#4472C4"
 	                    },
 	                    labels : {
 	                		font: "10px sans-serif",
+	                		// visible : true,
 	                    },
 	                    axisCrossingValues: [0, 7]
 	                },
 	                tooltip : {
-	                	visible: false,
+	                	visible: true,
 	                	template : function(dt){
-	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+	                		console.log(dt);
+	                		return dt.series.name + " : "+ dt.value//dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
 	                	}
 	                }
 	    });

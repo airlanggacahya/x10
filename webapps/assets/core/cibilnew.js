@@ -174,6 +174,9 @@ r.resetData = function(){
   
 r.cibilDraftTemp = ko.observableArray();
 
+cibil.compUnconfirm = ko.observableArray([]);
+cibil.promUnconfirm = ko.observableArray([]);
+
 r.getData = function() {
 
   r.cibilFileNameList([])
@@ -327,8 +330,64 @@ r.getData = function() {
          r.ConfirmText("Confirm");
       }
       r.CibilAccess();
+
+      var myreport = data[1].CibilReport
+
+      if(myreport.length > 0){
+        if(myreport[0].isConfirm == undefined || myreport[0].isConfirm == 0){
+            if(data[4].PromotorsUnconfirm.length > 0 || data[5].CibilReportUnconfirm.length > 0){
+              cibil.promUnconfirm(data[4].PromotorsUnconfirm);
+              cibil.compUnconfirm(data[5].CibilReportUnconfirm);
+
+                    swal({
+                    title: "There are new CIBIL datas",
+                    text: "Do you want to load new CIBIL?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    // customClass: 'swal-custom',
+                    // confirmButtonColor: '#3085d6',
+                    // cancelButtonColor: '#d33',
+                    showCloseButton: true,
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "View reports",
+                    confirmButtonClass: 'btn btn-primary',
+                    cancelButtonClass: 'btn btn-success',
+                    buttonsStyling: false
+                  }).then(function() {
+                    cibil.RecreateCibil();
+                    // $(".swal-custom").prev().attr("style","");
+                    // checkEntryCibilReport()
+                    // openreports();
+                  }, function(dismiss) {
+                    if (dismiss === 'cancel') {
+                      cibil.openUnconfirm();
+                      // openreports();
+                      // alert();
+                      // return;
+                    }
+                    // $(".swal-custom").prev().attr("style","");
+                  })                
+            }
+        }
+      }
+
     }
   })
+}
+
+cibil.RecreateCibil = function(){
+  var custid = "";
+  var dealno = "";
+
+  custid = r.reportCibilList()[0].Profile.CustomerId.toString();
+  dealno = r.reportCibilList()[0].Profile.DealNo;
+
+  ajaxPost("/datacapturing/recreatecibil", { CustomerId : custid, DealNo : dealno }, function (res){
+        if(res.Message == ""){
+          swal("Successful","Data Saved","success");
+          r.getData();
+        }
+    });
 }
 
 r.CibilAccess = function(){
@@ -1440,6 +1499,28 @@ preopenreports = function(){
 
 openreports = function(){
   preopenreports();
+}
+
+cibil.openUnconfirm = function(){
+  cibil.urls([])
+  for(var i=0; i < cibil.compUnconfirm().length; i++){
+      var data = cibil.compUnconfirm()[i]
+      cibil.urls.push("/static/pdf/"+data.FileName);
+  }
+
+  for(var i=0; i < cibil.promUnconfirm().length; i++){
+      var data = cibil.promUnconfirm()[i]
+      cibil.urls.push("/static/pdf/promotor/"+data.FileName);
+  }
+
+  if(cibil.urls().length==0) return;
+
+  var evalstring = "function myFunction() {"
+  for(var i=0; i < cibil.urls().length; i++){
+    evalstring+="setTimeout(function(){ window.open('"+cibil.urls()[i]+"');},1500);"
+  }
+  evalstring+="};myFunction();"
+  eval(evalstring);
 }
 
 openreportsGuarantor = function(fileName) {

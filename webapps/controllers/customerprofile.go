@@ -295,7 +295,7 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 	cibilReport := []CibilReportModel{}
 	err = csr.Fetch(&cibilReport, 0, false)
 	if err != nil {
-		return CreateResult(false, nil, e.Error())
+		return CreateResult(false, nil, err.Error())
 	} else if csr == nil {
 		return CreateResult(false, nil, "No data found !")
 	}
@@ -349,7 +349,7 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 
 	resprom := []tk.M{}
 	csr, e = cn.NewQuery().
-		Where(dbox.And(dbox.Eq("ConsumerInfo.CustomerId", id), dbox.Eq("ConsumerInfo.DealNo", p.DealNo))).
+		Where(dbox.And(dbox.Eq("ConsumerInfo.CustomerId", id), dbox.Eq("ConsumerInfo.DealNo", p.DealNo), dbox.Lte("CreatedDate", expdate))).
 		From("CibilReportPromotorFinal").
 		Cursor(nil)
 	if e != nil {
@@ -363,13 +363,166 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 		}
 	}
 
+	//get unconfirmId
+	csr, e = cn.NewQuery().
+		Where(dbox.And(dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo), dbox.Lte("CreatedDate", expdate))).
+		From("CibilReport").
+		Cursor(nil)
+
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	}
+
+	cbUnconfirm := []tk.M{}
+	e = csr.Fetch(&cbUnconfirm, 0, false)
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	}
+
+	//get unconfirmId
+	csr, e = cn.NewQuery().
+		Where(dbox.And(dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo), dbox.Lte("CreatedDate", expdate))).
+		From("CibilReportPromotorFinal").
+		Cursor(nil)
+
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	}
+
+	promUnconfirm := []tk.M{}
+	e = csr.Fetch(&promUnconfirm, 0, false)
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	}
+
 	results := []tk.M{}
 	results = append(results, tk.M{}.Set("CustomerProfile", customerProfile))
 	results = append(results, tk.M{}.Set("CibilReport", cibilReport))
 	results = append(results, tk.M{}.Set("CibilDraft", cibilDraft))
 	results = append(results, tk.M{}.Set("Promotors", resprom))
+	results = append(results, tk.M{}.Set("PromotorsUnconfirm", promUnconfirm))
+	results = append(results, tk.M{}.Set("CibilReportUnconfirm", cbUnconfirm))
 
 	return results
+}
+
+func (c *DataCapturingController) ReCreateCibil(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	p := struct {
+		CustomerId string
+		DealNo     string
+	}{}
+
+	err := k.GetPayload(&p)
+
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	cn, err := GetConnection()
+	defer cn.Close()
+
+	//get unconfirmId
+	csr, err := cn.NewQuery().
+		Where(dbox.And(dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo))).
+		From("CibilReport").
+		Cursor(nil)
+
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	cibilModel := []CibilReportModel{}
+	err = csr.Fetch(&cibilModel, 0, false)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	qinsert := cn.NewQuery().
+		From("CibilReport").
+		SetConfig("multiexec", true).
+		Save()
+	defer qinsert.Close()
+
+	qinsertprom := cn.NewQuery().
+		From("CibilReportPromotorFinal").
+		SetConfig("multiexec", true).
+		Save()
+	defer qinsert.Close()
+
+	for _, val := range cibilModel {
+		val.Profile.DealNo = p.DealNo
+		val.Profile.CustomerId = cast.ToInt(p.CustomerId, cast.RoundingAuto)
+		val.UnconfirmID = ""
+
+		insertdata := tk.M{}.Set("data", val)
+		err = qinsert.Exec(insertdata)
+		if err != nil {
+			return res.SetError(err)
+		}
+	}
+
+	//get unconfirmId
+	csr, err = cn.NewQuery().
+		Where(dbox.And(dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo))).
+		From("CibilReportPromotorFinal").
+		Cursor(nil)
+
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	cibilIndividual := []ReportData{}
+	err = csr.Fetch(&cibilIndividual, 0, false)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+
+	for _, curr := range cibilIndividual {
+		wh := []*dbox.Filter{}
+		wh = append(wh, dbox.Eq("ConsumerInfo.DealNo", p.DealNo), dbox.Eq("IncomeTaxIdNumber", curr.IncomeTaxIdNumber))
+
+		err = cn.NewQuery().
+			From("CibilReportPromotorFinal").
+			Delete().
+			Where(wh...).
+			Exec(nil)
+		if err != nil {
+			res.SetError(err)
+			return res
+		}
+
+		curr.ConsumersInfos.DealNo = p.DealNo
+		curr.ConsumersInfos.CustomerId = cast.ToInt(p.CustomerId, cast.RoundingAuto)
+		curr.UnconfirmID = ""
+		insertdata := tk.M{}.Set("data", curr)
+		err = qinsertprom.Exec(insertdata)
+		if err != nil {
+			return res.SetError(err)
+		}
+
+	}
+
+	wh := []*dbox.Filter{}
+	wh = append(wh, dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo))
+
+	err = cn.NewQuery().
+		From("CibilReportPromotorFinal").
+		Delete().
+		Where(wh...).
+		Exec(nil)
+	if err != nil {
+		res.SetError(err)
+		return res
+	}
+	return res
 }
 
 func (c *DataCapturingController) SaveCustomerProfileDetail(k *knot.WebContext) interface{} {

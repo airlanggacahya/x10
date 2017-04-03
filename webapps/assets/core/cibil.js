@@ -873,6 +873,26 @@ cibil.preopenreports = function(){
 	eval(evalstring);
 }
 
+cibil.openUnconfirm = function(){
+	cibil.urls([])
+	for(var i=0; i < cibil.reportCibilList().length; i++){
+		if(filter().CustomerSearchVal() == cibil.reportCibilList()[i].Profile.CustomerId){
+			var data = cibil.reportCibilList()[i]
+			cibil.urls.push("/static/pdf/"+data.FileName);
+		}
+	}
+	if(cibil.reportDraft().length != 0 && cibil.reportDraft().FileName != "") {
+		cibil.urls.push("/static/pdf/"+cibil.reportDraft().FileName);
+	}
+	if(cibil.urls().length==0) return;
+	var evalstring = "function myFunction() {"
+	for(var i=0; i < cibil.urls().length; i++){
+		evalstring+="setTimeout(function(){ window.open('"+cibil.urls()[i]+"');},1500);"
+	}
+	evalstring+="};myFunction();"
+	eval(evalstring);
+}
+
 cibil.acceptcibil = function(){
 	// swal("Success","Data accepted","success");
 	swal('Success','Data accepted','success')

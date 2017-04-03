@@ -47,6 +47,7 @@ type ReportData struct {
 	TotalEnquiries30Days     int               `bson:"TotalEnquiries30Days"`
 	RecentEnquiriesDates     time.Time         `bson:"RecentEnquiriesDates"`
 	StatusCibil              int               `bson:"StatusCibil,omitempty"`
+	CreatedDate              time.Time         `bson:"CreatedDate"`
 }
 
 func (e *ReportData) RecordID() interface{} {

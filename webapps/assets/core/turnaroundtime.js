@@ -25,7 +25,8 @@ turn.averageAcceptance = ko.observable(0);
 turn.avgAcceptance = ko.observable(0);
 turn.dealAcceptance = ko.observable(0);
 turn.averageAcceptanceData = ko.observableArray([]);
-turn.containerTitle = ko.observable("")
+turn.containerTitle = ko.observable("");
+turn.trendDataLength = ko.observable(6)
 
 turn.titleText = ko.computed(function () {
     var type = dash.FilterValue.GetVal("TimePeriod")
@@ -89,9 +90,7 @@ turn.averageAcceptanceClick = function(){
 	$(".dl").removeClass("onactive");
 	$("#acep").addClass("onactive");
 	turn.containerTitle("Average Acceptance TAT");
-	setTimeout(function(){
-		turn.loadChartContainer(turn.averageAcceptanceData())
-	}, 1000)
+	turn.loadChartContainer(turn.averageAcceptanceData())
 }
 
 // turn.loadFirst = function(){
@@ -217,7 +216,7 @@ turn.loadAlleverage = function(){
 	        turn.loadRadialGauge();
 	        
 	        // $("#tatgoals")
-		       // .css({ width: "150px", height: "125px", marginTop: "19px"})
+		       // .css({ width: "175px", height: "125px", marginTop: "19px"})
 		       // .data("kendoRadialGauge").resize(); 
 		});
 
@@ -521,6 +520,8 @@ turn.loadAlleverage = function(){
 				turn.avgConversion(0)
 				turn.dealConversion(0)
 			}
+
+			turn.averageConversionClick()
 			
 			$("#conversion").html('')
 			$("#conversion").kendoChart({
@@ -636,6 +637,11 @@ turn.lastMonth = function(id, field, data){
 }
 
 turn.loadChartContainer = function(data){
+	var len = turn.trendDataLength();
+    var start = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+    var type = dash.FilterValue.GetVal("TimePeriod")
+	var month = dash.generateXAxis(type, start, end, len)
 	setTimeout(function(){
 		$("#chartContainer").html('')
 		$("#chartContainer").kendoChart({
@@ -683,7 +689,7 @@ turn.loadChartContainer = function(data){
 	                }
 	                ],
 	                chartArea:{
-	                	height: 250,
+	                	height: 175,
 	                    background: "white"
 	                },
 	                legend: {
@@ -697,10 +703,11 @@ turn.loadChartContainer = function(data){
 	     				title: { 
 	     					text: "Days",
 	     					font: "11px sans-serif",
-	     					color : "#4472C4" 
+	     					color : "#4472C4", 
 	     				},
 	                    min: 0,
 	                    labels : {
+	                    	font: "10px sans-serif",
 	                    	step : 2,
 	                    	skip : 2
 	                    },
@@ -720,6 +727,7 @@ turn.loadChartContainer = function(data){
 	     				},
 	                    min: 0,
 	                    labels : {
+	                    	font: "10px sans-serif",
 	                    	step : 2,
 	                    	skip : 2
 	                    },
@@ -727,7 +735,8 @@ turn.loadChartContainer = function(data){
 	     			}
 	     			],
 	                categoryAxis: {
-	                	field: "dateStr",
+	                	categories: month,
+	                	// field: "dateStr",
 	                	// visible : true,
 	                	title : {
 	                    	text : "Deal Stages",
@@ -886,7 +895,8 @@ turn.CreateChartHistory = function(data){
 			visible: false,
 		},
 		chartArea:{
-            background: "white"
+            background: "white",
+            height: 175,
         },
 		valueAxis: {
             labels: {
@@ -984,7 +994,8 @@ turn.CreateChartMoving = function(ondata){
 			visible: false,
 		},
 		chartArea:{
-            background: "white"
+            background: "white",
+            height: 175,
         },
 		valueAxis: {
             labels: {
@@ -1022,7 +1033,8 @@ turn.CreateChartMoving = function(ondata){
         				" Deal Count: "+dt.dataItem.count+"</div>";
         	}
         }
-	})
+	});
+
 }
 
 turn.normalisasiData = function(data){
@@ -1085,8 +1097,11 @@ turn.loadChaterChart = function(){
                 visible: false,
             }
         },
+        chartArea:{
+        	height: 175,
+        },
         dataSource: {
-                    data: turn.dataScatter()
+            data: turn.dataScatter()
         },
         series: [{
 	        xField: "Conversion",
@@ -1101,7 +1116,7 @@ turn.loadChaterChart = function(){
 				template: "&lt;= #= value #",
 				skip: 1,
 				step: 1,
-				 font: "11px sans-serif",
+				font: "10px sans-serif",
 			},
 			majorUnit: 10,
 			minorUnit: 20,
@@ -1128,7 +1143,7 @@ turn.loadChaterChart = function(){
             },
             labels : {
             	// template : "#: kendo.toString( value/100000 , 'n0')#",
-            	 font: "11px sans-serif",
+            	 font: "10px sans-serif",
             }
         },
         click : function(val){
@@ -1225,7 +1240,6 @@ turn.setTitle = function(){
 
 
 $(function(){
-	setTimeout(function(){turn.loadAlleverage();turn.averageAcceptanceClick();}, 500)
 	// turn.loadChaterChart()
 	turn.accordion()
 });

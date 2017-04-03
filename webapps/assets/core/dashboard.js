@@ -605,6 +605,80 @@ dash.moveTimePeriod = function(start, end, type, movement) {
 	}
 }
 
+dash.trendDataLengthOptions = ko.computed(function () {
+    var unit = dash.FilterValue.GetVal("TimePeriod")
+    switch (unit) {
+    case "":
+    case "1month":
+        unit = "months"
+        break;
+    case "1year":
+        unit = "years"
+        break;
+    default:
+        unit = "period"
+    }
+    var ret =  _.map([3, 4, 6, 12], function (val) {
+        return {
+            text: "" + val + " " + unit,
+            value: val
+        }
+    });
+
+    return ret;
+});
+
+dash.generateXAxis = function (type, start, end, length) {
+    var cur = cleanMoment(start)
+    var till = cleanMoment(end)
+    var ret = []
+
+    switch (type) {
+    case "":
+    case "1month":
+        cur.day(1);
+        _.times(length, function() {
+            ret.push(cur.format('MMM `YY'))
+            cur.subtract(1, 'months')
+        })
+        break;
+    case "1year":
+        cur.day(1);
+        cur.month(4);
+        _.times(length, function() {
+            ret.push(cur.format('YYYY'))
+            cur.subtract(1, 'year')
+        })
+        break;
+    case "fromtill":
+        var days = till.diff(cur, "days") + 1
+
+        _.times(length, function() {
+            ret.push(
+                cur.format('DD/MM') + " - " + till.format('DD/MM')
+            );
+            cur.subtract(days, "days")
+            till.subtract(days, "days")
+        })
+        break;
+    case "10day":
+        _.times(length, function() {
+            ret.push(
+                cur.format('DD/MM/YY') + " - " + cur.clone().subtract(10, "days").format('DD/MM/YY')
+            );
+            cur.subtract(10, "days")
+        })
+        break;
+    default:
+        _.times(length, function() {
+            ret.push("");
+        })
+        break;
+    }
+
+    return ret
+}
+
 $(function(){
 	dash.accordionSideBar()
 	fetchAllDS().done(function () {

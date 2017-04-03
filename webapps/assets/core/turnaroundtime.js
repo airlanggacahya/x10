@@ -161,7 +161,7 @@ turn.loadAlleverage = function(){
 	                }],
 	                chartArea:{
 	                	// width: 250,
-	                    height: 100,
+	                    height: 75,
 	                    background: "transparent"
 	                },
 	                legend: {
@@ -252,7 +252,7 @@ turn.loadAlleverage = function(){
 	                }],
 	                chartArea:{
 	                	// width: 250,
-	                    height: 100,
+	                    height: 75,
 	                    background: "transparent"
 	                },
 	                legend: {
@@ -349,7 +349,7 @@ turn.loadAlleverage = function(){
 	                }],
 	                chartArea:{
 	                	// width: 250,
-	                    height: 100,
+	                    height: 75,
 	                    background: "transparent"
 	                },
 	                legend: {
@@ -447,7 +447,7 @@ turn.loadAlleverage = function(){
 	                }],
 	                chartArea:{
 	                	// width: 245,
-	                    height: 100,
+	                    height: 75,
 	                    background: "transparent"
 	                },
 	                legend: {
@@ -549,7 +549,7 @@ turn.loadAlleverage = function(){
 	                }],
 	                chartArea:{
 	                	// width: 250,
-	                    height: 100,
+	                    height: 75,
 	                    background: "transparent"
 	                },
 	                legend: {
@@ -641,7 +641,10 @@ turn.loadChartContainer = function(data){
     var start = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"))
     var end = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2"))
     var type = dash.FilterValue.GetVal("TimePeriod")
-	var month = dash.generateXAxis(type, start, end, len)
+	var month = dash.generateXAxis(type, start, end, len + 1)
+	month.shift();
+
+	console.log(data);
 	setTimeout(function(){
 		$("#chartContainer").html('')
 		$("#chartContainer").kendoChart({
@@ -652,6 +655,20 @@ turn.loadChartContainer = function(data){
 	            //         align: "left",
 	            //         color: "#58666e",
 	            //     },
+					title:{
+						text: "Average Conversion TAT",
+						font:  "12px Arial,Helvetica,Sans-Serif",
+						align: "left",
+						color: "#58666e",
+						padding: {
+							top: 0
+						}
+					},
+					plotArea: {
+						margin: {
+							right: 4,
+						}
+					},
 	                dataSource: data,
 	                series: [
 	                {
@@ -689,11 +706,11 @@ turn.loadChartContainer = function(data){
 	                }
 	                ],
 	                chartArea:{
-	                	height: 175,
+	                	height: 250,
 	                    background: "white"
 	                },
 	                legend: {
-	                	visible: true,
+	                	visible: false,
 	                    position: "bottom",
 	                    labels:{
 	                        font: "10px Arial,Helvetica,Sans-Serif"
@@ -702,8 +719,11 @@ turn.loadChartContainer = function(data){
 	     			valueAxes: [{
 	     				title: { 
 	     					text: "Days",
-	     					font: "11px sans-serif",
+	     					font: "10px sans-serif",
 	     					color : "#4472C4", 
+							margin: {
+								right: 1,
+							}
 	     				},
 	                    min: 0,
 	                    labels : {
@@ -713,8 +733,8 @@ turn.loadChartContainer = function(data){
 	                    },
 	                    // max: 10,
 	                    plotBands: [{
-							from: 3.0,
-							to: 3.5,
+							from: 2.9,
+							to: 3.0,
 							color: "#70ad47",
 							name: "Target"
 						}]
@@ -722,8 +742,11 @@ turn.loadChartContainer = function(data){
 	     				name: "dc",
 	     				title: { 
 	     					text: "Deal Count",
-	     					font: "11px sans-serif",
-	     					color : "#4472C4" 
+	     					font: "10px sans-serif",
+	     					color : "#4472C4",
+							margin: {
+								left: 1,
+							}
 	     				},
 	                    min: 0,
 	                    labels : {
@@ -740,7 +763,7 @@ turn.loadChartContainer = function(data){
 	                	// visible : true,
 	                	title : {
 	                    	text : "Deal Stages",
-	                		font: "11px sans-serif",
+	                		font: "10px sans-serif",
 	                    	visible : true,
 	                    	color : "#4472C4"
 	                    },
@@ -872,10 +895,18 @@ turn.CreateChartHistory = function(data){
 	$("#historytat").kendoChart({
 		title:{
 			text: "History TAT",
-			font:  "bold 12px Arial,Helvetica,Sans-Serif",
+			font:  "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",
-
+			padding: {
+				top: 0
+			}
+		},
+		plotArea: {
+			margin: {
+				left: 4,
+				right: 4
+			}
 		},
 		dataSource: historydata,
 		series:[{
@@ -896,7 +927,7 @@ turn.CreateChartHistory = function(data){
 		},
 		chartArea:{
             background: "white",
-            height: 175,
+            height: 250,
         },
 		valueAxis: {
             labels: {
@@ -907,9 +938,12 @@ turn.CreateChartHistory = function(data){
             },
             title : {
             	text : "No. of Deals",
-        		font: "11px sans-serif",
+        		font: "10px sans-serif",
             	visible : true,
-            	color : "#4472C4"
+            	color : "#4472C4",
+				margin: {
+					right: 1,
+				}
             }
         },
         categoryAxis: {
@@ -974,10 +1008,18 @@ turn.CreateChartMoving = function(ondata){
 	$("#movingtat").kendoChart({
 		title:{
 			text: "Moving TAT",
-			font:  "bold 12px Arial,Helvetica,Sans-Serif",
+			font:  "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",
-
+			padding: {
+				top: 0
+			}
+		},
+		plotArea: {
+			margin: {
+				left: 4,
+				right: 4
+			}
 		},
 		dataSource: movingdata,
 		series:[{
@@ -995,7 +1037,7 @@ turn.CreateChartMoving = function(ondata){
 		},
 		chartArea:{
             background: "white",
-            height: 175,
+            height: 250,
         },
 		valueAxis: {
             labels: {
@@ -1006,9 +1048,12 @@ turn.CreateChartMoving = function(ondata){
             },
             title : {
             	text : "No. of Deals",
-        		font: "11px sans-serif",
+        		font: "10px sans-serif",
             	visible : true,
-            	color : "#4472C4"
+            	color : "#4472C4",
+				margin: {
+					right: 1,
+				}
             }
         },
         categoryAxis: {
@@ -1086,10 +1131,12 @@ turn.loadChaterChart = function(){
 	$(".cater").kendoChart({
 		title:{
 			text: "Conversion TAT VS Deal Amount",
-			font:  "bold 12px Arial,Helvetica,Sans-Serif",
+			font:  "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",
-
+			padding: {
+				top: 0
+			}
 		},
         seriesDefaults: {
         	type: "scatter",
@@ -1098,7 +1145,7 @@ turn.loadChaterChart = function(){
             }
         },
         chartArea:{
-        	height: 175,
+        	height: 250,
         },
         dataSource: {
             data: turn.dataScatter()
@@ -1137,9 +1184,13 @@ turn.loadChaterChart = function(){
             min: 0,
             title: {
                 text: "Deal Amount (Rs. Lacs)",
-                font: "11px sans-serif",
+                font: "10px sans-serif",
             	visible : true,
-            	color : "#4472C4"
+            	color : "#4472C4",
+				padding: {
+					left: 0,
+					right: 0
+				}
             },
             labels : {
             	// template : "#: kendo.toString( value/100000 , 'n0')#",

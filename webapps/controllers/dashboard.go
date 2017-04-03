@@ -1700,7 +1700,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		}
 	}
 
-	finalRes := make([]tk.M, tp.PeriodCount+1)
+	finalRes := make([]tk.M, tp.PeriodCount)
 	months := tk.M{}
 	for key, val := range mapRes {
 		keyInt, _ := strconv.Atoi(key)
@@ -1719,7 +1719,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	}
 
 	if groupBy == "period" {
-		for val := 0; val <= tp.PeriodCount; val++ {
+		for val := 0; val < tp.PeriodCount; val++ {
 			valStr := strconv.Itoa(val)
 
 			if months.Get(valStr) == nil {
@@ -2274,4 +2274,114 @@ func (c *DashboardController) DealProfilMetrics(k *knot.WebContext) interface{} 
 	}
 
 	return DataAccess
+}
+
+func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := new(tk.Result)
+
+	payload := tk.M{}
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	cn, err := GetConnection()
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer cn.Close()
+
+	whs, err := GenerateRoleCondition(k)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	whsx := []*dbox.Filter{}
+
+	if len(whs) > 0 {
+		whsx = append(whsx, dbox.Or(whs...))
+	}
+
+	ids, err := FiltersAD2DealNo(
+		nil,
+		CheckArray(payload.Get("filter")),
+	)
+	if err != nil {
+		return res.SetError(err)
+	}
+	filterids := []interface{}{}
+	for _, id := range ids {
+		filterids = append(filterids, id)
+	}
+
+	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
+
+	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	if err != nil {
+		return res.SetError(err)
+	}
+	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	tp := TimePeriod{
+		Start:       periodStart,
+		End:         periodEnd,
+		TimeType:    payload.GetString("type"),
+		PeriodCount: 1,
+	}
+	tp = CalcTimePeriod(tp)
+
+	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whs...))
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	pipe := []tk.M{}
+	pipe = append(pipe, tk.M{
+		"$match": whsMatch,
+	})
+
+	// projecting, find last status
+	pipe = append(pipe, tk.M{
+		"$project": tk.M{
+			"status": tk.M{
+				"$arrayElemAt": []interface{}{"$info.myInfo", -1},
+			},
+			"customerprofile": "$customerprofile",
+			"accountdetails":  "$accountdetails",
+		},
+	})
+
+	// filter out on reject status or accepted status
+	// pipe := []tk.M{}
+	// pipe = append(pipe, tk.M{
+	// 	"$match": whsMatch,
+	// })
+
+	// debug, _ := json.MarshalIndent(pipe, "", "  ")
+	// tk.Printfn("%s", string(debug))
+
+	query := cn.NewQuery().
+		Command("pipe", pipe).
+		From("DealSetup")
+
+	csr, err := query.Cursor(nil)
+
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer csr.Close()
+
+	results := make([]tk.M, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	res.SetData(res)
+
+	return res
 }

@@ -1238,6 +1238,17 @@ turn.setTitle = function(){
 	return title;
 }
 
+$(window).bind("resize", function() {
+	$("#historytat").data("kendoChart").refresh();
+	$(".cater").data("kendoChart").refresh();
+	$("#chartContainer").data("kendoChart").refresh();
+	$("#movingtat").data("kendoChart").refresh();
+	$("#conversion").data("kendoChart").refresh();
+	$("#decision").data("kendoChart").refresh();
+	$("#processing").data("kendoChart").refresh();
+	$("#acceptance").data("kendoChart").refresh();
+});
+
 
 $(function(){
 	// turn.loadChaterChart()

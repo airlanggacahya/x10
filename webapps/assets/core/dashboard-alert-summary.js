@@ -235,11 +235,11 @@ alertSum.trendDataMonths = ko.observableArray([]);
 
 alertSum.summary2fa = function (values) {
     if (values == 0)
-        return "fa fa-minus fa-font-white";
+        return "";
     if (values < 0)
-        return "fa fa-arrow-down";
+        return "fa fa-caret-down";
     if (values > 0)
-        return "fa fa-arrow-up";
+        return "fa fa-caret-up";
 }
 
 alertSum.summary2color = function (values) {

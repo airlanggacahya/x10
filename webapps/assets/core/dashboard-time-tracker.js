@@ -235,10 +235,10 @@ ttrack.getData = function(){
         groupby: ttrack.trackingValue(),
         filter: dash.FilterValue()
     }
-	ajaxPost("/dashboard/timetracker", param,function(res){
-		   ttrack.renderChart(res.Data)
-		})
-	}
+    ajaxPost("/dashboard/timetracker", param,function(res){
+        ttrack.renderChart(res.Data)
+    })
+}
 
 ttrack.normalisasiData = function(data){
 	var category = [];
@@ -384,4 +384,108 @@ $(document).ready(function(){
 // Hook to filter value changes
 dash.FilterValue.subscribe(function (val) {
     ttrack.getData();
+    ttrack.loadHeaderBox();
 })
+
+ttrack.currentHeaderData = ko.observableArray([]);
+
+ttrack.currentHeadValue = function(section) {
+    function calculateSumSection(data, section) {
+        var ret = 0
+        _.each(data, function (val) {
+            if (_.get(val, "status", "") != section) {
+                return
+            }
+
+            ret = ret + _.get(val, "count")
+        })
+
+        return ret
+    }
+
+    return ko.computed(function () {
+        if (ttrack.currentHeaderData().length < 2)
+            return 0
+        var curSum = calculateSumSection(ttrack.currentHeaderData()[0], section);
+
+        return curSum;
+    })
+}
+
+ttrack.currentHeadPercent = function(section) {
+    function calculateSumSection(data, section) {
+        var ret = 0
+        _.each(data, function (val) {
+            if (_.get(val, "status", "") != section) {
+                return
+            }
+
+            ret = ret + _.get(val, "count")
+        })
+
+        return ret
+    }
+
+    return ko.computed(function () {
+        if (ttrack.currentHeaderData().length < 2)
+            return 0
+        var curSum = calculateSumSection(ttrack.currentHeaderData()[0], section);
+        var prevSum = calculateSumSection(ttrack.currentHeaderData()[1], section);
+
+        if (prevSum == 0)
+            return curSum * 100;
+
+        return (curSum - prevSum) / prevSum * 100;
+    })
+}
+
+ttrack.headerFa = function(section) {
+    return ko.computed(function() {
+        return dash.summary2fa(ttrack.currentHeadPercent(section)());
+    })
+}
+ttrack.headerColor = function(section) {
+    return ko.computed(function() {
+        return dash.summary2color(ttrack.currentHeadPercent(section)());
+    })
+}
+
+ttrack.loadHeaderBox = function () {
+    var start = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+    var type = dash.FilterValue.GetVal("TimePeriod")
+
+    var param = {
+        type: type,
+        start: start,
+        end: end,
+        groupby: 'stages',
+        filter: dash.FilterValue()
+    }
+
+    var currPromise = $.Deferred()
+    ajaxPost("/dashboard/timetracker", param,function(res){
+        currPromise.resolve(res)
+    })
+
+    var prev = dash.moveTimePeriod(start, end, type, -1);
+    var param = {
+        type: type,
+        start: prev.start,
+        end: prev.end,
+        groupby: 'stages',
+        filter: dash.FilterValue()
+    }
+
+    var prevPromise = $.Deferred()
+    ajaxPost("/dashboard/timetracker", param,function(res){
+        prevPromise.resolve(res)
+    })
+
+    $.when(currPromise, prevPromise).then(function (curr, prev) {
+        ttrack.currentHeaderData([
+            curr.Data,
+            prev.Data
+        ])
+    })
+}

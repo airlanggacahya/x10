@@ -66,6 +66,11 @@
 	    font-size: 32px;
 	    font-weight: bolder !important;
 	}
+
+	.tat-title{
+		text-align: left;
+	}
+
 	#conv, #dec, #proc, #acc{
 		text-align: center;
     	margin-top: -11px;
@@ -161,71 +166,74 @@
 		<h5>Summary : <span data-bind="text: turn.setTitle()"></span></h5>
 		<hr class="line">
 		<!-- <div class="col-sm-2"></div> -->
-		<div class="col-sm-12" style="width: 122%;margin-left: -1.5%;margin-top: -32px;">
+		<div class="col-sm-12 new-dashboard" style="width: 122%;margin-left: -1.5%;margin-top: -32px;">
 			<div id="butt">
 				<div class="col-sm-2 wl">
 					<div class="panel panel-body dl" id="target" style="height: 242px">
-						<h4>TAT Target</h4>
+						<h6 class="tat-title">TAT Target</h6>
 						<!-- <center> -->
 							<div id="goal-container">
-								<div id="tatgoals"></div>
+						<div id="tatgoals"></div>
+						<div>Days</div>
 							</div>
+
 						<!-- </center> -->
+
 					</div>
 				</div>
 				<div class="col-sm-2 wl " data-bind="click: turn.averageConversionClick">
 					<div class="panel panel-body dl material-ripple" id="conv">
-						<h4>Conversion TAT (Avg.)</h4>
+						<h6 class="tat-title">Conversion TAT (Avg.)</h6>
 						<div class="avg" data-bind="text: turn.averageConversion"></div>
-						<div id="conv"><span id="conve" class="fa fa-arrow-up"></span> <span data-bind="text: turn.avgConversion"></span></div>
+						<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: turn.avgConversion"></span></div>
 						<div id="conversion"></div>
 						<div class="col-sm-12" style="margin-top: -10px; text-align: left !important;">
-							<div class="col-sm-6">
+							<!-- <div class="col-sm-6"> -->
 								<p>Deal Count<br>
-								<span data-bind="text: turn.dealConversion"></span> <span id="convers" class="fa fa-arrow-up"></span></p>
-							</div>
+								<span data-bind="text: turn.dealConversion"></span> <span id="convers" class="fa fa-caret-up"></span></p>
+							<!-- </div> -->
 						</div>
 					</div>
 				</div>
 				<div class="col-sm-2 wl" data-bind="click: turn.averageDecisionClick">
 					<div class="panel panel-body dl material-ripple" id="dec">
-						<h4>Decision TAT (Avg.)</h4>
+						<h6 class="tat-title">Decision TAT (Avg.)</h6>
 						<div class="avg" data-bind="text: turn.averageDecision"></div>
-						<div id="dec"><span id="deci" class="fa fa-arrow-up"></span> <span data-bind="text: turn.avgDecision"></span></div>
+						<div id="dec"><span id="deci" class="fa fa-caret-up"></span> <span data-bind="text: turn.avgDecision"></span></div>
 						<div id="decision"></div>
 						<div style="margin-top: -10px; text-align: left !important;margin-left: 10px;">
-							<div class="col-sm-6">
+							<!-- <div class="col-sm-6"> -->
 								<p>Deal Count<br>
-								<span data-bind="text: turn.dealDecision"></span> <span id="dealdeci" class="fa fa-arrow-up"></span></p>
-							</div>
+								<span data-bind="text: turn.dealDecision"></span> <span id="dealdeci" class="fa fa-caret-up"></span></p>
+							<!-- </div> -->
 						</div>
 					</div>
 				</div>
 				<div class="col-sm-2 wl" data-bind="click: turn.averageProcessingClick">
 					<div class="panel panel-body dl material-ripple" id="process">
-						<h4>Processing TAT (Avg.)</h4>
+						<h6 class="tat-title">Processing TAT (Avg.)</h6>
 						<div class="avg" data-bind="text: turn.averageProcessing"></div>
-						<div id="proc"><span id="proce" class="fa fa-arrow-up"></span> <span data-bind="text: turn.avgProcessing"></span></div>
+						<div id="proc"><span id="proce" class="fa fa-caret-up"></span> <span data-bind="text: turn.avgProcessing"></span></div>
 						<div id="processing"></div>
 						<div class="col-sm-12" style="margin-top: -10px;">
-							<div class="col-sm-6">
+							<!-- <div class="col-sm-6"> -->
 								<p>Deal Count<br>
-								<span data-bind="text: turn.dealProcessing"></span> <span id="proces" class="fa fa-arrow-up"></span></p>
-							</div>
+								<span data-bind="text: turn.dealProcessing"></span> <span id="proces" class="fa fa-caret-up"></span></p>
+							<!-- </div> -->
 						</div>
 					</div>
 				</div>
 				<div class="col-sm-2 wl" data-bind="click: turn.averageAcceptanceClick">
 					<div class="panel panel-body dl material-ripple" id="acep">
-						<h4>Acceptance TAT (Avg.)</h4>
+						<h6 class="tat-title">Acceptance TAT (Avg.)</h6>
 						<div class="avg" data-bind="text: turn.averageAcceptance"></div>
-						<div id="acc"><span id="ace" class="fa fa-arrow-up"></span> <span data-bind="text: turn.avgAcceptance"></span></div>
+						<div id="acc"><span id="ace" class="fa fa-caret-up"></span> <span data-bind="text: turn.avgAcceptance"></span></div>
 						<div id="acceptance"></div>
 						<div class="col-sm-12" style="margin-top: -10px;">
-							<div class="col-sm-6">
+							<!-- <div class="col-sm-6"> -->
 								<p>Deal Count<br>
-								<span data-bind="text: turn.dealAcceptance"></span> <span id="dealacc" class="fa fa-arrow-up"></span></p>
-							</div>
+								<span data-bind="text: turn.dealAcceptance"></span> <span id="dealacc" class="fa fa-caret-up"></span></p>
+							<!-- </div> -->
 						</div>
 					</div>
 				</div>

@@ -174,8 +174,10 @@ turn.loadAlleverage = function(){
 	                },
 	                // seriesColors : ttrack.chartcolors,
 	                valueAxis: {
+	                	 visible :false,
 	                    labels: {
 	                        // format: "${0}",
+
 	                		font: "5px sans-serif",
 	                        skip: 2,
 	                        step: 2
@@ -190,16 +192,18 @@ turn.loadAlleverage = function(){
 					        visible: true
 					    },
 					    majorGridLines:{
-					        visible:true
+					        visible:true,
+					         skip: parseInt(turn.averageConversion()/2),
+	                        step: parseInt(turn.averageConversion()/2)
 					    }
 	                },
 	                categoryAxis: {
 	                    visible: true,
 	                   	line: {
-					        visible: true
+					        visible: false
 					    },
 					    majorGridLines:{
-					        visible:true
+					        visible:false
 					    }
 	                },
 	                tooltip : {
@@ -283,10 +287,10 @@ turn.loadAlleverage = function(){
 	                categoryAxis: {
 	                    visible: true,
 	                   	line: {
-					        visible: true
+					        visible: false
 					    },
 					    majorGridLines:{
-					        visible:true
+					        visible:false
 					    }
 	                },
 	                tooltip : {
@@ -358,6 +362,7 @@ turn.loadAlleverage = function(){
 	                },
 	                // seriesColors : ttrack.chartcolors,
 	                valueAxis: {
+	                	visible : false,
 	                    labels: {
 	                        // format: "${0}",
 	                		font: "5px sans-serif",
@@ -374,16 +379,18 @@ turn.loadAlleverage = function(){
 					        visible: true
 					    },
 					    majorGridLines:{
-					        visible:true
+					        visible:true,
+					         skip: parseInt(turn.averageConversion()/2),
+	                        step: parseInt(turn.averageConversion()/2)
 					    }
 	                },
 	                categoryAxis: {
 	                    visible: true,
 	                   	line: {
-					        visible: true
+					        visible: false
 					    },
 					    majorGridLines:{
-					        visible:true
+					        visible:false
 					    }
 	                },
 	                tooltip : {
@@ -453,6 +460,7 @@ turn.loadAlleverage = function(){
 	                },
 	                // seriesColors : ttrack.chartcolors,
 	                valueAxis: {
+	                	visible : false,
 	                    labels: {
 	                        // format: "${0}",
 	                		font: "5px sans-serif",
@@ -469,16 +477,18 @@ turn.loadAlleverage = function(){
 					        visible: true
 					    },
 					    majorGridLines:{
-					        visible:true
+					        visible:true,
+					         skip: parseInt(turn.averageConversion()/2),
+	                        step: parseInt(turn.averageConversion()/2)
 					    }
 	                },
 	                categoryAxis: {
 	                    visible: true,
 	                   	line: {
-					        visible: true
+					        visible: false
 					    },
 					    majorGridLines:{
-					        visible:true
+					        visible:false
 					    }
 	                },
 	                tooltip : {
@@ -550,11 +560,12 @@ turn.loadAlleverage = function(){
 	                },
 	                // seriesColors : ttrack.chartcolors,
 	                valueAxis: {
+	                	visible : false,
 	                    labels: {
 	                        // format: "${0}",
 	                		font: "5px sans-serif",
-	                        skip: 2,
-	                        step: 2
+	                        // skip: 5,
+	                        // step: 5
 	                    },
 	                    title : {
 	                    	text : "No. of Deals",
@@ -566,16 +577,19 @@ turn.loadAlleverage = function(){
 					        visible: true
 					    },
 					    majorGridLines:{
-					        visible:true
-					    }
+					        visible:true,
+					         skip: parseInt(turn.averageConversion()/2),
+	                        step: parseInt(turn.averageConversion()/2)
+					    },
+					   
 	                },
 	                categoryAxis: {
 	                    visible: true,
 	                   	line: {
-					        visible: true
+					        visible: false
 					    },
 					    majorGridLines:{
-					        visible:true
+					        visible:false
 					    }
 	                },
 	                tooltip : {
@@ -591,17 +605,17 @@ turn.loadAlleverage = function(){
 
 turn.lastMonth = function(id, field, data){
 	$("#"+id)
-		.removeClass('fa-arrow-up')
-		.removeClass('fa-arrow-down');
+		.removeClass('fa-caret-up')
+		.removeClass('fa-caret-down');
 
 	if(field == "avgdays"){
 		if(data[0].avgdays > data[1].avgdays){
 			$("#"+id)
-				.addClass('fa-arrow-up')
+				.addClass('fa-caret-up')
 				.css("color", "green");
 		}else{
 			$("#"+id)
-				.addClass('fa-arrow-down')
+				.addClass('fa-caret-down')
 				.css("color", "red")
 		}
 		var days = data[0].avgdays - data[1].avgdays
@@ -609,11 +623,11 @@ turn.lastMonth = function(id, field, data){
 	}else if(field == "dealcount"){
 		if(data[0].dealcount > data[1].dealcount){
 			$("#"+id)
-				.addClass('fa-arrow-up')
+				.addClass('fa-caret-up')
 				.css("color", "green");
 		}else{
 			$("#"+id)
-				.addClass('fa-arrow-down')
+				.addClass('fa-caret-down')
 				.css("color", "red")
 		}
 		var deals = data[0].dealcount - data[1].dealcount

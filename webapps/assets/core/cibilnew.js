@@ -342,7 +342,7 @@ r.getData = function() {
 
                     swal({
                     title: "There are new CIBIL datas",
-                    text: "Do you want to load new CIBIL?",
+                    text: "Do you want to load new CIBILs?",
                     type: 'warning',
                     showCancelButton: true,
                     // customClass: 'swal-custom',

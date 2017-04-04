@@ -35,20 +35,10 @@
 		/*padding-left: 24%;*/
 		padding-top: 20px;
 	}
-	.dl{
-		cursor: pointer;
+	.dl{	
 		display:block;
 		background-color: white;
 		margin-top: 0px !important;
-	}
-	.dl:hover{
-		background-color: rgba(0,0,0,0.1);
-		border: 3px solid #2f528f;
-	}
-
-	.onactive{
-		/*background-color: rgba(0,0,0,0.1);*/
-		border: 3px solid #2f528f !important;
 	}
 	.wl{
 		padding-left: 12px !important;
@@ -130,9 +120,6 @@
         -o-transform: scaleX(-1);
         transform: scaleX(-1);
         -ms-filter: fliph;
-	}
-	.toggle1{
-		cursor: pointer;
 	}
 	.scatter-title{
 		margin-top: 20px;
@@ -219,10 +206,21 @@
 	.chart-options {
 		position: absolute;
 		float: right;
-		z-index: 5;
+		z-index: 4;
 		right: 25px;
 		top: 3px;
 		font-size: 10px;
+		margin-top: 1%;
+        padding-right: 2%;
+	}
+
+	.chart-options0 {
+		float: left;
+		top: 3px;
+		right: 25px;
+		font-size: 10px;
+		margin-top: 3%;
+		padding-left: 2%;
 	}
 
 	.chart-options label {
@@ -230,20 +228,20 @@
 		margin-right: 5px;
 	}
 
-	.chart-options .k-widget.k-dropdown {
+	.chart-options .k-widget.k-dropdown, .chart-options0 .k-widget.k-dropdown {
 		width: 100px;
 	}
 
-	.chart-options .k-widget.k-dropdown .k-dropdown-wrap {
+	.chart-options .k-widget.k-dropdown .k-dropdown-wrap, .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap {
 		height: 16px !important;
 	}
 
-	.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-input {
+	.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-input, .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-input {
 		font-size: 9px;
 		padding-top: 1px;
 	}
 
-	.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
+	.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon, .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
 	    height: 20px;
 	}
 </style>
@@ -266,7 +264,7 @@
 							<!-- </center> -->
 						</div>
 					</div>
-					<div class="col-sm-2 wl " data-bind="click: turn.averageConversionClick">
+					<div class="col-sm-2 wl ">
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
 							<h6 class="tat-title tl">Conversion TAT (Avg.)</h6>
 							<div class="avg" data-bind="text: turn.averageConversion"></div>
@@ -280,7 +278,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-2 wl" data-bind="click: turn.averageDecisionClick">
+					<div class="col-sm-2 wl">
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
 							<h6 class="tat-title tl">Decision TAT (Avg.)</h6>
 							<div class="avg" data-bind="text: turn.averageDecision"></div>
@@ -294,7 +292,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-2 wl" data-bind="click: turn.averageProcessingClick">
+					<div class="col-sm-2 wl">
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="process">
 							<h6 class="tat-title tl">Processing TAT (Avg.)</h6>
 							<div class="avg" data-bind="text: turn.averageProcessing"></div>
@@ -308,7 +306,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-2 wl" data-bind="click: turn.averageAcceptanceClick">
+					<div class="col-sm-2 wl">
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="acep">
 							<h6 class="tat-title tl">Acceptance TAT (Avg.)</h6>
 							<div class="avg" data-bind="text: turn.averageAcceptance"></div>
@@ -337,8 +335,17 @@
 			<div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
 				<div class="col-md-4">
 					<div class="panel panel-body aol trend">
-						<div class="chart-options">
+						<div class="chart-options0">
 							<table>
+								<tr>
+									<td>
+										<select style="width: 150px" data-bind="kendoDropDownList: {data: turn.dataMenu, value: turn.dataMenuValue, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Quick Info'}"></select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="chart-options">
+							<table> 
 								<tr>
 									<td>
 										<label>View Acros</label>
@@ -349,6 +356,7 @@
 								</tr>
 							</table>
 						</div>
+						<div style="clear: both"></div>
 						<div id="chartContainer"></div>
 						<center>
 							<div class="col-md-12 legend" style="display: inline;">

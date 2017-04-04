@@ -111,6 +111,7 @@ func (c *CibilTransitoryController) GetDataCibilPromotor(k *knot.WebContext) int
 
 	query := []*dbox.Filter{}
 	query = append(query, dbox.Ne("_id", ""))
+	query = append(query, dbox.Eq("UnconfirmID", ""))
 
 	key := param.GetString("searchkey")
 	if key != "" {

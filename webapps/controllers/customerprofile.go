@@ -282,7 +282,13 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 	expdate := loginDate.AddDate(0, 2, 0)
 
 	csr, e = cn.NewQuery().
-		Where(dbox.And(dbox.Eq("Profile.customerid", id), dbox.Eq("Profile.dealno", p.DealNo), dbox.Lte("CreatedDate", expdate))).
+		Where(
+			dbox.And(dbox.Eq("Profile.customerid", id),
+				dbox.Eq("Profile.dealno", p.DealNo),
+				dbox.Lte("CreatedDate", expdate),
+				dbox.Lte("ReportDate", expdate),
+			),
+		).
 		From("CibilReport").
 		Cursor(nil)
 
@@ -301,7 +307,14 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 	}
 
 	csr, e = cn.NewQuery().
-		Where(dbox.And(dbox.Eq("Profile.customerid", id), dbox.Eq("Profile.dealno", p.DealNo), dbox.Lte("CreatedDate", expdate))).
+		Where(
+			dbox.And(
+				dbox.Eq("Profile.customerid", id),
+				dbox.Eq("Profile.dealno", p.DealNo),
+				dbox.Lte("CreatedDate", expdate),
+				dbox.Lte("ReportDate", expdate),
+			),
+		).
 		From("CibilReport").
 		Cursor(nil)
 
@@ -349,7 +362,14 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 
 	resprom := []tk.M{}
 	csr, e = cn.NewQuery().
-		Where(dbox.And(dbox.Eq("ConsumerInfo.CustomerId", id), dbox.Eq("ConsumerInfo.DealNo", p.DealNo), dbox.Lte("CreatedDate", expdate))).
+		Where(
+			dbox.And(
+				dbox.Eq("ConsumerInfo.CustomerId", id),
+				dbox.Eq("ConsumerInfo.DealNo", p.DealNo),
+				dbox.Lte("CreatedDate", expdate),
+				dbox.Lte("DateOfReport", expdate),
+			),
+		).
 		From("CibilReportPromotorFinal").
 		Cursor(nil)
 	if e != nil {
@@ -365,7 +385,13 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 
 	//get unconfirmId
 	csr, e = cn.NewQuery().
-		Where(dbox.And(dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo), dbox.Lte("CreatedDate", expdate))).
+		Where(
+			dbox.And(
+				dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo),
+				dbox.Lte("CreatedDate", expdate),
+				dbox.Lte("ReportDate", expdate),
+			),
+		).
 		From("CibilReport").
 		Cursor(nil)
 
@@ -381,7 +407,13 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 
 	//get unconfirmId
 	csr, e = cn.NewQuery().
-		Where(dbox.And(dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo), dbox.Lte("CreatedDate", expdate))).
+		Where(
+			dbox.And(
+				dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo),
+				dbox.Lte("CreatedDate", expdate),
+				dbox.Lte("DateOfReport", expdate),
+			),
+		).
 		From("CibilReportPromotorFinal").
 		Cursor(nil)
 
@@ -459,6 +491,7 @@ func (c *DataCapturingController) ReCreateCibil(k *knot.WebContext) interface{} 
 		val.Profile.DealNo = p.DealNo
 		val.Profile.CustomerId = cast.ToInt(p.CustomerId, cast.RoundingAuto)
 		val.UnconfirmID = ""
+		val.IsMatch = true
 
 		insertdata := tk.M{}.Set("data", val)
 		err = qinsert.Exec(insertdata)
@@ -487,7 +520,7 @@ func (c *DataCapturingController) ReCreateCibil(k *knot.WebContext) interface{} 
 
 	for _, curr := range cibilIndividual {
 		wh := []*dbox.Filter{}
-		wh = append(wh, dbox.Eq("ConsumerInfo.DealNo", p.DealNo), dbox.Eq("IncomeTaxIdNumber", curr.IncomeTaxIdNumber))
+		wh = append(wh, dbox.Eq("ConsumerInfo.DealNo", p.DealNo), dbox.Or(dbox.Eq("IncomeTaxIdNumber", curr.IncomeTaxIdNumber), dbox.Eq("ConsumerInfo.ConsumerName", curr.ConsumersInfos.ConsumerName)))
 
 		err = cn.NewQuery().
 			From("CibilReportPromotorFinal").
@@ -502,6 +535,7 @@ func (c *DataCapturingController) ReCreateCibil(k *knot.WebContext) interface{} 
 		curr.ConsumersInfos.DealNo = p.DealNo
 		curr.ConsumersInfos.CustomerId = cast.ToInt(p.CustomerId, cast.RoundingAuto)
 		curr.UnconfirmID = ""
+		curr.IsMatch = true
 		insertdata := tk.M{}.Set("data", curr)
 		err = qinsertprom.Exec(insertdata)
 		if err != nil {

@@ -989,11 +989,12 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 		err = csr.Fetch(&existdatarep, 0, false)
 		defer csr.Close()
 
-		if len(existdatarep) > 0 {
-			MoveFile(inbox+"/"+formattedName, failed)
-			os.RemoveAll(PathFrom + "/" + XmlName)
-			tk.Println("Data Existed")
-		} else if reportobj.CibilScore == 0 {
+		// if len(existdatarep) > 0 {
+		// 	MoveFile(inbox+"/"+formattedName, failed)
+		// 	os.RemoveAll(PathFrom + "/" + XmlName)
+		// 	tk.Println("Data Existed")
+		// } else
+		if reportobj.CibilScore == 0 {
 			MoveFile(inbox+"/"+formattedName, failed)
 			os.RemoveAll(PathFrom + "/" + XmlName)
 		} else {

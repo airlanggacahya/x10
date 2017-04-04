@@ -1394,7 +1394,7 @@ func CheckLoginDate(reportDate time.Time, CustomerId string, DealNo string) bool
 
 	defer csr.Close()
 
-	loginDate := AD.Get("AccountSetupDetails").(tk.M).Get("LoginDate").(time.Time)
+	loginDate := AD.Get("accountsetupdetails").(tk.M).Get("logindate").(time.Time)
 	expdate := loginDate.AddDate(0, -2, 0)
 
 	if reportDate.Before(expdate) && time.Now().Before(expdate) {

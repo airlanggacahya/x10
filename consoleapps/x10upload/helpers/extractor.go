@@ -74,6 +74,7 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 	standardtop := 0
 	topenquirysummarylayout := 0
 	topenquirysummaryindex := 0
+	topReportDate := 0
 
 	CibilReport := CibilReportModel{}
 
@@ -136,7 +137,7 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 			}
 
 			if text.Content == "Report Order Date" {
-				CibilReport.ReportDate = cast.String2Date(text.Content, "dd-MMM-yyyy")
+				topReportDate = text.Top
 			}
 
 		}
@@ -182,6 +183,10 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 				if text.Content == "Standard" {
 					standardtop = text.Top
 				}
+				if (text.Top == topReportDate || text.Top <= topReportDate+5 || text.Top >= topReportDate-5) && (text.Left >= 270 || text.Left <= 280) {
+					CibilReport.ReportDate = cast.String2Date(text.Content, "dd-MMM-yyyy")
+				}
+
 			}
 			//End Of Extract Profile
 

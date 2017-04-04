@@ -891,7 +891,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 							recordStatus = myRes[0].GetInt("isConfirm")
 						}
 
-						if recordStatus == 1 {
+						if recordStatus == 0 {
 							reportobj.Id = bson.NewObjectId()
 							reportobj.Profile.CustomerId = customerid
 							reportobj.Profile.DealNo = dealno
@@ -913,7 +913,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 							reportobj.Profile.DealNo = ""
 							reportobj.FilePath = PathFrom + "/" + FName
 							reportobj.FileName = newfilename
-							reportobj.IsMatch = false
+							reportobj.IsMatch = isMatch
 							custid := strconv.Itoa(customerid)
 							reportobj.UnconfirmID = custid + "_" + dealno
 							query := conn.NewQuery().From("CibilReport").Save()
@@ -1047,15 +1047,14 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 							t, err := time.Parse(layout, strdate)
 
 							if err != nil {
-								tk.Println(err)
-							} else {
-								if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
-									isMatch = true
-									break
-								} else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == t {
-									isMatch = true
-									break
-								}
+								t = time.Now()
+							}
+							if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
+								isMatch = true
+								break
+							} else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == t {
+								isMatch = true
+								break
 							}
 						}
 					}
@@ -1076,7 +1075,77 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 
 						err = cursor.Fetch(&result, 0, false)
 
-						if len(result) == 0 {
+						//GET STATUS FORM
+						filter = []*dbox.Filter{}
+						filter = append(filter, dbox.Eq("ConsumerInfo.CustomerId", customerid))
+						filter = append(filter, dbox.Eq("ConsumerInfo.DealNo", dealno))
+						cursor, err = conn.NewQuery().Select().From("CibilReportPromotorFinal").Where(filter...).Cursor(nil)
+						if err != nil {
+							tk.Println(err.Error())
+						}
+						resultForm := []tk.M{}
+
+						err = cursor.Fetch(&resultForm, 0, false)
+
+						statusForm := 0
+
+						if len(resultForm) > 0 {
+							statusForm = resultForm[0].GetInt("StatusCibil")
+						}
+
+						if statusForm == 1 {
+							if len(result) == 0 {
+								reportobj.Id = bson.NewObjectId()
+								reportobj.ConsumersInfos.CustomerId = 0
+								reportobj.ConsumersInfos.DealNo = ""
+								reportobj.FilePath = PathFrom + "/" + FName
+								reportobj.FileName = newfilename
+								reportobj.StatusCibil = 0
+								reportobj.IsMatch = true
+								custid := strconv.Itoa(customerid)
+								unconfirmid := custid + "_" + dealno
+								reportobj.UnconfirmID = unconfirmid
+								query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
+								err = query.Exec(tk.M{
+									"data": reportobj,
+								})
+								if err != nil {
+									tk.Println(err.Error())
+								}
+								query.Close()
+							} else {
+								for _, existdata := range result {
+									datereport := existdata.Get("DateOfReport").(time.Time)
+									timereport := existdata.Get("TimeOfReport").(time.Time)
+									if (datereport.Before(reportobj.DateOfReport) || datereport == reportobj.DateOfReport) && timereport.Before(reportobj.TimeOfReport) {
+										tk.Println("PDF MATCH - Creating to UnconfirmID")
+
+										reportobj.Id = bson.NewObjectId()
+										reportobj.ConsumersInfos.CustomerId = 0
+										reportobj.ConsumersInfos.DealNo = ""
+										reportobj.FilePath = PathFrom + "/" + FName
+										reportobj.FileName = newfilename
+										reportobj.StatusCibil = 0
+										reportobj.IsMatch = true
+										custid := strconv.Itoa(customerid)
+										unconfirmid := custid + "_" + dealno
+										reportobj.UnconfirmID = unconfirmid
+										query := conn.NewQuery().From("CibilReportPromotorFinal").Save()
+										err = query.Exec(tk.M{
+											"data": reportobj,
+										})
+										if err != nil {
+											tk.Println(err.Error())
+										}
+										query.Close()
+									} else {
+										tk.Println("DATA EXIST and DATE REPORT IS OLD")
+
+									}
+								}
+							}
+
+						} else if len(result) == 0 {
 							// if cpstatus == 1 {
 							// tk.Println(cpstatus)
 							reportobj.Id = bson.NewObjectId()
@@ -1227,7 +1296,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 										reportobj.FilePath = PathFrom + "/" + FName
 										reportobj.FileName = newfilename
 										reportobj.StatusCibil = 0
-										reportobj.IsMatch = false
+										reportobj.IsMatch = true
 										custid := strconv.Itoa(customerid)
 										unconfirmid := custid + "_" + dealno
 										reportobj.UnconfirmID = unconfirmid

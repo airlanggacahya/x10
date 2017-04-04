@@ -36,16 +36,10 @@
         padding-top: 20px;
     }
     .dl{
-        cursor: pointer;
         display:block;
         background-color: white;
         margin-top: 0px !important;
     }
-    .dl:hover{
-        background-color: rgba(0,0,0,0.1);
-        border: 3px solid #2f528f;
-    }
-
     .onactive{
         /*background-color: rgba(0,0,0,0.1);*/
         border: 3px solid #2f528f !important;
@@ -225,30 +219,60 @@
         font-size: 10px;
     }
 
+    .chart-options1{
+        z-index: 4;
+        float: right;
+        right: 25px;
+         top: 3px; 
+        font-size: 10px;
+        margin-top: 1%;
+        padding-right: 2%;
+    }
+
     .chart-options label {
         margin-top: 4px;
         margin-right: 5px;
     }
 
-    .chart-options .k-widget.k-dropdown {
+    .chart-options0{
+        float: left;
+        right: 25px;
+         top: 3px; 
+        font-size: 10px;
+        margin-top: 1%;
+        padding-left: 2%;
+    }
+
+    .chart-options0 label {
+        margin-top: 4px;
+        margin-right: 5px;
+    }
+
+
+    .chart-options1 label {
+        margin-top: 4px;
+        margin-right: 5px;
+    }
+
+    .chart-options0 .k-widget.k-dropdown, .chart-options1 .k-widget.k-dropdown, .chart-options .k-widget.k-dropdown {
         width: 100px;
     }
 
-    .chart-options .k-widget.k-dropdown .k-dropdown-wrap {
+    .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap, .chart-options1 .k-widget.k-dropdown .k-dropdown-wrap, .chart-options .k-widget.k-dropdown .k-dropdown-wrap {
         height: 16px !important;
     }
 
-    .chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-input {
+    .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-input, .chart-options1 .k-widget.k-dropdown .k-dropdown-wrap .k-input, .chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-input {
         font-size: 9px;
         padding-top: 1px;
     }
 
-    .chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
+    .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-icon,.chart-options1 .k-widget.k-dropdown .k-dropdown-wrap .k-icon, .chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
         height: 20px;
     }
 
     .donut-wrapper {
-        position: relative;
+        /*position: relative;*/
         width: 200px;
         height: 200px;
         background-color: transparent;
@@ -337,18 +361,28 @@
             <div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
                 <div class="col-md-6">
                     <div class="panel panel-body aol trend">
-                        <div class="chart-options">
+                        <div class="chart-options0">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenu, dataTextField: 'text', dataValueField: 'value', optionLabel:'View quick info'}"></select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="chart-options1">
                             <table>
                                 <tr>
                                     <td>
                                         <label>View Acros</label>
                                     </td>
                                     <td>
-                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod(), value: pm.ValueDataPeriod(), dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
                                     </td>
                                 </tr>
                             </table>
                         </div>
+                        <div style="clear: both"></div>
                         <div id="chartContainer"></div>
                     </div>
                 </div>

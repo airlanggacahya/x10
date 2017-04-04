@@ -279,14 +279,14 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 	defer csr.Close()
 
 	loginDate := AD.AccountSetupDetails.LoginDate
-	expdate := loginDate.AddDate(0, 2, 0)
+	expdate := loginDate.AddDate(0, -2, 0)
 
 	csr, e = cn.NewQuery().
 		Where(
 			dbox.And(dbox.Eq("Profile.customerid", id),
 				dbox.Eq("Profile.dealno", p.DealNo),
-				dbox.Lte("CreatedDate", expdate),
-				dbox.Lte("ReportDate", expdate),
+				dbox.Gte("CreatedDate", expdate),
+				dbox.Gte("ReportDate", expdate),
 			),
 		).
 		From("CibilReport").
@@ -311,8 +311,8 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 			dbox.And(
 				dbox.Eq("Profile.customerid", id),
 				dbox.Eq("Profile.dealno", p.DealNo),
-				dbox.Lte("CreatedDate", expdate),
-				dbox.Lte("ReportDate", expdate),
+				dbox.Gte("CreatedDate", expdate),
+				dbox.Gte("ReportDate", expdate),
 			),
 		).
 		From("CibilReport").
@@ -366,8 +366,8 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 			dbox.And(
 				dbox.Eq("ConsumerInfo.CustomerId", id),
 				dbox.Eq("ConsumerInfo.DealNo", p.DealNo),
-				dbox.Lte("CreatedDate", expdate),
-				dbox.Lte("DateOfReport", expdate),
+				dbox.Gte("CreatedDate", expdate),
+				dbox.Gte("DateOfReport", expdate),
 			),
 		).
 		From("CibilReportPromotorFinal").
@@ -388,8 +388,8 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 		Where(
 			dbox.And(
 				dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo),
-				dbox.Lte("CreatedDate", expdate),
-				dbox.Lte("ReportDate", expdate),
+				dbox.Gte("CreatedDate", expdate),
+				dbox.Gte("ReportDate", expdate),
 			),
 		).
 		From("CibilReport").
@@ -410,8 +410,8 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 		Where(
 			dbox.And(
 				dbox.Eq("UnconfirmID", p.CustomerId+"_"+p.DealNo),
-				dbox.Lte("CreatedDate", expdate),
-				dbox.Lte("DateOfReport", expdate),
+				dbox.Gte("CreatedDate", expdate),
+				dbox.Gte("DateOfReport", expdate),
 			),
 		).
 		From("CibilReportPromotorFinal").

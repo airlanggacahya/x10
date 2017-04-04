@@ -334,7 +334,8 @@ r.getData = function() {
       var myreport = data[1].CibilReport
 
       if(myreport.length > 0){
-        if(myreport[0].isConfirm == undefined || myreport[0].isConfirm == 0){
+        console.log(data[1].CibilReport)
+        if(myreport[0].IsConfirm == undefined || myreport[0].IsConfirm == 0){
             if(data[4].PromotorsUnconfirm.length > 0 || data[5].CibilReportUnconfirm.length > 0){
               cibil.promUnconfirm(data[4].PromotorsUnconfirm);
               cibil.compUnconfirm(data[5].CibilReportUnconfirm);

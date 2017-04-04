@@ -1377,7 +1377,7 @@ func CheckLoginDate(reportDate time.Time, CustomerId string, DealNo string) bool
 	}
 	defer conn.Close()
 
-	csr, err := cn.NewQuery().
+	csr, err := conn.NewQuery().
 		Where(dbox.And(dbox.Eq("customerid", CustomerId), dbox.Eq("dealno", DealNo))).
 		From("AccountDetails").
 		Cursor(nil)

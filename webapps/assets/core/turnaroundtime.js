@@ -725,7 +725,7 @@ turn.loadChartContainer = function(data){
 	                }
 	                ],
 	                chartArea:{
-	                	height: 250,
+	                	height: 220,
 	                    background: "white"
 	                },
 	                legend: {

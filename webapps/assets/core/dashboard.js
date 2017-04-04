@@ -292,7 +292,7 @@ dash.MasterDS.subscribe(function(values) {
 // Used for compile and parsing filter value
 dash.FilterList = []
 
-dash.initDashVal = function(name, path, options, def) {
+dash.initDashVal = function(name, path, options, def, optional = false) {
 	dash.FilterList.push(name)
 
 	dash[name + "Val"] = ko.observable("")
@@ -304,7 +304,15 @@ dash.initDashVal = function(name, path, options, def) {
 	dash[name + "ShowMe"].subscribe(function (values) {
 		dash.SaveFilter()
 	})
+
+	// if optional is true, then it's hidden from filter
+	// set this up to false to show from filter
+	dash[name + "Optional"] = ko.observable(optional);
+	dash[name + "Visible"] = ko.computed(function () {
+		return dash[name + "ShowMe"]() && !dash[name + "Optional"]();
+	})
 	// if default not defined, put default as empty string
+	// default will be forced whenever value is empty string
 	dash[name + "Default"] = (typeof(def) == "undefined" ? "" : _.cloneDeep(def))
 }
 
@@ -337,7 +345,10 @@ dash.initDashVal("IR", IR, [
 	{text: 'XFL-2', value:'>= 7 <= 8.5'},
 	{text: 'XFL-1', value:'> 8.5'},
 ])
-dash.initDashVal("Status", undefined, [])
+dash.initDashVal("DealStatus", undefined, [
+	{text: 'Approved', value:'Approved'},
+	{text: 'Rejected', value:'Rejected'},
+], 'Approved', true)
 dash.initDashVal("CA", CA, [])
 dash.initDashVal("RM", RM, [])
 dash.initDashVal("LoanValueType", undefined, [
@@ -347,6 +358,11 @@ dash.initDashVal("LoanValueType", undefined, [
 	{text: 'Sanctioned Amount', value:'sanc'},
 ])
 dash.initDashVal("Range", undefined, [])
+
+// To show optional filter options
+dash.showOptionalFilter = function (name, show = false) {
+	dash[name + "Optional"](show)
+}
 
 // Update to now
 dash.TimePeriodVal.subscribe(function (val) {

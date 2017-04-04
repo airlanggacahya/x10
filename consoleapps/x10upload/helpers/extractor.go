@@ -878,7 +878,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						isMatch = true
 					}
 
-					if isMatch {
+					if isMatch && CheckLoginDate(reportobj.ReportDate, cast.ToString(customerid), dealno) {
 
 						cursor, err = conn.NewQuery().
 							Select().
@@ -1067,7 +1067,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						}
 					}
 
-					if isMatch {
+					if isMatch && CheckLoginDate(reportobj.DateOfReport, cast.ToString(customerid), dealno) {
 						tk.Println("PDF Match")
 						tk.Println("Where", customerid, dealno, reportobj.ConsumersInfos.ConsumerName)
 
@@ -1368,6 +1368,38 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 	}
 
 	tk.Println("Extracting Finish")
+}
+
+func CheckLoginDate(reportDate time.Time, CustomerId string, DealNo string) bool {
+	csr, e = cn.NewQuery().
+		Where(dbox.And(dbox.Eq("customerid", CustomerId), dbox.Eq("dealno", DealNo))).
+		From("AccountDetails").
+		Cursor(nil)
+
+	if e != nil {
+		return CreateResult(false, nil, e.Error())
+	} else if csr == nil {
+		return CreateResult(true, nil, "")
+	}
+
+	AD := AccountDetail{}
+	err = csr.Fetch(&AD, 1, true)
+	if err != nil {
+		return CreateResult(false, nil, err.Error())
+	} else if csr == nil {
+		return CreateResult(false, nil, "No data found !")
+	}
+
+	defer csr.Close()
+
+	loginDate := AD.AccountSetupDetails.LoginDate
+	expdate := loginDate.AddDate(0, -2, 0)
+
+	if reportDate.Before(expdate) && time.Now().Before(expdate) {
+		return false
+	}
+
+	return true
 }
 
 func ReplaceString(number string) string {

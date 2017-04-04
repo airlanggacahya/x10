@@ -720,6 +720,9 @@ setup.getCurrenStatusDetails = function(d){
 				 		field: "status",
 				 		title: "Status",
 				 		headerAttributes: {"class": "sub-bgcolor"},
+				 		template : function(d){
+				 			return setup.SetAlias(d.status)
+				 		}
 				 	},
 				 	{
 				 		field: "updateTime",

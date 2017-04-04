@@ -7,6 +7,13 @@ setup.ListDealNo = ko.observableArray([])
 setup.AllCP = ko.observableArray([])
 setup.title = ko.observable("Customer Name :  | Dealno : ")
 
+setup.SetAlias = function(status){
+  if(status.toLowerCase() == "under process"){
+    return "Under Analysis"
+  }
+  return status 
+}
+
 setup.columnGrid = [
   {
     title : "Customer Name",
@@ -33,7 +40,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.myInfo.length
       count = count > 0 ? count-1 : 0 
-      return "<a onclick='setup.getCurrenStatusDetails(\""+dt.Id+"\")'>"+dt.Info.myInfo[count].status+"</a>" 
+      return "<a onclick='setup.getCurrenStatusDetails(\""+dt.Id+"\")'>"+setup.SetAlias(dt.Info.myInfo[count].status)+"</a>" 
     }
  },
  {
@@ -43,7 +50,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.myInfo.length
       count = count > 0 ? count-2 : 0
-      return dt.Info.myInfo[count] == undefined || dt.Info.myInfo[count] == null ? "" : dt.Info.myInfo[count].status
+      return setup.SetAlias(dt.Info.myInfo[count] == undefined || dt.Info.myInfo[count] == null ? "" : dt.Info.myInfo[count].status)
     }
  },
  {
@@ -63,7 +70,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.caInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.caInfo[count].status 
+      return setup.SetAlias(dt.Info.caInfo[count].status)
     }
  },
  {
@@ -73,7 +80,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.cibilInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.cibilInfo[count].status 
+      return setup.SetAlias(dt.Info.cibilInfo[count].status)
     }
  },
  {
@@ -83,7 +90,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.bsiInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.bsiInfo[count].status 
+      return setup.SetAlias(dt.Info.bsiInfo[count].status)
     }
  },
  {
@@ -93,7 +100,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.sbdInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.sbdInfo[count].status 
+      return setup.SetAlias(dt.Info.sbdInfo[count].status)
     }
  },
  {
@@ -103,7 +110,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.adInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.adInfo[count].status 
+      return setup.SetAlias(dt.Info.adInfo[count].status)
     }
  },
  {
@@ -113,7 +120,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.baInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.baInfo[count].status 
+      return setup.SetAlias(dt.Info.baInfo[count].status)
     }
  },
  {
@@ -123,7 +130,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.ertrInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.ertrInfo[count].status 
+      return setup.SetAlias(dt.Info.ertrInfo[count].status)
     }
  },
  {
@@ -133,7 +140,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.irtrInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.irtrInfo[count].status 
+      return setup.SetAlias(dt.Info.irtrInfo[count].status)
     }
  },
  {
@@ -143,7 +150,7 @@ setup.columnGrid = [
     template: function(dt){
       var count = dt.Info.ddInfo.length
       count = count > 0 ? count-1 : 0 
-      return dt.Info.ddInfo[count].status 
+      return setup.SetAlias(dt.Info.ddInfo[count].status)
     }
  },
  // {

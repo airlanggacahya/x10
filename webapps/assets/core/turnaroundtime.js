@@ -12,7 +12,7 @@ turn.dataMenu = ko.observableArray([
 	{text: 'Processing TAT (Avg)', value: 'processing'},
 	{text: 'Acceptance TAT (Avg)', value: 'acceptance'},
 ]);
-turn.dataMenuValue = ko.observable('');
+turn.dataMenuValue = ko.observable('conversion');
 turn.ValueDatePeriod = ko.observable(kendo.toString(new Date(), "MMM-yyyy"));
 turn.ValueDataPeriod = ko.observable('period');
 turn.chartcolors = ["#ff2929","#ffc000","#92d050", "#2e75b6"];

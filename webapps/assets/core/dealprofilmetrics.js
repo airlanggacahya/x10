@@ -1,5 +1,8 @@
 var pm = {};
 
+// set to show up dealstatus
+dash.showOptionalFilter("DealStatus")
+
 pm.dataPeriod = ko.observableArray([
 	{text: 'Period', value: 'period'},
 	{text: 'Region', value: 'region'},

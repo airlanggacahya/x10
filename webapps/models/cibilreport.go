@@ -314,7 +314,9 @@ func (m *CibilReportModel) GetAllDataByParam(param tk.M, k *knot.WebContext) (tk
 	query := []*dbox.Filter{}
 	querydraft := []*dbox.Filter{}
 	query = append(query, dbox.Ne("_id", ""))
+	query = append(query, dbox.Eq("UnconfirmID", ""))
 	querydraft = append(querydraft, dbox.Eq("Status", 1))
+	querydraft = append(querydraft, dbox.Eq("UnconfirmID", ""))
 
 	key := param.GetString("searchkey")
 

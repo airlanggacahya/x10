@@ -184,7 +184,7 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 				if text.Content == "Standard" {
 					standardtop = text.Top
 				}
-				if (text.Top == topReportDate || text.Top <= topReportDate+5 || text.Top >= topReportDate-5) && (text.Left >= 270 || text.Left <= 280) {
+				if (text.Top == topReportDate || (text.Top <= topReportDate+5 && text.Top >= topReportDate-5)) && (text.Left >= 270 && text.Left <= 280) {
 					tk.Println(text.Content, "------- CONTENT")
 					CibilReport.ReportDate = cast.String2Date(text.Content, "dd-MMM-yyyy")
 				}

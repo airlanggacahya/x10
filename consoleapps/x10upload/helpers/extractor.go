@@ -12,6 +12,7 @@ import (
 
 	. "eaciit/x10upload/models"
 
+	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	. "github.com/eaciit/textsearch"
 	tk "github.com/eaciit/toolkit"
@@ -74,6 +75,8 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 	topenquirysummarylayout := 0
 	topenquirysummaryindex := 0
 
+	CibilReport := CibilReportModel{}
+
 	//Create Layout
 	for i, page := range v.Pages {
 		for _, text := range page.Texts {
@@ -131,6 +134,11 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 			if text.Content == "No. of Credit Facilities" {
 				creditfacilityguaranttop = text.Top
 			}
+
+			if text.Content == "Report Order Date" {
+				CibilReport.ReportDate = cast.String2Date(text.Content, "dd-MMM-yyyy")
+			}
+
 		}
 	}
 	//End Of Create Layout
@@ -343,7 +351,6 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 		}
 	}
 
-	CibilReport := CibilReportModel{}
 	CibilReport.ReportType = "Company"
 	CibilReport.Profile = Profiles
 	CibilReport.Detail = DetailReportSummary

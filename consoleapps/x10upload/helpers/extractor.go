@@ -1371,28 +1371,30 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 }
 
 func CheckLoginDate(reportDate time.Time, CustomerId string, DealNo string) bool {
-	csr, e = cn.NewQuery().
+	conn, err := PrepareConnection()
+	if err != nil {
+		tk.Println(err)
+	}
+	defer conn.Close()
+
+	csr, err := cn.NewQuery().
 		Where(dbox.And(dbox.Eq("customerid", CustomerId), dbox.Eq("dealno", DealNo))).
 		From("AccountDetails").
 		Cursor(nil)
 
-	if e != nil {
-		return CreateResult(false, nil, e.Error())
-	} else if csr == nil {
-		return CreateResult(true, nil, "")
+	if err != nil {
+		tk.Println(err)
 	}
 
-	AD := AccountDetail{}
+	AD := tk.M{}
 	err = csr.Fetch(&AD, 1, true)
 	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	} else if csr == nil {
-		return CreateResult(false, nil, "No data found !")
+		tk.Println(err)
 	}
 
 	defer csr.Close()
 
-	loginDate := AD.AccountSetupDetails.LoginDate
+	loginDate := AD.Get("AccountSetupDetails").(tk.M).Get("LoginDate").(time.Time)
 	expdate := loginDate.AddDate(0, -2, 0)
 
 	if reportDate.Before(expdate) && time.Now().Before(expdate) {

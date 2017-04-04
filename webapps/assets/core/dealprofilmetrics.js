@@ -9,6 +9,14 @@ pm.dataPeriod = ko.observableArray([
 ]);
 pm.ValueDataPeriod = ko.observable('');
 
+pm.dataMenu = ko.observableArray([
+    {text: 'Deal Count', value: 'count'},
+    {text: 'Deal Mount', value: 'mount'},
+    {text: 'Interest Amount', value: 'interest'},
+]);
+
+pm.ValueDataMenu = ko.observable('');
+
 pm.loadAllHeadChart = function(){
 	pm.Count();
 	pm.Mount();
@@ -26,40 +34,40 @@ pm.dummyData = ko.observableArray([
 	{"avgdays":4.0,"date":"2017-03-01T00:00:00Z","dateStr":"Mar '17","dealcount":2,"median":8}])
 
 pm.Target = function(){
-	$("#target").html('')
-    $("#target").kendoRadialGauge({
-       pointer: {
-            value: 65
+	$("#tatgoals").html('')
+    $("#tatgoals").kendoRadialGauge({
+        pointer: {
+            value: 6
         },
 
         scale: {
             minorUnit: 5,
             startAngle: -30,
             endAngle: 210,
-            max: 40,
+            max: 30,
+            majorTicks: {
+                size: 5
+            },
             labels: {
-                position: "outside	"
+                position: "inside"
             },
             ranges: [
                 {
                     from: 0,
-                    to: 20,
+                    to: 10,
                     color: "green"
+                }, {
+                    from: 10,
+                    to: 20,
+                    color: "yellow"
                 }, {
                     from: 20,
                     to: 30,
-                    color: "yellow"
-                }, {
-                    from: 30,
-                    to: 40,
                     color: "red"
                 }
             ]
         }
     }); 
-    $("#target")
-       .css({ width: "150px", height: "138px"})
-       .data("kendoRadialGauge").resize();
 }
 
 pm.Count = function(){
@@ -223,11 +231,19 @@ pm.loadContainer = function(){
 		$("#chartContainer").kendoChart({
 	        // theme: "Material",
         // title: { 
-        //         // text: "Average Conversion TAT",
-        //         font:  "bold 12px Arial,Helvetica,Sans-Serif",
-        //         align: "left",
-        //         color: "#58666e",
-        //     },
+        //     text: "Deal Amount Interest",
+        //     font:  "12px Arial,Helvetica,Sans-Serif",
+        //     align: "left",
+        //     color: "#58666e",
+        //     padding: {
+        //         top: 0
+        //     }
+        // },
+        plotArea :{
+            margin: {
+                right: 4,
+            }
+        },
         dataSource: pm.dummyData(),
         series: [
         {
@@ -275,38 +291,57 @@ pm.loadContainer = function(){
                 font: "10px Arial,Helvetica,Sans-Serif"
             }
         },
-			valueAxes: [{
-				title: { 
-					text: "Amount (Rs. Lacs)",
-					font: "11px sans-serif",
-					color : "#4472C4" 
-				},
+		valueAxes: [{
+			title: { 
+				text: "Amount (Rs. Lacs)",
+				font: "10px sans-serif",
+				color : "#4472C4",
+                margin: {
+                    right: 1,
+                }
+			},
+            labels : {
+                font: "10px sans-serif",
+                step : 2,
+                skip : 2
+            },
             min: 0,
             max: 10,
             plotBands: [{
-				from: 3.0,
-				to: 3.5,
-				color: "#70ad47",
-				name: "Target"
-			}]
-			},{
-				name: "dc",
-				title: { 
-					text: "Deal Count",
-					font: "11px sans-serif",
-					color : "#4472C4" 
-				},
+    			from: 3.0,
+    			to: 3.5,
+    			color: "#70ad47",
+    			name: "Target"
+    		}]
+    		},{
+			name: "dc",
+			title: { 
+				text: "Deal Count",
+				font: "11px sans-serif",
+				color : "#4472C4",
+                margin: {
+                    left: 1,
+                }
+			},
             min: 0,
-            max: 10
-			}
-			],
+            max: 10,
+            labels : {
+                font: "10px sans-serif",
+                step : 2,
+                skip : 2
+            },
+		  }
+		],
         categoryAxis: {
         	field: "dateStr",
         	title : {
             	 text : "Time Period",
         		font: "11px sans-serif",
             	visible : true,
-            	color : "#4472C4"
+            	color : "#4472C4",
+                margin: {
+                    left: 1,
+                }
             },
             labels : {
         		font: "10px sans-serif",
@@ -379,11 +414,18 @@ pm.loadChaterChart = function(){
 	$(".cater").kendoChart({
 		title:{
 			text: "Deal Amount vs. Credit Scores",
-			font:  "bold 12px Arial,Helvetica,Sans-Serif",
+			font:  "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",
+            padding: {
+                top: 0
+            }
 
 		},
+        chartArea:{
+            height: 250,
+            background: "white"
+        },
         seriesDefaults: {
         	type: "scatter",
             labels: {
@@ -400,7 +442,7 @@ pm.loadChaterChart = function(){
         xAxis: {
             max: 50,
             title: {
-                text: "Credit Scores",
+                // text: "Credit Scores",
                 font: "11px sans-serif",
             	visible : true,
             	color : "#4472C4"
@@ -408,7 +450,8 @@ pm.loadChaterChart = function(){
             labels: {
 				template: "&lt;= #= value #",
 				skip: 1,
-				step: 1
+				step: 1,
+                font: "10px sans-serif",
 			},
 			majorUnit: 10,
 			minorUnit: 20,
@@ -429,9 +472,17 @@ pm.loadChaterChart = function(){
             min: 0,
             title: {
                 text: "Deal Amount",
-                font: "11px sans-serif",
+                font: "10px sans-serif",
             	visible : true,
-            	color : "#4472C4"
+            	color : "#4472C4",
+                padding: {
+                    left: 0,
+                    right: 0
+                }
+            },
+            labels : {
+                // template : "#: kendo.toString( value/100000 , 'n0')#",
+                 font: "10px sans-serif",
             }
         }
     });
@@ -490,9 +541,18 @@ pm.Distribution = function(){
 	$("#distribution").kendoChart({
         title: { 
             text: "Deal-time Tracking",
-            font:  "bold 12px Arial,Helvetica,Sans-Serif",
+            align: "left",
+            font:  "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",
+            padding: {
+                top: 0
+            }
+        },
+        plotArea :{
+            margin: {
+                right: 4,
+            }
         },
         dataSource: stocksDataSource,
         series: [{
@@ -502,7 +562,7 @@ pm.Distribution = function(){
             name: "#= group.value.split('*')[1] #"
         }],
         chartArea:{
-            height: 150,
+            height: 250,
             background: "white"
         },
         // seriesClick : function(e){
@@ -528,7 +588,8 @@ pm.Distribution = function(){
         //     }
         // },
         legend: {
-            position: "right",
+            visible: true,
+            position: "bottom",
             labels:{
                 font: "10px Arial,Helvetica,Sans-Serif"
             }
@@ -539,13 +600,16 @@ pm.Distribution = function(){
                 // format: "${0}",
         		font: "10px sans-serif",
                 skip: 2,
-                step: 2
+                step: 2,
             },
             title : {
             	text : "No. of Deals",
         		font: "11px sans-serif",
             	visible : true,
-            	color : "#4472C4"
+            	color : "#4472C4",
+                margin: {
+                    right: 1,
+                }
             }
         },
         categoryAxis: {

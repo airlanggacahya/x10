@@ -5,7 +5,14 @@ turn.dataHistory = ko.observableArray([])
 turn.dataPeriod = ko.observableArray([
 	{text: 'Period', value: 'period'},
 	{text: 'Region', value: 'region'},
-])
+]);
+turn.dataMenu = ko.observableArray([
+	{text: 'Conversion TAT (Avg)', value: 'conversion'},
+	{text: 'Decision TAT (Avg)', value: 'decision'},
+	{text: 'Processing TAT (Avg)', value: 'processing'},
+	{text: 'Acceptance TAT (Avg)', value: 'acceptance'},
+]);
+turn.dataMenuValue = ko.observable('conversion');
 turn.ValueDatePeriod = ko.observable(kendo.toString(new Date(), "MMM-yyyy"));
 turn.ValueDataPeriod = ko.observable('period');
 turn.chartcolors = ["#ff2929","#ffc000","#92d050", "#2e75b6"];
@@ -93,6 +100,18 @@ turn.averageAcceptanceClick = function(){
 	turn.loadChartContainer(turn.averageAcceptanceData())
 }
 
+turn.dataMenuValue.subscribe(function(value){
+	if(value == 'conversion'){
+		turn.averageConversionClick()
+	}else if(value == 'decision'){
+		turn.averageDecisionClick()
+	}else if(value == 'processing'){
+		turn.averageProcessingClick()
+	}else if(value == 'acceptance'){
+		turn.averageAcceptanceClick()
+	}
+
+})
 // turn.loadFirst = function(){
 // 	$(".dl").removeClass("onactive");
 // 	$("#acep").addClass("onactive");
@@ -655,15 +674,15 @@ turn.loadChartContainer = function(data){
 	            //         align: "left",
 	            //         color: "#58666e",
 	            //     },
-					title:{
-						text: "Average Conversion TAT",
-						font:  "12px Arial,Helvetica,Sans-Serif",
-						align: "left",
-						color: "#58666e",
-						padding: {
-							top: 0
-						}
-					},
+					// title:{
+					// 	text: "Average Conversion TAT",
+					// 	font:  "12px Arial,Helvetica,Sans-Serif",
+					// 	align: "left",
+					// 	color: "#58666e",
+					// 	padding: {
+					// 		top: 0
+					// 	}
+					// },
 					plotArea: {
 						margin: {
 							right: 4,
@@ -706,7 +725,7 @@ turn.loadChartContainer = function(data){
 	                }
 	                ],
 	                chartArea:{
-	                	height: 250,
+	                	height: 220,
 	                    background: "white"
 	                },
 	                legend: {
@@ -1288,6 +1307,17 @@ turn.setTitle = function(){
 
 	return title;
 }
+
+$(window).bind("resize", function() {
+	$("#historytat").data("kendoChart").refresh();
+	$(".cater").data("kendoChart").refresh();
+	$("#chartContainer").data("kendoChart").refresh();
+	$("#movingtat").data("kendoChart").refresh();
+	$("#conversion").data("kendoChart").refresh();
+	$("#decision").data("kendoChart").refresh();
+	$("#processing").data("kendoChart").refresh();
+	$("#acceptance").data("kendoChart").refresh();
+});
 
 
 $(function(){

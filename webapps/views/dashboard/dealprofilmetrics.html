@@ -1,61 +1,282 @@
 {{template "dataaccess.html" .}}
 <script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 <script>document.write('<script src="/static/core/dealprofilmetrics.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+<!-- <script type="text/javascript" src="/static/material/dist/ripple.min.js"></script> -->
 {{template "leftfilter.html"}}
 <style type="text/css">
-	.line{
+    .top{
+        margin-top: 50px;
+    }
+    .left{
+        text-align: left;
+    }
+    .ket{
+        margin-bottom: -5px;
+        margin-left: -14px;
+    }
+    #square1, #square2, #square3, #square4{
+        width: 7px;
+        height: 7px;
+        display: inline-block;
+    }
+    #square1{
+        background-color: #ff2929;
+    }
+    #square2{
+        background-color: #ffc000;
+    }
+    #square3{
+        background-color: #92d050;
+    }
+    #square4{
+        background-color: #2e75b6;
+    }
+    #butt{
+        /*padding-left: 24%;*/
+        padding-top: 20px;
+    }
+    .dl{
+        display:block;
+        background-color: white;
+        margin-top: 0px !important;
+    }
+    .onactive{
+        /*background-color: rgba(0,0,0,0.1);*/
+        border: 3px solid #2f528f !important;
+    }
+    .wl{
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+    #ti{
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 10px;
+        font-weight: bold !important;
+        margin-top: 12px;
+        margin-left: 17px;
+    }
+    .avg{
+        text-align: center;
+        font-size: 42px;
+        font-weight: bolder !important;
+    }
+
+    .tat-title{
+        text-align: left;
+    }
+
+    #conv, #dec, #proc, #acc{
+        text-align: center;
+        margin-top: -11px;
+    }
+    .material-ripple>.panel {
+        position: relative;
+        display: block;
+    }
+    .con{
+        margin-top: 20px !important;
+        background-color: white;
+        margin-bottom: -10px !important;
+    }
+    #tit{
+        font-size: 12px;
+        font-family: Arial,Helvetica,Sans-Serif;
+        font-weight: bold !important;
+    }
+    .aol{
+        background-color: white;
+        margin-top: -1% !important;
+    }
+    .aul{
+        margin-top:-0.5% !important;
+        background-color: #fff;
+    }
+    .tabl{
+        width: 95%;
+        margin-left: 4%;
+    }
+    .turnaroundtime h4 {
+        font-size: 16px;
+        text-align: left;
+        font-weight: bold;
+        font-family: Cambria, Helvetica, Arial;
+    }
+    .line{
         /*margin-top: 6px;
         margin-bottom: 20px;*/
         border: 1px solid #4472c4;
         border-top: 0px solid #eee;
         margin-top: -3px;
     }
-    .wl{
-    	margin-top: -45px;
-    }
     .acc-down{
-		float: right;
-		font-size: 14px;
-		color:grey;
-		-ms-transform: rotate(180deg);
+        float: right;
+        font-size: 14px;
+        color:grey;
+        -ms-transform: rotate(180deg);
         -webkit-transform: rotate(180deg);
         transform: rotate(180deg);
-	}
-	.acc-up{
-		font-size: 14px;
-		color:grey;
-		-moz-transform: scaleX(-1);
+    }
+    .acc-up{
+        font-size: 14px;
+        color:grey;
+        -moz-transform: scaleX(-1);
         -webkit-transform: scaleX(-1);
         -o-transform: scaleX(-1);
         transform: scaleX(-1);
         -ms-filter: fliph;
-	}
-	.dl{
-		cursor: pointer;
-		display:block;
-		background-color: white;
-		/*margin-top: 0px !important;*/
-	}
-	.dl:hover{
-		background-color: rgba(0,0,0,0.1);
-		border: 3px solid #2f528f;
-	}
-	.grap{
-		margin-top: -33px;
-    	margin-bottom: -30px;
-	}
-	.h{
-		margin-top: 0px !important;
-    	margin-bottom: 0px !important;
-	}
-	.donut-wrapper {
+    }
+    .toggle1{
+        cursor: pointer;
+    }
+    .scatter-title{
+        margin-top: 20px;
+    }
+    #goal-container {
+        /*background: transparent url("/static/img/gauge-container.png") no-repeat 50% 50%;*/
+        width: 150px;
+        height: 150px;
+        text-align: center;
+        margin: 0 auto 30px auto;
+        margin-top: 10px;
+    }
+    #tatgoals {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 0;
+    }
+    .lay{
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+    /*#goal-container .k-slider {
+                    margin-top: -11px;
+                    width: 200px;
+                }*/
+    .tl{
+        margin-top: -3%;
+    }
+
+    h5 {
+        margin-top: 0px;
+    }
+
+    .new-dashboard h6 {
+        margin-bottom: 0px;
+    }
+
+    .new-dashboard.minichart .panel {
+        padding: 0px;
+        padding-bottom: 10px;
+    }
+
+    .trend .legend #square1{
+        background-color: #2e75b6;
+        margin-left: 8px;
+    }
+    .trend .legend #square2{
+        background-color: #00b0f0;
+        margin-left: 8px;
+    }
+    .trend .legend #square3{
+        background-color: #ffc000;
+        margin-left: 8px;
+    }
+    .trend .legend #square4{
+        background-color: #678900;
+        margin-left: 8px;
+    }
+
+    .new-dashboard .footnote {
+        font-size: 11px;
+        padding-top: 5px;
+    }
+
+    .legend {
+        font-size: 11px;
+        font-family: Arial,Helvetica,Sans-Serif;
+    }
+
+    h6 {
+        font-weight: normal !important;
+    }
+
+    .aul h5 {
+        font-size: 12px;
+        font-family: Arial,Helvetica,Sans-Serif;
+        color: #58666e;
+    }
+
+    .aul {
+        padding-top: 0px;
+    }
+
+    .chart-options {
+        position: absolute;
+        float: right;
+        z-index: 5;
+        right: 25px;
+        top: 3px;
+        font-size: 10px;
+    }
+
+    .chart-options1{
+        z-index: 4;
+        float: right;
+        right: 25px;
+         top: 3px; 
+        font-size: 10px;
+        margin-top: 1%;
+        padding-right: 2%;
+    }
+
+    .chart-options label {
+        margin-top: 4px;
+        margin-right: 5px;
+    }
+
+    .chart-options0{
+        float: left;
+        right: 25px;
+         top: 3px; 
+        font-size: 10px;
+        margin-top: 1%;
+        padding-left: 2%;
+    }
+
+    .chart-options0 label {
+        margin-top: 4px;
+        margin-right: 5px;
+    }
+
+
+    .chart-options1 label {
+        margin-top: 4px;
+        margin-right: 5px;
+    }
+
+    .chart-options0 .k-widget.k-dropdown, .chart-options1 .k-widget.k-dropdown, .chart-options .k-widget.k-dropdown {
+        width: 100px;
+    }
+
+    .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap, .chart-options1 .k-widget.k-dropdown .k-dropdown-wrap, .chart-options .k-widget.k-dropdown .k-dropdown-wrap {
+        height: 16px !important;
+    }
+
+    .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-input, .chart-options1 .k-widget.k-dropdown .k-dropdown-wrap .k-input, .chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-input {
+        font-size: 9px;
+        padding-top: 1px;
+    }
+
+    .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-icon,.chart-options1 .k-widget.k-dropdown .k-dropdown-wrap .k-icon, .chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
+        height: 20px;
+    }
+
+    .donut-wrapper {
         position: relative;
         width: 200px;
         height: 200px;
         background-color: transparent;
-        margin-top: -46px;
-	    margin-bottom: -32px;
-	    margin-left: 7%;
+        margin: -10% auto auto 2%;
       }
 
     .donut-chart {
@@ -77,171 +298,189 @@
         text-align: center;
         color: grey;
     }
-
-    .bd{
-    	margin-top: 0px !important;
-    	background-color: #fff;
-    }
-
-    #tit {
-	    font-size: 12px;
-	    font-family: Arial,Helvetica,Sans-Serif;
-	    font-weight: bold !important;
-	}
-	#tabl{
-		width: 95%;
-    	margin-left: 4%;
-	}
-
-	.toggle1{
-		cursor: pointer;
-	}
 </style>
-<div class="col-md-12">
-	<div class="col-md-12" style="margin-top: 47px;">
-		<h5>Summary : <span data-bind="text: pm.setTitle()">nanana</span></h5>
-		<hr class="line">
-	</div>
-	<div class="col-sm-12">
-		<div id="butt">
-			<div class="col-sm-3 wl ">
-				<div class="panel panel-body dl material-ripple" id="conv">
-					<h4 class="h">Deal target</h4>
-					<!-- <div class="avg">30</div>
-					<div id="conv"><span id="conve" class="fa fa-arrow-up"></span> <span>nananana</span></div> -->
-					<center><div id="target"></div></center>
-					<!-- <div class="col-sm-12" style="margin-top: -10px; text-align: left !important;">
-						<div class="col-sm-6">
-							<p>Deal Count<br>
-							<span></span> <span id="convers" class="fa fa-arrow-up"></span></p>
-						</div>
-					</div> -->
-				</div>
-			</div>
-			<div class="col-sm-3 wl">
-				<div class="panel panel-body dl material-ripple" id="dec">
-					<h4 class="h">Deal Count</h4>
-					<h5 class="h">( Approved )</h5>
-					<!-- <div id="count" class="grap"></div> -->
-					<div class="donut-wrapper">
-						<div id="count" class="donut-chart"></div>
-						<div class="count-text inner-content"></div>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-3 wl">
-				<div class="panel panel-body dl material-ripple" id="process">
-					<h4 class="h">Deal Amount</h4>
-					<h5 class="h">( Approved )</h5>
-					<!-- <div id="amount" class="grap"></div> -->
-					<div class="donut-wrapper">
-						<div id="amount" class="donut-chart"></div>
-						<div class="amount-text inner-content"></div>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-3 wl">
-				<div class="panel panel-body dl material-ripple" id="acep">
-					<h4 class="h">Interest Amount</h4>
-					<h5 class="h">( Approved )</h5>
-					<!-- <div id="interest" class="grap"></div> -->
-					<div class="donut-wrapper">
-						<div id="interest" class="donut-chart"></div>
-						<div class="interest-text inner-content"></div>
-					</div>
-				</div>
-			</div>
-			<!-- <div class="col-sm-2 wl">
-				<div class="panel panel-body z-depth-2 dl material-ripple">
-					<div id="total"></div>
-				</div>
-			</div> -->
-		</div>
-	</div>
-	<div class="col-md-12 toggle1">
-		<h5>Trend : <span data-bind="text: pm.setTitle()">nanana</span> <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5>
-		<hr class="line">
-	</div>
-	<div class="col-md-12">
-		<div class="panel show" style="background-color: #fff;">
-			<div class="panel-heading">
-				<div class="col-md-12">
-					<div id="tit">Deal Amount And Interest</div><br/>
-					<div class="col-sm-6" style="margin-left: -3%;">
-						<div class="col-md-12">
-							<div class="col-md-8">
-								<div class="form-group">
-									<div class="col-md-3">
-										<label style="margin-top: 5px;">View Accros</label>
-									</div>
-									<div class="col-sm-5">
-										<select data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}" style="width: 100%;"></select>
-									</div>
-								</div>
-							</div>
-						</div>
-
-					</div>
-				</div>
-			</div>
-			<div class="panel-body" style="background-color: #fff;">
-				<div id="chartContainer"></div>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-12 toggle1">
-		<h5>Deal Distribution Across Interest Rates <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5>
-		<hr class="line">
-	</div>
-	<div class="col-md-12">
-		<div class="panel show" style="background-color: #fff;">
-			<div class="panel-heading">
-				<div class="col-md-12">
-					<div id="tit">Deal Amount / Count vs. Interest</div><br/>
-					<div class="col-sm-6" style="margin-left: -3%;">
-						<div class="col-md-12">
-							<div class="col-md-8">
-								<div class="form-group">
-									<div class="col-md-3">
-										<label style="margin-top: 5px;">View Accros</label>
-									</div>
-									<div class="col-sm-5">
-										<select data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'Deal Amount'}" style="width: 100%;"></select>
-									</div>
-								</div>
-							</div>
-						</div>
-
-					</div>
-				</div>
-			</div>
-			<div class="panel-body">
-				<div id="distribution"></div>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-12 toggle1">
-		<h5>Deal Distribution Across Credit Scores <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5>
-		<hr class="line">
-	</div>
-	<div class="col-md-12">
-		<div class="panel show" style="background-color: #fff;">
-			<div class="panel-heading">
-				
-			</div>
-			<div class="panel-body">
-				<div class="cater" style="margin-top: -6%;"></div>
-				<table id="tabl">
-					<tr>
-						<td class="le" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">XFL - 5</td>
-						<td class="le" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">XFL - 4</td>
-						<td class="le" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">XFL - 3</td>
-						<td class="le" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">XFL -2</td>
-						<td class="le" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">XFL - 1</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</div>
+<div class="col-md-12 lay">
+    <div class="col-md-12 top turnaroundtime">
+        <div class="col-md-12">
+            <h5>Quick Info : <span data-bind="text: pm.setTitle()">nanana</span></h5>
+            <hr class="line">
+            <!-- <div class="col-sm-2"></div> -->
+            <div class="col-sm-12 new-dashboard" style="width: 100%;margin-left: -0.5%;margin-top: -32px;">
+                <div id="butt">
+                    <div class="col-sm-3 wl">
+                        <div class="panel panel-body dl" id="target" style="height: 185px">
+                            <h6 class="tat-title tl">Deal Target</h6>
+                            <!-- <center> -->
+                                <div id="goal-container">
+                            <div id="tatgoals"></div>
+                            <div>Days</div>
+                                </div>
+                            <!-- </center> -->
+                        </div>
+                    </div>
+                    <div class="col-sm-3 wl ">
+                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
+                            <h6 class="tat-title tl">Deal Count</h6>
+                            <center>
+                                <div class="donut-wrapper">
+                                    <div id="count" class="donut-chart"></div>
+                                    <div class="count-text inner-content"></div>
+                                </div>
+                            </center>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 wl">
+                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
+                            <h6 class="tat-title tl">Deal Amount</h6>
+                            <center>
+                                <div class="donut-wrapper">
+                                    <div id="amount" class="donut-chart"></div>
+                                    <div class="amount-text inner-content"></div>
+                                </div>
+                            <center>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 wl">
+                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="process">
+                            <h6 class="tat-title tl">Interest Amount</h6>
+                            <center>
+                                <div class="donut-wrapper">
+                                    <div id="interest" class="donut-chart"></div>
+                                    <div class="interest-text inner-content"></div>
+                                </div>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-sm-2"></div> -->
+            <div class="col-md-12">
+                <h5>Trend : <span data-bind="text: pm.setTitle()">nanana</span> <!-- span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
+                <hr class="line">
+            </div>
+            <div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
+                <div class="col-md-6">
+                    <div class="panel panel-body aol trend">
+                        <div class="chart-options0">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenu, dataTextField: 'text', dataValueField: 'value', optionLabel:'View quick info'}"></select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="chart-options1">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label>View Acros</label>
+                                    </td>
+                                    <td>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod(), value: pm.ValueDataPeriod(), dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="clear: both"></div>
+                        <div id="chartContainer"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-body aol trend">
+                        <div class="chart-options">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label>View Acros</label>
+                                    </td>
+                                    <td>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'Deal Amount'}"></select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div id="distribution"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <h5>Conversion TAT & Deal Amount : <span data-bind="text: pm.setTitle()">nanana</span> <!--span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
+                <hr class="line">
+            </div>
+            <div class="col-md-12 new-dashboard">
+                <div class="panel panel-body aul show">
+                    <div class="cater"></div>
+                    <table class="tabl">
+                        <tr>
+                            <td class="le legend" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">0 - 10 Days</td>
+                            <td class="le legend" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">11 - 20 Days</td>
+                            <td class="le legend" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">21 - 30 Days</td>
+                            <td class="le legend" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">30 - 40 Days</td>
+                            <td class="le legend" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">40 + Days</td>
+                        </tr>
+                    </table>
+                    <div class="tabl" style="text-align: center; font-size: 11px; font-family: sans-serif; color: #4472c4;">Credit Scores</div>
+                     <!-- <h5 class="scatter-title">Deal Movement Table </h5> -->
+                     <!--  <div id="griddb" style="border: none;" class="k-grid k-widget" data-bind="visible:turn.listscatter().length > 0" >
+                         <div class="k-grid-header">
+                            <div class="k-grid-header-wrap">
+                               <table role="grid" width="100%">
+                                  <thead role="rowgroup">
+                                     <tr role="row" >
+                                        <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">Deal No</th>
+                                        <th style="width:30%" scope="col" role="columnheader" class="k-header header-bgcolor">Customer Name</th>
+                                        <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">CA</th>
+                                        <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">RM</th>
+                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Acceptance<br>TAT</th>
+                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Processing<br>TAT</th>
+                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Action<br>TAT</th>
+                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Decision<br>TAT</th>
+                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Conversion<br>TAT</th>
+                                            <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor"></th>
+                                     </tr>
+                                  </thead>
+                                  <tbody role="rowgroup" data-bind="foreach: turn.listscatter()">
+                                     <tr role="row">
+                                        <td role="gridcell">
+                                          <label data-bind="text: dealno"></label>
+                                        </td>
+                                        <td role="gridcell">
+                                          <label data-bind="text: custname"></label>
+                                        </td>
+                                         <td role="gridcell">
+                                          <label data-bind="text: caname"></label>
+                                        </td>
+                                         <td role="gridcell">
+                                          <label data-bind="text: rmname"></label>
+                                        </td>
+                                         <td role="gridcell">
+                                          <label data-bind="text: Acceptance"></label>
+                                        </td>
+                                         <td role="gridcell">
+                                          <label data-bind="text: Processing"></label>
+                                        </td>
+                                          <td role="gridcell">
+                                          <label data-bind="text: Action"></label>
+                                        </td>
+                                         <td role="gridcell">
+                                          <label data-bind="text: Decision"></label>
+                                        </td>
+                                         <td role="gridcell">
+                                          <label data-bind="text: Conversion"></label>
+                                        </td>
+                                        <td role="gridcell">
+                                          <button class="btn btn-flat btn-sm btn-danger noable" data-bind="click: turn.removescatterGrid($index())"><i class="fa fa-trash"></i></button>
+                                        </td>
+                                        
+                                     </tr>
+                                  </tbody>
+                               </table>
+                         </div>
+                      </div> -->
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-

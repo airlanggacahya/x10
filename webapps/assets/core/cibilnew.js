@@ -339,7 +339,10 @@ r.getData = function() {
             if(data[4].PromotorsUnconfirm.length > 0 || data[5].CibilReportUnconfirm.length > 0){
               cibil.promUnconfirm(data[4].PromotorsUnconfirm);
               cibil.compUnconfirm(data[5].CibilReportUnconfirm);
-              cibil.callSwal();
+
+              setTimeout(function(){
+                cibil.callSwal();
+              },1000)
                                      
             }
         }
@@ -349,24 +352,24 @@ r.getData = function() {
   })
 }
 
+cibil.showOverlay = function(){
+    setTimeout(function(){
+        $(".swal2-overlay").show();
+    },500);
+}
+
 cibil.callSwal = function(){
       swal({
           title: "New CIBIL Data found",
           text: "Do you want to update the CIBIL Details form with new CIBIL Data?",
           type: 'warning',
           showCancelButton: true,
-          // customClass: 'swal-custom',
-          // confirmButtonColor: '#3085d6',
-          // cancelButtonColor: '#d33',
           showCloseButton: true,
           confirmButtonText: "Yes",
           cancelButtonText: "View reports",
           confirmButtonClass: 'btn btn-primary custom-width',
           cancelButtonClass: 'btn btn-success custom-width',
           buttonsStyling: false,
-          closeOnConfirm: false,
-          closeOnCancel: false,
-          // allowOutsideClick: false
         }).then(function() {
           cibil.RecreateCibil();
         }, function(dismiss) {
@@ -375,6 +378,8 @@ cibil.callSwal = function(){
             cibil.callSwal();
           }
         })
+
+        cibil.showOverlay()
 }
 
 cibil.RecreateCibil = function(){
@@ -387,6 +392,8 @@ cibil.RecreateCibil = function(){
   ajaxPost("/datacapturing/recreatecibil", { CustomerId : custid, DealNo : dealno }, function (res){
         if(res.Message == ""){
           swal("Successful","Data Saved","success");
+        cibil.showOverlay()
+
           r.getData();
         }
     });
@@ -1196,6 +1203,8 @@ var saveCibilReport = function(status){
   
   if (!app.isFormValid("#entryCR") && status == 'submit') {
     swal("Warning","Please complete all fields","warning");
+        cibil.showOverlay()
+
     return;
   }
 
@@ -1218,6 +1227,8 @@ var saveCibilReport = function(status){
     ajaxPost(url, param, function(data) {
       if (data) {
         swal("Data Saved", "Data have been saved", "success");
+        cibil.showOverlay()
+
         r.dataEntryCibilReport().Id = data.Id;
 
         $(".collapsiblecibil").hide()
@@ -1275,6 +1286,8 @@ var saveCibilReport = function(status){
             // swal("Cancelled!", "Data didn't submit", "error");
           }
         })
+        cibil.showOverlay()
+
     }
 
 
@@ -1303,6 +1316,8 @@ var updateConfirmPromotors = function(status){
 var updateConfirmCibil = function(){
     if(r.reportCibilList().length == 0) {
       swal("Warning","CIBIL Data not found","warning");
+        cibil.showOverlay()
+
     } else {
       var status = 1
       if(r.isConfirm() == 1) {
@@ -1318,6 +1333,8 @@ var updateConfirmCibil = function(){
         if(data.success) {
           if(status == 0){
             swal("Please Edit / Enter Data", "", "success");
+            $(".swal2-overlay").show();
+
             $(".btn-disabled-confirm").prop("disabled", false);
             $(".btn-disabled").prop( "disabled", false );
 
@@ -1365,6 +1382,8 @@ var updateConfirmCibil = function(){
             });
 
             swal("Successfully Confirmed", "", "success");
+            cibil.showOverlay()
+
           }
 
           updateConfirmPromotors(status)
@@ -1532,6 +1551,8 @@ openreportsGuarantor = function(fileName) {
       window.open(urlFull)
     }else{
       swal("Warning","CIBIL file not found","warning");
+        cibil.showOverlay()
+
     }
   }
 }

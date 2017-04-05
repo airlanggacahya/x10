@@ -1048,7 +1048,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						setting := NewSimilaritySetting()
 						setting.SplitDelimeters = []rune{' ', '.', '-'}
 						similar := Similarity(reportobj.ConsumersInfos.ConsumerName, data.GetString("Name"), setting)
-						dob, isdate := data.Get("DateOfBirth").(time.Time)
+						// dob, isdate := data.Get("DateOfBirth").(time.Time)
 
 						tk.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 						tk.Println(similar, reportobj.IncomeTaxIdNumber, reportobj.ConsumersInfos.DateOfBirth, reportobj.ConsumersInfos.ConsumerName)

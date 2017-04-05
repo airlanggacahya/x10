@@ -339,41 +339,42 @@ r.getData = function() {
             if(data[4].PromotorsUnconfirm.length > 0 || data[5].CibilReportUnconfirm.length > 0){
               cibil.promUnconfirm(data[4].PromotorsUnconfirm);
               cibil.compUnconfirm(data[5].CibilReportUnconfirm);
-
-                    swal({
-                    title: "There are new CIBIL datas",
-                    text: "Do you want to load new CIBILs?",
-                    type: 'warning',
-                    showCancelButton: true,
-                    // customClass: 'swal-custom',
-                    // confirmButtonColor: '#3085d6',
-                    // cancelButtonColor: '#d33',
-                    showCloseButton: true,
-                    confirmButtonText: "Yes",
-                    cancelButtonText: "View reports",
-                    confirmButtonClass: 'btn btn-primary',
-                    cancelButtonClass: 'btn btn-success',
-                    buttonsStyling: false
-                  }).then(function() {
-                    cibil.RecreateCibil();
-                    // $(".swal-custom").prev().attr("style","");
-                    // checkEntryCibilReport()
-                    // openreports();
-                  }, function(dismiss) {
-                    if (dismiss === 'cancel') {
-                      cibil.openUnconfirm();
-                      // openreports();
-                      // alert();
-                      // return;
-                    }
-                    // $(".swal-custom").prev().attr("style","");
-                  })                
+              cibil.callSwal();
+                                     
             }
         }
       }
 
     }
   })
+}
+
+cibil.callSwal = function(){
+      swal({
+          title: "New CIBIL Data found",
+          text: "Do you want to update the CIBIL Details form with new CIBIL Data?",
+          type: 'warning',
+          showCancelButton: true,
+          // customClass: 'swal-custom',
+          // confirmButtonColor: '#3085d6',
+          // cancelButtonColor: '#d33',
+          showCloseButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "View reports",
+          confirmButtonClass: 'btn btn-primary custom-width',
+          cancelButtonClass: 'btn btn-success custom-width',
+          buttonsStyling: false,
+          closeOnConfirm: false,
+          closeOnCancel: false,
+          // allowOutsideClick: false
+        }).then(function() {
+          cibil.RecreateCibil();
+        }, function(dismiss) {
+          if (dismiss === 'cancel') {
+            cibil.openUnconfirm();
+            cibil.callSwal();
+          }
+        })
 }
 
 cibil.RecreateCibil = function(){

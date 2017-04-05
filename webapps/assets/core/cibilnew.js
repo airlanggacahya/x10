@@ -355,7 +355,7 @@ r.getData = function() {
 cibil.showOverlay = function(){
     setTimeout(function(){
         $(".swal2-overlay").show();
-    },500);
+    },100);
 }
 
 cibil.callSwal = function(){
@@ -1333,7 +1333,7 @@ var updateConfirmCibil = function(){
         if(data.success) {
           if(status == 0){
             swal("Please Edit / Enter Data", "", "success");
-            $(".swal2-overlay").show();
+           cibil.showOverlay();
 
             $(".btn-disabled-confirm").prop("disabled", false);
             $(".btn-disabled").prop( "disabled", false );

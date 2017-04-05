@@ -1053,33 +1053,34 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						tk.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 						tk.Println(similar, reportobj.IncomeTaxIdNumber, reportobj.ConsumersInfos.DateOfBirth, reportobj.ConsumersInfos.ConsumerName)
 
-						if isdate {
-							if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
-								isMatch = true
-								break
-							}
-							// else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == dob.UTC() {
-							// 	isMatch = true
-							// 	break
-							// }
-						} else {
-							datestring := data.GetString("DateOfBirth")
-							datesplitted := strings.Split(datestring, "T")
-							layout := "2006-01-02"
-							strdate := datesplitted[0]
-							t, err := time.Parse(layout, strdate)
+						// if isdate {
+						// 	if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
+						// 		isMatch = true
+						// 		break
+						// 	}
+						// 	// else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == dob.UTC() {
+						// 	// 	isMatch = true
+						// 	// 	break
+						// 	// }
+						// } else {
+						// 	datestring := data.GetString("DateOfBirth")
+						// 	datesplitted := strings.Split(datestring, "T")
+						// 	layout := "2006-01-02"
+						// 	strdate := datesplitted[0]
+						// 	t, err := time.Parse(layout, strdate)
 
-							if err != nil {
-								t = time.Now()
-							}
-							if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
-								isMatch = true
-								break
-							} else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == t {
-								isMatch = true
-								break
-							}
+						// 	if err != nil {
+						// 		t = time.Now()
+						// 	}
+						if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
+							isMatch = true
+							break
 						}
+						// 	} else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == t {
+						// 		isMatch = true
+						// 		break
+						// 	}
+						// }
 					}
 
 					if isMatch && CheckLoginDate(reportobj.DateOfReport, cast.ToString(customerid), dealno) {

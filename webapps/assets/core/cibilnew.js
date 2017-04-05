@@ -353,9 +353,9 @@ r.getData = function() {
 }
 
 cibil.showOverlay = function(){
-    setTimeout(function(){
-        $(".swal2-overlay").show();
-    },100);
+    // setTimeout(function(){
+    //     $(".swal2-overlay").show();
+    // },50);
 }
 
 cibil.callSwal = function(){

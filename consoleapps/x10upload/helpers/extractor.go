@@ -872,6 +872,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						}
 					}
 
+					tk.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 					similar := Similarity(simreportname, simcpname, setting)
 					tk.Println(simreportname, simcpname, similar, reportobj.Profile.Pan, custpan)
 
@@ -1016,6 +1017,8 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 				}
 			}
 
+			filter = append(filter, dbox.Eq("detailofpromoters.biodata.PAN",reportobj.IncomeTaxIdNumber))
+
 			cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(dbox.Or(filter...)).Cursor(nil)
 			if err != nil {
 				tk.Println(err.Error())
@@ -1042,7 +1045,8 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						similar := Similarity(reportobj.ConsumersInfos.ConsumerName, data.GetString("Name"), setting)
 						dob, isdate := data.Get("DateOfBirth").(time.Time)
 
-						tk.Println(similar)
+						tk.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+						tk.Println(similar,reportobj.IncomeTaxIdNumber ,reportobj.ConsumersInfos.DateOfBirth,reportobj.ConsumersInfos.ConsumerName)
 
 						if isdate {
 							if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
@@ -1423,7 +1427,7 @@ func CheckLoginDate(reportDate time.Time, CustomerId string, DealNo string) bool
 		return false
 	}
 
-	tk.Println("CHECKLOGINDATE ------", true)
+	tk.Println("CHECKLOGINDATE ------", true, " LOGINDATE :", logindate, "EXPDATE : "expdate)
 	return true
 }
 

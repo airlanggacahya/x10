@@ -137,7 +137,7 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 			}
 
 			if text.Content == "Report Order Date" && topReportDate == 0 {
-				tk.Println(text.Top, "------- TOP")
+				// tk.Println(text.Top, "------- TOP")
 				topReportDate = text.Top
 			}
 
@@ -185,7 +185,7 @@ func ExtractCompanyCibilReport(PathFrom string, Filename string) CibilReportMode
 					standardtop = text.Top
 				}
 				if (text.Top == topReportDate || (text.Top <= topReportDate+5 && text.Top >= topReportDate-5)) && (text.Left >= 270 && text.Left <= 280) {
-					tk.Println(text.Content, "------- CONTENT")
+					// tk.Println(text.Content, "------- CONTENT")
 					CibilReport.ReportDate = cast.String2Date(text.Content, "dd-MMM-yyyy")
 				}
 
@@ -822,6 +822,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 			customer := strings.Split(reportobj.Profile.CompanyName, " ")
 			res := []tk.M{}
 			filter := []*dbox.Filter{}
+			filterAll := []*dbox.Filter{}
 			isMatch := false
 			customerid := 0
 			dealno := ""
@@ -834,7 +835,9 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 				}
 			}
 
-			cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(filter...).Cursor(nil)
+			filterAll = append(filterAll, dbox.Or(dbox.Eq("applicantdetail.CustomerPan", reportobj.Profile.Pan), dbox.And(filter...)))
+
+			cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(filterAll...).Cursor(nil)
 			if err != nil {
 				tk.Println(err.Error())
 			}
@@ -932,6 +935,8 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 							}
 							query.Close()
 						}
+					} else if isMatch {
+						tk.Println("Can't Pass CHECKLOGINDATE")
 					}
 				}
 			} else {
@@ -1323,6 +1328,8 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 								}
 							}
 						}
+					} else if isMatch {
+						tk.Println("Can't Pass CHECKLOGINDATE")
 					}
 				}
 			}
@@ -1377,6 +1384,8 @@ func CheckLoginDate(reportDate time.Time, CustomerId string, DealNo string) bool
 	}
 	defer conn.Close()
 
+	tk.Println("CHECKLOGINDATE ------", reportDate, CustomerId, DealNo)
+
 	csr, err := conn.NewQuery().
 		Where(dbox.And(dbox.Eq("customerid", CustomerId), dbox.Eq("dealno", DealNo))).
 		From("AccountDetails").
@@ -1384,23 +1393,37 @@ func CheckLoginDate(reportDate time.Time, CustomerId string, DealNo string) bool
 
 	if err != nil {
 		tk.Println(err)
+		tk.Println("CHECKLOGINDATE ------", false)
+
+		return false
 	}
 
 	AD := tk.M{}
 	err = csr.Fetch(&AD, 1, true)
 	if err != nil {
 		tk.Println(err)
+		tk.Println("CHECKLOGINDATE ------", false)
+		return false
 	}
 
 	defer csr.Close()
+
+	if AD.Get("accountsetupdetails") == nil {
+		tk.Println("CHECKLOGINDATE ------", false)
+
+		return false
+	}
 
 	loginDate := AD.Get("accountsetupdetails").(tk.M).Get("logindate").(time.Time)
 	expdate := loginDate.AddDate(0, -2, 0)
 
 	if reportDate.Before(expdate) || time.Now().Before(expdate) {
+		tk.Println("CHECKLOGINDATE ------", false)
+
 		return false
 	}
 
+	tk.Println("CHECKLOGINDATE ------", true)
 	return true
 }
 

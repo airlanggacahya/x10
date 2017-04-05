@@ -1017,7 +1017,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 				}
 			}
 
-			filter = append(filter, dbox.Eq("detailofpromoters.biodata.PAN",reportobj.IncomeTaxIdNumber))
+			filter = append(filter, dbox.Eq("detailofpromoters.biodata.PAN", reportobj.IncomeTaxIdNumber))
 
 			cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(dbox.Or(filter...)).Cursor(nil)
 			if err != nil {
@@ -1046,7 +1046,7 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						dob, isdate := data.Get("DateOfBirth").(time.Time)
 
 						tk.Println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-						tk.Println(similar,reportobj.IncomeTaxIdNumber ,reportobj.ConsumersInfos.DateOfBirth,reportobj.ConsumersInfos.ConsumerName)
+						tk.Println(similar, reportobj.IncomeTaxIdNumber, reportobj.ConsumersInfos.DateOfBirth, reportobj.ConsumersInfos.ConsumerName)
 
 						if isdate {
 							if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
@@ -1422,12 +1422,12 @@ func CheckLoginDate(reportDate time.Time, CustomerId string, DealNo string) bool
 	expdate := loginDate.AddDate(0, -2, 0)
 
 	if reportDate.Before(expdate) || time.Now().Before(expdate) {
-		tk.Println("CHECKLOGINDATE ------", false)
+		tk.Println("CHECKLOGINDATE ------", false, " LOGINDATE :", logindate, "EXPDATE : ", expdate)
 
 		return false
 	}
 
-	tk.Println("CHECKLOGINDATE ------", true, " LOGINDATE :", logindate, "EXPDATE : "expdate)
+	tk.Println("CHECKLOGINDATE ------", true, " LOGINDATE :", logindate, "EXPDATE : ", expdate)
 	return true
 }
 

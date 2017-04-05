@@ -1422,12 +1422,12 @@ func CheckLoginDate(reportDate time.Time, CustomerId string, DealNo string) bool
 	expdate := loginDate.AddDate(0, -2, 0)
 
 	if reportDate.Before(expdate) || time.Now().Before(expdate) {
-		tk.Println("CHECKLOGINDATE ------", false, " LOGINDATE :", logindate, "EXPDATE : ", expdate)
+		tk.Println("CHECKLOGINDATE ------", false, " LOGINDATE :", loginDate, "EXPDATE : ", expdate)
 
 		return false
 	}
 
-	tk.Println("CHECKLOGINDATE ------", true, " LOGINDATE :", logindate, "EXPDATE : ", expdate)
+	tk.Println("CHECKLOGINDATE ------", true, " LOGINDATE :", loginDate, "EXPDATE : ", expdate)
 	return true
 }
 

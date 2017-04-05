@@ -1666,7 +1666,9 @@ function backToMain(){
 
 function refreshFilter(){
   $(".swal-custom").hide()
-  $(".swal2-overlay").hide()
+  if($(".swal-custom").length > 0){
+    $(".swal2-overlay").hide()
+  }
   backToMain();
   r.getData();
   refreshcomment();

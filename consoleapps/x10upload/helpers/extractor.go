@@ -819,23 +819,24 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 			MoveFile(inbox+"/"+formattedName, failed)
 			os.RemoveAll(PathFrom + "/" + XmlName)
 		} else {
-			customer := strings.Split(reportobj.Profile.CompanyName, " ")
+			// customer := strings.Split(reportobj.Profile.CompanyName, " ")
 			res := []tk.M{}
-			filter := []*dbox.Filter{}
+			// filter := []*dbox.Filter{}
 			filterAll := []*dbox.Filter{}
 			isMatch := false
 			customerid := 0
 			dealno := ""
 			// cpstatus := 0
 
-			for _, splited := range customer {
-				if len(splited) > 3 && splited != "PVT" && splited != "LTD" && splited != "PRIVATE" && splited != "LIMITED" {
-					tk.Println(splited)
-					filter = append(filter, dbox.Contains("applicantdetail.CustomerName", splited))
-				}
-			}
+			// for _, splited := range customer {
+			// 	if len(splited) > 3 && splited != "PVT" && splited != "LTD" && splited != "PRIVATE" && splited != "LIMITED" {
+			// 		tk.Println(splited)
+			// 		filter = append(filter, dbox.Contains("applicantdetail.CustomerName", splited))
+			// 	}
+			// }
 
-			filterAll = append(filterAll, dbox.Or(dbox.Eq("applicantdetail.CustomerPan", reportobj.Profile.Pan), dbox.And(filter...)))
+			// filterAll = append(filterAll, dbox.Or(dbox.Eq("applicantdetail.CustomerPan", reportobj.Profile.Pan), dbox.And(filter...)))
+			filterAll = append(filterAll, dbox.Eq("applicantdetail.CustomerPan", reportobj.Profile.Pan))
 
 			cursor, err := conn.NewQuery().Select().From("CustomerProfile").Where(filterAll...).Cursor(nil)
 			if err != nil {
@@ -876,9 +877,13 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 					similar := Similarity(simreportname, simcpname, setting)
 					tk.Println(simreportname, simcpname, similar, reportobj.Profile.Pan, custpan)
 
-					if similar >= 50 && custpan == reportobj.Profile.Pan {
-						isMatch = true
-					} else if similar >= 70 {
+					// if similar >= 50 && custpan == reportobj.Profile.Pan {
+					// 	isMatch = true
+					// } else if similar >= 70 {
+					// 	isMatch = true
+					// }
+
+					if custpan == reportobj.Profile.Pan {
 						isMatch = true
 					}
 
@@ -1004,18 +1009,18 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 			MoveFile(inbox+"/"+formattedName, failed)
 			os.RemoveAll(PathFrom + "/" + XmlName)
 		} else {
-			customer := strings.Split(reportobj.ConsumersInfos.ConsumerName, " ")
+			// customer := strings.Split(reportobj.ConsumersInfos.ConsumerName, " ")
 			res := []tk.M{}
 			filter := []*dbox.Filter{}
 			isMatch := false
 			customerid := 0
 			dealno := ""
 
-			for _, splited := range customer {
-				if len(splited) > 2 && splited != "JAIN" && splited != "PATEL" && splited != "SHAH" {
-					filter = append(filter, dbox.Contains("detailofpromoters.biodata.Name", splited))
-				}
-			}
+			// for _, splited := range customer {
+			// 	if len(splited) > 2 && splited != "JAIN" && splited != "PATEL" && splited != "SHAH" {
+			// 		filter = append(filter, dbox.Contains("detailofpromoters.biodata.Name", splited))
+			// 	}
+			// }
 
 			filter = append(filter, dbox.Eq("detailofpromoters.biodata.PAN", reportobj.IncomeTaxIdNumber))
 
@@ -1052,10 +1057,11 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 							if reportobj.IncomeTaxIdNumber == data.GetString("PAN") {
 								isMatch = true
 								break
-							} else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == dob.UTC() {
-								isMatch = true
-								break
 							}
+							// else if similar >= 50 && reportobj.ConsumersInfos.DateOfBirth == dob.UTC() {
+							// 	isMatch = true
+							// 	break
+							// }
 						} else {
 							datestring := data.GetString("DateOfBirth")
 							datesplitted := strings.Split(datestring, "T")

@@ -77,15 +77,27 @@ func (c *FormsAndReportLogicController) GetAllFile(k *knot.WebContext) interface
 	var path = filepath.Join(".", "assets", "formreportlogic")
 	files, _ := ioutil.ReadDir(path)
 	for _, f := range files {
+		var name = f.Name()
+
 		coba := tk.M{}
-		fmt.Println("------>>>>", f.Sys())
-		coba.Set("NameFile", f.Name())
+		coba.Set("NameFile", name)
 		coba.Set("Upload", f.ModTime())
 		coba.Set("Path", pathUI+f.Name())
+
+		// IF file ends with .disabled. Show only name but disable download.
+		// Implemented on client side js
+		var code = "disabled"
+		var lencode = len(code)
+		var lenname = len(name)
+		if len(name) > (lencode+1) && name[lenname-lencode:] == "disabled" {
+			coba.Set("NameFile", name[:lenname-lencode-1])
+			coba.Set("Disabled", true)
+		}
+
 		result = append(result, coba)
 	}
 
-	fmt.Println("------>>>>", result)
+	// fmt.Println("------>>>>", result)
 	conn, err := GetConnection()
 	defer conn.Close()
 	query, err := conn.NewQuery().Select().From("FormAndReportLink").Cursor(nil)

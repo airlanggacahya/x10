@@ -843,7 +843,7 @@ turn.loadRadialGauge = function(){
 
 turn.loadData = function(){
 	turn.dataHistory([]);
-	ajaxPost("/dashboard/historytat", {
+	turn.CreateChartHistoryData({
 		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
 		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
 		type: dash.FilterValue.GetVal("TimePeriod"),
@@ -851,7 +851,10 @@ turn.loadData = function(){
 	}, function(res){
 		if(res.Data != null){
 			turn.dataHistory(res.Data);
-			turn.CreateChartHistory(res.Data);
+			
+			var opt = turn.CreateChartHistoryOptions_(res.Data);
+			$("#historytat").html("");
+			$("#historytat").kendoChart(opt);
 		}
 	});
 
@@ -883,8 +886,7 @@ turn.loadData = function(){
 	})
 }
 
-turn.CreateChartHistory = function(data){
-	// var status = _.groupBy(data, ["status"])
+turn.CreateChartHistoryOptions_ = function (data) {
 	var status = _.groupBy(data, "status")
 	var cat = [];
 	$.each(status, function(key, item){
@@ -909,9 +911,8 @@ turn.CreateChartHistory = function(data){
 			field: "dayrange"
 		}
 	});
-	// console.log("---------->>>>32", historydata)
-	$("#historytat").html("");
-	$("#historytat").kendoChart({
+
+	return {
 		title:{
 			text: "History TAT",
 			font:  "12px Arial,Helvetica,Sans-Serif",
@@ -991,8 +992,19 @@ turn.CreateChartHistory = function(data){
         				" Deal Count: "+dt.dataItem.count+"</div>";
         	}
         }
-	});
+	}
+}
 
+turn.CreateChartHistoryData = function(param, callback) {
+	ajaxPost("/dashboard/historytat", param, function (data) {
+		callback(data)
+	})
+}
+
+turn.CreateChartHistory = function(param, callback) {
+	turn.CreateChartHistoryData(param, function(data) {
+		callback(turn.CreateChartHistoryOptions_(data))
+	})
 }
 
 turn.CreateChartMoving = function(ondata){

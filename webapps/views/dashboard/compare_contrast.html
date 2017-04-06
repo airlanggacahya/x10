@@ -1,0 +1,74 @@
+<script>document.write('<script src="/static/core/dashboard-compare-contrast.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+
+<style>
+  .modal-dialog.maximize {
+    width: 95%;
+  }
+
+  #compareModal .panel {
+    margin-bottom: 0px;
+  }
+
+  .compare-contrast {
+    position: absolute;
+    float: right;
+    z-index: 5;
+    right: 20px;
+    bottom: 30px;
+  }
+
+  #compareModal .panel-default>.panel-heading+.panel-collapse>.panel-body {
+    margin-top: 0px !important;
+  }
+</style>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="compareModal">
+  <div class="modal-dialog maximize" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Compare &amp; Contrast</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-2">
+            <div data-bind="foreach: { data: comp.FilterList, as:'filt' }">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" data-bind="attr:{id: 'compheader' + $index()}">
+                  <h4 class="panel-title">
+                    <a role="button"
+                      data-toggle="collapse"
+                      data-parent="#accordion"
+                      aria-expanded="true"
+                      data-bind="
+                        click: comp.openCompare.bind(comp, $index()),
+                        clickBubble: false,
+                        text: filt.title,
+                        attr:{href: '#compcollapse' + $index()},
+                        visible: comp.openCompare() !== $index()">
+                    </a>
+                    <span data-bind="text: filt.title, visible: comp.openCompare() === $index()"></span>
+                  </h4>
+                </div>
+                <div data-bind="attr:{id: 'compcollapse' + $index()}" class="panel-collapse collapse" role="tabpanel">
+                  <div class="panel-body">
+                    <ul data-bind="foreach: {data: compFilter[filt.varName + 'DS'], as: 'ds'}">
+                      <li>
+                        <a href="#" data-bind="click: comp.ToggleSelected.bind(comp, filt.varName, ds.value), text: ds.text, style: { fontWeight: comp.IsSelected(filt.varName, ds.value) ? 'bold': 'normal' }"></a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-10" id="compMainWindow">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -8,15 +8,14 @@ $(function () {
 			return
 		}
 
-		dash.LoadFilter(res.Data.Filter)
-	})
-})
-
-dash.SetSaveCallback(function (param) {
-	ajaxPost("/dashboard/savefilter", param, function(res){
-		if (res.IsError) {
-			swal("Error", res.Message, "error")
-		}
+		dash.LoadFilter(res.Data.Filters)
+		dash.SetSaveCallback(function (param) {
+			ajaxPost("/dashboard/savefilter", param, function(res){
+				if (res.IsError) {
+					swal("Error", res.Message, "error")
+				}
+			})
+		})
 	})
 })
 

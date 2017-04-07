@@ -2,6 +2,27 @@
 var compFilter = CreateDashFilter()
 var comp = {}
 
+comp.setFilterVal = function (filter, field, value) {
+    var ret = _.find(filter, function (val) {
+        return (val.FilterName === field)
+    })
+
+    ret.Value = value
+
+    return ret;
+}
+
+comp.getFilterVal = function (filter, field) {
+    var ret = _.find(filter, function (val) {
+        return (val.FilterName === field)
+    })
+
+    if (typeof(ret) === "undefined")
+        return ""
+    
+    return _.cloneDeep(ret.Value)
+}
+
 comp.FilterList = ko.observableArray([
     {
         varName: "Region",
@@ -58,14 +79,26 @@ comp.openCompare.subscribe(function (id) {
 
     comp.RedrawChart();
 })
-comp.openSelected = ko.computed(function () {
+comp.nameSelected = ko.computed(function () {
     var idx = comp.openCompare()
-    if (idx == "")
-        return [];
+    if (idx === "")
+        return "";
 
     var name = comp.FilterList()[idx].varName;
 
-    return comp[name + "SelectedItems"]();
+    return name;
+})
+comp.openSelected = ko.computed(function () {
+    var name = comp.nameSelected();
+
+    var base = comp.getFilterVal(comp.BaseFilter, name);
+    if (name === "")
+        return [base];
+
+    var selected = _.cloneDeep(comp[name + "SelectedItems"]());
+    selected.unshift(base)
+
+    return selected;
 })
 
 comp.IsSelected = function(section, needle) {
@@ -90,27 +123,66 @@ comp.ChartLoader = function (param, callback) {callback({})}
 
 comp.Open = function (chartconfig) {
     comp.ChartLoader = chartconfig;
+    comp.BaseFilter = dash.FilterValue();
 
     compFilter.LoadFilter(dash.FilterValue());
     $("#compareModal").modal('show');
-    comp.openCompare(0);
+    if (comp.openCompare() === "")
+        comp.openCompare(0);
+    
     comp.RedrawChart();
 }
 
+comp.RedrawChartDelay = null;
 comp.RedrawChart = function () {
-    console.log("in redraw")
+    if (comp.RedrawChartDelay) {
+        clearTimeout(comp.RedrawChartDelay)
+    }
+    comp.RedrawChartDelay = setTimeout(function () {
+        comp.RedrawChartDelay = null
+        comp.RedrawChart_()
+    }, 100);
+}
+
+comp.RedrawChart_ = function () {
     var parentEl = $("#compMainWindow");
-    parentEl.hide();
+    // parentEl.hide();
     parentEl.html("");
 
-    _.each(comp.openSelected(), function (val, index) {
-        console.log(val);
-        console.log(index);
-        var child = document.createElement("div");
-        child.id = "compChart" + index;
+    if (comp.nameSelected() == "")
+        return;
 
+    _.each(comp.openSelected(), function (val, index) {
+        var filter = _.cloneDeep(comp.BaseFilter);
+        comp.setFilterVal(filter, comp.nameSelected(), val);
+
+        var param = {
+            start: discardTimezone(comp.getFilterVal(filter, "TimePeriodCalendar")),
+            end: discardTimezone(comp.getFilterVal(filter, "TimePeriodCalendar2")),
+            type: comp.getFilterVal(filter, "TimePeriod"),
+            filter: filter
+        }
+
+        // Add child
+        var child = document.createElement("div");
+        child.id = "compChart" + index + "_wrapper";
+        child.classList.add("col-sm-6");
+        child.classList.add("chart-wrapper");
+
+        var el = document.createElement("div");
+        el.id = "compChar" + index;
+        el.classList.add("chart");
+
+        comp.ChartLoader(param, function (opt) {
+            var chart = $(el).kendoChart(opt);
+            $(chart[0]).data('kendoChart').redraw();
+        });
+
+        child.appendChild(el);
         parentEl.append(child);
     })
 
-    parentEl.show();
+    $("")
+
+    // parentEl.show();
 }

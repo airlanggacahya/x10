@@ -386,7 +386,7 @@
 				<div class="col-md-4 show new-dashboard">
 					<div class="panel panel-body aol">
 						<div class="compare-contrast">
-							<button data-bind="click: comp.Open">
+							<button data-bind="click: comp.Open.bind(comp, turn.CreateChartHistory)">
 								<i class="fa fa-balance-scale"></i>
 							</button>
 						</div>

@@ -1,6 +1,29 @@
 <script>document.write('<script src="/static/core/dashboard-compare-contrast.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 
 <style>
+  #compareModal .panel {
+    border: none;
+    border-radius: none;
+    border-top: 1px solid #ddd;
+  }
+
+  #compareModal .menu-panel {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+  }
+
+  #compareModal .panel-default>.panel-heading {
+    padding: 5px 10px;
+  }
+
+  #compareModal .panel .panel-body {
+    padding: 10px;
+  }
+
+  #compareModal .panel .panel-body ul {
+    padding: 0px;
+  }
+
   .modal-dialog.maximize {
     width: 95%;
   }
@@ -20,6 +43,16 @@
   #compareModal .panel-default>.panel-heading+.panel-collapse>.panel-body {
     margin-top: 0px !important;
   }
+
+  #compareModal #compMainWindow .chart {
+    border-radius: 1px;
+    border: 1px solid #cdcdcd;
+    margin: 0px;
+  }
+
+  #compareModal #compMainWindow .chart-wrapper {
+    padding: 4px;
+  }
 </style>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="compareModal">
@@ -32,7 +65,7 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-sm-2">
-            <div data-bind="foreach: { data: comp.FilterList, as:'filt' }">
+            <div class="menu-panel" data-bind="foreach: { data: comp.FilterList, as:'filt' }">
               <div class="panel panel-default">
                 <div class="panel-heading" role="tab" data-bind="attr:{id: 'compheader' + $index()}">
                   <h4 class="panel-title">

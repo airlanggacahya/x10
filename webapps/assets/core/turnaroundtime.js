@@ -978,7 +978,7 @@ turn.CreateChartHistoryOptions_ = function (data) {
             labels : {
         		font: "10px sans-serif",
         		name:function(dt){
-        			console.log("----------->>>86",dt)
+        			// console.log("----------->>>86",dt)
         			return "";
         		}
             }
@@ -1003,7 +1003,7 @@ turn.CreateChartHistoryData = function(param, callback) {
 
 turn.CreateChartHistory = function(param, callback) {
 	turn.CreateChartHistoryData(param, function(data) {
-		callback(turn.CreateChartHistoryOptions_(data))
+		callback(turn.CreateChartHistoryOptions_(data.Data))
 	})
 }
 
@@ -1013,7 +1013,6 @@ turn.CreateChartMoving = function(ondata){
 	$.each(status, function(key, item){
 		cat.push(key)
 	});
-	console.log(status)
 	$.each(ondata, function(i, item){
 		if(item.dayrange == "15 + Days"){
 			ondata[i].color = "#ff2929"
@@ -1132,7 +1131,7 @@ turn.normalisasiData = function(data){
     //add dummy data if in some category, group number is different 
      for(var i in category){
         var d = _.filter(data,function(x){return x.status == category[i]});
-        console.log("--------------->>>> d", d)
+        // console.log("--------------->>>> d", d)
         if(d.length<lengcomdata){
           for(var x in group){
               if(_.find(d,function(g){ return g.dayrange == group[x] } ) == undefined){

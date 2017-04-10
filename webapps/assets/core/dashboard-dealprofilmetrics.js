@@ -591,7 +591,7 @@ pm.Distribution = function() {
     $("#distribution").html("");
     $("#distribution").kendoChart({
         title: {
-            text: "Deal-time Tracking",
+            text: "Deal Amount / Count vs. Interest Rate",
             align: "left",
             font: "12px Arial,Helvetica,Sans-Serif",
             align: "left",

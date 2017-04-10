@@ -935,7 +935,6 @@ func CalcTimePeriod(input TimePeriod) TimePeriod {
 		input.FilterAfter = currDate.AddDate(1-input.PeriodCount, 0, 0)
 
 		input.GetPeriodID = func(val time.Time) int {
-			count := int(val.Month()) - 4 + ((val.Year() * 12) / 12)
 			count := (int(val.Month()) - 4 + (val.Year() * 12)) / 12
 			return input.Start.Year() - count
 		}
@@ -1943,7 +1942,6 @@ func (c *DashboardController) TurnaroundTime(k *knot.WebContext) interface{} {
 		"shared/dataaccess.html",
 		"shared/loading.html",
 		"shared/leftfilter.html",
-		"dashboard/compare_contrast.html",
 	}
 
 	return DataAccess
@@ -2294,31 +2292,16 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	}
 	defer cn.Close()
 
-	whs, err := GenerateRoleCondition(k)
+	/*whs, err := GenerateRoleCondition(k)
 	if err != nil {
 		return res.SetError(err)
-	}
+	}*/
 
-	whsx := []*dbox.Filter{}
-
-	if len(whs) > 0 {
+	/*if len(whs) > 0 {
 		whsx = append(whsx, dbox.Or(whs...))
-	}
+	}*/
 
-	ids, err := FiltersAD2DealNo(
-		nil,
-		CheckArray(payload.Get("filter")),
-	)
-	if err != nil {
-		return res.SetError(err)
-	}
-	filterids := []interface{}{}
-	for _, id := range ids {
-		filterids = append(filterids, id)
-	}
-
-	whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
-
+	// whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
 	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
 	if err != nil {
 		return res.SetError(err)
@@ -2332,11 +2315,32 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 		Start:       periodStart,
 		End:         periodEnd,
 		TimeType:    payload.GetString("type"),
-		PeriodCount: 1,
+		PeriodCount: 7,
 	}
 	tp = CalcTimePeriod(tp)
 
-	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whs...))
+	ids, err := FiltersAD2DealNo(
+		nil,
+		CheckArray(payload.Get("filter")),
+	)
+	if err != nil {
+		return res.SetError(err)
+	}
+	filterids := []interface{}{}
+	for _, id := range ids {
+		filterids = append(filterids, id)
+	}
+
+	whsx := []*dbox.Filter{}
+	whsx = append(whsx,
+		dbox.And(
+			dbox.Lt("info.myInfo.updateTime", tp.FilterBefore),
+			dbox.Gte("info.myInfo.updateTime", tp.FilterAfter),
+			dbox.In("customerprofile.applicantdetail.DealNo", filterids...),
+		),
+	)
+
+	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whsx...))
 	if err != nil {
 		return res.SetError(err)
 	}
@@ -2346,44 +2350,245 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 		"$match": whsMatch,
 	})
 
-	// projecting, find last status
-	pipe = append(pipe, tk.M{
-		"$project": tk.M{
-			"status": tk.M{
-				"$arrayElemAt": []interface{}{"$info.myInfo", -1},
-			},
-			"customerprofile": "$customerprofile",
-			"accountdetails":  "$accountdetails",
-		},
-	})
-
-	// filter out on reject status or accepted status
-	// pipe := []tk.M{}
-	// pipe = append(pipe, tk.M{
-	// 	"$match": whsMatch,
-	// })
-
-	// debug, _ := json.MarshalIndent(pipe, "", "  ")
-	// tk.Printfn("%s", string(debug))
-
+	///metric trend
+	err, pipeResult := c.trendChart(payload, tp, pipe)
+	if !tk.IsNilOrEmpty(err) {
+		return res.SetError(err)
+	}
 	query := cn.NewQuery().
-		Command("pipe", pipe).
+		Command("pipe", pipeResult).
 		From("DealSetup")
-
 	csr, err := query.Cursor(nil)
-
 	if err != nil {
 		return res.SetError(err)
 	}
 	defer csr.Close()
-
 	results := make([]tk.M, 0)
 	err = csr.Fetch(&results, 0, false)
 	if err != nil {
 		return res.SetError(err)
 	}
 
-	res.SetData(res)
+	///grouping manual coy!
+	///metric trend
+	resultData, resultDataWidget := c.metricTrendGrouping(results, tp)
+
+	///metric trend xfl
+	err, pipeResult = c.trendxfl(payload, tp, pipe)
+	if !tk.IsNilOrEmpty(err) {
+		return res.SetError(err)
+	}
+	query = cn.NewQuery().
+		Command("pipe", pipeResult).
+		From("DealSetup")
+	csr, err = query.Cursor(nil)
+	if err != nil {
+		return res.SetError(err)
+	}
+	defer csr.Close()
+	resultsXfl := make([]tk.M, 0)
+	err = csr.Fetch(&resultsXfl, 0, false)
+	if err != nil {
+		return res.SetError(err)
+	}
+
+	///grouping neh cuy!
+	///xfl
+	xflResult := c.xflTrendGrouping(resultsXfl, tp)
+
+	// tk.Println(tk.JsonString(resultData))
+	o := tk.M{}.Set("chart", resultData).Set("topwidget", resultDataWidget).Set("xfl", xflResult)
+	res.SetData(o)
 
 	return res
+}
+
+func (c *DashboardController) trendxfl(payload tk.M, tp TimePeriod, pipe []tk.M) (error, []tk.M) {
+	pipe = append(pipe, tk.M{"$lookup": tk.M{
+		"from":         "DCFinalSanction",
+		"localField":   "customerprofile.applicantdetail.DealNo",
+		"foreignField": "DealNo",
+		"as":           "dc",
+	}})
+	pipe = append(pipe, tk.M{"$unwind": tk.M{
+		"path": "$dc",
+		"preserveNullAndEmptyArrays": true,
+	}})
+	pipe = append(pipe, tk.M{"$lookup": tk.M{
+		"from":         "CreditScorecard",
+		"localField":   "customerprofile.applicantdetail.DealNo",
+		"foreignField": "DealNo",
+		"as":           "cs",
+	}})
+	pipe = append(pipe, tk.M{"$unwind": tk.M{
+		"path": "$cs",
+		"preserveNullAndEmptyArrays": true,
+	}})
+	pipe = append(pipe, tk.M{"$project": tk.M{
+		"dealno": "$customerprofile.applicantdetail.DealNo",
+		"dc":     "$dc",
+		"cs":     "$cs",
+		"info": tk.M{
+			"$slice": []interface{}{"$info.myInfo", -1},
+		},
+	}})
+	pipe = append(pipe, tk.M{"$unwind": "$info"})
+	pipe = append(pipe, tk.M{"$project": tk.M{
+		"dealno":      "$dealno",
+		"info":        "$info",
+		"finalRating": tk.M{"$ifNull": []interface{}{"$cs.FinalRating", ""}},
+		"amount":      tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
+		"ROI":         tk.M{"$ifNull": []interface{}{"$dc.ROI", 0}},
+	}})
+	// tk.Println(tk.JsonString(pipe))
+
+	return nil, pipe
+}
+
+func (c *DashboardController) xflTrendGrouping(results tk.Ms, tp TimePeriod) tk.Ms {
+	xflGrouping := map[string]tk.M{}
+	count := 0
+	var amount, interestsum float64
+	for _, v := range results {
+		timePeriod := v.Get("info").(tk.M).Get("updateTime").(time.Time)
+		hasil := tp.GetPeriodID(timePeriod)
+		// status := v.Get("info").(tk.M).GetString("status")
+		interest := tk.Div(v.GetFloat64("ROI"), 100) * v.GetFloat64("amount")
+
+		if hasil == 0 && !tk.IsNilOrEmpty(v.GetString("finalRating")) {
+			if _, exist := xflGrouping[v.GetString("finalRating")]; !exist {
+				count = 1
+				amount = v.GetFloat64("amount")
+				interestsum = interest
+				o := tk.M{}
+				o.Set("idx", hasil).Set("amount", amount).Set("interest", interestsum).Set("period", timePeriod).Set("xfl", v.GetString("finalRating")).Set("count", count)
+				xflGrouping[v.GetString("finalRating")] = o
+			} else {
+				count += 1
+				amount += v.GetFloat64("amount")
+				interestsum += interest
+				xflGrouping[v.GetString("finalRating")].Set("idx", hasil).Set("amount", amount).Set("interest", interestsum).Set("period", timePeriod).Set("xfl", v.GetString("finalRating")).Set("count", count)
+			}
+		}
+	}
+
+	totalCount := 0
+	var totalamount, totalinterest float64
+	for _, val := range xflGrouping {
+		totalCount += val.GetInt("count")
+		totalamount += val.GetFloat64("amount")
+		totalinterest += val.GetFloat64("interest")
+	}
+
+	result := tk.Ms{}
+	for _, val := range xflGrouping {
+		o := tk.M{}
+		o.Set("idx", val.GetInt("idx")).
+			Set("amount", tk.Div(val.GetFloat64("amount"), 10000000)).Set("amountwidth", tk.Div(val.GetFloat64("amount"), totalamount)*100).
+			Set("interest", tk.Div(val.GetFloat64("interest"), 10000000)).Set("interestwidth", tk.Div(val.GetFloat64("interest"), totalinterest)*100).
+			Set("period", val.Get("period")).
+			Set("xfl", val.GetString("xfl")).
+			Set("count", val.GetInt("count")).Set("countwidth", tk.Div(tk.ToFloat64(val.GetInt("count"), 2, tk.RoundingAuto), tk.ToFloat64(totalCount, 2, tk.RoundingAuto))*100)
+		result = append(result, o)
+		// tk.Println(val.GetString("xfl"), val.GetInt("count"), totalCount, tk.Div(tk.ToFloat64(val.GetInt("count"), 2, tk.RoundingAuto), tk.ToFloat64(totalCount, 2, tk.RoundingAuto)))
+	}
+
+	return result
+}
+
+func (c *DashboardController) trendChart(payload tk.M, tp TimePeriod, pipe []tk.M) (error, []tk.M) {
+	pipe = append(pipe, tk.M{"$lookup": tk.M{
+		"from":         "DCFinalSanction",
+		"localField":   "customerprofile.applicantdetail.DealNo",
+		"foreignField": "DealNo",
+		"as":           "dc",
+	}})
+	pipe = append(pipe, tk.M{"$project": tk.M{
+		"dealno": "$customerprofile.applicantdetail.DealNo",
+		"dc": tk.M{
+			"$slice": []interface{}{"$dc", -1},
+		},
+		"info": tk.M{
+			"$slice": []interface{}{"$info.myInfo", -1},
+		},
+	}})
+	pipe = append(pipe, tk.M{"$unwind": "$info"})
+	pipe = append(pipe, tk.M{"$unwind": tk.M{
+		"path": "$dc",
+		"preserveNullAndEmptyArrays": true,
+	}})
+	pipe = append(pipe, tk.M{"$project": tk.M{
+		"dealno": "$dealno",
+		//"dc":     "$dc",
+		"info":   "$info",
+		"amount": tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
+		"ROI":    tk.M{"$ifNull": []interface{}{"$dc.ROI", 0}},
+	}})
+	// tk.Println(tk.JsonString(pipe))
+
+	return nil, pipe
+}
+
+func (c *DashboardController) metricTrendGrouping(results tk.Ms, tp TimePeriod) (tk.Ms, tk.M) {
+	trendGroupByMonth := map[int]tk.Ms{}
+	data := tk.Ms{}
+	for _, v := range results {
+		timePeriod := v.Get("info").(tk.M).Get("updateTime").(time.Time)
+		hasil := tp.GetPeriodID(timePeriod)
+		// yearMonth := tk.ToString(timePeriod.Year()) + "-" + timePeriod.Month().String()
+		status := v.Get("info").(tk.M).GetString("status")
+		interest := tk.Div(v.GetFloat64("ROI"), 100) * v.GetFloat64("amount")
+
+		if _, exist := trendGroupByMonth[hasil]; !exist {
+			if len(data) > 0 {
+				data = tk.Ms{}
+			}
+			o := tk.M{}
+			o.Set("idx", hasil).Set("status", status).Set("amount", v.GetFloat64("amount")).Set("interest", interest).Set("period", timePeriod)
+			data = append(data, o)
+			trendGroupByMonth[hasil] = data
+		} else {
+			o := tk.M{}
+			o.Set("idx", hasil).Set("status", status).Set("amount", v.GetFloat64("amount")).Set("interest", interest).Set("period", timePeriod)
+			trendGroupByMonth[hasil] = append(trendGroupByMonth[hasil], o)
+		}
+	}
+	// tk.Println(tk.JsonString(trendGroupByMonth))
+	resultData := tk.Ms{}
+	resultDataWidget := tk.M{}
+	countMonthBefore := 0.0
+	for key, v := range trendGroupByMonth {
+		amount := 0.0
+		interest := 0.0
+
+		o := tk.M{}
+		o.Set("count", len(trendGroupByMonth[key]))
+		for _, subV := range v {
+			amount += subV.GetFloat64("amount")
+			interest += subV.GetFloat64("interest")
+
+			o.Set("idx", subV.GetInt("idx"))
+			o.Set("amount", tk.Div(amount, 10000000))
+			o.Set("interest", tk.Div(interest, 10000000))
+			o.Set("period", subV.Get("period"))
+		}
+		resultData = append(resultData, o)
+
+		if o.GetInt("idx") == 1 {
+			countMonthBefore = tk.ToFloat64(len(trendGroupByMonth[key]), 2, tk.RoundingAuto)
+		}
+		if o.GetInt("idx") == 0 {
+			count := tk.ToFloat64(len(trendGroupByMonth[key]), 2, tk.RoundingAuto)
+			resultDataWidget.Set("count", len(trendGroupByMonth[key]))
+			resultDataWidget.Set("avgCount", tk.Div(count-countMonthBefore, countMonthBefore))
+			resultDataWidget.Set("avgAmount", tk.Div(o.GetFloat64("amount")-countMonthBefore, countMonthBefore))
+			resultDataWidget.Set("avgInterest", tk.Div(o.GetFloat64("interest")-countMonthBefore, countMonthBefore))
+			resultDataWidget.Set("idx", o.GetInt("idx"))
+			resultDataWidget.Set("amount", o.GetFloat64("amount"))
+			resultDataWidget.Set("interest", o.GetFloat64("interest"))
+			resultDataWidget.Set("period", o.Get("period"))
+			// resultDataWidget = append(resultDataWidget, o)
+		}
+	}
+	return resultData, resultDataWidget
 }

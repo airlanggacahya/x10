@@ -1,7 +1,6 @@
 {{template "dataaccess.html" .}}
-<script>document.write('<script src="/static/core/dashboard-dashfilter.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 <script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
-<script>document.write('<script src="/static/core/dealprofilmetrics.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+<script>document.write('<script src="/static/core/dashboard-dealprofilmetrics.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 <!-- <script type="text/javascript" src="/static/material/dist/ripple.min.js"></script> -->
 {{template "leftfilter.html"}}
 <style type="text/css">
@@ -195,6 +194,9 @@
     .legend {
         font-size: 11px;
         font-family: Arial,Helvetica,Sans-Serif;
+        text-align: center;
+        color:  #fff;
+        height: 25px;
     }
 
     h6 {
@@ -299,6 +301,22 @@
         text-align: center;
         color: grey;
     }
+
+    .middle-center {
+        display: table;
+        height: 100%;
+        width: 100%;
+        text-align: center;
+    }
+
+    .middle {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .widget-title { font-size: 46px; font-weight: bold !important; color: grey; }
+    .up-arrow{color: #70ad47;}
+    .down-arrow{color: #ff2929;}
 </style>
 <div class="col-md-12 lay">
     <div class="col-md-12 top turnaroundtime">
@@ -322,34 +340,49 @@
                     <div class="col-sm-3 wl ">
                         <div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
                             <h6 class="tat-title tl">Deal Count</h6>
-                            <center>
-                                <div class="donut-wrapper">
-                                    <div id="count" class="donut-chart"></div>
-                                    <div class="count-text inner-content"></div>
+                            <div class="middle-center">
+                                <div class="middle widget-title col-sm-12" data-bind="text: pm.dealCount"></div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgCount"></span>&#37;</div>
+                                <div class="col-sm-12">
+                                    <table data-bind="style:{width:'100%', marginTop: '25px'}" id="dealcount">
+                                        <tr data-bind="foreach: pm.dealCountList">
+                                            <td class="le legend" data-bind="visible: $data.xflcount() > 0, style:{width: $data.xflcountwidth()+'%', backgroundColor: ($data.id() == 1)? '#0b8140' : ($data.id() == 2)? '#70ad47' : ($data.id() == 3)? '#ffc000' : ($data.id() == 4)? '#ed7d31' : 'ff2929'}"><div class="tooltipdealcount" data-bind="text: $data.xflcount"></div></td>
+                                        </tr>
+                                    </table>
                                 </div>
-                            </center>
+                            </div>
                         </div>
                     </div>
                     <div class="col-sm-3 wl">
                         <div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
                             <h6 class="tat-title tl">Deal Amount</h6>
-                            <center>
-                                <div class="donut-wrapper">
-                                    <div id="amount" class="donut-chart"></div>
-                                    <div class="amount-text inner-content"></div>
+                            <div class="middle-center">
+                                <div class="middle widget-title col-sm-12" data-bind="text: pm.dealAmount"></div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgAmount"></span>&#37;</div>
+                                <div class="col-sm-12">
+                                    <table data-bind="style:{width:'100%', marginTop: '25px'}">
+                                        <tr data-bind="foreach: pm.dealAmountList">
+                                            <td class="le legend" data-bind="visible: $data.xflamount() > 0, style:{width: $data.xflamountwidth()+'%', backgroundColor: ($data.id() == 1)? '#0b8140' : ($data.id() == 2)? '#70ad47' : ($data.id() == 3)? '#ffc000' : ($data.id() == 4)? '#ed7d31' : 'ff2929'}"><div class="tooltipdealamount" data-bind="text: $data.xflamount"></div></td>
+                                        </tr>
+                                    </table>
                                 </div>
-                            <center>
+                            </div>
                         </div>
                     </div>
                     <div class="col-sm-3 wl">
                         <div class="panel panel-body dl material-ripple" style="height: 185px" id="process">
                             <h6 class="tat-title tl">Interest Amount</h6>
-                            <center>
-                                <div class="donut-wrapper">
-                                    <div id="interest" class="donut-chart"></div>
-                                    <div class="interest-text inner-content"></div>
+                            <div class="middle-center">
+                                <div class="middle widget-title col-sm-12" data-bind="text: pm.interestAmount"></div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-down down-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgInterestAmount"></span>&#37;</div>
+                                <div class="col-sm-12">
+                                    <table data-bind="style:{width:'100%', marginTop: '25px'}">
+                                        <tr data-bind="foreach: pm.dealInterestList">
+                                            <td class="le legend" data-bind="visible: $data.xflinterest() > 0, style:{width: $data.xflinterestwidth()+'%', backgroundColor: ($data.id() == 1)? '#0b8140' : ($data.id() == 2)? '#70ad47' : ($data.id() == 3)? '#ffc000' : ($data.id() == 4)? '#ed7d31' : 'ff2929'}"><div class="tooltipdealinterest" data-bind="text: $data.xflinterest"></div></td>
+                                        </tr>
+                                    </table>
                                 </div>
-                            </center>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -479,6 +512,7 @@
                                </table>
                          </div>
                       </div> -->
+
                    </div>
                 </div>
             </div>

@@ -8,6 +8,10 @@ uat.linkdata = ko.observableArray([]);
 uat.path = ko.observable("");
 uat.visible= ko.observable(false);
 
+uat.comingSoon = function() {
+	swal("Being Updated", "", "info")
+}
+
 uat.onfilter = function(){
 	$("#filter").keydown(function(){
 	setTimeout(function(){
@@ -92,6 +96,13 @@ uat.renderGrid = function(){
                     width:40,
                     headerAttributes: {class: 'k-header header-bgcolor'},
                     template: function(d){
+						if (d.Disabled) {
+							return [
+								"<button class='btn btn-xs btn-primary tooltipster' title='Download File' onclick='uat.comingSoon()'><i class='fa fa-download'></i></button>",
+								"<button class='btn btn-xs btn-success tooltipster' title='Open File' onclick='uat.comingSoon()'><i class='fa fa-folder-open-o'></i></button>",
+							].join(' ')
+						}
+
                     	return [
                     	"<button class='btn btn-xs btn-primary tooltipster' title='Download File' onclick='uat.download(\""+d.NameFile+"\")'><i class='fa fa-download'></i></button>",
                     	"<button class='btn btn-xs btn-success tooltipster' title='Open File' onclick='uat.openLink(\""+d.NameFile+"\")'><i class='fa fa-folder-open-o'></i></button>",

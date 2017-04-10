@@ -1,13 +1,13 @@
 package x10upload
 
 import (
+	tk "github.com/eaciit/toolkit"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-
-	tk "github.com/eaciit/toolkit"
+	"time"
 )
 
 func MoveFile(From string, To string) {
@@ -48,6 +48,7 @@ func ProcessFile(inbox string, process string, failed string, success string, re
 			DeleteFile(".png", process)
 			DeleteFile(".jpg", process)
 
+			time.Sleep(time.Second * 3)
 			ExtractPdfDataCibilReport(process, process, f.Name(), reporttype, xmlfilename, inbox, success, failed, webapps)
 
 		}

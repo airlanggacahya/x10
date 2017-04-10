@@ -336,8 +336,12 @@
                                 <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgCount"></span>&#37;</div>
                                 <div class="col-sm-12">
                                     <table data-bind="style:{width:'100%', marginTop: '25px'}" id="dealcount">
-                                        <tr data-bind="foreach: pm.dealCountList">
-                                            <td class="le legend" data-bind="visible: $data.xflcount() > 0, style:{width: $data.xflcountwidth()+'%', backgroundColor: ($data.id() == 1)? '#0b8140' : ($data.id() == 2)? '#70ad47' : ($data.id() == 3)? '#ffc000' : ($data.id() == 4)? '#ed7d31' : 'ff2929'}"><div class="tooltipdealcount" data-bind="text: $data.xflcount"></div></td>
+                                        <tr>
+                                            <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1count() > 0, style:{width: pm.xfl1countwidth()+'%'},text:pm.xfl1count"></td>
+                                            <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2count() > 0, style:{width: pm.xfl2countwidth()+'%'},text:pm.xfl2count"></td>
+                                            <td class="le legend tooltipdealcount" style="background-color: #ffc000;" data-bind="visible: pm.xfl3count() > 0, style:{width: pm.xfl3countwidth()+'%'},text:pm.xfl3count"></td>
+                                            <td class="le legend" style="background-color: #ed7d31;" data-bind="visible: pm.xfl4count() > 0, style:{width: pm.xfl4countwidth()+'%'},text:pm.xfl4count"></td>
+                                            <td class="le legend" style="background-color: #ff2929;" data-bind="visible: pm.xfl5count() > 0, style:{width: pm.xfl5countwidth()+'%'},text:pm.xfl5count"></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -352,8 +356,12 @@
                                 <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgAmount"></span>&#37;</div>
                                 <div class="col-sm-12">
                                     <table data-bind="style:{width:'100%', marginTop: '25px'}">
-                                        <tr data-bind="foreach: pm.dealAmountList">
-                                            <td class="le legend" data-bind="visible: $data.xflamount() > 0, style:{width: $data.xflamountwidth()+'%', backgroundColor: ($data.id() == 1)? '#0b8140' : ($data.id() == 2)? '#70ad47' : ($data.id() == 3)? '#ffc000' : ($data.id() == 4)? '#ed7d31' : 'ff2929'}"><div class="tooltipdealamount" data-bind="text: $data.xflamount"></div></td>
+                                        <tr>
+                                            <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1amount() > 0, style:{width: pm.xfl1amountwidth()+'%'},text:pm.xfl1amount"></td>
+                                            <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2amount() > 0, style:{width: pm.xfl2amountwidth()+'%'},text:pm.xfl2amount"></td>
+                                            <td class="le legend" style="background-color: #ffc000;" data-bind="visible: pm.xfl3amount() > 0, style:{width: pm.xfl3amountwidth()+'%'},text:pm.xfl3amount"></td>
+                                            <td class="le legend" style="background-color: #ed7d31;" data-bind="visible: pm.xfl4amount() > 0, style:{width: pm.xfl4amountwidth()+'%'},text:pm.xfl4amount"></td>
+                                            <td class="le legend" style="background-color: #ff2929;" data-bind="visible: pm.xfl5amount() > 0, style:{width: pm.xfl5amountwidth()+'%'},text:pm.xfl5amount"></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -365,11 +373,15 @@
                             <h6 class="tat-title tl">Interest Amount</h6>
                             <div class="middle-center">
                                 <div class="middle widget-title col-sm-12" data-bind="text: pm.interestAmount"></div>
-                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-down down-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgInterestAmount"></span>&#37;</div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up down-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgInterestAmount"></span>&#37;</div>
                                 <div class="col-sm-12">
                                     <table data-bind="style:{width:'100%', marginTop: '25px'}">
-                                        <tr data-bind="foreach: pm.dealInterestList">
-                                            <td class="le legend" data-bind="visible: $data.xflinterest() > 0, style:{width: $data.xflinterestwidth()+'%', backgroundColor: ($data.id() == 1)? '#0b8140' : ($data.id() == 2)? '#70ad47' : ($data.id() == 3)? '#ffc000' : ($data.id() == 4)? '#ed7d31' : 'ff2929'}"><div class="tooltipdealinterest" data-bind="text: $data.xflinterest"></div></td>
+                                        <tr>
+                                            <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1interest() > 0, style:{width: pm.xfl1interestwidth()+'%'},text:pm.xfl1interest"></td>
+                                            <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2interest() > 0, style:{width: pm.xfl2interestwidth()+'%'},text:pm.xfl2interest"></td>
+                                            <td class="le legend" style="background-color: #ffc000;" data-bind="visible: pm.xfl3interest() > 0, style:{width: pm.xfl3interestwidth()+'%'},text:pm.xfl3interest"></td>
+                                            <td class="le legend" style="background-color: #ed7d31;" data-bind="visible: pm.xfl4interest() > 0, style:{width: pm.xfl4interestwidth()+'%'},text:pm.xfl4interest"></td>
+                                            <td class="le legend" style="background-color: #ff2929;" data-bind="visible: pm.xfl5interest() > 0, style:{width: pm.xfl5interestwidth()+'%'},text:pm.xfl5interest"></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -494,7 +506,6 @@
                                </table>
                          </div>
                       </div> -->
-
                    </div>
                 </div>
             </div>

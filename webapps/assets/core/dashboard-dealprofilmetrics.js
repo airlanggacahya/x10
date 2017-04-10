@@ -274,15 +274,15 @@ pm.loadContainer = function() {
     $("#chartContainer").html('')
     $("#chartContainer").kendoChart({
         // theme: "Material",
-        // title: { 
-        //     text: "Deal Amount Interest",
-        //     font:  "12px Arial,Helvetica,Sans-Serif",
-        //     align: "left",
-        //     color: "#58666e",
-        //     padding: {
-        //         top: 0
-        //     }
-        // },
+        title: { 
+            text: "Deal Amount and Interest",
+            font:  "12px Arial,Helvetica,Sans-Serif",
+            align: "left",
+            color: "#58666e",
+            padding: {
+                top: 0
+            }
+        },
         plotArea: {
             margin: {
                 right: 4,

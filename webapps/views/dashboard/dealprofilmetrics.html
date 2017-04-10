@@ -223,16 +223,6 @@
         font-size: 10px;
     }
 
-    .chart-options1{
-        z-index: 4;
-        float: right;
-        right: 25px;
-         top: 3px; 
-        font-size: 10px;
-        margin-top: 1%;
-        padding-right: 2%;
-    }
-
     .chart-options label {
         margin-top: 4px;
         margin-right: 5px;
@@ -390,22 +380,13 @@
             </div>
             <!-- <div class="col-sm-2"></div> -->
             <div class="col-md-12">
-                <h5>Trend : <span data-bind="text: pm.setTitle()">nanana</span> <!-- span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
+                <h5>Trend : <span data-bind="text: pm.setTitle()"></span> <!-- span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
                 <hr class="line">
             </div>
             <div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
                 <div class="col-md-6">
                     <div class="panel panel-body aol trend">
-                        <div class="chart-options0">
-                            <table>
-                                <tr>
-                                    <td>
-                                        <select data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenu, dataTextField: 'text', dataValueField: 'value', optionLabel:'View quick info'}"></select>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="chart-options1">
+                        <div class="chart-options">
                             <table>
                                 <tr>
                                     <td>

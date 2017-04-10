@@ -8,31 +8,18 @@ pm.avgAmount = ko.observable(0);
 pm.avgInterestAmount = ko.observable(0);
 pm.dummyData = ko.observableArray([]);
 
-pm.dealCountList = ko.observableArray([
-    {id: ko.observable(1), xflcount : ko.observable(0), xflcountwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(2), xflcount : ko.observable(0), xflcountwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(3), xflcount : ko.observable(0), xflcountwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(4), xflcount : ko.observable(0), xflcountwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(5), xflcount : ko.observable(0), xflcountwidth : ko.observable(0), xflcolor : ko.observable("")}
-]);
+pm.xfl1count = ko.observable(0);
+pm.xfl2count = ko.observable(0);
+pm.xfl3count = ko.observable(0);
+pm.xfl4count = ko.observable(0);
+pm.xfl5count = ko.observable(0);
+pm.xfl1countwidth = ko.observable(0);
+pm.xfl2countwidth = ko.observable(0);
+pm.xfl3countwidth = ko.observable(0);
+pm.xfl4countwidth = ko.observable(0);
+pm.xfl5countwidth = ko.observable(0);
 
-pm.dealAmountList = ko.observableArray([
-    {id: ko.observable(1), xflamount : ko.observable(0), xflamountwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(2), xflamount : ko.observable(0), xflamountwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(3), xflamount : ko.observable(0), xflamountwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(4), xflamount : ko.observable(0), xflamountwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(5), xflamount : ko.observable(0), xflamountwidth : ko.observable(0), xflcolor : ko.observable("")}
-]);
-
-pm.dealInterestList = ko.observableArray([
-    {id: ko.observable(1), xflinterest : ko.observable(0), xflinterestwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(2), xflinterest : ko.observable(0), xflinterestwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(3), xflinterest : ko.observable(0), xflinterestwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(4), xflinterest : ko.observable(0), xflinterestwidth : ko.observable(0), xflcolor : ko.observable("")},
-    {id: ko.observable(5), xflinterest : ko.observable(0), xflinterestwidth : ko.observable(0), xflcolor : ko.observable("")}
-]);
-
-/*pm.xfl1amount = ko.observable(0);
+pm.xfl1amount = ko.observable(0);
 pm.xfl2amount = ko.observable(0);
 pm.xfl3amount = ko.observable(0);
 pm.xfl4amount = ko.observable(0);
@@ -41,9 +28,9 @@ pm.xfl1amountwidth = ko.observable(0);
 pm.xfl2amountwidth = ko.observable(0);
 pm.xfl3amountwidth = ko.observable(0);
 pm.xfl4amountwidth = ko.observable(0);
-pm.xfl5amountwidth = ko.observable(0);*/
+pm.xfl5amountwidth = ko.observable(0);
 
-/*pm.xfl1interest = ko.observable(0);
+pm.xfl1interest = ko.observable(0);
 pm.xfl2interest = ko.observable(0);
 pm.xfl3interest = ko.observable(0);
 pm.xfl4interest = ko.observable(0);
@@ -52,7 +39,7 @@ pm.xfl1interestwidth = ko.observable(0);
 pm.xfl2interestwidth = ko.observable(0);
 pm.xfl3interestwidth = ko.observable(0);
 pm.xfl4interestwidth = ko.observable(0);
-pm.xfl5interestwidth = ko.observable(0);*/
+pm.xfl5interestwidth = ko.observable(0);
 
 
 
@@ -113,163 +100,6 @@ pm.Target = function() {
         }
     });
 }
-
-/*pm.Count = function(){
-    $("#count").html("")
-    $("#count").kendoChart({
-        title: {
-            visible: false
-        },
-        // dataSource: ds,
-        legend: {
-            visible: false
-        },
-        chartArea: {
-            background: "",
-            width: 300,
-            height: 200
-        },
-        seriesDefaults: {
-            type: "donut",
-            holeSize: 50,
-            startAngle: 150,
-        },
-        series: [{
-            type: "donut",
-            data: [{
-                category: "Football",
-                value: 35
-            }, {
-                category: "Basketball",
-                value: 25
-            }, {
-                category: "Volleyball",
-                value: 20
-            }, {
-                category: "Rugby",
-                value: 10
-            }, {
-                category: "Tennis",
-                value: 10
-            }],
-            overlay: {
-                gradient: "none"
-            },
-        }],
-        tooltip: {
-            visible: true,
-            template: "#= category # (#= series.name #): #= value #%"
-        }
-    });
-
-    var text = "<span style='font-size: 43px;font-weight: bold;'>30</span><br><div id='coba' style='margin-top: -42%;'><span class='fa fa-arrow-up'></span> 30%</div>"
-    $(".count-text").append(text);
-}
-
-pm.Mount = function(){
-    $("#amount").html('');
-    $("#amount").kendoChart({
-        title: {
-            visible: false
-        },
-        // dataSource: ds,
-        legend: {
-            visible: false
-        },
-        chartArea: {
-            background: "",
-            width: 300,
-            height: 200
-        },
-        seriesDefaults: {
-            type: "donut",
-            holeSize: 50,
-            startAngle: 150,
-        },
-        series: [{
-            type: "donut",
-            data: [{
-                category: "Football",
-                value: 35
-            }, {
-                category: "Basketball",
-                value: 25
-            }, {
-                category: "Volleyball",
-                value: 20
-            }, {
-                category: "Rugby",
-                value: 10
-            }, {
-                category: "Tennis",
-                value: 10
-            }],
-            overlay: {
-                gradient: "none"
-            },
-        }],
-        tooltip: {
-            visible: true,
-            template: "#= category # (#= series.name #): #= value #%"
-        }
-    });
-
-    var text = "<span style='font-size: 43px;font-weight: bold;'>30</span><span>Cr.</span> <br><div id='coba' style='margin-top: -42%;'><span class='fa fa-arrow-up'></span> 30%</div>"
-    $(".amount-text").append(text);
-}
-
-pm.Interest = function(){
-    $("#interest").html("");
-    $("#interest").kendoChart({
-        title: {
-            visible: false
-        },
-        // dataSource: ds,
-        legend: {
-            visible: false
-        },
-        chartArea: {
-            background: "",
-            width: 300,
-            height: 200
-        },
-        seriesDefaults: {
-            type: "donut",
-            holeSize: 50,
-            startAngle: 150,
-        },
-        series: [{
-            type: "donut",
-            data: [{
-                category: "Football",
-                value: 35
-            }, {
-                category: "Basketball",
-                value: 25
-            }, {
-                category: "Volleyball",
-                value: 20
-            }, {
-                category: "Rugby",
-                value: 10
-            }, {
-                category: "Tennis",
-                value: 10
-            }],
-            overlay: {
-                gradient: "none"
-            },
-        }],
-        tooltip: {
-            visible: true,
-            template: "#= category # (#= series.name #): #= value #%"
-        }
-    });
-
-    var text = "<span style='font-size: 43px;font-weight: bold;'>30</span><span>Cr.</span> <br><div id='coba' style='margin-top: -42%;'><span class='fa fa-arrow-up'></span> 30%</div>"
-    $(".interest-text").append(text);
-}*/
-
 pm.loadContainer = function() {
     $("#chartContainer").html('')
     $("#chartContainer").kendoChart({
@@ -746,85 +576,62 @@ pm.init = function() {
     }
     if (param.filter != undefined) {
         ajaxPost("/dashboard/metricstrend", param, function(res) {
-            pm.dealCount(res.Data.topwidget.count);
-            pm.dealAmount(kendo.toString(res.Data.topwidget.amount, "n"));
-            pm.interestAmount(kendo.toString(res.Data.topwidget.interest, "n"));
-            pm.avgCount(kendo.toString(res.Data.topwidget.avgCount, "n"));
-            pm.avgAmount(kendo.toString(res.Data.topwidget.avgAmount, "n"));
-            pm.avgInterestAmount(kendo.toString(res.Data.topwidget.avgInterest, "n"));
+            if ($.isEmptyObject(res.Data.topwidget) && res.Data.chart.length == 0 && res.Data.xfl.length == 0) {
+                pm.reset();
+            }else {
+                pm.dealCount(res.Data.topwidget.count);
+                pm.dealAmount(kendo.toString(res.Data.topwidget.amount, "n"));
+                pm.interestAmount(kendo.toString(res.Data.topwidget.interest, "n"));
+                pm.avgCount(kendo.toString(res.Data.topwidget.avgCount, "n"));
+                pm.avgAmount(kendo.toString(res.Data.topwidget.avgAmount, "n"));
+                pm.avgInterestAmount(kendo.toString(res.Data.topwidget.avgInterest, "n"));
 
-            // XFL
-            _.each(res.Data.xfl, function(v, k) {
-                var o = {}
-                switch (v.xfl) {
-                    case "XFL-1":
-                        o.id = 1;
-                        o.xflcount = v.count;
-                        o.xflcountwidth = kendo.toString(v.countwidth, "n0");
-                        o.xflamountwidth = kendo.toString(v.amountwidth, "n0");
-                        o.xflamount = kendo.toString(v.amount, "n");
-                        o.xflinterestwidth = kendo.toString(v.interestwidth, "n0");
-                        o.xflinterest = kendo.toString(v.interest, "n");
-                        break;
-                    case "XFL-2":
-                        o.id = 2;
-                        o.xflcount = v.count ;
-                        o.xflcountwidth = kendo.toString(v.countwidth, "n0");
-                        o.xflamountwidth = kendo.toString(v.amountwidth, "n0");
-                        o.xflamount = kendo.toString(v.amount, "n");
-                        o.xflinterestwidth = kendo.toString(v.interestwidth, "n0");
-                        o.xflinterest = kendo.toString(v.interest, "n");
-                        break;
-                    case "XFL-3":
-                        o.id = 3;
-                        o.xflcount = v.count;
-                        o.xflcountwidth = kendo.toString(v.countwidth, "n0");
-                        o.xflamountwidth = kendo.toString(v.amountwidth, "n0");
-                        o.xflamount = kendo.toString(v.amount, "n");
-                        o.xflinterestwidth = kendo.toString(v.interestwidth, "n0");
-                        o.xflinterest = kendo.toString(v.interest, "n");
-                        break;
-                    case "XFL-4":
-                        o.id = 4;
-                        o.xflcount = v.count;
-                        o.xflcountwidth = kendo.toString(v.countwidth, "n0");
-                        o.xflamountwidth = kendo.toString(v.amountwidth, "n0");
-                        o.xflamount = kendo.toString(v.amount, "n");
-                        o.xflinterestwidth = kendo.toString(v.interestwidth, "n0");
-                        o.xflinterest = kendo.toString(v.interest, "n");
-                        break;
-                    case "XFL-5":
-                        o.id = 5;
-                        o.xflcount = v.count;
-                        o.xflcountwidth = kendo.toString(v.countwidth, "n0");
-                        o.xflamountwidth = kendo.toString(v.amountwidth, "n0");
-                        o.xflamount = kendo.toString(v.amount, "n");
-                        o.xflinterestwidth = kendo.toString(v.interestwidth, "n0");
-                        o.xflinterest = kendo.toString(v.interest, "n");
-                        break;
-                }
-                _.each(pm.dealCountList(), function(v, k){
-                    if (v.id() == o.id) {
-                        v.xflcount(o.xflcount);
-                        v.xflcountwidth(o.xflcountwidth);
+                // XFL
+                _.each(res.Data.xfl, function(v, k) {
+                    switch (v.xfl) {
+                        case "XFL-1":
+                            pm.xfl1countwidth(kendo.toString(v.countwidth, "n0"));
+                            pm.xfl1count(v.count);
+                            pm.xfl1amountwidth(kendo.toString(v.amountwidth, "n0"));
+                            pm.xfl1amount(kendo.toString(v.amount, "n"));
+                            pm.xfl1interestwidth(kendo.toString(v.interestwidth, "n0"));
+                            pm.xfl1interest(kendo.toString(v.interest, "n"));
+                            break;
+                        case "XFL-2":
+                            pm.xfl2countwidth(kendo.toString(v.countwidth, "n0"));
+                            pm.xfl2count(kendo.toString(v.count, "n"));
+                            pm.xfl2amountwidth(kendo.toString(v.amountwidth, "n0"));
+                            pm.xfl2amount(v.amount);
+                            pm.xfl2interestwidth(kendo.toString(v.interestwidth, "n0"));
+                            pm.xfl2interest(kendo.toString(v.interest, "n"));
+                            break;
+                        case "XFL-3":
+                            pm.xfl3countwidth(kendo.toString(v.countwidth, "n0"));
+                            pm.xfl3count(v.count);
+                            pm.xfl3amountwidth(kendo.toString(v.amountwidth, "n0"));
+                            pm.xfl3amount(kendo.toString(v.amount, "n"));
+                            pm.xfl3interestwidth(kendo.toString(v.interestwidth, "n0"));
+                            pm.xfl3interest(kendo.toString(v.interest, "n"));
+                            break;
+                        case "XFL-4":
+                            pm.xfl4countwidth(kendo.toString(v.countwidth, "n0"));
+                            pm.xfl4count(v.count);
+                            pm.xfl4amountwidth(kendo.toString(v.amountwidth, "n0"));
+                            pm.xfl4amount(kendo.toString(v.amount, "n"));
+                            pm.xfl4interestwidth(kendo.toString(v.interestwidth, "n0"));
+                            pm.xfl4interest(kendo.toString(v.interest, "n"));
+                            break;
+                        case "XFL-5":
+                            pm.xfl5countwidth(kendo.toString(v.countwidth, "n0"));
+                            pm.xfl5count(v.count);
+                            pm.xfl5amountwidth(kendo.toString(v.amountwidth, "n0"));
+                            pm.xfl5amount(kendo.toString(v.amount, "n"));
+                            pm.xfl5interestwidth(kendo.toString(v.interestwidth, "n0"));
+                            pm.xfl5interest(kendo.toString(v.interest, "n"));
+                            break;
                     }
                 });
-
-                _.each(pm.dealAmountList(), function(v, k){
-                    if (v.id() == o.id) {
-                        v.xflamount(o.xflamount);
-                        v.xflamountwidth(o.xflamountwidth);
-                    }
-                });
-
-                _.each(pm.dealInterestList(), function(v, k){
-                    if (v.id() == o.id) {
-                        v.xflinterest(o.xflinterest);
-                        v.xflinterestwidth(o.xflinterestwidth);
-                    }
-                });
-            });
-            
+            }
 
             // sort by idx
             res.Data.chart = _.without(res.Data.chart, _.find(res.Data.chart, function(e) {
@@ -840,32 +647,71 @@ pm.init = function() {
     }
 }
 
+pm.reset = function() {
+    pm.dealCount(0);
+    pm.dealAmount(0);
+    pm.interestAmount(0);
+    pm.avgCount(0);
+    pm.avgAmount(0);
+    pm.avgInterestAmount(0);
+
+    pm.xfl1count(0);
+    pm.xfl2count(0);
+    pm.xfl3count(0);
+    pm.xfl4count(0);
+    pm.xfl5count(0);
+    pm.xfl1countwidth(0);
+    pm.xfl2countwidth(0);
+    pm.xfl3countwidth(0);
+    pm.xfl4countwidth(0);
+    pm.xfl5countwidth(0);
+
+    pm.xfl1amount(0);
+    pm.xfl2amount(0);
+    pm.xfl3amount(0);
+    pm.xfl4amount(0);
+    pm.xfl5amount(0);
+    pm.xfl1amountwidth(0);
+    pm.xfl2amountwidth(0);
+    pm.xfl3amountwidth(0);
+    pm.xfl4amountwidth(0);
+    pm.xfl5amountwidth(0);
+
+    pm.xfl1interest(0);
+    pm.xfl2interest(0);
+    pm.xfl3interest(0);
+    pm.xfl4interest(0);
+    pm.xfl5interest(0);
+    pm.xfl1interestwidth(0);
+    pm.xfl2interestwidth(0);
+    pm.xfl3interestwidth(0);
+    pm.xfl4interestwidth(0);
+    pm.xfl5interestwidth(0);
+}
+
 // Hook to filter value changes
 dash.FilterValue.subscribe(function(val) {
     pm.init();
 });
 
 $(function() {
-    // pm.init();
+    pm.init();
     pm.loadChaterChart();
     pm.Target();
     pm.Distribution();
     pm.accordion();
     // pm.loadAllHeadChart();
-    // $('.tooltipdealcount').tooltipster({
-    //     /*animation: 'fade',
-    //     delay: 100*/
-    //     functionInit: function(instance, helper){
-    //         console.log(instance, instance.title)
-    //         // // parse the content
-    //         // var content = instance.content(),
-    //         //     people = JSON.parse(content),
-    //         //     // and use it to make a sentence
-    //         //     newContent = 'We have ' + people.length + ' people today. Say hello to ' + people.join(', ');
-            
-    //         // // save the edited content
-    //         // instance.content(newContent);
-    //     }
-    // });
-    $('.tooltipdealcount').tooltipster();
+    $('#dealcount td.tooltipdealcount').tooltipster({
+        functionInit: function(instance, helper) {
+            console.log(instance, helper)
+            // // parse the content
+            // var content = instance.content(),
+            //     people = JSON.parse(content),
+            //     // and use it to make a sentence
+            //     newContent = 'We have ' + people.length + ' people today. Say hello to ' + people.join(', ');
+
+            // // save the edited content
+            // instance.content(newContent);
+        }
+    });
 });

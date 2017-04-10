@@ -936,6 +936,7 @@ func CalcTimePeriod(input TimePeriod) TimePeriod {
 
 		input.GetPeriodID = func(val time.Time) int {
 			count := int(val.Month()) - 4 + ((val.Year() * 12) / 12)
+			count := (int(val.Month()) - 4 + (val.Year() * 12)) / 12
 			return input.Start.Year() - count
 		}
 	}

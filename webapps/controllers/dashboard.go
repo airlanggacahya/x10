@@ -342,6 +342,7 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 	ids, err := FiltersAD2DealNo(
 		nil,
 		payload.Filter,
+		nil,
 	)
 	if err != nil {
 		return res.SetError(err)
@@ -956,6 +957,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	ids, err := FiltersAD2DealNo(
 		nil,
 		CheckArray(payload.Get("filter")),
+		nil,
 	)
 	if err != nil {
 		return res.SetError(err)
@@ -1281,6 +1283,7 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 	ids, err := FiltersAD2DealNo(
 		nil,
 		CheckArray(payload.Get("filter")),
+		nil,
 	)
 	if err != nil {
 		return res.SetError(err)
@@ -1512,6 +1515,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	ids, err := FiltersAD2DealNo(
 		nil,
 		CheckArray(payload.Get("filter")),
+		nil,
 	)
 	if err != nil {
 		return res.SetError(err)
@@ -1770,6 +1774,7 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 	ids, err := FiltersAD2DealNo(
 		nil,
 		CheckArray(payload.Get("filter")),
+		nil,
 	)
 	if err != nil {
 		return res.SetError(err)
@@ -2067,6 +2072,7 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	ids, err := FiltersAD2DealNo(
 		nil,
 		CheckArray(payload.Get("filter")),
+		nil,
 	)
 	if err != nil {
 		return res.SetError(err)
@@ -2324,6 +2330,7 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	ids, err := FiltersAD2DealNo(
 		nil,
 		CheckArray(payload.Get("filter")),
+		nil,
 	)
 	if err != nil {
 		return res.SetError(err)

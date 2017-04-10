@@ -652,12 +652,12 @@ error:
 	return ret
 }
 
-type filterMap struct {
+type FilterMap struct {
 	path   string
 	filter func(string, string) []toolkit.M
 }
 
-func compileFilter(fields map[string]filterMap, filter []toolkit.M) []toolkit.M {
+func compileFilter(fields map[string]FilterMap, filter []toolkit.M) []toolkit.M {
 	match := []toolkit.M{}
 	for _, val := range filter {
 		// Length 0
@@ -709,7 +709,7 @@ func GetBranchByFilter(filter []toolkit.M) ([]string, error) {
 		"path": "$Data.Items",
 	}})
 
-	field := map[string]filterMap{
+	field := map[string]FilterMap{
 		"Region": {"Data.Items.region.name", filterEqual},
 		"Branch": {"Data.Items.name", filterEqual},
 	}
@@ -758,9 +758,14 @@ func GetDealNoList(ids []toolkit.M) []string {
 	return ret
 }
 
+type OptionalFilter struct {
+	Stage1 map[string]FilterMap
+	Stage2 map[string]FilterMap
+}
+
 // Filter ad by filter, used in dashboard.
 // Return, list of all element matched
-func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
+func FiltersAD(ids, filter []toolkit.M, opt *OptionalFilter) ([]toolkit.M, error) {
 	conn, err := GetConnection()
 	defer conn.Close()
 
@@ -770,7 +775,7 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 
 	pipe := []toolkit.M{}
 	// Filter stage 1
-	field := map[string]filterMap{
+	field := map[string]FilterMap{
 		"Product":    {"accountdetails.accountsetupdetails.product", filterEqual},
 		"Scheme":     {"accountdetails.accountsetupdetails.scheme", filterEqual},
 		"CA":         {"accountdetails.accountsetupdetails.creditanalyst", filterEqual},
@@ -778,6 +783,12 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 		"ClientType": {"accountdetails.loandetails.ifexistingcustomer", filterBool},
 		"DealNo":     {"accountdetails.dealno", filterEqual},
 		"Customer":   {"accountdetails.customerid", filterEqual},
+	}
+	// Append optional stage1
+	if opt != nil {
+		for f, rule := range opt.Stage1 {
+			field[f] = rule
+		}
 	}
 	// dealnolist := GetDealNoList(ids)
 	match := compileFilter(field, filter)
@@ -806,9 +817,15 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 		"as":           "_profile",
 	}})
 	// Match stage 2
-	field = map[string]filterMap{
+	field = map[string]FilterMap{
 		"IR":             {"_creditscorecard.FinalScoreDob", filterFormula},
 		"ClientTurnover": {"_profile.applicantdetail.AnnualTurnOver", filterFormula},
+	}
+	// Append optional stage2
+	if opt != nil {
+		for f, rule := range opt.Stage2 {
+			field[f] = rule
+		}
 	}
 	match = compileFilter(field, filter)
 	// data filtered branch and region
@@ -849,8 +866,8 @@ func FiltersAD(ids, filter []toolkit.M) ([]toolkit.M, error) {
 	return result, err
 }
 
-func FiltersAD2DealNo(ids, filter []toolkit.M) ([]string, error) {
-	result, err := FiltersAD(ids, filter)
+func FiltersAD2DealNo(ids, filter []toolkit.M, opt *OptionalFilter) ([]string, error) {
+	result, err := FiltersAD(ids, filter, nil)
 
 	if err != nil {
 		return nil, err

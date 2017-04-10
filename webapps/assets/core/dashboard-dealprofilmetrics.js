@@ -576,62 +576,62 @@ pm.init = function() {
     }
     if (param.filter != undefined) {
         ajaxPost("/dashboard/metricstrend", param, function(res) {
-            if ($.isEmptyObject(res.Data.topwidget) && res.Data.chart.length == 0 && res.Data.xfl.length == 0) {
-                pm.reset();
-            }else {
+            pm.reset();
+            
+            if (!$.isEmptyObject(res.Data.topwidget)) {
                 pm.dealCount(res.Data.topwidget.count);
                 pm.dealAmount(kendo.toString(res.Data.topwidget.amount, "n"));
                 pm.interestAmount(kendo.toString(res.Data.topwidget.interest, "n"));
                 pm.avgCount(kendo.toString(res.Data.topwidget.avgCount, "n"));
                 pm.avgAmount(kendo.toString(res.Data.topwidget.avgAmount, "n"));
                 pm.avgInterestAmount(kendo.toString(res.Data.topwidget.avgInterest, "n"));
-
-                // XFL
-                _.each(res.Data.xfl, function(v, k) {
-                    switch (v.xfl) {
-                        case "XFL-1":
-                            pm.xfl1countwidth(kendo.toString(v.countwidth, "n0"));
-                            pm.xfl1count(v.count);
-                            pm.xfl1amountwidth(kendo.toString(v.amountwidth, "n0"));
-                            pm.xfl1amount(kendo.toString(v.amount, "n"));
-                            pm.xfl1interestwidth(kendo.toString(v.interestwidth, "n0"));
-                            pm.xfl1interest(kendo.toString(v.interest, "n"));
-                            break;
-                        case "XFL-2":
-                            pm.xfl2countwidth(kendo.toString(v.countwidth, "n0"));
-                            pm.xfl2count(kendo.toString(v.count, "n"));
-                            pm.xfl2amountwidth(kendo.toString(v.amountwidth, "n0"));
-                            pm.xfl2amount(v.amount);
-                            pm.xfl2interestwidth(kendo.toString(v.interestwidth, "n0"));
-                            pm.xfl2interest(kendo.toString(v.interest, "n"));
-                            break;
-                        case "XFL-3":
-                            pm.xfl3countwidth(kendo.toString(v.countwidth, "n0"));
-                            pm.xfl3count(v.count);
-                            pm.xfl3amountwidth(kendo.toString(v.amountwidth, "n0"));
-                            pm.xfl3amount(kendo.toString(v.amount, "n"));
-                            pm.xfl3interestwidth(kendo.toString(v.interestwidth, "n0"));
-                            pm.xfl3interest(kendo.toString(v.interest, "n"));
-                            break;
-                        case "XFL-4":
-                            pm.xfl4countwidth(kendo.toString(v.countwidth, "n0"));
-                            pm.xfl4count(v.count);
-                            pm.xfl4amountwidth(kendo.toString(v.amountwidth, "n0"));
-                            pm.xfl4amount(kendo.toString(v.amount, "n"));
-                            pm.xfl4interestwidth(kendo.toString(v.interestwidth, "n0"));
-                            pm.xfl4interest(kendo.toString(v.interest, "n"));
-                            break;
-                        case "XFL-5":
-                            pm.xfl5countwidth(kendo.toString(v.countwidth, "n0"));
-                            pm.xfl5count(v.count);
-                            pm.xfl5amountwidth(kendo.toString(v.amountwidth, "n0"));
-                            pm.xfl5amount(kendo.toString(v.amount, "n"));
-                            pm.xfl5interestwidth(kendo.toString(v.interestwidth, "n0"));
-                            pm.xfl5interest(kendo.toString(v.interest, "n"));
-                            break;
-                    }
-                });
             }
+
+            // XFL
+            _.each(res.Data.xfl, function(v, k) {
+                switch (v.xfl) {
+                    case "XFL-1":
+                        pm.xfl1countwidth(kendo.toString(v.countwidth, "n0"));
+                        pm.xfl1count(v.count);
+                        pm.xfl1amountwidth(kendo.toString(v.amountwidth, "n0"));
+                        pm.xfl1amount(kendo.toString(v.amount, "n"));
+                        pm.xfl1interestwidth(kendo.toString(v.interestwidth, "n0"));
+                        pm.xfl1interest(kendo.toString(v.interest, "n"));
+                        break;
+                    case "XFL-2":
+                        pm.xfl2countwidth(kendo.toString(v.countwidth, "n0"));
+                        pm.xfl2count(kendo.toString(v.count, "n"));
+                        pm.xfl2amountwidth(kendo.toString(v.amountwidth, "n0"));
+                        pm.xfl2amount(v.amount);
+                        pm.xfl2interestwidth(kendo.toString(v.interestwidth, "n0"));
+                        pm.xfl2interest(kendo.toString(v.interest, "n"));
+                        break;
+                    case "XFL-3":
+                        pm.xfl3countwidth(kendo.toString(v.countwidth, "n0"));
+                        pm.xfl3count(v.count);
+                        pm.xfl3amountwidth(kendo.toString(v.amountwidth, "n0"));
+                        pm.xfl3amount(kendo.toString(v.amount, "n"));
+                        pm.xfl3interestwidth(kendo.toString(v.interestwidth, "n0"));
+                        pm.xfl3interest(kendo.toString(v.interest, "n"));
+                        break;
+                    case "XFL-4":
+                        pm.xfl4countwidth(kendo.toString(v.countwidth, "n0"));
+                        pm.xfl4count(v.count);
+                        pm.xfl4amountwidth(kendo.toString(v.amountwidth, "n0"));
+                        pm.xfl4amount(kendo.toString(v.amount, "n"));
+                        pm.xfl4interestwidth(kendo.toString(v.interestwidth, "n0"));
+                        pm.xfl4interest(kendo.toString(v.interest, "n"));
+                        break;
+                    case "XFL-5":
+                        pm.xfl5countwidth(kendo.toString(v.countwidth, "n0"));
+                        pm.xfl5count(v.count);
+                        pm.xfl5amountwidth(kendo.toString(v.amountwidth, "n0"));
+                        pm.xfl5amount(kendo.toString(v.amount, "n"));
+                        pm.xfl5interestwidth(kendo.toString(v.interestwidth, "n0"));
+                        pm.xfl5interest(kendo.toString(v.interest, "n"));
+                        break;
+                }
+            });
 
             // sort by idx
             res.Data.chart = _.without(res.Data.chart, _.find(res.Data.chart, function(e) {

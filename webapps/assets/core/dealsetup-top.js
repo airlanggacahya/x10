@@ -240,6 +240,10 @@ setup.resetDealSetup = function(){
   setup.createGrid(); 
 }
 
+setup.searchValueCustomerName.subscribe(function (val) {
+  setup.filterChange()
+})
+
 setup.filterChange = function(){
   // setup.readUrlParam()
   var val = _.filter(setup.AllCP(), function(dt){

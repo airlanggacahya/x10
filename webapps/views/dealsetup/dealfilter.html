@@ -61,7 +61,7 @@
 
     <div class="jf-tbl col-md-8" style="display: none;">
        
-        <select id="name" class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:setup.ListCustomerName, value:setup.searchValueCustomerName , dataBound: setup.filterChange, optionLabel: 'Choose Customer' , filter:'contains'}"></select>
+        <select id="name" class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:setup.ListCustomerName, value:setup.searchValueCustomerName, optionLabel: 'Choose Customer' , filter:'contains'}"></select>
         
         <select id="dealno" class="filter-select filter-font pull-left" name="page" id="role" data-bind="kendoDropDownList: {data:setup.ListDealNo, value:setup.searchValueDealNo , select: setup.filterChange , optionLabel: 'Choose DealNo' , filter:'contains'}"></select>
       <!-- </div> -->
@@ -137,18 +137,23 @@ function loadDataList(){
       'success': function (data) {
         var dt = data.Data;
         setup.ListCustomerName([]);
+
+        var listCustName = [];
         $.each(dt, function(i, item){
           setup.AllCP.push(item.CustomerProfile.applicantdetail)
-          setup.ListCustomerName.push(item.CustomerProfile.applicantdetail.CustomerName)
+          listCustName.push(item.CustomerProfile.applicantdetail.CustomerName)
           // setup.ListDealNo.push(item.CustomerProfile.applicantdetail.DealNo)
         });
+
+        listCustName = _.sortedUniq(_.sortBy(listCustName));
+        console.log(listCustName);
+        setup.ListCustomerName(listCustName);
       }
     })
 }
 
 $(document).ready(function(){
   loadDataList();
-
 });
 
 $("body").click(function(e){  

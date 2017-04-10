@@ -133,11 +133,11 @@
     
     <div class="col-sm-12">  
         <div class="pull-right show" style="margin-top: -8px;">
-            <button data-bind="click: alertSide.todoEnableEdit.bind($data, true), visible: alertSide.todoEditState() == 'READ'"><i class="fa fa-pencil"></i></button>
+            <button data-bind="click: alertSide.todoEnableEdit.bind($data, true), visible: alertSide.todoEditState() == 'READ' && alertSide.todoData().length > 0"><i class="fa fa-pencil"></i></button>
             <button data-bind="click: alertSide.todoSave, visible: alertSide.todoEditState() == 'EDIT'"><i class="fa fa-floppy-o"></i></button>
             <button data-bind="click: alertSide.todoAdd"><i class="fa fa-plus"></i></button>
         </div>
-        <div class="sidebar sidebar-box system-todo show" style="margin-top: 27px;" data-bind="style: { visible: (alertSide.todoData().length > 0 ? 'initial' : 'hidden') }">
+        <div class="sidebar sidebar-box system-todo show" style="margin-top: 27px;" data-bind="style: { visibility: (alertSide.todoData().length > 0 ? 'initial' : 'hidden') }">
             <ul class="messages" data-bind="foreach: alertSide.todoData, visible: alertSide.todoEditState() == 'READ'">
                 <li>
                     <!-- workaround, we listen to click to notify save on backend -->

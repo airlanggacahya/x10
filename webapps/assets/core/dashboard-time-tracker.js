@@ -137,10 +137,13 @@ ttrack.renderChart = function(datas){
                     ttrack.modalGridTittle(gstr);
 
                     ttrack.modalChartTittle(str);
-                    if(ttrack.trackingValue() == 'stages'){
+                    switch (ttrack.trackingValue()) {
+                    case 'stages':
                         ttrack.loadDataStages(e);
-                    }else if(ttrack.trackingValue() == 'region'){
+                        break;
+                    case 'region':
                         ttrack.loadDataRegion(e);
+                        break;
                     }
                 },
                 legend: {
@@ -167,7 +170,7 @@ ttrack.renderChart = function(datas){
                 categoryAxis: {
                     field: "status",
                    	title : {
-                    	 text : "Deal Stages",
+                    	text : (ttrack.trackingValue() === "stages" ? "Deal Stages" : "Deal Region"),
                 		font: "11px sans-serif",
                     	visible : true,
                     	color : "#4472C4"

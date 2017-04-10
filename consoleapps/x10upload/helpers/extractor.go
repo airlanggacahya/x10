@@ -1110,11 +1110,36 @@ func ExtractPdfDataCibilReport(PathFrom string, PathTo string, FName string, Rep
 						resultForm := []tk.M{}
 
 						err = cursor.Fetch(&resultForm, 0, false)
+						if err != nil {
+							tk.Println(err.Error())
+						}
 
 						statusForm := 0
 
 						if len(resultForm) > 0 {
 							statusForm = resultForm[0].GetInt("StatusCibil")
+						}
+
+						//GET STATUS COMPANY
+						if statusForm == 0 {
+							cursor, err = conn.NewQuery().
+								Select().
+								From("CibilReport").
+								Where(dbox.And(dbox.Eq("Profile.customerid", customerid), dbox.Eq("Profile.dealno", dealno), dbox.Eq("UnconfirmID", ""))).
+								Cursor(nil)
+
+							if err != nil {
+								tk.Println(err.Error())
+							}
+							myRes := []tk.M{}
+							err = cursor.Fetch(&myRes, 0, false)
+							if err != nil {
+								tk.Println(err.Error())
+							}
+
+							if len(myRes) > 0 {
+								statusForm = myRes[0].GetInt("isConfirm")
+							}
 						}
 
 						if statusForm == 1 {

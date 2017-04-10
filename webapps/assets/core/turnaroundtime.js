@@ -843,7 +843,7 @@ turn.loadRadialGauge = function(){
 
 turn.loadData = function(){
 	turn.dataHistory([]);
-	ajaxPost("/dashboard/historytat", {
+	turn.CreateChartHistoryData({
 		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
 		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
 		type: dash.FilterValue.GetVal("TimePeriod"),
@@ -851,7 +851,10 @@ turn.loadData = function(){
 	}, function(res){
 		if(res.Data != null){
 			turn.dataHistory(res.Data);
-			turn.CreateChartHistory(res.Data);
+			
+			var opt = turn.CreateChartHistoryOptions_(res.Data);
+			$("#historytat").html("");
+			$("#historytat").kendoChart(opt);
 		}
 	});
 
@@ -883,8 +886,7 @@ turn.loadData = function(){
 	})
 }
 
-turn.CreateChartHistory = function(data){
-	// var status = _.groupBy(data, ["status"])
+turn.CreateChartHistoryOptions_ = function (data) {
 	var status = _.groupBy(data, "status")
 	var cat = [];
 	$.each(status, function(key, item){
@@ -909,9 +911,8 @@ turn.CreateChartHistory = function(data){
 			field: "dayrange"
 		}
 	});
-	// console.log("---------->>>>32", historydata)
-	$("#historytat").html("");
-	$("#historytat").kendoChart({
+
+	return {
 		title:{
 			text: "History TAT",
 			font:  "12px Arial,Helvetica,Sans-Serif",
@@ -977,7 +978,7 @@ turn.CreateChartHistory = function(data){
             labels : {
         		font: "10px sans-serif",
         		name:function(dt){
-        			console.log("----------->>>86",dt)
+        			// console.log("----------->>>86",dt)
         			return "";
         		}
             }
@@ -991,8 +992,19 @@ turn.CreateChartHistory = function(data){
         				" Deal Count: "+dt.dataItem.count+"</div>";
         	}
         }
-	});
+	}
+}
 
+turn.CreateChartHistoryData = function(param, callback) {
+	ajaxPost("/dashboard/historytat", param, function (data) {
+		callback(data)
+	})
+}
+
+turn.CreateChartHistory = function(param, callback) {
+	turn.CreateChartHistoryData(param, function(data) {
+		callback(turn.CreateChartHistoryOptions_(data.Data))
+	})
 }
 
 turn.CreateChartMoving = function(ondata){
@@ -1001,7 +1013,6 @@ turn.CreateChartMoving = function(ondata){
 	$.each(status, function(key, item){
 		cat.push(key)
 	});
-	console.log(status)
 	$.each(ondata, function(i, item){
 		if(item.dayrange == "15 + Days"){
 			ondata[i].color = "#ff2929"
@@ -1120,7 +1131,7 @@ turn.normalisasiData = function(data){
     //add dummy data if in some category, group number is different 
      for(var i in category){
         var d = _.filter(data,function(x){return x.status == category[i]});
-        console.log("--------------->>>> d", d)
+        // console.log("--------------->>>> d", d)
         if(d.length<lengcomdata){
           for(var x in group){
               if(_.find(d,function(g){ return g.dayrange == group[x] } ) == undefined){

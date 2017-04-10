@@ -476,7 +476,7 @@ var CreateDashFilter = function() {
     }
 
     dash.SaveFilter_ = function() {
-        if (!dash.InitComplete) {
+        if (!dash.InitComplete()) {
             return
         }
 
@@ -508,11 +508,24 @@ var CreateDashFilter = function() {
         }, 200);
     }
 
-    dash.InitComplete = false
+
+    dash.waitLoadFilter = null
+    dash.InitComplete = ko.observable(false)
+    dash.InitComplete.subscribe(function (val) {
+        if (!val)
+            return
+
+        dash.LoadFilter(dash.waitLoadFilter)
+        dash.waitLoadFilter = null
+    })
 
     dash.LoadFilter = function(res) {
+        if (!dash.InitComplete()) {
+            dash.waitLoadFilter = res
+            return
+        }
+
         dash.ParseFilter(res)
-        dash.InitComplete = true
         dash.SaveFilter()
     }
 
@@ -666,7 +679,10 @@ var CreateDashFilter = function() {
     $(function(){
         dash.accordionSideBar()
         fetchAllDS().done(function () {
-            dash.LoadFilter()
+            // timeout here, because seems kendoknockout is still building up when we load the filter value
+            setTimeout(function () {
+                dash.InitComplete(true);
+            }, 100);
         })
     });
 

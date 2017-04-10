@@ -7,9 +7,9 @@ turn.dataPeriod = ko.observableArray([
 	{text: 'Region', value: 'region'},
 ]);
 turn.dataMenu = ko.observableArray([
-	{text: 'Conversion TAT (Avg)', value: 'conversion'},
+	{text: 'Underwriting TAT (Avg)', value: 'conversion'},
 	{text: 'Decision TAT (Avg)', value: 'decision'},
-	{text: 'Processing TAT (Avg)', value: 'processing'},
+	{text: 'Analysis TAT (Avg)', value: 'processing'},
 	{text: 'Acceptance TAT (Avg)', value: 'acceptance'},
 ]);
 turn.dataMenuValue = ko.observable('conversion');

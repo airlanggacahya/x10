@@ -3,15 +3,6 @@ var compFilter = CreateDashFilter()
 var comp = {}
 
 comp.viewFilter = ko.observable(false)
-comp.titleChart = ko.observable("")
-
-comp.dataDummy = ko.observableArray([
-    {text: "coba1", value: "coba1"},
-    {text: "coba2", value: "coba2"},
-    {text: "coba2", value: "coba2"},
-]);
-
-comp.valueDummy1 = ko.observable("");
 
 comp.setFilterVal = function (filter, field, value) {
     var ret = _.find(filter, function (val) {
@@ -121,7 +112,6 @@ comp.ToggleSelected = function(section, needle) {
     var idx = _.indexOf(haystack, needle);
     if (idx === -1) {
         comp[section + "SelectedItems"].push(needle);
-        comp.titleChart(needle)
         comp.RedrawChart();
         return;
     }
@@ -147,15 +137,10 @@ comp.Open = function (chartconfig) {
 }
 
 comp.closeCompare = function(){
-    comp.RegionSelectedItems([]);
-    comp.BranchSelectedItems([]);
-    comp.ProductSelectedItems([]);
-    comp.SchemeSelectedItems([]);
-    comp.ClientTypeSelectedItems([]);
-    comp.ClientTurnoverSelectedItems([]);
-    comp.IRSelectedItems([]);
-    comp.CASelectedItems([]);
-    comp.RMSelectedItems([]);
+    _.each(comp.FilterList(), function (val) {
+        comp[val.varName + "SelectedItems"]([])
+    })
+
     comp.viewFilter(false);
     
 }
@@ -188,16 +173,11 @@ comp.RedrawChart_ = function () {
             end: discardTimezone(comp.getFilterVal(filter, "TimePeriodCalendar2")),
             type: comp.getFilterVal(filter, "TimePeriod"),
             filter: filter
-        }
+        } 
 
-        var ttl = document.createElement("span");
-        if(val == ""){
-            var n = document.createTextNode("Base Chart");
-        }else{
-            var n = document.createTextNode(val)
-        }
-        
-        ttl.appendChild(n)  
+        var icon = document.createElement("i");
+        icon.classList.add("fa");
+        icon.classList.add("fa-filter");
 
         var btn = document.createElement("button");
         btn.classList.add("onbuton")
@@ -205,18 +185,10 @@ comp.RedrawChart_ = function () {
         btn.classList.add("btn-xs")
         btn.classList.add("btn-flat")
         btn.classList.add("btn-primary")
-
-        var icon = document.createElement("i");
-        icon.classList.add("fa");
-        icon.classList.add("fa-filter");
-
         btn.appendChild(icon)
 
-        btn.appendChild(icon)
         var heading = document.createElement("div");
         heading.classList.add("panel-heading");
-
-        heading.appendChild(ttl);
         heading.appendChild(btn);
 
         var body = document.createElement("div")
@@ -224,32 +196,32 @@ comp.RedrawChart_ = function () {
 
         // Add child
         var child = document.createElement("div");
-        child.id = "compChart" + index + "_wrapper";
-        child.classList.add("col-sm-6");
         child.classList.add("chart-wrapper");
-        child.classList.add("new-wrapper");
-        
         child.appendChild(heading)
         child.appendChild(body)
+
+        var row = document.createElement("div");
+        row.id = "compChart" + index + "_wrapper";
+        row.classList.add("col-sm-6");
+        row.appendChild(child)
 
         var el = document.createElement("div");
         el.id = "compChar" + index;
         el.classList.add("chart");
+        body.appendChild(el);
 
         comp.ChartLoader(param, function (opt) {
-            // console.log(opt.title)
-            opt.title.text = "";
+            if (index == 0) {
+                opt.title.text = opt.title.text + " [Base Chart]";
+            } else {
+                opt.title.text = opt.title.text + " [" + val + "]";
+            }
             var chart = $(el).kendoChart(opt);
             $(chart[0]).data('kendoChart').redraw();
         });
 
-        // $(".chart-wrapper").append(heading)
-        body.appendChild(el);
-        parentEl.append(child);
-
+        parentEl.append(row);
     })
-
-    $("")
 
     // parentEl.show();
 

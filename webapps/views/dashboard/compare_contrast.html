@@ -50,19 +50,34 @@
     /*margin: 0px;*/
   }
 
-  .new-wrapper{
+  #compareModal #compMainWindow .chart-wrapper {
+    padding: 4px;
     border-radius: 1px;
     border: 1px solid #cdcdcd;
     background-color: #fff;
+    margin-bottom: 10px;
   }
 
-  #compareModal #compMainWindow .chart-wrapper {
-    padding: 4px;
-    width: 48.2%;
-    margin-left: 10.9px;
-    margin-right: 10.9px;
-    margin-bottom: 5px;
-    margin-top: 5px;
+  #compareModal #compMainWindow .chart-wrapper .panel-heading {
+    position: absolute;
+    z-index: 1;
+    right: 8px;
+  }
+
+  #compareModal #compMainWindow .chart-wrapper .panel-body {
+    padding: 0px;
+  }
+
+  .ontitle{
+    font-size:12px;
+  }
+  .onheading{
+    text-decoration: none;
+    color: #7c6689;
+  }
+
+  .onbuton{
+    float: right;
   }
 
   .ontitle{
@@ -89,7 +104,7 @@
         <div class="row">
           <div class="col-sm-2">
             <div data-bind="visible: (comp.viewFilter() == false)">
-              <h5>Menu</h5>
+              <h5>Compare</h5>
               <hr class="line">
               <div class="menu-panel" data-bind="foreach: { data: comp.FilterList, as:'filt' }">
                 <div class="panel panel-default onground">

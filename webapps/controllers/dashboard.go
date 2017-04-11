@@ -1481,9 +1481,6 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	trendFilt := payload.GetString("trend")
-	groupBy := payload.GetString("groupby")
-
 	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
 	if err != nil {
 		return res.SetError(err)
@@ -1494,17 +1491,25 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	}
 
 	tp := TimePeriod{
-		Start:       periodStart,
-		End:         periodEnd,
-		TimeType:    payload.GetString("type"),
-		PeriodCount: 7,
+		Start:    periodStart,
+		End:      periodEnd,
+		TimeType: payload.GetString("type"),
 	}
-	tp = CalcTimePeriod(tp)
 
+	groupBy := payload.GetString("groupby")
 	if groupBy == "" {
 		groupBy = "period"
 	}
 
+	switch groupBy {
+	case "period":
+		tp.PeriodCount = 7
+	default:
+		tp.PeriodCount = 1
+	}
+	tp = CalcTimePeriod(tp)
+
+	trendFilt := payload.GetString("trend")
 	if trendFilt == "" {
 		trendFilt = "conversion"
 	}
@@ -1718,25 +1723,25 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		}
 	}
 
-	finalRes := make([]tk.M, tp.PeriodCount)
-	months := tk.M{}
-	for key, val := range mapRes {
-		keyInt, _ := strconv.Atoi(key)
-		if keyInt > tp.PeriodCount {
-			continue
-		}
-		re := tk.M{}
-		re.Set("avgdays", tk.Div(float64(mapResDays.GetInt(key)), float64(val.(int))))
-		re.Set("median", mapResMaxDays.GetInt(key)-mapResMinDays.GetInt(key))
-		re.Set("dealcount", val)
-		re.Set("idx", key)
-		// re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
-		months.Set(key, "")
-
-		finalRes[keyInt] = re
-	}
-
 	if groupBy == "period" {
+		finalRes := make([]tk.M, tp.PeriodCount)
+		months := tk.M{}
+		for key, val := range mapRes {
+			keyInt, _ := strconv.Atoi(key)
+			if keyInt > tp.PeriodCount {
+				continue
+			}
+			re := tk.M{}
+			re.Set("avgdays", tk.Div(float64(mapResDays.GetInt(key)), float64(val.(int))))
+			re.Set("median", mapResMaxDays.GetInt(key)-mapResMinDays.GetInt(key))
+			re.Set("dealcount", val)
+			re.Set("idx", key)
+			// re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
+			months.Set(key, "")
+
+			finalRes[keyInt] = re
+		}
+
 		for val := 0; val < tp.PeriodCount; val++ {
 			valStr := strconv.Itoa(val)
 
@@ -1751,9 +1756,23 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 				finalRes[val] = re
 			}
 		}
-	}
 
-	res.SetData(finalRes)
+		res.SetData(finalRes)
+	} else {
+		finalRes := make([]tk.M, 0)
+		for key, val := range mapRes {
+			re := tk.M{}
+			re.Set("avgdays", tk.Div(float64(mapResDays.GetInt(key)), float64(val.(int))))
+			re.Set("median", mapResMaxDays.GetInt(key)-mapResMinDays.GetInt(key))
+			re.Set("dealcount", val)
+			re.Set("idx", key)
+			// re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
+
+			finalRes = append(finalRes, re)
+		}
+
+		res.SetData(finalRes)
+	}
 
 	return res
 }

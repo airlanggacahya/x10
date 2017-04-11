@@ -127,16 +127,16 @@ comp.Open = function (chartconfig) {
     comp.ChartLoader = chartconfig;
     comp.BaseFilter = dash.FilterValue();
 
+    comp.resetModal();
     compFilter.LoadFilter(dash.FilterValue());
     // $("#compareModal").modal('show');
     $('#compareModal').modal({show: true, backdrop: 'static', keyboard: false})  
-    if (comp.openCompare() === "")
-        comp.openCompare(0);
-    
+    comp.openCompare(0);
+
     comp.RedrawChart();
 }
 
-comp.closeCompare = function(){
+comp.resetModal = function(){
     _.each(comp.FilterList(), function (val) {
         comp[val.varName + "SelectedItems"]([])
     })
@@ -174,22 +174,25 @@ comp.RedrawChart_ = function () {
             type: comp.getFilterVal(filter, "TimePeriod"),
             filter: filter
         } 
-
-        var icon = document.createElement("i");
-        icon.classList.add("fa");
-        icon.classList.add("fa-filter");
-
-        var btn = document.createElement("button");
-        btn.classList.add("onbuton")
-        btn.classList.add("btn")
-        btn.classList.add("btn-xs")
-        btn.classList.add("btn-flat")
-        btn.classList.add("btn-primary")
-        btn.appendChild(icon)
-
         var heading = document.createElement("div");
         heading.classList.add("panel-heading");
-        heading.appendChild(btn);
+
+        if (index === 0) {
+            var icon = document.createElement("i");
+            icon.classList.add("fa");
+            icon.classList.add("fa-filter");
+
+            var btn = document.createElement("button");
+            btn.classList.add("btn")
+            btn.classList.add("btn-xs")
+            btn.classList.add("btn-flat")
+            btn.classList.add("btn-primary")
+            btn.appendChild(icon)
+            $(btn).on("click", function(){
+                comp.viewFilter(true);
+            })
+            heading.appendChild(btn);
+        }
 
         var body = document.createElement("div")
         body.classList.add("panel-body");
@@ -224,10 +227,6 @@ comp.RedrawChart_ = function () {
     })
 
     // parentEl.show();
-
-    $(".onbuton").click(function(){
-        comp.viewFilter(true);
-    });
 }
 
 comp.setFilterFalse = function(){

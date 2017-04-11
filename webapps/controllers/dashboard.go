@@ -1587,10 +1587,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		"conversion": []string{},
 	}
 
-	mapRes := tk.M{}
-	mapResDays := tk.M{}
-	mapResMaxDays := tk.M{}
-	mapResMinDays := tk.M{}
+	mapRes := make(map[string][]int)
 
 	trend := lib.Get(trendFilt).([]string)
 
@@ -1634,55 +1631,20 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 						}
 					}
 
-					if mapRes.Get(key) == nil {
-						mapRes.Set(key, 0)
-					}
-					mapRes.Set(key, mapRes.GetInt(key)+1)
+					listData, found := mapRes[key]
 
-					if mapResDays.Get(key) == nil {
-						mapResDays.Set(key, 0)
+					if !found {
+						mapRes[key] = []int{days}
+					} else {
+						mapRes[key] = append(listData, days)
 					}
-					mapResDays.Set(key, mapResDays.GetInt(key)+days)
-
-					if mapResMaxDays.Get(key) == nil {
-						mapResMaxDays.Set(key, 0)
-					}
-					currMaxVal := mapResMaxDays.GetInt(key)
-					if days > currMaxVal {
-						mapResMaxDays.Set(key, days)
-					}
-
-					if mapResMinDays.Get(key) == nil {
-						mapResMinDays.Set(key, 0)
-					}
-					currMinVal := mapResMinDays.GetInt(key)
-					if days < currMinVal || idx == 0 {
-						mapResMinDays.Set(key, days)
-					}
-
 				}
 			} else if trendFilt == "conversion" && (laststatus == Approve || laststatus == Reject) {
 				lasttime := myInfo[len(myInfo)-1].Get("updateTime").(time.Time)
 
 				timex := myInfo[0].Get("updateTime").(time.Time)
 
-				// tk.Println(trendFilt)
-				// tk.Println(pos, "--------POSITION")
-				// tk.Println(trend, "--------TREND")
-				// tk.Println(status, "--------STATUS")
-				// if pos == -1 {
-				// 	continue
-				// }
-
-				days := 0
-				year, month, day, hour, min, sec := Diff(timex, lasttime)
-
-				if hour > 0 || min > 0 || sec > 0 {
-					days += 1
-				}
-				days += day
-				days += month * 31
-				days += year * 12 * 31
+				days := int(math.Ceil(math.Abs(timex.Sub(lasttime).Hours() / 24)))
 
 				key := ""
 				if groupBy == "period" {
@@ -1694,30 +1656,12 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 						return res.SetError(err)
 					}
 				}
-				if mapRes.Get(key) == nil {
-					mapRes.Set(key, 0)
-				}
-				mapRes.Set(key, mapRes.GetInt(key)+1)
+				listData, found := mapRes[key]
 
-				if mapResDays.Get(key) == nil {
-					mapResDays.Set(key, 0)
-				}
-				mapResDays.Set(key, mapResDays.GetInt(key)+days)
-
-				if mapResMaxDays.Get(key) == nil {
-					mapResMaxDays.Set(key, 0)
-				}
-				currMaxVal := mapResMaxDays.GetInt(key)
-				if days > currMaxVal {
-					mapResMaxDays.Set(key, days)
-				}
-
-				if mapResMinDays.Get(key) == nil {
-					mapResMinDays.Set(key, 0)
-				}
-				currMinVal := mapResMinDays.GetInt(key)
-				if days < currMinVal {
-					mapResMinDays.Set(key, days)
+				if !found {
+					mapRes[key] = []int{days}
+				} else {
+					mapRes[key] = append(listData, days)
 				}
 			}
 		}
@@ -1732,11 +1676,10 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 				continue
 			}
 			re := tk.M{}
-			re.Set("avgdays", tk.Div(float64(mapResDays.GetInt(key)), float64(val.(int))))
-			re.Set("median", mapResMaxDays.GetInt(key)-mapResMinDays.GetInt(key))
-			re.Set("dealcount", val)
+			re.Set("avgdays", hp.SumInt(val)/len(val))
+			re.Set("median", hp.MaxInt(val)-hp.MinInt(val))
+			re.Set("dealcount", len(val))
 			re.Set("idx", key)
-			// re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
 			months.Set(key, "")
 
 			finalRes[keyInt] = re
@@ -1752,7 +1695,6 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 				re.Set("dealcount", 0)
 				re.Set("idx", valStr)
 				re.Set("empty", true)
-				// re.Set("date", val)
 				finalRes[val] = re
 			}
 		}
@@ -1762,11 +1704,10 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		finalRes := make([]tk.M, 0)
 		for key, val := range mapRes {
 			re := tk.M{}
-			re.Set("avgdays", tk.Div(float64(mapResDays.GetInt(key)), float64(val.(int))))
-			re.Set("median", mapResMaxDays.GetInt(key)-mapResMinDays.GetInt(key))
-			re.Set("dealcount", val)
+			re.Set("avgdays", hp.SumInt(val)/len(val))
+			re.Set("median", hp.MaxInt(val)-hp.MinInt(val))
+			re.Set("dealcount", len(val))
 			re.Set("idx", key)
-			// re.Set("date", cast.String2Date("01-"+key, "dd-MMM-yyyy"))
 
 			finalRes = append(finalRes, re)
 		}

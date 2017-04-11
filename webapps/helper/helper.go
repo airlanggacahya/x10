@@ -189,3 +189,47 @@ func TkWalk(obj tk.M, path string) interface{} {
 
 	return curobj
 }
+
+func SumInt(data []int) int {
+	sum := 0
+	for _, val := range data {
+		sum = sum + val
+	}
+
+	return sum
+}
+
+const maxUint = ^uint(0)
+const minUint = 0
+const maxInt = int(maxUint >> 1)
+const minInt = -maxInt - 1
+
+func MaxInt(data []int) int {
+	if len(data) == 0 {
+		return 0
+	}
+
+	max := minInt
+	for _, val := range data {
+		if val > max {
+			max = val
+		}
+	}
+
+	return max
+}
+
+func MinInt(data []int) int {
+	if len(data) == 0 {
+		return 0
+	}
+
+	min := maxInt
+	for _, val := range data {
+		if val < min {
+			min = val
+		}
+	}
+
+	return min
+}

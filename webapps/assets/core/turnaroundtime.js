@@ -35,6 +35,21 @@ turn.averageAcceptanceData = ko.observableArray([]);
 turn.containerTitle = ko.observable("");
 turn.trendDataLength = ko.observable(6)
 
+turn.ValueDataPeriod.subscribe(function (val) {
+	switch (val) {
+	case 'period':
+		$("#chartContainer").show();
+		$("#chartContainer").data('kendoChart').redraw();
+		$("#chartContainer2").hide();
+		break;
+	case 'region':
+		$("#chartContainer2").show();
+		$("#chartContainer2").data('kendoChart').redraw();
+		$("#chartContainer").hide();
+		break;
+	}
+})
+
 turn.titleText = ko.computed(function () {
     var type = dash.FilterValue.GetVal("TimePeriod")
     var start = moment(dash.FilterValue.GetVal("TimePeriodCalendar"))
@@ -54,9 +69,6 @@ turn.titleText = ko.computed(function () {
     case "fromtill":
         return start.format("DD MMM YYYY") + " - " + end.format("DD MMM YYYY")
     }
-
-    turn.loadAlleverage();
-    // alert("masuk")
 })
 
 
@@ -125,7 +137,7 @@ turn.loadAlleverage = function(){
 	setTimeout(function(){
 		var param = {
 			trend: '',
-			groupby: turn.ValueDataPeriod(),
+			groupby: 'period',
 			start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
 			end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
 			type: dash.FilterValue.GetVal("TimePeriod"),
@@ -233,10 +245,6 @@ turn.loadAlleverage = function(){
 	        });
 
 	        turn.loadRadialGauge();
-	        
-	        // $("#tatgoals")
-		       // .css({ width: "175px", height: "125px", marginTop: "19px"})
-		       // .data("kendoRadialGauge").resize(); 
 		});
 
 		param.trend = 'total';
@@ -655,6 +663,143 @@ turn.lastMonth = function(id, field, data){
 	}
 }
 
+turn.loadChartRegionContainer = function() {
+	var param = {
+		trend: '',
+		groupby: 'region',
+		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
+		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
+		type: dash.FilterValue.GetVal("TimePeriod"),
+		filter: dash.FilterValue(),
+		trend: turn.dataMenuValue()
+	}
+
+	ajaxPost("/dashboard/snapshottat",param,function(res) {
+		$("#chartContainer2").html('')
+		$("#chartContainer2").kendoChart({
+			plotArea: {
+				margin: {
+					right: 4,
+				}
+			},
+			dataSource: res.Data,
+			series: [
+			{
+				type: "column",
+				stack : false,
+				field: "avgdays",
+				color: '#2e75b6',
+				overlay: {
+					gradient: "none"
+				},
+				name: "Avg Days"
+			},
+			{
+				type: "column",
+				stack : false,
+				field: "median",
+				color: '#00b0f0',
+				overlay: {
+					gradient: "none"
+				},
+				name: "Median"
+			},
+			{
+				type: "column",
+				stack : false,
+				field: "dealcount",
+				axis: "dc",
+				// dashType: "dot",
+				color: '#ffc000',
+				overlay: {
+					gradient: "none"
+				},
+				name: "Deal Count"
+			},
+			{
+				// field: "wind",
+				name: "Target TAT"
+			}
+			],
+			chartArea:{
+				height: 220,
+				background: "white"
+			},
+			legend: {
+				visible: false,
+				position: "bottom",
+				labels:{
+					font: "10px Arial,Helvetica,Sans-Serif"
+				}
+			},
+			valueAxes: [{
+				title: { 
+					text: "Days",
+					font: "10px sans-serif",
+					color : "#4472C4", 
+					margin: {
+						right: 1,
+					}
+				},
+				min: 0,
+				labels : {
+					font: "10px sans-serif",
+					step : 2,
+					skip : 2
+				},
+				// max: 10,
+				plotBands: [{
+					from: 2.9,
+					to: 3.0,
+					color: "#70ad47",
+					name: "Target"
+				}]
+			},{
+				name: "dc",
+				title: { 
+					text: "Deal Count",
+					font: "10px sans-serif",
+					color : "#4472C4",
+					margin: {
+						left: 1,
+					}
+				},
+				min: 0,
+				labels : {
+					font: "10px sans-serif",
+					step : 2,
+					skip : 2
+				},
+				// max: 10
+			}
+			],
+			categoryAxis: {
+				// categories: month,
+				field: "idx",
+				// visible : true,
+				title : {
+					text : "Region",
+					font: "10px sans-serif",
+					visible : true,
+					color : "#4472C4"
+				},
+				labels : {
+					font: "10px sans-serif",
+					// visible : true,
+				},
+				axisCrossingValues: [0, 7]
+			},
+			tooltip : {
+				visible: true,
+				template : function(dt){
+					console.log(dt);
+					return dt.series.name + " : "+ dt.value//dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+				}
+			}
+	    });
+	})
+}
+
 turn.loadChartContainer = function(data){
 	var len = turn.trendDataLength();
     var start = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"))
@@ -663,7 +808,8 @@ turn.loadChartContainer = function(data){
 	var month = dash.generateXAxis(type, start, end, len + 1)
 	month.shift();
 
-	console.log(data);
+	turn.loadChartRegionContainer();
+
 	setTimeout(function(){
 		$("#chartContainer").html('')
 		$("#chartContainer").kendoChart({

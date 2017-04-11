@@ -112,6 +112,7 @@ comp.openSelected = ko.computed(function () {
 })
 
 comp.IsSelected = function(section, needle) {
+    console.log("---------------->>>>>",  _.indexOf(comp[section + "SelectedItems"](), needle) !== -1)
     return _.indexOf(comp[section + "SelectedItems"](), needle) !== -1
 }
 

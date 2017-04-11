@@ -78,7 +78,7 @@
     <div class="modal-content" style="background-color: #f0f3f4;">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Compare &amp; Contrast</h4>
+        <h4 class="modal-title">Compare</h4>
       </div>
       <div class="modal-body">
         <div class="row">
@@ -108,7 +108,7 @@
                     <div class="panel-body">
                       <ul data-bind="foreach: {data: compFilter[filt.varName + 'DS'], as: 'ds'}">
                         <li>
-                          <a href="#" data-bind="click: comp.ToggleSelected.bind(comp, filt.varName, ds.value), text: ds.text, style: { fontWeight: comp.IsSelected(filt.varName, ds.value) ? 'bold': 'normal' }"></a>
+                          <a href="#" data-bind="click: comp.ToggleSelected.bind(comp, filt.varName, ds.value), text: ds.text, style: { fontWeight: comp.IsSelected(filt.varName, ds.value) ? 'bold': 'normal' }"></a><span data-bind="visible: comp.IsSelected(filt.varName, ds.value)" style="color: #2a6496; float: right;"><i class="fa fa-check"></i></span>
                         </li>
                       </ul>
                     </div>
@@ -117,7 +117,7 @@
               </div>
             </div>
             <div data-bind="visible: (comp.viewFilter() != false)">
-              <h5>Filter</h5>
+              <h5>Edit</h5>
               <hr class="line">
               <div class="menu-panel" id="accordion">
                 <div class="panel panel-default onground">

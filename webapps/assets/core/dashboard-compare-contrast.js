@@ -2,6 +2,16 @@
 var compFilter = CreateDashFilter()
 var comp = {}
 
+comp.viewFilter = ko.observable(false)
+
+comp.dataDummy = ko.observableArray([
+    {text: "coba1", value: "coba1"},
+    {text: "coba2", value: "coba2"},
+    {text: "coba2", value: "coba2"},
+]);
+
+comp.valueDummy1 = ko.observable("");
+
 comp.setFilterVal = function (filter, field, value) {
     var ret = _.find(filter, function (val) {
         return (val.FilterName === field)
@@ -102,6 +112,7 @@ comp.openSelected = ko.computed(function () {
 })
 
 comp.IsSelected = function(section, needle) {
+    console.log("---------------->>>>>",  _.indexOf(comp[section + "SelectedItems"](), needle) !== -1)
     return _.indexOf(comp[section + "SelectedItems"](), needle) !== -1
 }
 
@@ -163,26 +174,72 @@ comp.RedrawChart_ = function () {
             filter: filter
         }
 
+        var ttl = document.createElement("span");
+        var n = document.createTextNode("History TAT")
+        ttl.appendChild(n)  
+
+        var btn = document.createElement("button");
+        btn.classList.add("onbuton")
+        btn.classList.add("btn")
+        btn.classList.add("btn-xs")
+        btn.classList.add("btn-flat")
+        btn.classList.add("btn-primary")
+
+        var icon = document.createElement("i");
+        icon.classList.add("fa");
+        icon.classList.add("fa-filter");
+
+        btn.appendChild(icon)
+
+        btn.appendChild(icon)
+        var heading = document.createElement("div");
+        heading.classList.add("panel-heading");
+
+        heading.appendChild(ttl);
+        heading.appendChild(btn);
+
+        var body = document.createElement("div")
+        body.classList.add("panel-body");
+
         // Add child
         var child = document.createElement("div");
         child.id = "compChart" + index + "_wrapper";
         child.classList.add("col-sm-6");
         child.classList.add("chart-wrapper");
+        child.classList.add("new-wrapper");
+        
+        child.appendChild(heading)
+        child.appendChild(body)
 
         var el = document.createElement("div");
         el.id = "compChar" + index;
         el.classList.add("chart");
 
         comp.ChartLoader(param, function (opt) {
+            // console.log(opt.title)
+            opt.title.text = "";
             var chart = $(el).kendoChart(opt);
             $(chart[0]).data('kendoChart').redraw();
         });
 
-        child.appendChild(el);
+        // $(".chart-wrapper").append(heading)
+        body.appendChild(el);
         parentEl.append(child);
+
     })
 
     $("")
 
     // parentEl.show();
+
+    $(".onbuton").click(function(){
+        comp.viewFilter(true);
+    });
 }
+
+comp.setFilterFalse = function(){
+    comp.viewFilter(false)
+}
+
+
+

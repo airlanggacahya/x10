@@ -1,5 +1,4 @@
 <script>document.write('<script src="/static/core/dashboard-compare-contrast.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
-
 <style>
   #compareModal .panel {
     border: none;
@@ -14,6 +13,7 @@
 
   #compareModal .panel-default>.panel-heading {
     padding: 5px 10px;
+    background-color: #fff;
   }
 
   #compareModal .panel .panel-body {
@@ -45,54 +45,337 @@
   }
 
   #compareModal #compMainWindow .chart {
+    
+    /*border: 1px solid #cdcdcd;*/
+    /*margin: 0px;*/
+  }
+
+  .new-wrapper{
     border-radius: 1px;
     border: 1px solid #cdcdcd;
-    margin: 0px;
+    background-color: #fff;
   }
 
   #compareModal #compMainWindow .chart-wrapper {
     padding: 4px;
   }
+
+  .ontitle{
+    font-size:12px;
+  }
+  .onheading{
+    text-decoration: none;
+    color: #7c6689;
+  }
+
+  .onbuton{
+    float: right;
+  }
 </style>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="compareModal">
   <div class="modal-dialog maximize" role="document">
-    <div class="modal-content">
+    <div class="modal-content" style="background-color: #f0f3f4;">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Compare &amp; Contrast</h4>
+        <h4 class="modal-title">Compare</h4>
       </div>
       <div class="modal-body">
         <div class="row">
           <div class="col-sm-2">
-            <div class="menu-panel" data-bind="foreach: { data: comp.FilterList, as:'filt' }">
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" data-bind="attr:{id: 'compheader' + $index()}">
-                  <h4 class="panel-title">
-                    <a role="button"
-                      data-toggle="collapse"
-                      data-parent="#accordion"
-                      aria-expanded="true"
-                      data-bind="
-                        click: comp.openCompare.bind(comp, $index()),
-                        clickBubble: false,
-                        text: filt.title,
-                        attr:{href: '#compcollapse' + $index()},
-                        visible: comp.openCompare() !== $index()">
-                    </a>
-                    <span data-bind="text: filt.title, visible: comp.openCompare() === $index()"></span>
-                  </h4>
-                </div>
-                <div data-bind="attr:{id: 'compcollapse' + $index()}" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <ul data-bind="foreach: {data: compFilter[filt.varName + 'DS'], as: 'ds'}">
-                      <li>
-                        <a href="#" data-bind="click: comp.ToggleSelected.bind(comp, filt.varName, ds.value), text: ds.text, style: { fontWeight: comp.IsSelected(filt.varName, ds.value) ? 'bold': 'normal' }"></a>
-                      </li>
-                    </ul>
+            <div data-bind="visible: (comp.viewFilter() == false)">
+              <h5>Menu</h5>
+              <hr class="line">
+              <div class="menu-panel" data-bind="foreach: { data: comp.FilterList, as:'filt' }">
+                <div class="panel panel-default onground">
+                  <div class="panel-heading onground" role="tab" data-bind="attr:{id: 'compheader' + $index()}">
+                    <h4 class="panel-title ontitle">
+                      <a role="button"
+                        data-toggle="collapse"
+                        data-parent="#accordion"
+                        aria-expanded="true"
+                        data-bind="
+                          click: comp.openCompare.bind(comp, $index()),
+                          clickBubble: false,
+                          text: filt.title,
+                          attr:{href: '#compcollapse' + $index()},
+                          visible: comp.openCompare() !== $index()">
+                      </a>
+                      <span data-bind="text: filt.title, visible: comp.openCompare() === $index()"></span>
+                    </h4>
+                  </div>
+                  <div data-bind="attr:{id: 'compcollapse' + $index()}" class="panel-collapse collapse" role="tabpanel">
+                    <div class="panel-body">
+                      <ul data-bind="foreach: {data: compFilter[filt.varName + 'DS'], as: 'ds'}">
+                        <li>
+                          <a href="#" data-bind="click: comp.ToggleSelected.bind(comp, filt.varName, ds.value), text: ds.text, style: { fontWeight: comp.IsSelected(filt.varName, ds.value) ? 'bold': 'normal' }"></a><span data-bind="visible: comp.IsSelected(filt.varName, ds.value)" style="color: #2a6496; float: right;"><i class="fa fa-check"></i></span>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
+            <div data-bind="visible: (comp.viewFilter() != false)">
+              <h5>Edit</h5>
+              <hr class="line">
+              <div class="menu-panel" id="accordion">
+                <div class="panel panel-default onground">
+                  <div class="panel-heading onground">
+                    <div class="panel-title ontitle">
+                      <a role="button" style="text-decoration: none;color:#7c6689;" class="onheading" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" href="#dicoba0">Time Period</a>
+                    </div>
+                  </div>
+                  <div id="dicoba0" class="panel-collapse collapse in" role="tabpanel">
+                    <div class="panel-body">
+                      <div class="col-md-12">
+                        <div class="form-group" data-bind="visible: dash.TimePeriodVisible">
+                          <label>Time Period</label>
+                          <div>
+                            <input name="page" id="timeperiodFilter" style="width: 100%;" data-bind="
+                              kendoDropDownList: {
+                                dataSource: compFilter.TimePeriodDS(),
+                                value: compFilter.TimePeriodVal(),
+                                dataValueField: 'value',
+                                dataTextField: 'text',
+                                optionLabel: 'Select One',
+                              }" >
+                            <div data-bind="visible: compFilter.TimePeriodVal() != '' && compFilter.TimePeriodVal() != '10day'">
+                              <span class="calendar-label" data-bind="text: compFilter.TimePeriodCalendarValFormat"></span>
+                              <input data-bind="
+                                kendoDatePicker: {
+                                  value: compFilter.TimePeriodCalendarVal(),
+                                  depth: compFilter.TimePeriodCalendarScale(),
+                                  start: compFilter.TimePeriodCalendarScale()
+                                }" id="timeperiodCalendar" style="width: 100%">
+                            </div>
+                            <div data-bind="visible: compFilter.TimePeriodVal() == 'fromtill'">
+                              <span class="calendar-label" data-bind="text: compFilter.TimePeriodCalendar2ValFormat"></span>
+                              <input data-bind="
+                                kendoDatePicker: {
+                                  value: compFilter.TimePeriodCalendar2Val(),
+                                  min: compFilter.TimePeriodCalendarVal(),
+                                }" id="timeperiodCalendar2" style="width: 100%">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default onground">
+                  <div class="panel-heading onground" >
+                    <div class="panel-title ontitle">
+                      <a role="button" style="text-decoration: none;color:#7c6689;" class="onheading" data-toggle="collapse" data-parent="#accordion" href="#dicoba1">Location Filter</a>
+                    </div>
+                  </div>
+                  <div id="dicoba1" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Region :</label>
+                          <select name="page" style="width: 100%;"  data-bind="
+                              kendoDropDownList: {
+                              data: compFilter.RegionDS,
+                              value: compFilter.RegionVal,
+                              optionLabel: 'Select One',
+                              dataValueField: 'value',
+                              dataTextField: 'text',  
+                              }" >
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>Branch :</label>
+                          <select name="page" style="width: 100%;"  data-bind="
+                              kendoDropDownList: {
+                              data:compFilter.BranchDS,
+                              value:compFilter.BranchVal,
+                              optionLabel: 'Select One',
+                              dataValueField: 'value',
+                              dataTextField: 'text',
+                              }" >
+                          </select>
+                        </div>
+                      </div> 
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default onground">
+                  <div class="panel-heading onground" >
+                    <div class="panel-title ontitle">
+                      <a role="button" style="text-decoration: none;color:#7c6689;" class="onheading" data-toggle="collapse" data-parent="#accordion" href="#dicoba2">Verticals</a>
+                    </div>
+                  </div>
+                  <div id="dicoba2" class="panel-collapse collapse">
+                    <div class="panel-body"> 
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Product :</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.ProductDS,
+                            value: compFilter.ProductVal,
+                            optionLabel: 'Select One',
+                            dataValueField: 'value',
+                            dataTextField: 'text'}">
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>Scheme :</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.SchemeDS,
+                            value: compFilter.SchemeVal,
+                            optionLabel: 'Select One',
+                            dataValueField: 'value',
+                            dataTextField: 'text'}">
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default onground">
+                  <div class="panel-heading onground" >
+                    <div class="panel-title ontitle">
+                      <a role="button" style="text-decoration: none;color:#7c6689;" class="onheading" data-toggle="collapse" data-parent="#accordion" href="#dicoba3">Clients Filter</a>
+                    </div>
+                  </div>
+                  <div id="dicoba3" class="panel-collapse collapse">
+                    <div class="panel-body"> 
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Client Type</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.ClientTypeDS,
+                            value: compFilter.ClientTypeVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>Client Turnover</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.ClientTurnoverDS,
+                            value: compFilter.ClientTurnoverVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>Customer Name</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.CustomerDS,
+                            value: compFilter.CustomerVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>Deal Number</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.DealNoDS,
+                            value: compFilter.DealNoVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default onground">
+                  <div class="panel-heading onground" >
+                    <div class="panel-title ontitle">
+                      <a role="button" style="text-decoration: none;color:#7c6689;" class="onheading" data-toggle="collapse" data-parent="#accordion" href="#dicoba4">Deal Filters</a>
+                    </div>
+                  </div>
+                  <div id="dicoba4" class="panel-collapse collapse">
+                    <div class="panel-body"> 
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Deal Status :</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.DealStatusDS,
+                            value: compFilter.DealStatusVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>Internal Rating :</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.IRDS,
+                            value: compFilter.IRVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>CA &nbsp; :</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.CADS,
+                            value: compFilter.CAVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>RM &nbsp; :</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.RMDS,
+                            value: compFilter.RMVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>Loan Value Type :</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.LoanValueTypeDS,
+                            value: compFilter.LoanValueTypeVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label>Range :</label>
+                          <select style="width: 100%;"  data-bind="
+                            kendoDropDownList: {
+                            data: compFilter.RangeDS,
+                            value: compFilter.StatusVal,
+                            dataValueField: 'value',
+                            dataTextField: 'text',
+                            optionLabel: 'Select One'}">
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <button class="btn btn-sm btn-flat btn-primary" data-bind="click: comp.setFilterFalse()" style="width: 100%;">Apply Filter</button>
+              <br/>
+              <hr class="line">
             </div>
           </div>
           <div class="col-sm-10" id="compMainWindow">

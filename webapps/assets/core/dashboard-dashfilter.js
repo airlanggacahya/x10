@@ -417,12 +417,6 @@ var CreateDashFilter = function() {
             return "month";
         }
     })
-    dash.TimePeriodCalendarScale.subscribe(function (val) {
-        $("#timeperiodCalendar").data("kendoDatePicker").setOptions({
-            depth: val,
-            start: val
-        })
-    })
 
     dash.CompileFilter = function () {
         var param = []

@@ -215,12 +215,29 @@
     }
 
     .chart-options {
-        position: absolute;
+        /*position: absolute;
         float: right;
-        z-index: 1;
+        z-index: 5;
+        right: 25px;
+        top: 3px;
+        font-size: 10px;*/
+        z-index: 4;
+        float: right;
         right: 25px;
         top: 3px;
         font-size: 10px;
+        margin-top: 1%;
+        padding-right: 2%;
+    }
+
+    .chart-options1{
+        z-index: 4;
+        float: right;
+        right: 25px;
+         top: 3px; 
+        font-size: 10px;
+        margin-top: 1%;
+        padding-right: 2%;
     }
 
     .chart-options label {
@@ -308,32 +325,7 @@
     .widget-title { font-size: 46px; font-weight: bold !important; color: grey; }
     .up-arrow{color: #70ad47;}
     .down-arrow{color: #ff2929;}
-
-    .new-dashboard.minichart .panel.aol.manual-height {
-        height: 262px;
-        padding: 12px 10px;
-    }
-
-    .new-dashboard.minichart .panel.aol.manual-height h6 {
-        margin-top: 0px;
-        margin-bottom: 6px;
-    }
-
-    .new-dashboard.minichart .panel.aol.manual-height .k-grid .k-grid-header {
-        height: 215px;
-        padding-right: 0px;
-    }
-
-    .new-dashboard.minichart .panel.aol.manual-height .k-grid .k-grid-header .k-grid-header-wrap {
-        overflow: scroll;
-        height: 215px;
-        padding-right: 0px;
-    }
-
-    .new-dashboard.minichart .panel.aol.manual-height .k-grid .k-grid-header .k-grid-header-wrap table {
-        width: 900px;
-    }
-
+    .k-chart-tooltip {text-align: left;}
 </style>
 <div class="col-md-12 lay">
     <div class="col-md-12 top turnaroundtime">
@@ -418,20 +410,29 @@
             </div>
             <!-- <div class="col-sm-2"></div> -->
             <div class="col-md-12">
-                <h5>Trend : <span data-bind="text: pm.setTitle()"></span> <!-- span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
+                <h5>Trend : <span data-bind="text: pm.setTitle()">nanana</span> <!-- span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
                 <hr class="line">
             </div>
             <div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="panel panel-body aol trend">
-                        <div class="chart-options">
+                        <div class="chart-options0">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod(), value: pm.ValueDataPeriod(), dataTextField: 'text', dataValueField: 'value', optionLabel:'Select Period'}"></select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="chart-options1">
                             <table>
                                 <tr>
                                     <td>
                                         <label>View Acros</label>
                                     </td>
                                     <td>
-                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod(), value: pm.ValueDataPeriod(), dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenuTrend, dataTextField: 'text', dataValueField: 'value', optionLabel:'Select the Deal'}"></select>
                                     </td>
                                 </tr>
                             </table>
@@ -440,100 +441,22 @@
                         <div id="chartContainer"></div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="panel panel-body aol trend">
                         <div class="chart-options">
                             <table>
                                 <tr>
                                     <td>
-                                        <label>View Acros</label>
+                                        <label>View</label>
                                     </td>
                                     <td>
-                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'Deal Amount'}"></select>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenuDistribution, dataTextField: 'text', dataValueField: 'value'}"></select>
                                     </td>
                                 </tr>
                             </table>
                         </div>
+                        <div style="clear: both"></div>
                         <div id="distribution"></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-body aol trend manual-height">
-                        <div id="interestRateDetail">
-                            <h6>Deal Amount and Interest</h5>
-                            <div id="interestDetailDB" style="border: none;" class="k-grid k-widget" >
-                                <div class="k-grid-header">
-                                    <div class="k-grid-header-wrap">
-                                        <table role="grid">
-                                            <thead role="rowgroup">
-                                                <tr role="row" >
-                                                    <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor">Sr. No</th>
-                                                    <th style="width:28%" scope="col" role="columnheader" class="k-header header-bgcolor">Customer Name</th>
-                                                    <th style="width:22%" scope="col" role="columnheader" class="k-header header-bgcolor">Deal No</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">CA</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">RM</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Sanc Amount</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Interest</th>
-                                                    <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor">Detail</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody role="rowgroup" data-bind="">
-                                                <tr role="row">
-                                                    <td role="gridcell">
-                                                        123
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        NIKI INFOTECH PVT LTD
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        DXMUM00716-170000222
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        ADMIN
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        SUMEET JHA
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        10,00,00,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        1,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                    </td>
-                                                </tr>
-                                                <tr role="row">
-                                                    <td role="gridcell">
-                                                        456
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        M INTERGRAPH SYSTEMS PRIVATE LIMITED
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        DXMUM00716-170000222
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        ADMIN
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        ADMIN
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        10,00,00,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        1,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

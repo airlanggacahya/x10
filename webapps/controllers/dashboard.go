@@ -2438,8 +2438,11 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	///xfl
 	xflResult := c.xflTrendGrouping(resultsXfl, tp)
 
+	///grouping deal distribution
+	resultDistribution := c.dealDistribution(resultsXfl)
+
 	// tk.Println(tk.JsonString(resultData))
-	o := tk.M{}.Set("chart", resultData).Set("topwidget", resultDataWidget).Set("xfl", xflResult)
+	o := tk.M{}.Set("chart", resultData).Set("topwidget", resultDataWidget).Set("xfl", xflResult).Set("distribution", resultDistribution)
 	res.SetData(o)
 
 	return res
@@ -2633,4 +2636,101 @@ func (c *DashboardController) metricTrendGrouping(results tk.Ms, tp TimePeriod) 
 		}
 	}
 	return resultData, resultDataWidget
+}
+
+func (c *DashboardController) dealDistribution(data []tk.M) tk.Ms {
+	xflGrouping := map[string]tk.M{}
+	count := 0
+	var amount, roi, interestamount float64
+	for _, v := range data {
+		timePeriod := v.Get("info").(tk.M).Get("updateTime").(time.Time)
+		percent := c.roiRange(v.GetFloat64("ROI"))
+		interest := tk.Div(v.GetFloat64("ROI"), 100) * v.GetFloat64("amount")
+		if !tk.IsNilOrEmpty(v.GetString("finalRating")) {
+			if _, exist := xflGrouping[v.GetString("finalRating")+"|"+percent]; !exist {
+				count = 1
+				amount = v.GetFloat64("amount")
+				interestamount = interest
+				roi = v.GetFloat64("ROI")
+				o := tk.M{}
+				o.Set("amount", amount).Set("roi", roi).Set("period", timePeriod).Set("xfl", v.GetString("finalRating")).Set("count", count).Set("percent", percent).Set("interest", interest)
+				xflGrouping[v.GetString("finalRating")+"|"+percent] = o
+			} else {
+				count += 1
+				amount += v.GetFloat64("amount")
+				roi += v.GetFloat64("ROI")
+				interestamount += interest
+				xflGrouping[v.GetString("finalRating")+"|"+percent].Set("amount", amount).Set("roi", roi).Set("period", timePeriod).Set("xfl", v.GetString("finalRating")).Set("count", count).Set("percent", percent).Set("interest", interest)
+			}
+		}
+	}
+
+	result := tk.Ms{}
+	for _, val := range xflGrouping {
+		o := tk.M{}
+		o.Set("amount", tk.Div(val.GetFloat64("amount"), 10000000)).
+			Set("roi", val.GetFloat64("roi")).Set("period", val.Get("period")).
+			Set("xfl", val.GetString("xfl")).Set("count", val.GetInt("count")).Set("percent", val.GetString("percent")).
+			Set("interest", tk.Div(val.GetFloat64("interest"), 10000000))
+		result = append(result, o)
+	}
+	// tk.Println(tk.JsonString(result))
+	return result
+}
+
+func (c *DashboardController) roiRange(roi float64) string {
+	roipercentage := ""
+	switch {
+	case roi > 5.875 && roi <= 6.125:
+		roipercentage = "6"
+	case roi > 6.125 && roi <= 6.375:
+		roipercentage = "6.25"
+	case roi > 6.375 && roi <= 6.625:
+		roipercentage = "6.5"
+	case roi > 6.625 && roi <= 6.875:
+		roipercentage = "6.75"
+	case roi > 6.875 && roi <= 7.125:
+		roipercentage = "7"
+	case roi > 7.125 && roi <= 7.375:
+		roipercentage = "7.25"
+	case roi > 7.375 && roi <= 7.625:
+		roipercentage = "7.5"
+	case roi > 7.625 && roi <= 7.875:
+		roipercentage = "7.75"
+	case roi > 7.875 && roi <= 8.125:
+		roipercentage = "8"
+	case roi > 8.125 && roi <= 8.375:
+		roipercentage = "8.25"
+	case roi > 8.375 && roi <= 8.625:
+		roipercentage = "8.50"
+	case roi > 8.625 && roi <= 8.875:
+		roipercentage = "8.75"
+	case roi > 8.875 && roi <= 9.125:
+		roipercentage = "9"
+	case roi > 9.125 && roi <= 9.375:
+		roipercentage = "9.25"
+	case roi > 9.375 && roi <= 9.625:
+		roipercentage = "9.50"
+	case roi > 9.625 && roi <= 9.875:
+		roipercentage = "9.75"
+	case roi > 9.875 && roi <= 10.125:
+		roipercentage = "10"
+	case roi > 10.125 && roi <= 10.375:
+		roipercentage = "10.25"
+	case roi > 10.375 && roi <= 10.625:
+		roipercentage = "10.50"
+	case roi > 10.625 && roi <= 10.875:
+		roipercentage = "10.75"
+	case roi > 10.875 && roi <= 11.125:
+		roipercentage = "11"
+	case roi > 11.125 && roi <= 11.375:
+		roipercentage = "11.25"
+	case roi > 11.375 && roi <= 11.625:
+		roipercentage = "11.50"
+	case roi > 11.625 && roi <= 11.875:
+		roipercentage = "11.75"
+	case roi > 11.875:
+		roipercentage = ">12"
+	}
+	return roipercentage
 }

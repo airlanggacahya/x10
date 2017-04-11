@@ -41,7 +41,12 @@ pm.xfl3interestwidth = ko.observable(0);
 pm.xfl4interestwidth = ko.observable(0);
 pm.xfl5interestwidth = ko.observable(0);
 
+pm.distributionData = ko.observableArray([]);
 
+// Hook to filter value changes
+dash.FilterValue.subscribe(function(val) {
+    pm.init();
+});
 
 // set to show up dealstatus
 dash.showOptionalFilter("DealStatus")
@@ -53,19 +58,17 @@ pm.dataPeriod = ko.observableArray([
 pm.ValueDataPeriod = ko.observable('');
 
 pm.dataMenu = ko.observableArray([
+    { text: 'Deal Amount', value: 'amount' },
     { text: 'Deal Count', value: 'count' },
-    { text: 'Deal Mount', value: 'mount' },
     { text: 'Interest Amount', value: 'interest' },
 ]);
 
-pm.ValueDataMenu = ko.observable('');
+pm.ValueDataMenuTrend = ko.observable('');
+pm.ValueDataMenuDistribution = ko.observable('amount');
+pm.ValueDataMenuDistribution.subscribe(function(e){
+    pm.Distribution(e);
+})
 
-/*pm.loadAllHeadChart = function(){
-    pm.Count();
-    pm.Mount();
-    pm.Interest();
-}
-*/
 pm.Target = function() {
     $("#tatgoals").html('')
     $("#tatgoals").kendoRadialGauge({
@@ -103,16 +106,6 @@ pm.Target = function() {
 pm.loadContainer = function() {
     $("#chartContainer").html('')
     $("#chartContainer").kendoChart({
-        // theme: "Material",
-        title: { 
-            text: "Deal Amount and Interest",
-            font:  "12px Arial,Helvetica,Sans-Serif",
-            align: "left",
-            color: "#58666e",
-            padding: {
-                top: 0
-            }
-        },
         plotArea: {
             margin: {
                 right: 4,
@@ -202,19 +195,6 @@ pm.loadContainer = function() {
         }],
         categoryAxis: {
             categories: pm.trendDataMonths(),
-            /*field: "dateStr",
-            title : {
-                 text : "Time Period",
-                font: "11px sans-serif",
-                visible : true,
-                color : "#4472C4",
-                margin: {
-                    left: 1,
-                }
-            },
-            labels : {
-                font: "10px sans-serif",
-            },*/
             axisCrossingValues: [0, 7]
         },
         tooltip: {
@@ -278,11 +258,6 @@ pm.setTitle = function() {
 
     return title;
 }
-
-// pm.setTitle = function(){
-//  var title = kendo.toString(new Date(pm.titleText()), "MMM 'yy");
-//  return title;
-// }
 
 pm.loadChaterChart = function() {
     var data = [
@@ -404,111 +379,111 @@ pm.normalisasiData = function(data) {
     return data
 }
 
-pm.Distribution = function() {
-    var data = [{ "count": 1, "order": 1, "status": "Under Process", "timestatus": "c*Getting due" }];
-    var datas = pm.normalisasiData(data)
-
-    var myHeight = ($(window).height() - 90) / 3
-
-    datas = _.sortBy(datas, ["status"])
-
-    var stocksDataSource = new kendo.data.DataSource({
-        data: datas,
-        group: {
-            field: "timestatus"
-        },
-    });
+pm.Distribution = function(selected) {
+    var selectedoption;
+    if (selected == undefined) {
+        selectedoption = "amount";
+    } else {
+        selectedoption = selected;
+    }
     $("#distribution").html("");
     $("#distribution").kendoChart({
-        title: {
-            text: "Deal Amount / Count vs. Interest Rate",
-            align: "left",
-            font: "12px Arial,Helvetica,Sans-Serif",
-            align: "left",
-            color: "#58666e",
-            padding: {
-                top: 0
-            }
-        },
-        plotArea: {
-            margin: {
-                right: 4,
-            }
-        },
-        dataSource: stocksDataSource,
-        series: [{
-            type: "column",
-            stack: true,
-            field: "count",
-            name: "#= group.value.split('*')[1] #"
-        }],
-        chartArea: {
-            height: 250,
-            background: "white"
-        },
-        // seriesClick : function(e){
-        //     var status = e.dataItem.timestatus.split("*")[1];
-        //     if(status == "Over due"){
-        //         ttrack.popupchartcolor(["#FF0000"]);
-        //     }else if( status == "New"){
-        //         ttrack.popupchartcolor(["#4472C4"]);
-        //     }else if(status == "Getting due"){
-        //         ttrack.popupchartcolor(["#FFC000"]);
-        //     }else if(status == "In time"){
-        //         ttrack.popupchartcolor(["#70AD47"])
-        //     }
-        //     var str = e.dataItem.status+" : "+status+" Deals accross Stages";
-        //     var gstr = "In Queue : "+ status+ " Deals"
-        //     ttrack.modalGridTittle(gstr);
-
-        //     ttrack.modalChartTittle(str);
-        //     if(ttrack.trackingValue() == 'stages'){
-        //         ttrack.loadDataStages(e);
-        //     }else if(ttrack.trackingValue() == 'region'){
-        //         ttrack.loadDataRegion(e);
-        //     }
-        // },
-        legend: {
-            visible: true,
-            position: "bottom",
-            labels: {
-                font: "10px Arial,Helvetica,Sans-Serif"
-            }
-        },
-        // seriesColors : ttrack.chartcolors,
-        valueAxis: {
-            labels: {
-                // format: "${0}",
-                font: "10px sans-serif",
-                skip: 2,
-                step: 2,
-            },
-            title: {
-                text: "No. of Deals",
-                font: "11px sans-serif",
-                visible: true,
-                color: "#4472C4",
-                margin: {
-                    right: 1,
+        dataSource: new kendo.data.DataSource({
+            data: pm.distributionData(),
+            group: [
+                { field: "xfl" }
+            ],
+            schema: {
+                model: {
+                    fields: {
+                        percent: {
+                            type: "string"
+                        },
+                        xfl: {
+                            type: "string"
+                        },
+                        roi: {
+                            type: "number"
+                        }
+                    }
                 }
             }
+        }),
+        chartArea: {
+            height: 250
         },
-        categoryAxis: {
-            field: "status",
-            title: {
-                text: "Deal Stages",
-                font: "11px sans-serif",
-                visible: true,
-                color: "#4472C4"
-            },
-            labels: {
-                font: "10px sans-serif",
+        theme: 'Office365',
+            seriesDefaults: {
+            type: 'column'
+        },
+        series: [
+            {
+                type: "column",
+                field: selectedoption,
+                categoryField: "percent",
+                name: "#= group.value #",
+                stack: {
+                    group: "xfl"
+                }
             }
+        ],
+        dataBound: function(e) {
+            if (this.options.series[0].name != "#= group.value #") {
+                for(var i in this.options.series){
+                    switch (this.options.series[i].name) {
+                        case "XFL-1":
+                            this.options.series[i].color = "#0b8140";
+                            break;
+                        case "XFL-2":
+                            this.options.series[i].color = "#70ad47";
+                            break;
+                        case "XFL-3":
+                            this.options.series[i].color = "#ffc000";
+                            break;
+                        case "XFL-4":
+                            this.options.series[i].color = "#ed7d31";
+                            break;
+                        case "XFL-5":
+                            this.options.series[i].color = "#ff2929";
+                            break;
+                    }
+                };
+            }
+            
+            var axis = e.sender.options.categoryAxis;
+            axis.categories = _.sortBy(this.options.categoryAxis.categories);
+            this.options.categoryAxis.categories.sort(function(a,b) {
+                if (isNaN(a) || isNaN(b)) {
+                    return a > b ? 1 : -1;
+                }
+                return a - b;
+            });
         },
         tooltip: {
             visible: true,
-            template: function(dt) {
-                return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+            template: function(e){
+                var tlpData = _.find(pm.distributionData(), function(a){
+                    return a.xfl == e.series.name && a.percent == e.category;
+                });
+                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") + "<br /> Deal Count: " + tlpData.count + "<br /> Deal Interest: " + kendo.toString(tlpData.interest, "n");
+                return data;
+            }
+        },
+        valueAxis: [{
+            name: selectedoption,
+            title: {
+                text: "Deal Amount",
+                font: "10px sans-serif",
+                visible: true,
+                color: "#4472C4",
+            }
+        }],
+        categoryAxis: {
+            title: {
+                text: "Interest Rates (%)",
+                font: "10px sans-serif",
+                visible: true,
+                color: "#4472C4",
             }
         }
     });
@@ -576,62 +551,7 @@ pm.init = function() {
     }
     if (param.filter != undefined) {
         ajaxPost("/dashboard/metricstrend", param, function(res) {
-            pm.reset();
-            
-            if (!$.isEmptyObject(res.Data.topwidget)) {
-                pm.dealCount(res.Data.topwidget.count);
-                pm.dealAmount(kendo.toString(res.Data.topwidget.amount, "n"));
-                pm.interestAmount(kendo.toString(res.Data.topwidget.interest, "n"));
-                pm.avgCount(kendo.toString(res.Data.topwidget.avgCount, "n"));
-                pm.avgAmount(kendo.toString(res.Data.topwidget.avgAmount, "n"));
-                pm.avgInterestAmount(kendo.toString(res.Data.topwidget.avgInterest, "n"));
-            }
-
-            // XFL
-            _.each(res.Data.xfl, function(v, k) {
-                switch (v.xfl) {
-                    case "XFL-1":
-                        pm.xfl1countwidth(kendo.toString(v.countwidth, "n0"));
-                        pm.xfl1count(v.count);
-                        pm.xfl1amountwidth(kendo.toString(v.amountwidth, "n0"));
-                        pm.xfl1amount(kendo.toString(v.amount, "n"));
-                        pm.xfl1interestwidth(kendo.toString(v.interestwidth, "n0"));
-                        pm.xfl1interest(kendo.toString(v.interest, "n"));
-                        break;
-                    case "XFL-2":
-                        pm.xfl2countwidth(kendo.toString(v.countwidth, "n0"));
-                        pm.xfl2count(kendo.toString(v.count, "n"));
-                        pm.xfl2amountwidth(kendo.toString(v.amountwidth, "n0"));
-                        pm.xfl2amount(v.amount);
-                        pm.xfl2interestwidth(kendo.toString(v.interestwidth, "n0"));
-                        pm.xfl2interest(kendo.toString(v.interest, "n"));
-                        break;
-                    case "XFL-3":
-                        pm.xfl3countwidth(kendo.toString(v.countwidth, "n0"));
-                        pm.xfl3count(v.count);
-                        pm.xfl3amountwidth(kendo.toString(v.amountwidth, "n0"));
-                        pm.xfl3amount(kendo.toString(v.amount, "n"));
-                        pm.xfl3interestwidth(kendo.toString(v.interestwidth, "n0"));
-                        pm.xfl3interest(kendo.toString(v.interest, "n"));
-                        break;
-                    case "XFL-4":
-                        pm.xfl4countwidth(kendo.toString(v.countwidth, "n0"));
-                        pm.xfl4count(v.count);
-                        pm.xfl4amountwidth(kendo.toString(v.amountwidth, "n0"));
-                        pm.xfl4amount(kendo.toString(v.amount, "n"));
-                        pm.xfl4interestwidth(kendo.toString(v.interestwidth, "n0"));
-                        pm.xfl4interest(kendo.toString(v.interest, "n"));
-                        break;
-                    case "XFL-5":
-                        pm.xfl5countwidth(kendo.toString(v.countwidth, "n0"));
-                        pm.xfl5count(v.count);
-                        pm.xfl5amountwidth(kendo.toString(v.amountwidth, "n0"));
-                        pm.xfl5amount(kendo.toString(v.amount, "n"));
-                        pm.xfl5interestwidth(kendo.toString(v.interestwidth, "n0"));
-                        pm.xfl5interest(kendo.toString(v.interest, "n"));
-                        break;
-                }
-            });
+            pm.dealCountAmountInterest(res.Data);
 
             // sort by idx
             res.Data.chart = _.without(res.Data.chart, _.find(res.Data.chart, function(e) {
@@ -643,6 +563,69 @@ pm.init = function() {
             pm.trendDataMonths(months);
             pm.dummyData(_.sortBy(res.Data.chart, "idx"))
             pm.loadContainer();
+
+            ///load distribution chart
+            pm.distributionData(res.Data.distribution);
+            pm.Distribution();
+        });
+    }
+}
+
+pm.dealCountAmountInterest = function(data) {
+    if ($.isEmptyObject(data.topwidget) && data.chart.length == 0 && data.xfl.length == 0) {
+        pm.reset();
+    }else {
+        pm.dealCount(data.topwidget.count);
+        pm.dealAmount(kendo.toString(data.topwidget.amount, "n"));
+        pm.interestAmount(kendo.toString(data.topwidget.interest, "n"));
+        pm.avgCount(kendo.toString(data.topwidget.avgCount, "n"));
+        pm.avgAmount(kendo.toString(data.topwidget.avgAmount, "n"));
+        pm.avgInterestAmount(kendo.toString(data.topwidget.avgInterest, "n"));
+
+        // XFL
+        _.each(data.xfl, function(v, k) {
+            switch (v.xfl) {
+                case "XFL-1":
+                    pm.xfl1countwidth(kendo.toString(v.countwidth, "n0"));
+                    pm.xfl1count(v.count);
+                    pm.xfl1amountwidth(kendo.toString(v.amountwidth, "n0"));
+                    pm.xfl1amount(kendo.toString(v.amount, "n"));
+                    pm.xfl1interestwidth(kendo.toString(v.interestwidth, "n0"));
+                    pm.xfl1interest(kendo.toString(v.interest, "n"));
+                    break;
+                case "XFL-2":
+                    pm.xfl2countwidth(kendo.toString(v.countwidth, "n0"));
+                    pm.xfl2count(kendo.toString(v.count, "n"));
+                    pm.xfl2amountwidth(kendo.toString(v.amountwidth, "n0"));
+                    pm.xfl2amount(v.amount);
+                    pm.xfl2interestwidth(kendo.toString(v.interestwidth, "n0"));
+                    pm.xfl2interest(kendo.toString(v.interest, "n"));
+                    break;
+                case "XFL-3":
+                    pm.xfl3countwidth(kendo.toString(v.countwidth, "n0"));
+                    pm.xfl3count(v.count);
+                    pm.xfl3amountwidth(kendo.toString(v.amountwidth, "n0"));
+                    pm.xfl3amount(kendo.toString(v.amount, "n"));
+                    pm.xfl3interestwidth(kendo.toString(v.interestwidth, "n0"));
+                    pm.xfl3interest(kendo.toString(v.interest, "n"));
+                    break;
+                case "XFL-4":
+                    pm.xfl4countwidth(kendo.toString(v.countwidth, "n0"));
+                    pm.xfl4count(v.count);
+                    pm.xfl4amountwidth(kendo.toString(v.amountwidth, "n0"));
+                    pm.xfl4amount(kendo.toString(v.amount, "n"));
+                    pm.xfl4interestwidth(kendo.toString(v.interestwidth, "n0"));
+                    pm.xfl4interest(kendo.toString(v.interest, "n"));
+                    break;
+                case "XFL-5":
+                    pm.xfl5countwidth(kendo.toString(v.countwidth, "n0"));
+                    pm.xfl5count(v.count);
+                    pm.xfl5amountwidth(kendo.toString(v.amountwidth, "n0"));
+                    pm.xfl5amount(kendo.toString(v.amount, "n"));
+                    pm.xfl5interestwidth(kendo.toString(v.interestwidth, "n0"));
+                    pm.xfl5interest(kendo.toString(v.interest, "n"));
+                    break;
+            }
         });
     }
 }
@@ -689,29 +672,22 @@ pm.reset = function() {
     pm.xfl5interestwidth(0);
 }
 
-// Hook to filter value changes
-dash.FilterValue.subscribe(function(val) {
-    pm.init();
-});
-
 $(function() {
-    pm.init();
     pm.loadChaterChart();
     pm.Target();
-    pm.Distribution();
     pm.accordion();
     // pm.loadAllHeadChart();
-    $('#dealcount td.tooltipdealcount').tooltipster({
-        functionInit: function(instance, helper) {
-            console.log(instance, helper)
-            // // parse the content
-            // var content = instance.content(),
-            //     people = JSON.parse(content),
-            //     // and use it to make a sentence
-            //     newContent = 'We have ' + people.length + ' people today. Say hello to ' + people.join(', ');
+    // $('#dealcount td.tooltipdealcount').tooltipster({
+    //     functionInit: function(instance, helper) {
+    //         console.log(instance, helper)
+    //         // // parse the content
+    //         // var content = instance.content(),
+    //         //     people = JSON.parse(content),
+    //         //     // and use it to make a sentence
+    //         //     newContent = 'We have ' + people.length + ' people today. Say hello to ' + people.join(', ');
 
-            // // save the edited content
-            // instance.content(newContent);
-        }
-    });
+    //         // // save the edited content
+    //         // instance.content(newContent);
+    //     }
+    // });
 });

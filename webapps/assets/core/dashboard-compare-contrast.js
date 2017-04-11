@@ -182,7 +182,7 @@ comp.RedrawChart_ = function () {
         btn.classList.add("btn")
         btn.classList.add("btn-xs")
         btn.classList.add("btn-flat")
-        btn.classList.add("btn-success")
+        btn.classList.add("btn-primary")
 
         var icon = document.createElement("i");
         icon.classList.add("fa");

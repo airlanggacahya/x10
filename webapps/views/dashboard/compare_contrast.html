@@ -58,6 +58,23 @@
 
   #compareModal #compMainWindow .chart-wrapper {
     padding: 4px;
+    width: 48.2%;
+    margin-left: 10.9px;
+    margin-right: 10.9px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+
+  .ontitle{
+    font-size:12px;
+  }
+  .onheading{
+    text-decoration: none;
+    color: #7c6689;
+  }
+
+  .onbuton{
+    float: right;
   }
 
   .ontitle{
@@ -383,7 +400,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" data-bind="click: comp.closeCompare()" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

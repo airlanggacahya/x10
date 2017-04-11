@@ -3,6 +3,7 @@ var compFilter = CreateDashFilter()
 var comp = {}
 
 comp.viewFilter = ko.observable(false)
+comp.titleChart = ko.observable("")
 
 comp.dataDummy = ko.observableArray([
     {text: "coba1", value: "coba1"},
@@ -112,7 +113,6 @@ comp.openSelected = ko.computed(function () {
 })
 
 comp.IsSelected = function(section, needle) {
-    console.log("---------------->>>>>",  _.indexOf(comp[section + "SelectedItems"](), needle) !== -1)
     return _.indexOf(comp[section + "SelectedItems"](), needle) !== -1
 }
 
@@ -121,6 +121,7 @@ comp.ToggleSelected = function(section, needle) {
     var idx = _.indexOf(haystack, needle);
     if (idx === -1) {
         comp[section + "SelectedItems"].push(needle);
+        comp.titleChart(needle)
         comp.RedrawChart();
         return;
     }
@@ -137,11 +138,26 @@ comp.Open = function (chartconfig) {
     comp.BaseFilter = dash.FilterValue();
 
     compFilter.LoadFilter(dash.FilterValue());
-    $("#compareModal").modal('show');
+    // $("#compareModal").modal('show');
+    $('#compareModal').modal({show: true, backdrop: 'static', keyboard: false})  
     if (comp.openCompare() === "")
         comp.openCompare(0);
     
     comp.RedrawChart();
+}
+
+comp.closeCompare = function(){
+    comp.RegionSelectedItems([]);
+    comp.BranchSelectedItems([]);
+    comp.ProductSelectedItems([]);
+    comp.SchemeSelectedItems([]);
+    comp.ClientTypeSelectedItems([]);
+    comp.ClientTurnoverSelectedItems([]);
+    comp.IRSelectedItems([]);
+    comp.CASelectedItems([]);
+    comp.RMSelectedItems([]);
+    comp.viewFilter(false);
+    
 }
 
 comp.RedrawChartDelay = null;
@@ -175,7 +191,12 @@ comp.RedrawChart_ = function () {
         }
 
         var ttl = document.createElement("span");
-        var n = document.createTextNode("History TAT")
+        if(val == ""){
+            var n = document.createTextNode("Base Chart");
+        }else{
+            var n = document.createTextNode(val)
+        }
+        
         ttl.appendChild(n)  
 
         var btn = document.createElement("button");

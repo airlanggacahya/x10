@@ -46,6 +46,8 @@ pm.distributionData = ko.observableArray([]);
 
 // Hook to filter value changes
 dash.FilterValue.subscribe(function(val) {
+    pm.ValueDataPeriod("period");
+    pm.ValueDataMenuDistribution("amount");
     pm.init();
 });
 

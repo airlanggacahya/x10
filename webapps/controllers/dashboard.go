@@ -2304,7 +2304,11 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	ids, err := FiltersAD2DealNo(
 		nil,
 		CheckArray(payload.Get("filter")),
-		nil,
+		&OptionalFilter{
+			Stage2: map[string]FilterMap{
+				"DealStatus": FilterMap{"lastInfo.status", FilterEqual},
+			},
+		},
 	)
 	if err != nil {
 		return res.SetError(err)

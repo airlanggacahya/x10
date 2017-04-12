@@ -1005,7 +1005,7 @@ turn.loadData = function(){
 	});
 
 	turn.dataMoving([]);
-	ajaxPost("/dashboard/movingtat", {
+	turn.CreateChartMovingData({
 		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
 		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
 		type: dash.FilterValue.GetVal("TimePeriod"),
@@ -1013,8 +1013,10 @@ turn.loadData = function(){
 	}, function(rest){
 		if(rest.Data != null){
 			turn.dataMoving(rest.Data);
-			// turn.setUpData(rest.Data)
-			turn.CreateChartMoving(rest.Data);
+			
+			var opt = turn.CreateChartMovingOptions_(rest.Data);
+			$("#movingtat").html("");
+			$("#movingtat").kendoChart(opt);
 		}
 	})
 
@@ -1030,6 +1032,110 @@ turn.loadData = function(){
 			turn.loadChaterChart();
 		}
 	})
+}
+
+turn.CreateChartMovingOptions_ = function (data) {
+	var status = _.groupBy(data, "status")
+	var cat = [];
+	$.each(status, function(key, item){
+		cat.push(key)
+	});
+	$.each(data, function(i, item){
+		if(item.dayrange == "15 + Days"){
+			data[i].color = "#ff2929"
+		}else if(item.dayrange == "11 - 15 Days"){
+			data[i].color = "#ffc000"
+		}else if(item.dayrange == "6 - 10 Days"){
+			data[i].color = "#92d050"
+		}else if(item.dayrange == "0 - 5 Days"){
+			data[i].color = "#2e75b6"
+		}
+	})
+	var set = turn.normalisasiData(data)
+	set = _.sortBy(set,["status"])
+	// console.log(JSON.stringify(ondata))
+	var movingdata = new kendo.data.DataSource({
+		data: set,
+		group:{
+			field: "dayrange"
+		},
+
+	});
+	
+	return {
+		title:{
+			text: "Moving TAT",
+			font:  "12px Arial,Helvetica,Sans-Serif",
+            align: "left",
+            color: "#58666e",
+			padding: {
+				top: 0
+			}
+		},
+		plotArea: {
+			margin: {
+				left: 4,
+				right: 4
+			}
+		},
+		dataSource: movingdata,
+		series:[{
+			type: "column",
+			stack: false,
+			field: "count",
+			name : "#= group.value#",
+			overlay: {
+                gradient: "none"
+            },
+		}],
+		legend: {
+			// position: "bottom"
+			visible: false,
+		},
+		chartArea:{
+            background: "white",
+            height: 250,
+        },
+		valueAxis: {
+            labels: {
+                // format: "${0}",
+        		font: "10px sans-serif",
+                skip: 2,
+                step: 2
+            },
+            title : {
+            	text : "No. of Deals",
+        		font: "10px sans-serif",
+            	visible : true,
+            	color : "#4472C4",
+				margin: {
+					right: 1,
+				}
+            }
+        },
+        categoryAxis: {
+        	// categories: cat,
+            field: "status",
+           	title : {
+            	text : "Deal Movement",
+        		font: "10px sans-serif",
+            	visible : true,
+            	color : "#4472C4"
+            },
+            labels : {
+        		font: "10px sans-serif",
+            }
+        },
+        tooltip : {
+        	visible: true,
+        	template : function(dt){
+        		// console.log("------------------>>>",dt)
+        		return "<div class='left'>Deal Stage : "+dt.category+"<br>"+
+        				"Processing Days : "+dt.dataItem.dayrange+"<br>"+
+        				" Deal Count: "+dt.dataItem.count+"</div>";
+        	}
+        }
+	}
 }
 
 turn.CreateChartHistoryOptions_ = function (data) {
@@ -1153,109 +1259,16 @@ turn.CreateChartHistory = function(param, callback) {
 	})
 }
 
-turn.CreateChartMoving = function(ondata){
-	var status = _.groupBy(ondata, "status")
-	var cat = [];
-	$.each(status, function(key, item){
-		cat.push(key)
-	});
-	$.each(ondata, function(i, item){
-		if(item.dayrange == "15 + Days"){
-			ondata[i].color = "#ff2929"
-		}else if(item.dayrange == "11 - 15 Days"){
-			ondata[i].color = "#ffc000"
-		}else if(item.dayrange == "6 - 10 Days"){
-			ondata[i].color = "#92d050"
-		}else if(item.dayrange == "0 - 5 Days"){
-			ondata[i].color = "#2e75b6"
-		}
+turn.CreateChartMovingData = function(param, callback) {
+	ajaxPost("/dashboard/movingtat", param, function (data) {
+		callback(data)
 	})
-	var set = turn.normalisasiData(ondata)
-	set = _.sortBy(set,["status"])
-	// console.log(JSON.stringify(ondata))
-	var movingdata = new kendo.data.DataSource({
-		data: set,
-		group:{
-			field: "dayrange"
-		},
+}
 
-	});
-	$("#movingtat").html("");
-	$("#movingtat").kendoChart({
-		title:{
-			text: "Moving TAT",
-			font:  "12px Arial,Helvetica,Sans-Serif",
-            align: "left",
-            color: "#58666e",
-			padding: {
-				top: 0
-			}
-		},
-		plotArea: {
-			margin: {
-				left: 4,
-				right: 4
-			}
-		},
-		dataSource: movingdata,
-		series:[{
-			type: "column",
-			stack: false,
-			field: "count",
-			name : "#= group.value#",
-			overlay: {
-                gradient: "none"
-            },
-		}],
-		legend: {
-			// position: "bottom"
-			visible: false,
-		},
-		chartArea:{
-            background: "white",
-            height: 250,
-        },
-		valueAxis: {
-            labels: {
-                // format: "${0}",
-        		font: "10px sans-serif",
-                skip: 2,
-                step: 2
-            },
-            title : {
-            	text : "No. of Deals",
-        		font: "10px sans-serif",
-            	visible : true,
-            	color : "#4472C4",
-				margin: {
-					right: 1,
-				}
-            }
-        },
-        categoryAxis: {
-        	// categories: cat,
-            field: "status",
-           	title : {
-            	text : "Deal Movement",
-        		font: "10px sans-serif",
-            	visible : true,
-            	color : "#4472C4"
-            },
-            labels : {
-        		font: "10px sans-serif",
-            }
-        },
-        tooltip : {
-        	visible: true,
-        	template : function(dt){
-        		// console.log("------------------>>>",dt)
-        		return "<div class='left'>Deal Stage : "+dt.category+"<br>"+
-        				"Processing Days : "+dt.dataItem.dayrange+"<br>"+
-        				" Deal Count: "+dt.dataItem.count+"</div>";
-        	}
-        }
-	});
-
+turn.CreateChartMoving = function(param, callback) {
+	turn.CreateChartMovingData(param, function(data) {
+		callback(turn.CreateChartMovingOptions_(data.Data))
+	})
 }
 
 turn.normalisasiData = function(data){

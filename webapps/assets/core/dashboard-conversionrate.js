@@ -1,5 +1,11 @@
 var  conv = {}
 
+conv.dataPeriod = ko.observableArray([
+	{text: 'coba1', value: 'coba1'},
+	{text: 'coba2', value: 'coba2'},
+	{text: 'coba3', value: 'coba3'},
+]);
+conv.dataValuePeriod = ko.observable('');
 conv.dummyData = ko.observableArray([
 	{"avgdays":2.2,"date":"2016-10-01T00:00:00Z","dateStr":"Oct-2016","dealcount":8,"median":4},
 	{"avgdays":3.3,"date":"2016-11-01T00:00:00Z","dateStr":"Nov-2016","dealcount":5,"median":3},
@@ -284,12 +290,12 @@ conv.loadContainer = function(){
 	$("#chartContainer").html('')
 	$("#chartContainer").kendoChart({
         // theme: "Material",
-            // title: { 
-            //         // text: "Average Conversion TAT",
-            //         font:  "bold 12px Arial,Helvetica,Sans-Serif",
-            //         align: "left",
-            //         color: "#58666e",
-            //     },
+            title: { 
+                    text: "Processing Rate",
+                    font:  "bold 12px Arial,Helvetica,Sans-Serif",
+                    align: "left",
+                    color: "#58666e",
+                },
 				// title:{
 				// 	text: "Average Conversion TAT",
 				// 	font:  "12px Arial,Helvetica,Sans-Serif",
@@ -411,23 +417,23 @@ conv.loadContainer = function(){
 
 conv.octData = ko.observableArray([
 	{
-    category: "Impressions ",
+    	category: "Accepted deals ",
 	    value: 434823,
 	    color: "#0e5a7e"
 	},{
-	    category: "Clicks",
+	    category: "Analized Deals",
 	    value: 356854,
 	    color: "#166f99"
 	},{
-	    category: "Unique Visitors",
+	    category: "Actioned Deals",
 	    value: 280022,
 	    color: "#2185b4"
 	},{
-	    category: "Downloads",
+	    category: "Underwritten Deals",
 	    value: 190374,
 	    color: "#319fd2"
 	},{
-	    category: "Purchases",
+	    category: "Approved Deals",
 	    value: 120392,
 	    color: "#3eaee2"
 	}
@@ -436,8 +442,11 @@ conv.octData = ko.observableArray([
 conv.loadFunnelChart = function(){
 	$('#funnelChart').kendoChart({
         title: {
-            text: "dicoba",
-            position: "bottom"
+            text: "Processing Funnel",
+            position: "top",
+            align: "left",
+            color: "#58666e",
+            font:  "bold 12px Arial,Helvetica,Sans-Serif",
         },
         legend: {
             visible: false
@@ -448,6 +457,18 @@ conv.loadFunnelChart = function(){
         },
         seriesDefaults: {
             labels: {
+            	template: function(d){
+            		console.log("-------------------------->>>>", d)
+            		var str = ''
+            		if(d.category == 'Analized Deals'){
+            			str = 'Analized Deals \n (Underwritten = n4, Sent Back for Analysis = n6) \n'+ d.value
+            		}else if(d.category == 'Underwritten Deals'){
+            			str = d.category +" \n (Approved = n7, Rejected = n8) \n"+ d.value
+            		}else{
+            			str = d.category +" \n"+ d.value
+            		}
+            		return str
+            	},
                 visible: true,
                 background: "transparent",
                 color:"white",

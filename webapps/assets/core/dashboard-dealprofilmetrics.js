@@ -6,7 +6,8 @@ pm.interestAmount = ko.observable(0);
 pm.avgCount = ko.observable(0);
 pm.avgAmount = ko.observable(0);
 pm.avgInterestAmount = ko.observable(0);
-pm.dummyData = ko.observableArray([]);
+pm.trendPeriod = ko.observableArray([]);
+pm.trendRegion = ko.observableArray([]);
 
 pm.xfl1count = ko.observable(0);
 pm.xfl2count = ko.observable(0);
@@ -55,19 +56,20 @@ pm.dataPeriod = ko.observableArray([
     { text: 'Period', value: 'period' },
     { text: 'Region', value: 'region' },
 ]);
-pm.ValueDataPeriod = ko.observable('');
+pm.ValueDataPeriod = ko.observable('period');
+pm.ValueDataPeriod.subscribe(function(e){
+    pm.loadContainer(e);
+});
 
 pm.dataMenu = ko.observableArray([
     { text: 'Deal Amount', value: 'amount' },
     { text: 'Deal Count', value: 'count' },
     { text: 'Interest Amount', value: 'interest' },
 ]);
-
-pm.ValueDataMenuTrend = ko.observable('');
 pm.ValueDataMenuDistribution = ko.observable('amount');
 pm.ValueDataMenuDistribution.subscribe(function(e){
     pm.Distribution(e);
-})
+});
 
 pm.Target = function() {
     $("#tatgoals").html('')
@@ -103,7 +105,17 @@ pm.Target = function() {
         }
     });
 }
-pm.loadContainer = function() {
+
+pm.loadContainer = function(selected) {
+    var selectedData;
+    var catSelected;
+    if (selected == undefined || selected == "period"){
+        selectedData = pm.trendPeriod();
+        catSelected = { categories: pm.trendDataMonths(), axisCrossingValues: [0, 7]}
+    }else{
+        selectedData = pm.trendRegion();
+        catSelected = { field: "region", axisCrossingValues: [0, 7] }
+    }
     $("#chartContainer").html('')
     $("#chartContainer").kendoChart({
         title: {  
@@ -120,7 +132,7 @@ pm.loadContainer = function() {
                 right: 4,
             }
         },
-        dataSource: pm.dummyData(),
+        dataSource: selectedData,
         series: [{
             type: "column",
             stack: false,
@@ -202,10 +214,7 @@ pm.loadContainer = function() {
                 skip: 2
             },
         }],
-        categoryAxis: {
-            categories: pm.trendDataMonths(),
-            axisCrossingValues: [0, 7]
-        },
+        categoryAxis: catSelected,
         tooltip: {
             visible: true,
             template: function(dt) {
@@ -515,15 +524,15 @@ pm.Distribution = function(selected) {
 }
 
 pm.dealDistributionDetails = function(value, category, selected) {
-    var emptyData = [];
     var data = _.find(pm.distributionData(), function(e){
         return e[selected] == value && e.percent == category;
     });
-    
+
+    var isData = (data != undefined)? data.details : [];
     $("#interestDetailDB").html();
     $("#interestDetailDB").kendoGrid({
         dataSource: {
-            data: (data.details.length > 0)? data.details : emptyData
+            data: isData
         },
         sortable: true,
         columns: [{
@@ -541,7 +550,8 @@ pm.dealDistributionDetails = function(value, category, selected) {
         }, {
             field: "period",
             title: "Date",
-            template: "#= moment(period).format('YYYY-MM-DD h:m:s') #"
+            template: "#= moment(period).format('YYYY-MM-DD h:m:s') #",
+            width: 150
         }]
     });
 }
@@ -599,7 +609,7 @@ pm.generateXAxis = function(type, start, end, length) {
 
 pm.init = function() {
     pm.trendDataMonths([]);
-    pm.dummyData([]);
+    pm.trendPeriod([]);
     var param = {
         type: dash.FilterValue.GetVal("TimePeriod"),
         start: cleanMoment(dash.FilterValue.GetVal("TimePeriodCalendar")),
@@ -611,19 +621,21 @@ pm.init = function() {
             pm.dealCountAmountInterest(res.Data);
 
             // sort by idx
-            res.Data.chart = _.without(res.Data.chart, _.find(res.Data.chart, function(e) {
+            res.Data.trendPeriod = _.without(res.Data.trendPeriod, _.find(res.Data.trendPeriod, function(e) {
                 return e.idx == 0;
             }));
             //generate label
             var months = pm.generateXAxis(param.type, param.start, param.end, 7);
             months.shift();
             pm.trendDataMonths(months);
-            pm.dummyData(_.sortBy(res.Data.chart, "idx"))
+            pm.trendPeriod(_.sortBy(res.Data.trendPeriod, "idx"))
+            pm.trendRegion(res.Data.trendRegion);
             pm.loadContainer();
 
             ///load distribution chart
             pm.distributionData(res.Data.distribution);
             pm.Distribution();
+            pm.dealDistributionDetails();
         });
     }
 }

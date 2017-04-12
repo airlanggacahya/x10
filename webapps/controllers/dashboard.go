@@ -2354,7 +2354,13 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 
 	///grouping manual coy!
 	///metric trend
-	resultData, resultDataWidget := c.metricTrendGrouping(results, tp)
+	resultData, resultDataWidget := c.metricTrendPeriodGrouping(results, tp)
+
+	///grouping trend by region
+	err, regionGrouping := c.metricTrendRegionGrouping(results, tp, k)
+	if !tk.IsNilOrEmpty(err) {
+		return res.SetError(err)
+	}
 
 	///metric trend xfl
 	err, pipeResult = c.trendxfl(payload, tp, pipe)
@@ -2374,16 +2380,18 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	if err != nil {
 		return res.SetError(err)
 	}
-
-	///grouping neh cuy!
 	///xfl
 	xflResult := c.xflTrendGrouping(resultsXfl, tp)
 
 	///grouping deal distribution
 	resultDistribution := c.dealDistribution(resultsXfl)
 
-	// tk.Println(tk.JsonString(resultData))
-	o := tk.M{}.Set("chart", resultData).Set("topwidget", resultDataWidget).Set("xfl", xflResult).Set("distribution", resultDistribution)
+	o := tk.M{}
+	o.Set("trendPeriod", resultData)
+	o.Set("topwidget", resultDataWidget)
+	o.Set("xfl", xflResult)
+	o.Set("distribution", resultDistribution)
+	o.Set("trendRegion", regionGrouping)
 	res.SetData(o)
 
 	return res
@@ -2490,7 +2498,8 @@ func (c *DashboardController) trendChart(payload tk.M, tp TimePeriod, pipe []tk.
 		"as":           "dc",
 	}})
 	pipe = append(pipe, tk.M{"$project": tk.M{
-		"dealno": "$customerprofile.applicantdetail.DealNo",
+		"dealno":     "$customerprofile.applicantdetail.DealNo",
+		"citynameid": "$accountdetails.accountsetupdetails.citynameid",
 		"dc": tk.M{
 			"$slice": []interface{}{"$dc", -1},
 		},
@@ -2504,24 +2513,23 @@ func (c *DashboardController) trendChart(payload tk.M, tp TimePeriod, pipe []tk.
 		"preserveNullAndEmptyArrays": true,
 	}})
 	pipe = append(pipe, tk.M{"$project": tk.M{
-		"dealno": "$dealno",
-		//"dc":     "$dc",
-		"info":   "$info",
-		"amount": tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
-		"ROI":    tk.M{"$ifNull": []interface{}{"$dc.ROI", 0}},
+		"dealno":     "$dealno",
+		"citynameid": "$citynameid",
+		"info":       "$info",
+		"amount":     tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
+		"ROI":        tk.M{"$ifNull": []interface{}{"$dc.ROI", 0}},
 	}})
 	// tk.Println(tk.JsonString(pipe))
 
 	return nil, pipe
 }
 
-func (c *DashboardController) metricTrendGrouping(results tk.Ms, tp TimePeriod) (tk.Ms, tk.M) {
+func (c *DashboardController) metricTrendPeriodGrouping(results tk.Ms, tp TimePeriod) (tk.Ms, tk.M) {
 	trendGroupByMonth := map[int]tk.Ms{}
 	data := tk.Ms{}
 	for _, v := range results {
 		timePeriod := v.Get("info").(tk.M).Get("updateTime").(time.Time)
 		hasil := tp.GetPeriodID(timePeriod)
-		// yearMonth := tk.ToString(timePeriod.Year()) + "-" + timePeriod.Month().String()
 		status := v.Get("info").(tk.M).GetString("status")
 		interest := tk.Div(v.GetFloat64("ROI"), 100) * v.GetFloat64("amount")
 
@@ -2539,7 +2547,7 @@ func (c *DashboardController) metricTrendGrouping(results tk.Ms, tp TimePeriod) 
 			trendGroupByMonth[hasil] = append(trendGroupByMonth[hasil], o)
 		}
 	}
-	// tk.Println(tk.JsonString(trendGroupByMonth))
+	// tk.Println(tk.JsonString(results))
 	resultData := tk.Ms{}
 	resultDataWidget := tk.M{}
 	countMonthBefore := 0.0
@@ -2577,6 +2585,52 @@ func (c *DashboardController) metricTrendGrouping(results tk.Ms, tp TimePeriod) 
 		}
 	}
 	return resultData, resultDataWidget
+}
+
+func (c *DashboardController) metricTrendRegionGrouping(results tk.Ms, tp TimePeriod, k *knot.WebContext) (error, tk.Ms) {
+	grouping := map[string]tk.Ms{}
+	maps := tk.Ms{}
+	for _, v := range results {
+		timePeriod := v.Get("info").(tk.M).Get("updateTime").(time.Time)
+		hasil := tp.GetPeriodID(timePeriod)
+		status := v.Get("info").(tk.M).GetString("status")
+		interest := tk.Div(v.GetFloat64("ROI"), 100) * v.GetFloat64("amount")
+		key, err := GetRegionName(v.GetString("citynameid"), k)
+		if err != nil {
+			return err, nil
+		}
+
+		if hasil == 0 {
+			if _, exist := grouping[key]; !exist {
+				if len(maps) > 0 {
+					maps = tk.Ms{}
+				}
+				o := tk.M{}
+				o.Set("idx", hasil).Set("status", status).Set("amount", tk.Div(v.GetFloat64("amount"), 10000000)).Set("interest", tk.Div(interest, 10000000)).Set("period", timePeriod).Set("region", key)
+				maps = append(maps, o)
+				grouping[key] = maps
+			} else {
+				o := tk.M{}
+				o.Set("idx", hasil).Set("status", status).Set("amount", tk.Div(v.GetFloat64("amount"), 10000000)).Set("interest", tk.Div(interest, 10000000)).Set("period", timePeriod).Set("region", key)
+				grouping[key] = append(grouping[key], o)
+			}
+		}
+	}
+
+	resultsData := tk.Ms{}
+	for key, v := range grouping {
+		var amountsum, interestsum float64
+		o := tk.M{}
+		for _, vals := range v {
+			amountsum += vals.GetFloat64("amount")
+			interestsum += vals.GetFloat64("interest")
+			o.Set("idx", vals.GetInt("idx")).Set("status", vals.GetString("status")).Set("amount", amountsum).Set("interest", interestsum).Set("period", vals.Get("period")).Set("region", vals.GetString("region"))
+		}
+		o.Set("count", len(grouping[key]))
+		resultsData = append(resultsData, o)
+	}
+
+	return nil, resultsData
 }
 
 func (c *DashboardController) dealDistribution(data []tk.M) tk.Ms {

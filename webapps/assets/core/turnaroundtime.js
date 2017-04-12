@@ -36,7 +36,6 @@ turn.avgAcceptance = ko.observable(0);
 turn.avgAcceptancePercent = ko.observable(0);
 turn.dealAcceptance = ko.observable(0);
 turn.averageAcceptanceData = ko.observableArray([]);
-turn.averageAcceptanceCurrent = ko.observable({});
 
 turn.trendDataLength = ko.observable(6)
 

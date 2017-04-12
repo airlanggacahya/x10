@@ -56,6 +56,7 @@
     border: 1px solid #cdcdcd;
     background-color: #fff;
     margin-bottom: 10px;
+    height: 270px;
   }
 
   #compareModal #compMainWindow .chart-wrapper .panel-heading {
@@ -90,6 +91,32 @@
 
   .onbuton{
     float: right;
+  }
+
+  /* Side Filter */
+  #compareModal .calendar-wrapper {
+    margin-top: 5px;
+  }
+
+  #compareModal .calendar-label {
+    position: absolute;
+    z-index: 1;
+    color: rgb(70, 70, 70);
+    text-align: center;
+    width: 100%;
+    padding-top: 7px;
+    padding-right: 20px;
+  }
+
+  #compareModal .k-widget.k-datepicker .k-picker-wrap .k-input {
+    visibility: hidden;
+  }
+
+  #compareModal .k-widget.k-datepicker .k-picker-wrap .k-select {
+    border: none;
+    width: 20px;
+    margin-left: 10px;
+    z-index: 2;
   }
 </style>
 
@@ -154,28 +181,28 @@
                           <div>
                             <input name="page" id="timeperiodFilter" style="width: 100%;" data-bind="
                               kendoDropDownList: {
-                                dataSource: compFilter.TimePeriodDS(),
-                                value: compFilter.TimePeriodVal(),
+                                dataSource: compFilter.TimePeriodDS,
+                                value: compFilter.TimePeriodVal,
                                 dataValueField: 'value',
                                 dataTextField: 'text',
                                 optionLabel: 'Select One',
                               }" >
-                            <div data-bind="visible: compFilter.TimePeriodVal() != '' && compFilter.TimePeriodVal() != '10day'">
+                            <div class="calendar-wrapper" data-bind="visible: compFilter.TimePeriodVal() != '' && compFilter.TimePeriodVal() != '10day'">
                               <span class="calendar-label" data-bind="text: compFilter.TimePeriodCalendarValFormat"></span>
                               <input data-bind="
                                 kendoDatePicker: {
-                                  value: compFilter.TimePeriodCalendarVal(),
-                                  depth: compFilter.TimePeriodCalendarScale(),
-                                  start: compFilter.TimePeriodCalendarScale()
-                                }" id="timeperiodCalendar" style="width: 100%">
+                                  value: compFilter.TimePeriodCalendarVal,
+                                  depth: compFilter.TimePeriodCalendarScale,
+                                  start: compFilter.TimePeriodCalendarScale
+                                }" id="compare-timeperiodCalendar" style="width: 100%">
                             </div>
-                            <div data-bind="visible: compFilter.TimePeriodVal() == 'fromtill'">
+                            <div class="calendar-wrapper" data-bind="visible: compFilter.TimePeriodVal() == 'fromtill'">
                               <span class="calendar-label" data-bind="text: compFilter.TimePeriodCalendar2ValFormat"></span>
                               <input data-bind="
                                 kendoDatePicker: {
-                                  value: compFilter.TimePeriodCalendar2Val(),
-                                  min: compFilter.TimePeriodCalendarVal(),
-                                }" id="timeperiodCalendar2" style="width: 100%">
+                                  value: compFilter.TimePeriodCalendar2Val,
+                                  min: compFilter.TimePeriodCalendarVal,
+                                }" id="compare-timeperiodCalendar2" style="width: 100%">
                             </div>
                           </div>
                         </div>
@@ -393,7 +420,7 @@
                 </div>
               </div>
               <br/>
-              <button class="btn btn-sm btn-flat btn-primary" data-bind="click: comp.setFilterFalse()" style="width: 100%;">Apply Filter</button>
+              <button class="btn btn-sm btn-flat btn-primary" data-bind="click: comp.setFilterFalse()" style="width: 100%;">Back to Compare</button>
               <br/>
               <hr class="line">
             </div>
@@ -403,7 +430,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" data-bind="click: comp.closeCompare()" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

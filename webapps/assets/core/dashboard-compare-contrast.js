@@ -123,40 +123,48 @@ comp.ToggleSelected = function(section, needle) {
 
 comp.ChartLoader = function (param, callback) {callback({})}
 
+comp.disableDraw = false;
 comp.Open = function (chartconfig) {
-    comp.ChartLoader = chartconfig;
-    comp.BaseFilter = dash.FilterValue();
+    // we disable drawing until modal show up
+    comp.disableDraw = true;
 
+    // set callback function
+    comp.ChartLoader = chartconfig;
+
+    // reset state
+    comp.resetModal();
     compFilter.LoadFilter(dash.FilterValue());
-    // $("#compareModal").modal('show');
-    $('#compareModal').modal({show: true, backdrop: 'static', keyboard: false})  
-    if (comp.openCompare() === "")
-        comp.openCompare(0);
-    
-    comp.RedrawChart();
+    // clear chart
+    $("#compMainWindow").html("");
+
+    $('#compareModal').modal({show: true, backdrop: 'static', keyboard: false})
+    // default open first filter
+    comp.openCompare(0);
 }
 
-comp.closeCompare = function(){
+comp.resetModal = function(){
     _.each(comp.FilterList(), function (val) {
         comp[val.varName + "SelectedItems"]([])
     })
 
     comp.viewFilter(false);
-    
 }
 
 comp.RedrawChartDelay = null;
 comp.RedrawChart = function () {
+    if (comp.disableDraw)
+        return;
+
     if (comp.RedrawChartDelay) {
         clearTimeout(comp.RedrawChartDelay)
     }
     comp.RedrawChartDelay = setTimeout(function () {
         comp.RedrawChartDelay = null
         comp.RedrawChart_()
-    }, 100);
+    }, 50);
 }
 
-comp.RedrawChart_ = function () {
+comp.RedrawChart_ = function (firstload) {
     var parentEl = $("#compMainWindow");
     // parentEl.hide();
     parentEl.html("");
@@ -165,8 +173,12 @@ comp.RedrawChart_ = function () {
         return;
 
     _.each(comp.openSelected(), function (val, index) {
-        var filter = _.cloneDeep(comp.BaseFilter);
-        comp.setFilterVal(filter, comp.nameSelected(), val);
+        var filter = _.cloneDeep(compFilter.FilterValue());
+
+        // do not reset on index zero
+        if (index !== 0) {
+            comp.setFilterVal(filter, comp.nameSelected(), val);
+        }
 
         var param = {
             start: discardTimezone(comp.getFilterVal(filter, "TimePeriodCalendar")),
@@ -174,22 +186,25 @@ comp.RedrawChart_ = function () {
             type: comp.getFilterVal(filter, "TimePeriod"),
             filter: filter
         } 
-
-        var icon = document.createElement("i");
-        icon.classList.add("fa");
-        icon.classList.add("fa-filter");
-
-        var btn = document.createElement("button");
-        btn.classList.add("onbuton")
-        btn.classList.add("btn")
-        btn.classList.add("btn-xs")
-        btn.classList.add("btn-flat")
-        btn.classList.add("btn-primary")
-        btn.appendChild(icon)
-
         var heading = document.createElement("div");
         heading.classList.add("panel-heading");
-        heading.appendChild(btn);
+
+        if (index === 0) {
+            var icon = document.createElement("i");
+            icon.classList.add("fa");
+            icon.classList.add("fa-filter");
+
+            var btn = document.createElement("button");
+            btn.classList.add("btn")
+            btn.classList.add("btn-xs")
+            btn.classList.add("btn-flat")
+            btn.classList.add("btn-primary")
+            btn.appendChild(icon)
+            $(btn).on("click", function(){
+                comp.viewFilter(true);
+            })
+            heading.appendChild(btn);
+        }
 
         var body = document.createElement("div")
         body.classList.add("panel-body");
@@ -216,23 +231,34 @@ comp.RedrawChart_ = function () {
             } else {
                 opt.title.text = opt.title.text + " [" + val + "]";
             }
-            var chart = $(el).kendoChart(opt);
-            $(chart[0]).data('kendoChart').redraw();
+            $(el).kendoChart(opt);
         });
 
         parentEl.append(row);
     })
 
     // parentEl.show();
-
-    $(".onbuton").click(function(){
-        comp.viewFilter(true);
-    });
 }
 
 comp.setFilterFalse = function(){
     comp.viewFilter(false)
 }
 
+compFilter.FilterValue.subscribe(function (val) {
+    comp.RedrawChart();
+})
 
+compFilter.TimePeriodCalendarScale.subscribe(function (val) {
+	$("#compare-timeperiodCalendar").data("kendoDatePicker").setOptions({
+		depth: val,
+		start: val
+	})
+})
+
+$(function () {
+    $('#compareModal').on('shown.bs.modal', function () {
+        comp.disableDraw = false;
+        comp.RedrawChart();
+    });
+})
 

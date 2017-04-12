@@ -3,3 +3,369 @@
 <script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 <script>document.write('<script src="/static/core/dashboard-conversionrate.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 {{template "leftfilter.html"}}
+
+<style type="text/css">
+	.top{
+		margin-top: 50px;
+	}
+	.left{
+		text-align: left;
+	}
+	.ket{
+		margin-bottom: -5px;
+    	margin-left: -14px;
+	}
+	#square1, #square2, #square3, #square4{
+		width: 7px;
+		height: 7px;
+		display: inline-block;
+	}
+	#square1{
+		background-color: #ff2929;
+	}
+	#square2{
+		background-color: #ffc000;
+	}
+	#square3{
+		background-color: #92d050;
+	}
+	#square4{
+		background-color: #2e75b6;
+	}
+	#butt{
+		/*padding-left: 24%;*/
+		padding-top: 20px;
+	}
+	.dl{	
+		display:block;
+		background-color: white;
+		margin-top: 0px !important;
+	}
+	.wl{
+		padding-left: 12px !important;
+    	padding-right: 12px !important;
+	}
+	#ti{
+		font-family: Arial,Helvetica,sans-serif;
+	    font-size: 10px;
+	    font-weight: bold !important;
+	    margin-top: 12px;
+    	margin-left: 17px;
+	}
+	.avg{
+		text-align: center;
+	    font-size: 42px;
+	    font-weight: bolder !important;
+	}
+
+	.tat-title{
+		text-align: left;
+	}
+
+	#conv, #dec, #proc, #acc{
+		text-align: center;
+    	margin-top: -11px;
+	}
+	.material-ripple>.panel {
+		position: relative;
+		display: block;
+	}
+	.con{
+		margin-top: 20px !important;
+		background-color: white;
+		margin-bottom: -10px !important;
+	}
+	#tit{
+		font-size: 12px;
+		font-family: Arial,Helvetica,Sans-Serif;
+		font-weight: bold !important;
+	}
+	.aol{
+		background-color: white;
+		margin-top: -1% !important;
+	}
+	.aul{
+		margin-top:-0.5% !important;
+		background-color: #fff;
+	}
+	#tabl{
+		width: 95%;
+    	margin-left: 4%;
+	}
+	.turnaroundtime h4 {
+		font-size: 16px;
+		text-align: left;
+		font-weight: bold;
+		font-family: Cambria, Helvetica, Arial;
+	}
+	.line{
+        /*margin-top: 6px;
+        margin-bottom: 20px;*/
+        border: 1px solid #4472c4;
+        border-top: 0px solid #eee;
+        margin-top: -3px;
+    }
+    .acc-down{
+		float: right;
+		font-size: 14px;
+		color:grey;
+		-ms-transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        transform: rotate(180deg);
+	}
+	.acc-up{
+		font-size: 14px;
+		color:grey;
+		-moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        transform: scaleX(-1);
+        -ms-filter: fliph;
+	}
+	.scatter-title{
+		margin-top: 20px;
+	}
+	#goal-container {
+        /*background: transparent url("/static/img/gauge-container.png") no-repeat 50% 50%;*/
+        width: 150px;
+        height: 150px;
+        text-align: center;
+        margin: 0 auto 30px auto;
+		margin-top: 10px;
+    }
+    #tatgoals {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 0;
+    }
+    .lay{
+    	padding-left: 25px;
+    	padding-right: 25px;
+    }
+    /*#goal-container .k-slider {
+                    margin-top: -11px;
+                    width: 200px;
+                }*/
+    .tl{
+    	margin-top: -3%;
+    }
+
+	h5 {
+		margin-top: 0px;
+	}
+
+	.new-dashboard h6 {
+		margin-bottom: 0px;
+	}
+
+	.new-dashboard.minichart .panel {
+		padding: 0px;
+		padding-bottom: 10px;
+	}
+
+	.trend .legend #square1{
+		background-color: #2e75b6;
+		margin-left: 8px;
+	}
+	.trend .legend #square2{
+		background-color: #00b0f0;
+		margin-left: 8px;
+	}
+	.trend .legend #square3{
+		background-color: #ffc000;
+		margin-left: 8px;
+	}
+	.trend .legend #square4{
+		background-color: #678900;
+		margin-left: 8px;
+	}
+
+	.new-dashboard .footnote {
+		font-size: 11px;
+		padding-top: 5px;
+	}
+
+	.legend {
+		font-size: 11px;
+		font-family: Arial,Helvetica,Sans-Serif;
+	}
+
+	h6 {
+		font-weight: normal !important;
+	}
+
+	.aul h5 {
+		font-size: 12px;
+		font-family: Arial,Helvetica,Sans-Serif;
+        color: #58666e;
+	}
+
+	.aul {
+		padding-top: 0px;
+	}
+
+	.chart-options {
+		position: absolute;
+		float: right;
+		z-index: 4;
+		right: 25px;
+		top: 3px;
+		font-size: 10px;
+		margin-top: 1%;
+        padding-right: 2%;
+	}
+
+	.chart-options0 {
+		float: left;
+		top: 3px;
+		right: 25px;
+		font-size: 10px;
+		margin-top: 3%;
+		padding-left: 2%;
+	}
+
+	.chart-options label {
+		margin-top: 4px;
+		margin-right: 5px;
+	}
+
+	.chart-options .k-widget.k-dropdown, .chart-options0 .k-widget.k-dropdown {
+		width: 100px;
+	}
+
+	.chart-options .k-widget.k-dropdown .k-dropdown-wrap, .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap {
+		height: 16px !important;
+	}
+
+	.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-input, .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-input {
+		font-size: 9px;
+		padding-top: 1px;
+	}
+
+	.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon, .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
+	    height: 20px;
+	}
+</style>
+<div class="col-md-12 lay">
+	<div class="col-md-12 top turnaroundtime">
+		<div class="col-md-12">
+			<h5>Quick Info : <span ></span></h5>
+			<hr class="line">
+			<!-- <div class="col-sm-2"></div> -->
+			<div class="col-sm-12 new-dashboard" style="width: 100%;">
+				<div id="butt">
+					<div class="col-sm-3 width	l">
+						<div class="panel panel-body dl" id="target" style="height: 185px">
+							<h6 class="tat-title tl">Underwriting Rate Target</h6>
+							<!-- <center> -->
+								<div id="goal-container">
+							<div id="tatgoals"></div>
+							<div>Days</div>
+								</div>
+							<!-- </center> -->
+						</div>
+					</div>
+					<div class="col-sm-3 wl ">
+						<div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
+							<h6 class="tat-title tl">Underwriting Rate</h6>
+							<div class="avg">30</div>
+							<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span>30</span>%</div>
+							<div id="rate"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+								<!-- <div class="col-sm-6"> -->
+									<p>Deal Count
+									<span style="margin-left: 5px">30</span> <span id="convers" class="fa fa-caret-up"></span></p>
+								<!-- </div> -->
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-3 wl ">
+						<div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
+							<h6 class="tat-title tl">Approval Rate</h6>
+							<div class="avg">30</div>
+							<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span>30</span>%</div>
+							<div id="approval"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+								<!-- <div class="col-sm-6"> -->
+									<p>Deal Count
+									<span style="margin-left: 5px">30</span> <span id="convers" class="fa fa-caret-up"></span></p>
+								<!-- </div> -->
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-3 wl ">
+						<div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
+							<h6 class="tat-title tl">Analysis Rate</h6>
+							<div class="avg">30</div>
+							<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span>30</span>%</div>
+							<div id="analysis"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+								<!-- <div class="col-sm-6"> -->
+									<p>Deal Count
+									<span style="margin-left: 5px">30</span> <span id="convers" class="fa fa-caret-up"></span></p>
+								<!-- </div> -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<h5>Trend & Summary : <span></span> <!-- span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
+				<hr class="line">
+			</div>
+			<div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
+				<div class="col-md-6">
+					<div class="panel panel-body aol trend">
+						<!-- <div class="chart-options0">
+							<table>
+								<tr>
+									<td>
+										<select style="width: 150px" data-bind="kendoDropDownList: {data: turn.dataMenu, value: turn.dataMenuValue, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Quick Info'}"></select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="chart-options">
+							<table> 
+								<tr>
+									<td>
+										<label>View Across</label>
+									</td>
+									<td>
+										<select data-bind="kendoDropDownList: {data: turn.dataPeriod, value: turn.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div style="clear: both"></div>
+						<div id="chartContainer"></div>
+						<center>
+							<div class="col-md-12 legend" style="display: inline;">
+								<span id="square1"></span> Avg Days
+								<span id="square2"></span> Median
+								<span id="square3"></span> Deal Count
+								<span id="square4"></span> Target TAT
+							</div>
+						</center> -->
+						<div id="chartContainer"></div>
+					</div>
+				</div>
+				<div class="col-md-6 show new-dashboard">
+					<div class="panel panel-body aol">
+						<!-- <div id="movingtat"></div>
+						<center>
+							<div class="col-md-12 legend" style="display: inline;">
+								<span id="square1"></span> 15 + Days &nbsp
+								<span id="square2"></span> 11 - 15 Days &nbsp
+								<span id="square3"></span> 6 - 10 Days &nbsp
+								<span id="square4"></span> 0 - 5 Days &nbsp
+							</div>
+						</center> -->
+						<div id="funnelChart"></div>	
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>

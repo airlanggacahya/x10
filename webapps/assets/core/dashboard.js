@@ -28,6 +28,13 @@ function cleanMoment(date) {
 	return moment(discardTimezone(date))
 }
 
+dash.TimePeriodCalendarScale.subscribe(function (val) {
+	$("#timeperiodCalendar").data("kendoDatePicker").setOptions({
+		depth: val,
+		start: val
+	})
+})
+
 dash.summary2fa = function (values) {
     if (values == 0)
         return "";

@@ -319,7 +319,7 @@
         margin-bottom: 6px;
     }
 
-    .new-dashboard.minichart .panel.aol.manual-height .k-grid .k-grid-header {
+    /*.new-dashboard.minichart .panel.aol.manual-height .k-grid .k-grid-header {
         height: 215px;
         padding-right: 0px;
     }
@@ -332,8 +332,8 @@
 
     .new-dashboard.minichart .panel.aol.manual-height .k-grid .k-grid-header .k-grid-header-wrap table {
         width: 900px;
-    }
-
+    }*/
+    .k-chart-tooltip{text-align: left;}
 </style>
 <div class="col-md-12 lay">
     <div class="col-md-12 top turnaroundtime">
@@ -446,14 +446,15 @@
                             <table>
                                 <tr>
                                     <td>
-                                        <label>View Acros</label>
+                                        <label>View</label>
                                     </td>
                                     <td>
-                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'Deal Amount'}"></select>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenuDistribution, dataTextField: 'text', dataValueField: 'value'}"></select>
                                     </td>
                                 </tr>
                             </table>
                         </div>
+                        <div style="clear: both"></div>
                         <div id="distribution"></div>
                     </div>
                 </div>
@@ -461,7 +462,8 @@
                     <div class="panel panel-body aol trend manual-height">
                         <div id="interestRateDetail">
                             <h6>Deal Amount and Interest</h5>
-                            <div id="interestDetailDB" style="border: none;" class="k-grid k-widget" >
+                            <div id="interestDetailDB"></div>
+                            <!-- <div id="interestDetailDB" style="border: none;" class="k-grid k-widget" >
                                 <div class="k-grid-header">
                                     <div class="k-grid-header-wrap">
                                         <table role="grid">
@@ -532,7 +534,7 @@
                                         </table>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

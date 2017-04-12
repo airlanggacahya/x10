@@ -2639,6 +2639,8 @@ func (c *DashboardController) metricTrendGrouping(results tk.Ms, tp TimePeriod) 
 }
 
 func (c *DashboardController) dealDistribution(data []tk.M) tk.Ms {
+	dealGrouping := map[string]tk.Ms{}
+	dealAppend := tk.Ms{}
 	xflGrouping := map[string]tk.M{}
 	count := 0
 	var amount, roi, interestamount float64
@@ -2662,6 +2664,20 @@ func (c *DashboardController) dealDistribution(data []tk.M) tk.Ms {
 				interestamount += interest
 				xflGrouping[v.GetString("finalRating")+"|"+percent].Set("amount", amount).Set("roi", roi).Set("period", timePeriod).Set("xfl", v.GetString("finalRating")).Set("count", count).Set("percent", percent).Set("interest", interest)
 			}
+
+			if _, exist := dealGrouping[v.GetString("finalRating")]; !exist {
+				o := tk.M{}
+				if len(dealAppend) > 0 {
+					dealAppend = tk.Ms{}
+				}
+				o.Set("dealno", v.GetString("dealno")).Set("dealamount", tk.Div(v.GetFloat64("amount"), 10000000)).Set("interestrate", tk.Div(v.GetFloat64("ROI"), 100)).Set("period", timePeriod)
+				dealAppend = append(dealAppend, o)
+				dealGrouping[v.GetString("finalRating")] = dealAppend
+			} else {
+				o := tk.M{}
+				o.Set("dealno", v.GetString("dealno")).Set("dealamount", tk.Div(v.GetFloat64("amount"), 10000000)).Set("interestrate", tk.Div(v.GetFloat64("ROI"), 100)).Set("period", timePeriod)
+				dealGrouping[v.GetString("finalRating")] = append(dealGrouping[v.GetString("finalRating")], o)
+			}
 		}
 	}
 
@@ -2671,10 +2687,10 @@ func (c *DashboardController) dealDistribution(data []tk.M) tk.Ms {
 		o.Set("amount", tk.Div(val.GetFloat64("amount"), 10000000)).
 			Set("roi", val.GetFloat64("roi")).Set("period", val.Get("period")).
 			Set("xfl", val.GetString("xfl")).Set("count", val.GetInt("count")).Set("percent", val.GetString("percent")).
-			Set("interest", tk.Div(val.GetFloat64("interest"), 10000000))
+			Set("interest", tk.Div(val.GetFloat64("interest"), 10000000)).
+			Set("details", dealGrouping[val.GetString("xfl")])
 		result = append(result, o)
 	}
-	// tk.Println(tk.JsonString(result))
 	return result
 }
 

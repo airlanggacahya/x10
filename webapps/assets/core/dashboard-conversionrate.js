@@ -5,6 +5,14 @@ conv.dataPeriod = ko.observableArray([
 	{text: 'coba2', value: 'coba2'},
 	{text: 'coba3', value: 'coba3'},
 ]);
+conv.actRate = ko.observable(0);
+conv.undrRate = ko.observable(0);
+conv.apprRate = ko.observable(0);
+conv.analRate = ko.observable(0);
+conv.compactRate = ko.observable(0);
+conv.compundrRate = ko.observable(0);
+conv.compapprRate = ko.observable(0);
+conv.companalRate = ko.observable(0);
 conv.dataValuePeriod = ko.observable('');
 conv.dummyData = ko.observableArray([
 	{"avgdays":2.2,"date":"2016-10-01T00:00:00Z","dateStr":"Oct-2016","dealcount":8,"median":4},
@@ -253,7 +261,7 @@ conv.loadRadialGauge = function(){
 	$("#tatgoals").html('')
     $("#tatgoals").kendoRadialGauge({
        	pointer: {
-            value: 5
+            value: parseInt(kendo.toString(conv.actRate(), 'n2'))
         },
 
         scale: {
@@ -408,7 +416,7 @@ conv.loadContainer = function(){
                 tooltip : {
                 	visible: true,
                 	template : function(dt){
-                		console.log(dt);
+                		// console.log(dt);
                 		return dt.series.name + " : "+ dt.value//dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
                 	}
                 }
@@ -458,7 +466,7 @@ conv.loadFunnelChart = function(){
         seriesDefaults: {
             labels: {
             	template: function(d){
-            		console.log("-------------------------->>>>", d)
+            		// console.log("-------------------------->>>>", d)
             		var str = ''
             		if(d.category == 'Analized Deals'){
             			str = 'Analized Deals \n (Underwritten = n4, Sent Back for Analysis = n6) \n'+ d.value
@@ -488,10 +496,68 @@ conv.loadFunnelChart = function(){
     });
 }
 
+conv.loadData = function(){
+	var param = {
+		start : discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
+		end : discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
+		type : dash.FilterValue.GetVal("TimePeriod"),
+		filter: dash.FilterValue()
+	}
+	ajaxPost("/dashboard/conversionoption", param, function(res){
+		console.log(res.Data)
+		if(res != null){
+			conv.actRate(res.actRate);
+			conv.undrRate(res.undrRate);
+			conv.apprRate(res.apprRate);
+			conv.analRate(res.analRate);
+			// conv.compactRate(res.compactRate);
+			conv.compundrRate(res.compundrRate);
+			conv.compapprRate(res.compapprRate);
+			conv.companalRate(res.companalRate);
+			conv.loadRadialGauge()
+
+		}
+	})
+}
+
+conv.titleText = ko.computed(function () {
+    var type = dash.FilterValue.GetVal("TimePeriod")
+    var start = moment(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = moment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+
+    if (!start.isValid())
+        return "-"
+
+    switch (type) {
+    case "10day":
+        return start.clone().subtract(10, "day").format("DD MMM YYYY") + " - " + start.format("DD MMM YYYY")
+    case "":
+    case "1month":
+        return start.format("MMMM YYYY")
+    case "1year":
+        return start.format("YYYY")
+    case "fromtill":
+        return start.format("DD MMM YYYY") + " - " + end.format("DD MMM YYYY")
+    }
+})
+
+conv.subscribe = function(){
+	dash.FilterValue.subscribe(function (val) {
+		// turn.loadAlleverage()
+	    conv.loadData()
+	})
+}
+
 
 $(function(){
 	conv.loadFunnelChart();
 	conv.loadRadialGauge();
 	conv.loadAllTop();
 	conv.loadContainer();
+	setTimeout(function(){
+		conv.loadData()
+		conv.subscribe()
+
+	}, 1000)
+	
 });

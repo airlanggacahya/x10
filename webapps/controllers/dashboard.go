@@ -1672,7 +1672,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		months := tk.M{}
 		for key, val := range mapRes {
 			keyInt, _ := strconv.Atoi(key)
-			if keyInt > tp.PeriodCount {
+			if keyInt >= tp.PeriodCount || keyInt < 0 {
 				continue
 			}
 			re := tk.M{}

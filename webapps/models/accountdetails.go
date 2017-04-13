@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"regexp"
 	"time"
 
@@ -667,7 +666,7 @@ func compileFilter(fields map[string]FilterMap, filter []toolkit.M) []toolkit.M 
 		}
 
 		field, ok := fields[val.GetString("FilterName")]
-		toolkit.Printfn("--> %v %v %v", val.GetString("FilterName"), ok, val.GetString("Value"))
+		// toolkit.Printfn("--> %v %v %v", val.GetString("FilterName"), ok, val.GetString("Value"))
 		if !ok {
 			continue
 		}
@@ -856,8 +855,8 @@ func FiltersAD(ids, filter []toolkit.M, opt *OptionalFilter) ([]toolkit.M, error
 	}
 	pipe = append(pipe, wrapMatch(match))
 
-	debug, _ := json.MarshalIndent(pipe, "", "  ")
-	toolkit.Printfn("PIPEX\n%s", debug)
+	// debug, _ := json.MarshalIndent(pipe, "", "  ")
+	// toolkit.Printfn("PIPEX\n%s", debug)
 
 	csr, err := conn.
 		NewQuery().

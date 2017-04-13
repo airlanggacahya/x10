@@ -169,82 +169,63 @@ turn.loadAlleverage = function(){
 			$("#acceptance").html('')
 			$("#acceptance").kendoChart({
 				theme: "Material",
-	            title: { 
-	                    // text: "Processing TAT",
-	                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
-	                    align: "left",
-	                    color: "#58666e",
-	                },
-	                dataSource: turn.averageConversionData(),
-	                seriesDefaults: {
-	                    type: "area",
-	                    area: {
-	                        line: {
-	                            style: "smooth"
-	                        }
-	                    }
-	                },
-	                series: [{
-	                    // type: "area",
-	                    stack : false,
-	                    field: "avgdays",
-	                    // name: "#= group.value.split('*')[1] #"
-	                }],
-	                chartArea:{
-	                	// width: 250,
-	                    height: 75,
-	                    background: "transparent"
-	                },
-	                legend: {
-	                	visible: false,
-	                    position: "right",
-	                    labels:{
-	                        font: "10px Arial,Helvetica,Sans-Serif"
-	                    }
-	                },
-	                // seriesColors : ttrack.chartcolors,
-	                valueAxis: {
-	                	 visible :false,
-	                    labels: {
-	                        // format: "${0}",
+				title: { 
+					font:  "bold 10px Arial,Helvetica,Sans-Serif",
+					align: "left",
+					color: "#58666e",
+				},
+				dataSource: turn.averageAcceptanceData(),
+				seriesDefaults: {
+					type: "area",
+					area: {
+						line: {
+							style: "smooth"
+						}
+					}
+				},
+				series: [{
+					stack : false,
+					field: "avgdays",
+				}],
+				chartArea:{
+					// width: 250,
+					height: 75,
+					background: "transparent"
+				},
+				legend: {
+					visible: false,
+					position: "right",
+					labels:{
+						font: "10px Arial,Helvetica,Sans-Serif"
+					}
+				},
+				// seriesColors : ttrack.chartcolors,
+				valueAxis: [{
+					visible: false,
+					line: {
+						visible: false
+					},
+					majorGridLines: {
+						visible: true,
+					},
+					majorUnit: dash.chartUnit(turn.averageAcceptanceData(), 'avgdays', 4),
+					max: dash.chartMax(turn.averageAcceptanceData(), 'avgdays')
+				}],
+				categoryAxis: {
+					visible: false,
+					line: {
+						visible: false
+					},
+					majorGridLines:{
+						visible: false
+					}
+				},
+				tooltip : {
+					visible: false
+				}
+			});
 
-	                		font: "5px sans-serif",
-	                        skip: 2,
-	                        step: 2
-	                    },
-	                    title : {
-	                    	text : "No. of Deals",
-	                		font: "5px sans-serif",
-	                    	visible : false,
-	                    	color : "#4472C4"
-	                    },
-	                    line: {
-					        visible: true
-					    },
-					    majorGridLines:{
-					        visible:true,
-					         skip: parseInt(turn.avgConversion()/2),
-	                        step: parseInt(turn.avgConversion()/2)
-					    }
-	                },
-	                categoryAxis: {
-	                    visible: true,
-	                   	line: {
-					        visible: false
-					    },
-					    majorGridLines:{
-					        visible:false
-					    }
-	                },
-	                tooltip : {
-	                	visible: false,
-	                	template : function(dt){
-	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-	                	}
-	                }
-	        });
-
-	        turn.loadRadialGauge();
+			turn.loadRadialGauge();
 		});
 
 		param.trend = 'processing';
@@ -271,80 +252,62 @@ turn.loadAlleverage = function(){
 			}
 			$("#processing").html('')
 			$("#processing").kendoChart({
-	            theme: "Material",
-	            title: { 
-	                    // text: "Processing TAT",
-	                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
-	                    align: "left",
-	                    color: "#58666e",
-	                },
-	                dataSource: turn.averageProcessingData(),
-	                seriesDefaults: {
-	                    type: "area",
-	                    area: {
-	                        line: {
-	                            style: "smooth"
-	                        }
-	                    }
-	                },
-	                series: [{
-	                    // type: "area",
-	                    stack : false,
-	                    field: "avgdays",
-	                    // name: "#= group.value.split('*')[1] #"
-	                }],
-	                chartArea:{
-	                	// width: 250,
-	                    height: 75,
-	                    background: "transparent"
-	                },
-	                legend: {
-	                	visible: false,
-	                    position: "right",
-	                    labels:{
-	                        font: "10px Arial,Helvetica,Sans-Serif"
-	                    }
-	                },
-	                // seriesColors : ttrack.chartcolors,
-	                valueAxis: {
-	                	visible : false,
-	                    labels: {
-	                        // format: "${0}",
-	                		font: "5px sans-serif",
-	                        skip: 2,
-	                        step: 2
-	                    },
-	                    title : {
-	                    	text : "No. of Deals",
-	                		font: "5px sans-serif",
-	                    	visible : false,
-	                    	color : "#4472C4"
-	                    },
-	                    line: {
-					        visible: true
-					    },
-					    majorGridLines:{
-					        visible:true,
-					         skip: parseInt(turn.avgConversion()/2),
-	                        step: parseInt(turn.avgConversion()/2)
-					    }
-	                },
-	                categoryAxis: {
-	                    visible: true,
-	                   	line: {
-					        visible: false
-					    },
-					    majorGridLines:{
-					        visible:false
-					    }
-	                },
-	                tooltip : {
-	                	visible: false,
-	                	template : function(dt){
-	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-	                	}
-	                }
-	        });  
+				theme: "Material",
+				title: { 
+					font:  "bold 10px Arial,Helvetica,Sans-Serif",
+					align: "left",
+					color: "#58666e",
+				},
+				dataSource: turn.averageProcessingData(),
+				seriesDefaults: {
+					type: "area",
+					area: {
+						line: {
+							style: "smooth"
+						}
+					}
+				},
+				series: [{
+					stack : false,
+					field: "avgdays",
+				}],
+				chartArea:{
+					// width: 250,
+					height: 75,
+					background: "transparent"
+				},
+				legend: {
+					visible: false,
+					position: "right",
+					labels:{
+						font: "10px Arial,Helvetica,Sans-Serif"
+					}
+				},
+				// seriesColors : ttrack.chartcolors,
+				valueAxis: [{
+					visible: false,
+					line: {
+						visible: false
+					},
+					majorGridLines: {
+						visible: true,
+					},
+					majorUnit: dash.chartUnit(turn.averageProcessingData(), 'avgdays', 4),
+					max: dash.chartMax(turn.averageProcessingData(), 'avgdays')
+				}],
+				categoryAxis: {
+					visible: false,
+					line: {
+						visible: false
+					},
+					majorGridLines:{
+						visible: false
+					}
+				},
+				tooltip : {
+					visible: false
+				}
+			});
 		});
 		param.trend = 'decision';
 		ajaxPost("/dashboard/snapshottat",param,function(res){ 
@@ -369,80 +332,62 @@ turn.loadAlleverage = function(){
 			}
 			$("#decision").html('')
 			$("#decision").kendoChart({
-	            theme: "Material",
-	            title: { 
-	                    // text: "Processing TAT",
-	                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
-	                    align: "left",
-	                    color: "#58666e",
-	                },
-	                dataSource: turn.averageDecisionData(),
-	                seriesDefaults: {
-	                    type: "area",
-	                    area: {
-	                        line: {
-	                            style: "smooth"
-	                        }
-	                    }
-	                },
-	                series: [{
-	                    // type: "area",
-	                    stack : false,
-	                    field: "avgdays",
-	                    // name: "#= group.value.split('*')[1] #"
-	                }],
-	                chartArea:{
-	                	// width: 245,
-	                    height: 75,
-	                    background: "transparent"
-	                },
-	                legend: {
-	                	visible: false,
-	                    position: "right",
-	                    labels:{
-	                        font: "10px Arial,Helvetica,Sans-Serif"
-	                    }
-	                },
-	                // seriesColors : ttrack.chartcolors,
-	                valueAxis: {
-	                	visible : false,
-	                    labels: {
-	                        // format: "${0}",
-	                		font: "5px sans-serif",
-	                        skip: 2,
-	                        step: 2
-	                    },
-	                    title : {
-	                    	text : "No. of Deals",
-	                		font: "5px sans-serif",
-	                    	visible : false,
-	                    	color : "#4472C4"
-	                    },
-	                    line: {
-					        visible: true
-					    },
-					    majorGridLines:{
-					        visible:true,
-					         skip: parseInt(turn.avgConversion()/2),
-	                        step: parseInt(turn.avgConversion()/2)
-					    }
-	                },
-	                categoryAxis: {
-	                    visible: true,
-	                   	line: {
-					        visible: false
-					    },
-					    majorGridLines:{
-					        visible:false
-					    }
-	                },
-	                tooltip : {
-	                	visible: false,
-	                	template : function(dt){
-	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-	                	}
-	                }
-	        });  
+				theme: "Material",
+				title: { 
+					font:  "bold 10px Arial,Helvetica,Sans-Serif",
+					align: "left",
+					color: "#58666e",
+				},
+				dataSource: turn.averageDecisionData(),
+				seriesDefaults: {
+					type: "area",
+					area: {
+						line: {
+							style: "smooth"
+						}
+					}
+				},
+				series: [{
+					stack : false,
+					field: "avgdays",
+				}],
+				chartArea:{
+					// width: 250,
+					height: 75,
+					background: "transparent"
+				},
+				legend: {
+					visible: false,
+					position: "right",
+					labels:{
+						font: "10px Arial,Helvetica,Sans-Serif"
+					}
+				},
+				// seriesColors : ttrack.chartcolors,
+				valueAxis: [{
+					visible: false,
+					line: {
+						visible: false
+					},
+					majorGridLines: {
+						visible: true,
+					},
+					majorUnit: dash.chartUnit(turn.averageDecisionData(), 'avgdays', 4),
+					max: dash.chartMax(turn.averageDecisionData(), 'avgdays')
+				}],
+				categoryAxis: {
+					visible: false,
+					line: {
+						visible: false
+					},
+					majorGridLines:{
+						visible: false
+					}
+				},
+				tooltip : {
+					visible: false
+				}
+			});
 		});
 
 		param.trend = 'conversion';
@@ -471,81 +416,62 @@ turn.loadAlleverage = function(){
 			
 			$("#conversion").html('')
 			$("#conversion").kendoChart({
-	            theme: "Material",
-	            title: { 
-	                    // text: "Processing TAT",
-	                    font:  "bold 10px Arial,Helvetica,Sans-Serif",
-	                    align: "left",
-	                    color: "#58666e",
-	                },
-	                dataSource: turn.averageConversionData(),
-	                seriesDefaults: {
-	                    type: "area",
-	                    area: {
-	                        line: {
-	                            style: "smooth"
-	                        }
-	                    }
-	                },
-	                series: [{
-	                    // type: "area",
-	                    stack : false,
-	                    field: "avgdays",
-	                    // name: "#= group.value.split('*')[1] #"
-	                }],
-	                chartArea:{
-	                	// width: 250,
-	                    height: 75,
-	                    background: "transparent"
-	                },
-	                legend: {
-	                	visible: false,
-	                    position: "right",
-	                    labels:{
-	                        font: "10px Arial,Helvetica,Sans-Serif"
-	                    }
-	                },
-	                // seriesColors : ttrack.chartcolors,
-	                valueAxis: {
-	                	visible : false,
-	                    labels: {
-	                        // format: "${0}",
-	                		font: "5px sans-serif",
-	                        // skip: 5,
-	                        // step: 5
-	                    },
-	                    title : {
-	                    	text : "No. of Deals",
-	                		font: "5px sans-serif",
-	                    	visible : false,
-	                    	color : "#4472C4"
-	                    },
-	                    line: {
-					        visible: true
-					    },
-					    majorGridLines:{
-					        visible:true,
-					         skip: parseInt(turn.avgConversion()/2),
-	                        step: parseInt(turn.avgConversion()/2)
-					    },
-					   
-	                },
-	                categoryAxis: {
-	                    visible: true,
-	                   	line: {
-					        visible: false
-					    },
-					    majorGridLines:{
-					        visible:false
-					    }
-	                },
-	                tooltip : {
-	                	visible: false,
-	                	template : function(dt){
-	                		return dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-	                	}
-	                }
-	        });   
+				theme: "Material",
+				title: { 
+					font:  "bold 10px Arial,Helvetica,Sans-Serif",
+					align: "left",
+					color: "#58666e",
+				},
+				dataSource: turn.averageConversionData(),
+				seriesDefaults: {
+					type: "area",
+					area: {
+						line: {
+							style: "smooth"
+						}
+					}
+				},
+				series: [{
+					stack : false,
+					field: "avgdays",
+				}],
+				chartArea:{
+					// width: 250,
+					height: 75,
+					background: "transparent"
+				},
+				legend: {
+					visible: false,
+					position: "right",
+					labels:{
+						font: "10px Arial,Helvetica,Sans-Serif"
+					}
+				},
+				// seriesColors : ttrack.chartcolors,
+				valueAxis: [{
+					visible: false,
+					line: {
+						visible: false
+					},
+					majorGridLines: {
+						visible: true,
+					},
+					majorUnit: dash.chartUnit(turn.averageConversionData(), 'avgdays', 4),
+					max: dash.chartMax(turn.averageConversionData(), 'avgdays')
+				}],
+				categoryAxis: {
+					visible: false,
+					line: {
+						visible: false
+					},
+					majorGridLines:{
+						visible: false
+					}
+				},
+				tooltip : {
+					visible: false
+				}
+			});
 		});
 	}, 500)
 }

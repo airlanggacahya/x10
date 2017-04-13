@@ -632,12 +632,13 @@ pm.dealDistributionDetails = function(value, category, selected) {
             title: "Interest Rate",
             attributes: { style: "text-align: right" },
             template: "<div> #= interestrate # </div>"
-        }, {
-            field: "period",
-            title: "Date",
-            template: "#= moment(period).format('YYYY-MM-DD h:m:s') #",
-            width: 150
-        }]
+        }// }, {
+        //     field: "period",
+        //     title: "Date",
+        //     template: "#= moment(period).format('YYYY-MM-DD h:m:s') #",
+        //     width: 150
+        // }]
+        ]
     });
 }
 

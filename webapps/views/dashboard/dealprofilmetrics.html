@@ -94,7 +94,7 @@
     }
     .tabl{
         width: 95%;
-        margin-left: 4%;
+        margin-left: 3.4%;
     }
     .turnaroundtime h4 {
         font-size: 16px;
@@ -463,78 +463,6 @@
                         <div id="interestRateDetail">
                             <h6>Deal Amount and Interest</h5>
                             <div id="interestDetailDB"></div>
-                            <!-- <div id="interestDetailDB" style="border: none;" class="k-grid k-widget" >
-                                <div class="k-grid-header">
-                                    <div class="k-grid-header-wrap">
-                                        <table role="grid">
-                                            <thead role="rowgroup">
-                                                <tr role="row" >
-                                                    <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor">Sr. No</th>
-                                                    <th style="width:28%" scope="col" role="columnheader" class="k-header header-bgcolor">Customer Name</th>
-                                                    <th style="width:22%" scope="col" role="columnheader" class="k-header header-bgcolor">Deal No</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">CA</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">RM</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Sanc Amount</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Interest</th>
-                                                    <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor">Detail</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody role="rowgroup" data-bind="">
-                                                <tr role="row">
-                                                    <td role="gridcell">
-                                                        123
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        NIKI INFOTECH PVT LTD
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        DXMUM00716-170000222
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        ADMIN
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        SUMEET JHA
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        10,00,00,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        1,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                    </td>
-                                                </tr>
-                                                <tr role="row">
-                                                    <td role="gridcell">
-                                                        456
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        M INTERGRAPH SYSTEMS PRIVATE LIMITED
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        DXMUM00716-170000222
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        ADMIN
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        ADMIN
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        10,00,00,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        1,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -545,18 +473,19 @@
             </div>
             <div class="col-md-12 new-dashboard">
                 <div class="panel panel-body aul show">
-                    <div class="cater"></div>
+                    <div id="cater"></div>
                     <table class="tabl">
                         <tr>
-                            <td class="le legend" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">0 - 10 Days</td>
-                            <td class="le legend" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">11 - 20 Days</td>
-                            <td class="le legend" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">21 - 30 Days</td>
-                            <td class="le legend" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">30 - 40 Days</td>
-                            <td class="le legend" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">40 + Days</td>
+                            <td class="le legend" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">XFL - 5</td>
+                            <td class="le legend" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">XFL - 4</td>
+                            <td class="le legend" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">XFL - 3</td>
+                            <td class="le legend" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">XFL - 2</td>
+                            <td class="le legend" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">XFL - 1</td>
                         </tr>
                     </table>
                     <div class="tabl" style="text-align: center; font-size: 11px; font-family: sans-serif; color: #4472c4;">Credit Scores</div>
-                     <!-- <h5 class="scatter-title">Deal Movement Table </h5> -->
+                     <h5 class="scatter-title">Deal Amount and Interest Amount</h5>
+                     <div id="creaditscoretable"></div>
                      <!--  <div id="griddb" style="border: none;" class="k-grid k-widget" data-bind="visible:turn.listscatter().length > 0" >
                          <div class="k-grid-header">
                             <div class="k-grid-header-wrap">

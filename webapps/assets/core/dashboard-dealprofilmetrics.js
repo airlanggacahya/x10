@@ -10,6 +10,8 @@ pm.trendPeriod = ko.observableArray([]);
 pm.trendRegion = ko.observableArray([]);
 pm.creditScore = ko.observableArray([]);
 pm.creditScoreAseli = ko.observableArray([]);
+pm.creditscoreclicked = ko.observable(false);
+pm.creditScoreDataTable = ko.observableArray([]);
 
 pm.xfl1count = ko.observable(0);
 pm.xfl2count = ko.observable(0);
@@ -356,60 +358,89 @@ pm.loadChaterChart = function() {
             }
         },
         seriesClick: function(e) {
+            pm.creditscoreclicked(true);
             var found = _.find(pm.creditScoreAseli(), function(a){
                 return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"))
             })
-            console.log(found)
-            pm.creaditScoreTable();
+            for (var i in found) {
+                var interestamount = (found.ROI/100) * (found.amount/10000000);
+                found.interesetamount = interestamount;
+            }
+            var exist = _.find(pm.creditScoreDataTable(), function(a){
+                return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"));
+            })
+            if (!exist || exist == undefined) {
+                pm.creditScoreDataTable().push(found);
+                pm.creaditScoreTable();
+            }
         }
     });
 }
 
+var record = 0;
 pm.creaditScoreTable = function() {
-    /*var data = _.find(pm.distributionData(), function(e){
-        return e[selected] == value && e.percent == category;
-    });
-
-    var isData = (data != undefined)? data.details : [];*/
     $("#creaditscoretable").html();
     $("#creaditscoretable").kendoGrid({
         dataSource: {
-            data: []
+            data: pm.creditScoreDataTable(),
+            pageSize: 20
         },
         sortable: true,
         columns: [{
-            field: "",
-            title: "Sr. No."
+            title: "Sr. No.",
+            template: "#= ++record #",
+            width: 50,
         }, {
             field: "customername",
-            title: "Customer Name",
-            // template: "<div style='float: right;'> #= kendo.toString(dealamount, 'n') # </div>"
+            title: "Customer Name"
         }, {
             field: "dealno",
             title: "Deal No",
-            // template: "<div style='float: right;'> #= interestrate # </div>"
         }, {
             field: "creditanalyst",
             title: "Credit Analyst",
-            // template: "#= moment(period).format('YYYY-MM-DD h:m:s') #",
-            // width: 150
         }, {
             field: "rmname",
             title: "RM"
         }, {
             field: "amount",
-            title: "Sanctioned Amount"
+            title: "Sanctioned Amount",
+            attributes: { style: "text-align: right" },
+            template: "<div> #= kendo.toString(amount/10000000, 'n') # </div>"
         }, {
-            field: "interest",
-            title: "Intereset Amount"
+            field: "interesetamount",
+            title: "Intereset Amount",
+            attributes: { style: "text-align: right" },
+            template: "<div> #= kendo.toString(interesetamount, 'n') # </div>"
         }, {
             field: "details",
-            title: "Details"
+            title: "Details",
+            template: function(e){
+                return "<a onclick='pm.showMore(\""+e.customername+"\", \""+e.dealno+"\")' style='text-decoration:none; cursor: pointer;'>Show More</a>";
+            }
         }, {
             field: "",
-            title: ""
-        }]
+            title: "",
+            width: 50,
+            template: "<button type='button' class='btn btn-danger' onclick='pm.removecreditscorecardrow(\"#:dealno#\")'><i class='glyphicon glyphicon-remove'></i></button>"
+        }],
+        pageable: true,
+        dataBinding: function() {
+            record = (this.dataSource.page() -1) * this.dataSource.pageSize();
+        }
     });
+}
+
+pm.removecreditscorecardrow = function(dealno) {
+    var found = _.without(pm.creditScoreDataTable(), _.find(pm.creditScoreDataTable(), function(e){
+        return e.dealno == dealno;
+    }));
+    pm.creditScoreDataTable(found);
+    pm.creaditScoreTable();
+}
+
+pm.showMore = function(custname, dealno) {
+    window.open("/dealsetup/default?customername="+custname+"&dealno="+dealno);
 }
 
 pm.normalisasiData = function(data) {
@@ -594,11 +625,13 @@ pm.dealDistributionDetails = function(value, category, selected) {
         }, {
             field: "dealamount",
             title: "Deal Amount",
-            template: "<div style='float: right;'> #= kendo.toString(dealamount, 'n') # </div>"
+            attributes: { style: "text-align: right" },
+            template: "<div> #= kendo.toString(dealamount, 'n') # </div>"
         }, {
             field: "interestrate",
             title: "Interest Rate",
-            template: "<div style='float: right;'> #= interestrate # </div>"
+            attributes: { style: "text-align: right" },
+            template: "<div> #= interestrate # </div>"
         }, {
             field: "period",
             title: "Date",

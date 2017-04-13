@@ -2426,6 +2426,9 @@ func (c *DashboardController) trendxfl(payload tk.M, tp TimePeriod, pipe []tk.M)
 	pipe = append(pipe, tk.M{"$project": tk.M{
 		"dealno":        "$customerprofile.applicantdetail.DealNo",
 		"finalscoredob": "$cs.FinalScoreDob",
+		"rmname":        "$accountdetails.accountsetupdetails.rmname",
+		"creditanalyst": "$accountdetails.accountsetupdetails.creditanalyst",
+		"customername":  "$customerprofile.applicantdetail.CustomerName",
 		"dc":            "$dc",
 		"cs":            "$cs",
 		"info": tk.M{
@@ -2436,6 +2439,9 @@ func (c *DashboardController) trendxfl(payload tk.M, tp TimePeriod, pipe []tk.M)
 	pipe = append(pipe, tk.M{"$project": tk.M{
 		"dealno":        "$dealno",
 		"info":          "$info",
+		"rmname":        "$rmname",
+		"creditanalyst": "$creditanalyst",
+		"customername":  "$customername",
 		"finalscoredob": tk.M{"$ifNull": []interface{}{"$finalscoredob", 0}},
 		"finalRating":   tk.M{"$ifNull": []interface{}{"$cs.FinalRating", ""}},
 		"amount":        tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},

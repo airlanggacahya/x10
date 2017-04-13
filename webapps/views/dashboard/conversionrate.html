@@ -252,7 +252,7 @@
 			<h5>Quick Info : <span ></span></h5>
 			<hr class="line">
 			<!-- <div class="col-sm-2"></div> -->
-			<div class="col-sm-12 new-dashboard" style="width: 100%;">
+			<div class="col-sm-12 new-dashboard" style="width: 100%;margin-top: -32px;">
 				<div id="butt">
 					<div class="col-sm-3 width	l">
 						<div class="panel panel-body dl" id="target" style="height: 185px">
@@ -347,11 +347,25 @@
 								<span id="square4"></span> Target TAT
 							</div>
 						</center> -->
+						<div class="chart-options">
+							<table> 
+								<tr>
+									<td>
+										<label>View Across</label>
+									</td>
+									<td>
+										<select data-bind="kendoDropDownList: {data: conv.dataPeriod, value: conv.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
+									</td>
+								</tr>
+							</table>
+						</div>
 						<div id="chartContainer"></div>
 					</div>
 				</div>
 				<div class="col-md-6 show new-dashboard">
 					<div class="panel panel-body aol">
+						<div class="col-md-12">
+						<!-- <h5 class="tat-title">Processing Funnel</h5> -->
 						<!-- <div id="movingtat"></div>
 						<center>
 							<div class="col-md-12 legend" style="display: inline;">
@@ -361,7 +375,8 @@
 								<span id="square4"></span> 0 - 5 Days &nbsp
 							</div>
 						</center> -->
-						<div id="funnelChart"></div>	
+						<div id="funnelChart"></div>
+						</div>	
 					</div>
 				</div>
 			</div>

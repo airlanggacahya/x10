@@ -357,6 +357,8 @@ func RoleMenuSync() error {
 			val[roleIdx].Menu[menuIdx].Url = menu.Url
 			val[roleIdx].Menu[menuIdx].Enable = menu.Enable
 			val[roleIdx].Menu[menuIdx].Parent = menu.Parent
+			val[roleIdx].Menu[menuIdx].Haschild = menu.Haschild
+			val[roleIdx].Menu[menuIdx].Menuname = menu.Title
 			newmenu = append(newmenu, val[roleIdx].Menu[menuIdx])
 		}
 

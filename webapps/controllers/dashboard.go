@@ -2396,6 +2396,7 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	o.Set("xfl", xflResult)
 	o.Set("distribution", resultDistribution)
 	o.Set("trendRegion", regionGrouping)
+	o.Set("creditscore", resultsXfl)
 	res.SetData(o)
 
 	return res
@@ -2423,20 +2424,22 @@ func (c *DashboardController) trendxfl(payload tk.M, tp TimePeriod, pipe []tk.M)
 		"preserveNullAndEmptyArrays": true,
 	}})
 	pipe = append(pipe, tk.M{"$project": tk.M{
-		"dealno": "$customerprofile.applicantdetail.DealNo",
-		"dc":     "$dc",
-		"cs":     "$cs",
+		"dealno":        "$customerprofile.applicantdetail.DealNo",
+		"finalscoredob": "$cs.FinalScoreDob",
+		"dc":            "$dc",
+		"cs":            "$cs",
 		"info": tk.M{
 			"$slice": []interface{}{"$info.myInfo", -1},
 		},
 	}})
 	pipe = append(pipe, tk.M{"$unwind": "$info"})
 	pipe = append(pipe, tk.M{"$project": tk.M{
-		"dealno":      "$dealno",
-		"info":        "$info",
-		"finalRating": tk.M{"$ifNull": []interface{}{"$cs.FinalRating", ""}},
-		"amount":      tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
-		"ROI":         tk.M{"$ifNull": []interface{}{"$dc.ROI", 0}},
+		"dealno":        "$dealno",
+		"info":          "$info",
+		"finalscoredob": tk.M{"$ifNull": []interface{}{"$finalscoredob", 0}},
+		"finalRating":   tk.M{"$ifNull": []interface{}{"$cs.FinalRating", ""}},
+		"amount":        tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
+		"ROI":           tk.M{"$ifNull": []interface{}{"$dc.ROI", 0}},
 	}})
 	// tk.Println(tk.JsonString(pipe))
 

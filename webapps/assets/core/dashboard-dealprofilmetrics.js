@@ -8,6 +8,8 @@ pm.avgAmount = ko.observable(0);
 pm.avgInterestAmount = ko.observable(0);
 pm.trendPeriod = ko.observableArray([]);
 pm.trendRegion = ko.observableArray([]);
+pm.creditScore = ko.observableArray([]);
+pm.creditScoreAseli = ko.observableArray([]);
 
 pm.xfl1count = ko.observable(0);
 pm.xfl2count = ko.observable(0);
@@ -43,6 +45,7 @@ pm.xfl4interestwidth = ko.observable(0);
 pm.xfl5interestwidth = ko.observable(0);
 
 pm.distributionData = ko.observableArray([]);
+pm.scatterWidth = ko.observable(0);
 
 // Hook to filter value changes
 dash.FilterValue.subscribe(function(val) {
@@ -280,12 +283,16 @@ pm.setTitle = function() {
 }
 
 pm.loadChaterChart = function() {
-    var data = [
-        [20, 23],
-        [40, 27]
-    ];
-    $(".cater").html("");
-    $(".cater").kendoChart({
+    //[x axis, y axis]
+    //[index 0, index 1]
+    //[FinalScoreDob, amount]
+    var data = [{
+        name: "data",
+        data: pm.creditScore()
+    }];
+
+    $("#cater").html("");
+    $("#cater").kendoChart({
         title: {
             text: "Deal Amount vs. Credit Scores",
             font: "12px Arial,Helvetica,Sans-Serif",
@@ -301,20 +308,15 @@ pm.loadChaterChart = function() {
             background: "white"
         },
         seriesDefaults: {
-            type: "scatter",
-            labels: {
-                visible: true
-            }
+            type: "scatter"
         },
-        series: [{
-            name: "Data",
-            data: data
-        }],
+        series: data,
         legend: {
             visible: false,
         },
         xAxis: {
-            max: 50,
+            min:0,
+            max: 10,
             title: {
                 // text: "Credit Scores",
                 font: "11px sans-serif",
@@ -322,25 +324,11 @@ pm.loadChaterChart = function() {
                 color: "#4472C4"
             },
             labels: {
-                template: "&lt;= #= value #",
-                skip: 1,
+                template: "# if (value != 0) { # &lt;= #= value # # }else{# #= value # #} #",
+                // skip: 2,
                 step: 1,
                 font: "10px sans-serif",
             },
-            majorUnit: 10,
-            minorUnit: 20,
-            majorTicks: {
-                visible: false
-            },
-            majorGridLines: {
-                visible: false
-            },
-            minorTicks: {
-                visible: true
-            },
-            minorGridLines: {
-                visible: true
-            }
         },
         yAxis: {
             min: 0,
@@ -355,10 +343,72 @@ pm.loadChaterChart = function() {
                 }
             },
             labels: {
-                // template : "#: kendo.toString( value/100000 , 'n0')#",
                 font: "10px sans-serif",
             }
+        },
+        tooltip: {
+            visible: true,
+            template: function(e) {
+                var found = _.find(pm.creditScoreAseli(), function(a){
+                    return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"))
+                })
+                return "Deal Amount: " + kendo.toString(found.amount/10000000, "n") + "<br /> Interest Rate: " + found.ROI + "%";
+            }
+        },
+        seriesClick: function(e) {
+            var found = _.find(pm.creditScoreAseli(), function(a){
+                return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"))
+            })
+            console.log(found)
+            pm.creaditScoreTable();
         }
+    });
+}
+
+pm.creaditScoreTable = function() {
+    /*var data = _.find(pm.distributionData(), function(e){
+        return e[selected] == value && e.percent == category;
+    });
+
+    var isData = (data != undefined)? data.details : [];*/
+    $("#creaditscoretable").html();
+    $("#creaditscoretable").kendoGrid({
+        dataSource: {
+            data: []
+        },
+        sortable: true,
+        columns: [{
+            field: "",
+            title: "Sr. No."
+        }, {
+            field: "customername",
+            title: "Customer Name",
+            // template: "<div style='float: right;'> #= kendo.toString(dealamount, 'n') # </div>"
+        }, {
+            field: "dealno",
+            title: "Deal No",
+            // template: "<div style='float: right;'> #= interestrate # </div>"
+        }, {
+            field: "creditanalyst",
+            title: "Credit Analyst",
+            // template: "#= moment(period).format('YYYY-MM-DD h:m:s') #",
+            // width: 150
+        }, {
+            field: "rmname",
+            title: "RM"
+        }, {
+            field: "amount",
+            title: "Sanctioned Amount"
+        }, {
+            field: "interest",
+            title: "Intereset Amount"
+        }, {
+            field: "details",
+            title: "Details"
+        }, {
+            field: "",
+            title: ""
+        }]
     });
 }
 
@@ -638,8 +688,30 @@ pm.init = function() {
             pm.distributionData(res.Data.distribution);
             pm.Distribution();
             pm.dealDistributionDetails();
+
+            ///load scatter chart
+            pm.creditScoreAseli(res.Data.creditscore);
+            pm.creditScoreCreator(res.Data.creditscore);
+            pm.loadChaterChart();
+            setTimeout(function(){
+                var caterWidth = $("#cater").width();
+                var tablewidth = caterWidth - pm.findWidthScatter() - 22
+                $(".tabl").css({"width": pm.findWidthScatter()+"px", "margin-left": tablewidth+"px"});
+            }, 500);
         });
     }
+}
+
+pm.creditScoreCreator = function(creditscore) {
+    var dataCreditScroce = [];
+    for(var i in creditscore) {
+        if (creditscore[i].finalscoredob != 0) {
+            var a = [];
+            a.push(creditscore[i].finalscoredob, parseFloat(kendo.toString(creditscore[i].amount/10000000, "n")));
+            dataCreditScroce.push(a)
+        }
+    }
+    pm.creditScore(dataCreditScroce);
 }
 
 pm.dealCountAmountInterest = function(data) {
@@ -743,8 +815,13 @@ pm.reset = function() {
     pm.xfl5interestwidth(0);
 }
 
+pm.findWidthScatter = function() {
+    var data1 = parseInt($("#cater g:first path:eq(1)").attr("d").split(" ")[3], 10);
+    var data2 = parseInt($("#cater g:first path:eq(1)").attr("d").split(" ")[7], 10);
+    return data1 - data2;
+}
+
 $(function() {
-    pm.loadChaterChart();
     pm.Target();
     pm.accordion();
     // pm.loadAllHeadChart();

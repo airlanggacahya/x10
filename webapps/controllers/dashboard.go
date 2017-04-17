@@ -1672,7 +1672,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 		months := tk.M{}
 		for key, val := range mapRes {
 			keyInt, _ := strconv.Atoi(key)
-			if keyInt > tp.PeriodCount {
+			if keyInt >= tp.PeriodCount || keyInt < 0 {
 				continue
 			}
 			re := tk.M{}
@@ -2253,6 +2253,7 @@ func (c *DashboardController) DealProfilMetrics(k *knot.WebContext) interface{} 
 		"shared/dataaccess.html",
 		"shared/loading.html",
 		"shared/leftfilter.html",
+		"dashboard/compare_contrast.html",
 	}
 
 	return DataAccess
@@ -2261,7 +2262,7 @@ func (c *DashboardController) DealProfilMetrics(k *knot.WebContext) interface{} 
 func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
-
+	o := tk.M{}
 	payload := tk.M{}
 	err := k.GetPayload(&payload)
 	if err != nil {
@@ -2274,16 +2275,6 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	}
 	defer cn.Close()
 
-	/*whs, err := GenerateRoleCondition(k)
-	if err != nil {
-		return res.SetError(err)
-	}*/
-
-	/*if len(whs) > 0 {
-		whsx = append(whsx, dbox.Or(whs...))
-	}*/
-
-	// whsx = append(whsx, dbox.In("customerprofile.applicantdetail.DealNo", filterids...))
 	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
 	if err != nil {
 		return res.SetError(err)
@@ -2304,7 +2295,11 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	ids, err := FiltersAD2DealNo(
 		nil,
 		CheckArray(payload.Get("filter")),
-		nil,
+		&OptionalFilter{
+			Stage2: map[string]FilterMap{
+				"DealStatus": FilterMap{"lastInfo.status", FilterEqual},
+			},
+		},
 	)
 	if err != nil {
 		return res.SetError(err)
@@ -2333,71 +2328,52 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 		"$match": whsMatch,
 	})
 
-	///metric trend
-	err, pipeResult := c.trendChart(payload, tp, pipe)
+	///metric trend xfl query
+	err, resultsXfl := c.trendxfl(payload, tp, pipe, cn)
 	if !tk.IsNilOrEmpty(err) {
 		return res.SetError(err)
 	}
-	query := cn.NewQuery().
-		Command("pipe", pipeResult).
-		From("DealSetup")
-	csr, err := query.Cursor(nil)
-	if err != nil {
-		return res.SetError(err)
+
+	if !tk.IsNilOrEmpty(payload.Get("distributionchart")) {
+		///grouping deal distribution
+		resultDistribution := c.dealDistribution(resultsXfl)
+		return res.SetData(o.Set("distribution", resultDistribution))
 	}
-	defer csr.Close()
-	results := make([]tk.M, 0)
-	err = csr.Fetch(&results, 0, false)
-	if err != nil {
+
+	///metric trend query
+	err, trendResult := c.trendChart(payload, tp, pipe, cn)
+	if !tk.IsNilOrEmpty(err) {
 		return res.SetError(err)
 	}
 
 	///grouping manual coy!
 	///metric trend
-	resultData, resultDataWidget := c.metricTrendPeriodGrouping(results, tp)
+	resultData, resultDataWidget := c.metricTrendPeriodGrouping(trendResult, tp)
 
 	///grouping trend by region
-	err, regionGrouping := c.metricTrendRegionGrouping(results, tp, k)
+	err, regionGrouping := c.metricTrendRegionGrouping(trendResult, tp, k)
 	if !tk.IsNilOrEmpty(err) {
 		return res.SetError(err)
 	}
 
-	///metric trend xfl
-	err, pipeResult = c.trendxfl(payload, tp, pipe)
-	if !tk.IsNilOrEmpty(err) {
-		return res.SetError(err)
-	}
-	query = cn.NewQuery().
-		Command("pipe", pipeResult).
-		From("DealSetup")
-	csr, err = query.Cursor(nil)
-	if err != nil {
-		return res.SetError(err)
-	}
-	defer csr.Close()
-	resultsXfl := make([]tk.M, 0)
-	err = csr.Fetch(&resultsXfl, 0, false)
-	if err != nil {
-		return res.SetError(err)
-	}
 	///xfl
 	xflResult := c.xflTrendGrouping(resultsXfl, tp)
 
 	///grouping deal distribution
 	resultDistribution := c.dealDistribution(resultsXfl)
 
-	o := tk.M{}
 	o.Set("trendPeriod", resultData)
 	o.Set("topwidget", resultDataWidget)
 	o.Set("xfl", xflResult)
 	o.Set("distribution", resultDistribution)
 	o.Set("trendRegion", regionGrouping)
+	o.Set("creditscore", resultsXfl)
 	res.SetData(o)
 
 	return res
 }
 
-func (c *DashboardController) trendxfl(payload tk.M, tp TimePeriod, pipe []tk.M) (error, []tk.M) {
+func (c *DashboardController) trendxfl(payload tk.M, tp TimePeriod, pipe []tk.M, cn dbox.IConnection) (error, []tk.M) {
 	pipe = append(pipe, tk.M{"$lookup": tk.M{
 		"from":         "DCFinalSanction",
 		"localField":   "customerprofile.applicantdetail.DealNo",
@@ -2419,24 +2395,45 @@ func (c *DashboardController) trendxfl(payload tk.M, tp TimePeriod, pipe []tk.M)
 		"preserveNullAndEmptyArrays": true,
 	}})
 	pipe = append(pipe, tk.M{"$project": tk.M{
-		"dealno": "$customerprofile.applicantdetail.DealNo",
-		"dc":     "$dc",
-		"cs":     "$cs",
+		"dealno":        "$customerprofile.applicantdetail.DealNo",
+		"finalscoredob": "$cs.FinalScoreDob",
+		"rmname":        "$accountdetails.accountsetupdetails.rmname",
+		"creditanalyst": "$accountdetails.accountsetupdetails.creditanalyst",
+		"customername":  "$customerprofile.applicantdetail.CustomerName",
+		"dc":            "$dc",
+		"cs":            "$cs",
 		"info": tk.M{
 			"$slice": []interface{}{"$info.myInfo", -1},
 		},
 	}})
 	pipe = append(pipe, tk.M{"$unwind": "$info"})
 	pipe = append(pipe, tk.M{"$project": tk.M{
-		"dealno":      "$dealno",
-		"info":        "$info",
-		"finalRating": tk.M{"$ifNull": []interface{}{"$cs.FinalRating", ""}},
-		"amount":      tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
-		"ROI":         tk.M{"$ifNull": []interface{}{"$dc.ROI", 0}},
+		"dealno":        "$dealno",
+		"info":          "$info",
+		"rmname":        "$rmname",
+		"creditanalyst": "$creditanalyst",
+		"customername":  "$customername",
+		"finalscoredob": tk.M{"$ifNull": []interface{}{"$finalscoredob", 0}},
+		"finalRating":   tk.M{"$ifNull": []interface{}{"$cs.FinalRating", ""}},
+		"amount":        tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
+		"ROI":           tk.M{"$ifNull": []interface{}{"$dc.ROI", 0}},
 	}})
 	// tk.Println(tk.JsonString(pipe))
 
-	return nil, pipe
+	query := cn.NewQuery().
+		Command("pipe", pipe).
+		From("DealSetup")
+	csr, err := query.Cursor(nil)
+	if err != nil {
+		return err, nil
+	}
+	defer csr.Close()
+	resultsXfl := make([]tk.M, 0)
+	err = csr.Fetch(&resultsXfl, 0, false)
+	if err != nil {
+		return err, nil
+	}
+	return nil, resultsXfl
 }
 
 func (c *DashboardController) xflTrendGrouping(results tk.Ms, tp TimePeriod) tk.Ms {
@@ -2490,7 +2487,7 @@ func (c *DashboardController) xflTrendGrouping(results tk.Ms, tp TimePeriod) tk.
 	return result
 }
 
-func (c *DashboardController) trendChart(payload tk.M, tp TimePeriod, pipe []tk.M) (error, []tk.M) {
+func (c *DashboardController) trendChart(payload tk.M, tp TimePeriod, pipe []tk.M, cn dbox.IConnection) (error, []tk.M) {
 	pipe = append(pipe, tk.M{"$lookup": tk.M{
 		"from":         "DCFinalSanction",
 		"localField":   "customerprofile.applicantdetail.DealNo",
@@ -2520,8 +2517,21 @@ func (c *DashboardController) trendChart(payload tk.M, tp TimePeriod, pipe []tk.
 		"ROI":        tk.M{"$ifNull": []interface{}{"$dc.ROI", 0}},
 	}})
 	// tk.Println(tk.JsonString(pipe))
+	query := cn.NewQuery().
+		Command("pipe", pipe).
+		From("DealSetup")
+	csr, err := query.Cursor(nil)
+	if err != nil {
+		return err, nil
+	}
+	defer csr.Close()
+	results := make([]tk.M, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return err, nil
+	}
 
-	return nil, pipe
+	return nil, results
 }
 
 func (c *DashboardController) metricTrendPeriodGrouping(results tk.Ms, tp TimePeriod) (tk.Ms, tk.M) {

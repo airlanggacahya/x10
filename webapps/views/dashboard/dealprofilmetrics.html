@@ -1,325 +1,390 @@
 {{template "dataaccess.html" .}}
-<script>document.write('<script src="/static/core/dashboard-dashfilter.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
-<script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
-<script>document.write('<script src="/static/core/dashboard-dealprofilmetrics.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+<script>
+document.write('<script src="/static/core/dashboard-dashfilter.js?nochace=' + Math.floor(Math.random() * 100) + '"\><\/script>')
+</script>
+<script>
+document.write('<script src="/static/core/dashboard.js?nochace=' + Math.floor(Math.random() * 100) + '"\><\/script>')
+</script>
+<script>
+document.write('<script src="/static/core/dashboard-dealprofilmetrics.js?nochace=' + Math.floor(Math.random() * 100) + '"\><\/script>')
+</script>
 <!-- <script type="text/javascript" src="/static/material/dist/ripple.min.js"></script> -->
 {{template "leftfilter.html"}}
+{{template "compare_contrast.html"}}
 <style type="text/css">
-    .top{
-        margin-top: 50px;
-    }
-    .left{
-        text-align: left;
-    }
-    .ket{
-        margin-bottom: -5px;
-        margin-left: -14px;
-    }
-    #square1, #square2, #square3, #square4{
-        width: 7px;
-        height: 7px;
-        display: inline-block;
-    }
-    #square1{
-        background-color: #ff2929;
-    }
-    #square2{
-        background-color: #ffc000;
-    }
-    #square3{
-        background-color: #92d050;
-    }
-    #square4{
-        background-color: #2e75b6;
-    }
-    #butt{
-        /*padding-left: 24%;*/
-        padding-top: 20px;
-    }
-    .dl{
-        display:block;
-        background-color: white;
-        margin-top: 0px !important;
-    }
-    .onactive{
-        /*background-color: rgba(0,0,0,0.1);*/
-        border: 3px solid #2f528f !important;
-    }
-    .wl{
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-    }
-    #ti{
-        font-family: Arial,Helvetica,sans-serif;
-        font-size: 10px;
-        font-weight: bold !important;
-        margin-top: 12px;
-        margin-left: 17px;
-    }
-    .avg{
-        text-align: center;
-        font-size: 42px;
-        font-weight: bolder !important;
-    }
+.top {
+    margin-top: 50px;
+}
 
-    .tat-title{
-        text-align: left;
-    }
+.left {
+    text-align: left;
+}
 
-    #conv, #dec, #proc, #acc{
-        text-align: center;
-        margin-top: -11px;
-    }
-    .material-ripple>.panel {
-        position: relative;
-        display: block;
-    }
-    .con{
-        margin-top: 20px !important;
-        background-color: white;
-        margin-bottom: -10px !important;
-    }
-    #tit{
-        font-size: 12px;
-        font-family: Arial,Helvetica,Sans-Serif;
-        font-weight: bold !important;
-    }
-    .aol{
-        background-color: white;
-        margin-top: -1% !important;
-    }
-    .aul{
-        margin-top:-0.5% !important;
-        background-color: #fff;
-    }
-    .tabl{
-        width: 95%;
-        margin-left: 4%;
-    }
-    .turnaroundtime h4 {
-        font-size: 16px;
-        text-align: left;
-        font-weight: bold;
-        font-family: Cambria, Helvetica, Arial;
-    }
-    .line{
-        /*margin-top: 6px;
+.ket {
+    margin-bottom: -5px;
+    margin-left: -14px;
+}
+
+#square1,
+#square2,
+#square3,
+#square4 {
+    width: 7px;
+    height: 7px;
+    display: inline-block;
+}
+
+#square1 {
+    background-color: #ff2929;
+}
+
+#square2 {
+    background-color: #ffc000;
+}
+
+#square3 {
+    background-color: #92d050;
+}
+
+#square4 {
+    background-color: #2e75b6;
+}
+
+#butt {
+    /*padding-left: 24%;*/
+    padding-top: 20px;
+}
+
+.dl {
+    display: block;
+    background-color: white;
+    margin-top: 0px !important;
+}
+
+.onactive {
+    /*background-color: rgba(0,0,0,0.1);*/
+    border: 3px solid #2f528f !important;
+}
+
+.wl {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+}
+
+#ti {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    font-weight: bold !important;
+    margin-top: 12px;
+    margin-left: 17px;
+}
+
+.avg {
+    text-align: center;
+    font-size: 42px;
+    font-weight: bolder !important;
+}
+
+.tat-title {
+    text-align: left;
+}
+
+#conv,
+#dec,
+#proc,
+#acc {
+    text-align: center;
+    margin-top: -11px;
+}
+
+.material-ripple>.panel {
+    position: relative;
+    display: block;
+}
+
+.con {
+    margin-top: 20px !important;
+    background-color: white;
+    margin-bottom: -10px !important;
+}
+
+#tit {
+    font-size: 12px;
+    font-family: Arial, Helvetica, Sans-Serif;
+    font-weight: bold !important;
+}
+
+.aol {
+    background-color: white;
+    margin-top: -1% !important;
+}
+
+.aul {
+    margin-top: -0.5% !important;
+    background-color: #fff;
+}
+
+.tabl {
+    width: 95%;
+    margin-left: 3.4%;
+}
+
+.turnaroundtime h4 {
+    font-size: 16px;
+    text-align: left;
+    font-weight: bold;
+    font-family: Cambria, Helvetica, Arial;
+}
+
+.line {
+    /*margin-top: 6px;
         margin-bottom: 20px;*/
-        border: 1px solid #4472c4;
-        border-top: 0px solid #eee;
-        margin-top: -3px;
-    }
-    .acc-down{
-        float: right;
-        font-size: 14px;
-        color:grey;
-        -ms-transform: rotate(180deg);
-        -webkit-transform: rotate(180deg);
-        transform: rotate(180deg);
-    }
-    .acc-up{
-        font-size: 14px;
-        color:grey;
-        -moz-transform: scaleX(-1);
-        -webkit-transform: scaleX(-1);
-        -o-transform: scaleX(-1);
-        transform: scaleX(-1);
-        -ms-filter: fliph;
-    }
-    .toggle1{
-        cursor: pointer;
-    }
-    .scatter-title{
-        margin-top: 20px;
-    }
-    #goal-container {
-        /*background: transparent url("/static/img/gauge-container.png") no-repeat 50% 50%;*/
-        width: 150px;
-        height: 150px;
-        text-align: center;
-        margin: 0 auto 30px auto;
-        margin-top: 10px;
-    }
-    #tatgoals {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 0;
-    }
-    .lay{
-        padding-left: 25px;
-        padding-right: 25px;
-    }
-    /*#goal-container .k-slider {
+    border: 1px solid #4472c4;
+    border-top: 0px solid #eee;
+    margin-top: -3px;
+}
+
+.acc-down {
+    float: right;
+    font-size: 14px;
+    color: grey;
+    -ms-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.acc-up {
+    font-size: 14px;
+    color: grey;
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    transform: scaleX(-1);
+    -ms-filter: fliph;
+}
+
+.toggle1 {
+    cursor: pointer;
+}
+
+.scatter-title {
+    margin-top: 20px;
+}
+
+#goal-container {
+    /*background: transparent url("/static/img/gauge-container.png") no-repeat 50% 50%;*/
+    width: 150px;
+    height: 150px;
+    text-align: center;
+    margin: 0 auto 30px auto;
+    margin-top: 10px;
+}
+
+#tatgoals {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 0;
+}
+
+.lay {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+
+/*#goal-container .k-slider {
                     margin-top: -11px;
                     width: 200px;
                 }*/
-    .tl{
-        margin-top: -3%;
-    }
 
-    h5 {
-        margin-top: 0px;
-    }
+.tl {
+    margin-top: -3%;
+}
 
-    .new-dashboard h6 {
-        margin-bottom: 0px;
-    }
+h5 {
+    margin-top: 0px;
+}
 
-    .new-dashboard.minichart .panel {
-        padding: 0px;
-        padding-bottom: 10px;
-    }
+.new-dashboard h6 {
+    margin-bottom: 0px;
+}
 
-    .trend .legend #square1{
-        background-color: #2e75b6;
-        margin-left: 8px;
-    }
-    .trend .legend #square2{
-        background-color: #00b0f0;
-        margin-left: 8px;
-    }
-    .trend .legend #square3{
-        background-color: #ffc000;
-        margin-left: 8px;
-    }
-    .trend .legend #square4{
-        background-color: #678900;
-        margin-left: 8px;
-    }
+.new-dashboard.minichart .panel {
+    padding: 0px;
+    padding-bottom: 10px;
+}
 
-    .new-dashboard .footnote {
-        font-size: 11px;
-        padding-top: 5px;
-    }
+.trend .legend #square1 {
+    background-color: #2e75b6;
+    margin-left: 8px;
+}
 
-    .legend {
-        font-size: 11px;
-        font-family: Arial,Helvetica,Sans-Serif;
-        text-align: center;
-        color:  #fff;
-        height: 25px;
-    }
+.trend .legend #square2 {
+    background-color: #00b0f0;
+    margin-left: 8px;
+}
 
-    h6 {
-        font-weight: normal !important;
-    }
+.trend .legend #square3 {
+    background-color: #ffc000;
+    margin-left: 8px;
+}
 
-    .aul h5 {
-        font-size: 12px;
-        font-family: Arial,Helvetica,Sans-Serif;
-        color: #58666e;
-    }
+.trend .legend #square4 {
+    background-color: #678900;
+    margin-left: 8px;
+}
 
-    .aul {
-        padding-top: 0px;
-    }
+.new-dashboard .footnote {
+    font-size: 11px;
+    padding-top: 5px;
+}
 
-    .chart-options {
-        position: absolute;
-        float: right;
-        z-index: 1;
-        right: 25px;
-        top: 3px;
-        font-size: 10px;
-    }
+.legend {
+    font-size: 11px;
+    font-family: Arial, Helvetica, Sans-Serif;
+    text-align: center;
+    color: #fff;
+    height: 25px;
+}
 
-    .chart-options label {
-        margin-top: 4px;
-        margin-right: 5px;
-    }
+h6 {
+    font-weight: normal !important;
+}
 
-    .chart-options0{
-        float: left;
-        right: 25px;
-         top: 3px; 
-        font-size: 10px;
-        margin-top: 1%;
-        padding-left: 2%;
-    }
+.aul h5 {
+    font-size: 12px;
+    font-family: Arial, Helvetica, Sans-Serif;
+    color: #58666e;
+}
 
-    .chart-options0 label {
-        margin-top: 4px;
-        margin-right: 5px;
-    }
+.aul {
+    padding-top: 0px;
+}
+
+.chart-options {
+    position: absolute;
+    float: right;
+    z-index: 1;
+    right: 25px;
+    top: 3px;
+    font-size: 10px;
+}
+
+.chart-options label {
+    margin-top: 4px;
+    margin-right: 5px;
+}
+
+.chart-options0 {
+    float: left;
+    right: 25px;
+    top: 3px;
+    font-size: 10px;
+    margin-top: 1%;
+    padding-left: 2%;
+}
+
+.chart-options0 label {
+    margin-top: 4px;
+    margin-right: 5px;
+}
+
+.chart-options1 label {
+    margin-top: 4px;
+    margin-right: 5px;
+}
+
+.chart-options0 .k-widget.k-dropdown,
+.chart-options1 .k-widget.k-dropdown,
+.chart-options .k-widget.k-dropdown {
+    width: 100px;
+}
+
+.chart-options0 .k-widget.k-dropdown .k-dropdown-wrap,
+.chart-options1 .k-widget.k-dropdown .k-dropdown-wrap,
+.chart-options .k-widget.k-dropdown .k-dropdown-wrap {
+    height: 16px !important;
+}
+
+.chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-input,
+.chart-options1 .k-widget.k-dropdown .k-dropdown-wrap .k-input,
+.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-input {
+    font-size: 9px;
+    padding-top: 1px;
+}
+
+.chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-icon,
+.chart-options1 .k-widget.k-dropdown .k-dropdown-wrap .k-icon,
+.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
+    height: 20px;
+}
+
+.donut-wrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background-color: transparent;
+    margin: -10% auto auto 2%;
+}
+
+.donut-chart {
+    width: 200px;
+    height: 200px;
+}
+
+.inner-content {
+    position: absolute;
+    top: 45%;
+    left: 51%;
+    width: 200px;
+    height: 200px;
+    margin-top: -50px;
+    margin-left: -50px;
+    font-size: 12px;
+    line-height: 100px;
+    vertical-align: middle;
+    text-align: center;
+    color: grey;
+}
+
+.middle-center {
+    display: table;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+.middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.widget-title {
+    font-size: 46px;
+    font-weight: bold !important;
+    color: grey;
+}
+
+.up-arrow {
+    color: #70ad47;
+}
+
+.down-arrow {
+    color: #ff2929;
+}
+
+.new-dashboard.minichart .panel.aol.manual-height {
+    height: 262px;
+    padding: 12px 10px;
+}
+
+.new-dashboard.minichart .panel.aol.manual-height h6 {
+    margin-top: 0px;
+    margin-bottom: 6px;
+}
 
 
-    .chart-options1 label {
-        margin-top: 4px;
-        margin-right: 5px;
-    }
-
-    .chart-options0 .k-widget.k-dropdown, .chart-options1 .k-widget.k-dropdown, .chart-options .k-widget.k-dropdown {
-        width: 100px;
-    }
-
-    .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap, .chart-options1 .k-widget.k-dropdown .k-dropdown-wrap, .chart-options .k-widget.k-dropdown .k-dropdown-wrap {
-        height: 16px !important;
-    }
-
-    .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-input, .chart-options1 .k-widget.k-dropdown .k-dropdown-wrap .k-input, .chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-input {
-        font-size: 9px;
-        padding-top: 1px;
-    }
-
-    .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-icon,.chart-options1 .k-widget.k-dropdown .k-dropdown-wrap .k-icon, .chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
-        height: 20px;
-    }
-
-    .donut-wrapper {
-        position: relative;
-        width: 200px;
-        height: 200px;
-        background-color: transparent;
-        margin: -10% auto auto 2%;
-      }
-
-    .donut-chart {
-        width: 200px;
-        height: 200px;
-    }
-
-    .inner-content {
-        position: absolute;
-        top: 45%;
-        left: 51%;
-        width: 200px;
-        height: 200px;
-        margin-top: -50px;
-        margin-left: -50px;
-        font-size: 12px;
-        line-height: 100px;
-        vertical-align: middle;
-        text-align: center;
-        color: grey;
-    }
-
-    .middle-center {
-        display: table;
-        height: 100%;
-        width: 100%;
-        text-align: center;
-    }
-
-    .middle {
-        display: table-cell;
-        vertical-align: middle;
-    }
-
-    .widget-title { font-size: 46px; font-weight: bold !important; color: grey; }
-    .up-arrow{color: #70ad47;}
-    .down-arrow{color: #ff2929;}
-
-    .new-dashboard.minichart .panel.aol.manual-height {
-        height: 262px;
-        padding: 12px 10px;
-    }
-
-    .new-dashboard.minichart .panel.aol.manual-height h6 {
-        margin-top: 0px;
-        margin-bottom: 6px;
-    }
-
-    /*.new-dashboard.minichart .panel.aol.manual-height .k-grid .k-grid-header {
+/*.new-dashboard.minichart .panel.aol.manual-height .k-grid .k-grid-header {
         height: 215px;
         padding-right: 0px;
     }
@@ -333,25 +398,25 @@
     .new-dashboard.minichart .panel.aol.manual-height .k-grid .k-grid-header .k-grid-header-wrap table {
         width: 900px;
     }*/
-    .k-chart-tooltip{text-align: left;}
+
+.k-chart-tooltip {
+    text-align: left;
+}
 </style>
 <div class="col-md-12 lay">
     <div class="col-md-12 top turnaroundtime">
         <div class="col-md-12">
             <h5>Quick Info : <span data-bind="text: pm.setTitle()">nanana</span></h5>
             <hr class="line">
-            <!-- <div class="col-sm-2"></div> -->
             <div class="col-sm-12 new-dashboard" style="width: 100%;margin-left: -0.5%;margin-top: -32px;">
                 <div id="butt">
                     <div class="col-sm-3 wl">
                         <div class="panel panel-body dl" id="target" style="height: 185px">
                             <h6 class="tat-title tl">Deal Target</h6>
-                            <!-- <center> -->
-                                <div id="goal-container">
-                            <div id="tatgoals"></div>
-                            <div>Days</div>
-                                </div>
-                            <!-- </center> -->
+                            <div id="goal-container">
+                                <div id="tatgoals"></div>
+                                <div>Days</div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-sm-3 wl ">
@@ -418,7 +483,7 @@
             </div>
             <!-- <div class="col-sm-2"></div> -->
             <div class="col-md-12">
-                <h5>Trend : <span data-bind="text: pm.setTitle()"></span> <!-- span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
+                <h5>Trend : <span data-bind="text: pm.setTitle()"></span> </h5>
                 <hr class="line">
             </div>
             <div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
@@ -456,85 +521,18 @@
                         </div>
                         <div style="clear: both"></div>
                         <div id="distribution"></div>
+                        <div class="compare-contrast">
+                            <button data-bind="click: comp.Open.bind(comp, pm.CreateChartMoving)">
+                                <i class="fa fa-balance-scale"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="panel panel-body aol trend manual-height">
                         <div id="interestRateDetail">
-                            <h6>Deal Amount and Interest</h5>
+                            <h6>Deal Amount and Interest</h6>
                             <div id="interestDetailDB"></div>
-                            <!-- <div id="interestDetailDB" style="border: none;" class="k-grid k-widget" >
-                                <div class="k-grid-header">
-                                    <div class="k-grid-header-wrap">
-                                        <table role="grid">
-                                            <thead role="rowgroup">
-                                                <tr role="row" >
-                                                    <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor">Sr. No</th>
-                                                    <th style="width:28%" scope="col" role="columnheader" class="k-header header-bgcolor">Customer Name</th>
-                                                    <th style="width:22%" scope="col" role="columnheader" class="k-header header-bgcolor">Deal No</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">CA</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">RM</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Sanc Amount</th>
-                                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Interest</th>
-                                                    <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor">Detail</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody role="rowgroup" data-bind="">
-                                                <tr role="row">
-                                                    <td role="gridcell">
-                                                        123
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        NIKI INFOTECH PVT LTD
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        DXMUM00716-170000222
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        ADMIN
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        SUMEET JHA
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        10,00,00,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        1,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                    </td>
-                                                </tr>
-                                                <tr role="row">
-                                                    <td role="gridcell">
-                                                        456
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        M INTERGRAPH SYSTEMS PRIVATE LIMITED
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        DXMUM00716-170000222
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        ADMIN
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        ADMIN
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        10,00,00,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                        1,00,00,000
-                                                    </td>
-                                                    <td role="gridcell">
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -545,75 +543,19 @@
             </div>
             <div class="col-md-12 new-dashboard">
                 <div class="panel panel-body aul show">
-                    <div class="cater"></div>
+                    <div id="cater"></div>
                     <table class="tabl">
                         <tr>
-                            <td class="le legend" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">0 - 10 Days</td>
-                            <td class="le legend" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">11 - 20 Days</td>
-                            <td class="le legend" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">21 - 30 Days</td>
-                            <td class="le legend" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">30 - 40 Days</td>
-                            <td class="le legend" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">40 + Days</td>
+                            <td class="le legend" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">XFL - 5</td>
+                            <td class="le legend" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">XFL - 4</td>
+                            <td class="le legend" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">XFL - 3</td>
+                            <td class="le legend" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">XFL - 2</td>
+                            <td class="le legend" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">XFL - 1</td>
                         </tr>
                     </table>
                     <div class="tabl" style="text-align: center; font-size: 11px; font-family: sans-serif; color: #4472c4;">Credit Scores</div>
-                     <!-- <h5 class="scatter-title">Deal Movement Table </h5> -->
-                     <!--  <div id="griddb" style="border: none;" class="k-grid k-widget" data-bind="visible:turn.listscatter().length > 0" >
-                         <div class="k-grid-header">
-                            <div class="k-grid-header-wrap">
-                               <table role="grid" width="100%">
-                                  <thead role="rowgroup">
-                                     <tr role="row" >
-                                        <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">Deal No</th>
-                                        <th style="width:30%" scope="col" role="columnheader" class="k-header header-bgcolor">Customer Name</th>
-                                        <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">CA</th>
-                                        <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">RM</th>
-                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Acceptance<br>TAT</th>
-                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Processing<br>TAT</th>
-                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Action<br>TAT</th>
-                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Decision<br>TAT</th>
-                                        <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Conversion<br>TAT</th>
-                                            <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor"></th>
-                                     </tr>
-                                  </thead>
-                                  <tbody role="rowgroup" data-bind="foreach: turn.listscatter()">
-                                     <tr role="row">
-                                        <td role="gridcell">
-                                          <label data-bind="text: dealno"></label>
-                                        </td>
-                                        <td role="gridcell">
-                                          <label data-bind="text: custname"></label>
-                                        </td>
-                                         <td role="gridcell">
-                                          <label data-bind="text: caname"></label>
-                                        </td>
-                                         <td role="gridcell">
-                                          <label data-bind="text: rmname"></label>
-                                        </td>
-                                         <td role="gridcell">
-                                          <label data-bind="text: Acceptance"></label>
-                                        </td>
-                                         <td role="gridcell">
-                                          <label data-bind="text: Processing"></label>
-                                        </td>
-                                          <td role="gridcell">
-                                          <label data-bind="text: Action"></label>
-                                        </td>
-                                         <td role="gridcell">
-                                          <label data-bind="text: Decision"></label>
-                                        </td>
-                                         <td role="gridcell">
-                                          <label data-bind="text: Conversion"></label>
-                                        </td>
-                                        <td role="gridcell">
-                                          <button class="btn btn-flat btn-sm btn-danger noable" data-bind="click: turn.removescatterGrid($index())"><i class="fa fa-trash"></i></button>
-                                        </td>
-                                        
-                                     </tr>
-                                  </tbody>
-                               </table>
-                         </div>
-                      </div> -->
-                   </div>
+                    <h5 class="scatter-title" data-bind="visible: pm.creditscoreclicked">Deal Amount and Interest Amount</h5>
+                    <div id="creaditscoretable"></div>
                 </div>
             </div>
         </div>

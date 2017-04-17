@@ -8,6 +8,10 @@ pm.avgAmount = ko.observable(0);
 pm.avgInterestAmount = ko.observable(0);
 pm.trendPeriod = ko.observableArray([]);
 pm.trendRegion = ko.observableArray([]);
+pm.creditScore = ko.observableArray([]);
+pm.creditScoreAseli = ko.observableArray([]);
+pm.creditscoreclicked = ko.observable(false);
+pm.creditScoreDataTable = ko.observableArray([]);
 
 pm.xfl1count = ko.observable(0);
 pm.xfl2count = ko.observable(0);
@@ -43,6 +47,7 @@ pm.xfl4interestwidth = ko.observable(0);
 pm.xfl5interestwidth = ko.observable(0);
 
 pm.distributionData = ko.observableArray([]);
+pm.scatterWidth = ko.observable(0);
 
 // Hook to filter value changes
 dash.FilterValue.subscribe(function(val) {
@@ -280,12 +285,16 @@ pm.setTitle = function() {
 }
 
 pm.loadChaterChart = function() {
-    var data = [
-        [20, 23],
-        [40, 27]
-    ];
-    $(".cater").html("");
-    $(".cater").kendoChart({
+    //[x axis, y axis]
+    //[index 0, index 1]
+    //[FinalScoreDob, amount]
+    var data = [{
+        name: "data",
+        data: pm.creditScore()
+    }];
+
+    $("#cater").html("");
+    $("#cater").kendoChart({
         title: {
             text: "Deal Amount vs. Credit Scores",
             font: "12px Arial,Helvetica,Sans-Serif",
@@ -301,20 +310,15 @@ pm.loadChaterChart = function() {
             background: "white"
         },
         seriesDefaults: {
-            type: "scatter",
-            labels: {
-                visible: true
-            }
+            type: "scatter"
         },
-        series: [{
-            name: "Data",
-            data: data
-        }],
+        series: data,
         legend: {
             visible: false,
         },
         xAxis: {
-            max: 50,
+            min:0,
+            max: 10,
             title: {
                 // text: "Credit Scores",
                 font: "11px sans-serif",
@@ -322,25 +326,11 @@ pm.loadChaterChart = function() {
                 color: "#4472C4"
             },
             labels: {
-                template: "&lt;= #= value #",
-                skip: 1,
+                template: "# if (value != 0) { # &lt;= #= value # # }else{# #= value # #} #",
+                // skip: 2,
                 step: 1,
                 font: "10px sans-serif",
             },
-            majorUnit: 10,
-            minorUnit: 20,
-            majorTicks: {
-                visible: false
-            },
-            majorGridLines: {
-                visible: false
-            },
-            minorTicks: {
-                visible: true
-            },
-            minorGridLines: {
-                visible: true
-            }
         },
         yAxis: {
             min: 0,
@@ -355,11 +345,110 @@ pm.loadChaterChart = function() {
                 }
             },
             labels: {
-                // template : "#: kendo.toString( value/100000 , 'n0')#",
                 font: "10px sans-serif",
+            }
+        },
+        tooltip: {
+            visible: true,
+            template: function(e) {
+                var found = _.find(pm.creditScoreAseli(), function(a){
+                    return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"))
+                })
+                return "Deal Amount: " + kendo.toString(found.amount/10000000, "n") + "<br /> Interest Rate: " + found.ROI + "%";
+            }
+        },
+        seriesClick: function(e) {
+            pm.creditscoreclicked(true);
+            var found = _.find(pm.creditScoreAseli(), function(a){
+                return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"))
+            })
+            for (var i in found) {
+                var interestamount = (found.ROI/100) * (found.amount/10000000);
+                found.interesetamount = interestamount;
+            }
+            var exist = _.find(pm.creditScoreDataTable(), function(a){
+                return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"));
+            })
+            if (!exist || exist == undefined) {
+                pm.creditScoreDataTable().push(found);
+                pm.creaditScoreTable();
             }
         }
     });
+}
+
+var record = 0;
+pm.creaditScoreTable = function() {
+    $("#creaditscoretable").html();
+    $("#creaditscoretable").kendoGrid({
+        dataSource: {
+            data: pm.creditScoreDataTable(),
+            pageSize: 20
+        },
+        columns: [{
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            title: "Sr. No.",
+            template: "#= ++record #",
+            width: 50,
+        }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            field: "customername",
+            title: "Customer Name"
+        }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            field: "dealno",
+            title: "Deal No",
+        }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            field: "creditanalyst",
+            title: "Credit Analyst",
+        }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            field: "rmname",
+            title: "RM"
+        }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            field: "amount",
+            title: "Sanctioned Amount",
+            attributes: { style: "text-align: right" },
+            template: "<div> #= kendo.toString(amount/10000000, 'n') # </div>"
+        }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            field: "interesetamount",
+            title: "Intereset Amount",
+            attributes: { style: "text-align: right" },
+            template: "<div> #= kendo.toString(interesetamount, 'n') # </div>"
+        }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            field: "details",
+            title: "Details",
+            template: function(e){
+                return "<a onclick='pm.showMore(\""+e.customername+"\", \""+e.dealno+"\")' style='text-decoration:none; cursor: pointer;'>Show More</a>";
+            }
+        }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
+            field: "",
+            title: "",
+            width: 50,
+            template: "<button type='button' class='btn btn-danger' onclick='pm.removecreditscorecardrow(\"#:dealno#\")'><i class='glyphicon glyphicon-remove'></i></button>"
+        }],
+        pageable: true,
+        dataBinding: function() {
+            record = (this.dataSource.page() -1) * this.dataSource.pageSize();
+        }
+    });
+}
+
+pm.removecreditscorecardrow = function(dealno) {
+    var found = _.without(pm.creditScoreDataTable(), _.find(pm.creditScoreDataTable(), function(e){
+        return e.dealno == dealno;
+    }));
+    pm.creditScoreDataTable(found);
+    pm.creaditScoreTable();
+}
+
+pm.showMore = function(custname, dealno) {
+    window.open("/dealsetup/default?customername="+custname+"&dealno="+dealno);
 }
 
 pm.normalisasiData = function(data) {
@@ -536,25 +625,30 @@ pm.dealDistributionDetails = function(value, category, selected) {
         dataSource: {
             data: isData
         },
-        sortable: true,
         columns: [{
+            headerAttributes: { "class": "k-header header-bgcolor" },
             field: "dealno",
             title: "Deal Number",
             width: 150
         }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
             field: "dealamount",
             title: "Deal Amount",
-            template: "<div style='float: right;'> #= kendo.toString(dealamount, 'n') # </div>"
+            attributes: { style: "text-align: right" },
+            template: "<div> #= kendo.toString(dealamount, 'n') # </div>"
         }, {
+            headerAttributes: { "class": "k-header header-bgcolor" },
             field: "interestrate",
             title: "Interest Rate",
-            template: "<div style='float: right;'> #= interestrate # </div>"
-        }, {
-            field: "period",
-            title: "Date",
-            template: "#= moment(period).format('YYYY-MM-DD h:m:s') #",
-            width: 150
-        }]
+            attributes: { style: "text-align: right" },
+            template: "<div> #= interestrate # </div>"
+        }// }, {
+        //     field: "period",
+        //     title: "Date",
+        //     template: "#= moment(period).format('YYYY-MM-DD h:m:s') #",
+        //     width: 150
+        // }]
+        ]
     });
 }
 
@@ -638,8 +732,30 @@ pm.init = function() {
             pm.distributionData(res.Data.distribution);
             pm.Distribution();
             pm.dealDistributionDetails();
+
+            ///load scatter chart
+            pm.creditScoreAseli(res.Data.creditscore);
+            pm.creditScoreCreator(res.Data.creditscore);
+            pm.loadChaterChart();
+            setTimeout(function(){
+                var caterWidth = $("#cater").width();
+                var tablewidth = caterWidth - pm.findWidthScatter() - 22
+                $(".tabl").css({"width": pm.findWidthScatter()+"px", "margin-left": tablewidth+"px"});
+            }, 500);
         });
     }
+}
+
+pm.creditScoreCreator = function(creditscore) {
+    var dataCreditScroce = [];
+    for(var i in creditscore) {
+        if (creditscore[i].finalscoredob != 0) {
+            var a = [];
+            a.push(creditscore[i].finalscoredob, parseFloat(kendo.toString(creditscore[i].amount/10000000, "n")));
+            dataCreditScroce.push(a)
+        }
+    }
+    pm.creditScore(dataCreditScroce);
 }
 
 pm.dealCountAmountInterest = function(data) {
@@ -667,7 +783,7 @@ pm.dealCountAmountInterest = function(data) {
                 break;
             case "XFL-2":
                 pm.xfl2countwidth(kendo.toString(v.countwidth, "n0"));
-                pm.xfl2count(kendo.toString(v.count, "n"));
+                pm.xfl2count(v.count);
                 pm.xfl2amountwidth(kendo.toString(v.amountwidth, "n0"));
                 pm.xfl2amount(v.amount);
                 pm.xfl2interestwidth(kendo.toString(v.interestwidth, "n0"));
@@ -743,22 +859,222 @@ pm.reset = function() {
     pm.xfl5interestwidth(0);
 }
 
+pm.findWidthScatter = function() {
+    var data1 = parseInt($("#cater g:first path:eq(1)").attr("d").split(" ")[3], 10);
+    var data2 = parseInt($("#cater g:first path:eq(1)").attr("d").split(" ")[7], 10);
+    return data1 - data2;
+}
+
+pm.CreateChartMoving = function(param, callback) {
+    /*ajaxPost("/dashboard/metricstrend", param, function (data) {
+        pm.CreateChartMovingOptions_(data.Data.distribution);
+    })*/
+    pm.CreateChartMovingData(param, function(data) {
+        callback(pm.CreateChartMovingOptions_(data))
+    })
+}
+
+pm.CreateChartMovingData = function(param, callback) {
+    param.distributionchart = true
+    ajaxPost("/dashboard/metricstrend", param, function (data) {
+        callback(data.Data.distribution);
+    })
+}
+
+pm.CreateChartMovingOptions_ = function (data) {
+    console.log(data)
+    var movingdata = new kendo.data.DataSource({
+        data: data,
+        group: [
+            { field: "xfl" }
+        ],
+        schema: {
+            model: {
+                fields: {
+                    percent: {
+                        type: "string"
+                    },
+                    xfl: {
+                        type: "string"
+                    },
+                    roi: {
+                        type: "number"
+                    }
+                }
+            }
+        }
+    });
+    
+    return {
+        title: {
+            text: "Deal Amount / Count vs. Interest Rate",
+            font: "12px Arial,Helvetica,Sans-Serif",
+            align: "left",
+            color: "#58666e",
+            padding: {
+                top: 0
+            }
+
+        },
+        dataSource: movingdata,
+        chartArea: {
+            height: 250
+        },
+        theme: 'Office365',
+            seriesDefaults: {
+            type: 'column'
+        },
+        series: [
+            {
+                type: "column",
+                field: pm.ValueDataMenuDistribution(),
+                categoryField: "percent",
+                name: "#= group.value #",
+                stack: {
+                    group: "xfl"
+                }
+            }
+        ],
+        dataBound: function(e) {
+            if (this.options.series[0].name != "#= group.value #") {
+                for(var i in this.options.series){
+                    switch (this.options.series[i].name) {
+                        case "XFL-1":
+                            this.options.series[i].color = "#0b8140";
+                            break;
+                        case "XFL-2":
+                            this.options.series[i].color = "#70ad47";
+                            break;
+                        case "XFL-3":
+                            this.options.series[i].color = "#ffc000";
+                            break;
+                        case "XFL-4":
+                            this.options.series[i].color = "#ed7d31";
+                            break;
+                        case "XFL-5":
+                            this.options.series[i].color = "#ff2929";
+                            break;
+                    }
+                };
+            }
+            
+            var axis = e.sender.options.categoryAxis;
+            axis.categories = _.sortBy(this.options.categoryAxis.categories);
+            this.options.categoryAxis.categories.sort(function(a,b) {
+                if (isNaN(a) || isNaN(b)) {
+                    return a > b ? 1 : -1;
+                }
+                return a - b;
+            });
+        },
+        tooltip: {
+            visible: true,
+            padding: {
+              left: 10
+            },
+            template: function(e){
+                var tlpData = _.find(pm.distributionData(), function(a){
+                    return a.xfl == e.series.name && a.percent == e.category;
+                });
+                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") + "<br /> Deal Count: " + tlpData.count + "<br /> Deal Interest: " + kendo.toString(tlpData.interest, "n");
+                return data;
+            }
+        },
+        valueAxis: [{
+            name: pm.ValueDataMenuDistribution(),
+            title: {
+                text: "Deal Amount",
+                font: "10px sans-serif",
+                visible: true,
+                color: "#4472C4",
+            }
+        }],
+        categoryAxis: {
+            title: {
+                text: "Interest Rates (%)",
+                font: "10px sans-serif",
+                visible: true,
+                color: "#4472C4",
+            }
+        }
+    }
+    /*return {
+        title:{
+            text: "Moving TAT",
+            font:  "12px Arial,Helvetica,Sans-Serif",
+            align: "left",
+            color: "#58666e",
+            padding: {
+                top: 0
+            }
+        },
+        plotArea: {
+            margin: {
+                left: 4,
+                right: 4
+            }
+        },
+        dataSource: movingdata,
+        series:[{
+            type: "column",
+            stack: false,
+            field: "count",
+            name : "#= group.value#",
+            overlay: {
+                gradient: "none"
+            },
+        }],
+        legend: {
+            // position: "bottom"
+            visible: false,
+        },
+        chartArea:{
+            background: "white",
+            height: 250,
+        },
+        valueAxis: {
+            labels: {
+                // format: "${0}",
+                font: "10px sans-serif",
+                skip: 2,
+                step: 2
+            },
+            title : {
+                text : "Deal Amount",
+                font: "10px sans-serif",
+                visible : true,
+                color : "#4472C4",
+                margin: {
+                    right: 1,
+                }
+            }
+        },
+        categoryAxis: {
+            // categories: cat,
+            field: "status",
+            title : {
+                text : "Interest Rates (%)",
+                font: "10px sans-serif",
+                visible : true,
+                color : "#4472C4"
+            },
+            labels : {
+                font: "10px sans-serif",
+            }
+        },
+        tooltip : {
+            visible: true,
+            template : function(dt){
+                // console.log("------------------>>>",dt)
+                return "<div class='left'>Deal Stage : "+dt.category+"<br>"+
+                        "Processing Days : "+dt.dataItem.dayrange+"<br>"+
+                        " Deal Count: "+dt.dataItem.count+"</div>";
+            }
+        }
+    }*/
+}
+
 $(function() {
-    pm.loadChaterChart();
     pm.Target();
     pm.accordion();
-    // pm.loadAllHeadChart();
-    // $('#dealcount td.tooltipdealcount').tooltipster({
-    //     functionInit: function(instance, helper) {
-    //         console.log(instance, helper)
-    //         // // parse the content
-    //         // var content = instance.content(),
-    //         //     people = JSON.parse(content),
-    //         //     // and use it to make a sentence
-    //         //     newContent = 'We have ' + people.length + ' people today. Say hello to ' + people.join(', ');
-
-    //         // // save the edited content
-    //         // instance.content(newContent);
-    //     }
-    // });
 });

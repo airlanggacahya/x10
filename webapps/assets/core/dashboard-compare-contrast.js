@@ -3,6 +3,12 @@ var compFilter = CreateDashFilter()
 var comp = {}
 
 comp.viewFilter = ko.observable(false)
+comp.viewFilter.subscribe(function (val) {
+    if (val)
+        $("#compareModal .filter-button").hide();
+    else
+        $("#compareModal .filter-button").show();
+})
 
 comp.setFilterVal = function (filter, field, value) {
     var ret = _.find(filter, function (val) {
@@ -199,6 +205,7 @@ comp.RedrawChart_ = function (firstload) {
             btn.classList.add("btn-xs")
             btn.classList.add("btn-flat")
             btn.classList.add("btn-primary")
+            btn.classList.add("filter-button")
             btn.appendChild(icon)
             $(btn).on("click", function(){
                 comp.viewFilter(true);

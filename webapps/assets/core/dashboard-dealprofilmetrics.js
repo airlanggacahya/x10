@@ -430,7 +430,7 @@ pm.creaditScoreTable = function() {
             field: "",
             title: "",
             width: 50,
-            template: "<button type='button' class='btn btn-danger' onclick='pm.removecreditscorecardrow(\"#:dealno#\")'><i class='glyphicon glyphicon-remove'></i></button>"
+            template: "<button type='button' class='btn btn-sm btn-danger' onclick='pm.removecreditscorecardrow(\"#:dealno#\")'><i class='fa fa-trash'></i></button>"
         }],
         pageable: true,
         dataBinding: function() {
@@ -976,7 +976,7 @@ pm.CreateChartMovingOptions_ = function (data) {
                 var tlpData = _.find(pm.distributionData(), function(a){
                     return a.xfl == e.series.name && a.percent == e.category;
                 });
-                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") + "<br /> Deal Count: " + tlpData.count + "<br /> Deal Interest: " + kendo.toString(tlpData.interest, "n");
+                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") + "<br /> Deal Count: " + tlpData.count + "<br /> Deal Interest: " + kendo.toString(tlpData.interest * 100, "n") + "%";
                 return data;
             }
         },

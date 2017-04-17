@@ -2335,8 +2335,10 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	}
 
 	if !tk.IsNilOrEmpty(payload.Get("distributionchart")) {
+		// filter out not current period for credit score
+		currentOnlyXfl := c.xflFilterResult(resultsXfl, tp)
 		///grouping deal distribution
-		resultDistribution := c.dealDistribution(resultsXfl)
+		resultDistribution := c.dealDistribution(currentOnlyXfl)
 		return res.SetData(o.Set("distribution", resultDistribution))
 	}
 
@@ -2359,15 +2361,18 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	///xfl
 	xflResult := c.xflTrendGrouping(resultsXfl, tp)
 
+	// filter out not current period for credit score
+	currentOnlyXfl := c.xflFilterResult(resultsXfl, tp)
+
 	///grouping deal distribution
-	resultDistribution := c.dealDistribution(resultsXfl)
+	resultDistribution := c.dealDistribution(currentOnlyXfl)
 
 	o.Set("trendPeriod", resultData)
 	o.Set("topwidget", resultDataWidget)
 	o.Set("xfl", xflResult)
 	o.Set("distribution", resultDistribution)
 	o.Set("trendRegion", regionGrouping)
-	o.Set("creditscore", resultsXfl)
+	o.Set("creditscore", currentOnlyXfl)
 	res.SetData(o)
 
 	return res
@@ -2558,25 +2563,42 @@ func (c *DashboardController) metricTrendPeriodGrouping(results tk.Ms, tp TimePe
 		}
 	}
 	// tk.Println(tk.JsonString(results))
-	resultData := tk.Ms{}
+	resultData := make([]tk.M, tp.PeriodCount)
 	resultDataWidget := tk.M{}
 	countMonthBefore := 0.0
+	for key := range resultData {
+		o := tk.M{}
+		o.Set("count", 0)
+		o.Set("idx", key)
+		o.Set("amount", 0)
+		o.Set("interest", 0)
+		resultData[key] = o
+	}
+
 	for key, v := range trendGroupByMonth {
+		if len(v) == 0 {
+			continue
+		}
+
 		amount := 0.0
 		interest := 0.0
-
-		o := tk.M{}
-		o.Set("count", len(trendGroupByMonth[key]))
 		for _, subV := range v {
 			amount += subV.GetFloat64("amount")
 			interest += subV.GetFloat64("interest")
-
-			o.Set("idx", subV.GetInt("idx"))
-			o.Set("amount", tk.Div(amount, 10000000))
-			o.Set("interest", tk.Div(interest, 10000000))
-			o.Set("period", subV.Get("period"))
 		}
-		resultData = append(resultData, o)
+
+		o := tk.M{}
+		o.Set("count", len(v))
+		o.Set("idx", v[0].GetInt("idx"))
+		o.Set("amount", tk.Div(amount, 10000000))
+		o.Set("interest", tk.Div(interest, 10000000))
+		o.Set("period", v[0].Get("period"))
+
+		if o.GetInt("idx") < 0 || o.GetInt("idx") >= tp.PeriodCount {
+			continue
+		}
+
+		resultData[o.GetInt("idx")] = o
 
 		if o.GetInt("idx") == 1 {
 			countMonthBefore = tk.ToFloat64(len(trendGroupByMonth[key]), 2, tk.RoundingAuto)
@@ -2641,6 +2663,20 @@ func (c *DashboardController) metricTrendRegionGrouping(results tk.Ms, tp TimePe
 	}
 
 	return nil, resultsData
+}
+
+func (c *DashboardController) xflFilterResult(data []tk.M, tp TimePeriod) tk.Ms {
+	ret := tk.Ms{}
+	for _, v := range data {
+		timePeriod := v.Get("info").(tk.M).Get("updateTime").(time.Time)
+		if tp.GetPeriodID(timePeriod) != 0 {
+			continue
+		}
+
+		ret = append(ret, v)
+	}
+
+	return ret
 }
 
 func (c *DashboardController) dealDistribution(data []tk.M) tk.Ms {

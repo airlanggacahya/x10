@@ -2791,3 +2791,311 @@ func (c *DashboardController) roiRange(roi float64) string {
 	}
 	return roipercentage
 }
+
+func (c *DashboardController) ConversionOption(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+	res := tk.M{}
+
+	payload := tk.M{}
+
+	err := k.GetPayload(&payload)
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	cn, err := GetConnection()
+	if err != nil {
+		tk.Println("connection failed")
+	}
+
+	defer cn.Close()
+
+	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	tp := TimePeriod{
+		Start:       periodStart,
+		End:         periodEnd,
+		TimeType:    payload.GetString("type"),
+		PeriodCount: 1,
+	}
+	tp = CalcTimePeriod(tp)
+
+	ids, err := FiltersAD2DealNo(
+		nil,
+		CheckArray(payload.Get("filter")),
+		nil,
+	)
+
+	filterids := []interface{}{}
+	for _, id := range ids {
+		filterids = append(filterids, id)
+	}
+
+	whsx := []*dbox.Filter{}
+	whsx = append(whsx,
+		dbox.And(
+			dbox.Lt("info.myInfo.updateTime", tp.FilterBefore),
+			dbox.Gte("info.myInfo.updateTime", tp.FilterAfter),
+			dbox.In("customerprofile.applicantdetail.DealNo", filterids...),
+		),
+	)
+
+	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whsx...))
+	if err != nil {
+		return c.SetResultInfo(true, err.Error(), nil)
+	}
+
+	pipe := []tk.M{}
+	tk.Println("---------------------2811")
+	pipe = append(pipe, tk.M{
+		"$match": whsMatch,
+	})
+	pipe = append(pipe, tk.M{
+		"$project": tk.M{
+			"info": tk.M{
+				"$filter": tk.M{
+					"input": "$info.myInfo",
+					"as":    "myInfo",
+					"cond": tk.M{
+						"$and": []interface{}{
+							tk.M{"$lt": []interface{}{"$$myInfo.updateTime", tp.FilterBefore}},
+							tk.M{"$gte": []interface{}{"$$myInfo.updateTime", tp.FilterAfter}},
+						},
+					},
+				},
+			},
+			"comp": tk.M{
+				"$filter": tk.M{
+					"input": "$info.myInfo",
+					"as":    "myInfo",
+					"cond": tk.M{
+						"$and": []interface{}{
+							tk.M{"$lte": []interface{}{"$$myInfo.updateTime", tp.FilterAfter}},
+						},
+					},
+				},
+			},
+		},
+	})
+
+	// err, pipeResult := c.trendChart(payload, tp, pipe)
+	// if !tk.IsNilOrEmpty(err) {
+	// 	return res.SetError(err)
+	// }
+
+	query := cn.NewQuery().
+		Command("pipe", pipe).
+		From("DealSetup")
+
+	csr, err := query.Cursor(nil)
+	if err != nil {
+		return c.SetResultInfo(true, "error", nil)
+	}
+	defer csr.Close()
+	results := make([]tk.M, 0)
+	err = csr.Fetch(&results, 0, false)
+	if err != nil {
+		return c.SetResultInfo(true, "error", nil)
+	}
+	if len(results) != 0 {
+		tk.Println("---------------------2851")
+
+		undrDeals := 0
+		apprDeals := 0
+		inQueue := 0
+		inAnlysis := 0
+		onAnlysis := 0
+		pendingDeals2 := 0
+		sentdc := 0
+		actDeals := 0
+		undrDeals1 := 0
+		apprDeals1 := 0
+		inQueue1 := 0
+		inAnlysis1 := 0
+		onAnlysis1 := 0
+		pendingDeals21 := 0
+		sentdc1 := 0
+
+		actDeals1 := 0
+		undrRate := 0.0
+		apprRate := 0.0
+		analRate := 0.0
+		actRate := 0.0
+		undrRate1 := 0.0
+		apprRate1 := 0.0
+		analRate1 := 0.0
+		actRate1 := 0.0
+		pendingDeals1 := 0
+		pendingDeals11 := 0
+		tk.Println("---------------------2880", results)
+
+		for _, otr := range results {
+			v := otr.Get("info")
+			l := v.([]interface{})
+			if len(l) != 0 {
+				for i, st := range l {
+
+					stts := hp.TkWalk(st.(tk.M), "status")
+					tk.Println("---------------------2871", stts)
+					if stts == "Approved" || stts == "Rejected" {
+						undrDeals = undrDeals + 1
+					}
+
+					if stts == "Approved" {
+						apprDeals = apprDeals + 1
+					}
+
+					if stts == "In queue" {
+						inQueue = inQueue + 1
+					}
+
+					if stts == "Under Analysis" || stts == "Sent Back for Analysis" {
+						inAnlysis = inAnlysis + 1
+					}
+
+					if stts == "Sent Back for Analysis" {
+						bs := l[i-1]
+						stl := hp.TkWalk(bs.(tk.M), "status")
+
+						if stl == "On Hold" || stl == "Awaiting Decision" {
+							onAnlysis = onAnlysis + 1
+						}
+
+					}
+
+					if stts == "On Hold" || stts == "Awaiting Decision" {
+						f := len(l) > i+1
+						if !f {
+							pendingDeals2 = pendingDeals2 + 1
+						} else {
+							cs := l[i+1]
+							ostl := hp.TkWalk(cs.(tk.M), "status")
+							if cs != nil {
+								if ostl == "Approved" || ostl == "Rejected" || ostl == "Cancelled" {
+									pendingDeals2 = pendingDeals2 + 1
+								}
+							}
+
+						}
+
+					}
+
+					if stts == "Sent to Decision Committee" {
+						sentdc = sentdc + 1
+					}
+
+					if stts == "Approved" || stts == "Rejected" || stts == "Cancelled" {
+						actDeals = actDeals + 1
+					}
+				}
+				pendingDeals1 = inAnlysis + onAnlysis
+				undrRate = float64(undrDeals)/float64(inQueue) + float64(pendingDeals1) + float64(pendingDeals2)
+				apprRate = float64(apprDeals)/float64(inQueue) + float64(pendingDeals1) + float64(pendingDeals2)
+				actRate = float64(actDeals)/float64(inQueue) + float64(pendingDeals1) + float64(pendingDeals2)
+				analRate = float64(sentdc)/float64(inQueue) + float64(pendingDeals1)
+				res.Set("undrRate", undrRate)
+				res.Set("apprRate", apprRate)
+				res.Set("analRate", analRate)
+				res.Set("actRate", actRate)
+			}
+
+			x := otr.Get("comp")
+			m := x.([]interface{})
+			tk.Println("--------------------- len", len(m))
+			if len(m) != 0 {
+				for i, st1 := range m {
+
+					stts1 := hp.TkWalk(st1.(tk.M), "status")
+					tk.Println("---------------------2871", stts1)
+					if stts1 == "Approved" || stts1 == "Rejected" {
+						undrDeals1 = undrDeals1 + 1
+					}
+
+					if stts1 == "Approved" {
+						apprDeals1 = apprDeals1 + 1
+					}
+
+					if stts1 == "In queue" {
+						inQueue1 = inQueue1 + 1
+					}
+
+					if stts1 == "Under Analysis" || stts1 == "Sent to Decision Committee" {
+						inAnlysis1 = inAnlysis1 + 1
+					}
+
+					if stts1 == "Sent Back for Analysis" {
+						bs1 := l[i-1]
+						stl1 := hp.TkWalk(bs1.(tk.M), "status")
+
+						if stl1 == "On Hold" || stl1 == "Awaiting Decision" {
+							onAnlysis1 = onAnlysis1 + 1
+						}
+
+					}
+
+					if stts1 == "On Hold" || stts1 == "Awaiting Decision" {
+						f1 := len(m) > i+1
+						if !f1 {
+							pendingDeals21 = pendingDeals21 + 1
+						} else {
+							cs1 := l[i+1]
+							ostl1 := hp.TkWalk(cs1.(tk.M), "status")
+							if cs1 != nil {
+								if ostl1 == "Approved" || ostl1 == "Rejected" || ostl1 == "Cancelled" {
+									pendingDeals21 = pendingDeals21 + 1
+								}
+							}
+
+						}
+
+					}
+
+					if stts1 == "Sent to Decision Committee" {
+						sentdc1 = sentdc1 + 1
+					}
+
+					if stts1 == "Approved" || stts1 == "Rejected" || stts1 == "Cancelled" {
+						actDeals1 = actDeals1 + 1
+					}
+				}
+				pendingDeals11 = inAnlysis1 + onAnlysis1
+				undrRate1 = float64(undrDeals1)/float64(inQueue1) + float64(pendingDeals11) + float64(pendingDeals21)
+				apprRate1 = float64(apprDeals1)/float64(inQueue1) + float64(pendingDeals11) + float64(pendingDeals21)
+				actRate1 = float64(actDeals1)/float64(inQueue1) + float64(pendingDeals11) + float64(pendingDeals21)
+				analRate1 = float64(sentdc1)/float64(inQueue1) + float64(pendingDeals11)
+
+			}
+
+		}
+
+		tk.Println("---------------------2999", results)
+
+		// res.Set("ondata", results)
+		if undrRate1 != 0 || apprRate1 != 0 || analRate1 != 0 || actRate1 != 0 {
+			res.Set("compundrRate", undrRate1-undrRate)
+			res.Set("compapprRate", apprRate1-apprRate)
+			res.Set("companalRate", analRate1-analRate)
+			res.Set("compactRate", actRate1-actRate)
+		} else {
+			res.Set("compundrRate", 0)
+			res.Set("compapprRate", 0)
+			res.Set("companalRate", 0)
+			res.Set("compactRate", 0)
+		}
+
+		return res
+	} else {
+		tk.Printfn("data not found")
+	}
+
+	return c.SetResultInfo(true, "data not found", nil)
+
+}

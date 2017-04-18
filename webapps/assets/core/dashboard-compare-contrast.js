@@ -3,6 +3,7 @@ var compFilter = CreateDashFilter()
 var comp = {}
 
 comp.viewFilter = ko.observable(false)
+comp.arr = ko.observableArray([])
 comp.viewFilter.subscribe(function (val) {
     if (val)
         $("#compareModal .filter-button").hide();
@@ -141,6 +142,7 @@ comp.Open = function (chartconfig) {
     comp.resetModal();
     compFilter.LoadFilter(dash.FilterValue());
     // clear chart
+    comp.arr([])
     $("#compMainWindow").html("");
 
     $('#compareModal').modal({show: true, backdrop: 'static', keyboard: false})
@@ -198,13 +200,13 @@ comp.RedrawChart_ = function (firstload) {
         if (index === 0) {
             var icon = document.createElement("i");
             icon.classList.add("fa");
-            icon.classList.add("fa-filter");
+            icon.classList.add("fa-pencil");
 
             var btn = document.createElement("button");
             btn.classList.add("btn")
             btn.classList.add("btn-xs")
             btn.classList.add("btn-flat")
-            btn.classList.add("btn-primary")
+            btn.classList.add("btn-default")
             btn.classList.add("filter-button")
             btn.appendChild(icon)
             $(btn).on("click", function(){
@@ -238,12 +240,27 @@ comp.RedrawChart_ = function (firstload) {
             } else {
                 opt.title.text = opt.title.text + " [" + val + "]";
             }
-            $(el).kendoChart(opt);
+            setTimeout(function(){
+                $(el).kendoChart(opt);
+                data = $(el).data("kendoChart").dataSource.data();
+                $.each(data, function(i, item){
+                    comp.arr.push(item.count)
+                })
+                
+                var chart =$(el).data("kendoChart");
+                max = Math.max(...comp.arr())
+                chart.setOptions({ valueAxis: { min: 0, max: max + 0.5 }});
+                // comp.RedrawChart()
+                console.log("-------------->>>>", opt)
+            }, 200)
+           
+           
+            
         });
 
         parentEl.append(row);
     })
-
+    // comp.RedrawChart()
     // parentEl.show();
 }
 

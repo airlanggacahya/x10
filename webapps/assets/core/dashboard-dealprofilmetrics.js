@@ -635,13 +635,13 @@ pm.dealDistributionDetails = function(value, category, selected) {
             field: "dealamount",
             title: "Deal Amount",
             attributes: { style: "text-align: right" },
-            template: "<div> #= kendo.toString(dealamount, 'n') # </div>"
+            template: "<div> #= kendo.toString(dealamount, 'n') #cr </div>"
         }, {
             headerAttributes: { "class": "k-header header-bgcolor" },
             field: "interestrate",
             title: "Interest Rate",
             attributes: { style: "text-align: right" },
-            template: "<div> #= interestrate # </div>"
+            template: "<div> #= interestrate * 100 #% </div>"
         }// }, {
         //     field: "period",
         //     title: "Date",
@@ -976,7 +976,7 @@ pm.CreateChartMovingOptions_ = function (data) {
                 var tlpData = _.find(pm.distributionData(), function(a){
                     return a.xfl == e.series.name && a.percent == e.category;
                 });
-                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") + "<br /> Deal Count: " + tlpData.count + "<br /> Deal Interest: " + kendo.toString(tlpData.interest * 100, "n") + "%";
+                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") + "cr<br /> Deal Count: " + tlpData.count + "<br /> Deal Interest: " + kendo.toString(tlpData.interest, "n") + "cr";
                 return data;
             }
         },

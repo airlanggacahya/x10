@@ -911,7 +911,7 @@ type TimePeriod struct {
 	GetPeriodID func(time.Time) int
 }
 
-func CalcTimePeriod(input TimePeriod) TimePeriod {
+func (input *TimePeriod) CalcTimePeriod() {
 	var endDate, currDate time.Time
 	switch input.TimeType {
 	case "10day", "fromtill":
@@ -954,8 +954,27 @@ func CalcTimePeriod(input TimePeriod) TimePeriod {
 			return input.Start.Year() - count
 		}
 	}
+}
 
-	return input
+// Move time period,
+// Use negative value to move backward
+// Use positive value to move forward
+func (input *TimePeriod) MoveTimePeriod(i int) {
+	input.CalcTimePeriod()
+
+	switch input.TimeType {
+	case "10day":
+		input.Start = input.Start.AddDate(0, 0, input.Period*i)
+	case "fromtill":
+		input.Start = input.Start.AddDate(0, 0, input.Period*i)
+		input.End = input.End.AddDate(0, 0, input.Period*i)
+	case "", "1month":
+		input.Start = input.Start.AddDate(0, i, 0)
+	case "1year":
+		input.Start = input.Start.AddDate(i, 0, 0)
+	}
+
+	input.CalcTimePeriod()
 }
 
 func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
@@ -1374,7 +1393,7 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 		TimeType:    payload.GetString("type"),
 		PeriodCount: 1,
 	}
-	tp = CalcTimePeriod(tp)
+	tp.CalcTimePeriod()
 
 	// Filter by timeperiod
 	pipe = append(pipe, tk.M{
@@ -1507,7 +1526,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	default:
 		tp.PeriodCount = 1
 	}
-	tp = CalcTimePeriod(tp)
+	tp.CalcTimePeriod()
 
 	trendFilt := payload.GetString("trend")
 	if trendFilt == "" {
@@ -1780,7 +1799,7 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 		TimeType:    payload.GetString("type"),
 		PeriodCount: 1,
 	}
-	tp = CalcTimePeriod(tp)
+	tp.CalcTimePeriod()
 
 	pipe := []tk.M{}
 	pipe = append(pipe, tk.M{
@@ -1997,7 +2016,7 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 		TimeType:    payload.GetString("type"),
 		PeriodCount: 1,
 	}
-	tp = CalcTimePeriod(tp)
+	tp.CalcTimePeriod()
 
 	trendFilt := payload.GetString("trend")
 	// periodFilt := payload.GetString("period")
@@ -2230,7 +2249,6 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 }
 
 func checkMyDate(tp TimePeriod, date time.Time) bool {
-
 	tk.Println("CHECK DATE", tp, date)
 
 	if tp.TimeType == "" {
@@ -2290,7 +2308,7 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 		TimeType:    payload.GetString("type"),
 		PeriodCount: 7,
 	}
-	tp = CalcTimePeriod(tp)
+	tp.CalcTimePeriod()
 
 	ids, err := FiltersAD2DealNo(
 		nil,
@@ -2735,6 +2753,7 @@ func (c *DashboardController) dealDistribution(data []tk.M) tk.Ms {
 	return result
 }
 
+// TODO convert this to mathematic function
 func (c *DashboardController) roiRange(roi float64) string {
 	roipercentage := ""
 	switch {
@@ -2792,41 +2811,144 @@ func (c *DashboardController) roiRange(roi float64) string {
 	return roipercentage
 }
 
-func (c *DashboardController) ConversionOption(k *knot.WebContext) interface{} {
-	k.Config.OutputType = knot.OutputJson
-	res := tk.M{}
+type processFunnel struct {
+	// [A] Change to InQueue in timeperiod
+	InQueueDeals map[string]bool
+	// [B] Change to UnderProcess in timeperiod
+	AcceptedDeals map[string]bool
+	// [C] Change to Sent To DC in timeperiod
+	AnalyzedDeals map[string]bool
+	// [D] Status Under Process / Sent Back to Analysist before timeperiod
+	// [E] Status On Hold / Send to DC before timeperiod and Changes to Sent Back for Analysis
+	PendingDeals_1 map[string]bool
+	// [F] Changed to Approved / Rejected / Sent Back for Analysis / Canceled
+	ActionedDeals map[string]bool
+	// [G] Status On Hold / Sent to DC before timeperiod and remains the same
+	// [H] Status On Hold / Sent to DC before timeperiod and Changes to Approved / Rejected / Canceled
+	PendingDeals_2 map[string]bool
+	// [I] Changes to Approved / Rejected
+	UnderwrittenDeals map[string]bool
+	// [J] Changes to Approved
+	ApprovedDeals map[string]bool
+}
 
-	payload := tk.M{}
+func newProcessFunnel(data []tk.M) processFunnel {
+	ret := processFunnel{}
+	ret.InQueueDeals = make(map[string]bool)
+	ret.AcceptedDeals = make(map[string]bool)
+	ret.AnalyzedDeals = make(map[string]bool)
+	ret.PendingDeals_1 = make(map[string]bool)
+	ret.ActionedDeals = make(map[string]bool)
+	ret.PendingDeals_2 = make(map[string]bool)
+	ret.UnderwrittenDeals = make(map[string]bool)
+	ret.ApprovedDeals = make(map[string]bool)
 
-	err := k.GetPayload(&payload)
-	if err != nil {
-		return c.SetResultInfo(true, err.Error(), nil)
+	for _, it := range data {
+		dealno := it["dealno"].(string)
+		current := it["current"].([]interface{})
+		var lastStatus string
+		if it["before"] != nil {
+			lastInfo := it["before"].(tk.M)
+			lastStatus = lastInfo.GetString("status")
+		}
+
+		if lastStatus == UnderProcess || lastStatus == SendBackAnalysis {
+			ret.PendingDeals_1[dealno] = true // [D]
+		}
+
+		if (lastStatus == OnHold || lastStatus == SendToDecision) && len(current) == 0 {
+			ret.PendingDeals_2[dealno] = true // [G]
+		}
+
+		for key, inforaw := range current {
+			info := inforaw.(tk.M)
+			status := info.GetString("status")
+
+			if status == Inque {
+				ret.InQueueDeals[dealno] = true // [A]
+			}
+
+			if status == UnderProcess {
+				ret.AcceptedDeals[dealno] = true // [B]
+			}
+
+			if status == SendToDecision {
+				ret.ApprovedDeals[dealno] = true // [C]
+			}
+
+			if key == 0 && status == SendBackAnalysis && (lastStatus == OnHold || lastStatus == SendToDecision) {
+				ret.PendingDeals_1[dealno] = true // [E]
+			}
+
+			if status == Approve || status == Reject || status == SendBackAnalysis || status == Cancel {
+				ret.ActionedDeals[dealno] = true // [F]
+			}
+
+			if key == 0 && (status == Approve || status == Reject || status == Cancel) {
+				ret.PendingDeals_2[dealno] = true // [H]
+			}
+
+			if status == Approve || status == Reject {
+				ret.UnderwrittenDeals[dealno] = true // [I]
+			}
+
+			if status == Reject {
+				ret.ApprovedDeals[dealno] = true // [J]
+			}
+		}
 	}
 
+	return ret
+}
+
+func (proc *processFunnel) ToM() tk.M {
+	ret := tk.M{
+		"inqueue":      len(proc.InQueueDeals),
+		"accepted":     len(proc.AcceptedDeals),
+		"analyzed":     len(proc.AnalyzedDeals),
+		"pending_1":    len(proc.PendingDeals_1),
+		"actioned":     len(proc.ActionedDeals),
+		"pending_2":    len(proc.PendingDeals_2),
+		"underwritten": len(proc.UnderwrittenDeals),
+		"approved":     len(proc.ApprovedDeals),
+	}
+
+	a := float64(len(proc.InQueueDeals))
+	ae := a + float64(len(proc.PendingDeals_1))
+	aeh := ae + float64(len(proc.PendingDeals_2))
+
+	if a != 0 {
+		ret["accept_rate"] = float64(len(proc.AcceptedDeals)) / a * 100.
+	} else {
+		ret["accept_rate"] = 0
+	}
+
+	if ae != 0 {
+		ret["analyze_rate"] = float64(len(proc.AnalyzedDeals)) / ae * 100.
+	} else {
+		ret["analyze_rate"] = 0
+	}
+
+	if aeh != 0 {
+		ret["action_rate"] = float64(len(proc.ActionedDeals)) / aeh * 100.
+		ret["underwrite_rate"] = float64(len(proc.UnderwrittenDeals)) / aeh * 100.
+		ret["approve_rate"] = float64(len(proc.ApprovedDeals)) / aeh * 100.
+	} else {
+		ret["action_rate"] = 0
+		ret["underwrite_rate"] = 0
+		ret["approve_rate"] = 0
+	}
+
+	return ret
+}
+
+func (c *DashboardController) conversionOption(payload tk.M, tp TimePeriod) (tk.M, error) {
 	cn, err := GetConnection()
 	if err != nil {
 		tk.Println("connection failed")
 	}
 
 	defer cn.Close()
-
-	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
-	if err != nil {
-		return c.SetResultInfo(true, err.Error(), nil)
-	}
-
-	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
-	if err != nil {
-		return c.SetResultInfo(true, err.Error(), nil)
-	}
-
-	tp := TimePeriod{
-		Start:       periodStart,
-		End:         periodEnd,
-		TimeType:    payload.GetString("type"),
-		PeriodCount: 1,
-	}
-	tp = CalcTimePeriod(tp)
 
 	ids, err := FiltersAD2DealNo(
 		nil,
@@ -2843,24 +2965,26 @@ func (c *DashboardController) ConversionOption(k *knot.WebContext) interface{} {
 	whsx = append(whsx,
 		dbox.And(
 			dbox.Lt("info.myInfo.updateTime", tp.FilterBefore),
-			dbox.Gte("info.myInfo.updateTime", tp.FilterAfter),
+			// disabeld, because we need to select pending deal (before time period)s
+			// dbox.Gte("info.myInfo.updateTime", tp.FilterAfter),
 			dbox.In("customerprofile.applicantdetail.DealNo", filterids...),
 		),
 	)
 
 	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whsx...))
 	if err != nil {
-		return c.SetResultInfo(true, err.Error(), nil)
+		return nil, err
 	}
 
 	pipe := []tk.M{}
-	tk.Println("---------------------2811", tp.FilterBefore)
+	// tk.Println("---------------------2811", tp.FilterBefore)
 	pipe = append(pipe, tk.M{
 		"$match": whsMatch,
 	})
 	pipe = append(pipe, tk.M{
 		"$project": tk.M{
-			"info": tk.M{
+			"dealno": "accountdetails.accountsetupdetails.dealno",
+			"current": tk.M{
 				"$filter": tk.M{
 					"input": "$info.myInfo",
 					"as":    "myInfo",
@@ -2872,24 +2996,31 @@ func (c *DashboardController) ConversionOption(k *knot.WebContext) interface{} {
 					},
 				},
 			},
-			"comp": tk.M{
+			"before": tk.M{
 				"$filter": tk.M{
 					"input": "$info.myInfo",
 					"as":    "myInfo",
 					"cond": tk.M{
 						"$and": []interface{}{
-							tk.M{"$lte": []interface{}{"$$myInfo.updateTime", tp.FilterAfter}},
+							tk.M{"$lt": []interface{}{"$$myInfo.updateTime", tp.FilterAfter}},
 						},
 					},
 				},
 			},
 		},
 	})
+	pipe = append(pipe, tk.M{
+		"$project": tk.M{
+			"dealno":  "$dealno",
+			"current": "$current",
+			"before": tk.M{
+				"$arrayElemAt": []interface{}{"$before", -1},
+			},
+		},
+	})
 
-	// err, pipeResult := c.trendChart(payload, tp, pipe)
-	// if !tk.IsNilOrEmpty(err) {
-	// 	return res.SetError(err)
-	// }
+	// debug, _ := json.MarshalIndent(pipe, "", "  ")
+	// tk.Printfn("PIPE Summary\n%s", debug)
 
 	query := cn.NewQuery().
 		Command("pipe", pipe).
@@ -2897,209 +3028,24 @@ func (c *DashboardController) ConversionOption(k *knot.WebContext) interface{} {
 
 	csr, err := query.Cursor(nil)
 	if err != nil {
-		return c.SetResultInfo(true, "error", nil)
+		return nil, err
 	}
 	defer csr.Close()
 	results := make([]tk.M, 0)
 	err = csr.Fetch(&results, 0, false)
 	if err != nil {
-		return c.SetResultInfo(true, "error", nil)
-	}
-	if len(results) != 0 {
-		res.Set("ondata", results)
-
-		undrDeals := 0
-		apprDeals := 0
-		inQueue := 0
-		inAnlysis := 0
-		onAnlysis := 0
-		pendingDeals2 := 0
-		sentdc := 0
-		actDeals := 0
-		undrDeals1 := 0
-		apprDeals1 := 0
-		inQueue1 := 0
-		inAnlysis1 := 0
-		onAnlysis1 := 0
-		pendingDeals21 := 0
-		sentdc1 := 0
-
-		actDeals1 := 0
-		undrRate := 0.0
-		apprRate := 0.0
-		analRate := 0.0
-		actRate := 0.0
-		undrRate1 := 0.0
-		apprRate1 := 0.0
-		analRate1 := 0.0
-		actRate1 := 0.0
-		pendingDeals1 := 0
-		pendingDeals11 := 0
-
-		for _, otr := range results {
-			v := otr.Get("info")
-			l := v.([]interface{})
-			if len(l) != 0 {
-				for i, st := range l {
-
-					stts := hp.TkWalk(st.(tk.M), "status")
-					if stts == "Approved" || stts == "Rejected" {
-						undrDeals = undrDeals + 1
-					}
-
-					if stts == "Approved" {
-						apprDeals = apprDeals + 1
-					}
-
-					if stts == "In queue" {
-						inQueue = inQueue + 1
-					}
-
-					if stts == "Under Analysis" || stts == "Sent Back for Analysis" {
-						inAnlysis = inAnlysis + 1
-					}
-
-					if stts == "Sent Back for Analysis" {
-						bs := l[i-1]
-						stl := hp.TkWalk(bs.(tk.M), "status")
-
-						if stl == "On Hold" || stl == "Awaiting Decision" {
-							onAnlysis = onAnlysis + 1
-						}
-
-					}
-
-					if stts == "On Hold" || stts == "Awaiting Decision" {
-						f := len(l) > i+1
-						if !f {
-							pendingDeals2 = pendingDeals2 + 1
-						} else {
-							cs := l[i+1]
-							ostl := hp.TkWalk(cs.(tk.M), "status")
-							if cs != nil {
-								if ostl == "Approved" || ostl == "Rejected" || ostl == "Cancelled" {
-									pendingDeals2 = pendingDeals2 + 1
-								}
-							}
-
-						}
-
-					}
-
-					if stts == "Sent to Decision Committee" {
-						sentdc = sentdc + 1
-					}
-
-					if stts == "Approved" || stts == "Rejected" || stts == "Cancelled" {
-						actDeals = actDeals + 1
-					}
-				}
-				pendingDeals1 = inAnlysis + onAnlysis
-				undrRate = float64(undrDeals)/float64(inQueue) + float64(pendingDeals1) + float64(pendingDeals2)
-				apprRate = float64(apprDeals)/float64(inQueue) + float64(pendingDeals1) + float64(pendingDeals2)
-				actRate = float64(actDeals)/float64(inQueue) + float64(pendingDeals1) + float64(pendingDeals2)
-				analRate = float64(sentdc)/float64(inQueue) + float64(pendingDeals1)
-
-				tk.Println("-------------->>>>", undrRate, apprRate, actRate, analRate, inAnlysis)
-
-				res.Set("undrRate", undrRate)
-				res.Set("apprRate", apprRate)
-				res.Set("analRate", analRate)
-				res.Set("actRate", actRate)
-			}
-
-			x := otr.Get("comp")
-			m := x.([]interface{})
-			if len(m) != 0 {
-				for i, st1 := range m {
-
-					stts1 := hp.TkWalk(st1.(tk.M), "status")
-					if stts1 == "Approved" || stts1 == "Rejected" {
-						undrDeals1 = undrDeals1 + 1
-					}
-
-					if stts1 == "Approved" {
-						apprDeals1 = apprDeals1 + 1
-					}
-
-					if stts1 == "In queue" {
-						inQueue1 = inQueue1 + 1
-					}
-
-					if stts1 == "Under Analysis" || stts1 == "Sent to Decision Committee" {
-						inAnlysis1 = inAnlysis1 + 1
-					}
-
-					if stts1 == "Sent Back for Analysis" {
-						bs1 := l[i-1]
-						stl1 := hp.TkWalk(bs1.(tk.M), "status")
-
-						if stl1 == "On Hold" || stl1 == "Awaiting Decision" {
-							onAnlysis1 = onAnlysis1 + 1
-						}
-
-					}
-
-					if stts1 == "On Hold" || stts1 == "Awaiting Decision" {
-						f1 := len(m) > i+1
-						if !f1 {
-							pendingDeals21 = pendingDeals21 + 1
-						} else {
-							cs1 := l[i+1]
-							ostl1 := hp.TkWalk(cs1.(tk.M), "status")
-							if cs1 != nil {
-								if ostl1 == "Approved" || ostl1 == "Rejected" || ostl1 == "Cancelled" {
-									pendingDeals21 = pendingDeals21 + 1
-								}
-							}
-
-						}
-
-					}
-
-					if stts1 == "Sent to Decision Committee" {
-						sentdc1 = sentdc1 + 1
-					}
-
-					if stts1 == "Approved" || stts1 == "Rejected" || stts1 == "Cancelled" {
-						actDeals1 = actDeals1 + 1
-					}
-				}
-				pendingDeals11 = inAnlysis1 + onAnlysis1
-				undrRate1 = float64(undrDeals1)/float64(inQueue1) + float64(pendingDeals11) + float64(pendingDeals21)
-				apprRate1 = float64(apprDeals1)/float64(inQueue1) + float64(pendingDeals11) + float64(pendingDeals21)
-				actRate1 = float64(actDeals1)/float64(inQueue1) + float64(pendingDeals11) + float64(pendingDeals21)
-				analRate1 = float64(sentdc1)/float64(inQueue1) + float64(pendingDeals11)
-
-			}
-
-		}
-
-		if undrRate1 != 0 || apprRate1 != 0 || analRate1 != 0 || actRate1 != 0 {
-			res.Set("compundrRate", undrRate1-undrRate)
-			res.Set("compapprRate", apprRate1-apprRate)
-			res.Set("companalRate", analRate1-analRate)
-			res.Set("compactRate", actRate1-actRate)
-		} else {
-			res.Set("compundrRate", 0)
-			res.Set("compapprRate", 0)
-			res.Set("companalRate", 0)
-			res.Set("compactRate", 0)
-		}
-
-		return res
-	} else {
-		tk.Printfn("data not found")
+		return nil, err
 	}
 
-	return c.SetResultInfo(true, "data not found", nil)
+	funnel := newProcessFunnel(results)
 
+	return funnel.ToM(), nil
 }
 
-func (c *DashboardController) ConversionOption6(k *knot.WebContext) interface{} {
+func (c *DashboardController) ConversionOption(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
-	res := tk.M{}
 
+	res := new(tk.Result)
 	payload := tk.M{}
 
 	err := k.GetPayload(&payload)
@@ -3107,253 +3053,76 @@ func (c *DashboardController) ConversionOption6(k *knot.WebContext) interface{} 
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
-	cn, err := GetConnection()
-	if err != nil {
-		tk.Println("connection failed")
-	}
-
-	defer cn.Close()
-
 	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
 	if err != nil {
-		return c.SetResultInfo(true, err.Error(), nil)
+		return res.SetError(err)
 	}
-
 	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
 	if err != nil {
-		return c.SetResultInfo(true, err.Error(), nil)
+		return res.SetError(err)
 	}
 
 	tp := TimePeriod{
 		Start:       periodStart,
 		End:         periodEnd,
 		TimeType:    payload.GetString("type"),
-		PeriodCount: 7,
+		PeriodCount: 1,
 	}
-	tp = CalcTimePeriod(tp)
-	// tk.Println("----------->>> tp", tp)
+	tp.CalcTimePeriod()
 
-	ids, err := FiltersAD2DealNo(
-		nil,
-		CheckArray(payload.Get("filter")),
-		nil,
-	)
-
-	filterids := []interface{}{}
-	for _, id := range ids {
-		filterids = append(filterids, id)
+	ret := []tk.M{}
+	for i := 0; i < 2; i++ {
+		dat, err := c.conversionOption(payload, tp)
+		if err != nil {
+			return res.SetError(err)
+		}
+		ret = append(ret, dat)
+		tp.MoveTimePeriod(-1)
 	}
 
-	whsx := []*dbox.Filter{}
-	whsx = append(whsx,
-		dbox.And(
-			dbox.Lt("info.myInfo.updateTime", tp.FilterBefore),
-			dbox.Gte("info.myInfo.updateTime", tp.FilterAfter),
-			dbox.In("customerprofile.applicantdetail.DealNo", filterids...),
-		),
-	)
+	res.SetData(ret)
 
-	whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.And(whsx...))
+	return res
+}
+
+func (c *DashboardController) ConversionOption6(k *knot.WebContext) interface{} {
+	k.Config.OutputType = knot.OutputJson
+
+	res := new(tk.Result)
+	payload := tk.M{}
+
+	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
-	pipe := []tk.M{}
-	// tk.Println("---------------------2811", tp.FilterBefore)
-	pipe = append(pipe, tk.M{
-		"$match": whsMatch,
-	})
-	// pipe = append(pipe, tk.M{
-	// 	"$project": tk.M{
-	// 		"info": tk.M{
-	// 			"$filter": tk.M{
-	// 				"input": "$info.myInfo",
-	// 				"as":    "myInfo",
-	// 				"cond": tk.M{
-	// 					"$and": []interface{}{
-	// 						tk.M{"$lt": []interface{}{"$$myInfo.updateTime", tp.FilterBefore}},
-	// 						tk.M{"$gte": []interface{}{"$$myInfo.updateTime", tp.FilterAfter}},
-	// 					},
-	// 				},
-	// 			},
-	// 		},
-	// 		"comp": tk.M{
-	// 			"$filter": tk.M{
-	// 				"input": "$info.myInfo",
-	// 				"as":    "myInfo",
-	// 				"cond": tk.M{
-	// 					"$and": []interface{}{
-	// 						tk.M{"$lte": []interface{}{"$$myInfo.updateTime", tp.FilterAfter}},
-	// 					},
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// })
-
-	// err, pipeResult := c.trendChart(payload, tp, pipe)
-	// if !tk.IsNilOrEmpty(err) {
-	// 	return res.SetError(err)
-	// }
-
-	query := cn.NewQuery().
-		Command("pipe", pipe).
-		From("DealSetup")
-
-	csr, err := query.Cursor(nil)
+	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
 	if err != nil {
-		return c.SetResultInfo(true, "error", nil)
+		return res.SetError(err)
 	}
-	defer csr.Close()
-	results := make([]tk.M, 0)
-	err = csr.Fetch(&results, 0, false)
+	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
 	if err != nil {
-		return c.SetResultInfo(true, "error", nil)
+		return res.SetError(err)
 	}
 
-	// obj := struct {
-	// 	undrRate float64
-	// 	apprRate float64
-	// 	actRate  float64
-	// 	analRate float64
-	// }{}
-
-	undrDeals := 0
-	apprDeals := 0
-	inQueue := 0
-	inAnlysis := 0
-	onAnlysis := 0
-	pendingDeals2 := 0
-	sentdc := 0
-	actDeals := 0
-	pendingDeals1 := 0
-
-	ts := map[int][]tk.M{}
-
-	ds := make([]interface{}, 0)
-	// ol := []tk.M{}
-	// sl := make([]interface{}, 0)
-
-	res.Set("ondata", results)
-
-	if len(results) == 0 {
-		return ds
+	tp := TimePeriod{
+		Start:       periodStart,
+		End:         periodEnd,
+		TimeType:    payload.GetString("type"),
+		PeriodCount: 1,
 	}
 
-	for _, m := range results {
-		jj := hp.TkWalk(m, "info.myInfo")
-		d := jj.([]interface{})
-		// tmp := []tk.M{}
-		for _, v := range d {
-			it := tk.M{}
-			tpr := v.(tk.M).Get("updateTime").(time.Time)
-			onres := tp.GetPeriodID(tpr)
-
-			it.Set("Status", v.(tk.M).Get("status").(string))
-			it.Set("updTime", v.(tk.M).Get("updateTime").(time.Time))
-
-			if ts[onres] == nil {
-				ts[onres] = []tk.M{}
-			}
-
-			tmp := ts[onres]
-			tmp = append(tmp, it)
-			ts[onres] = tmp
-
+	ret := []tk.M{}
+	for i := 0; i < 6; i++ {
+		tp.MoveTimePeriod(-1)
+		dat, err := c.conversionOption(payload, tp)
+		if err != nil {
+			return res.SetError(err)
 		}
+		ret = append(ret, dat)
 	}
 
-	// tk.Println(ts[6])
-	// pendingDeals1 := inAnlysis + onAnlysis
-	undrRate := 0.0
-	apprRate := 0.0
-	actRate := 0.0
-	analRate := 0.0
+	res.SetData(ret)
 
-	for i := 0; i < tp.PeriodCount; i++ {
-		tk.Println("-------------->>>>", ts[i])
-
-		if len(ts[i]) != 0 {
-
-			for l, m := range ts[i] {
-				stts := m.Get("Status")
-				if stts == "Approved" || stts == "Rejected" {
-					undrDeals = undrDeals + 1
-				}
-
-				if stts == "Approved" {
-					apprDeals = apprDeals + 1
-				}
-
-				if stts == "In queue" {
-					inQueue = inQueue + 1
-				}
-
-				if stts == "Under Analysis" || stts == "Sent Back for Analysis" {
-					inAnlysis = inAnlysis + 1
-				}
-
-				if stts == "Sent Back for Analysis" {
-					bs := ts[i][l+1]
-					stl := hp.TkWalk(bs, "status")
-
-					if stl == "On Hold" || stl == "Awaiting Decision" {
-						tk.Println("---------> masuk")
-						onAnlysis = onAnlysis + 1
-					}
-
-				}
-
-				if stts == "On Hold" || stts == "Awaiting Decision" {
-
-					f := len(ts[i]) > l+1
-					// tk.Println("---------> masuk ..", f)
-					if f == false {
-						pendingDeals2 = pendingDeals2 + 1
-					} else {
-						cs := ts[i][l+1]
-						ostl := hp.TkWalk(cs, "status")
-						if len(cs) != 0 {
-							tk.Println("---------> masuk ..")
-							if ostl == "Approved" || ostl == "Rejected" || ostl == "Cancelled" {
-								pendingDeals2 = pendingDeals2 + 1
-							}
-						}
-
-					}
-
-				}
-
-				if stts == "Sent to Decision Committee" {
-					sentdc = sentdc + 1
-				}
-
-				if stts == "Approved" || stts == "Rejected" || stts == "Cancelled" {
-					actDeals = actDeals + 1
-				}
-
-			}
-
-			pendingDeals1 = inAnlysis + onAnlysis
-			undrRate = float64(undrDeals)/float64(inQueue) + float64(pendingDeals1) + float64(pendingDeals2)
-			apprRate = float64(apprDeals)/float64(inQueue) + float64(pendingDeals1) + float64(pendingDeals2)
-			actRate = float64(actDeals)/float64(inQueue) + float64(pendingDeals1) + float64(pendingDeals2)
-			analRate = float64(sentdc)/float64(inQueue) + float64(pendingDeals1)
-
-		} else {
-			undrRate = 0.0
-			apprRate = 0.0
-			actRate = 0.0
-			analRate = 0.0
-		}
-
-		//
-
-		tk.Println("-------------->>>>", undrRate, apprRate, actRate, analRate, pendingDeals2)
-
-	}
-	// b, _ := json.Marshal(cont)
-
-	return c.SetResultInfo(false, "success", ts)
-
+	return res
 }

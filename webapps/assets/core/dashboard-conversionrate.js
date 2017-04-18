@@ -504,19 +504,17 @@ conv.loadData = function(){
 		filter: dash.FilterValue()
 	}
 	ajaxPost("/dashboard/conversionoption", param, function(res){
-		console.log(res.Data)
-		if(res != null){
-			conv.actRate(res.actRate);
-			conv.undrRate(res.undrRate);
-			conv.apprRate(res.apprRate);
-			conv.analRate(res.analRate);
-			// conv.compactRate(res.compactRate);
-			conv.compundrRate(res.compundrRate);
-			conv.compapprRate(res.compapprRate);
-			conv.companalRate(res.companalRate);
-			conv.loadRadialGauge()
+        var data = res.Data;
 
-		}
+        conv.actRate(data[0].action_rate);
+        conv.undrRate(data[0].underwrite_rate);
+        conv.apprRate(data[0].approve_rate);
+        conv.analRate(data[0].analyze_rate);
+        // conv.compactRate(data.compactRate);
+        conv.compundrRate(data[0].underwrite_rate - data[1].underwrite_rate);
+        conv.compapprRate(data[0].approve_rate - data[1].approve_rate);
+        conv.companalRate(data[0].analyze_rate - data[1].analyze_rate);
+        conv.loadRadialGauge()
 	})
 }
 

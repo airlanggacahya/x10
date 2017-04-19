@@ -2873,7 +2873,7 @@ func newProcessFunnel(data []tk.M) processFunnel {
 			}
 
 			if status == SendToDecision {
-				ret.ApprovedDeals[dealno] = true // [C]
+				ret.AnalyzedDeals[dealno] = true // [C]
 			}
 
 			if key == 0 && status == SendBackAnalysis && (lastStatus == OnHold || lastStatus == SendToDecision) {

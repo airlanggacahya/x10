@@ -73,7 +73,7 @@
                                 <div class="rest" data-bind="text: ttrack.currentHeadValue('In queue')"></div>
 								<span data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('In queue')())}">
 									<i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('In queue')())}"></i>
-									<span data-bind="text: ttrack.currentHeadPercent('In queue')"></span>%
+									<span data-bind="text: kendo.toString(ttrack.currentHeadPercent('In queue'), 'n2')"></span>%
 								</span>
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                                 <div class="rest" data-bind="text: ttrack.currentHeadValue('Under Process')"></div>
 								<span data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('Under Process')())}">
 									<i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Under Process')()) }"></i>
-									<span data-bind="text: ttrack.currentHeadPercent('Under Process')"></span>%
+									<span data-bind="text: kendo.toString(ttrack.currentHeadPercent('Under Process'), 'n2')"></span>%
 								</span>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                                 <div class="rest" data-bind="text: ttrack.currentHeadValue('Sent to Decision Committee')"></div>
 								<span data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('Sent to Decision Committee')())}">
 									<i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Sent to Decision Committee')())}"></i>
-									<span data-bind="text: ttrack.currentHeadPercent('Sent to Decision Committee')"></span>%
+									<span data-bind="text: kendo.toString(ttrack.currentHeadPercent('Sent to Decision Committee'), 'n2')"></span>%
 								</span>
                             </div>
                         </div>
@@ -118,7 +118,7 @@
                                 <div class="rest" data-bind="text: ttrack.currentHeadValue('On Hold')"></div>
 								<span data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('On Hold')())}">
 									<i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('On Hold')())}"></i>
-									<span data-bind="text: ttrack.currentHeadPercent('On Hold')"></span>%
+									<span data-bind="text: kendo.toString(ttrack.currentHeadPercent('On Hold'), 'n2')"></span>%
 								</span>
                             </div>
                         </div>

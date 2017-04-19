@@ -24,7 +24,8 @@ conv.dummyData = ko.observableArray([
 	{"avgdays":8.0,"date":"2017-02-01T00:00:00Z","dateStr":"Feb-2017","dealcount":9,"median":7},
 	{"avgdays":4.0,"date":"2017-03-01T00:00:00Z","dateStr":"Mar-2017","dealcount":2,"median":8}])
 
-conv.loadAllTop = function(){
+conv.loadAllTop = function(data){
+	console.log("------------------>>>>", data)
 	$("#rate").html("")
 	$("#rate").kendoChart({
 		theme: "Material",
@@ -34,7 +35,7 @@ conv.loadAllTop = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: conv.summaryTrenData(),
+        dataSource: data,
         seriesDefaults: {
             type: "area",
             area: {
@@ -111,7 +112,7 @@ conv.loadAllTop = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: conv.summaryTrenData(),
+        dataSource: data,
         seriesDefaults: {
             type: "area",
             area: {
@@ -189,7 +190,7 @@ conv.loadAllTop = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: conv.summaryTrenData(),
+        dataSource: data,
         seriesDefaults: {
             type: "area",
             area: {
@@ -307,6 +308,7 @@ conv.containerPeriodData = function(){
 		if(res.Data != null){
 			var data = res.Data;
 			conv.loadContainer(data);
+			conv.loadAllTop(data)
 
 		}
 	})
@@ -344,7 +346,7 @@ conv.loadContainer = function(data){
                     field: "underwrite_rate",
                     // axis: "dc",
                     dashType: "dot",
-                    color: '#2e75b6',
+                    // color: 'green',
                     overlay: {
 		                gradient: "none"
 		            },
@@ -356,7 +358,7 @@ conv.loadContainer = function(data){
                     field: "approve_rate",
                     // axis: "dc",
                     dashType: "dot",
-                    color: 'red',
+                    // color: 'red',
                     overlay: {
 		                gradient: "none"
 		            },
@@ -368,11 +370,35 @@ conv.loadContainer = function(data){
                     field: "analyze_rate",
                     // axis: "dc",
                     dashType: "dot",
-                    color: '#00b0f0',
+                    // color: '#00b0f0',
                     overlay: {
 		                gradient: "none"
 		            },
                     name: "Analys Rate"
+                },
+                {
+                    type: "line",
+                    stack : false,
+                    field: "accept_rate",
+                    // axis: "dc",
+                    dashType: "dot",
+                    // color: 'brown',
+                    overlay: {
+		                gradient: "none"
+		            },
+                    name: "Accepted Rate"
+                },
+                {
+                    type: "line",
+                    stack : false,
+                    field: "action_rate",
+                    // axis: "dc",
+                    dashType: "dot",
+                    // color: 'grey',
+                    overlay: {
+		                gradient: "none"
+		            },
+                    name: "Actioned Rate"
                 },
                 ],
                 chartArea:{
@@ -552,7 +578,6 @@ conv.subscribe = function(){
 		// turn.loadAlleverage()
 	    conv.loadData();
 	    conv.containerPeriodData();
-	    conv.loadAllTop();
 	    conv.loadRadialGauge();
 	})
 }

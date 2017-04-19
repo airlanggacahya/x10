@@ -2830,6 +2830,16 @@ type processFunnel struct {
 	UnderwrittenDeals map[string]bool
 	// [J] Changes to Approved
 	ApprovedDeals map[string]bool
+	//funnel value
+	Underwriten map[string]bool
+	//funnel value
+	Onhold map[string]bool
+	//funnel value
+	Sentbackforanalysis map[string]bool
+	//funnel value
+	Approved map[string]bool
+	//funnel value
+	Rejected map[string]bool
 }
 
 func newProcessFunnel(data []tk.M) processFunnel {
@@ -2842,6 +2852,11 @@ func newProcessFunnel(data []tk.M) processFunnel {
 	ret.PendingDeals_2 = make(map[string]bool)
 	ret.UnderwrittenDeals = make(map[string]bool)
 	ret.ApprovedDeals = make(map[string]bool)
+	ret.Underwriten = make(map[string]bool)
+	ret.Sentbackforanalysis = make(map[string]bool)
+	ret.Onhold = make(map[string]bool)
+	ret.Approved = make(map[string]bool)
+	ret.Rejected = make(map[string]bool)
 
 	for _, it := range data {
 		dealno := it["dealno"].(string)
@@ -2882,6 +2897,9 @@ func newProcessFunnel(data []tk.M) processFunnel {
 
 			if status == Approve || status == Reject || status == SendBackAnalysis || status == Cancel {
 				ret.ActionedDeals[dealno] = true // [F]
+				ret.Underwriten[dealno] = true
+				ret.Onhold[dealno] = true
+				ret.Sentbackforanalysis[dealno] = true
 			}
 
 			if key == 0 && (status == Approve || status == Reject || status == Cancel) {
@@ -2890,6 +2908,8 @@ func newProcessFunnel(data []tk.M) processFunnel {
 
 			if status == Approve || status == Reject {
 				ret.UnderwrittenDeals[dealno] = true // [I]
+				ret.Approved[dealno] = true
+				ret.Rejected[dealno] = true
 			}
 
 			if status == Reject {
@@ -2898,19 +2918,26 @@ func newProcessFunnel(data []tk.M) processFunnel {
 		}
 	}
 
+	tk.Println("----->>>>2921", ret)
+
 	return ret
 }
 
 func (proc *processFunnel) ToM() tk.M {
 	ret := tk.M{
-		"inqueue":      len(proc.InQueueDeals),
-		"accepted":     len(proc.AcceptedDeals),
-		"analyzed":     len(proc.AnalyzedDeals),
-		"pending_1":    len(proc.PendingDeals_1),
-		"actioned":     len(proc.ActionedDeals),
-		"pending_2":    len(proc.PendingDeals_2),
-		"underwritten": len(proc.UnderwrittenDeals),
-		"approved":     len(proc.ApprovedDeals),
+		"inqueue":             len(proc.InQueueDeals),
+		"accepted":            len(proc.AcceptedDeals),
+		"analyzed":            len(proc.AnalyzedDeals),
+		"pending_1":           len(proc.PendingDeals_1),
+		"actioned":            len(proc.ActionedDeals),
+		"pending_2":           len(proc.PendingDeals_2),
+		"underwritten":        len(proc.UnderwrittenDeals),
+		"approved":            len(proc.ApprovedDeals),
+		"fnapproved":          len(proc.Approved),
+		"fnunderwriten":       len(proc.Underwriten),
+		"fnonhold":            len(proc.Onhold),
+		"fnrejected":          len(proc.Rejected),
+		"fnsentbackforanalys": len(proc.Sentbackforanalysis),
 	}
 
 	a := float64(len(proc.InQueueDeals))
@@ -3038,6 +3065,8 @@ func (c *DashboardController) conversionOption(payload tk.M, tp TimePeriod) (tk.
 	}
 
 	funnel := newProcessFunnel(results)
+
+	tk.Println("--------------->>>3062", funnel)
 
 	return funnel.ToM(), nil
 }

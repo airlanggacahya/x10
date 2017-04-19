@@ -453,7 +453,7 @@ conv.loadContainer = function(data){
     });
 }
 
-conv.loadFunnelChart = function(){
+conv.loadFunnelChart = function(data){
 	$('#funnelChart').kendoChart({
         title: {
             text: "Processing Funnel",
@@ -475,9 +475,9 @@ conv.loadFunnelChart = function(){
             		// console.log("-------------------------->>>>", d)
             		var str = ''
             		if(d.category == 'Actioned Deals'){
-            			str = 'Analized Deals \n (Underwritten = n4, Sent Back for Analysis = n6) \n'+ d.value
+            			str = 'Actioned deals \n (Underwritten = '+data[0].fnunderwriten+' , On Hold = '+data[0].fnonhold+' , Sent Back for Analysis = '+data[0].fnsentbackforanalys+') \n'+ d.value
             		}else if(d.category == 'Underwritten Deals'){
-            			str = d.category +" \n (Approved = n7, Rejected = n8) \n"+ d.value
+            			str = d.category +" \n (Approved = "+data[0].fnapproved+", Rejected = "+data[0].fnrejected+") \n"+ d.value
             		}else{
             			str = d.category +" \n"+ d.value
             		}
@@ -546,7 +546,7 @@ conv.loadData = function(){
 				    color: "#3eaee2"
 				}
 		]);
-        conv.loadFunnelChart()
+        conv.loadFunnelChart(data)
         conv.loadRadialGauge()
 	})
 }

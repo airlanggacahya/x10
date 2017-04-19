@@ -1,9 +1,8 @@
 var  conv = {}
 
 conv.dataPeriod = ko.observableArray([
-	{text: 'coba1', value: 'coba1'},
-	{text: 'coba2', value: 'coba2'},
-	{text: 'coba3', value: 'coba3'},
+	{text: 'Period', value: 'period'},
+	{text: 'Region', value: 'Region'},
 ]);
 conv.actRate = ko.observable(0);
 conv.undrRate = ko.observable(0);
@@ -328,7 +327,7 @@ conv.loadContainer = function(data){
         // theme: "Material",
             title: { 
                     text: "Processing Rate",
-                    font:  "bold 12px Arial,Helvetica,Sans-Serif",
+                    font:  "12px Arial,Helvetica,Sans-Serif",
                     align: "left",
                     color: "#58666e",
                 },
@@ -435,7 +434,7 @@ conv.loadFunnelChart = function(){
             position: "top",
             align: "left",
             color: "#58666e",
-            font:  "bold 12px Arial,Helvetica,Sans-Serif",
+            font:  "12px Arial,Helvetica,Sans-Serif",
         },
         legend: {
             visible: false
@@ -539,12 +538,13 @@ conv.titleText = ko.computed(function () {
         return start.clone().subtract(10, "day").format("DD MMM YYYY") + " - " + start.format("DD MMM YYYY")
     case "":
     case "1month":
-        return start.format("MMMM YYYY")
+        return start.format("MMM ' YY")
     case "1year":
         return start.format("YYYY")
     case "fromtill":
         return start.format("DD MMM YYYY") + " - " + end.format("DD MMM YYYY")
     }
+    return title;
 })
 
 conv.subscribe = function(){
@@ -560,7 +560,7 @@ conv.subscribe = function(){
 $(window).bind("resize", function() {
 	$('#funnelChart').data("kendoChart").refresh()
 	$('#chartContainer').data("kendoChart").refresh()
-	$('#tatgoals').data("kendoChart").refresh()
+	$('#tatgoals').data("kendoRadialGauge").refresh()
 	$('#analysis').data("kendoChart").refresh()
 	$('#approval').data("kendoChart").refresh()
 	$('#rate').data("kendoChart").refresh()

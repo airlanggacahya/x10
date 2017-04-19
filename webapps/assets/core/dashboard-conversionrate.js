@@ -14,6 +14,9 @@ conv.compundrRate = ko.observable(0);
 conv.compapprRate = ko.observable(0);
 conv.companalRate = ko.observable(0);
 conv.dataValuePeriod = ko.observable('');
+conv.funneldata = ko.observable([]);
+conv.summaryTrenData = ko.observable([]);
+conv.trendDataLength = ko.observable(6)
 conv.dummyData = ko.observableArray([
 	{"avgdays":2.2,"date":"2016-10-01T00:00:00Z","dateStr":"Oct-2016","dealcount":8,"median":4},
 	{"avgdays":3.3,"date":"2016-11-01T00:00:00Z","dateStr":"Nov-2016","dealcount":5,"median":3},
@@ -32,7 +35,7 @@ conv.loadAllTop = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: conv.dummyData(),
+        dataSource: conv.summaryTrenData(),
         seriesDefaults: {
             type: "area",
             area: {
@@ -44,7 +47,7 @@ conv.loadAllTop = function(){
         series: [{
             // type: "area",
             stack : false,
-            field: "avgdays",
+            field: "underwrite_rate",
             // name: "#= group.value.split('*')[1] #"
         }],
         chartArea:{
@@ -109,7 +112,7 @@ conv.loadAllTop = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: conv.dummyData(),
+        dataSource: conv.summaryTrenData(),
         seriesDefaults: {
             type: "area",
             area: {
@@ -121,7 +124,7 @@ conv.loadAllTop = function(){
         series: [{
             // type: "area",
             stack : false,
-            field: "avgdays",
+            field: "approve_rate",
             // name: "#= group.value.split('*')[1] #"
         }],
         chartArea:{
@@ -187,7 +190,7 @@ conv.loadAllTop = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: conv.dummyData(),
+        dataSource: conv.summaryTrenData(),
         seriesDefaults: {
             type: "area",
             area: {
@@ -199,7 +202,7 @@ conv.loadAllTop = function(){
         series: [{
             // type: "area",
             stack : false,
-            field: "avgdays",
+            field: "analyze_rate",
             // name: "#= group.value.split('*')[1] #"
         }],
         chartArea:{
@@ -294,7 +297,32 @@ conv.loadRadialGauge = function(){
     }); 
 }
 
-conv.loadContainer = function(){
+conv.containerPeriodData = function(){
+	var param = {
+		start : discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
+		end : discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
+		type : dash.FilterValue.GetVal("TimePeriod"),
+		filter: dash.FilterValue()
+	}
+	ajaxPost("/dashboard/conversionoption6", param, function(res){
+		if(res.Data != null){
+			var data = res.Data;
+			conv.loadContainer(data);
+
+		}
+	})
+}
+
+conv.loadContainer = function(data){
+		var len = conv.trendDataLength();
+		var start = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar"));
+		var end = discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2"));
+		var type = dash.FilterValue.GetVal("TimePeriod");
+		var title = false;
+		var groupby = 'period';
+		var month = dash.generateXAxis(type, start, end, len + 1)
+		month.shift();
+		console.log("----->>>",month)
 	$("#chartContainer").html('')
 	$("#chartContainer").kendoChart({
         // theme: "Material",
@@ -304,49 +332,52 @@ conv.loadContainer = function(){
                     align: "left",
                     color: "#58666e",
                 },
-				// title:{
-				// 	text: "Average Conversion TAT",
-				// 	font:  "12px Arial,Helvetica,Sans-Serif",
-				// 	align: "left",
-				// 	color: "#58666e",
-				// 	padding: {
-				// 		top: 0
-				// 	}
-				// },
 				plotArea: {
 					margin: {
 						right: 4,
 					}
 				},
-                dataSource: conv.dummyData(),
+                dataSource: data,
                 series: [
                 {
                     type: "line",
                     stack : false,
-                    field: "avgdays",
+                    field: "underwrite_rate",
                     // axis: "dc",
                     dashType: "dot",
                     color: '#2e75b6',
                     overlay: {
 		                gradient: "none"
 		            },
-                    name: "Avg Days"
+                    name: "Underwrite Rate"
                 },
                 {
                     type: "line",
                     stack : false,
-                    field: "median",
+                    field: "approve_rate",
+                    // axis: "dc",
+                    dashType: "dot",
+                    color: 'red',
+                    overlay: {
+		                gradient: "none"
+		            },
+                    name: "Approval Rate"
+                },
+                {
+                    type: "line",
+                    stack : false,
+                    field: "analyze_rate",
                     // axis: "dc",
                     dashType: "dot",
                     color: '#00b0f0',
                     overlay: {
 		                gradient: "none"
 		            },
-                    name: "Median"
+                    name: "Analys Rate"
                 },
                 ],
                 chartArea:{
-                	height: 220,
+                	height: 265,
                     background: "white"
                 },
                 legend: {
@@ -371,36 +402,10 @@ conv.loadContainer = function(){
                     	step : 2,
                     	skip : 2
                     },
-                    // max: 10,
-     //                plotBands: [{
-					// 	from: 2.9,
-					// 	to: 3.0,
-					// 	color: "#70ad47",
-					// 	name: "Target"
-					// }]
-     			},//{
-     	// 			name: "dc",
-     	// 			title: { 
-     	// 				text: "Deal Count",
-     	// 				font: "10px sans-serif",
-     	// 				color : "#4472C4",
-						// margin: {
-						// 	left: 1,
-						// }
-     	// 			},
-      //               min: 0,
-      //               labels : {
-      //               	font: "10px sans-serif",
-      //               	step : 2,
-      //               	skip : 2
-      //               },
-      //               // max: 10
-     	// 		}
-     			],
+                    
+     			}],
                 categoryAxis: {
-                	// categories: month,
-                	field: "dateStr",
-                	// visible : true,
+                	categories: month,
                 	title : {
                     	text : "Time Period",
                 		font: "10px sans-serif",
@@ -423,30 +428,6 @@ conv.loadContainer = function(){
     });
 }
 
-conv.octData = ko.observableArray([
-	{
-    	category: "Accepted deals ",
-	    value: 434823,
-	    color: "#0e5a7e"
-	},{
-	    category: "Analized Deals",
-	    value: 356854,
-	    color: "#166f99"
-	},{
-	    category: "Actioned Deals",
-	    value: 280022,
-	    color: "#2185b4"
-	},{
-	    category: "Underwritten Deals",
-	    value: 190374,
-	    color: "#319fd2"
-	},{
-	    category: "Approved Deals",
-	    value: 120392,
-	    color: "#3eaee2"
-	}
-]);
-
 conv.loadFunnelChart = function(){
 	$('#funnelChart').kendoChart({
         title: {
@@ -460,7 +441,7 @@ conv.loadFunnelChart = function(){
             visible: false
         },
         chartArea:{
-        	height: 220,
+        	height: 265,
             background: "white"
         },
         seriesDefaults: {
@@ -468,7 +449,7 @@ conv.loadFunnelChart = function(){
             	template: function(d){
             		// console.log("-------------------------->>>>", d)
             		var str = ''
-            		if(d.category == 'Analized Deals'){
+            		if(d.category == 'Actioned Deals'){
             			str = 'Analized Deals \n (Underwritten = n4, Sent Back for Analysis = n6) \n'+ d.value
             		}else if(d.category == 'Underwritten Deals'){
             			str = d.category +" \n (Approved = n7, Rejected = n8) \n"+ d.value
@@ -487,7 +468,7 @@ conv.loadFunnelChart = function(){
         },
         series: [{
             type: "funnel",
-            data: conv.octData()
+            data: conv.funneldata()
         }],
         tooltip: {
             visible: true,
@@ -497,6 +478,8 @@ conv.loadFunnelChart = function(){
 }
 
 conv.loadData = function(){
+	conv.funneldata([]);
+	conv.summaryTrenData([]);
 	var param = {
 		start : discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
 		end : discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
@@ -505,7 +488,7 @@ conv.loadData = function(){
 	}
 	ajaxPost("/dashboard/conversionoption", param, function(res){
         var data = res.Data;
-
+        conv.summaryTrenData(data);
         conv.actRate(data[0].action_rate);
         conv.undrRate(data[0].underwrite_rate);
         conv.apprRate(data[0].approve_rate);
@@ -514,6 +497,31 @@ conv.loadData = function(){
         conv.compundrRate(data[0].underwrite_rate - data[1].underwrite_rate);
         conv.compapprRate(data[0].approve_rate - data[1].approve_rate);
         conv.companalRate(data[0].analyze_rate - data[1].analyze_rate);
+        conv.summaryTrenData(data)
+        conv.funneldata([
+			{
+			    	category: "Accepted deals ",
+				    value: 0,//conv.summaryTrenData()[0].accepted
+				    color: "#0e5a7e"
+				},{
+				    category: "Analized Deals",
+				    value: data[0].analyzed,
+				    color: "#166f99"
+				},{
+				    category: "Actioned Deals",
+				    value: data[0].actioned,
+				    color: "#2185b4"
+				},{
+				    category: "Underwritten Deals",
+				    value: data[0].underwritten,
+				    color: "#319fd2"
+				},{
+				    category: "Approved Deals",
+				    value: data[0].approved,
+				    color: "#3eaee2"
+				}
+		]);
+        conv.loadFunnelChart()
         conv.loadRadialGauge()
 	})
 }
@@ -542,20 +550,31 @@ conv.titleText = ko.computed(function () {
 conv.subscribe = function(){
 	dash.FilterValue.subscribe(function (val) {
 		// turn.loadAlleverage()
-	    conv.loadData()
+	    conv.loadData();
+	    conv.containerPeriodData();
+	    conv.loadAllTop();
+	    conv.loadRadialGauge();
 	})
 }
 
+$(window).bind("resize", function() {
+	$('#funnelChart').data("kendoChart").refresh()
+	$('#chartContainer').data("kendoChart").refresh()
+	$('#tatgoals').data("kendoChart").refresh()
+	$('#analysis').data("kendoChart").refresh()
+	$('#approval').data("kendoChart").refresh()
+	$('#rate').data("kendoChart").refresh()
+});
+
 
 $(function(){
-	conv.loadFunnelChart();
 	conv.loadRadialGauge();
 	conv.loadAllTop();
 	conv.loadContainer();
 	setTimeout(function(){
 		conv.loadData()
 		conv.subscribe()
-
+		conv.containerPeriodData()
 	}, 1000)
 	
 });

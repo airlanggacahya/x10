@@ -2983,7 +2983,7 @@ func (c *DashboardController) conversionOption(payload tk.M, tp TimePeriod) (tk.
 	})
 	pipe = append(pipe, tk.M{
 		"$project": tk.M{
-			"dealno": "accountdetails.accountsetupdetails.dealno",
+			"dealno": "$accountdetails.accountsetupdetails.dealno",
 			"current": tk.M{
 				"$filter": tk.M{
 					"input": "$info.myInfo",

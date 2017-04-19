@@ -402,6 +402,10 @@ h6 {
 .k-chart-tooltip {
     text-align: left;
 }
+
+.compare-space {
+    right: 48px;
+}
 </style>
 <div class="col-md-12 lay">
     <div class="col-md-12 top turnaroundtime">
@@ -507,7 +511,7 @@ h6 {
                 </div>
                 <div class="col-md-4">
                     <div class="panel panel-body aol trend">
-                        <div class="chart-options">
+                        <div class="chart-options compare-space">
                             <table>
                                 <tr>
                                     <td>
@@ -522,8 +526,8 @@ h6 {
                         <div style="clear: both"></div>
                         <div id="distribution"></div>
                         <div class="compare-contrast">
-                            <button data-bind="click: comp.Open.bind(comp, pm.CreateChartMoving)">
-                                <i class="fa fa-balance-scale"></i>
+                            <button class="btn btn-flat btn-xs btn-primary" data-bind="click: comp.Open.bind(comp, pm.CreateChartMoving)">
+                                <i class="fa fa-columns"></i>
                             </button>
                         </div>
                     </div>

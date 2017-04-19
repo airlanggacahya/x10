@@ -1,9 +1,8 @@
 var  conv = {}
 
 conv.dataPeriod = ko.observableArray([
-	{text: 'coba1', value: 'coba1'},
-	{text: 'coba2', value: 'coba2'},
-	{text: 'coba3', value: 'coba3'},
+	{text: 'Period', value: 'period'},
+	{text: 'Region', value: 'Region'},
 ]);
 conv.actRate = ko.observable(0);
 conv.undrRate = ko.observable(0);
@@ -25,7 +24,8 @@ conv.dummyData = ko.observableArray([
 	{"avgdays":8.0,"date":"2017-02-01T00:00:00Z","dateStr":"Feb-2017","dealcount":9,"median":7},
 	{"avgdays":4.0,"date":"2017-03-01T00:00:00Z","dateStr":"Mar-2017","dealcount":2,"median":8}])
 
-conv.loadAllTop = function(){
+conv.loadAllTop = function(data){
+	console.log("------------------>>>>", data)
 	$("#rate").html("")
 	$("#rate").kendoChart({
 		theme: "Material",
@@ -35,7 +35,7 @@ conv.loadAllTop = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: conv.summaryTrenData(),
+        dataSource: data,
         seriesDefaults: {
             type: "area",
             area: {
@@ -112,7 +112,7 @@ conv.loadAllTop = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: conv.summaryTrenData(),
+        dataSource: data,
         seriesDefaults: {
             type: "area",
             area: {
@@ -190,7 +190,7 @@ conv.loadAllTop = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: conv.summaryTrenData(),
+        dataSource: data,
         seriesDefaults: {
             type: "area",
             area: {
@@ -308,6 +308,7 @@ conv.containerPeriodData = function(){
 		if(res.Data != null){
 			var data = res.Data;
 			conv.loadContainer(data);
+			conv.loadAllTop(data)
 
 		}
 	})
@@ -328,7 +329,7 @@ conv.loadContainer = function(data){
         // theme: "Material",
             title: { 
                     text: "Processing Rate",
-                    font:  "bold 12px Arial,Helvetica,Sans-Serif",
+                    font:  "12px Arial,Helvetica,Sans-Serif",
                     align: "left",
                     color: "#58666e",
                 },
@@ -345,7 +346,7 @@ conv.loadContainer = function(data){
                     field: "underwrite_rate",
                     // axis: "dc",
                     dashType: "dot",
-                    color: '#2e75b6',
+                    // color: 'green',
                     overlay: {
 		                gradient: "none"
 		            },
@@ -357,7 +358,7 @@ conv.loadContainer = function(data){
                     field: "approve_rate",
                     // axis: "dc",
                     dashType: "dot",
-                    color: 'red',
+                    // color: 'red',
                     overlay: {
 		                gradient: "none"
 		            },
@@ -369,11 +370,35 @@ conv.loadContainer = function(data){
                     field: "analyze_rate",
                     // axis: "dc",
                     dashType: "dot",
-                    color: '#00b0f0',
+                    // color: '#00b0f0',
                     overlay: {
 		                gradient: "none"
 		            },
                     name: "Analys Rate"
+                },
+                {
+                    type: "line",
+                    stack : false,
+                    field: "accept_rate",
+                    // axis: "dc",
+                    dashType: "dot",
+                    // color: 'brown',
+                    overlay: {
+		                gradient: "none"
+		            },
+                    name: "Accepted Rate"
+                },
+                {
+                    type: "line",
+                    stack : false,
+                    field: "action_rate",
+                    // axis: "dc",
+                    dashType: "dot",
+                    // color: 'grey',
+                    overlay: {
+		                gradient: "none"
+		            },
+                    name: "Actioned Rate"
                 },
                 ],
                 chartArea:{
@@ -435,7 +460,7 @@ conv.loadFunnelChart = function(){
             position: "top",
             align: "left",
             color: "#58666e",
-            font:  "bold 12px Arial,Helvetica,Sans-Serif",
+            font:  "12px Arial,Helvetica,Sans-Serif",
         },
         legend: {
             visible: false
@@ -539,12 +564,13 @@ conv.titleText = ko.computed(function () {
         return start.clone().subtract(10, "day").format("DD MMM YYYY") + " - " + start.format("DD MMM YYYY")
     case "":
     case "1month":
-        return start.format("MMMM YYYY")
+        return start.format("MMM ' YY")
     case "1year":
         return start.format("YYYY")
     case "fromtill":
         return start.format("DD MMM YYYY") + " - " + end.format("DD MMM YYYY")
     }
+    return title;
 })
 
 conv.subscribe = function(){
@@ -552,7 +578,6 @@ conv.subscribe = function(){
 		// turn.loadAlleverage()
 	    conv.loadData();
 	    conv.containerPeriodData();
-	    conv.loadAllTop();
 	    conv.loadRadialGauge();
 	})
 }
@@ -560,7 +585,7 @@ conv.subscribe = function(){
 $(window).bind("resize", function() {
 	$('#funnelChart').data("kendoChart").refresh()
 	$('#chartContainer').data("kendoChart").refresh()
-	$('#tatgoals').data("kendoChart").refresh()
+	$('#tatgoals').data("kendoRadialGauge").refresh()
 	$('#analysis').data("kendoChart").refresh()
 	$('#approval').data("kendoChart").refresh()
 	$('#rate').data("kendoChart").refresh()

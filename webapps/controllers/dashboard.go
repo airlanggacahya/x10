@@ -2875,6 +2875,10 @@ func newProcessFunnel(data []tk.M) processFunnel {
 			ret.PendingDeals_2[dealno] = true // [G]
 		}
 
+		if lastStatus == OnHold {
+			ret.Onhold[dealno] = true
+		}
+
 		for key, inforaw := range current {
 			info := inforaw.(tk.M)
 			status := info.GetString("status")
@@ -2897,9 +2901,12 @@ func newProcessFunnel(data []tk.M) processFunnel {
 
 			if status == Approve || status == Reject || status == SendBackAnalysis || status == Cancel {
 				ret.ActionedDeals[dealno] = true // [F]
-				ret.Underwriten[dealno] = true
-				ret.Onhold[dealno] = true
-				ret.Sentbackforanalysis[dealno] = true
+				switch status {
+				case Approve, Reject:
+					ret.Underwriten[dealno] = true
+				case SendBackAnalysis:
+					ret.Sentbackforanalysis[dealno] = true
+				}
 			}
 
 			if key == 0 && (status == Approve || status == Reject || status == Cancel) {
@@ -2908,17 +2915,19 @@ func newProcessFunnel(data []tk.M) processFunnel {
 
 			if status == Approve || status == Reject {
 				ret.UnderwrittenDeals[dealno] = true // [I]
-				ret.Approved[dealno] = true
-				ret.Rejected[dealno] = true
+				switch status {
+				case Approve:
+					ret.Approved[dealno] = true
+				case Reject:
+					ret.Rejected[dealno] = true
+				}
 			}
 
-			if status == Reject {
+			if status == Approve {
 				ret.ApprovedDeals[dealno] = true // [J]
 			}
 		}
 	}
-
-	tk.Println("----->>>>2921", ret)
 
 	return ret
 }

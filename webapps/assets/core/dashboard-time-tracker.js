@@ -438,7 +438,7 @@ ttrack.currentHeadPercent = function(section) {
         if (prevSum == 0)
             return curSum * 100;
 
-        return (curSum - prevSum) / prevSum * 100;
+        return kendo.toString((curSum - prevSum) / prevSum * 100, "n2");
     })
 }
 

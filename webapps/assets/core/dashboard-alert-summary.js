@@ -313,8 +313,8 @@ alertSum.seriesChangePercent = function(section) {
         if (series.length < 1)
             return 0;
         if (_.get(series[0], section, 0) == 0)
-            return _.get(alertSum.trendDataCurrent(), section, 0) * 100;
-        return (_.get(alertSum.trendDataCurrent(), section, 0) - _.get(series[0], section, 0)) / _.get(series[0], section, 0) * 100;
+            return kendo.toString(_.get(alertSum.trendDataCurrent(), section, 0) * 100, "n2");
+        return kendo.toString((_.get(alertSum.trendDataCurrent(), section, 0) - _.get(series[0], section, 0)) / _.get(series[0], section, 0) * 100, "n2");
     })
 }
 alertSum.seriesChangeFa = function(section) {

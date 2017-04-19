@@ -447,7 +447,7 @@ conv.loadContainer = function(data){
                 	visible: true,
                 	template : function(dt){
                 		// console.log(dt);
-                		return dt.series.name + " : "+ dt.value//dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+                		return dt.series.name + " : " + kendo.toString(dt.value, 'n2')
                 	}
                 }
     });

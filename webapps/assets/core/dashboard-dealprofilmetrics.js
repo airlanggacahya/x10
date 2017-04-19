@@ -123,6 +123,10 @@ pm.loadContainer = function(selected) {
         selectedData = pm.trendRegion();
         catSelected = { field: "region", axisCrossingValues: [0, 7] }
     }
+    catSelected.labels = {
+        font: "10px sans-serif"
+    }
+
     $("#chartContainer").html('')
     $("#chartContainer").kendoChart({
         title: {  
@@ -321,7 +325,7 @@ pm.loadChaterChart = function() {
             max: 10,
             title: {
                 // text: "Credit Scores",
-                font: "11px sans-serif",
+                font: "10px sans-serif",
                 visible: true,
                 color: "#4472C4"
             },
@@ -495,10 +499,23 @@ pm.Distribution = function(selected) {
     } else {
         selectedoption = selected;
     }
+
+    var title = "";
+    switch (pm.ValueDataMenuDistribution()) {
+    case "amount":
+        title = "Deal Amount vs Interest Rate"
+        break;
+    case "count":
+        title = "Deal Count vs Interest Rate"
+        break;
+    case "interest":
+        title = "Deal Interest vs Interest Rate"
+        break;
+    }
     $("#distribution").html("");
     $("#distribution").kendoChart({
         title: {
-            text: "Deal Amount / Count vs. Interest Rate",
+            text: title,
             font: "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",
@@ -587,7 +604,10 @@ pm.Distribution = function(selected) {
                 var tlpData = _.find(pm.distributionData(), function(a){
                     return a.xfl == e.series.name && a.percent == e.category;
                 });
-                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") + "<br /> Deal Count: " + tlpData.count + "<br /> Deal Interest: " + kendo.toString(tlpData.interest, "n");
+                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") +" cr<br />" + 
+                    "Deal Count: " + tlpData.count + "<br />" +
+                    "Deal Interest: " + kendo.toString(tlpData.interest, "n") + " cr<br />" +
+                    tlpData.xfl;
                 return data;
             }
         },
@@ -598,14 +618,29 @@ pm.Distribution = function(selected) {
                 font: "10px sans-serif",
                 visible: true,
                 color: "#4472C4",
+            },
+            labels: {
+                font: "10px sans-serif",
             }
         }],
         categoryAxis: {
             title: {
+                visible: false,
                 text: "Interest Rates (%)",
                 font: "10px sans-serif",
-                visible: true,
-                color: "#4472C4",
+                color: "#4472C4"
+            },
+            labels: {
+                font: "10px sans-serif",
+                template: function (dt) {
+                    return dt.value + "%";
+                }
+            }
+        },
+        legend: {
+            position: "bottom",
+            labels:{
+                font: "10px Arial,Helvetica,Sans-Serif"
             }
         },
         seriesClick: function(e) {
@@ -904,10 +939,23 @@ pm.CreateChartMovingOptions_ = function (data) {
             }
         }
     });
-    
+
+    var title = "";
+    switch (pm.ValueDataMenuDistribution()) {
+    case "amount":
+        title = "Deal Amount vs Interest Rate"
+        break;
+    case "count":
+        title = "Deal Count vs Interest Rate"
+        break;
+    case "interest":
+        title = "Deal Interest vs Interest Rate"
+        break;
+    }
+
     return {
         title: {
-            text: "Deal Amount / Count vs. Interest Rate",
+            text: title,
             font: "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",
@@ -976,7 +1024,10 @@ pm.CreateChartMovingOptions_ = function (data) {
                 var tlpData = _.find(pm.distributionData(), function(a){
                     return a.xfl == e.series.name && a.percent == e.category;
                 });
-                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") + "cr<br /> Deal Count: " + tlpData.count + "<br /> Deal Interest: " + kendo.toString(tlpData.interest, "n") + "cr";
+                var data = "Deal Amount: " + kendo.toString(tlpData.amount, "n") +" cr<br />" + 
+                    "Deal Count: " + tlpData.count + "<br />" +
+                    "Deal Interest: " + kendo.toString(tlpData.interest, "n") + " cr<br />" +
+                    tlpData.xfl;
                 return data;
             }
         },
@@ -987,14 +1038,30 @@ pm.CreateChartMovingOptions_ = function (data) {
                 font: "10px sans-serif",
                 visible: true,
                 color: "#4472C4",
+            },
+            labels: {
+                font: "10px sans-serif"
             }
         }],
         categoryAxis: {
             title: {
                 text: "Interest Rates (%)",
                 font: "10px sans-serif",
-                visible: true,
+                visible: false,
                 color: "#4472C4",
+            },
+            labels: {
+                font: "10px sans-serif",
+                template: function (dt) {
+                    return dt.value + "%";
+                }
+            }
+        },
+        legend: {
+            visible: false,
+            position: "bottom",
+            labels:{
+                font: "10px Arial,Helvetica,Sans-Serif"
             }
         }
     }

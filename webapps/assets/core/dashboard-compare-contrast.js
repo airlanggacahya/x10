@@ -3,7 +3,7 @@ var compFilter = CreateDashFilter()
 var comp = {}
 
 comp.viewFilter = ko.observable(false)
-comp.arr = ko.observableArray([])
+comp.axisData = ko.observableArray([])
 comp.viewFilter.subscribe(function (val) {
     if (val)
         $("#compareModal .filter-button").hide();
@@ -141,8 +141,9 @@ comp.Open = function (chartconfig) {
     // reset state
     comp.resetModal();
     compFilter.LoadFilter(dash.FilterValue());
+    // clear max value
+    comp.axisData([])
     // clear chart
-    comp.arr([])
     $("#compMainWindow").html("");
 
     $('#compareModal').modal({show: true, backdrop: 'static', keyboard: false})
@@ -179,6 +180,8 @@ comp.RedrawChart_ = function (firstload) {
 
     if (comp.nameSelected() == "")
         return;
+    
+    comp.axisData([])
 
     _.each(comp.openSelected(), function (val, index) {
         var filter = _.cloneDeep(compFilter.FilterValue());
@@ -240,22 +243,21 @@ comp.RedrawChart_ = function (firstload) {
             } else {
                 opt.title.text = opt.title.text + " [" + val + "]";
             }
-            setTimeout(function(){
-                $(el).kendoChart(opt);
-                data = $(el).data("kendoChart").dataSource.data();
-                $.each(data, function(i, item){
-                    comp.arr.push(item.count)
-                })
-                
-                var chart =$(el).data("kendoChart");
-                max = Math.max(...comp.arr())
-                chart.setOptions({ valueAxis: { min: 0, max: max + 0.5 }});
-                // comp.RedrawChart()
-                console.log("-------------->>>>", opt)
-            }, 200)
-           
-           
+
+            $(el).kendoChart(opt);
+            var data = $(el).data("kendoChart");
+
+            comp.axisData.push(data._plotArea.axes[1].totalMax);
+
+            if (comp.axisData().length != comp.openSelected().length)
+                return
             
+            // when all chart data collected
+            // we adjust chart options to the same max axis value
+            var max = Math.max(...comp.axisData())
+            $("#compMainWindow .chart").each(function (i, val) {
+                $(val).data("kendoChart").setOptions({ axisDefaults: { max: max}});
+            })
         });
 
         parentEl.append(row);

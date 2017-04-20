@@ -500,6 +500,8 @@
       }
 
       $(document).ready(function () {
+        onwidth = $( document ).width();
+        $(".horizontal-menu.k-content, #onnav").css("width", onwidth.toString()+"!important")
         ClearSavedFilter();
 
          // if(window.location.href.indexOf("accountdetail/default") == -1){
@@ -1196,6 +1198,8 @@
               openx = !openx
 
             }
+
+            ontoggled()
             </script>
 
             <script id="template-menu" type="text/html">
@@ -1244,8 +1248,8 @@
               <ul style="margin-left: 50px;" class="nav navbar-nav" id="myTopnav" data-bind="template: { name: 'template-menu', foreach: menu }"></ul>
               <ul class="nav navbar-nav" id="myTopnavhide" data-bind="template: { name: 'template-menu', foreach: menu }" style="display: none;"></ul>
               <div class="clear"></div>
-              <div id="menubackup" class="horizontal-menu tabs tabs-style-linemove k-content">
-                <nav>
+              <div id="menubackup" class="horizontal-menu tabs tabs-style-linemove k-content" style="width: 100% !important;">
+                <nav class="col-md-12" id="onnav" >
 
                 </nav>
               </div>
@@ -1335,13 +1339,27 @@
       getServerDateTime();
       model.getDataMenu();
       // toggle()
-      onwidth = $( document ).width();
-      $(".horizontal-menu.k-content").css("width", onwidth.toString())
+      // setInterval(function(){
+      //   el = $(".navbar-nav > li > a").is(":hover")
+      //   if(el == true){
+      //     alert("masuk")
+      //   }
+      // }, 200)
+      
   });
 
   $(window).on('load resize ajaxComplete', function(){
     setTimeout(function(){
       setSubmenu()
+      var el = $(".modal").is(":visible")
+      // alert("nanana...")
+
+        setTimeout(function(){
+          onwidth = $( document ).width();
+          $(".horizontal-menu.k-content").css("width", onwidth.toString())
+        }, 11)
+        
+      // }
     }, 200);
   })
 

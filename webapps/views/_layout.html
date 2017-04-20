@@ -501,7 +501,7 @@
 
       $(document).ready(function () {
         onwidth = $( document ).width();
-        $(".horizontal-menu.k-content, #onnav").css("width", onwidth.toString()+"!important")
+        $(".horizontal-menu.k-content").css("width", onwidth.toString())
         ClearSavedFilter();
 
          // if(window.location.href.indexOf("accountdetail/default") == -1){
@@ -941,7 +941,8 @@
   var setSubmenu = function() {
     setTimeout(function(){
       var submenuWidth = function() {
-          return $(window).width() - $("#sidebar-wrapper").width();
+          // return $(window).width() - $("#sidebar-wrapper").width();
+          return $(window).width();
       }
 
       $('#menubackup').width(submenuWidth())
@@ -1214,9 +1215,9 @@
 
               <!-- ko if: $data.submenu().length > 0 -->
 
-                <li class="k-item k-state-default" data-bind="css: { error: ($data.submenu() > 0) }">
+                <li class="onmenu k-item k-state-default" data-bind="css: { error: ($data.submenu() > 0) }, attr: {'id':'onmenu'+[$index()]}">
 
-                  <a id="idmenu" class="color-base" data-toggle="dropdown" data-bind="css: { 'active': (model.currentMenu() == $data.title()) }, attr: { href: $data.href() }">
+                  <a class="color-base" data-toggle="dropdown" data-bind="css: { 'active': (model.currentMenu() == $data.title()) }, attr: { href: $data.href()}">
                     <i data-bind="css: $data.icon()"></i>&nbsp;
                     <span data-bind="text: $data.title()"></span>
                   </a>
@@ -1345,17 +1346,19 @@
       //     alert("masuk")
       //   }
       // }, 200)
-      
+
   });
 
   $(window).on('load resize ajaxComplete', function(){
+
     setTimeout(function(){
       setSubmenu()
       var el = $(".modal").is(":visible")
       // alert("nanana...")
-
+       
         setTimeout(function(){
-          onwidth = $( document ).width();
+           // = $( document ).width();
+           onwidth = $(window).width() - $("#sidebar-wrapper").width()
           $(".horizontal-menu.k-content").css("width", onwidth.toString())
         }, 11)
         

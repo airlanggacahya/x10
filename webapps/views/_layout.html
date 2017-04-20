@@ -1147,7 +1147,7 @@
                 Additional Filters
               </div> -->
               <div class="sidebar-toggle custom-bar">
-                <i class="fa fa-bars" style="font-size: 23px; cursor: pointer; cursor: hand; color: white;" onClick="toggle()"></i>
+                <i class="fa fa-bars" style="font-size: 23px; cursor: pointer; cursor: hand; color: white;" onClick="ontoggled()"></i>
               </div>
               <!-- <div class="logo-container" > -->
                 <!-- <a href="{{BaseUrl}}">
@@ -1160,7 +1160,7 @@
             var openx = true;
             // toggle()
 
-            function toggle() {
+            ontoggled = function() {
               menumarginleft = 0
               if( !openx ){
                 if(model.currentTitle() === 'Alerts & Updates' || model.currentTitle() === 'Turnaround Time' || model.currentTitle() === 'Conversion Rate' || model.currentTitle() === 'Deal Profil Metrics' || model.currentTitle() === 'Custom Analysis'){
@@ -1189,12 +1189,13 @@
               }
               setTimeout(function() {
                 $("#myTopnav").css("margin-left", menumarginleft);
-              }, 10)
+                onwidth = $( document ).width();
+                $(".horizontal-menu.k-content").css("width", onwidth.toString())
+              }, 11)
               setSubmenu()
               openx = !openx
-            }
 
-            toggle()
+            }
             </script>
 
             <script id="template-menu" type="text/html">
@@ -1333,6 +1334,9 @@
       model.Processing = false;
       getServerDateTime();
       model.getDataMenu();
+      // toggle()
+      onwidth = $( document ).width();
+      $(".horizontal-menu.k-content").css("width", onwidth.toString())
   });
 
   $(window).on('load resize ajaxComplete', function(){

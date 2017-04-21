@@ -1,17 +1,44 @@
 package models
 
 import (
-	"github.com/eaciit/orm"
 	"time"
+
+	"encoding/json"
+
+	"github.com/eaciit/orm"
 )
+
+type StrArray []string
+
+func (list *StrArray) UnmarshalJSON(data []byte) error {
+	var s string
+	err := json.Unmarshal(data, &s)
+	if err == nil {
+		*list = []string{s}
+		return nil
+	}
+
+	var ar []string
+	err = json.Unmarshal(data, &ar)
+	if err == nil {
+		*list = ar
+		return nil
+	}
+
+	return err
+}
+
+func (list *StrArray) MarshalJSON() ([]byte, error) {
+	return json.Marshal(*list)
+}
 
 type DashboardFilterModel struct {
 	orm.ModelBase `bson:"-",json:"-"`
-	Id            string ` bson:"_id" , json:"_id" ` //mas Bud ini sampean isi UserID
+	Id            string ` bson:"_id" , json:"_id" `
 	Filters       []struct {
 		FilterName string
 		ShowMe     bool
-		Value      string
+		Value      StrArray
 	}
 }
 
@@ -25,7 +52,7 @@ func (m *DashboardFilterModel) TableName() string {
 
 type DashboardNoteModel struct {
 	orm.ModelBase `bson:"-",json:"-"`
-	Id            string ` bson:"_id" , json:"_id" ` //mas Bud ini sampean isi UserID
+	Id            string ` bson:"_id" , json:"_id" `
 	Comments      []struct {
 		Text        string
 		Checked     bool

@@ -40,6 +40,10 @@ var CreateDashFilter = function() {
             if (isEmptyNull(source))
                 return true
 
+            if (_.isArray(source)) {
+                return _.indexOf(source, _.get(val, path)) !== -1
+            }
+
             return source == _.get(val, path)
         }
     }
@@ -89,7 +93,12 @@ var CreateDashFilter = function() {
         return function (val) {
             if (isEmptyNull(source))
                 return true;
-            
+
+            if (_.isArray(source)) {
+                return _.reduce(source, function (result, it) {
+                    result = result || IRlambda(it, _.get(val, path))
+                }, false)
+            }
             return IRlambda(source, _.get(val, path))
         }
     }
@@ -294,10 +303,7 @@ var CreateDashFilter = function() {
     // Used for compile and parsing filter value
     dash.FilterList = []
 
-    dash.initDashVal = function(name, path, options, def, optional = false) {
-        dash.FilterList.push(name)
-
-        dash[name + "Val"] = ko.observable("")
+    dash.initVal = function(name, path, options, def, optional = false) {
         dash[name + "Val"].subscribe(function (values) {
             reapplyFilter(path)
         })
@@ -315,7 +321,30 @@ var CreateDashFilter = function() {
         })
         // if default not defined, put default as empty string
         // default will be forced whenever value is empty string
-        dash[name + "Default"] = (typeof(def) == "undefined" ? "" : _.cloneDeep(def))
+        switch (dash[name + "Type"]) {
+        case "single":
+            dash[name + "Default"] = (typeof(def) == "undefined" ? "" : _.cloneDeep(def))
+            break
+        case "multi":
+            dash[name + "Default"] = (typeof(def) == "undefined" ? [] : _.cloneDeep(def))
+            break
+        }
+
+        dash.FilterList.push(name)
+    }
+
+    dash.initDashVal = function(name, path, options, def, optional = false) {
+        dash[name + "Val"] = ko.observable("")
+        dash[name + "Type"] = "single"
+
+        dash.initVal(name, path, options, def, optional)
+    }
+
+    dash.initMultiDashVal = function(name, path, options, def, optional = false) {
+        dash[name + "Val"] = ko.observableArray([])
+        dash[name + "Type"] = "multi"
+
+        dash.initVal(name, path, options, def, optional)
     }
 
     dash.initDashVal("TimePeriod", undefined, [
@@ -326,10 +355,10 @@ var CreateDashFilter = function() {
     ])
     dash.initDashVal("TimePeriodCalendar", undefined, [], moment().toDate())
     dash.initDashVal("TimePeriodCalendar2", undefined, [], moment().toDate())
-    dash.initDashVal("Region", REGION, [])
-    dash.initDashVal("Branch", BRANCH, [])
-    dash.initDashVal("Product", PRODUCT, [])
-    dash.initDashVal("Scheme", SCHEME, [])
+    dash.initMultiDashVal("Region", REGION, [])
+    dash.initMultiDashVal("Branch", BRANCH, [])
+    dash.initMultiDashVal("Product", PRODUCT, [])
+    dash.initMultiDashVal("Scheme", SCHEME, [])
     dash.initDashVal("ClientType", CLIENTTYPE, [])
     dash.initDashVal("ClientTurnover", undefined, [
         {text: '5cr - 10cr', value:'> 50000000 <= 100000000'},
@@ -442,10 +471,28 @@ var CreateDashFilter = function() {
             var name = val.FilterName
             if (_.indexOf(dash.FilterList, name) == -1)
                 return
-            if (val.Value == "")
+
+            // default value is set
+            if (val.Value === "" || val.Value === null)
                 return
 
             dash[name + "ShowMe"](val.ShowMe)
+
+            // when dash is multi select but the data is not array
+            // make it so
+            switch (dash[name + "Type"]) {
+            case "multi":
+                if (!_.isArray(val.Value)) {
+                    val.Value = [val.Value]
+                }
+                break;
+            case "single":
+                if (_.isArray(val.Value)) {
+                    val.Value = val.Value[0]
+                }
+                break;
+            }
+
             dash[name + "Val"](val.Value)
         })
     }

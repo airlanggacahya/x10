@@ -34,6 +34,7 @@ func (c *DashboardController) Default(k *knot.WebContext) interface{} {
 		"shared/dataaccess.html",
 		"shared/loading.html",
 		"shared/leftfilter.html",
+		"shared/filter_menu.html",
 
 		"dashboard/alert_summary.html",
 		"dashboard/time_tracker.html",

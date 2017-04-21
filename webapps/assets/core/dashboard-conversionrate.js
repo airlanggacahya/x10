@@ -82,10 +82,10 @@ conv.loadAllTop = function(data){
 		        visible: true
 		    },
 		    majorGridLines:{
-		        visible:true,
-		         skip: 2,
-                step: 2
-		    }
+		        visible:true
+		    },
+            majorUnit: dash.chartUnit(data, 'underwrite_rate', 4),
+            max: dash.chartMax(data, 'underwrite_rate')
         },
         categoryAxis: {
             visible: true,
@@ -159,10 +159,10 @@ conv.loadAllTop = function(data){
 		        visible: true
 		    },
 		    majorGridLines:{
-		        visible:true,
-		         skip: 2,
-                step: 2
-		    }
+		        visible:true
+		    },
+            majorUnit: dash.chartUnit(data, 'approve_rate', 4),
+            max: dash.chartMax(data, 'approve_rate')
         },
         categoryAxis: {
             visible: true,
@@ -237,10 +237,10 @@ conv.loadAllTop = function(data){
 		        visible: true
 		    },
 		    majorGridLines:{
-		        visible:true,
-		         skip: 2,
-                step: 2
-		    }
+		        visible:true
+		    },
+            majorUnit: dash.chartUnit(data, 'analyze_rate', 4),
+            max: dash.chartMax(data, 'analyze_rate')
         },
         categoryAxis: {
             visible: true,
@@ -475,24 +475,26 @@ conv.loadFunnelChart = function(data){
             		// console.log("-------------------------->>>>", d)
             		var str = ''
             		if(d.category == 'Actioned Deals'){
-            			str = 'Actioned deals \n (Underwritten = '+data[0].fnunderwriten+' , On Hold = '+data[0].fnonhold+' , Sent Back for Analysis = '+data[0].fnsentbackforanalys+') \n'+ d.value
+            			str = 'Actioned deals \n (On Hold = '+data[0].fnonhold+' , Sent Back for Analysis = '+data[0].fnsentbackforanalys+') \n'+ d.dataItem.real_value
             		}else if(d.category == 'Underwritten Deals'){
-            			str = d.category +" \n (Approved = "+data[0].fnapproved+", Rejected = "+data[0].fnrejected+") \n"+ d.value
+            			str = d.category +" \n (Approved = "+data[0].fnapproved+", Rejected = "+data[0].fnrejected+") \n"+ d.dataItem.real_value
             		}else{
-            			str = d.category +" \n"+ d.value
+            			str = d.category +" \n"+ d.dataItem.real_value
             		}
             		return str
             	},
                 visible: true,
                 background: "transparent",
-                color:"white",
-                format: "N0"
+                color: "white",
+                format: "N0",
+                font: "bold 11px Arial,Helvetica,Sans-Serif"
             },
             dynamicSlope: false,
             dynamicHeight: false
         },
         series: [{
             type: "funnel",
+            dynamicSlope: true,
             data: conv.funneldata()
         }],
         tooltip: {
@@ -523,29 +525,47 @@ conv.loadData = function(){
         conv.compapprRate(data[0].approve_rate - data[1].approve_rate);
         conv.companalRate(data[0].analyze_rate - data[1].analyze_rate);
         conv.summaryTrenData(data)
-        conv.funneldata([
-			{
-			    	category: "Accepted deals ",
-				    value: 0,//conv.summaryTrenData()[0].accepted
-				    color: "#0e5a7e"
-				},{
-				    category: "Analized Deals",
-				    value: data[0].analyzed,
-				    color: "#166f99"
-				},{
-				    category: "Actioned Deals",
-				    value: data[0].actioned,
-				    color: "#2185b4"
-				},{
-				    category: "Underwritten Deals",
-				    value: data[0].underwritten,
-				    color: "#319fd2"
-				},{
-				    category: "Approved Deals",
-				    value: data[0].approved,
-				    color: "#3eaee2"
-				}
-		]);
+        var funnel = [
+            {
+                category: "Deals Inqueue",
+                value: data[0].inqueue,
+                color: "#0e5a7e"
+
+            },
+            {
+                category: "Accepted deals ",
+                value: data[0].accepted,
+                color: "#0e5a7e"
+
+            },{
+                category: "Analized Deals",
+                value: data[0].analyzed,
+                color: "#166f99"
+            },{
+                category: "Actioned Deals",
+                value: data[0].actioned,
+                color: "#2185b4"
+            },{
+                category: "Underwritten Deals",
+                value: data[0].underwritten,
+                color: "#319fd2"
+            },{
+                category: "Approved Deals",
+                value: data[0].approved,
+                color: "#3eaee2"
+            }
+		];
+        var maxfun = _.maxBy(funnel, "value")
+        var minfun = _.minBy(funnel, "value")
+        var base = (maxfun.value - minfun.value) * 2
+        if (base === 0)
+            base = 1
+        funnel = _.map(funnel, function (val) {
+            val.real_value = val.value
+            val.value = val.value + base
+            return val
+        })
+        conv.funneldata(funnel);
         conv.loadFunnelChart(data)
         conv.loadRadialGauge()
 	})
@@ -573,33 +593,20 @@ conv.titleText = ko.computed(function () {
     return title;
 })
 
-conv.subscribe = function(){
-	dash.FilterValue.subscribe(function (val) {
-		// turn.loadAlleverage()
-	    conv.loadData();
-	    conv.containerPeriodData();
-	    conv.loadRadialGauge();
-	})
-}
+dash.FilterValue.subscribe(function (val) {
+    // turn.loadAlleverage()
+    conv.loadData();
+    conv.containerPeriodData();
+    conv.loadRadialGauge();
+})
 
-$(window).bind("resize", function() {
-	$('#funnelChart').data("kendoChart").refresh()
-	$('#chartContainer').data("kendoChart").refresh()
-	$('#tatgoals').data("kendoRadialGauge").refresh()
-	$('#analysis').data("kendoChart").refresh()
-	$('#approval').data("kendoChart").refresh()
-	$('#rate').data("kendoChart").refresh()
-});
-
-
-$(function(){
-	conv.loadRadialGauge();
-	conv.loadAllTop();
-	conv.loadContainer();
-	setTimeout(function(){
-		conv.loadData()
-		conv.subscribe()
-		conv.containerPeriodData()
-	}, 1000)
-	
-});
+$(function () {
+    $(window).bind("resize", function() {
+        $('#funnelChart').data("kendoChart").refresh()
+        $('#chartContainer').data("kendoChart").refresh()
+        $('#tatgoals').data("kendoRadialGauge").refresh()
+        $('#analysis').data("kendoChart").refresh()
+        $('#approval').data("kendoChart").refresh()
+        $('#rate').data("kendoChart").refresh()
+    });
+})

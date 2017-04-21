@@ -259,6 +259,36 @@ vm.showPas = function(){
 // 	})
 // }
 
+vm.ontoggled = function(){
+	var infilter = $("#infilter")
+	var incontainer = $("#incontainer")
+	var onbar = $(".onbar");
+
+	if(infilter.is(":visible") == true){
+		onbar
+			.css("width", "0px !important")
+			.css("min-width", "0px !important");
+		infilter.hide()
+		infilter.removeClass("col-md-2");
+		// .css("margin-left", "0%")
+		incontainer.removeClass("col-md-10");
+		incontainer.addClass("col-md-12");
+		$("#main").css("margin-left", "0%")
+	}else{
+		infilter.show();
+		onbar
+			.css("width", "113%")
+			.css("min-width", "255px");
+		infilter.addClass("col-md-2");
+		// incontainer.css("margin-left", "-18%")
+		incontainer.removeClass("col-md-12");
+		incontainer.addClass("col-md-10");
+		$("#main").css("margin-left", "1.3%")
+	}
+
+
+}
+
 $(function () {
 	// vm.accordionSideBar();
 	vm.prepareDropDownMenu();

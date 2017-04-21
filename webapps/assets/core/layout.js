@@ -259,6 +259,7 @@ vm.showPas = function(){
 // 	})
 // }
 
+
 $(function () {
 	// vm.accordionSideBar();
 	vm.prepareDropDownMenu();

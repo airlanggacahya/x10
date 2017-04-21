@@ -70,6 +70,7 @@ func (c *DashboardController) GetCurrentDate(k *knot.WebContext) interface{} {
 
 func (c *DashboardController) GetBranch(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
+
 	conn, err := GetConnection()
 	defer conn.Close()
 	res := new(tk.Result)

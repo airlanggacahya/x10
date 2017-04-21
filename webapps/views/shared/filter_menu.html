@@ -52,13 +52,46 @@
     margin-top: 10px;
  }
 
- .sidebar-nav .k-widget {
-   margin-left: -20px;
+ .onbar.k-widget {
+   margin-left: 0px;
  }
- 
+ .onbar{
+    margin-left: -6%;
+    background-color: #202935;
+    width: 113%;
+    margin-bottom: -8%;
+    overflow: scroll !important;
+    overflow-x: hidden !important;
+    transition: 0.5s;
+
+ }
+ .onli{
+  margin-left: -17%;
+ }
+ .cnt{
+  margin-left: 1%;
+  color: #fff;
+ }
+
+ .onbar::-webkit-scrollbar-track{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+  }
+
+  .onbar::-webkit-scrollbar{
+    width: 12px;
+    background-color: #F5F5F5;
+  }
+
+  .onbar::-webkit-scrollbar-thumb{
+    border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: #acacac;
+  }
 </style>
-<div id="sidebar-wrapper">
-<ul class="sidebar-nav">
+<div class="col-md-12 onbar">
+<ul class="onli">
     <!-- <li class="lilabel">Customer ID | Name</li>
     <li><select name="page"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
      <li class="lilabel">Deal Number</li>
@@ -81,7 +114,7 @@
         <span class="col-md-6" id="reset" style="cursor:pointer;color:#eb8131;float: right;margin-right: -14px;" data-bind="click: dash.ResetFilter"><h5>Reset</h5></span>
       </div>
     </li>
-    <li data-bind="visible: dash.TimePeriodVisible">
+    <li  data-bind="visible: dash.TimePeriodVisible">
       <div class="panel show" style="background-color: #202935;">
         <div class="col-md-12">
           <div class="form-group fg" data-bind="visible: dash.TimePeriodVisible">
@@ -116,6 +149,7 @@
             </div>
           </div>
           <hr style="border-top: 1px solid #1586f0;"/>
+          <br/>
         </div>
       </div>
     </li>
@@ -383,5 +417,8 @@
     $(document).ready(function(){
         $("#sidebar-wrapper").hide()
         $("#sidebar-wrapper").width(0)
+        var onheight = $(window).height() - ($(".navbar-fixed-top").height() + $("#menubackup").height() + $(".div-container").height());
+        $(".onbar").css("height", onheight.toString())
+        $(window).css("overflow-x", "none")
     })
 </script>

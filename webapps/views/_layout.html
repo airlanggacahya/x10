@@ -942,7 +942,7 @@
     setTimeout(function(){
       var submenuWidth = function() {
           // return $(window).width() - $("#sidebar-wrapper").width();
-          return $(window).width();
+          return $(document).width();
       }
 
       $('#menubackup').width(submenuWidth())
@@ -1250,7 +1250,7 @@
               <ul class="nav navbar-nav" id="myTopnavhide" data-bind="template: { name: 'template-menu', foreach: menu }" style="display: none;"></ul>
               <div class="clear"></div>
               <div id="menubackup" class="horizontal-menu tabs tabs-style-linemove k-content" style="width: 100% !important;">
-                <nav class="col-md-12" id="onnav" >
+                <nav class="col-md-12" id="onnav" style="margin-left: -1%">
 
                 </nav>
               </div>
@@ -1358,7 +1358,7 @@
        
         setTimeout(function(){
            // = $( document ).width();
-           onwidth = $(window).width()
+           onwidth = $(document).width()
           $(".horizontal-menu.k-content").css("width", onwidth.toString())
         }, 11)
         

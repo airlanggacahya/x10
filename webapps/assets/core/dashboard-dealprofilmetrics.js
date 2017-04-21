@@ -292,10 +292,26 @@ pm.loadChaterChart = function() {
     //[x axis, y axis]
     //[index 0, index 1]
     //[FinalScoreDob, amount]
-    var data = [{
-        name: "data",
-        data: pm.creditScore()
-    }];
+    var data = _.map(pm.creditScoreAseli(), function (val) {
+        var score = val.finalscoredob
+        var amount = val.amount / 10000000
+
+        if (score <= 4.5) {
+            score = score / 4.5 * 2
+        } else if (score <= 6) {
+            score = (score - 4.5) / (6 - 4.5) * 2 + 2;
+        } else if (score <= 7) {
+            score = (score - 6) / (7 - 6) * 2 + 4;
+        } else if (score <= 8.5) {
+            score = (score - 7) / (8.5 - 7) * 2 + 6;
+        } else {
+            score = (score - 8.5) / (10 - 8.5) * 2 + 8;
+        }
+
+        val.data = [[score, val.amount / 10000000]]
+
+        return val
+    })
 
     $("#cater").html("");
     $("#cater").kendoChart({
@@ -330,7 +346,24 @@ pm.loadChaterChart = function() {
                 color: "#4472C4"
             },
             labels: {
-                template: "# if (value != 0) { # &lt;= #= value # # }else{# #= value # #} #",
+                template: function (dt) {
+                    switch (dt.value) {
+                    case 0:
+                        return "0";
+                    case 2:
+                        return " &lt;= 4.5";
+                    case 4:
+                        return " &lt;= 6";
+                    case 6:
+                        return " &lt;= 7";
+                    case 8:
+                        return " &lt;= 8.5";
+                    case 10:
+                        return " &lt;= 10";
+                    default:
+                        console.log(dt);
+                    }
+                },
                 // skip: 2,
                 step: 1,
                 font: "10px sans-serif",
@@ -355,28 +388,26 @@ pm.loadChaterChart = function() {
         tooltip: {
             visible: true,
             template: function(e) {
-                var found = _.find(pm.creditScoreAseli(), function(a){
-                    return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"))
-                })
-                return "Deal Amount: " + kendo.toString(found.amount/10000000, "n") + "<br /> Interest Rate: " + found.ROI + "%";
+                // console.log(e);
+                return "Deal Amount: " + kendo.toString(e.dataItem[1], "n") + "<br /> Interest Rate: " + e.series.ROI + "%";
             }
         },
         seriesClick: function(e) {
             pm.creditscoreclicked(true);
-            var found = _.find(pm.creditScoreAseli(), function(a){
-                return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"))
+
+            var data = _.cloneDeep(e.series)
+            // console.log(data);
+            var idx = _.findIndex(pm.creditScoreDataTable(), function (val) {
+                return val.dealno == data.dealno
             })
-            for (var i in found) {
-                var interestamount = (found.ROI/100) * (found.amount/10000000);
-                found.interesetamount = interestamount;
-            }
-            var exist = _.find(pm.creditScoreDataTable(), function(a){
-                return e.value.x == a.finalscoredob && e.value.y == parseFloat(kendo.toString(a.amount/10000000, "n"));
-            })
-            if (!exist || exist == undefined) {
-                pm.creditScoreDataTable().push(found);
-                pm.creaditScoreTable();
-            }
+
+            if (idx !== -1)
+                return
+
+            delete data['data']
+            data.interesetamount = (data.ROI/100) * (data.amount/10000000);
+            pm.creditScoreDataTable.push(data);
+            pm.creaditScoreTable();
         }
     });
 }

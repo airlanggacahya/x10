@@ -32,14 +32,16 @@ func (list *StrArray) MarshalJSON() ([]byte, error) {
 	return json.Marshal(*list)
 }
 
+type DashboardFilterItem struct {
+	FilterName string
+	ShowMe     bool
+	Value      StrArray
+}
+
 type DashboardFilterModel struct {
 	orm.ModelBase `bson:"-",json:"-"`
 	Id            string ` bson:"_id" , json:"_id" `
-	Filters       []struct {
-		FilterName string
-		ShowMe     bool
-		Value      StrArray
-	}
+	Filters       []DashboardFilterItem
 }
 
 func (e *DashboardFilterModel) RecordID() interface{} {

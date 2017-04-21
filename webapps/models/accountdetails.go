@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"regexp"
 	"time"
 
@@ -577,25 +578,61 @@ func (a *AccountDetail) Where(filter []*dbox.Filter) ([]AccountDetail, error) {
 	return res, err
 }
 
-func FilterEqual(path string, val string) []toolkit.M {
-	return []toolkit.M{{path: val}}
+func FilterEqual(path string, val []string) []toolkit.M {
+	var list []string
+	for _, v := range val {
+		if v == "" {
+			continue
+		}
+
+		list = append(list, v)
+	}
+
+	if len(list) == 0 {
+		return []toolkit.M{}
+	}
+
+	return []toolkit.M{{path: toolkit.M{"$in": list}}}
 }
 
-func filterBool(path string, val string) []toolkit.M {
-	if val == "true" {
-		return []toolkit.M{{path: true}}
+func filterBool(path string, val []string) []toolkit.M {
+	var list []bool
+	for _, v := range val {
+		if v == "true" {
+			list = append(list, true)
+		} else if v == "false" {
+			list = append(list, false)
+		}
 	}
 
-	if val == "false" {
-		return []toolkit.M{{path: false}}
+	if len(list) == 0 {
+		return []toolkit.M{}
 	}
 
-	return []toolkit.M{}
+	return []toolkit.M{{path: toolkit.M{"$in": list}}}
 }
 
 var formulaRegex = regexp.MustCompile(`^\s*((?:>|=|<)=?)\s*(-?[0-9]+(?:\.[0-9]*)?)\s*`)
 
-func filterFormula(path string, val string) []toolkit.M {
+func filterFormula(path string, val []string) []toolkit.M {
+	var ret []toolkit.M
+
+	for _, v := range val {
+		fil := filterFormula_(path, v)
+		if len(fil) == 0 {
+			continue
+		}
+		ret = append(ret, toolkit.M{"$and": fil})
+	}
+
+	if len(ret) == 0 {
+		return ret
+	}
+
+	return []toolkit.M{{"$or": ret}}
+}
+
+func filterFormula_(path string, val string) []toolkit.M {
 	reg := formulaRegex.Copy()
 	ret := []toolkit.M{}
 
@@ -654,24 +691,24 @@ error:
 
 type FilterMap struct {
 	Path   string
-	Filter func(string, string) []toolkit.M
+	Filter func(string, []string) []toolkit.M
 }
 
-func compileFilter(fields map[string]FilterMap, filter []toolkit.M) []toolkit.M {
+func compileFilter(fields map[string]FilterMap, filter []DashboardFilterItem) []toolkit.M {
 	match := []toolkit.M{}
 	for _, val := range filter {
 		// Length 0
-		if len(val.GetString("Value")) == 0 {
+		if len(val.Value) == 0 {
 			continue
 		}
 
-		field, ok := fields[val.GetString("FilterName")]
+		field, ok := fields[val.FilterName]
 		// toolkit.Printfn("--> %v %v %v", val.GetString("FilterName"), ok, val.GetString("Value"))
 		if !ok {
 			continue
 		}
 
-		match = append(match, field.Filter(field.Path, val.GetString("Value"))...)
+		match = append(match, field.Filter(field.Path, val.Value)...)
 	}
 
 	return match
@@ -691,7 +728,7 @@ func wrapMatch(match []toolkit.M) toolkit.M {
 	}
 }
 
-func GetBranchByFilter(filter []toolkit.M) ([]string, error) {
+func GetBranchByFilter(filter []DashboardFilterItem) ([]string, error) {
 	conn, err := GetConnection()
 	defer conn.Close()
 
@@ -766,7 +803,7 @@ type OptionalFilter struct {
 
 // Filter ad by filter, used in dashboard.
 // Return, list of all element matched
-func FiltersAD(ids, filter []toolkit.M, opt *OptionalFilter) ([]toolkit.M, error) {
+func FiltersAD(ids, filter []DashboardFilterItem, opt *OptionalFilter) ([]toolkit.M, error) {
 	conn, err := GetConnection()
 	defer conn.Close()
 
@@ -855,8 +892,8 @@ func FiltersAD(ids, filter []toolkit.M, opt *OptionalFilter) ([]toolkit.M, error
 	}
 	pipe = append(pipe, wrapMatch(match))
 
-	// debug, _ := json.MarshalIndent(pipe, "", "  ")
-	// toolkit.Printfn("PIPEX\n%s", debug)
+	debug, _ := json.MarshalIndent(pipe, "", "  ")
+	fmt.Printf("PIPEX\n%s\n", debug)
 
 	csr, err := conn.
 		NewQuery().
@@ -879,7 +916,7 @@ func FiltersAD(ids, filter []toolkit.M, opt *OptionalFilter) ([]toolkit.M, error
 	return result, err
 }
 
-func FiltersAD2DealNo(ids, filter []toolkit.M, opt *OptionalFilter) ([]string, error) {
+func FiltersAD2DealNo(ids, filter []DashboardFilterItem, opt *OptionalFilter) ([]string, error) {
 	result, err := FiltersAD(ids, filter, opt)
 
 	if err != nil {

@@ -348,7 +348,7 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 		End    time.Time
 		Length int
 		Type   string
-		Filter []tk.M
+		Filter []DashboardFilterItem
 	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
@@ -983,7 +983,15 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
-	payload := tk.M{}
+	payload := struct {
+		Filter     []DashboardFilterItem
+		Groupby    string
+		Regionname string
+		Timestatus string
+		Type       string
+		Start      string
+		End        string
+	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return res.SetError(err)
@@ -991,7 +999,7 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 
 	ids, err := FiltersAD2DealNo(
 		nil,
-		CheckArray(payload.Get("filter")),
+		payload.Filter,
 		nil,
 	)
 	if err != nil {
@@ -1004,14 +1012,14 @@ func (c *DashboardController) TimeTracker(k *knot.WebContext) interface{} {
 	// 	arrInt = append(arrInt, val)
 	// }
 
-	groupBy := payload.GetString("groupby")
-	regionName := payload.GetString("regionname")
-	timeStatus := payload.GetString("timestatus")
+	groupBy := payload.Groupby
+	regionName := payload.Regionname
+	timeStatus := payload.Timestatus
 	branchIds := []string{}
 
-	timeType := payload.GetString("type")
-	timeStr := strings.Split(payload.GetString("start"), "T")[0]
-	timeStrTwo := strings.Split(payload.GetString("end"), "T")[0]
+	timeType := payload.Type
+	timeStr := strings.Split(payload.Start, "T")[0]
+	timeStrTwo := strings.Split(payload.End, "T")[0]
 
 	if timeType == "" {
 		timeStr = cast.Date2String(time.Date(time.Now().Year(), time.Now().Month(), 1, 0, 0, 0, 0, time.UTC), "yyyy-MM-dd")
@@ -1292,7 +1300,12 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
-	payload := tk.M{}
+	payload := struct {
+		Filter []DashboardFilterItem
+		Type   string
+		Start  string
+		End    string
+	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return res.SetError(err)
@@ -1317,7 +1330,7 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 
 	ids, err := FiltersAD2DealNo(
 		nil,
-		CheckArray(payload.Get("filter")),
+		payload.Filter,
 		nil,
 	)
 	if err != nil {
@@ -1380,11 +1393,11 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 		},
 	})
 
-	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	periodStart, err := time.Parse(time.RFC3339, payload.Start)
 	if err != nil {
 		return res.SetError(err)
 	}
-	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	periodEnd, err := time.Parse(time.RFC3339, payload.End)
 	if err != nil {
 		return res.SetError(err)
 	}
@@ -1392,7 +1405,7 @@ func (c *DashboardController) MovingTAT(k *knot.WebContext) interface{} {
 	tp := TimePeriod{
 		Start:       periodStart,
 		End:         periodEnd,
-		TimeType:    payload.GetString("type"),
+		TimeType:    payload.Type,
 		PeriodCount: 1,
 	}
 	tp.CalcTimePeriod()
@@ -1496,17 +1509,24 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
-	payload := tk.M{}
+	payload := struct {
+		Filter  []DashboardFilterItem
+		Trend   string
+		Groupby string
+		Type    string
+		Start   string
+		End     string
+	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return res.SetError(err)
 	}
 
-	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	periodStart, err := time.Parse(time.RFC3339, payload.Start)
 	if err != nil {
 		return res.SetError(err)
 	}
-	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	periodEnd, err := time.Parse(time.RFC3339, payload.End)
 	if err != nil {
 		return res.SetError(err)
 	}
@@ -1514,10 +1534,10 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	tp := TimePeriod{
 		Start:    periodStart,
 		End:      periodEnd,
-		TimeType: payload.GetString("type"),
+		TimeType: payload.Type,
 	}
 
-	groupBy := payload.GetString("groupby")
+	groupBy := payload.Groupby
 	if groupBy == "" {
 		groupBy = "period"
 	}
@@ -1530,7 +1550,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 	}
 	tp.CalcTimePeriod()
 
-	trendFilt := payload.GetString("trend")
+	trendFilt := payload.Trend
 	if trendFilt == "" {
 		trendFilt = "conversion"
 	}
@@ -1554,7 +1574,7 @@ func (c *DashboardController) SnapshotTAT(k *knot.WebContext) interface{} {
 
 	ids, err := FiltersAD2DealNo(
 		nil,
-		CheckArray(payload.Get("filter")),
+		payload.Filter,
 		nil,
 	)
 	if err != nil {
@@ -1743,7 +1763,12 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
-	payload := tk.M{}
+	payload := struct {
+		Filter []DashboardFilterItem
+		Type   string
+		Start  string
+		End    string
+	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return res.SetError(err)
@@ -1768,7 +1793,7 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 
 	ids, err := FiltersAD2DealNo(
 		nil,
-		CheckArray(payload.Get("filter")),
+		payload.Filter,
 		nil,
 	)
 	if err != nil {
@@ -1786,11 +1811,11 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 		return res.SetError(err)
 	}
 
-	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	periodStart, err := time.Parse(time.RFC3339, payload.Start)
 	if err != nil {
 		return res.SetError(err)
 	}
-	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	periodEnd, err := time.Parse(time.RFC3339, payload.End)
 	if err != nil {
 		return res.SetError(err)
 	}
@@ -1798,7 +1823,7 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 	tp := TimePeriod{
 		Start:       periodStart,
 		End:         periodEnd,
-		TimeType:    payload.GetString("type"),
+		TimeType:    payload.Type,
 		PeriodCount: 1,
 	}
 	tp.CalcTimePeriod()
@@ -1919,20 +1944,6 @@ func (c *DashboardController) HistoryTAT(k *knot.WebContext) interface{} {
 	return res
 }
 
-func (c *DashboardController) ConversionTatScatter(k *knot.WebContext) interface{} {
-	k.Config.OutputType = knot.OutputJson
-	res := new(tk.Result)
-
-	data := []interface{}{
-		[]int{20, 23},
-		[]int{40, 27},
-	}
-
-	res.Data = data
-
-	return res
-}
-
 func (c *DashboardController) TurnaroundTime(k *knot.WebContext) interface{} {
 	k.Config.NoLog = true
 	k.Config.OutputType = knot.OutputTemplate
@@ -1989,7 +2000,13 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
-	payload := tk.M{}
+	payload := struct {
+		Filter []DashboardFilterItem
+		Type   string
+		Start  string
+		End    string
+		Trend  string
+	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return res.SetError(err)
@@ -2001,12 +2018,12 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	}
 	defer cn.Close()
 
-	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	periodStart, err := time.Parse(time.RFC3339, payload.Start)
 	if err != nil {
 		periodStart = time.Now()
 		// return res.SetError(err)
 	}
-	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	periodEnd, err := time.Parse(time.RFC3339, payload.End)
 	if err != nil {
 		periodEnd = time.Now()
 		// return res.SetError(err)
@@ -2015,12 +2032,12 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 	tp := TimePeriod{
 		Start:       periodStart,
 		End:         periodEnd,
-		TimeType:    payload.GetString("type"),
+		TimeType:    payload.Type,
 		PeriodCount: 1,
 	}
 	tp.CalcTimePeriod()
 
-	trendFilt := payload.GetString("trend")
+	trendFilt := payload.Trend
 	// periodFilt := payload.GetString("period")
 	// regionName := payload.GetString("region")
 	// groupByDate := time.Now()
@@ -2066,7 +2083,7 @@ func (c *DashboardController) GridDetailsTAT(k *knot.WebContext) interface{} {
 
 	ids, err := FiltersAD2DealNo(
 		nil,
-		CheckArray(payload.Get("filter")),
+		payload.Filter,
 		nil,
 	)
 	if err != nil {
@@ -2283,7 +2300,14 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 	o := tk.M{}
-	payload := tk.M{}
+
+	payload := struct {
+		Filter            []DashboardFilterItem
+		Type              string
+		Start             string
+		End               string
+		Distributionchart string
+	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return res.SetError(err)
@@ -2295,11 +2319,11 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	}
 	defer cn.Close()
 
-	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	periodStart, err := time.Parse(time.RFC3339, payload.Start)
 	if err != nil {
 		return res.SetError(err)
 	}
-	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	periodEnd, err := time.Parse(time.RFC3339, payload.End)
 	if err != nil {
 		return res.SetError(err)
 	}
@@ -2307,14 +2331,14 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	tp := TimePeriod{
 		Start:       periodStart,
 		End:         periodEnd,
-		TimeType:    payload.GetString("type"),
+		TimeType:    payload.Type,
 		PeriodCount: 7,
 	}
 	tp.CalcTimePeriod()
 
 	ids, err := FiltersAD2DealNo(
 		nil,
-		CheckArray(payload.Get("filter")),
+		payload.Filter,
 		&OptionalFilter{
 			Stage2: map[string]FilterMap{
 				"DealStatus": FilterMap{"lastInfo.status", FilterEqual},
@@ -2349,12 +2373,12 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	})
 
 	///metric trend xfl query
-	err, resultsXfl := c.trendxfl(payload, tp, pipe, cn)
+	err, resultsXfl := c.trendxfl(tp, pipe, cn)
 	if !tk.IsNilOrEmpty(err) {
 		return res.SetError(err)
 	}
 
-	if !tk.IsNilOrEmpty(payload.Get("distributionchart")) {
+	if !tk.IsNilOrEmpty(payload.Distributionchart) {
 		// filter out not current period for credit score
 		currentOnlyXfl := c.xflFilterResult(resultsXfl, tp)
 		///grouping deal distribution
@@ -2363,7 +2387,7 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	}
 
 	///metric trend query
-	err, trendResult := c.trendChart(payload, tp, pipe, cn)
+	err, trendResult := c.trendChart(tp, pipe, cn)
 	if !tk.IsNilOrEmpty(err) {
 		return res.SetError(err)
 	}
@@ -2398,7 +2422,7 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 	return res
 }
 
-func (c *DashboardController) trendxfl(payload tk.M, tp TimePeriod, pipe []tk.M, cn dbox.IConnection) (error, []tk.M) {
+func (c *DashboardController) trendxfl(tp TimePeriod, pipe []tk.M, cn dbox.IConnection) (error, []tk.M) {
 	pipe = append(pipe, tk.M{"$lookup": tk.M{
 		"from":         "DCFinalSanction",
 		"localField":   "customerprofile.applicantdetail.DealNo",
@@ -2512,7 +2536,7 @@ func (c *DashboardController) xflTrendGrouping(results tk.Ms, tp TimePeriod) tk.
 	return result
 }
 
-func (c *DashboardController) trendChart(payload tk.M, tp TimePeriod, pipe []tk.M, cn dbox.IConnection) (error, []tk.M) {
+func (c *DashboardController) trendChart(tp TimePeriod, pipe []tk.M, cn dbox.IConnection) (error, []tk.M) {
 	pipe = append(pipe, tk.M{"$lookup": tk.M{
 		"from":         "DCFinalSanction",
 		"localField":   "customerprofile.applicantdetail.DealNo",
@@ -2980,7 +3004,7 @@ func (proc *processFunnel) ToM() tk.M {
 	return ret
 }
 
-func (c *DashboardController) conversionOption(payload tk.M, tp TimePeriod) (tk.M, error) {
+func (c *DashboardController) conversionOption(filter []DashboardFilterItem, tp TimePeriod) (tk.M, error) {
 	cn, err := GetConnection()
 	if err != nil {
 		tk.Println("connection failed")
@@ -2990,7 +3014,7 @@ func (c *DashboardController) conversionOption(payload tk.M, tp TimePeriod) (tk.
 
 	ids, err := FiltersAD2DealNo(
 		nil,
-		CheckArray(payload.Get("filter")),
+		filter,
 		nil,
 	)
 
@@ -3086,18 +3110,24 @@ func (c *DashboardController) ConversionOption(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
 	res := new(tk.Result)
-	payload := tk.M{}
+
+	payload := struct {
+		Filter []DashboardFilterItem
+		Type   string
+		Start  string
+		End    string
+	}{}
 
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
-	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	periodStart, err := time.Parse(time.RFC3339, payload.Start)
 	if err != nil {
 		return res.SetError(err)
 	}
-	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	periodEnd, err := time.Parse(time.RFC3339, payload.End)
 	if err != nil {
 		return res.SetError(err)
 	}
@@ -3105,14 +3135,14 @@ func (c *DashboardController) ConversionOption(k *knot.WebContext) interface{} {
 	tp := TimePeriod{
 		Start:       periodStart,
 		End:         periodEnd,
-		TimeType:    payload.GetString("type"),
+		TimeType:    payload.Type,
 		PeriodCount: 1,
 	}
 	tp.CalcTimePeriod()
 
 	ret := []tk.M{}
 	for i := 0; i < 2; i++ {
-		dat, err := c.conversionOption(payload, tp)
+		dat, err := c.conversionOption(payload.Filter, tp)
 		if err != nil {
 			return res.SetError(err)
 		}
@@ -3129,18 +3159,24 @@ func (c *DashboardController) ConversionOption6(k *knot.WebContext) interface{} 
 	k.Config.OutputType = knot.OutputJson
 
 	res := new(tk.Result)
-	payload := tk.M{}
+
+	payload := struct {
+		Filter []DashboardFilterItem
+		Type   string
+		Start  string
+		End    string
+	}{}
 
 	err := k.GetPayload(&payload)
 	if err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
 	}
 
-	periodStart, err := time.Parse(time.RFC3339, payload.GetString("start"))
+	periodStart, err := time.Parse(time.RFC3339, payload.Start)
 	if err != nil {
 		return res.SetError(err)
 	}
-	periodEnd, err := time.Parse(time.RFC3339, payload.GetString("end"))
+	periodEnd, err := time.Parse(time.RFC3339, payload.End)
 	if err != nil {
 		return res.SetError(err)
 	}
@@ -3148,14 +3184,14 @@ func (c *DashboardController) ConversionOption6(k *knot.WebContext) interface{} 
 	tp := TimePeriod{
 		Start:       periodStart,
 		End:         periodEnd,
-		TimeType:    payload.GetString("type"),
+		TimeType:    payload.Type,
 		PeriodCount: 1,
 	}
 
 	ret := []tk.M{}
 	for i := 0; i < 6; i++ {
 		tp.MoveTimePeriod(-1)
-		dat, err := c.conversionOption(payload, tp)
+		dat, err := c.conversionOption(payload.Filter, tp)
 		if err != nil {
 			return res.SetError(err)
 		}

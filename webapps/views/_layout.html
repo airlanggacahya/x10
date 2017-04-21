@@ -500,6 +500,8 @@
       }
 
       $(document).ready(function () {
+        onwidth = $( document ).width();
+        $(".horizontal-menu.k-content").css("width", onwidth.toString())
         ClearSavedFilter();
 
          // if(window.location.href.indexOf("accountdetail/default") == -1){
@@ -939,7 +941,8 @@
   var setSubmenu = function() {
     setTimeout(function(){
       var submenuWidth = function() {
-          return $(window).width() - $("#sidebar-wrapper").width();
+          // return $(window).width() - $("#sidebar-wrapper").width();
+          return $(document).width();
       }
 
       $('#menubackup').width(submenuWidth())
@@ -1147,7 +1150,7 @@
                 Additional Filters
               </div> -->
               <div class="sidebar-toggle custom-bar">
-                <i class="fa fa-bars" style="font-size: 23px; cursor: pointer; cursor: hand; color: white;" onClick="toggle()"></i>
+                <i class="fa fa-bars" style="font-size: 23px; cursor: pointer; cursor: hand; color: white;" onClick="ontoggled()"></i>
               </div>
               <!-- <div class="logo-container" > -->
                 <!-- <a href="{{BaseUrl}}">
@@ -1160,7 +1163,7 @@
             var openx = true;
             // toggle()
 
-            function toggle() {
+            ontoggled = function() {
               menumarginleft = 0
               if( !openx ){
                 if(model.currentTitle() === 'Alerts & Updates' || model.currentTitle() === 'Turnaround Time' || model.currentTitle() === 'Conversion Rate' || model.currentTitle() === 'Deal Profil Metrics' || model.currentTitle() === 'Custom Analysis'){
@@ -1189,12 +1192,15 @@
               }
               setTimeout(function() {
                 $("#myTopnav").css("margin-left", menumarginleft);
-              }, 10)
+                onwidth = $( document ).width();
+                $(".horizontal-menu.k-content").css("width", onwidth.toString())
+              }, 11)
               setSubmenu()
               openx = !openx
+
             }
 
-            toggle()
+            ontoggled()
             </script>
 
             <script id="template-menu" type="text/html">
@@ -1209,9 +1215,9 @@
 
               <!-- ko if: $data.submenu().length > 0 -->
 
-                <li class="k-item k-state-default" data-bind="css: { error: ($data.submenu() > 0) }">
+                <li class="onmenu k-item k-state-default" data-bind="css: { error: ($data.submenu() > 0) }, attr: {'id':'onmenu'+[$index()]}">
 
-                  <a id="idmenu" class="color-base" data-toggle="dropdown" data-bind="css: { 'active': (model.currentMenu() == $data.title()) }, attr: { href: $data.href() }">
+                  <a class="color-base" data-toggle="dropdown" data-bind="css: { 'active': (model.currentMenu() == $data.title()) }, attr: { href: $data.href()}">
                     <i data-bind="css: $data.icon()"></i>&nbsp;
                     <span data-bind="text: $data.title()"></span>
                   </a>
@@ -1243,8 +1249,8 @@
               <ul style="margin-left: 50px;" class="nav navbar-nav" id="myTopnav" data-bind="template: { name: 'template-menu', foreach: menu }"></ul>
               <ul class="nav navbar-nav" id="myTopnavhide" data-bind="template: { name: 'template-menu', foreach: menu }" style="display: none;"></ul>
               <div class="clear"></div>
-              <div id="menubackup" class="horizontal-menu tabs tabs-style-linemove k-content">
-                <nav>
+              <div id="menubackup" class="horizontal-menu tabs tabs-style-linemove k-content" style="width: 100% !important;">
+                <nav class="col-md-12" id="onnav" style="margin-left: -1%">
 
                 </nav>
               </div>
@@ -1333,11 +1339,30 @@
       model.Processing = false;
       getServerDateTime();
       model.getDataMenu();
+      // toggle()
+      // setInterval(function(){
+      //   el = $(".navbar-nav > li > a").is(":hover")
+      //   if(el == true){
+      //     alert("masuk")
+      //   }
+      // }, 200)
+
   });
 
   $(window).on('load resize ajaxComplete', function(){
+
     setTimeout(function(){
       setSubmenu()
+      var el = $(".modal").is(":visible")
+      // alert("nanana...")
+       
+        setTimeout(function(){
+           // = $( document ).width();
+           onwidth = $(document).width()
+          $(".horizontal-menu.k-content").css("width", onwidth.toString())
+        }, 11)
+        
+      // }
     }, 200);
   })
 

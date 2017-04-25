@@ -381,6 +381,17 @@ ttrack.accordion = function(){
 $(document).ready(function(){
 	// ttrack.getData();
     ttrack.accordion();
+    $(".sidebar-toggle").click(function(){
+        var infilter = $("#infilter")
+        if(infilter.is(":visible") == true){
+            $("#timeTrackerChart").data("kendoChart").refresh();
+            $("#alert-summary").data("kendoChart").refresh();
+            
+        }else{
+            $("#timeTrackerChart").data("kendoChart").refresh();
+            $("#alert-summary").data("kendoChart").refresh();
+        }
+    })
 })
 
 

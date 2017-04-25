@@ -53,6 +53,7 @@ func (c *DashboardController) ConversionRate(k *knot.WebContext) interface{} {
 		"shared/dataaccess.html",
 		"shared/loading.html",
 		"shared/leftfilter.html",
+		"shared/filter_menu.html",
 	}
 
 	return DataAccess
@@ -2292,6 +2293,7 @@ func (c *DashboardController) DealProfilMetrics(k *knot.WebContext) interface{} 
 		"shared/loading.html",
 		"shared/leftfilter.html",
 		"dashboard/compare_contrast.html",
+		"shared/filter_menu.html",
 	}
 
 	return DataAccess

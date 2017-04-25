@@ -1953,6 +1953,7 @@ func (c *DashboardController) TurnaroundTime(k *knot.WebContext) interface{} {
 		"shared/dataaccess.html",
 		"shared/loading.html",
 		"shared/leftfilter.html",
+		"shared/filter_menu.html",
 
 		"dashboard/compare_contrast.html",
 	}

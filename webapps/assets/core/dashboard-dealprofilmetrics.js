@@ -1172,7 +1172,30 @@ pm.CreateChartMovingOptions_ = function (data) {
     }*/
 }
 
+$(window).bind("resize", function() {
+    $('#chartContainer').data("kendoChart").refresh()
+    // $('#tatgoals').data("kendoRadialGauge").refresh()
+    $('#distribution').data("kendoChart").refresh()
+    $('#cater').data("kendoChart").refresh()
+});
+
 $(function() {
     pm.Target();
     pm.accordion();
+    $(".sidebar-toggle").click(function(){
+        var infilter = $("#infilter")
+        if(infilter.is(":visible") == true){
+            $('#chartContainer').data("kendoChart").refresh();
+            // $('#tatgoals').data("kendoRadialGauge").refresh()
+            $('#distribution').data("kendoChart").refresh();
+            $('#cater').data("kendoChart").refresh();
+            $(".tabl").css("width", "98.5%");
+        }else{
+            $('#chartContainer').data("kendoChart").refresh()
+            // $('#tatgoals').data("kendoRadialGauge").refresh()
+            $('#distribution').data("kendoChart").refresh()
+            $('#cater').data("kendoChart").refresh()
+            $(".tabl").css("width", "98.5%");
+        }
+    })
 });

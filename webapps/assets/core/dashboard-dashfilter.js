@@ -41,6 +41,11 @@ var CreateDashFilter = function() {
                 return true
 
             if (_.isArray(source)) {
+                source = _.filter(val.Value, function (val) { return val !== "" })
+
+                if (source.length === 0)
+                    return true
+
                 return _.indexOf(source, _.get(val, path)) !== -1
             }
 
@@ -95,6 +100,11 @@ var CreateDashFilter = function() {
                 return true;
 
             if (_.isArray(source)) {
+                source = _.filter(val.Value, function (val) { return val !== "" })
+
+                if (source.length === 0)
+                    return true
+
                 return _.reduce(source, function (result, it) {
                     result = result || IRlambda(it, _.get(val, path))
                 }, false)
@@ -472,21 +482,30 @@ var CreateDashFilter = function() {
             if (_.indexOf(dash.FilterList, name) == -1)
                 return
 
+            dash[name + "ShowMe"](val.ShowMe)
+
             // default value is set
             if (val.Value === "" || val.Value === null)
                 return
+            
+            // for array, we filter for empty string, and then exit on empty array
+            if (_.isArray(val.Value)) {
+                val.Value = _.filter(val.Value, function (val) { return val !== "" })
 
-            dash[name + "ShowMe"](val.ShowMe)
+                if (val.Value.length === 0)
+                    return
+            }
 
-            // when dash is multi select but the data is not array
-            // make it so
             switch (dash[name + "Type"]) {
             case "multi":
+                // when dash is multi select but the data is not array
+                // make it so
                 if (!_.isArray(val.Value)) {
                     val.Value = [val.Value]
                 }
                 break;
             case "single":
+                // dash is single select and data is array
                 if (_.isArray(val.Value)) {
                     val.Value = val.Value[0]
                 }

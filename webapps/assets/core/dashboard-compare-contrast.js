@@ -130,6 +130,7 @@ comp.ToggleSelected = function(section, needle) {
 
 comp.ChartLoader = function (param, callback) {callback({})}
 
+comp.InitialFilter = null;
 comp.disableDraw = false;
 comp.Open = function (chartconfig) {
     // we disable drawing until modal show up
@@ -140,7 +141,10 @@ comp.Open = function (chartconfig) {
 
     // reset state
     comp.resetModal();
-    compFilter.LoadFilter(dash.FilterValue());
+    // save initial filter
+    comp.InitialFilter = dash.FilterValue()
+    // set default filter using clone object
+    compFilter.LoadFilter(_.cloneDeep(comp.InitialFilter));
     // clear max value
     comp.axisData([])
     // clear chart
@@ -186,8 +190,8 @@ comp.RedrawChart_ = function (firstload) {
     _.each(comp.openSelected(), function (val, index) {
         var filter = _.cloneDeep(compFilter.FilterValue());
 
-        // do not reset on index zero
         if (index !== 0) {
+            // on index not zero, set filter
             comp.setFilterVal(filter, comp.nameSelected(), val);
         }
 

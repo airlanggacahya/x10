@@ -265,9 +265,9 @@ vm.ontoggled = function(){
 	var onbar = $(".onbar");
 
 	if(infilter.is(":visible") == true){
-		onbar
-			.css("width", "0px !important")
-			.css("min-width", "0px !important");
+		// onbar
+		// 	.css("width", "0px !important")
+		// 	.css("min-width", "0px !important");
 		infilter.hide()
 		infilter.removeClass("col-md-2");
 		// .css("margin-left", "0%")
@@ -275,10 +275,13 @@ vm.ontoggled = function(){
 		incontainer.addClass("col-md-12");
 		$("#main").css("margin-left", "0%")
 	}else{
+		// call to filter_menu.html js
+		// to recalculate height
+		recalculateFilterMenu();
 		infilter.show();
-		onbar
-			.css("width", "113%")
-			.css("min-width", "255px");
+		// onbar
+		// 	.css("width", "100%")
+		// 	.css("min-width", "255px");
 		infilter.addClass("col-md-2");
 		// incontainer.css("margin-left", "-18%")
 		incontainer.removeClass("col-md-12");

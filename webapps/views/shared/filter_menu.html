@@ -509,12 +509,23 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    function recalculateFilterMenu() {
         $("#sidebar-wrapper").hide()
         $("#sidebar-wrapper").width(0)
-        var onheight = $(window).height() - ($(".navbar-fixed-top").height() + $("#menubackup").height() + $(".div-container").height());
-        $(".onbar").css("height", onheight.toString())
-        $(".onbar").css("min-height", "450px")
+        var onheight = $(window).height() - $(".navbar-fixed-top").height() - $("#menubackup").height();
+        console.log(onheight)
+        $(".onbar").css("height", onheight)
         $(window).css("overflow-x", "hidden")
+    }
+
+    // hack to prevent width scrollbar
+    // TODO: FIX THIS
+    $(function () {
+      $("html").css("overflow-x", "hidden")
+    })
+
+    // Handle for resize event
+    $(window).resize(function(){
+      recalculateFilterMenu();
     })
 </script>

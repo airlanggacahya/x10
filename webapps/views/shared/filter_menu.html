@@ -15,32 +15,35 @@
     color:#eb8131 !important;
   }
 
-  .sidebar-nav .calendar-label {
+  .sidebar-filter .calendar-label {
     position: absolute;
     z-index: 10;
     color: rgb(70, 70, 70);
     text-align: center;
-    margin-left: -20px;
     width: 84%;
-    padding-right: 50px;
+    margin-top: 6px;
   }
 
-  .sidebar-nav .k-widget.k-datepicker .k-picker-wrap .k-input {
+  .sidebar-filter .k-widget.k-datepicker .k-picker-wrap .k-input {
     background: rgb(226, 226, 226);
     margin-left: -20px !important;
     text-align: center;
     visibility: hidden;
   }
 
-  .sidebar-nav .k-widget.k-datepicker .k-picker-wrap .k-select {
+  .sidebar-filter .k-widget.k-datepicker .k-picker-wrap .k-select {
     border: none;
     width: 20px;
     margin-left: 10px;
     z-index: 15;
   }
 
-  .sidebar-nav .k-widget.k-datepicker .k-picker-wrap .k-select .k-icon {
-    margin-left: -30px;
+  .sidebar-filter .k-widget.k-datepicker .k-picker-wrap .k-select .k-icon {
+    margin-left: -5px;
+  }
+
+  .sidebar-filter .sidebar-widget {
+    margin-top: 10px;
   }
 
   .sidebar-nav .fa-times{
@@ -174,7 +177,7 @@
     }
   }
 </style>
-<div class="col-md-12">
+<div class="col-md-12 sidebar-filter">
 <ul class="onli">
     <!-- <li class="lilabel">Customer ID | Name</li>
     <li><select name="page"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
@@ -213,7 +216,7 @@
                   optionLabel: 'Select One',
                   filter:'contains'
                 }" ></select>
-              <div data-bind="visible: dash.TimePeriodVal() != '' && dash.TimePeriodVal() != '10day'">
+              <div data-bind="visible: dash.TimePeriodVal() != '' && dash.TimePeriodVal() != '10day'" class="sidebar-widget">
                 <span class="calendar-label" data-bind="text: dash.TimePeriodCalendarValFormat"></span>
                 <input data-bind="
                   kendoDatePicker: {
@@ -222,7 +225,7 @@
                     start: dash.TimePeriodCalendarScale
                   }" id="timeperiodCalendar" style="width: 84%">
               </div>
-              <div data-bind="visible: dash.TimePeriodVal() == 'fromtill'">
+              <div data-bind="visible: dash.TimePeriodVal() == 'fromtill'" class="sidebar-widget">
                 <span class="calendar-label" data-bind="text: dash.TimePeriodCalendar2ValFormat"></span>
                 <input data-bind="
                   kendoDatePicker: {

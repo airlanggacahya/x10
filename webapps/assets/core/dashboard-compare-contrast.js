@@ -215,6 +215,10 @@ comp.RedrawChart_ = function (firstload) {
             btn.classList.add("btn-flat")
             btn.classList.add("btn-default")
             btn.classList.add("filter-button")
+            if (comp.viewFilter() === true) {
+                btn.style.display = "none"
+            }
+
             btn.appendChild(icon)
             $(btn).on("click", function(){
                 comp.viewFilter(true);
@@ -268,10 +272,6 @@ comp.RedrawChart_ = function (firstload) {
     })
     // comp.RedrawChart()
     // parentEl.show();
-}
-
-comp.setFilterFalse = function(){
-    comp.viewFilter(false)
 }
 
 compFilter.FilterValue.subscribe(function (val) {

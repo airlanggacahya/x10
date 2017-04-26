@@ -1360,4 +1360,31 @@ $(window).bind("resize", function() {
 $(function(){
 	// turn.loadChaterChart()
 	turn.accordion()
+	$(".sidebar-toggle").click(function(){
+		var infilter = $("#infilter")
+		if(infilter.is(":visible") == true){
+			turn.loadChaterChart()
+			$("#onselect").css("width", "117px")
+			$("#historytat").data("kendoChart").refresh();
+			$(".cater").data("kendoChart").refresh();
+			$("#movingtat").data("kendoChart").refresh();
+			$("#conversion").data("kendoChart").refresh();
+			$("#decision").data("kendoChart").refresh();
+			$("#processing").data("kendoChart").refresh();
+			$("#acceptance").data("kendoChart").refresh();
+			$("#chartContainer").data("kendoChart").refresh();
+		}else{
+			turn.loadChaterChart()
+			$("#onselect").css("width", "150px")
+			$("#historytat").data("kendoChart").refresh();
+			$(".cater").data("kendoChart").refresh();
+			$("#movingtat").data("kendoChart").refresh();
+			$("#conversion").data("kendoChart").refresh();
+			$("#decision").data("kendoChart").refresh();
+			$("#processing").data("kendoChart").refresh();
+			$("#acceptance").data("kendoChart").refresh();
+			$("#chartContainer").data("kendoChart").refresh();
+		}
+	})
+	
 });

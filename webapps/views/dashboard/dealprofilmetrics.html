@@ -406,8 +406,24 @@ h6 {
 .compare-space {
     right: 48px;
 }
+
+.side{
+    margin-top: 10% !important;
+    /*margin-left: -7% !important;*/
+}
+.filterfix{
+    position: fixed;
+    width: 16%;
+}
 </style>
-<div class="col-md-12 lay">
+ <div id="infilter" class="col-md-2" style="display: none;">
+    <div class="filterfix">
+        <div class="panel panel-body side onbar">
+           {{template "filter_menu.html"}}
+        </div>
+    </div>
+</div>
+<div id="incontainer" class="col-md-12 setpad lay">
     <div class="col-md-12 top turnaroundtime">
         <div class="col-md-12">
             <h5>Quick Info : <span data-bind="text: pm.setTitle()">nanana</span></h5>
@@ -564,4 +580,161 @@ h6 {
             </div>
         </div>
     </div>
-</div>
+</div> 
+<!-- <div class="col-md-12 lay">
+    <div class="col-md-12 top turnaroundtime">
+        <div class="col-md-12">
+            <h5>Quick Info : <span data-bind="text: pm.setTitle()">nanana</span></h5>
+            <hr class="line">
+            <div class="col-sm-12 new-dashboard" style="width: 100%;margin-left: -0.5%;margin-top: -32px;">
+                <div id="butt">
+                    <div class="col-sm-3 wl">
+                        <div class="panel panel-body dl" id="target" style="height: 185px">
+                            <h6 class="tat-title tl">Deal Target</h6>
+                            <div id="goal-container">
+                                <div id="tatgoals"></div>
+                                <div>Days</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 wl ">
+                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
+                            <h6 class="tat-title tl">Deal Count</h6>
+                            <div class="middle-center">
+                                <div class="middle widget-title col-sm-12" data-bind="text: pm.dealCount"></div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgCount"></span>&#37;</div>
+                                <div class="col-sm-12">
+                                    <table data-bind="style:{width:'100%', marginTop: '25px'}" id="dealcount">
+                                        <tr>
+                                            <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1count() > 0, style:{width: pm.xfl1countwidth()+'%'},text:pm.xfl1count"></td>
+                                            <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2count() > 0, style:{width: pm.xfl2countwidth()+'%'},text:pm.xfl2count"></td>
+                                            <td class="le legend tooltipdealcount" style="background-color: #ffc000;" data-bind="visible: pm.xfl3count() > 0, style:{width: pm.xfl3countwidth()+'%'},text:pm.xfl3count"></td>
+                                            <td class="le legend" style="background-color: #ed7d31;" data-bind="visible: pm.xfl4count() > 0, style:{width: pm.xfl4countwidth()+'%'},text:pm.xfl4count"></td>
+                                            <td class="le legend" style="background-color: #ff2929;" data-bind="visible: pm.xfl5count() > 0, style:{width: pm.xfl5countwidth()+'%'},text:pm.xfl5count"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 wl">
+                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
+                            <h6 class="tat-title tl">Deal Amount</h6>
+                            <div class="middle-center">
+                                <div class="middle widget-title col-sm-12" data-bind="text: pm.dealAmount"></div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgAmount"></span>&#37;</div>
+                                <div class="col-sm-12">
+                                    <table data-bind="style:{width:'100%', marginTop: '25px'}">
+                                        <tr>
+                                            <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1amount() > 0, style:{width: pm.xfl1amountwidth()+'%'},text:pm.xfl1amount"></td>
+                                            <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2amount() > 0, style:{width: pm.xfl2amountwidth()+'%'},text:pm.xfl2amount"></td>
+                                            <td class="le legend" style="background-color: #ffc000;" data-bind="visible: pm.xfl3amount() > 0, style:{width: pm.xfl3amountwidth()+'%'},text:pm.xfl3amount"></td>
+                                            <td class="le legend" style="background-color: #ed7d31;" data-bind="visible: pm.xfl4amount() > 0, style:{width: pm.xfl4amountwidth()+'%'},text:pm.xfl4amount"></td>
+                                            <td class="le legend" style="background-color: #ff2929;" data-bind="visible: pm.xfl5amount() > 0, style:{width: pm.xfl5amountwidth()+'%'},text:pm.xfl5amount"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 wl">
+                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="process">
+                            <h6 class="tat-title tl">Interest Amount</h6>
+                            <div class="middle-center">
+                                <div class="middle widget-title col-sm-12" data-bind="text: pm.interestAmount"></div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up down-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgInterestAmount"></span>&#37;</div>
+                                <div class="col-sm-12">
+                                    <table data-bind="style:{width:'100%', marginTop: '25px'}">
+                                        <tr>
+                                            <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1interest() > 0, style:{width: pm.xfl1interestwidth()+'%'},text:pm.xfl1interest"></td>
+                                            <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2interest() > 0, style:{width: pm.xfl2interestwidth()+'%'},text:pm.xfl2interest"></td>
+                                            <td class="le legend" style="background-color: #ffc000;" data-bind="visible: pm.xfl3interest() > 0, style:{width: pm.xfl3interestwidth()+'%'},text:pm.xfl3interest"></td>
+                                            <td class="le legend" style="background-color: #ed7d31;" data-bind="visible: pm.xfl4interest() > 0, style:{width: pm.xfl4interestwidth()+'%'},text:pm.xfl4interest"></td>
+                                            <td class="le legend" style="background-color: #ff2929;" data-bind="visible: pm.xfl5interest() > 0, style:{width: pm.xfl5interestwidth()+'%'},text:pm.xfl5interest"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <h5>Trend : <span data-bind="text: pm.setTitle()"></span> </h5>
+                <hr class="line">
+            </div>
+            <div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
+                <div class="col-md-4">
+                    <div class="panel panel-body aol trend">
+                        <div class="chart-options">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label>View Acros</label>
+                                    </td>
+                                    <td>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value'}"></select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="clear: both"></div>
+                        <div id="chartContainer"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-body aol trend">
+                        <div class="chart-options compare-space">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label>View</label>
+                                    </td>
+                                    <td>
+                                        <select data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenuDistribution, dataTextField: 'text', dataValueField: 'value'}"></select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="clear: both"></div>
+                        <div id="distribution"></div>
+                        <div class="compare-contrast">
+                            <button class="btn btn-flat btn-xs btn-primary" data-bind="click: comp.Open.bind(comp, pm.CreateChartMoving)">
+                                <i class="fa fa-columns"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-body aol trend manual-height">
+                        <div id="interestRateDetail">
+                            <h6>Deal Amount and Interest</h6>
+                            <div id="interestDetailDB"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <h5>Conversion TAT & Deal Amount : <span data-bind="text: pm.setTitle()">nanana</span></h5>
+                <hr class="line">
+            </div>
+            <div class="col-md-12 new-dashboard">
+                <div class="panel panel-body aul show">
+                    <div id="cater"></div>
+                    <table class="tabl">
+                        <tr>
+                            <td class="le legend" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">XFL - 5</td>
+                            <td class="le legend" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">XFL - 4</td>
+                            <td class="le legend" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">XFL - 3</td>
+                            <td class="le legend" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">XFL - 2</td>
+                            <td class="le legend" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">XFL - 1</td>
+                        </tr>
+                    </table>
+                    <div class="tabl" style="text-align: center; font-size: 11px; font-family: sans-serif; color: #4472c4;">Credit Scores</div>
+                    <h5 class="scatter-title" data-bind="visible: pm.creditscoreclicked">Deal Amount and Interest Amount</h5>
+                    <div id="creaditscoretable"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->

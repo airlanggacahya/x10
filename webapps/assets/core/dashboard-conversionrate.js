@@ -609,4 +609,22 @@ $(function () {
         $('#approval').data("kendoChart").refresh()
         $('#rate').data("kendoChart").refresh()
     });
+    $(".sidebar-toggle").click(function(){
+        var infilter = $("#infilter")
+        if(infilter.is(":visible") == true){
+            $('#funnelChart').data("kendoChart").refresh()
+            $('#chartContainer').data("kendoChart").refresh()
+            // $('#tatgoals').data("kendoRadialGauge").refresh()
+            $('#analysis').data("kendoChart").refresh()
+            $('#approval').data("kendoChart").refresh()
+            $('#rate').data("kendoChart").refresh()
+        }else{
+            $('#funnelChart').data("kendoChart").refresh()
+            $('#chartContainer').data("kendoChart").refresh()
+            // $('#tatgoals').data("kendoRadialGauge").refresh()
+            $('#analysis').data("kendoChart").refresh()
+            $('#approval').data("kendoChart").refresh()
+            $('#rate').data("kendoChart").refresh()
+        }
+    })
 })

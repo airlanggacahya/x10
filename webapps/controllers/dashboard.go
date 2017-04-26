@@ -34,6 +34,7 @@ func (c *DashboardController) Default(k *knot.WebContext) interface{} {
 		"shared/dataaccess.html",
 		"shared/loading.html",
 		"shared/leftfilter.html",
+		"shared/filter_menu.html",
 
 		"dashboard/alert_summary.html",
 		"dashboard/time_tracker.html",
@@ -52,6 +53,7 @@ func (c *DashboardController) ConversionRate(k *knot.WebContext) interface{} {
 		"shared/dataaccess.html",
 		"shared/loading.html",
 		"shared/leftfilter.html",
+		"shared/filter_menu.html",
 	}
 
 	return DataAccess
@@ -69,6 +71,7 @@ func (c *DashboardController) GetCurrentDate(k *knot.WebContext) interface{} {
 
 func (c *DashboardController) GetBranch(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
+
 	conn, err := GetConnection()
 	defer conn.Close()
 	res := new(tk.Result)
@@ -1951,6 +1954,7 @@ func (c *DashboardController) TurnaroundTime(k *knot.WebContext) interface{} {
 		"shared/dataaccess.html",
 		"shared/loading.html",
 		"shared/leftfilter.html",
+		"shared/filter_menu.html",
 
 		"dashboard/compare_contrast.html",
 	}
@@ -2289,6 +2293,7 @@ func (c *DashboardController) DealProfilMetrics(k *knot.WebContext) interface{} 
 		"shared/loading.html",
 		"shared/leftfilter.html",
 		"dashboard/compare_contrast.html",
+		"shared/filter_menu.html",
 	}
 
 	return DataAccess

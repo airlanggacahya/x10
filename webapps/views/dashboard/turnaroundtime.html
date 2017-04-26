@@ -246,9 +246,27 @@
 	.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon, .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
 	    height: 20px;
 	}
+	.side{
+        margin-top: 10% !important;
+        /*margin-left: -7% !important;*/
+    }
+	.filterfix{
+        position: fixed;
+        width: 16%;
+    }
+    #onselect{
+    	width: 150px;
+    }
 </style>
-<div class="col-md-12 lay">
-	<div class="col-md-12 top turnaroundtime">
+ <div id="infilter" class="col-md-2" style="display: none">
+    <div class="filterfix">
+        <div class="panel panel-body side onbar">
+           {{template "filter_menu.html"}}
+        </div>
+    </div>
+</div>
+<div id="incontainer" class="col-md-12 setpad">
+    <div class="col-md-12 top turnaroundtime">
 		<div class="col-md-12">
 			<h5>Quick Info : <span data-bind="text: turn.setTitle()"></span></h5>
 			<hr class="line">
@@ -336,7 +354,7 @@
 							<table>
 								<tr>
 									<td>
-										<select style="width: 150px" data-bind="kendoDropDownList: {data: turn.dataMenu, value: turn.dataMenuValue, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Quick Info'}"></select>
+										<select id="onselect" data-bind="kendoDropDownList: {data: turn.dataMenu, value: turn.dataMenuValue, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Quick Info'}"></select>
 									</td>
 								</tr>
 							</table>
@@ -482,3 +500,227 @@
 		</div>
 	</div>
 </div>
+<!-- <div class="col-md-12 lay">
+	<div class="col-md-12 top turnaroundtime">
+		<div class="col-md-12">
+			<h5>Quick Info : <span data-bind="text: turn.setTitle()"></span></h5>
+			<hr class="line">
+			<div class="col-sm-12 new-dashboard" style="width: 120%;margin-left: -0.5%;margin-top: -32px;">
+				<div id="butt">
+					<div class="col-sm-2 width	l">
+						<div class="panel panel-body dl" id="target" style="height: 185px">
+							<h6 class="tat-title tl">TAT Target</h6>
+								<div id="goal-container">
+							<div id="tatgoals"></div>
+							<div>Days</div>
+								</div>
+						</div>
+					</div>
+					<div class="col-sm-2 wl ">
+						<div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
+							<h6 class="tat-title tl">Underwriting TAT (Avg.)</h6>
+							<div class="avg" data-bind="text: turn.avgConversion"></div>
+							<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgConversionPercent(), 'n2')"></span>%</div>
+							<div id="conversion"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+									<p>Deal Count
+									<span style="margin-left: 5px" data-bind="text: turn.dealConversion"></span> <span id="convers" class="fa fa-caret-up"></span></p>
+								
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-2 wl">
+						<div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
+							<h6 class="tat-title tl">Decision TAT (Avg.)</h6>
+							<div class="avg" data-bind="text: turn.avgDecision"></div>
+							<div id="dec"><span id="deci" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgDecisionPercent(), 'n2')"></span>%</div>
+							<div id="decision"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+									<p>Deal Count
+									<span style="margin-left: 5px" data-bind="text: turn.dealDecision"></span> <span id="dealdeci" class="fa fa-caret-up"></span></p>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-2 wl">
+						<div class="panel panel-body dl material-ripple" style="height: 185px" id="process">
+							<h6 class="tat-title tl">Analysis TAT (Avg.)</h6>
+							<div class="avg" data-bind="text: turn.avgProcessing"></div>
+							<div id="proc"><span id="proce" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgProcessingPercent(), 'n2')"></span>%</div>
+							<div id="processing"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px;">
+									<p>Deal Count
+									<span style="margin-left: 5px" data-bind="text: turn.dealProcessing"></span> <span id="proces" class="fa fa-caret-up"></span></p>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-2 wl">
+						<div class="panel panel-body dl material-ripple" style="height: 185px" id="acep">
+							<h6 class="tat-title tl">Acceptance TAT (Avg.)</h6>
+							<div class="avg" data-bind="text: turn.avgAcceptance"></div>
+							<div id="acc"><span id="ace" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgAcceptancePercent(), 'n2')"></span>%</div>
+							<div id="acceptance"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px;">
+									<p>Deal Count
+									<span style="margin-left: 5px" data-bind="text: turn.dealAcceptance"></span> <span id="dealacc" class="fa fa-caret-up"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<h5>Trend : <span data-bind="text: turn.setTitle()"></span></h5>
+				<hr class="line">
+			</div>
+			<div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
+				<div class="col-md-4">
+					<div class="panel panel-body aol trend">
+						<div class="chart-options0">
+							<table>
+								<tr>
+									<td>
+										<select style="width: 150px" data-bind="kendoDropDownList: {data: turn.dataMenu, value: turn.dataMenuValue, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Quick Info'}"></select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="chart-options">
+							<table> 
+								<tr>
+									<td>
+										<label>View Across</label>
+									</td>
+									<td>
+										<select data-bind="kendoDropDownList: {data: turn.dataPeriod, value: turn.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div style="clear: both"></div>
+						<div id="chartContainer"></div>
+						<div id="chartContainer2" style="display: none"></div>
+						<center>
+							<div class="col-md-12 legend" style="display: inline;">
+								<span id="square1"></span> Avg Days
+								<span id="square2"></span> Median
+								<span id="square3"></span> Deal Count
+								<span id="square4"></span> Target TAT
+							</div>
+						</center>
+					</div>
+				</div>
+				<div class="col-md-4 show new-dashboard">
+					<div class="panel panel-body aol">
+						<div class="compare-contrast">
+							<button class="btn btn-flat btn-xs btn-primary" data-bind="click: comp.Open.bind(comp, turn.CreateChartMoving)">
+								<i class="fa fa-columns"></i>
+							</button>
+						</div>
+						<div id="movingtat"></div>
+						<center>
+							<div class="col-md-12 legend" style="display: inline;">
+								<span id="square1"></span> 15 + Days &nbsp
+								<span id="square2"></span> 11 - 15 Days &nbsp
+								<span id="square3"></span> 6 - 10 Days &nbsp
+								<span id="square4"></span> 0 - 5 Days &nbsp
+							</div>
+						</center>	
+					</div>
+				</div>
+				<div class="col-md-4 show new-dashboard">
+					<div class="panel panel-body aol">
+						<div class="compare-contrast">
+							<button class="btn btn-flat btn-xs btn-primary" data-bind="click: comp.Open.bind(comp, turn.CreateChartHistory)">
+								<i class="fa fa-columns"></i>
+							</button>
+						</div>
+						<div id="historytat"></div>
+						<center>
+							<div class="col-md-12 legend" style="display: inline;">
+								<span id="square1"></span> 15 + Days &nbsp
+								<span id="square2"></span> 11 - 15 Days &nbsp
+								<span id="square3"></span> 6 - 10 Days &nbsp
+								<span id="square4"></span> 0 - 5 Days &nbsp
+							</div>
+						</center>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<h5>Conversion TAT & Deal Amount : <span data-bind="text: turn.setTitle()"></span></h5>
+				<hr class="line">
+			</div>
+			<div class="col-md-12 new-dashboard">
+				<div class="panel panel-body aul show">
+					<div class="cater"></div>
+					<table id="tabl">
+						<tr>
+							<td class="le legend" style="text-align: center;background-color: #0b8140;color:  #fff;width: 20%;">0 - 10 Days</td>
+							<td class="le legend" style="text-align: center;background-color: #70ad47;color:  #fff;width: 20%;">11 - 20 Days</td>
+							<td class="le legend" style="text-align: center;background-color: #ffc000;color:  #fff;width: 20%;">21 - 30 Days</td>
+							<td class="le legend" style="text-align: center;background-color: #ed7d31;color:  #fff;width: 20%;">30 - 40 Days</td>
+							<td class="le legend" style="text-align: center;background-color: #ff2929;color:  #fff;width: 20%;">40 + Days</td>
+						</tr>
+					</table>
+					 <h5 class="scatter-title" data-bind="visible:turn.listscatter().length > 0" >Deal Movement Table </h5>
+	                  <div id="griddb" style="border: none;" class="k-grid k-widget" data-bind="visible:turn.listscatter().length > 0" >
+	                     <div class="k-grid-header">
+	                        <div class="k-grid-header-wrap">
+	                           <table role="grid" width="100%">
+	                              <thead role="rowgroup">
+	                                 <tr role="row" >
+	                                    <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">Deal No</th>
+	                                    <th style="width:30%" scope="col" role="columnheader" class="k-header header-bgcolor">Customer Name</th>
+	                                    <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">CA</th>
+	                                    <th style="width:15%" scope="col" role="columnheader" class="k-header header-bgcolor">RM</th>
+	                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Acceptance<br>TAT</th>
+	                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Processing<br>TAT</th>
+	                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Action<br>TAT</th>
+	                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Decision<br>TAT</th>
+	                                    <th style="width:10%" scope="col" role="columnheader" class="k-header header-bgcolor">Conversion<br>TAT</th>
+	                                        <th style="width:5%" scope="col" role="columnheader" class="k-header header-bgcolor"></th>
+	                                 </tr>
+	                              </thead>
+	                              <tbody role="rowgroup" data-bind="foreach: turn.listscatter()">
+	                                 <tr role="row">
+	                                    <td role="gridcell">
+	                                      <label data-bind="text: dealno"></label>
+	                                    </td>
+	                                    <td role="gridcell">
+	                                      <label data-bind="text: custname"></label>
+	                                    </td>
+	                                     <td role="gridcell">
+	                                      <label data-bind="text: caname"></label>
+	                                    </td>
+	                                     <td role="gridcell">
+	                                      <label data-bind="text: rmname"></label>
+	                                    </td>
+	                                     <td role="gridcell">
+	                                      <label data-bind="text: Acceptance"></label>
+	                                    </td>
+	                                     <td role="gridcell">
+	                                      <label data-bind="text: Processing"></label>
+	                                    </td>
+	                                      <td role="gridcell">
+	                                      <label data-bind="text: Action"></label>
+	                                    </td>
+	                                     <td role="gridcell">
+	                                      <label data-bind="text: Decision"></label>
+	                                    </td>
+	                                     <td role="gridcell">
+	                                      <label data-bind="text: Conversion"></label>
+	                                    </td>
+	                                    <td role="gridcell">
+	                                      <button class="btn btn-flat btn-sm btn-danger noable" data-bind="click: turn.removescatterGrid($index())"><i class="fa fa-trash"></i></button>
+	                                    </td>
+	                                    
+	                                 </tr>
+	                              </tbody>
+	                           </table>
+	                     </div>
+	                  </div>
+	               </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div> -->

@@ -245,9 +245,25 @@
 	.chart-options .k-widget.k-dropdown .k-dropdown-wrap .k-icon, .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap .k-icon {
 	    height: 20px;
 	}
+
+	.side{
+        margin-top: 10% !important;
+        /*margin-left: -7% !important;*/
+    }
+	.filterfix{
+        position: fixed;
+        width: 16%;
+    }
 </style>
-<div class="col-md-12 lay">
-	<div class="col-md-12 top turnaroundtime">
+ <div id="infilter" class="col-md-2" style="display: none;">
+    <div class="filterfix">
+        <div class="panel panel-body side onbar">
+           {{template "filter_menu.html"}}
+        </div>
+    </div>
+</div>
+<div id="incontainer" class="col-md-12 setpad lay">
+    <div class="col-md-12 top turnaroundtime">
 		<div class="col-md-12">
 			<h5>Quick Info : <span data-bind="text:conv.titleText()"></span></h5>
 			<hr class="line">
@@ -379,3 +395,86 @@
 		</div>
 	</div>
 </div>
+<!-- <div class="col-md-12 lay">
+	<div class="col-md-12 top turnaroundtime">
+		<div class="col-md-12">
+			<h5>Quick Info : <span data-bind="text:conv.titleText()"></span></h5>
+			<hr class="line">
+			<div class="col-sm-12 new-dashboard" style="width: 100%;margin-top: -32px;">
+				<div id="butt">
+					<div class="col-sm-3 width	l">
+						<div class="panel panel-body dl" id="target" style="height: 165px">
+							<h6 class="tat-title tl">Underwriting Rate Target</h6>
+								<div id="goal-container">
+							<div id="tatgoals"></div>
+							<div>Days</div>
+								</div>
+						</div>
+					</div>
+					<div class="col-sm-3 wl ">
+						<div class="panel panel-body dl material-ripple" style="height: 165px" id="conv">
+							<h6 class="tat-title tl">Underwriting Rate</h6>
+							<div class="avg"><span data-bind="text: kendo.toString(conv.apprRate(), 'n2')"></span ><span>%</span></div>
+							<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.compundrRate(), 'n2')"></span>%</div>
+							<div id="rate"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-3 wl ">
+						<div class="panel panel-body dl material-ripple" style="height: 165px" id="conv">
+							<h6 class="tat-title tl">Approval Rate</h6>
+							<div class="avg"><span data-bind="text: kendo.toString(conv.apprRate(), 'n2')"></span ><span>%</span></div>
+							<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.compapprRate(), 'n2')">30</span>%</div>
+							<div id="approval"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-3 wl ">
+						<div class="panel panel-body dl material-ripple" style="height: 165px" id="conv">
+							<h6 class="tat-title tl">Analysis Rate</h6>
+							<div class="avg"><span data-bind="text: kendo.toString(conv.analRate(), 'n2')"></span ><span>%</span></div>
+							<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.companalRate(), 'n2')">30</span>%</div>
+							<div id="analysis"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<h5>Trend & Summary : <span data-bind="text:conv.titleText()"></span> </h5>
+				<hr class="line">
+			</div>
+			<div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
+				<div class="col-md-6">
+					<div class="panel panel-body aol trend">
+						<div class="chart-options">
+							<table> 
+								<tr>
+									<td>
+										<label>View Across</label>
+									</td>
+									<td>
+										<select data-bind="kendoDropDownList: {data: conv.dataPeriod, value: conv.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div id="chartContainer"></div>
+					</div>
+				</div>
+				<div class="col-md-6 show new-dashboard">
+					<div class="panel panel-body aol">
+						<div class="col-md-12">
+						<div id="funnelChart"></div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div> -->

@@ -7,11 +7,11 @@
   #onfg{
     width: 119%;
   }
-  .sidebar-nav .toggle{
+  .sidebar-filter .toggle{
     cursor: pointer;
   }
 
-  .sidebar-nav .toggle:hover{
+  .sidebar-filter .toggle:hover{
     color:#eb8131 !important;
   }
 
@@ -46,27 +46,11 @@
     margin-top: 10px;
   }
 
-  .sidebar-nav .fa-times{
-    cursor: pointer;
-  }
-
-  .sidebar-nav .fa-times:hover{
-    color: red !important;
-  }
-
-  .sidebar-nav .cnt, .sidebar-nav .fg{
-    margin-bottom: -5px !important;
-  }
-
- .sidebar-nav .fa-times {
+  .onbar.k-widget {
     margin-left: 0px;
-    margin-top: 10px;
- }
+  }
 
- .onbar.k-widget {
-   margin-left: 0px;
- }
- .onbar{
+  .onbar{
     margin-left: -6%;
     background-color: #202935;
     width: 113%;
@@ -76,15 +60,16 @@
     transition: 0.5s;
     font-family:arial;
     /*padding:0px;*/
+  }
 
- }
- .onli{
+  .onli{
   margin-left: -17%;
- }
- .cnt{
+  }
+
+  .cnt{
   margin-left: 1%;
   color: #fff;
- }
+  }
 
  .onbar::-webkit-scrollbar-track{
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -102,6 +87,7 @@
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
   background-color: #acacac;
   }
+
   .fortitle{
     margin-left: -9%;
     width: 119%;
@@ -176,6 +162,15 @@
       margin-right: -36.8% !important;
     }
   }
+
+  .sidebar-filter .filter-close {
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  .sidebar-filter .filter-close:hover{
+    color: red !important;
+  }
 </style>
 <div class="col-md-12 sidebar-filter">
 <ul class="onli">
@@ -247,7 +242,7 @@
           <div class="form-group fg" data-bind="visible: dash.RegionVisible">
             <label class="cnt">Region</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl0 pull-right" aria-hidden="true" data-bind="click: dash.RegionShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl0 pull-right" aria-hidden="true" data-bind="click: dash.RegionShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoMultiSelect: {
                   data: dash.RegionDS,
@@ -261,7 +256,7 @@
            <div class="form-group fg" data-bind="visible: dash.BranchVisible">
             <label class="cnt">Branch</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl0 pull-right" aria-hidden="true" data-bind="click: dash.BranchShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl0 pull-right" aria-hidden="true" data-bind="click: dash.BranchShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoMultiSelect: {
                   data:dash.BranchDS,
@@ -283,7 +278,7 @@
           <div class="form-group fg" data-bind="visible: dash.ProductVisible">
             <label class="cnt">Product</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl1 pull-right" aria-hidden="true" data-bind="click: dash.ProductShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl1 pull-right" aria-hidden="true" data-bind="click: dash.ProductShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoMultiSelect: {
                   data: dash.ProductDS,
@@ -297,7 +292,7 @@
           <div class="form-group fg" data-bind="visible: dash.SchemeVisible">
             <label class="cnt">Scheme</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl1 pull-right" aria-hidden="true" data-bind="click: dash.SchemeShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl1 pull-right" aria-hidden="true" data-bind="click: dash.SchemeShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoMultiSelect: {
                   data: dash.SchemeDS,
@@ -319,7 +314,7 @@
           <div class="form-group fg" data-bind="visible: dash.ClientTypeVisible">
             <label class="cnt">Client Type</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl2 pull-right" aria-hidden="true" data-bind="click: dash.ClientTypeShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl2 pull-right" aria-hidden="true" data-bind="click: dash.ClientTypeShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.ClientTypeDS,
@@ -334,7 +329,7 @@
           <div class="form-group fg" data-bind="visible: dash.ClientTurnoverVisible">
             <label class="cnt">Client Turnover</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl2 pull-right" aria-hidden="true" data-bind="click: dash.ClientTurnoverShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl2 pull-right" aria-hidden="true" data-bind="click: dash.ClientTurnoverShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.ClientTurnoverDS,
@@ -349,7 +344,7 @@
           <div class="form-group fg" data-bind="visible: dash.CustomerVisible">
             <label class="cnt">Customer Name</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl2 pull-right" aria-hidden="true" data-bind="click: dash.CustomerShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl2 pull-right" aria-hidden="true" data-bind="click: dash.CustomerShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.CustomerDS,
@@ -364,7 +359,7 @@
           <div class="form-group fg" data-bind="visible: dash.DealNoVisible">
             <label class="cnt">Deal Number</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl2 pull-right" aria-hidden="true" data-bind="click: dash.DealNoShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl2 pull-right" aria-hidden="true" data-bind="click: dash.DealNoShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.DealNoDS,
@@ -387,7 +382,7 @@
           <div class="form-group fg" data-bind="visible: dash.DealStatusVisible">
             <label class="cnt">Deal Status</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.DealStatusShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.DealStatusShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.DealStatusDS,
@@ -402,7 +397,7 @@
           <div class="form-group fg" data-bind="visible: dash.IRVisible">
             <label class="cnt">Internal Rating</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.IRShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.IRShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.IRDS,
@@ -417,7 +412,7 @@
          <!--  <div class="form-group fg" data-bind="visible: dash.StatusVisible">
             <label class="cnt">Status</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.StatusShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.StatusShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.StatusDS,
@@ -432,7 +427,7 @@
           <div class="form-group fg" data-bind="visible: dash.CAVisible">
             <label class="cnt">CA &nbsp;</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.CAShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.CAShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.CADS,
@@ -447,7 +442,7 @@
           <div class="form-group fg" data-bind="visible: dash.RMVisible">
             <label class="cnt">RM &nbsp;</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.RMShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.RMShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.RMDS,
@@ -462,7 +457,7 @@
           <div class="form-group fg" data-bind="visible: false && dash.LoanValueTypeShowMe()">
             <label class="cnt">Loan Value Type</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl cl3 pull-right" aria-hidden="true" data-bind="click: dash.LoanValueTypeShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.LoanValueTypeShowMe.bind(dash, false)"></span>
               <select name="page" style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.LoanValueTypeDS,

@@ -2304,7 +2304,7 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 		Type              string
 		Start             string
 		End               string
-		Distributionchart string
+		Distributionchart bool
 	}{}
 	err := k.GetPayload(&payload)
 	if err != nil {
@@ -2372,11 +2372,11 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 
 	///metric trend xfl query
 	err, resultsXfl := c.trendxfl(tp, pipe, cn)
-	if !tk.IsNilOrEmpty(err) {
+	if err != nil {
 		return res.SetError(err)
 	}
 
-	if !tk.IsNilOrEmpty(payload.Distributionchart) {
+	if payload.Distributionchart {
 		// filter out not current period for credit score
 		currentOnlyXfl := c.xflFilterResult(resultsXfl, tp)
 		///grouping deal distribution
@@ -2386,7 +2386,7 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 
 	///metric trend query
 	err, trendResult := c.trendChart(tp, pipe, cn)
-	if !tk.IsNilOrEmpty(err) {
+	if err != nil {
 		return res.SetError(err)
 	}
 
@@ -2396,7 +2396,7 @@ func (c *DashboardController) MetricsTrend(k *knot.WebContext) interface{} {
 
 	///grouping trend by region
 	err, regionGrouping := c.metricTrendRegionGrouping(trendResult, tp, k)
-	if !tk.IsNilOrEmpty(err) {
+	if err != nil {
 		return res.SetError(err)
 	}
 

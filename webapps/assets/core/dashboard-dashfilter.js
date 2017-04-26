@@ -35,13 +35,18 @@ var CreateDashFilter = function() {
         return false
     }
 
+    // create function for filtering
+    // source - filter value
+    // path - path to get the value from object
+    // val - object that to be filtered
+    // return true is match, false is not match
     function createFilterUpstream(source, path) {
         return function(val) {
             if (isEmptyNull(source))
                 return true
 
             if (_.isArray(source)) {
-                source = _.filter(val.Value, function (val) { return val !== "" })
+                source = _.filter(source, function (it) { return it !== "" })
 
                 if (source.length === 0)
                     return true
@@ -94,13 +99,18 @@ var CreateDashFilter = function() {
         return ret
     }
 
+    // create function for filtering
+    // source - filter value
+    // path - path to get the value from object
+    // val - object that to be filtered
+    // return true is match, false is not match
     function createFilterUpstreamIR(source, path) {
         return function (val) {
             if (isEmptyNull(source))
                 return true;
 
             if (_.isArray(source)) {
-                source = _.filter(val.Value, function (val) { return val !== "" })
+                source = _.filter(source, function (it) { return it !== "" })
 
                 if (source.length === 0)
                     return true

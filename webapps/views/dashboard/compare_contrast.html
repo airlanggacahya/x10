@@ -226,10 +226,9 @@
                         <div class="form-group">
                           <label>Region :</label>
                           <select name="page" style="width: 100%;"  data-bind="
-                              kendoDropDownList: {
+                              kendoMultiSelect: {
                               data: compFilter.RegionDS,
                               value: compFilter.RegionVal,
-                              optionLabel: 'Select One',
                               dataValueField: 'value',
                               dataTextField: 'text',  
                               }" >
@@ -238,10 +237,9 @@
                         <div class="form-group">
                           <label>Branch :</label>
                           <select name="page" style="width: 100%;"  data-bind="
-                              kendoDropDownList: {
+                              kendoMultiSelect: {
                               data:compFilter.BranchDS,
                               value:compFilter.BranchVal,
-                              optionLabel: 'Select One',
                               dataValueField: 'value',
                               dataTextField: 'text',
                               }" >
@@ -263,10 +261,9 @@
                         <div class="form-group">
                           <label>Product :</label>
                           <select style="width: 100%;"  data-bind="
-                            kendoDropDownList: {
+                            kendoMultiSelect: {
                             data: compFilter.ProductDS,
                             value: compFilter.ProductVal,
-                            optionLabel: 'Select One',
                             dataValueField: 'value',
                             dataTextField: 'text'}">
                           </select>
@@ -274,10 +271,9 @@
                         <div class="form-group">
                           <label>Scheme :</label>
                           <select style="width: 100%;"  data-bind="
-                            kendoDropDownList: {
+                            kendoMultiSelect: {
                             data: compFilter.SchemeDS,
                             value: compFilter.SchemeVal,
-                            optionLabel: 'Select One',
                             dataValueField: 'value',
                             dataTextField: 'text'}">
                           </select>

@@ -1188,13 +1188,13 @@ $(function() {
             $('#chartContainer').data("kendoChart").refresh();
             // $('#tatgoals').data("kendoRadialGauge").refresh()
             $('#distribution').data("kendoChart").refresh();
-            $('#cater').data("kendoChart").refresh();
+            pm.loadChaterChart()
             $(".tabl").css("width", "98.5%");
         }else{
             $('#chartContainer').data("kendoChart").refresh()
             // $('#tatgoals').data("kendoRadialGauge").refresh()
             $('#distribution').data("kendoChart").refresh()
-            $('#cater').data("kendoChart").refresh()
+            pm.loadChaterChart()
             $(".tabl").css("width", "98.5%");
         }
     })

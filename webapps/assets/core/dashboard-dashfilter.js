@@ -570,34 +570,34 @@ var CreateDashFilter = function() {
         dash.SaveFilter()
     }
 
-    dash.accordionSideBar = function(){
-        $(".toggle").click(function(e){
-            e.preventDefault();
+    // dash.accordionSideBar = function(){
+    //     $(".toggle").click(function(e){
+    //         e.preventDefault();
+    //         // alert("masuk")
+    //         var $this = $(this);
+    //         if($this.next().hasClass('show')){
+    //             $this.next().removeClass('show');
+    //             $this.next().slideUp(350);
+    //             $this.find("h5>").removeClass("fa-chevron-down");
+    //             $this.find("h5>").addClass("fa-chevron-up");
+    //         }else{
+    //             $this.next().removeClass('hide');
+    //             $this.next().slideDown(350);
+    //             $this.next().addClass("show");
+    //             $this.find("h5>").addClass("fa-chevron-down");
+    //             $this.find("h5>").removeClass("fa-chevron-up");
+    //         }
+    //     })
 
-            var $this = $(this);
-            if($this.next().hasClass('show')){
-                $this.next().removeClass('show');
-                $this.next().slideUp(350);
-                $this.find("h5>").removeClass("fa-chevron-down");
-                $this.find("h5>").addClass("fa-chevron-up");
-            }else{
-                $this.next().removeClass('hide');
-                $this.next().slideDown(350);
-                $this.next().addClass("show");
-                $this.find("h5>").addClass("fa-chevron-down");
-                $this.find("h5>").removeClass("fa-chevron-up");
-            }
-        })
-
-        $("#all").click(function(e){
-            $(".toggle").next().removeClass('hide');
-            $(".toggle").next().slideDown(350).addClass("show");
-            $(".toggle").find("h5>").addClass("fa-chevron-down");
-            $(".toggle").find("h5>").removeClass("fa-chevron-up");
+    //     $("#all").click(function(e){
+    //         $(".toggle").next().removeClass('hide');
+    //         $(".toggle").next().slideDown(350).addClass("show");
+    //         $(".toggle").find("h5>").addClass("fa-chevron-down");
+    //         $(".toggle").find("h5>").removeClass("fa-chevron-up");
             
-            $(".form-group").show()
-        })
-    }
+    //         $(".form-group").show()
+    //     })
+    // }
 
     dash.ResetFilter = function(){
         _.each(dash.FilterList, function (val) {		
@@ -718,7 +718,7 @@ var CreateDashFilter = function() {
     }
 
     $(function(){
-        dash.accordionSideBar()
+        // dash.accordionSideBar()
         fetchAllDS().done(function () {
             // timeout here, because seems kendoknockout is still building up when we load the filter value
             setTimeout(function () {

@@ -1,6 +1,7 @@
 var dash = CreateDashFilter()
 
 $(function () {
+	dash.accordionSideBar()
 	ajaxPost("/dashboard/getfilter", {}, function(res) {
 		if (res.IsError) {
 			swal("Error", res.Message, "error")
@@ -54,9 +55,10 @@ dash.summary2color = function (values) {
 }
 
 dash.accordionSideBar = function(){
+	
 	$(".toggle").click(function(e){
 		e.preventDefault();
-
+		// alert("masuk sini")
 		var $this = $(this);
 		if($this.next().hasClass('show')){
 			$this.next().removeClass('show');
@@ -73,6 +75,7 @@ dash.accordionSideBar = function(){
 	})
 
 	$("#all").click(function(e){
+		// alert("masuk")
 		$(".toggle").next().removeClass('hide');
 		$(".toggle").next().slideDown(350).addClass("show");
 		$(".toggle").find("h5>").addClass("fa-chevron-down");

@@ -856,12 +856,13 @@ func FiltersAD(ids, filter []DashboardFilterItem, opt *OptionalFilter) ([]toolki
 	}})
 	// Project the last deal status for filtering purposes
 	pipe = append(pipe, toolkit.M{"$project": toolkit.M{
-		"id":              "$id",
-		"info":            "$info",
-		"customerprofile": "$customerprofile",
-		"accountdetails":  "$accountdetails",
-		"internalrtr":     "$internalrtr",
-		"_profile":        "$_profile",
+		"id":               "$id",
+		"info":             "$info",
+		"customerprofile":  "$customerprofile",
+		"accountdetails":   "$accountdetails",
+		"internalrtr":      "$internalrtr",
+		"_profile":         "$_profile",
+		"_creditscorecard": "$_creditscorecard",
 		"lastInfo": toolkit.M{
 			"$arrayElemAt": []interface{}{"$info.myInfo", -1},
 		},

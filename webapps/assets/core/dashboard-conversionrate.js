@@ -439,6 +439,18 @@ conv.loadContainer = function(data){
                     },
                     labels : {
                 		font: "10px sans-serif",
+                        template:function(e){
+                            data = (e.value).split(" ");
+                            tl = data[0].split("/");
+                            tgl1 = tl[0]+"/"+tl[1];
+                            tg = data[2].split("/");
+                            tgl2 = tg[0]+"/"+tg[1]
+                            if(tl[2] != null && tg[2] != null){
+                                return tgl1+"\n"+tgl2
+                            }
+                            return e.value
+                                    
+                        }
                 		// visible : true,
                     },
                     axisCrossingValues: [0, 7]
@@ -529,30 +541,30 @@ conv.loadData = function(){
             {
                 category: "Deals Inqueue",
                 value: data[0].inqueue,
-                color: "#0e5a7e"
+                color: "#ff2929"
 
             },
             {
                 category: "Accepted deals ",
                 value: data[0].accepted,
-                color: "#0e5a7e"
+                color: "#ffc000"
 
             },{
                 category: "Analized Deals",
                 value: data[0].analyzed,
-                color: "#166f99"
+                color: "#92d050"
             },{
                 category: "Actioned Deals",
                 value: data[0].actioned,
-                color: "#2185b4"
+                color: "#2e75b6"
             },{
                 category: "Underwritten Deals",
                 value: data[0].underwritten,
-                color: "#319fd2"
+                color: "#c63cdb"
             },{
                 category: "Approved Deals",
                 value: data[0].approved,
-                color: "#3eaee2"
+                color: "#e1f03e"
             }
 		];
         var maxfun = _.maxBy(funnel, "value")

@@ -652,6 +652,7 @@ turn.CreateChartTrendOption_  = function (data) {
     var type = data._request.type;
 	var month = dash.generateXAxis(type, start, end, len + 1)
 	month.shift();
+	console.log("---------------->>>", month)
 
 	var opt = {
 		plotArea: {
@@ -719,7 +720,7 @@ turn.CreateChartTrendOption_  = function (data) {
 			labels : {
 				font: "10px sans-serif",
 				step : 2,
-				skip : 2
+				skip : 2,
 			},
 			// max: 10,
 			plotBands: [{
@@ -759,6 +760,20 @@ turn.CreateChartTrendOption_  = function (data) {
 			},
 			labels : {
 				font: "10px sans-serif",
+				// rotation: -45,   
+				template:function(e){
+					data = (e.value).split(" ");
+					if(data[2] != null){
+						tl = data[0].split("/");
+						tgl1 = tl[0]+"/"+tl[1];
+						tg = data[2].split("/");
+						tgl2 = tg[0]+"/"+tg[1]
+						return tgl1+"\n"+tgl2
+					}
+
+					return e.value
+					
+				}
 				// visible : true,
 			},
 			axisCrossingValues: [0, 7]

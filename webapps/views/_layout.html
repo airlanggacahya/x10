@@ -500,8 +500,8 @@
       }
 
       $(document).ready(function () {
-        onwidth = $( document ).width();
-        $(".horizontal-menu.k-content").css("width", onwidth.toString())
+        var onwidth = $(window).width();
+        $(".horizontal-menu.k-content").css("width", onwidth)
         ClearSavedFilter();
 
          // if(window.location.href.indexOf("accountdetail/default") == -1){
@@ -942,7 +942,7 @@
     setTimeout(function(){
       var submenuWidth = function() {
           // return $(window).width() - $("#sidebar-wrapper").width();
-          return $(document).width();
+          return $(window).width();
       }
 
       $('#menubackup').width(submenuWidth())
@@ -1164,7 +1164,7 @@
             // toggle()
 
             ontoggled = function() {
-              menumarginleft = 0
+              // menumarginleft = 0
               if( !openx ){
                 if(model.currentTitle() === 'Alerts & Updates' || model.currentTitle() === 'Turnaround Time' || model.currentTitle() === 'Conversion Rate' || model.currentTitle() === 'Deal Profil Metrics' || model.currentTitle() === 'Custom Analysis'){
                   $(".sidebar-top").addClass("toggled-title")
@@ -1174,10 +1174,10 @@
                   $(".sidebar-nav").show()
                   $("#sidebar-wrapper").css("min-width", "255px");
                   $("#sidebar-wrapper").css("width", "16.66666667%");
-                  menumarginleft = $("#toggle-toggle").outerWidth(false)
+                  // menumarginleft = $("#toggle-toggle").outerWidth(false)
                   vm.open(true);
                 } else {
-                  menumarginleft = $("#toggle-toggle").outerWidth(false)
+                  // menumarginleft = $("#toggle-toggle").outerWidth(false)
                 }
               } else {
                 $(".sidebar-top").removeClass("toggled-title")
@@ -1188,11 +1188,11 @@
                 $(".sidebar-nav").hide()
                 $("#sidebar-wrapper").css("width", "0px");
                 $("#sidebar-wrapper").css("min-width", "0px");
-                menumarginleft = $("#toggle-toggle").outerWidth(false)
+                // menumarginleft = $("#toggle-toggle").outerWidth(false)
               }
               setTimeout(function() {
-                $("#myTopnav").css("margin-left", menumarginleft);
-                onwidth = $( document ).width();
+                // $("#myTopnav").css("margin-left", menumarginleft);
+                var onwidth = $(window).width();
                 $(".horizontal-menu.k-content").css("width", onwidth.toString())
               }, 11)
               setSubmenu()
@@ -1250,7 +1250,7 @@
               <ul class="nav navbar-nav" id="myTopnavhide" data-bind="template: { name: 'template-menu', foreach: menu }" style="display: none;"></ul>
               <div class="clear"></div>
               <div id="menubackup" class="horizontal-menu tabs tabs-style-linemove k-content" style="width: 100% !important;">
-                <nav class="col-md-12" id="onnav" style="margin-left: -1%">
+                <nav class="col-md-12" id="onnav" style="padding: 0px">
 
                 </nav>
               </div>
@@ -1358,7 +1358,7 @@
        
         setTimeout(function(){
            // = $( document ).width();
-           onwidth = $(document).width()
+           var onwidth = $(window).width()
           $(".horizontal-menu.k-content").css("width", onwidth.toString())
         }, 11)
         

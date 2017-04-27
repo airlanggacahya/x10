@@ -386,10 +386,12 @@ $(document).ready(function(){
         if(infilter.is(":visible") == true){
             $("#timeTrackerChart").data("kendoChart").refresh();
             $("#alert-summary").data("kendoChart").refresh();
+            alertSum.loadQuickChart()
             
         }else{
             $("#timeTrackerChart").data("kendoChart").refresh();
             $("#alert-summary").data("kendoChart").refresh();
+            alertSum.loadQuickChart()
         }
     })
 })

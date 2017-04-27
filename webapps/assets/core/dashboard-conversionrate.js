@@ -15,14 +15,7 @@ conv.companalRate = ko.observable(0);
 conv.dataValuePeriod = ko.observable('');
 conv.funneldata = ko.observable([]);
 conv.summaryTrenData = ko.observable([]);
-conv.trendDataLength = ko.observable(6)
-conv.dummyData = ko.observableArray([
-	{"avgdays":2.2,"date":"2016-10-01T00:00:00Z","dateStr":"Oct-2016","dealcount":8,"median":4},
-	{"avgdays":3.3,"date":"2016-11-01T00:00:00Z","dateStr":"Nov-2016","dealcount":5,"median":3},
-	{"avgdays":4.4,"date":"2016-12-01T00:00:00Z","dateStr":"Dec-2016","dealcount":3,"median":5},
-	{"avgdays":2.0,"date":"2017-01-01T00:00:00Z","dateStr":"Jan-2017","dealcount":7,"median":6},
-	{"avgdays":8.0,"date":"2017-02-01T00:00:00Z","dateStr":"Feb-2017","dealcount":9,"median":7},
-	{"avgdays":4.0,"date":"2017-03-01T00:00:00Z","dateStr":"Mar-2017","dealcount":2,"median":8}])
+conv.trendDataLength = ko.observable(6);
 
 conv.loadAllTop = function(data){
 	$("#rate").html("")
@@ -439,16 +432,22 @@ conv.loadContainer = function(data){
                     labels : {
                 		font: "10px sans-serif",
                         template:function(e){
-                            data = (e.value).split(" ");
-                            tl = data[0].split("/");
-                            tgl1 = tl[0]+"/"+tl[1];
-                            tg = data[2].split("/");
-                            tgl2 = tg[0]+"/"+tg[1]
-                            if(tl[2] != null && tg[2] != null){
-                                return tgl1+"\n"+tgl2
+                            // try to split using dash
+                            // if length is one, then return because not a from till
+                            var data = (e.value).split(" - ");
+                            if (data.length === 1)
+                                return e.value;
+
+                            var tgl1 = data[0].split("/");
+                            var tgl2 = data[1].split("/");
+
+                            // take out year if there is year value
+                            if (tgl1.length >= 3 && tgl2.length >= 3) {
+                                data[0] = tgl1[0] + "/" + tgl1[1]
+                                data[1] = tgl2[0] + "/" + tgl2[1]
                             }
-                            return e.value
-                                    
+
+                            return data[0] + "\n" + data[1];
                         }
                 		// visible : true,
                     },

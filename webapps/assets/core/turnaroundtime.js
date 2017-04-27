@@ -762,17 +762,22 @@ turn.CreateChartTrendOption_  = function (data) {
 				font: "10px sans-serif",
 				// rotation: -45,   
 				template:function(e){
-					data = (e.value).split(" ");
-					if(data[2] != null){
-						tl = data[0].split("/");
-						tgl1 = tl[0]+"/"+tl[1];
-						tg = data[2].split("/");
-						tgl2 = tg[0]+"/"+tg[1]
-						return tgl1+"\n"+tgl2
+					// try to split using dash
+					// if length is one, then return because not a from till
+					var data = (e.value).split(" - ");
+					if (data.length === 1)
+						return e.value;
+
+					var tgl1 = data[0].split("/");
+					var tgl2 = data[1].split("/");
+
+					// take out year if there is year value
+					if (tgl1.length >= 3 && tgl2.length >= 3) {
+						data[0] = tgl1[0] + "/" + tgl1[1]
+						data[1] = tgl2[0] + "/" + tgl2[1]
 					}
 
-					return e.value
-					
+					return data[0] + "\n" + data[1];
 				}
 				// visible : true,
 			},

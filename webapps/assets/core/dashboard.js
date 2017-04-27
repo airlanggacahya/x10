@@ -158,3 +158,10 @@ dash.chartMax = function(data, fieldname) {
 dash.chartUnit = function(data, fieldname, step) {
 	return dash.chartMax(data, fieldname) / step;
 }
+
+dash.openTopNumber = function () {
+	// somehow, when we do search(), the popup will have a little gap from input box
+	// call to refresh() fixes it up.
+	$('#dashFilterTopNumber').data('kendoAutoComplete').search()
+	$('#dashFilterTopNumber').data('kendoAutoComplete').refresh()
+}

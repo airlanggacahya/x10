@@ -485,21 +485,9 @@
       </div>
     </li>
 <li data-bind="visible: true">
-      <div type="button" href="javascript:void(0)" class="fortitle toggle col-md-12" style="background-color: #202935;color: #1586f0;margin-top: 0px;"><h5>Top Selection<span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
+      <div type="button" href="javascript:void(0)" class="fortitle toggle col-md-12" style="background-color: #202935;color: #1586f0;margin-top: 0px;"><h5>Top Deals<span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
       <div class="panel show" id="acc2" style="display: block;background-color: #202935;color: white;">
         <div class="col-md-12 cont">
-          <div class="form-group fg" data-bind="visible: dash.TopNumberVisible">
-            <label class="cnt">Number of Deals</label>
-            <div>
-              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.DealStatusShowMe.bind(dash, false)"></span>
-              <input style="width: 84%;"  data-bind="
-                kendoAutoComplete: {
-                  data: dash.TopNumberDS,
-                  value: dash.TopNumberVal,
-                  filter: 'startswith'
-                }" ></select>
-            </div>
-          </div>
           <div class="form-group fg" data-bind="visible: dash.TopFilterVisible()">
             <label class="cnt">Sort By</label>
             <div>
@@ -511,6 +499,19 @@
                   dataValueField: 'value',
                   dataTextField: 'text'
                 }" ></select>
+            </div>
+          </div>
+          <div class="form-group fg" data-bind="visible: dash.TopNumberVisible">
+            <label class="cnt">Select Top</label>
+            <div>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.DealStatusShowMe.bind(dash, false)"></span>
+              <input style="width: 84%;"  id="dashFilterTopNumber" data-bind="
+                kendoAutoComplete: {
+                  data: dash.TopNumberDS,
+                  value: dash.TopNumberVal,
+                  filter: 'startswith',
+                  minLength: 0
+                }" onclick="dash.openTopNumber()" >
             </div>
           </div>
           <hr style="border-top: 1px solid #1586f0;"/>

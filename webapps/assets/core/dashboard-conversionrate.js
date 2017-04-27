@@ -25,7 +25,6 @@ conv.dummyData = ko.observableArray([
 	{"avgdays":4.0,"date":"2017-03-01T00:00:00Z","dateStr":"Mar-2017","dealcount":2,"median":8}])
 
 conv.loadAllTop = function(data){
-	console.log("------------------>>>>", data)
 	$("#rate").html("")
 	$("#rate").kendoChart({
 		theme: "Material",

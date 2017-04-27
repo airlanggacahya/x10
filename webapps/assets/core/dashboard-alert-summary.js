@@ -206,6 +206,7 @@ alertSum.trendDataAjaxRefresh = function() {
                 var months = alertSum.generateXAxis(type, start, end, len + 1)
                 months.shift()
                 alertSum.trendDataMonths(months)
+                alertSum.loadQuickChart();
                 return
             }
         }
@@ -354,7 +355,7 @@ alertSum.loadQuickChart = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: alertSum.dummyData(),
+        dataSource: alertSum.trendDataSeries(),
         seriesDefaults: {
             type: "area",
             area: {
@@ -365,7 +366,7 @@ alertSum.loadQuickChart = function(){
         },
         series: [{
             stack : false,
-            field: "avgdays",
+            field: "countApproved",
         }],
         chartArea:{
             // width: 85,
@@ -388,8 +389,8 @@ alertSum.loadQuickChart = function(){
             majorGridLines: {
                 visible: true,
             },
-            majorUnit: 5,
-            max: 50
+            majorUnit: 2,
+            max: 5
         }],
         categoryAxis: {
             visible: false,
@@ -413,7 +414,7 @@ alertSum.loadQuickChart = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: alertSum.dummyData(),
+        dataSource: alertSum.trendDataSeries(),
         seriesDefaults: {
             type: "area",
             area: {
@@ -424,7 +425,7 @@ alertSum.loadQuickChart = function(){
         },
         series: [{
             stack : false,
-            field: "avgdays",
+            field: "countRejected",
         }],
         chartArea:{
             // width: 85,
@@ -447,8 +448,8 @@ alertSum.loadQuickChart = function(){
             majorGridLines: {
                 visible: true,
             },
-            majorUnit: 5,
-            max: 50
+            majorUnit: 2,
+            max: 5
         }],
         categoryAxis: {
             visible: false,
@@ -472,7 +473,7 @@ alertSum.loadQuickChart = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: alertSum.dummyData(),
+        dataSource: alertSum.trendDataSeries(),
         seriesDefaults: {
             type: "area",
             area: {
@@ -483,7 +484,7 @@ alertSum.loadQuickChart = function(){
         },
         series: [{
             stack : false,
-            field: "avgdays",
+            field: "amountApproved",
         }],
         chartArea:{
             // width: 85,
@@ -506,8 +507,8 @@ alertSum.loadQuickChart = function(){
             majorGridLines: {
                 visible: true,
             },
-            majorUnit: 5,
-            max: 50
+            majorUnit: 2,
+            max: 5
         }],
         categoryAxis: {
             visible: false,
@@ -531,7 +532,7 @@ alertSum.loadQuickChart = function(){
             align: "left",
             color: "#58666e",
         },
-        dataSource: alertSum.dummyData(),
+        dataSource: alertSum.trendDataSeries(),
         seriesDefaults: {
             type: "area",
             area: {
@@ -542,7 +543,7 @@ alertSum.loadQuickChart = function(){
         },
         series: [{
             stack : false,
-            field: "avgdays",
+            field: "amountRejected",
         }],
         chartArea:{
             // width: 85,
@@ -565,8 +566,8 @@ alertSum.loadQuickChart = function(){
             majorGridLines: {
                 visible: true,
             },
-            majorUnit: 5,
-            max: 50
+            majorUnit: 2,
+            max: 5
         }],
         categoryAxis: {
             visible: false,
@@ -584,5 +585,5 @@ alertSum.loadQuickChart = function(){
 }
 
 $(function(){
-    alertSum.loadQuickChart();
+    
 })

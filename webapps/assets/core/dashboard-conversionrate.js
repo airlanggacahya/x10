@@ -495,7 +495,7 @@ conv.loadFunnelChart = function(data){
             	},
                 visible: true,
                 background: "transparent",
-                color: "white",
+                color: "#dedede",
                 format: "N0",
                 font: "bold 11px Arial,Helvetica,Sans-Serif"
             },
@@ -540,29 +540,28 @@ conv.loadData = function(){
                 category: "Deals Inqueue",
                 value: data[0].inqueue,
                 color: "#ff2929"
-
             },
             {
                 category: "Accepted deals ",
                 value: data[0].accepted,
-                color: "#ffc000"
+                color: "#FF8229"
 
             },{
                 category: "Analized Deals",
                 value: data[0].analyzed,
-                color: "#92d050"
+                color: "#FFAD29"
             },{
                 category: "Actioned Deals",
                 value: data[0].actioned,
-                color: "#2e75b6"
+                color: "#27C85E"
             },{
                 category: "Underwritten Deals",
                 value: data[0].underwritten,
-                color: "#c63cdb"
+                color: "#2e75b6"
             },{
                 category: "Approved Deals",
                 value: data[0].approved,
-                color: "#e1f03e"
+                color: "#413CC1"
             }
 		];
         var maxfun = _.maxBy(funnel, "value")

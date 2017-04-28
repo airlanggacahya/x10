@@ -410,16 +410,16 @@ var CreateDashFilter = function() {
         {text: 'Sanctioned Amount', value:'sanc'},
     ])
     dash.initDashVal("Range", undefined, [])
-    dash.initDashVal("TopNumber", undefined, [
-        "10",
-        "20",
-        "50"
-    ])
     dash.initDashVal("TopFilter", undefined, [
         {text: 'Turnover', value:'turnover'},
         {text: 'Proposed Amount', value:'proposed'},
         {text: 'Sanctioned Amount', value:'sanction'},
     ])
+    dash.initDashVal("TopNumber", undefined, [
+        "10",
+        "20",
+        "50"
+    ], "10", true)
 
     // To show optional filter options
     dash.showOptionalFilter = function (name, show = false) {

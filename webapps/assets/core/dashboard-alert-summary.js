@@ -219,24 +219,48 @@ alertSum.trendDataConfig = [
         name: 'Amount Approved',
         field: 'amountApproved',
         axis: 'cr',
+        tooltip: {
+            visible: true,
+            template: function (e) {
+                return "Amount Approved: " + e.dataItem.amountApproved + "cr."
+            }
+        }
     },
     {
         type: 'column',
         name: 'Amount Rejected',
         field: 'amountRejected',
-        axis: 'cr'
+        axis: 'cr',
+        tooltip: {
+            visible: true,
+            template: function (e) {
+                return "Amount Rejected: " + e.dataItem.amountRejected + "cr."
+            }
+        }
     },
     {
         type: 'line',
         name: 'Deal Approved',
         field: 'countApproved',
-        axis: 'count'
+        axis: 'count',
+        tooltip: {
+            visible: true,
+            template: function (e) {
+                return "Deal Approved: " + e.dataItem.countApproved
+            }
+        }
     },
     {
         type: 'line',
         name: 'Deal Rejected',
         field: 'countRejected',
-        axis: 'count'
+        axis: 'count',
+        tooltip: {
+            visible: true,
+            template: function (e) {
+                return "Deal Rejected: " + e.dataItem.countRejected
+            }
+        }
     }
 ]
 
@@ -370,7 +394,7 @@ alertSum.loadQuickChart = function(){
         }],
         chartArea:{
             // width: 85,
-            height: 85,
+            height: 65,
             background: "transparent"
         },
         legend: {
@@ -389,8 +413,8 @@ alertSum.loadQuickChart = function(){
             majorGridLines: {
                 visible: true,
             },
-            majorUnit: 2,
-            max: 5
+            majorUnit: dash.chartUnit(alertSum.trendDataSeries(), 'countApproved', 4),
+            max: dash.chartMax(alertSum.trendDataSeries(), 'countApproved')
         }],
         categoryAxis: {
             visible: false,
@@ -429,7 +453,7 @@ alertSum.loadQuickChart = function(){
         }],
         chartArea:{
             // width: 85,
-            height: 85,
+            height: 65,
             background: "transparent"
         },
         legend: {
@@ -448,8 +472,8 @@ alertSum.loadQuickChart = function(){
             majorGridLines: {
                 visible: true,
             },
-            majorUnit: 2,
-            max: 5
+            majorUnit: dash.chartUnit(alertSum.trendDataSeries(), 'countRejected', 4),
+            max: dash.chartMax(alertSum.trendDataSeries(), 'countRejected')
         }],
         categoryAxis: {
             visible: false,
@@ -488,7 +512,7 @@ alertSum.loadQuickChart = function(){
         }],
         chartArea:{
             // width: 85,
-            height: 85,
+            height: 65,
             background: "transparent"
         },
         legend: {
@@ -507,8 +531,8 @@ alertSum.loadQuickChart = function(){
             majorGridLines: {
                 visible: true,
             },
-            majorUnit: 2,
-            max: 5
+            majorUnit: dash.chartUnit(alertSum.trendDataSeries(), 'amountApproved', 4),
+            max: dash.chartMax(alertSum.trendDataSeries(), 'amountApproved')
         }],
         categoryAxis: {
             visible: false,
@@ -547,7 +571,7 @@ alertSum.loadQuickChart = function(){
         }],
         chartArea:{
             // width: 85,
-            height: 85,
+            height: 65,
             background: "transparent"
         },
         legend: {
@@ -566,8 +590,8 @@ alertSum.loadQuickChart = function(){
             majorGridLines: {
                 visible: true,
             },
-            majorUnit: 2,
-            max: 5
+            majorUnit: dash.chartUnit(alertSum.trendDataSeries(), 'amountRejected', 4),
+            max: dash.chartMax(alertSum.trendDataSeries(), 'amountRejected')
         }],
         categoryAxis: {
             visible: false,

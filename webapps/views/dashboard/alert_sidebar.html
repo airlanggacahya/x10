@@ -101,18 +101,14 @@
 </style>
 
 <div class="row">
-    <div class="toggle1 had">
-        <div class="col-md-12" style="margin-bottom: -32px;">
+    <div class="toggle1 had" style="margin-top: 26px">
+        <div class="col-md-12" style="margin-bottom: -32px">
             <h5 class="hed title-dashboard1"><span class="fa fa-envelope"> &nbsp; </span>System Notification <span style="float: right" class="ic acc-down fa fa-external-link-square"></span></h5><br>
             <hr class="line">
         </div>
     </div>
     <div class="col-sm-12 gap-from-menu">
         <div class="sidebar sidebar-box system-notif show" data-bind="style: { visibility: (alertSide.notifData().length > 0 ? 'initial' : 'hidden') }">
-           <!--  <button class="pull-right"  style="margin-top: 3px" data-toggle="collapse" data-target="#dashboard-summary-trend">
-                <i class="fa fa-external-link"></i>
-            </button> -->
-            <!-- <h5 class="title-dashboard"><span class="fa fa-envelope"> &nbsp; </span>System Notifications</h5> -->
             <div class="collapse in">
                 <ul data-bind="foreach: alertSide.notifData">
                     <li data-bind="text: $data"></li>

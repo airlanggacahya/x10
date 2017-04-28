@@ -1,24 +1,30 @@
 var dash = CreateDashFilter()
 
-$(function () {
-	dash.accordionSideBar()
-	ajaxPost("/dashboard/getfilter", {}, function(res) {
-		if (res.IsError) {
-			swal("Error", res.Message, "error")
-			dash.LoadFilter([])
-			return
-		}
+// for top deals
+// show or hide number input
+// and set when empty
+dash.TopFilterVal.subscribe(function (val) {
+	// set topnumber when sort by is selected
+	if (val.length === 0) {
+		dash.TopNumberOptional(true)
+		return
+	}
 
-		dash.LoadFilter(res.Data.Filters)
-		dash.SetSaveCallback(function (param) {
-			ajaxPost("/dashboard/savefilter", param, function(res){
-				if (res.IsError) {
-					swal("Error", res.Message, "error")
-				}
-			})
-		})
-	})
+	dash.TopNumberOptional(false)
+	var number = dash.TopNumberVal()
+
+	if (number.length !== 0)
+		return
+	
+	dash.TopNumberVal("10")
 })
+
+// prevent empty input
+dash.TopNumberVal.subscribe(function (val) {
+	if (val.length === 0)
+		dash.TopNumberVal("10")
+})
+
 
 function discardTimezone(date) {
     var newdate = moment(date)
@@ -146,42 +152,12 @@ dash.trendDataLengthOptions = ko.computed(function () {
 
 // utilities for calculating chart grid
 dash.chartMax = function(data, fieldname) {
-	var max = _.maxBy(data, fieldname)[fieldname];
-	
-	if (max === 0)
-		return 1;
-	
-	return max;
+	return _.get(_.maxBy(data, fieldname), fieldname, 1);
 }
 
 dash.chartUnit = function(data, fieldname, step) {
 	return dash.chartMax(data, fieldname) / step;
 }
-
-// for top deals
-// show or hide number input
-// and set when empty
-dash.TopFilterVal.subscribe(function (val) {
-	// set topnumber when sort by is selected
-	if (val.length === 0) {
-		dash.TopNumberOptional(true)
-		return
-	}
-
-	dash.TopNumberOptional(false)
-	var number = dash.TopNumberVal()
-
-	if (number.length !== 0)
-		return
-	
-	dash.TopNumberVal("10")
-})
-
-// prevent empty input
-dash.TopNumberVal.subscribe(function (val) {
-	if (val.length === 0)
-		dash.TopNumberVal("10")
-})
 
 dash.openTopNumber = function () {
 	// somehow, when we do search(), the popup will have a little gap from input box
@@ -200,3 +176,23 @@ function onlyNumber(event) {
 
 	return isNumber;
 }
+
+$(function () {
+	dash.accordionSideBar()
+	ajaxPost("/dashboard/getfilter", {}, function(res) {
+		if (res.IsError) {
+			swal("Error", res.Message, "error")
+			dash.LoadFilter([])
+			return
+		}
+
+		dash.LoadFilter(res.Data.Filters)
+		dash.SetSaveCallback(function (param) {
+			ajaxPost("/dashboard/savefilter", param, function(res){
+				if (res.IsError) {
+					swal("Error", res.Message, "error")
+				}
+			})
+		})
+	})
+})

@@ -713,16 +713,71 @@ func compileFilter(fields map[string]FilterMap, filter []DashboardFilterItem) []
 	return match
 }
 
-func wrapMatch(match []toolkit.M) toolkit.M {
-	if len(match) == 0 {
-		return toolkit.M{
-			"$match": toolkit.M{},
+func sortFiltersAD(filter []DashboardFilterItem) []toolkit.M {
+	pipe := []toolkit.M{}
+
+	// path
+	var path string
+	// default limit take
+	limCount := 10
+
+	for _, val := range filter {
+		// Length 0
+		if len(val.Value) == 0 {
+			continue
+		}
+
+		if val.FilterName == "TopNumber" {
+			lim, err := strconv.Atoi(val.Value[0])
+			if err != nil {
+				continue
+			}
+
+			limCount = lim
+			continue
+		}
+
+		if val.FilterName != "TopFilter" {
+			continue
+		}
+
+		switch val.Value[0] {
+		case "turnover":
+			path = "_profile.applicantdetail.AnnualTurnOver"
+		case "proposed":
+			path = "_profile.applicantdetail.AmountLoan"
+		case "sanction":
+			path = "_sanction.Amount"
 		}
 	}
 
-	return toolkit.M{
-		"$match": toolkit.M{
-			"$and": match,
+	if len(path) == 0 {
+		return pipe
+	}
+
+	pipe = append(pipe, toolkit.M{
+		"$sort": toolkit.M{
+			path: 1,
+		},
+	})
+
+	pipe = append(pipe, toolkit.M{
+		"$limit": limCount,
+	})
+
+	return pipe
+}
+
+func wrapMatch(match []toolkit.M) []toolkit.M {
+	if len(match) == 0 {
+		return []toolkit.M{}
+	}
+
+	return []toolkit.M{
+		toolkit.M{
+			"$match": toolkit.M{
+				"$and": match,
+			},
 		},
 	}
 }
@@ -756,7 +811,7 @@ func GetBranchByFilter(filter []DashboardFilterItem) ([]string, error) {
 		return nil, nil
 	}
 
-	pipe = append(pipe, wrapMatch(match))
+	pipe = append(pipe, wrapMatch(match)...)
 
 	csr, err := conn.
 		NewQuery().
@@ -834,17 +889,13 @@ func FiltersAD(ids, filter []DashboardFilterItem, opt *OptionalFilter) ([]toolki
 	// 		"$in": dealnolist,
 	// 	},
 	// })
-	pipe = append(pipe, wrapMatch(match))
+	pipe = append(pipe, wrapMatch(match)...)
 	// Join Credit Score Card
 	pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
 		"from":         "CreditScorecard",
 		"localField":   "accountdetails.dealno",
 		"foreignField": "DealNo",
 		"as":           "_creditscorecard",
-	}})
-	pipe = append(pipe, toolkit.M{"$unwind": toolkit.M{
-		"path": "$_creditscorecard",
-		"preserveNullAndEmptyArrays": true,
 	}})
 	// Join CustomerProfile, for region and branch filtering
 	pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
@@ -853,15 +904,29 @@ func FiltersAD(ids, filter []DashboardFilterItem, opt *OptionalFilter) ([]toolki
 		"foreignField": "applicantdetail.DealNo",
 		"as":           "_profile",
 	}})
+	// Join DCFinalSanction
+	pipe = append(pipe, toolkit.M{"$lookup": toolkit.M{
+		"from":         "DCFinalSanction",
+		"localField":   "accountdetails.dealno",
+		"foreignField": "DealNo",
+		"as":           "_sanction",
+	}})
 	// Project the last deal status for filtering purposes
 	pipe = append(pipe, toolkit.M{"$project": toolkit.M{
-		"id":               "$id",
-		"info":             "$info",
-		"customerprofile":  "$customerprofile",
-		"accountdetails":   "$accountdetails",
-		"internalrtr":      "$internalrtr",
-		"_profile":         "$_profile",
-		"_creditscorecard": "$_creditscorecard",
+		"id":              "$id",
+		"info":            "$info",
+		"customerprofile": "$customerprofile",
+		"accountdetails":  "$accountdetails",
+		"internalrtr":     "$internalrtr",
+		"_profile": toolkit.M{
+			"$arrayElemAt": []interface{}{"$_profile", -1},
+		},
+		"_creditscorecard": toolkit.M{
+			"$arrayElemAt": []interface{}{"$_creditscorecard", -1},
+		},
+		"_sanction": toolkit.M{
+			"$arrayElemAt": []interface{}{"$_sanction", -1},
+		},
 		"lastInfo": toolkit.M{
 			"$arrayElemAt": []interface{}{"$info.myInfo", -1},
 		},
@@ -890,7 +955,10 @@ func FiltersAD(ids, filter []DashboardFilterItem, opt *OptionalFilter) ([]toolki
 			},
 		})
 	}
-	pipe = append(pipe, wrapMatch(match))
+	pipe = append(pipe, wrapMatch(match)...)
+
+	// Sort and Limit
+	pipe = append(pipe, sortFiltersAD(filter)...)
 
 	// debug, _ := json.MarshalIndent(pipe, "", "  ")
 	// fmt.Printf("PIPEX\n%s\n", debug)

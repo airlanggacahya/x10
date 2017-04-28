@@ -335,6 +335,7 @@ var CreateDashFilter = function() {
 
         // if optional is true, then it's hidden from filter
         // set this up to false to show from filter
+        // used to hide dependent filter or special filter for certain page
         dash[name + "Optional"] = ko.observable(optional);
         dash[name + "Visible"] = ko.computed(function () {
             return dash[name + "ShowMe"]() && !dash[name + "Optional"]();

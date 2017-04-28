@@ -55,7 +55,6 @@ dash.summary2color = function (values) {
 }
 
 dash.accordionSideBar = function(){
-	
 	$(".toggle").click(function(e){
 		e.preventDefault();
 		// alert("masuk sini")
@@ -159,9 +158,45 @@ dash.chartUnit = function(data, fieldname, step) {
 	return dash.chartMax(data, fieldname) / step;
 }
 
+// for top deals
+// show or hide number input
+// and set when empty
+dash.TopFilterVal.subscribe(function (val) {
+	// set topnumber when sort by is selected
+	if (val.length === 0) {
+		dash.TopNumberOptional(true)
+		return
+	}
+
+	dash.TopNumberOptional(false)
+	var number = dash.TopNumberVal()
+
+	if (number.length !== 0)
+		return
+	
+	dash.TopNumberVal("10")
+})
+
+// prevent empty input
+dash.TopNumberVal.subscribe(function (val) {
+	if (val.length === 0)
+		dash.TopNumberVal("10")
+})
+
 dash.openTopNumber = function () {
 	// somehow, when we do search(), the popup will have a little gap from input box
 	// call to refresh() fixes it up.
 	$('#dashFilterTopNumber').data('kendoAutoComplete').search()
 	$('#dashFilterTopNumber').data('kendoAutoComplete').refresh()
+}
+
+function onlyNumber(event) {
+	var keyCode = ('which' in event) ? event.which : event.keyCode;
+
+	var isNumber = false;
+	if (keyCode >= 48 && keyCode <= 57) {
+		isNumber = true;
+	}
+
+	return isNumber;
 }

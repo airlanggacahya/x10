@@ -379,25 +379,28 @@ func (c *DashboardController) SummaryTrends(k *knot.WebContext) interface{} {
 		"as":           "dc",
 	}})
 	pipe = append(pipe, tk.M{"$project": tk.M{
-		"dealno": "$accountdetails.dealno",
+		"dealno":          "$accountdetails.dealno",
+		"customerprofile": "$customerprofile",
 		"dc": tk.M{
-			"$slice": []interface{}{"$dc", -1},
+			"$arrayElemAt": []interface{}{"$dc", -1},
 		},
 		"info": tk.M{
-			"$slice": []interface{}{"$info.myInfo", -1},
+			"$arrayElemAt": []interface{}{"$info.myInfo", -1},
 		},
 	}})
-	pipe = append(pipe, tk.M{"$unwind": "$info"})
-	pipe = append(pipe, tk.M{"$unwind": tk.M{
-		"path": "$dc",
-		"preserveNullAndEmptyArrays": true,
-	}})
 	pipe = append(pipe, tk.M{"$project": tk.M{
-		"dealno": "$dealno",
-		"dc":     "$dc",
-		"info":   "$info",
-		"amount": tk.M{"$ifNull": []interface{}{"$dc.Amount", 0}},
+		"dealno":          "$dealno",
+		"customerprofile": "$customerprofile",
+		"dc":              "$dc",
+		"info":            "$info",
+		"amount": tk.M{
+			"$ifNull": []interface{}{
+				"$dc.Amount",
+				"$customerprofile.applicantdetail.AmountLoan",
+			},
+		},
 	}})
+
 	// Time Scope
 	period := 1
 	var currDate, endDate time.Time

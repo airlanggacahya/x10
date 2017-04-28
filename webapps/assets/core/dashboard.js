@@ -152,7 +152,12 @@ dash.trendDataLengthOptions = ko.computed(function () {
 
 // utilities for calculating chart grid
 dash.chartMax = function(data, fieldname) {
-	return _.get(_.maxBy(data, fieldname), fieldname, 1);
+	var max = _.get(_.maxBy(data, fieldname), fieldname, 1);
+
+	if (max === 0)
+		return 1;
+	
+	return max;
 }
 
 dash.chartUnit = function(data, fieldname, step) {

@@ -14,14 +14,8 @@ import (
 	"time"
 	// "github.com/eaciit/dbox"
 	// . "eaciit/x10/webapps/connection"
-	"bytes"
+
 	. "eaciit/x10/webapps/models"
-
-	"encoding/json"
-	"io"
-
-	"io/ioutil"
-	"net/http"
 
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
@@ -754,104 +748,19 @@ func changeStatus(CustomerID string, DealNo string, TableName string, Status int
 	return nil
 }
 
-func SendJSONtoOmnifin(custid string, dealno string) error {
-	res := tk.M{}
-	c := ReadConfig()
-	dataLog := tk.M{}
-
-	usercred := tk.M{}.Set("userId", c["userOmnifin"]).Set("userPassword", c["passOmnifin"])
-	res.Set("userCredentials", usercred)
-
-	results, err := FetchOmnifinXML(custid, dealno)
-	if err != nil {
-		return err
-	}
-
-	if len(results) == 0 {
-		return errors.New("Error, Omnifin data not found")
-	}
-
-	OmXML := results[len(results)-1]
-
-	procdetail := tk.M{}
-	procdetail.Set("dealId", cast.ToString(OmXML.GetInt("dealId")))
-	procdetail.Set("approvalStatus", "X")
-	procdetail.Set("approvalRemark", "Send back from CAT stage")
-	res.Set("processedDealDetails", procdetail)
-
-	tk.Printfn(" ----- SEND TO OMNIFIN ------ %v ------", res)
-	id := custid + "|" + dealno
-	dataLog.Set("dataSent", res)
-	dataLog.Set("createdDate", time.Now())
-	dataLog.Set("_id", id+cast.ToString(dataLog.Get("createdDate")))
-
-	resp, err := doSendBackRequest("http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit", res)
-	dataLog.Set("dataReceived", resp)
-	CreateLogSendBack(dataLog)
-
-	if err != nil {
-		dataLog.Set("error", err.Error())
-		CreateLogSendBack(dataLog)
-		return err
-	}
-	defer resp.Close()
-
-	jsonResp, err := ioutil.ReadAll(resp)
-	if err != nil {
-		dataLog.Set("error", err.Error())
-		CreateLogSendBack(dataLog)
-		return err
-	}
-
-	data := tk.M{}
-	err = json.Unmarshal(jsonResp, &data)
-	dataLog.Set("dataReceived", data)
-	CreateLogSendBack(dataLog)
-
-	if err != nil {
-		dataLog.Set("error", err.Error())
-		CreateLogSendBack(dataLog)
-		return err
-	}
-
-	tk.Printfn(" ----- RESPOND FROM OMNIFIN ------ %v ------", data)
-
-	if data.GetString("operationStatus") == "0" {
-		return errors.New("Failed to Send Back - " + data.GetString("operationMessage"))
-	}
-
-	return nil
-}
-
-func doSendBackRequest(url string, body tk.M) (io.ReadCloser, error) {
-	buf := new(bytes.Buffer)
-	json.NewEncoder(buf).Encode(body)
-
-	resp, err := http.Post(url, "application/json", buf)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Response is not HTTP 200 OK")
-	}
-
-	return resp.Body, nil
-}
-
 func (c *DealSetUpController) SendBack(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	res := new(tk.Result)
 
-	payload := tk.M{}
+	// payload := tk.M{}
 
-	if err := k.GetPayload(&payload); err != nil {
-		res.SetError(err)
-		return res
-	}
+	// if err := k.GetPayload(&payload); err != nil {
+	// 	res.SetError(err)
+	// 	return res
+	// }
 
-	cid := payload.GetString("custid")
-	dealno := payload.GetString("dealno")
+	// cid := payload.GetString("custid")
+	// dealno := payload.GetString("dealno")
 
 	// err, _, _ := checkDealSetup(cid, dealno)
 	// if err != nil {
@@ -860,17 +769,17 @@ func (c *DealSetUpController) SendBack(k *knot.WebContext) interface{} {
 	// 	return res
 	// }
 
-	err := SendJSONtoOmnifin(cid, dealno)
-	if err != nil {
-		res.SetError(err)
-		return res
-	}
+	// err := SendJSONtoOmnifin(cid, dealno)
+	// if err != nil {
+	// 	res.SetError(err)
+	// 	return res
+	// }
 
-	err = updateDealSetupLatestData(cid, dealno, "ds", SendBackOmnifin, k)
-	if err != nil {
-		res.SetError(err)
-		return res
-	}
+	// err = updateDealSetupLatestData(cid, dealno, "ds", SendBackOmnifin, k)
+	// if err != nil {
+	// 	res.SetError(err)
+	// 	return res
+	// }
 
 	return res
 }

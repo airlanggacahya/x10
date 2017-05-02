@@ -1,25 +1,18 @@
 package controllers
 
 import (
-	"bytes"
 	"eaciit/x10/consoleapps/OmnifinMaster/core"
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/helper"
 	. "eaciit/x10/webapps/models"
 	"errors"
 	"fmt"
-	"net/http"
 	"os"
-	"strings"
 	"time"
 	// "fm	t"
 	"strconv"
 
-	"encoding/base64"
-	"encoding/json"
 	"io"
-
-	"io/ioutil"
 
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
@@ -303,121 +296,6 @@ func writeDebugFile(CustId int, DealNo string, src io.Reader, ext string) error 
 	return nil
 }
 
-func sendOmnifinApproval(data DFFinalSanctionInput) error {
-	// Converting status to approval status
-	// And only process data with status Approved and Rejected
-	var appStatus string
-	switch data.LatestStatus {
-	case "Approved":
-		appStatus = "A"
-	case "Rejected":
-		appStatus = "R"
-	default:
-		return nil
-	}
-
-	omnifin, err := FetchOmnifinXML(strconv.Itoa(data.CustomerId), data.DealNo)
-	if err != nil {
-		return err
-	}
-	if len(omnifin) == 0 {
-		return ErrorOmnifinNotFound
-	}
-
-	conn, err := GetConnection()
-	defer conn.Close()
-	if err != nil {
-		return err
-	}
-
-	cur, err := conn.NewQuery().
-		From("CreditScorecard").
-		Where(
-		dbox.And(
-			dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
-			dbox.Eq("DealNo", data.DealNo),
-		),
-	).
-		Cursor(nil)
-	if err != nil {
-		return err
-	}
-
-	csc := tk.M{}
-	err = cur.Fetch(&csc, 1, true)
-	if err != nil {
-		return err
-	}
-
-	pf, err := strconv.ParseFloat(data.PF, 64)
-	if err != nil {
-		return err
-	}
-
-	req := DFFRequest{
-		core.CredentialRequest{
-			Id:       "CAT",
-			Password: "44382d31c7fc609d8ff46ad3add2e4a5",
-		},
-		DFFOmnifinDetails{
-			DealId:                          omnifin[0].GetInt("dealId"),
-			Score:                           csc.GetFloat64("FinalScore"),
-			SanctionAmount:                  data.Amount,
-			ROI:                             data.ROI,
-			ManagementFee:                   pf,
-			PersonalGuarantee:               data.PG,
-			ApprovalStatus:                  appStatus,
-			ApprovalConditions:              strings.Join(data.OtherConditions, "; "),
-			ApprovalRemark:                  data.CommitteeRemarks,
-			LoanApprovalFormReport:          data.AppPdf,
-			CreditScoreReport:               data.CreditPdf,
-			PromoterManagementDetailsReport: data.LoanPdf,
-		},
-	}
-
-	reqbody, err := json.Marshal(req)
-	if err != nil {
-		return err
-	}
-
-	err = writeDebugFile(data.CustomerId, data.DealNo, bytes.NewReader(reqbody), "_JSON.txt")
-	if err != nil {
-		return err
-	}
-
-	resp, err := http.Post(
-		"http://103.251.60.132:8085/OmniFinServices/restServices/applicationProcessing/processedDeal/submit",
-		"application/json",
-		bytes.NewReader(reqbody),
-	)
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	err = writeDebugFile(data.CustomerId, data.DealNo, bytes.NewReader(body), "_RESP.txt")
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return ErrorStatusNotOk
-	}
-
-	omnifinResp := DFFResponse{}
-	err = json.Unmarshal(body, &omnifinResp)
-	if err != nil {
-		return err
-	}
-
-	if omnifinResp.OpStatus != "1" {
-		return errors.New(omnifinResp.OpMessage)
-	}
-
-	return nil
-}
-
 type DFFinalSanctionInput struct {
 	DCFinalSanctionModel
 	AppPdf    string
@@ -428,102 +306,7 @@ type DFFinalSanctionInput struct {
 func (c *ApprovalController) UpdateDateAndLatestValue(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	credit := NewCreditAnalysModel()
-
-	datas := DFFinalSanctionInput{}
-	err := k.GetPayload(&datas)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
-
-	// DEBUG write pdf to file
-	for idx, val := range []string{datas.AppPdf, datas.LoanPdf, datas.CreditPdf} {
-		decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(val))
-		err = writeDebugFile(datas.CustomerId, datas.DealNo, decoder, "_PDF"+strconv.Itoa(idx)+".pdf")
-		if err != nil {
-			return err
-		}
-	}
-
-	err = sendOmnifinApproval(datas)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
-
-	// BEGIN hit remote
-	//return CreateResult(false, nil, "NOT IMPLEMENTED")
-	//return CreateResult(true, nil, "")
-	// END hit remote
-
-	model := NewDCFinalSanctionModel()
-	err = model.Update(datas.DCFinalSanctionModel)
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
-
-	cid := strconv.Itoa(datas.CustomerId)
-	dealno := datas.DealNo
-
-	arr := []string{"AccountDetails", "InternalRTR", "BankAnalysisV2", "CustomerProfile", "RatioInputData", "RepaymentRecords", "StockandDebt", "CibilReport", "CibilReportPromotorFinal", "DueDiligenceInput"}
-
-	if datas.LatestStatus == "Sent Back" {
-		datas.LatestStatus = SendBackAnalysis
-		for _, val := range arr {
-			err = changeStatus(cid, dealno, val, 1, k)
-			if err != nil {
-				return CreateResult(false, nil, err.Error())
-			}
-		}
-
-		credit.Delete(datas.CustomerId, datas.DealNo, "")
-		creditList, err := credit.Get(datas.CustomerId, datas.DealNo, "Draft")
-
-		if err != nil {
-			return CreateResult(false, nil, err.Error())
-		}
-
-		err = credit.UpdateIsFreezeByStruct(creditList, false, "Draft")
-		if err != nil {
-			return CreateResult(false, nil, err.Error())
-		}
-
-	} else {
-		for _, val := range arr {
-			err = changeStatus(cid, dealno, val, 2, k)
-			if err != nil {
-				return CreateResult(false, nil, err.Error())
-			}
-		}
-	}
-
-	if datas.LatestStatus == Cancel {
-		err = SendJSONtoOmnifin(cid, dealno)
-		if err != nil {
-			return CreateResult(false, nil, err.Error())
-		}
-
-		arr = append(arr, "CreditAnalysDraft")
-		arr = append(arr, "CreditScorecard")
-		arr = append(arr, "InternalRTR")
-
-		for _, val := range arr {
-			err = DeleteAllDatas(cid, dealno, val)
-			if err != nil {
-				return CreateResult(false, nil, err.Error())
-			}
-		}
-
-		err = ResetSession(k)
-		if err != nil {
-			return CreateResult(false, nil, err.Error())
-		}
-	}
-
-	err = UpdateDealSetup(cid, dealno, "ds", datas.LatestStatus, k)
-
-	// if err != nil {
-	// 	return CreateResult(false, nil, err.Error())
-	// }
+	// DISABLE FOR AVOIDING HITTING REMOTE OMNIFIN
 
 	return CreateResult(true, nil, "")
 }

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"bytes"
-	omni "eaciit/x10/consoleapps/OmnifinMaster/core"
 	. "eaciit/x10/consoleapps/OmnifinMaster/models"
 	. "eaciit/x10/webapps/connection"
 	hp "eaciit/x10/webapps/helper"
@@ -178,7 +177,7 @@ func checkMasterData(data DealSetupModel) error {
 		}
 	}
 
-	omni.DoMain()
+	// omni.DoMain()
 	for key, val := range checklist {
 		found, err := CheckMaster(key, "name", val)
 		if err != nil {

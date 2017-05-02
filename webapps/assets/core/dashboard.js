@@ -150,6 +150,27 @@ dash.trendDataLengthOptions = ko.computed(function () {
     return ret;
 });
 
+dash.PeriodRangeText = ko.computed(function () {
+    var type = dash.FilterValue.GetVal("TimePeriod")
+    var start = moment(dash.FilterValue.GetVal("TimePeriodCalendar"))
+    var end = moment(dash.FilterValue.GetVal("TimePeriodCalendar2"))
+
+    if (!start.isValid())
+        return "-"
+
+    switch (type) {
+    case "10day":
+        return start.clone().subtract(10, "day").format("DD MMM YYYY") + " - " + start.format("DD MMM YYYY")
+    case "":
+    case "1month":
+        return start.format("MMMM YYYY")
+    case "1year":
+        return start.format("YYYY")
+    case "fromtill":
+        return start.format("DD MMM YYYY") + " - " + end.format("DD MMM YYYY")
+    }
+})
+
 // utilities for calculating chart grid
 dash.chartMax = function(data, fieldname) {
 	var max = _.get(_.maxBy(data, fieldname), fieldname, 1);

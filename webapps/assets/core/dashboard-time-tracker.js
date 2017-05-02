@@ -105,7 +105,7 @@ ttrack.renderChart = function(datas){
 
 			$("#timeTrackerChart").kendoChart({
                 title: { 
-                    text: "Deal-time Tracking",
+                    text: "Deal Tracker",
                     font:  "bold 12px Arial,Helvetica,Sans-Serif",
                     align: "left",
                     color: "#58666e",

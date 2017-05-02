@@ -394,7 +394,7 @@ conv.loadContainer = function(data){
                 },
                 ],
                 chartArea:{
-                	height: 265,
+                	height: 283,
                     background: "white"
                 },
                 legend: {
@@ -465,18 +465,21 @@ conv.loadContainer = function(data){
 
 conv.loadFunnelChart = function(data){
 	$('#funnelChart').kendoChart({
-        title: {
-            text: "Processing Funnel",
-            position: "top",
-            align: "left",
-            color: "#58666e",
-            font:  "12px Arial,Helvetica,Sans-Serif",
-        },
+        // title: {
+        //     text: "Processing Funnel",
+        //     position: "top",
+        //     align: "left",
+        //     color: "#58666e",
+        //     font:  "12px Arial,Helvetica,Sans-Serif",
+        //     // margin: {
+        //     //     left: -20
+        //     // }
+        // },
         legend: {
             visible: false
         },
         chartArea:{
-        	height: 265,
+        	height: 250,
             background: "white"
         },
         seriesDefaults: {
@@ -561,7 +564,8 @@ conv.loadData = function(){
             },{
                 category: "Approved Deals",
                 value: data[0].approved,
-                color: "#413CC1"
+                color: "#413CC1",
+                height: 500,
             }
 		];
         var maxfun = _.maxBy(funnel, "value")

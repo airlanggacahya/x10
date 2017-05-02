@@ -1206,7 +1206,7 @@ turn.loadChaterChart = function(){
 	$(".cater").html("");
 	$(".cater").kendoChart({
 		title:{
-			text: "Conversion TAT VS Deal Amount",
+			text: "Conversion TAT Vs. Deal Amount",
 			font:  "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",

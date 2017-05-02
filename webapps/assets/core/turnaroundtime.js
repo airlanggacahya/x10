@@ -1235,6 +1235,7 @@ turn.loadChaterChart = function(){
 	    },
         xAxis: {
             max: 50,
+            // min: 0,
             labels: {
 				template: "&lt;= #= value #",
 				skip: 1,
@@ -1242,7 +1243,7 @@ turn.loadChaterChart = function(){
 				font: "10px sans-serif",
 			},
 			majorUnit: 10,
-			minorUnit: 20,
+			minorUnit: 10,
 			majorTicks: {
 				visible: false
 			},

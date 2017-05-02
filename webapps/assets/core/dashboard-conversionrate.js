@@ -416,8 +416,8 @@ conv.loadContainer = function(data){
                     min: 0,
                     labels : {
                     	font: "10px sans-serif",
-                    	step : 1,
-                    	// skip : 2
+                    	step : 2,
+                    	skip : 2
                     },
                     
      			}],

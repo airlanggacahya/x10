@@ -54,8 +54,20 @@ func startTimer() {
 }
 
 func main() {
+	// TODO: Rename readconfig name onto something general
+	cfg := connection.ReadConfig()
 
-	app := knot.GetApp("X10-dev")
+	// get server parameter
+	knotApp, ok := cfg["knotapp"]
+	if !ok || len(knotApp) == 0 {
+		knotApp = "X10-dev"
+	}
+	knotListen, ok := cfg["knotlisten"]
+	if !ok || len(knotListen) == 0 {
+		knotListen = "localhost:9013"
+	}
+
+	app := knot.GetApp(knotApp)
 	if app == nil {
 		log.Println("App not found....")
 		return
@@ -93,7 +105,7 @@ func main() {
 			return nil
 		},
 	}
-	knot.StartAppWithFn(app, "localhost:9013", routes)
+	knot.StartAppWithFn(app, knotListen, routes)
 }
 
 func checkInList(surl string) bool {

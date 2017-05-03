@@ -204,10 +204,21 @@ comp.RedrawChart_ = function (firstload) {
         var heading = document.createElement("div");
         heading.classList.add("panel-heading");
 
+        
+
+        var body = document.createElement("div")
+        body.classList.add("panel-body");
+
+        //title bottom
+        var onp = document.createElement("p")
+
+        //set center 
+        var oncenter = document.createElement("center")
+        oncenter.appendChild(onp);
+
         if (index === 0) {
-            var icon = document.createElement("i");
-            icon.classList.add("fa");
-            icon.classList.add("fa-pencil");
+            var icon = document.createElement("div");
+            icon.innerHTML = "Edit";
 
             var btn = document.createElement("button");
             btn.classList.add("btn")
@@ -215,6 +226,9 @@ comp.RedrawChart_ = function (firstload) {
             btn.classList.add("btn-flat")
             btn.classList.add("btn-default")
             btn.classList.add("filter-button")
+            btn.classList.add("edit")
+            btn.style.borderColor = "red"
+            btn.style.color = "red"
             if (comp.viewFilter() === true) {
                 btn.style.display = "none"
             }
@@ -223,18 +237,15 @@ comp.RedrawChart_ = function (firstload) {
             $(btn).on("click", function(){
                 comp.viewFilter(true);
             })
-            heading.appendChild(btn);
+            oncenter.appendChild(btn);
+            
         }
-
-        var body = document.createElement("div")
-        body.classList.add("panel-body");
 
         // Add child
         var child = document.createElement("div");
         child.classList.add("chart-wrapper");
         child.appendChild(heading)
         child.appendChild(body)
-
         var row = document.createElement("div");
         row.id = "compChart" + index + "_wrapper";
         row.classList.add("col-sm-6");
@@ -247,10 +258,14 @@ comp.RedrawChart_ = function (firstload) {
 
         comp.ChartLoader(param, function (opt) {
             if (index == 0) {
-                opt.title.text = opt.title.text + " [Base Chart]";
+                opt.title.text = opt.title.text;
+                onp.innerHTML = "Base Chart";
             } else {
-                opt.title.text = opt.title.text + " [" + val + "]";
+                opt.title.text = opt.title.text;
+                onp.innerHTML = val;
             }
+
+            child.appendChild(oncenter)
 
             $(el).kendoChart(opt);
             var data = $(el).data("kendoChart");
@@ -291,4 +306,5 @@ $(function () {
         comp.RedrawChart();
     });
 })
+
 

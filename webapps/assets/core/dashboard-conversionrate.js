@@ -464,8 +464,8 @@ conv.loadContainer = function(data){
 }
 
 conv.loadFunnelChart = function(data){
-    $("#ontext1").text(data[0].pending_1)
-    $("#ontext2").text(data[0].pending_2)
+    $("#ontext1").text("Pending Deals: "+data[0].pending_1)
+    $("#ontext2").text("Pending Deals: "+data[0].pending_2)
 	$('#funnelChart').kendoChart({
         // title: {
         //     text: "Processing Funnel",
@@ -537,8 +537,8 @@ conv.loadFunnelChart = function(data){
         var top1 = $("#svg1").offset().top
         var fun2 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(4) > path:nth-child(1)").offset().left
         var top2 = $("#svg2").offset().top
-        $('#svg1').offset({top: top1, left: fun1 - 208})
-        $('#svg2').offset({top: top2, left: fun2 - 208})
+        $('#svg1').offset({top: top1, left: fun1 - 195})
+        $('#svg2').offset({top: top2, left: fun2 - 195})
     }, 500)
 }
 
@@ -647,8 +647,8 @@ $(function () {
             var top1 = $("#svg1").offset().top
             var fun2 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(4) > path:nth-child(1)").offset().left
             var top2 = $("#svg2").offset().top
-            $('#svg1').offset({top: top1, left: fun1 - 208})
-            $('#svg2').offset({top: top2, left: fun2 - 208})
+            $('#svg1').offset({top: top1, left: fun1 - 195})
+            $('#svg2').offset({top: top2, left: fun2 - 195})
         }, 500)
         $('#chartContainer').data("kendoChart").refresh()
         $('#tatgoals').data("kendoRadialGauge").refresh()

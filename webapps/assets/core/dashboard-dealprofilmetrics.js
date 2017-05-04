@@ -362,7 +362,7 @@ pm.loadChaterChart = function() {
     $("#cater").html("");
     $("#cater").kendoChart({
         title: {
-            text: "Deal Amount vs. Credit Scores",
+            text: "Deal Amount Vs. Credit Scores",
             font: "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",

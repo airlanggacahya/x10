@@ -518,10 +518,10 @@ conv.loadFunnelChart = function(data){
                 // console.log("------->>>>> ccc", e)
                 var str = ''
                 if(e.dataItem.category == 'Actioned Deals'){
-                    str = 'Actioned deals \n (On Hold = '+data[0].fnonhold+' , Sent Back for Analysis = '+data[0].fnsentbackforanalys+') <br/>'+ e.dataItem.real_value
+                    str = 'Actioned deals <br/> (On Hold = '+data[0].fnonhold+' , Sent Back for Analysis = '+data[0].fnsentbackforanalys+') <br/>'+ e.dataItem.real_value
                     // str = "mmm"
                 }else if(e.dataItem.category == 'Underwritten Deals'){
-                    str = "(Approved = "+data[0].fnapproved+", Rejected = "+data[0].fnrejected+") <br/>"+ e.dataItem.real_value
+                    str = e.dataItem.category+"<br/>(Approved = "+data[0].fnapproved+", Rejected = "+data[0].fnrejected+") <br/>"+ e.dataItem.real_value
                     // str = "nnnn"
                 }else{
                     str = e.dataItem.category +"<br/>"+ e.dataItem.real_value
@@ -565,7 +565,7 @@ conv.loadData = function(){
         conv.summaryTrenData(data)
         var funnel = [
             {
-                category: "Deals Inqueue",
+                category: "Deals In Queue",
                 value: data[0].inqueue,
                 color: "#ff2929"
             },

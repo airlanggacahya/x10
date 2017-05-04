@@ -464,6 +464,8 @@ conv.loadContainer = function(data){
 }
 
 conv.loadFunnelChart = function(data){
+    $("#ontext1").text("Pending Deals: "+data[0].pending_1)
+    $("#ontext2").text("Pending Deals: "+data[0].pending_2)
 	$('#funnelChart').kendoChart({
         // title: {
         //     text: "Processing Funnel",
@@ -512,9 +514,32 @@ conv.loadFunnelChart = function(data){
         }],
         tooltip: {
             visible: true,
-            template: "#= category #"
+            template: function(e){
+                // console.log("------->>>>> ccc", e)
+                var str = ''
+                if(e.dataItem.category == 'Actioned Deals'){
+                    str = 'Actioned deals \n (On Hold = '+data[0].fnonhold+' , Sent Back for Analysis = '+data[0].fnsentbackforanalys+') <br/>'+ e.dataItem.real_value
+                    // str = "mmm"
+                }else if(e.dataItem.category == 'Underwritten Deals'){
+                    str = "(Approved = "+data[0].fnapproved+", Rejected = "+data[0].fnrejected+") <br/>"+ e.dataItem.real_value
+                    // str = "nnnn"
+                }else{
+                    str = e.dataItem.category +"<br/>"+ e.dataItem.real_value
+                    // str = "sss"
+                }
+                return str
+            }
         }
     });
+
+    setTimeout(function(){
+        var fun1 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(3) > path:nth-child(1)").offset().left
+        var top1 = $("#svg1").offset().top
+        var fun2 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(4) > path:nth-child(1)").offset().left
+        var top2 = $("#svg2").offset().top
+        $('#svg1').offset({top: top1, left: fun1 - 195})
+        $('#svg2').offset({top: top2, left: fun2 - 195})
+    }, 500)
 }
 
 conv.loadData = function(){
@@ -581,7 +606,8 @@ conv.loadData = function(){
         conv.funneldata(funnel);
         conv.loadFunnelChart(data)
         conv.loadRadialGauge()
-	})
+
+	}) 
 }
 
 conv.titleText = ko.computed(function () {
@@ -613,9 +639,17 @@ dash.FilterValue.subscribe(function (val) {
     conv.loadRadialGauge();
 })
 
-$(function () {
+$(function () {        
     $(window).bind("resize", function() {
         $('#funnelChart').data("kendoChart").refresh()
+        setTimeout(function(){
+            var fun1 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(3) > path:nth-child(1)").offset().left
+            var top1 = $("#svg1").offset().top
+            var fun2 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(4) > path:nth-child(1)").offset().left
+            var top2 = $("#svg2").offset().top
+            $('#svg1').offset({top: top1, left: fun1 - 195})
+            $('#svg2').offset({top: top2, left: fun2 - 195})
+        }, 500)
         $('#chartContainer').data("kendoChart").refresh()
         $('#tatgoals').data("kendoRadialGauge").refresh()
         $('#analysis').data("kendoChart").refresh()

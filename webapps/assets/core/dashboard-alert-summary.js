@@ -313,7 +313,7 @@ alertSum.trendDataAxes = ko.computed(function () {
     },{
         name: 'count',
         title: { 
-            text: 'Deal Account',
+            text: 'Deal Number',
             font: '11px sans-serif',
             color: '#4472C4'
         },

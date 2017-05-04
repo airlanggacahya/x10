@@ -572,7 +572,7 @@ conv.loadData = function(){
             {
                 category: "Accepted deals ",
                 value: data[0].accepted,
-                color: "#FF8229"
+                color: "#FF5929"
 
             },{
                 category: "Analized Deals",

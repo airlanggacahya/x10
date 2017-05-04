@@ -85,11 +85,33 @@ ttrack.renderModalChart = function(datas){
     });
 }
 ttrack.renderChart = function(datas){
-			datas = ttrack.normalisasiData(datas)
+			var datas = ttrack.normalisasiData(datas)
 
             var myHeight = ($(window).height() - 90)/3
 
-			datas = _.sortBy(datas,["status"])
+			datas = _.cloneDeep(_.sortBy(datas,["status"]))
+
+            datas = _.map(datas, function (val) {
+                switch (val.timestatus) {
+                case "d*Over due":
+                    val.color = "#ff2929"
+                    break
+                case "c*Getting due":
+                    val.color = "#ffc000"
+                    break
+                case "b*In time":
+                    val.color = "#92d050"
+                    break
+                case "a*New":
+                    val.color = "#2e75b6"
+                    break
+                default:
+                    val.color = "#00b0f0"
+                }
+
+                return val
+            })
+
 
 			var stocksDataSource = new kendo.data.DataSource({
             data : datas,
@@ -115,7 +137,8 @@ ttrack.renderChart = function(datas){
                     type: "column",
                     stack : true,
                     field: "count",
-                    name: "#= group.value.split('*')[1] #"
+                    name: "#= group.value.split('*')[1] #",
+                    colorField: "color"
                 }],
                 chartArea:{
                     height: myHeight,
@@ -152,7 +175,6 @@ ttrack.renderChart = function(datas){
                         font: "10px Arial,Helvetica,Sans-Serif"
                     }
                 },
-                seriesColors : ttrack.chartcolors,
                 valueAxis: {
                     labels: {
                         // format: "${0}",

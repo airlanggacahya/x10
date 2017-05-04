@@ -5,10 +5,13 @@ var comp = {}
 comp.viewFilter = ko.observable(false)
 comp.axisData = ko.observableArray([])
 comp.viewFilter.subscribe(function (val) {
-    if (val)
+    if (val){
         $("#compareModal .filter-button").hide();
-    else
+        $("#compChart0_wrapper > div > center > p").css("margin-top", "2%");
+    }else{
         $("#compareModal .filter-button").show();
+        $("#compChart0_wrapper > div > center > p").css("margin-top", "0");
+    }
 })
 
 comp.setFilterVal = function (filter, field, value) {
@@ -263,6 +266,7 @@ comp.RedrawChart_ = function (firstload) {
             } else {
                 opt.title.text = opt.title.text;
                 onp.innerHTML = val;
+                onp.style.marginTop = "2%";
             }
 
             child.appendChild(oncenter)

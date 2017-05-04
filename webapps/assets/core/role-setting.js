@@ -285,7 +285,7 @@ var dashboardMapping = [
         "grant": ["all", "view"]
     },
     {
-        "name": "Deal Profil Metrics",
+        "name": "Deal Profile",
         "menuid": "2017317134147",
         "grant": ["all", "view"]
     },

@@ -1366,16 +1366,27 @@ turn.setTitle = function(){
 	return title;
 }
 
-$(window).bind("resize", function() {
-	$("#historytat").data("kendoChart").refresh();
-	$(".cater").data("kendoChart").refresh();
-	$("#chartContainer").data("kendoChart").refresh();
-	$("#movingtat").data("kendoChart").refresh();
-	$("#conversion").data("kendoChart").refresh();
-	$("#decision").data("kendoChart").refresh();
-	$("#processing").data("kendoChart").refresh();
-	$("#acceptance").data("kendoChart").refresh();
-});
+function refreshChart(selection) {
+	var chart = $(selection).data("kendoChart")
+	if (typeof(chart) === "undefined")
+		return;
+	if (chart === null)
+		return;
+	chart.refresh();
+}
+
+function refreshAllChart() {
+	refreshChart("#historytat");
+	refreshChart(".cater");
+	refreshChart("#chartContainer");
+	refreshChart("#movingtat");
+	refreshChart("#conversion");
+	refreshChart("#decision");
+	refreshChart("#processing");
+	refreshChart("#acceptance");
+}
+
+$(window).bind("resize", refreshAllChart);
 
 
 $(function(){
@@ -1386,25 +1397,11 @@ $(function(){
 		if(infilter.is(":visible") == true){
 			turn.loadChaterChart()
 			$("#onselect").css("width", "117px")
-			$("#historytat").data("kendoChart").refresh();
-			$(".cater").data("kendoChart").refresh();
-			$("#movingtat").data("kendoChart").refresh();
-			$("#conversion").data("kendoChart").refresh();
-			$("#decision").data("kendoChart").refresh();
-			$("#processing").data("kendoChart").refresh();
-			$("#acceptance").data("kendoChart").refresh();
-			$("#chartContainer").data("kendoChart").refresh();
-		}else{
+			refreshAllChart();
+		} else {
 			turn.loadChaterChart()
 			$("#onselect").css("width", "150px")
-			$("#historytat").data("kendoChart").refresh();
-			$(".cater").data("kendoChart").refresh();
-			$("#movingtat").data("kendoChart").refresh();
-			$("#conversion").data("kendoChart").refresh();
-			$("#decision").data("kendoChart").refresh();
-			$("#processing").data("kendoChart").refresh();
-			$("#acceptance").data("kendoChart").refresh();
-			$("#chartContainer").data("kendoChart").refresh();
+			refreshAllChart();
 		}
 	})
 	

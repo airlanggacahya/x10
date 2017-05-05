@@ -4,6 +4,7 @@ import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/helper"
 	"eaciit/x10/webapps/models"
+	"encoding/json"
 	"errors"
 
 	"github.com/eaciit/cast"
@@ -512,7 +513,6 @@ type branchChannel struct {
 func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 	conn := a.Ctx.Connection
-	resCust := []tk.M{}
 
 	// parallelism branch query
 	ch := make(chan branchChannel, 1)
@@ -520,7 +520,7 @@ func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface
 		// Fetch branch data
 		acc, err := models.GetMasterAccountDetailv2()
 		if err != nil {
-			ch <- branchChannel{
+			c <- branchChannel{
 				err:    err,
 				branch: nil,
 			}
@@ -535,14 +535,14 @@ func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface
 				branch[key] = briter
 			}
 		} else {
-			ch <- branchChannel{
+			c <- branchChannel{
 				err:    errors.New("Branch Master not found"),
 				branch: nil,
 			}
 
 			return
 		}
-		ch <- branchChannel{
+		c <- branchChannel{
 			err:    nil,
 			branch: branch,
 		}
@@ -589,6 +589,9 @@ func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface
 		},
 	}})
 
+	debug, _ := json.MarshalIndent(pipe, "", "  ")
+	fmt.Printf("PIPEX\n%s\n", debug)
+
 	csr, err := conn.
 		NewQuery().
 		Command("pipe", pipe).
@@ -622,10 +625,10 @@ func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface
 		return CreateResult(false, nil, brch.err.Error())
 	}
 
-	// Combine with brnach
-	for _, val := range resCust {
+	// Combine with branch
+	for _, val := range results1 {
 		AttachBranchDetailNew(brch.branch, val)
 	}
 
-	return CreateResult(true, resCust, "")
+	return CreateResult(true, results1, "")
 }

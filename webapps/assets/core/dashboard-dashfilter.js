@@ -577,7 +577,7 @@ var CreateDashFilter = function() {
         dash.SaveCallback_(param)
     }
 
-    // We delay 200ms before saving to prevent double request every propagated changes
+    // We delay 50ms before saving to prevent double request every propagated changes
     dash.SaveTimerDelay = null
     dash.SaveFilter = function() {
         if (dash.SaveTimerDelay) {

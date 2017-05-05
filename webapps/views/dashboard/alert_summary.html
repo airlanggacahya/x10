@@ -130,6 +130,17 @@
 	.bd .col-md-3.panel-wrapper .panel {
 		min-height: 120px;
 	}
+
+    .setnumhed{
+        text-align: right;
+        padding: 0px;
+    }
+
+    .setnumch{
+        text-align: left;
+        padding: 0;
+        /*margin-top: 1.5px !important;*/
+    }
 </style>
 
 <div class="row">
@@ -150,12 +161,22 @@
                                 <div class="col-md-4">
                                     <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
                                 </div>
-                                <div class="col-md-8 text-center">
-                                    <div class="rest" data-bind="text: alertSum.currentData('countApproved')"></div>
-                                    <span data-bind="attr: {class: alertSum.colorClass('countApproved')}">
-										<i data-bind="attr: {class: alertSum.seriesChangeFa('countApproved')}"></i>
-										<span data-bind="text: alertSum.seriesChangePercent('countApproved')"></span>%
-									</span>
+                                <div class="col-md-8">
+                                    <center>
+                                        <div class="rest" data-bind="text: alertSum.currentData('countApproved')"></div>
+                                        <span data-bind="attr: {class: alertSum.colorClass('countApproved')}">
+                                            <div class="col-md-12 colhed" style="width: 112%;">
+                                                <span class="col-md-6 setnumhed">
+                                                    &nbsp
+                                                    <i id="countApproved" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('countApproved')}"></i>
+                                                    <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countApproved', 0)"></span>
+                                                </span>
+                                                <span class="col-md-6 countApproved setnumch">
+                                                    <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countApproved', 1), attr:{'id':'countApproved1'}"></small>
+                                                </span>
+                                            </div>
+    									</span>
+                                    </center>
                                 </div>
                                 <div class="col-sm-12" style="margin-bottom: 10px">
                                     <div id="onac1"></div>
@@ -171,8 +192,15 @@
                                 <div class="col-md-8 text-center">
 									<div class="rest" data-bind="text: alertSum.currentData('amountApproved')"></div>
                                     <span data-bind="attr: {class: alertSum.colorClass('amountApproved')}">
-										<i data-bind="attr: {class: alertSum.seriesChangeFa('amountApproved')}"></i>
-										<span data-bind="text: alertSum.seriesChangePercent('amountApproved')"></span>%
+                                        <div class="col-md-12 colhed" style="width: 112%;">
+                                            <span class="col-md-6 setnumhed">
+                                                <i id="amountApproved" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('amountApproved')}"></i>
+                                                <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountApproved', 0)"></span>
+                                            </span>
+                                            <span class="col-md-6 amountApproved setnumch">
+                                                <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('amountApproved', 1), attr:{'id':'amountApproved1'}"></small>
+                                            </span>
+                                        </div>
 									</span>
                                 </div>
                                 <div class="col-sm-12" style="margin-bottom: 10px">
@@ -189,8 +217,15 @@
                                 <div class="col-md-8 text-center">
 									<div class="rest" data-bind="text: alertSum.currentData('countRejected')"></div>
                                     <span data-bind="attr: {class: alertSum.colorClass('countRejected')}">
-										<i data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
-										<span data-bind="text: alertSum.seriesChangePercent('countRejected')"></span>%
+                                        <div class="col-md-12 colhed" style="width: 112%;">
+                                            <span class="col-md-6 setnumhed">
+                                                <i id="countRejected" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
+                                                <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 0)"></span>
+                                            </span>
+                                            <span class="col-md-6 countRejected setnumch">
+                                                <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 1), attr:{'id':'countRejected1'}"></small>
+                                            </span>
+                                        </div>
 									</span>
                                 </div>
                                 <div class="col-sm-12" style="margin-bottom: 10px">
@@ -207,8 +242,15 @@
                                 <div class="col-md-8 text-center">
 									<div class="rest" data-bind="text: alertSum.currentData('amountRejected')"></div>
                                     <span data-bind="attr: {class: alertSum.colorClass('amountRejected')}">
-										<i data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></i>
-										<span data-bind="text: alertSum.seriesChangePercent('amountRejected')"></span>%
+                                        <div class="col-md-12" style="width: 112%;">
+                                            <span class="col-md-6 setnumhed">
+                                                <i id="countRejected" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></i>
+                                                <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 0)"></span>
+                                            </span>
+                                            <span class="col-md-6 amountRejected setnumch">
+                                                <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 1), attr:{'id':'amountRejected1'}"></small>
+                                            </span>
+                                        </div>
 									</span>
                                 </div>
                                 <div class="col-sm-12" style="margin-bottom: 10px">

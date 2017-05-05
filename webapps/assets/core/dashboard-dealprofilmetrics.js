@@ -435,7 +435,9 @@ pm.loadChaterChart = function() {
             visible: true,
             template: function(e) {
                 // console.log(e);
-                return "Deal Amount: " + kendo.toString(e.dataItem[1], "n") + "<br /> Interest Rate: " + e.series.ROI + "%";
+                return "Deal Amount: " + kendo.toString(e.dataItem[1], "n") +
+                "<br /> Interest Rate: " + e.series.ROI + "%" +
+                "<br /> XFL Score: " + kendo.toString(e.series.finalscoredob, "n2");
             }
         },
         seriesClick: function(e) {

@@ -481,7 +481,7 @@ conv.loadFunnelChart = function(data){
             visible: false
         },
         chartArea:{
-            width: 400,
+            width: 350,
         	height: 250,
             background: "white"
         },
@@ -640,7 +640,8 @@ dash.FilterValue.subscribe(function (val) {
     conv.loadRadialGauge();
 })
 
-$(function () {        
+$(function () { 
+    $(".funpan").css("margin-left", "9%");       
     $(window).bind("resize", function() {
         $('#funnelChart').data("kendoChart").refresh()
         setTimeout(function(){
@@ -660,7 +661,6 @@ $(function () {
     $(".sidebar-toggle").click(function(){
         var infilter = $("#infilter");
         if(infilter.is(":visible") == true){
-            $(".funpan").css("margin-left", "-3%");
             setTimeout(function(){
                 var fun1 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(3) > path:nth-child(1)").offset().left
                 var top1 = $("#svg1").offset().top
@@ -676,7 +676,7 @@ $(function () {
             $('#approval').data("kendoChart").refresh()
             $('#rate').data("kendoChart").refresh()
         }else{
-            $(".funpan").css("margin-left", "0")
+            // $(".funpan").css("margin-left", "3px")
             setTimeout(function(){
                 var fun1 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(3) > path:nth-child(1)").offset().left
                 var top1 = $("#svg1").offset().top

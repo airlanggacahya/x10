@@ -586,7 +586,7 @@ var CreateDashFilter = function() {
         dash.SaveTimerDelay = setTimeout(function () {
             dash.SaveTimerDelay = null
             dash.SaveFilter_()
-        }, 200);
+        }, 50);
     }
 
 

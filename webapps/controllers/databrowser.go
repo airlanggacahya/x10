@@ -4,9 +4,11 @@ import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/helper"
 	"eaciit/x10/webapps/models"
+	"errors"
 
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
+	"github.com/eaciit/dbox/dbc/mongo"
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 	// "net/http"
@@ -502,35 +504,96 @@ func (a *DataBrowserController) GetCombinedData(k *knot.WebContext) interface{} 
 	return CreateResult(true, resCust, "")
 }
 
+type branchChannel struct {
+	err    error
+	branch map[string]tk.M
+}
+
 func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
-
-	conn, err := GetConnection()
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
-	}
-	defer conn.Close()
-
+	conn := a.Ctx.Connection
 	resCust := []tk.M{}
+
+	// parallelism branch query
+	ch := make(chan branchChannel, 1)
+	go func(c chan<- branchChannel) {
+		// Fetch branch data
+		acc, err := models.GetMasterAccountDetailv2()
+		if err != nil {
+			ch <- branchChannel{
+				err:    err,
+				branch: nil,
+			}
+
+			return
+		}
+
+		branch := make(map[string]tk.M)
+		if br, found := acc["Branch"]; found {
+			for _, briter := range br.([]tk.M) {
+				key := briter.GetString("name")
+				branch[key] = briter
+			}
+		} else {
+			ch <- branchChannel{
+				err:    errors.New("Branch Master not found"),
+				branch: nil,
+			}
+
+			return
+		}
+		ch <- branchChannel{
+			err:    nil,
+			branch: branch,
+		}
+	}(ch)
 
 	dbf, err := GenerateRoleCondition(k)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}
 
-	keys := []*dbox.Filter{}
+	pipe := []tk.M{}
 
-	keys = append(keys, dbox.Or(dbf...))
+	if len(dbf) > 0 {
+		whsMatch, err := dbox.NewFilterBuilder(new(mongo.FilterBuilder)).BuildFilter(dbox.Or(dbf...))
+		if err != nil {
+			return CreateResult(false, nil, err.Error())
+		}
 
-	query1 := conn.NewQuery().
-		From("DealSetup")
-
-	if len(keys) > 0 {
-		query1 = query1.Where(dbox.And(keys...))
+		pipe = append(pipe, tk.M{
+			"$match": whsMatch,
+		})
 	}
 
-	csr, err := query1.Cursor(nil)
+	pipe = append(pipe, tk.M{"$lookup": tk.M{
+		"from":         "CreditScorecard",
+		"localField":   "accountdetails.dealno",
+		"foreignField": "DealNo",
+		"as":           "_creditscorecard",
+	}})
 
+	pipe = append(pipe, tk.M{"$project": tk.M{
+		"customerprofile": "$customerprofile",
+
+		"CustomerID":      "$customerprofile.applicantdetail.CustomerID",
+		"customer_id":     "$customerprofile.applicantdetail.CustomerID",
+		"CustomerName":    "$customerprofile.applicantdetail.CustomerName",
+		"customer_name":   "$customerprofile.applicantdetail.CustomerName",
+		"DealNo":          "$customerprofile.applicantdetail.DealNo",
+		"deal_no":         "$customerprofile.applicantdetail.DealNo",
+		"_profile":        "$customerprofile",
+		"_accountdetails": "$accountdetails",
+		"_creditscorecard": tk.M{
+			"$arrayElemAt": []interface{}{"$_creditscorecard", -1},
+		},
+	}})
+
+	csr, err := conn.
+		NewQuery().
+		Command("pipe", pipe).
+		From("DealSetup").
+		Cursor(nil)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	}
@@ -540,19 +603,6 @@ func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface
 	err = csr.Fetch(&results1, 0, false)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
-	}
-
-	for _, val := range results1 {
-		appdet := tk.M{}
-		appdet.Set("CustomerID", TkWalk(val, "customerprofile.applicantdetail.CustomerID").(int))
-		appdet.Set("customer_id", TkWalk(val, "customerprofile.applicantdetail.CustomerID").(int))
-		appdet.Set("CustomerName", TkWalk(val, "customerprofile.applicantdetail.CustomerName").(string))
-		appdet.Set("customer_name", TkWalk(val, "customerprofile.applicantdetail.CustomerName").(string))
-		appdet.Set("DealNo", TkWalk(val, "customerprofile.applicantdetail.DealNo").(string))
-		appdet.Set("deal_no", TkWalk(val, "customerprofile.applicantdetail.DealNo").(string))
-		appdet.Set("_profile", TkWalk(val, "customerprofile").(tk.M))
-		appdet.Set("_accountdetails", TkWalk(val, "accountdetails").(tk.M))
-		resCust = append(resCust, appdet)
 	}
 
 	// Filter based on ID
@@ -567,28 +617,14 @@ func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface
 	// 	}
 	// }
 
-	// Fetch branch data
-	acc, err := models.GetMasterAccountDetailv2()
-	if err != nil {
-		return CreateResult(false, nil, err.Error())
+	brch := <-ch
+	if brch.err != nil {
+		return CreateResult(false, nil, brch.err.Error())
 	}
 
-	branch := make(map[string]tk.M)
-	if br, found := acc["Branch"]; found {
-		for _, briter := range br.([]tk.M) {
-			key := briter.GetString("name")
-			branch[key] = briter
-		}
-	} else {
-		return CreateResult(false, nil, "Master Omnifin Branch Not Found")
-	}
-
-	// Combine
+	// Combine with brnach
 	for _, val := range resCust {
-		// AttachCustomerProfile(conn, val)
-		// AttachAccountDetail(conn, val)
-		AttachBranchDetailNew(branch, val)
-		AttachCreditScoreCard(conn, val)
+		AttachBranchDetailNew(brch.branch, val)
 	}
 
 	return CreateResult(true, resCust, "")

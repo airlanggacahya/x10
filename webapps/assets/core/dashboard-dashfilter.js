@@ -301,8 +301,6 @@ var CreateDashFilter = function() {
     }
 
     function reapplyFilter(without) {
-        dash.SaveFilter()
-
         applyFilterRegionDS()
         applyFilterBranchDS()
         applyFilterProductDS()
@@ -312,6 +310,8 @@ var CreateDashFilter = function() {
         applyFilterCustDS()
         applyFilterDealNoDS()
         applyFilterClientTypeDS()
+
+        dash.SaveFilter()
     }
 
     dash.MasterDS = ko.observableArray([])
@@ -556,11 +556,18 @@ var CreateDashFilter = function() {
         dash.SaveCallback_ = callback;
     }
 
-    dash.SaveFilter_ = function() {
-        if (!dash.InitComplete()) {
-            return
+    dash.DelayNotifyTimer = null
+    dash.DelayNotify = function (param) {
+        if (dash.DelayNotifyTimer) {
+            clearTimeout(dash.DelayNotifyTimer)
         }
+        dash.DelayNotifyTimer = setTimeout(function () {
+            dash.DelayNotifyTimer = null
+            dash.FilterValue(param.Filters)
+        }, 50);
+    }
 
+    dash.NotifyFilter = function() {
         var param = {}
         // Id            string
         // Filters       []struct {
@@ -572,7 +579,16 @@ var CreateDashFilter = function() {
         param.Filters = dash.CompileFilter()
         
         // Notify subscribed chart first
-        dash.FilterValue(param.Filters)
+        dash.DelayNotify(param)
+
+        return param
+    }
+
+    dash.SaveFilter_ = function() {
+        var param = dash.NotifyFilter()
+
+        if (!dash.InitComplete())
+             return
 
         dash.SaveCallback_(param)
     }
@@ -580,6 +596,9 @@ var CreateDashFilter = function() {
     // We delay 50ms before saving to prevent double request every propagated changes
     dash.SaveTimerDelay = null
     dash.SaveFilter = function() {
+        if (dash.waitLoadFilter !== null)
+            return
+
         if (dash.SaveTimerDelay) {
             clearTimeout(dash.SaveTimerDelay)
         }
@@ -590,23 +609,23 @@ var CreateDashFilter = function() {
     }
 
 
-    dash.waitLoadFilter = null
+    dash.waitLoadFilter = []
     dash.InitComplete = ko.observable(false)
     dash.InitComplete.subscribe(function (val) {
         if (!val)
             return
 
-        dash.LoadFilter(dash.waitLoadFilter)
+        dash.ParseFilter(dash.waitLoadFilter)
         dash.waitLoadFilter = null
     })
 
     dash.LoadFilter = function(res) {
-        if (!dash.InitComplete()) {
+        if (!dash.InitComplete())
             dash.waitLoadFilter = res
-            return
-        }
 
         dash.ParseFilter(res)
+        dash.NotifyFilter()
+
         dash.SaveFilter()
     }
 

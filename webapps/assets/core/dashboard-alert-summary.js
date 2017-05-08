@@ -356,7 +356,7 @@ alertSum.seriesChangePercent = function(section, num) {
             str = (kendo.toString(_.get(alertSum.trendDataCurrent(), section, 0) * 100, "n2")).split(".");
             if(ondata == 0)
                 $("."+section).css("margin-top", "4.5px");
-                $("#"+section).css("margin-left","-30%")
+                $("#"+section).css("margin-left","-17%")
             if (num == 0)
                 return str[0]
             return "."+str[1]+"%"

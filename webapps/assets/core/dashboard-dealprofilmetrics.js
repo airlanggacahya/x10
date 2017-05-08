@@ -554,13 +554,13 @@ pm.Distribution = function(selected) {
     var title = "";
     switch (pm.ValueDataMenuDistribution()) {
     case "amount":
-        title = "Deal Amount vs Interest Rate"
+        title = "Deal Amount Vs. Interest Rate"
         break;
     case "count":
-        title = "Deal Count vs Interest Rate"
+        title = "Deal Count Vs. Interest Rate"
         break;
     case "interest":
-        title = "Deal Interest vs Interest Rate"
+        title = "Deal Interest Vs. Interest Rate"
         break;
     }
     $("#distribution").html("");
@@ -676,7 +676,7 @@ pm.Distribution = function(selected) {
         }],
         categoryAxis: {
             title: {
-                visible: false,
+                visible: !pm.distributionData().length,
                 text: "Interest Rates (%)",
                 font: "10px sans-serif",
                 color: "#4472C4"

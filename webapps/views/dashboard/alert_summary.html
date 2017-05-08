@@ -165,15 +165,24 @@
                                     <center>
                                         <div class="rest" data-bind="text: alertSum.currentData('countApproved')"></div>
                                         <span data-bind="attr: {class: alertSum.colorClass('countApproved')}">
-                                            <div class="col-md-12 colhed" id="countApproved" style="width: 146%;">
-                                                <span class="col-md-6 setnumhed">
+                                            <div class="col-md-12" style="width: 100%;">
+                                               <!--  <span class="col-md-6 setnumhed">
                                                     &nbsp
                                                     <i id="countApproved" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('countApproved')}"></i>
                                                     <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countApproved', 0)"></span>
                                                 </span>
                                                 <span class="col-md-6 countApproved setnumch">
                                                     <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countApproved', 1), attr:{'id':'countApproved1'}"></small>
-                                                </span>
+                                                </span> -->
+                                                <div class="col-md-4"></div>
+                                                <table class="col-md-4">
+                                                    <tr>
+                                                        <td><span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('countApproved')}"></span></td>
+                                                        <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countApproved', 0)"></span></td>
+                                                        <td style="text-align: left;"><small style="font-size: 12px;"  data-bind="text: alertSum.seriesChangePercent('countApproved', 1)"></small></td>
+                                                    </tr>
+                                                </table> 
+                                                <div class="col-md-4"></div>
                                             </div>
     									</span>
                                     </center>
@@ -192,14 +201,16 @@
                                 <div class="col-md-8 text-center">
 									<div class="rest" data-bind="text: alertSum.currentData('amountApproved')"></div>
                                     <span data-bind="attr: {class: alertSum.colorClass('amountApproved')}">
-                                        <div class="col-md-12 colhed" id="amountApproved" style="width: 146%;">
-                                            <span class="col-md-6 setnumhed">
-                                                <i id="amountApproved" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('amountApproved')}"></i>
-                                                <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountApproved', 0)"></span>
-                                            </span>
-                                            <span class="col-md-6 amountApproved setnumch">
-                                                <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('amountApproved', 1), attr:{'id':'amountApproved1'}"></small>
-                                            </span>
+                                        <div class="col-md-12 colhed" id="amountApproved" style="width: 100%;">
+                                            <div class="col-md-4"></div>
+                                            <table class="col-md-4">
+                                                <tr>
+                                                    <td><span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('amountApproved')}"></span></td>
+                                                    <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountApproved', 0)"></span></td>
+                                                    <td style="text-align: left;"><small style="font-size: 12px;"  data-bind="text: alertSum.seriesChangePercent('amountApproved', 1), attr:{'id':'amountApproved1'}"></small></td>
+                                                </tr>
+                                            </table> 
+                                            <div class="col-md-4"></div>
                                         </div>
 									</span>
                                 </div>
@@ -217,14 +228,24 @@
                                 <div class="col-md-8 text-center">
 									<div class="rest" data-bind="text: alertSum.currentData('countRejected')"></div>
                                     <span data-bind="attr: {class: alertSum.colorClass('countRejected')}">
-                                        <div class="col-md-12 colhed" id="countRejected" style="width: 146%;">
-                                            <span class="col-md-6 setnumhed">
+                                        <div class="col-md-12" style="width: 100%;">
+                                           <!--  <span class="col-md-6 setnumhed">
                                                 <i id="countRejected" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
                                                 <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 0)"></span>
                                             </span>
                                             <span class="col-md-6 countRejected setnumch">
                                                 <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 1), attr:{'id':'countRejected1'}"></small>
-                                            </span>
+                                            </span> -->
+
+                                            <div class="col-md-4"></div>
+                                            <table class="col-md-4">
+                                                <tr>
+                                                    <td><span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></span></td>
+                                                    <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 0)"></span></td>
+                                                    <td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 1), attr:{'id':'countRejected1'}"></small></td>
+                                                </tr>
+                                            </table> 
+                                            <div class="col-md-4"></div>
                                         </div>
 									</span>
                                 </div>
@@ -242,14 +263,24 @@
                                 <div class="col-md-8 text-center">
 									<div class="rest" data-bind="text: alertSum.currentData('amountRejected')"></div>
                                     <span data-bind="attr: {class: alertSum.colorClass('amountRejected')}">
-                                        <div class="col-md-12" id="amountRejected" style="width: 146%;">
-                                            <span class="col-md-6 setnumhed">
+                                        <div class="col-md-12" id="amountRejected" style="width: 100%;">
+                                            <!-- <span class="col-md-6 setnumhed">
                                                 <i id="countRejected" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></i>
                                                 <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 0)"></span>
                                             </span>
                                             <span class="col-md-6 amountRejected setnumch">
                                                 <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 1), attr:{'id':'amountRejected1'}"></small>
-                                            </span>
+                                            </span> -->
+
+                                            <div class="col-md-4"></div>
+                                            <table class="col-md-4">
+                                                <tr>
+                                                    <td><span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></span></td>
+                                                    <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 0)"></span></td>
+                                                    <td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 1), attr:{'id':'amountRejected1'}"></small></td>
+                                                </tr>
+                                            </table> 
+                                            <div class="col-md-4"></div>
                                         </div>
 									</span>
                                 </div>

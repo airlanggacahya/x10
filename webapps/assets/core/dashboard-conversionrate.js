@@ -633,6 +633,24 @@ conv.titleText = ko.computed(function () {
     return title;
 })
 
+
+conv.setInfoHed = function(number, num, el){
+    return ko.computed(function(){
+        // t = $("#"+el+"> div.col-md-12 > div:nth-child(2) > table > tbody > tr > td:nth-child(2) > small").offset().top
+        // l = $("#"+el+"> div.col-md-12 > div:nth-child(2) > table > tbody > tr > td:nth-child(2) > small").offset().left
+        // $("#"+el+"> div.col-md-12 > div:nth-child(2) > table > tbody > tr > td:nth-child(2) > small").offset({top: t-3, left: l})
+        return dash.stringArr(number, num)
+    })
+}
+
+conv.setInfo = function(number, num, el){
+    return ko.computed(function(){
+        // l = $("#"+el+"> span:nth-child(2) > small").offset().left
+        // $("#"+el+"> span:nth-child(2) > small").offset({top: 202.390625+1.5, left: l+2})
+        return dash.stringArr(number, num)
+    })
+}
+
 dash.FilterValue.subscribe(function (val) {
     // turn.loadAlleverage()
     conv.loadData();

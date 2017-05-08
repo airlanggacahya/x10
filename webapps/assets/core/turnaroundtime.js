@@ -1258,8 +1258,6 @@ turn.openCompareTrend = function() {
 				response: resp
 			}
 
-			console.log(prm)
-
 			callback(turn.CreateChartTrendOption_(prm))
 		})
 	}

@@ -995,6 +995,23 @@ pm.CreateChartMovingData = function(param, callback) {
     })
 }
 
+// Separate decimal on number.
+// Part 0 will be number ahead dot.
+// Part 1 will be decimal point and below.
+pm.SeparateDecimal = function (input, part) {
+    var inputStr = "" + input
+    var parts = inputStr.split(".", 2)
+
+    if (part == 0) {
+        return parts[0];
+    }
+
+    if (part == 1 && parts.length < 2)
+        return "";
+    
+    return "." + parts[1]
+}
+
 pm.CreateChartMovingOptions_ = function (data) {
     console.log(data)
     var movingdata = new kendo.data.DataSource({

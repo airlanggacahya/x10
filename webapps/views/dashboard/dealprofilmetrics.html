@@ -406,6 +406,29 @@ h6 {
 .compare-space {
     right: 48px;
 }
+
+/* quick info small big percent */
+.quickinfo-percent.percent-span-big {
+    font-size: 15px;
+}
+
+.quickinfo-percent.percent-span-small {
+    font-size: 12px;
+    position: relative;
+    bottom: 1px;
+    right: 2px;
+}
+
+.quickinfo-stat.percent-span-big {
+}
+
+.quickinfo-stat.percent-span-small {
+    font-size: 32px;
+    position: relative;
+    bottom: 4px;
+    right: 10px;
+}
+
 </style>
  <div id="infilter" class="col-md-2" style="display: none;">
     <div class="filterfix">
@@ -435,7 +458,10 @@ h6 {
                             <h6 class="tat-title tl">Deal Count</h6>
                             <div class="middle-center">
                                 <div class="middle widget-title col-sm-12" data-bind="text: pm.dealCount"></div>
-                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgCount"></span>&#37;</div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i>
+                                    <span class="quickinfo-percent percent-span-big" data-bind="text: pm.SeparateDecimal(pm.avgCount(), 0)"></span>
+                                    <span class="quickinfo-percent percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.avgCount(), 'n2'), 1) + '%'"></span>
+                                </div>
                                 <div class="col-sm-12">
                                     <table data-bind="style:{width:'100%', marginTop: '25px'}" id="dealcount">
                                         <tr>
@@ -454,8 +480,14 @@ h6 {
                         <div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
                             <h6 class="tat-title tl">Deal Amount</h6>
                             <div class="middle-center">
-                                <div class="middle widget-title col-sm-12" data-bind="text: pm.dealAmount"></div>
-                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgAmount"></span>&#37;</div>
+                                <div class="middle widget-title col-sm-12">
+                                    <span class="quickinfo-stat percent-span-big"data-bind="text: pm.SeparateDecimal(pm.dealAmount(), 0)"></span>
+                                    <span class="quickinfo-stat percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.dealAmount(), 'n2'), 1) + 'cr'"></span>
+                                </div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i>
+                                    <span class="quickinfo-percent percent-span-big" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.avgAmount(), 'n2') + '%', 0)"></span>
+                                    <span class="quickinfo-percent percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.avgAmount(), 'n2') + '%', 1)"></span>
+                                </div>
                                 <div class="col-sm-12">
                                     <table data-bind="style:{width:'100%', marginTop: '25px'}">
                                         <tr>
@@ -474,8 +506,14 @@ h6 {
                         <div class="panel panel-body dl material-ripple" style="height: 185px" id="process">
                             <h6 class="tat-title tl">Interest Amount</h6>
                             <div class="middle-center">
-                                <div class="middle widget-title col-sm-12" data-bind="text: pm.interestAmount"></div>
-                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up down-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgInterestAmount"></span>&#37;</div>
+                                <div class="middle widget-title col-sm-12">
+                                    <span class="quickinfo-stat percent-span-big"data-bind="text: pm.SeparateDecimal(pm.interestAmount(), 0)"></span>
+                                    <span class="quickinfo-stat percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.interestAmount(), 'n2'), 1) + 'cr'"></span>
+                                </div>
+                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up down-arrow" aria-hidden="true"></i>
+                                    <span class="quickinfo-percent percent-span-big" data-bind="text: pm.SeparateDecimal(pm.avgInterestAmount(), 0)"></span>
+                                    <span class="quickinfo-percent percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.avgInterestAmount(), 'n2'), 1) + '%'"></span>
+                                </div>
                                 <div class="col-sm-12">
                                     <table data-bind="style:{width:'100%', marginTop: '25px'}">
                                         <tr>

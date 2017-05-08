@@ -75,18 +75,18 @@
 								<div class="col-md-7">
 									<div class="text-center">
 										<div class="rest" data-bind="text: ttrack.currentHeadValue('In queue')"></div>
-										<span style="width: 103%" data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('In queue')())}">
-											<i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('In queue')())}"></i>
-											<span data-bind="text: ttrack.currentHeadPercent('In queue')"></span>%
-											<!-- <div class="col-md-12 colhed">
+										<span style="width: 150%" data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('In queue',0)())}">
+											<!-- <i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('In queue')())}"></i>
+											<span data-bind="text: ttrack.currentHeadPercent('In queue')"></span>% -->
+											<div class="col-md-12 colhed" id="Inqueue">
                                                 <span class="col-md-6 setnumhed">
-                                                    <i style="font-size: 18px;" data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('In queue')())}"></i>
+                                                    <i style="font-size: 18px;" data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('In queue',0)())}"></i>
                                                     <span style="font-size: 15px;" data-bind="text: ttrack.currentHeadPercent('In queue', 0)"></span>
                                                 </span>
                                                 <span class="col-md-6 Inqueue setnumch">
                                                     <small style="font-size: 12px;" data-bind="text: ttrack.currentHeadPercent('In queue', 1)"></small>
                                                 </span>
-                                            </div> -->
+                                            </div>
 										</span>
 									</div>
 								</div>
@@ -102,19 +102,18 @@
 								<div class="col-md-7">
 									<div class="text-center">
 										<div class="rest" data-bind="text: ttrack.currentHeadValue('Under Process')"></div>
-										<span style="width: 103%" data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('Under Process')())}">
-											<i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Under Process')()) }"></i>
-											<span data-bind="text: ttrack.currentHeadPercent('Under Process')"></span>%
+										<span style="width: 150%" data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('Under Process', 0)())}">
+											<!-- <i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Under Process')()) }"></i>
+											<span data-bind="text: ttrack.currentHeadPercent('Under Process')"></span>% -->
 
-											<!-- <div class="col-md-12 colhed">
+											<div class="col-md-12 colhed" id="UnderProcess">
                                                 <span class="col-md-6 setnumhed">
-                                                    <i style="font-size: 18px;" data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Under Process')())}"></i>
-                                                    <span style="font-size: 15px;" data-bind="text: ttrack.currentHeadPercent('Under Process', 0)"></span>
+                                                    <i style="font-size: 18px;" data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Under Process',0)())}"></i><span style="font-size: 15px;" data-bind="text: ttrack.currentHeadPercent('Under Process',0)"></span>
                                                 </span>
                                                 <span class="col-md-6 UnderProcess setnumch">
                                                     <small style="font-size: 12px;" data-bind="text: ttrack.currentHeadPercent('Under Process', 1)"></small>
                                                 </span>
-                                            </div> -->
+                                            </div>
 										</span>
 									</div>
 								</div>
@@ -130,19 +129,19 @@
 								<div class="col-md-7">
 									<div class="text-center">
 										<div class="rest" data-bind="text: ttrack.currentHeadValue('Sent to Decision Committee')"></div>
-										<span style="width: 103%" data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('Sent to Decision Committee')())}">
-											<i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Sent to Decision Committee')())}"></i>
-											<span data-bind="text: ttrack.currentHeadPercent('Sent to Decision Committee')"></span>%
+										<span style="width: 150%"OnHold data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('Sent to Decision Committee', 0)())}">
+											<!-- <i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Sent to Decision Committee')())}"></i>
+											<span data-bind=text: ttrack.currentHeadPercent('Sent to Decision Committee')"></span>% -->
 
-											<!-- <div class="col-md-12 colhed">
+											<div class="col-md-12 colhed" id="SenttoDecisionCommittee">
                                                 <span class="col-md-6 setnumhed">
-                                                    <i style="font-size: 18px;" data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Sent to Decision Committee')())}"></i>
+                                                    <i style="font-size: 18px;" data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('Sent to Decision Committee', 0)())}"></i>
                                                     <span style="font-size: 15px;" data-bind="text: ttrack.currentHeadPercent('Sent to Decision Committee', 0)"></span>
                                                 </span>
                                                 <span class="col-md-6 SenttoDecisionCommittee setnumch">
                                                     <small style="font-size: 12px;" data-bind="text: ttrack.currentHeadPercent('Sent to Decision Committee', 1)"></small>
                                                 </span>
-                                            </div> -->
+                                            </div>
 										</span>
 									</div>
 								</div>
@@ -158,19 +157,19 @@
 								<div class="col-md-7">
 									<div class="text-center">
 										<div class="rest" data-bind="text: ttrack.currentHeadValue('On Hold')"></div>
-										<span style="width: 103%" data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('On Hold')())}">
-											<i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('On Hold')())}"></i>
-											<span data-bind="text: ttrack.currentHeadPercent('On Hold')"></span>%
+										<span style="width: 150%" data-bind="attr: {class: dash.summary2color(ttrack.currentHeadPercent('On Hold',0)())}">
+											<!-- <i data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('On Hold')())}"></i>
+											<span data-bind="text: ttrack.currentHeadPercent('On Hold')"></span>% -->
 
-											<!-- <div class="col-md-12 colhed">
+											<div class="col-md-12 colhed" id="OnHold">
                                                 <span class="col-md-6 setnumhed">
-                                                    <i style="font-size: 18px;" data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('On Hold')())}"></i>
+                                                    <i style="font-size: 18px;" data-bind="attr: {class: dash.summary2fa(ttrack.currentHeadPercent('On Hold', 0)())}"></i>
                                                     <span style="font-size: 15px;" data-bind="text: ttrack.currentHeadPercent('On Hold', 0)"></span>
                                                 </span>
-                                                <span class="col-md-6 On Hold setnumch">
+                                                <span class="col-md-6 OnHold setnumch">
                                                     <small style="font-size: 12px;" data-bind="text: ttrack.currentHeadPercent('On Hold', 1)"></small>
                                                 </span>
-                                            </div> -->
+                                            </div>
 										</span>
 									</div>
 								</div>

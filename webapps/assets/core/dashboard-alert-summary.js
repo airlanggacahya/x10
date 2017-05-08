@@ -344,6 +344,8 @@ alertSum.seriesChangePercent = function(section, num) {
     var strnum = '';
     var str = '';
     $("."+section).css("margin-top", "1.5px");
+    // if($("#"+section+".fa").is(":visible") == true){}
+
     return ko.computed(function() {
         var series = alertSum.trendDataSeries()
         if (series.length < 1){
@@ -351,14 +353,18 @@ alertSum.seriesChangePercent = function(section, num) {
         }
         if (_.get(series[0], section, 0) == 0){
             ondata = _.get(alertSum.trendDataCurrent(), section, 0)
-            str = (kendo.toString(_.get(alertSum.trendDataCurrent(), section, 0) * 100, "n2")).split(".")
+            str = (kendo.toString(_.get(alertSum.trendDataCurrent(), section, 0) * 100, "n2")).split(".");
             if(ondata == 0)
                 $("."+section).css("margin-top", "4.5px");
+                $("#"+section).css("margin-left","-30%")
             if (num == 0)
                 return str[0]
             return "."+str[1]+"%"
         }
         $("."+section).css("margin-top", "1.5px");
+        $("#"+section).css("margin-left","-17%")
+        // $("#"+section).css("margin-left","-18%")
+            if (num == 0)
         data =  (kendo.toString((_.get(alertSum.trendDataCurrent(), section, 0) - _.get(series[0], section, 0)) / _.get(series[0], section, 0) * 100, "n2")).toString();
         strnum = data.split(".")
         

@@ -116,30 +116,33 @@ pm.Target = function() {
 pm.loadContainer = function(selected) {
     var selectedData;
     var catSelected;
-    if (selected == undefined || selected == "period"){
+    switch (selected) {
+    default:
+    case "period":
         selectedData = pm.trendPeriod();
         catSelected = { categories: pm.trendDataMonths(), axisCrossingValues: [0, 7]}
-    }else{
+        catSelected.labels = {
+            font: "10px sans-serif",
+            // rotation: -45,   
+            template:function(e){
+                data = (e.value).split(" ");
+                if(data[2] != null){
+                    tl = data[0].split("/");
+                    tgl1 = tl[0]+"/"+tl[1];
+                    tg = data[2].split("/");
+                    tgl2 = tg[0]+"/"+tg[1]
+                    return tgl1+"\n"+tgl2
+                }
+
+                return e.value
+                
+            }
+            // visible : true, 
+        }
+        break
+    case "region":
         selectedData = pm.trendRegion();
         catSelected = { field: "region", axisCrossingValues: [0, 7] }
-    }
-    catSelected.labels = {
-        font: "10px sans-serif",
-        // rotation: -45,   
-        template:function(e){
-            data = (e.value).split(" ");
-            if(data[2] != null){
-                tl = data[0].split("/");
-                tgl1 = tl[0]+"/"+tl[1];
-                tg = data[2].split("/");
-                tgl2 = tg[0]+"/"+tg[1]
-                return tgl1+"\n"+tgl2
-            }
-
-            return e.value
-            
-        }
-        // visible : true, 
     }
 
     $("#chartContainer").html('')
@@ -241,37 +244,6 @@ pm.loadContainer = function(selected) {
             },
         }],
         categoryAxis: catSelected,
-        // categoryAxis: {
-        //     categories: catSelected,
-        //     // field: "dateStr",
-        //     visible : true,
-        //     title : {
-        //         text : "",
-        //         font: "10px sans-serif",
-        //         visible : true,
-        //         color : "#4472C4"
-        //     },
-        //     labels : {
-        //         font: "10px sans-serif",
-        //         // rotation: -45,   
-        //         template:function(e){
-        //             console.log("-------------->>>", e)
-        //             data = (e.value).split(" ");
-        //             if(data[2] != null){
-        //                 tl = data[0].split("/");
-        //                 tgl1 = tl[0]+"/"+tl[1];
-        //                 tg = data[2].split("/");
-        //                 tgl2 = tg[0]+"/"+tg[1]
-        //                 return tgl1+"\n"+tgl2
-        //             }
-
-        //             return e.value
-                    
-        //         }
-        //         // visible : true,
-        //     },
-        //     axisCrossingValues: [0, 7]
-        // },
         tooltip: {
             visible: true,
             template: function(dt) {
@@ -979,10 +951,183 @@ pm.findWidthScatter = function() {
     return data1 - data2;
 }
 
+pm.CreateChartTrendOption_ = function(param) {
+    var selectedData;
+    var catSelected;
+
+    switch (param.groupby) {
+    default:
+    case "period":
+        var months = pm.generateXAxis(param.type, param.start, param.end, 7);
+        months.shift();
+
+        selectedData = _.sortBy(param.trendPeriod, "idx");
+        catSelected = {
+            categories: months,
+            axisCrossingValues: [0, 7]
+        }
+        catSelected.labels = {
+            font: "10px sans-serif",
+            // rotation: -45,   
+            template:function(e){
+                data = (e.value).split(" ");
+                if(data[2] != null){
+                    tl = data[0].split("/");
+                    tgl1 = tl[0]+"/"+tl[1];
+                    tg = data[2].split("/");
+                    tgl2 = tg[0]+"/"+tg[1]
+                    return tgl1+"\n"+tgl2
+                }
+
+                return e.value
+                
+            }
+            // visible : true, 
+        }
+        break
+    case "region":
+        selectedData = param.trendRegion;
+        catSelected = {
+            field: "region",
+            axisCrossingValues: [0, 7]
+        }
+    }
+
+    return {
+        title: {  
+            text: "Deal Amount and Interest", 
+            font:  "12px Arial,Helvetica,Sans-Serif", 
+            align: "left", 
+            color: "#58666e", 
+            padding: { 
+                top: 0 
+            } 
+        },
+        plotArea: {
+            margin: {
+                right: 4
+            }
+        },
+        dataSource: selectedData,
+        series: [
+            {
+                type: "column",
+                stack: false,
+                field: "interest",
+                color: '#2e75b6',
+                overlay: {
+                    gradient: "none"
+                },
+                name: "Interest"
+            }, {
+                type: "column",
+                stack: false,
+                field: "amount",
+                color: '#00b0f0',
+                overlay: {
+                    gradient: "none"
+                },
+                name: "Deal Amount"
+            }, {
+                type: "line",
+                stack: false,
+                field: "count",
+                axis: "dc",
+                dashType: "dot",
+                color: '#ffc000',
+                name: "Deal Count"
+            }, {
+                name: "Target"
+            }
+        ],
+        chartArea: {
+            height: 250,
+            background: "white"
+        },
+        legend: {
+            visible: true,
+            position: "bottom",
+            labels: {
+                font: "10px Arial,Helvetica,Sans-Serif"
+            }
+        },
+        valueAxes: [{
+            title: {
+                text: "Amount (Rs. Lacs)",
+                font: "10px sans-serif",
+                color: "#4472C4",
+                margin: {
+                    right: 1,
+                }
+            },
+            labels: {
+                font: "10px sans-serif",
+                step: 2,
+                skip: 2
+            },
+            min: 0,
+            plotBands: [{
+                from: 2.9,
+                to: 3.0,
+                color: "#70ad47",
+                name: "Target"
+            }]
+        }, {
+            name: "dc",
+            title: {
+                text: "Deal Count",
+                font: "11px sans-serif",
+                color: "#4472C4",
+                margin: {
+                    left: 1,
+                }
+            },
+            min: 0,
+            max: 10,
+            labels: {
+                font: "10px sans-serif",
+                step: 2,
+                skip: 2
+            },
+        }],
+        categoryAxis: catSelected,
+        tooltip: {
+            visible: true,
+            template: function(dt) {
+                if (dt.series.field == "count") {
+                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Deal Count: " + kendo.toString(dt.value, "n0");
+                }else if (dt.series.field == "amount"){
+                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Amount: " + kendo.toString(dt.value, "n0");
+                }else if ((dt.series.field == "interest")){
+                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Interest: " + kendo.toString(dt.value, "n0");
+                }
+                return;
+            }
+        }
+    };
+}
+
+pm.openCompareTrend = function(param, callback) {
+    var groupby = pm.ValueDataPeriod()
+
+	var fun = function (param, callback) {
+		ajaxPost("/dashboard/metricstrend", param, function(res) {
+            var resp = res.Data;
+            resp.groupby = groupby;
+
+            // remove id 0
+            resp.trendPeriod = _.without(resp.trendPeriod, _.find(resp.trendPeriod, function(e) {
+                return e.idx == 0;
+            }));
+
+			callback(pm.CreateChartTrendOption_(resp))
+		})
+	}
+
+	comp.Open(fun)
+}
+
 pm.CreateChartMoving = function(param, callback) {
-    /*ajaxPost("/dashboard/metricstrend", param, function (data) {
-        pm.CreateChartMovingOptions_(data.Data.distribution);
-    })*/
     pm.CreateChartMovingData(param, function(data) {
         callback(pm.CreateChartMovingOptions_(data))
     })

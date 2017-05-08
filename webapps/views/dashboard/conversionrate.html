@@ -3,6 +3,7 @@
 <script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 <script>document.write('<script src="/static/core/dashboard-conversionrate.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
 {{template "leftfilter.html"}}
+{{template "compare_contrast.html"}}
 
 <style type="text/css">
 	.top{
@@ -208,11 +209,9 @@
 		position: absolute;
 		float: right;
 		z-index: 4;
-		right: 25px;
+		right: 50px;
 		top: 3px;
 		font-size: 10px;
-		margin-top: 1%;
-        padding-right: 2%;
 	}
 
 	.chart-options0 {
@@ -342,14 +341,10 @@
 			<div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
 				<div class="col-md-6">
 					<div class="panel panel-body aol trend">
-						<!-- <div class="chart-options0">
-							<table>
-								<tr>
-									<td>
-										<select style="width: 150px" data-bind="kendoDropDownList: {data: turn.dataMenu, value: turn.dataMenuValue, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Quick Info'}"></select>
-									</td>
-								</tr>
-							</table>
+						<div class="compare-contrast">
+							<button class="btn btn-flat btn-xs btn-primary tooltipster" title='Compare & Contrast' data-bind="click: conv.openCompareTrend">
+								<i class="fa fa-search"></i>
+							</button>
 						</div>
 						<div class="chart-options">
 							<table> 
@@ -358,29 +353,7 @@
 										<label>View Across</label>
 									</td>
 									<td>
-										<select data-bind="kendoDropDownList: {data: turn.dataPeriod, value: turn.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div style="clear: both"></div>
-						<div id="chartContainer"></div>
-						<center>
-							<div class="col-md-12 legend" style="display: inline;">
-								<span id="square1"></span> Avg Days
-								<span id="square2"></span> Median
-								<span id="square3"></span> Deal Count
-								<span id="square4"></span> Target TAT
-							</div>
-						</center> -->
-						<div class="chart-options">
-							<table> 
-								<tr>
-									<td>
-										<label>View Across</label>
-									</td>
-									<td>
-										<select data-bind="kendoDropDownList: {data: conv.dataPeriod, value: conv.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value'}"></select>
+										<select data-bind="kendoDropDownList: {data: conv.dataPeriod, value: conv.dataValuePeriod, dataTextField: 'text', dataValueField: 'value'}"></select>
 									</td>
 								</tr>
 							</table>

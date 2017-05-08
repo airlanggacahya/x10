@@ -12,7 +12,7 @@ conv.compactRate = ko.observable(0);
 conv.compundrRate = ko.observable(0);
 conv.compapprRate = ko.observable(0);
 conv.companalRate = ko.observable(0);
-conv.dataValuePeriod = ko.observable('');
+conv.dataValuePeriod = ko.observable('period');
 conv.funneldata = ko.observable([]);
 conv.summaryTrenData = ko.observable([]);
 conv.trendDataLength = ko.observable(6);
@@ -609,6 +609,186 @@ conv.loadData = function(){
         conv.loadRadialGauge()
 
 	}) 
+}
+
+conv.CreateChartTrendOption_ = function (data) {
+    var len = data._request.len;
+    var start = data._request.start;
+    var end = data._request.end;
+    var type = data._request.type
+    var groupby = data._request.groupby;
+    var month = dash.generateXAxis(type, start, end, len + 1)
+    month.shift();
+
+	return {
+        // theme: "Material",
+        title: { 
+            text: "Processing Rate",
+            font:  "12px Arial,Helvetica,Sans-Serif",
+            align: "left",
+            color: "#58666e",
+        },
+        plotArea: {
+            margin: {
+                right: 4,
+            }
+        },
+        dataSource: data,
+        series: [
+        {
+            type: "line",
+            stack : false,
+            field: "underwrite_rate",
+            // axis: "dc",
+            dashType: "dot",
+            // color: 'green',
+            overlay: {
+                gradient: "none"
+            },
+            name: "Underwrite Rate"
+        },
+        {
+            type: "line",
+            stack : false,
+            field: "approve_rate",
+            // axis: "dc",
+            dashType: "dot",
+            // color: 'red',
+            overlay: {
+                gradient: "none"
+            },
+            name: "Approval Rate"
+        },
+        {
+            type: "line",
+            stack : false,
+            field: "analyze_rate",
+            // axis: "dc",
+            dashType: "dot",
+            // color: '#00b0f0',
+            overlay: {
+                gradient: "none"
+            },
+            name: "Analys Rate"
+        },
+        {
+            type: "line",
+            stack : false,
+            field: "accept_rate",
+            // axis: "dc",
+            dashType: "dot",
+            // color: 'brown',
+            overlay: {
+                gradient: "none"
+            },
+            name: "Accepted Rate"
+        },
+        {
+            type: "line",
+            stack : false,
+            field: "action_rate",
+            // axis: "dc",
+            dashType: "dot",
+            // color: 'grey',
+            overlay: {
+                gradient: "none"
+            },
+            name: "Actioned Rate"
+        },
+        ],
+        chartArea:{
+            height: 283,
+            background: "white"
+        },
+        legend: {
+            visible: true,
+            position: "bottom",
+            labels:{
+                font: "10px Arial,Helvetica,Sans-Serif"
+            }
+        },
+        valueAxes: [{
+            title: { 
+                text: "Rate",
+                font: "10px sans-serif",
+                color : "#4472C4", 
+                margin: {
+                    right: 1,
+                }
+            },
+            min: 0,
+            labels : {
+                font: "10px sans-serif",
+                step : 2,
+                skip : 2
+            },
+            
+        }],
+        categoryAxis: {
+            categories: month,
+            title : {
+                text : "Time Period",
+                font: "10px sans-serif",
+                visible : true,
+                color : "#4472C4"
+            },
+            labels : {
+                font: "10px sans-serif",
+                template:function(e){
+                    // try to split using dash
+                    // if length is one, then return because not a from till
+                    var data = (e.value).split(" - ");
+                    if (data.length === 1)
+                        return e.value;
+
+                    var tgl1 = data[0].split("/");
+                    var tgl2 = data[1].split("/");
+
+                    // take out year if there is year value
+                    if (tgl1.length >= 3 && tgl2.length >= 3) {
+                        data[0] = tgl1[0] + "/" + tgl1[1]
+                        data[1] = tgl2[0] + "/" + tgl2[1]
+                    }
+
+                    return data[0] + "\n" + data[1];
+                }
+                // visible : true,
+            },
+            axisCrossingValues: [0, 7]
+        },
+        tooltip : {
+            visible: true,
+            template : function(dt){
+                // console.log(dt);
+                return dt.series.name + " : " + kendo.toString(dt.value, 'n2')
+            }
+        }
+    };
+}
+
+conv.openCompareTrend = function () {
+    var request = {
+        len: conv.trendDataLength(),
+        groupby: conv.dataValuePeriod()
+    }
+
+	var fun = function (param, callback) {
+		ajaxPost("/dashboard/conversionoption6", param, function(res) {
+            var resp = res.Data;
+            request.start = param.start
+			request.end = param.end
+			request.type = param.type
+
+			var prm = {
+				_request: request,
+				response: resp
+			}
+
+			callback(conv.CreateChartTrendOption_(resp))
+		})
+	}
+
+	comp.Open(fun)
 }
 
 conv.titleText = ko.computed(function () {

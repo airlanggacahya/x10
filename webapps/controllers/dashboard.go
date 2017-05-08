@@ -54,6 +54,8 @@ func (c *DashboardController) ConversionRate(k *knot.WebContext) interface{} {
 		"shared/loading.html",
 		"shared/leftfilter.html",
 		"shared/filter_menu.html",
+
+		"dashboard/compare_contrast.html",
 	}
 
 	return DataAccess

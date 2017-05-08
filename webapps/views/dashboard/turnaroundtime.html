@@ -283,19 +283,21 @@
 					<div class="col-sm-2 wl ">
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
 							<h6 class="tat-title tl">Underwriting TAT (Avg.)</h6>
-							<div class="avg" data-bind="text: turn.avgConversion"></div>
 							<div class="col-sm-12">
-								<center id="conv" class="conve">
-		                            <div class="col-md-4"></div>
+								<!-- <center> -->
+								<div class="avg" data-bind="text: turn.avgConversion"></div>
+								<div id="conv" class="conve">
+			                    <div class="col-md-4"></div>
 		                            <table class="col-md-4">
 		                            	<tr>
 		                            		<td><span  style="font-size: 18px;" id="conve" class="fa fa-caret-up"></span></td>
 		                            		<td><span style="font-size: 15px;" data-bind="text: turn.setInfo(turn.avgConversionPercent(), 0, 'conv')"></span></td>
 		                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: turn.setInfo(turn.avgConversionPercent(), 1, 'conv')"></small></td>
 		                            	</tr>
-		                            </table> 
-		                             <div class="col-md-4"></div>     
-								</center>
+		                            </table>
+		                        </div> 
+		                        <div class="col-md-4"></div>     
+							</div>
 							</div>
 							<div id="conversion"></div>
 							<div class="col-sm-12 footnote" style="margin-top: -1px; text-align: left !important;">
@@ -309,8 +311,9 @@
 					<div class="col-sm-2 wl">
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
 							<h6 class="tat-title tl">Decision TAT (Avg.)</h6>
-							<div class="avg" data-bind="text: turn.avgDecision"></div>
-							<div class="col-sm-12">
+							
+							<div class="col-sm-12"><div class="avg" data-bind="text: turn.avgDecision"></div>
+								<div class="avg" data-bind="text: turn.avgDecision"></div>
 								<center id="dec" class="conve">
 		                            <div class="col-md-4"></div>
 		                            <table class="col-md-4">

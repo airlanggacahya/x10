@@ -302,10 +302,10 @@
 							<div class="col-md-12">
 								<center>
 		                            <div class="col-md-4"></div>
-		                            <table class="col-md-4 avg">
+		                            <table class="col-md-4 avg" style="margin-left: -7%;">
 		                            	<tr>
 		                            		<td style="text-align: right;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 0, 'conv')"></span></td>
-		                            		<td style="text-align: left;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 1, 'conv')"></span></td>
+		                            		<td style="text-align: left;font-size: 30px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 1, 'conv')"></span></td>
 		                            	</tr>
 		                            </table> 
 		                             <div class="col-md-4"></div>     
@@ -336,7 +336,19 @@
 					<div class="col-sm-3 wl ">
 						<div class="panel panel-body dl material-ripple" style="height: 165px" id="appr">
 							<h6 class="tat-title tl">Approval Rate</h6>
-							<div class="avg"><span data-bind="text: kendo.toString(conv.apprRate(), 'n2')"></span ><span>%</span></div>
+							<!-- <div class="avg"><span data-bind="text: kendo.toString(conv.apprRate(), 'n2')"></span ><span>%</span></div> -->
+							<div class="col-md-12">
+								<center>
+		                            <div class="col-md-4"></div>
+		                            <table class="col-md-4 avg" style="margin-left: -7%;">
+		                            	<tr>
+		                            		<td style="text-align: right;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 0, 'conv')"></span></td>
+		                            		<td style="text-align: left;font-size: 30px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 1, 'conv')"></span></td>
+		                            	</tr>
+		                            </table> 
+		                             <div class="col-md-4"></div>     
+								</center>
+							</div>
 							<!-- <div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.compapprRate(), 'n2')">30</span>%</div> -->
 							<div class="col-sm-12">
 								<center id="conv" class="conve">
@@ -361,7 +373,19 @@
 					<div class="col-sm-3 wl ">
 						<div class="panel panel-body dl material-ripple" style="height: 165px" id="anal">
 							<h6 class="tat-title tl">Analysis Rate</h6>
-							<div class="avg"><span data-bind="text: kendo.toString(conv.analRate(), 'n2')"></span ><span>%</span></div>
+							<!-- <div class="avg"><span data-bind="text: kendo.toString(conv.analRate(), 'n2')"></span ><span>%</span></div> -->
+							<div class="col-md-12">
+								<center>
+		                            <div class="col-md-4"></div>
+		                            <table class="col-md-4 avg" style="margin-left: -7%;">
+		                            	<tr>
+		                            		<td style="text-align: right;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.analRate(), 0, 'conv')"></span></td>
+		                            		<td style="text-align: left;font-size: 30px;"><span data-bind="text: conv.setInfo(conv.analRate(), 1, 'conv')"></span></td>
+		                            	</tr>
+		                            </table> 
+		                             <div class="col-md-4"></div>     
+								</center>
+							</div>
 							<!-- <div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.companalRate(), 'n2')">30</span>%</div> -->
 							<div class="col-sm-12">
 								<center id="conv" class="conve">

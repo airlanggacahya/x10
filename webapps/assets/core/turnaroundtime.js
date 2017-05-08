@@ -566,7 +566,7 @@ turn.loadChartRegionContainer = function() {
 			}
 			],
 			chartArea:{
-				height: 220,
+				height: 224,
 				background: "white"
 			},
 			legend: {
@@ -801,7 +801,7 @@ turn.CreateChartTrendOption_  = function (data) {
 		dataSource: data.response,
 		series: series,
 		chartArea:{
-			height: 220,
+			height: 224,
 			background: "white"
 		},
 		legend: {
@@ -865,6 +865,8 @@ turn.CreateChartTrendOption_  = function (data) {
 				top: 0
 			}
 		}
+
+		opt.chartArea.height = 250;
 
 		switch (data._request.trend) {
 		case "conversion":

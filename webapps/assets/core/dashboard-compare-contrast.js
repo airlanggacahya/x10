@@ -257,7 +257,7 @@ comp.RedrawChart_ = function (firstload) {
         comp.ChartLoader(param, function (opt) {
             if (index == 0) {
                 opt.title.text = opt.title.text;
-                onp.innerHTML = "Base Chart";
+                onp.innerHTML = "BASE CHART";
             } else {
                 opt.title.text = opt.title.text;
                 onp.innerHTML = val;

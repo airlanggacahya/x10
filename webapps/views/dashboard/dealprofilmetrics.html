@@ -177,7 +177,6 @@ document.write('<script src="/static/core/dashboard-dealprofilmetrics.js?nochace
     height: 150px;
     text-align: center;
     margin: 0 auto 30px auto;
-    margin-top: 10px;
 }
 
 #tatgoals {
@@ -422,7 +421,7 @@ h6 {
             <div class="col-sm-12 new-dashboard" style="width: 100%;margin-left: -0.5%;margin-top: -32px;">
                 <div id="butt">
                     <div class="col-sm-3 wl">
-                        <div class="panel panel-body dl" id="target" style="height: 185px">
+                        <div class="panel panel-body dl" id="target" style="height: 165px">
                             <h6 class="tat-title tl">Deal Target</h6>
                             <div id="goal-container">
                                 <div id="tatgoals"></div>
@@ -431,13 +430,13 @@ h6 {
                         </div>
                     </div>
                     <div class="col-sm-3 wl ">
-                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
+                        <div class="panel panel-body dl material-ripple" style="height: 165px" id="conv">
                             <h6 class="tat-title tl">Deal Count</h6>
                             <div class="middle-center">
                                 <div class="middle widget-title col-sm-12" data-bind="text: pm.dealCount"></div>
                                 <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgCount"></span>&#37;</div>
                                 <div class="col-sm-12">
-                                    <table data-bind="style:{width:'100%', marginTop: '25px'}" id="dealcount">
+                                    <table data-bind="style:{width:'100%', marginTop: '18px'}" id="dealcount">
                                         <tr>
                                             <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1count() > 0, style:{width: pm.xfl1countwidth()+'%'},text:pm.xfl1count"></td>
                                             <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2count() > 0, style:{width: pm.xfl2countwidth()+'%'},text:pm.xfl2count"></td>
@@ -451,13 +450,13 @@ h6 {
                         </div>
                     </div>
                     <div class="col-sm-3 wl">
-                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
+                        <div class="panel panel-body dl material-ripple" style="height: 165px" id="dec">
                             <h6 class="tat-title tl">Deal Amount</h6>
                             <div class="middle-center">
                                 <div class="middle widget-title col-sm-12" data-bind="text: pm.dealAmount"></div>
                                 <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgAmount"></span>&#37;</div>
                                 <div class="col-sm-12">
-                                    <table data-bind="style:{width:'100%', marginTop: '25px'}">
+                                    <table data-bind="style:{width:'100%', marginTop: '18px'}">
                                         <tr>
                                             <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1amount() > 0, style:{width: pm.xfl1amountwidth()+'%'},text:pm.xfl1amount"></td>
                                             <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2amount() > 0, style:{width: pm.xfl2amountwidth()+'%'},text:pm.xfl2amount"></td>
@@ -471,13 +470,13 @@ h6 {
                         </div>
                     </div>
                     <div class="col-sm-3 wl">
-                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="process">
+                        <div class="panel panel-body dl material-ripple" style="height: 165px" id="process">
                             <h6 class="tat-title tl">Interest Amount</h6>
                             <div class="middle-center">
                                 <div class="middle widget-title col-sm-12" data-bind="text: pm.interestAmount"></div>
                                 <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up down-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgInterestAmount"></span>&#37;</div>
                                 <div class="col-sm-12">
-                                    <table data-bind="style:{width:'100%', marginTop: '25px'}">
+                                    <table data-bind="style:{width:'100%', marginTop: '18px'}">
                                         <tr>
                                             <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1interest() > 0, style:{width: pm.xfl1interestwidth()+'%'},text:pm.xfl1interest"></td>
                                             <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2interest() > 0, style:{width: pm.xfl2interestwidth()+'%'},text:pm.xfl2interest"></td>

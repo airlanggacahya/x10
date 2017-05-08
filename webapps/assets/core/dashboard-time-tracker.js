@@ -450,7 +450,7 @@ ttrack.currentHeadValue = function(section) {
     })
 }
 
-ttrack.currentHeadPercent = function(section) {
+ttrack.currentHeadPercent = function(section, num) {
     function calculateSumSection(data, section) {
         var ret = 0
         _.each(data, function (val) {
@@ -471,9 +471,18 @@ ttrack.currentHeadPercent = function(section) {
         var prevSum = calculateSumSection(ttrack.currentHeaderData()[1], section);
 
         if (prevSum == 0)
-            return curSum * 100;
-
-        return kendo.toString((curSum - prevSum) / prevSum * 100, "n2");
+            ttrack.csstrack(curSum * 100, section)
+            return dash.stringArr(curSum * 100, num, section)
+            // if(num== 0){
+            //     return dash.stringArr(curSum * 100, num)
+            // }else{
+                
+            // }
+            
+        console.log("--------------->>>>> 475", dash.stringArr((curSum - prevSum) / prevSum * 100, num))
+        // return kendo.toString((curSum - prevSum) / prevSum * 100, "n2");
+        ttrack.csstrack((curSum - prevSum) / prevSum * 100, section)
+        return dash.stringArr((curSum - prevSum) / prevSum * 100, num, section)
     })
 }
 
@@ -526,4 +535,49 @@ ttrack.loadHeaderBox = function () {
             prev.Data
         ])
     })
+}
+
+ttrack.csstrack = function(number, section){
+    console.log("masuk")
+    var infilter = $("#infilter")
+    if(infilter.is(":visible") == true){
+        if(number != 0){
+            if(section.indexOf(" ") > -1){
+                cl = section.replace(/\s+/g, '');
+                $("."+cl).css("margin-top", "3%")
+                $("#"+cl).css("margin-left", "-11%")
+            }else{
+                 $("."+cl).css("margin-top", "3%")
+                 $("#"+section).css("margin-left", "-11%")
+            }
+        }else{
+            if(section.indexOf(" ") > -1){
+                cl = section.replace(/\s+/g, '');
+                $("."+cl).css("margin-top", "6.5%")
+                $("#"+cl).css("margin-left", "-21%")
+            }else{
+                $("."+section).css("margin-top", "6.5%")
+                $("#"+section).css("margin-left", "-21%")
+            }
+        }
+    }else{
+        if(number != 0){
+            if(section.indexOf(" ") > -1){
+                cl = section.replace(/\s+/g, '');
+                $("."+cl).css("margin-top", "2%")
+                $("#"+cl).css("margin-left", "-11%")
+            }else{
+                 $("."+cl).css("margin-top", "2%")
+                 $("#"+section).css("margin-left", "-11%")
+            }
+        }else{
+            if(section.indexOf(" ") > -1){
+                cl = section.replace(/\s+/g, '');
+                $("."+cl).css("margin-top", "4.5%")
+                $("#"+cl).css("margin-left", "-21%")
+            }else{
+                $("."+section).css("margin-top", "4.5%")
+                $("#"+section).css("margin-left", "-21%")
+            }
+        }3    }
 }

@@ -468,14 +468,11 @@ conv.loadFunnelChart = function(data){
     $("#ontext2").text("Pending Deals: "+data[0].pending_2)
 	$('#funnelChart').kendoChart({
         // title: {
-        //     text: "Processing Funnel",
+        //     text: "Deals",
         //     position: "top",
-        //     align: "left",
-        //     color: "#58666e",
+        //     align: "center",
+        //     color: "black",
         //     font:  "12px Arial,Helvetica,Sans-Serif",
-        //     // margin: {
-        //     //     left: -20
-        //     // }
         // },
         legend: {
             visible: false
@@ -518,10 +515,10 @@ conv.loadFunnelChart = function(data){
             template: function(e){
                 // console.log("------->>>>> ccc", e)
                 var str = ''
-                if(e.dataItem.category == 'Actioned Deals'){
-                    str = 'Actioned deals <br/> (On Hold = '+data[0].fnonhold+' , Sent Back for Analysis = '+data[0].fnsentbackforanalys+') <br/>'+ e.dataItem.real_value
+                if(e.dataItem.category == 'Actioned'){
+                    str = 'Actioned<br/> (On Hold = '+data[0].fnonhold+' , Sent Back for Analysis = '+data[0].fnsentbackforanalys+') <br/>'+ e.dataItem.real_value
                     // str = "mmm"
-                }else if(e.dataItem.category == 'Underwritten Deals'){
+                }else if(e.dataItem.category == 'Underwritten'){
                     str = e.dataItem.category+"<br/>(Approved = "+data[0].fnapproved+", Rejected = "+data[0].fnrejected+") <br/>"+ e.dataItem.real_value
                     // str = "nnnn"
                 }else{
@@ -566,29 +563,29 @@ conv.loadData = function(){
         conv.summaryTrenData(data)
         var funnel = [
             {
-                category: "Deals In Queue",
+                category: "In Queue",
                 value: data[0].inqueue,
                 color: "#ff2929"
             },
             {
-                category: "Accepted deals ",
+                category: "Accepted",
                 value: data[0].accepted,
                 color: "#FF5929"
 
             },{
-                category: "Analized Deals",
+                category: "Analyzed",
                 value: data[0].analyzed,
                 color: "#FFAD29"
             },{
-                category: "Actioned Deals",
+                category: "Actioned",
                 value: data[0].actioned,
                 color: "#27C85E"
             },{
-                category: "Underwritten Deals",
+                category: "Underwritten",
                 value: data[0].underwritten,
                 color: "#2e75b6"
             },{
-                category: "Approved Deals",
+                category: "Approved",
                 value: data[0].approved,
                 color: "#413CC1",
                 height: 500,
@@ -812,6 +809,24 @@ conv.titleText = ko.computed(function () {
     }
     return title;
 })
+
+
+conv.setInfoHed = function(number, num, el){
+    return ko.computed(function(){
+        // t = $("#"+el+"> div.col-md-12 > div:nth-child(2) > table > tbody > tr > td:nth-child(2) > small").offset().top
+        // l = $("#"+el+"> div.col-md-12 > div:nth-child(2) > table > tbody > tr > td:nth-child(2) > small").offset().left
+        // $("#"+el+"> div.col-md-12 > div:nth-child(2) > table > tbody > tr > td:nth-child(2) > small").offset({top: t-3, left: l})
+        return dash.stringArr(number, num)
+    })
+}
+
+conv.setInfo = function(number, num, el){
+    return ko.computed(function(){
+        // l = $("#"+el+"> span:nth-child(2) > small").offset().left
+        // $("#"+el+"> span:nth-child(2) > small").offset({top: 202.390625+1.5, left: l+2})
+        return dash.stringArr(number, num)
+    })
+}
 
 dash.FilterValue.subscribe(function (val) {
     // turn.loadAlleverage()

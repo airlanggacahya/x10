@@ -240,7 +240,7 @@ alertSum.trendDataConfig = [
     },
     {
         type: 'line',
-        name: 'Deal Approved',
+        name: 'Deals Approved',
         field: 'countApproved',
         axis: 'count',
         tooltip: {
@@ -252,7 +252,7 @@ alertSum.trendDataConfig = [
     },
     {
         type: 'line',
-        name: 'Deal Rejected',
+        name: 'Deals Rejected',
         field: 'countRejected',
         axis: 'count',
         tooltip: {
@@ -340,14 +340,37 @@ alertSum.seriesChange = function(section) {
         return _.get(alertSum.trendDataCurrent(), section, 0) - _.get(series[0], section, 0);
     })
 }
-alertSum.seriesChangePercent = function(section) {
+alertSum.seriesChangePercent = function(section, num) {
+    var strnum = '';
+    var str = '';
+    $("."+section).css("margin-top", "1.5px");
+    // if($("#"+section+".fa").is(":visible") == true){}
+
     return ko.computed(function() {
         var series = alertSum.trendDataSeries()
-        if (series.length < 1)
+        if (series.length < 1){
             return 0;
-        if (_.get(series[0], section, 0) == 0)
-            return kendo.toString(_.get(alertSum.trendDataCurrent(), section, 0) * 100, "n2");
-        return kendo.toString((_.get(alertSum.trendDataCurrent(), section, 0) - _.get(series[0], section, 0)) / _.get(series[0], section, 0) * 100, "n2");
+        }
+        if (_.get(series[0], section, 0) == 0){
+            ondata = _.get(alertSum.trendDataCurrent(), section, 0)
+            str = (kendo.toString(_.get(alertSum.trendDataCurrent(), section, 0) * 100, "n2")).split(".");
+            if(ondata == 0)
+                $("."+section).css("margin-top", "4.5px");
+                $("#"+section).css("margin-left","-17%")
+            if (num == 0)
+                return str[0]
+            return "."+str[1]+"%"
+        }
+        $("."+section).css("margin-top", "1.5px");
+        $("#"+section).css("margin-left","-17%")
+        // $("#"+section).css("margin-left","-18%")
+            if (num == 0)
+        data =  (kendo.toString((_.get(alertSum.trendDataCurrent(), section, 0) - _.get(series[0], section, 0)) / _.get(series[0], section, 0) * 100, "n2")).toString();
+        strnum = data.split(".")
+        
+        if (num == 0)
+            return strnum[0]
+        return "."+strnum[1]+"%"
     })
 }
 alertSum.seriesChangeFa = function(section) {

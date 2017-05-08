@@ -1473,6 +1473,15 @@ turn.setTitle = function(){
 	return title;
 }
 
+turn.setInfo = function(number, num, el){
+	return ko.computed(function(){
+	// 	t = $("#"+el+"> span:nth-child(2) > small").offset().top
+	// 	l = $("#"+el+"> span:nth-child(2) > small").offset().left
+	// 	$("#"+el+"> span:nth-child(2) > small").offset({top: t-0.3, left: l})
+		return dash.stringArr(number, num)
+	})
+}
+
 function refreshChart(selection) {
 	var chart = $(selection).data("kendoChart")
 	if (typeof(chart) === "undefined")

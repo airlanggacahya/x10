@@ -811,7 +811,6 @@ conv.titleText = ko.computed(function () {
 })
 
 conv.setInfo = function(number, num, el){
-    console.log("--------------->>>", el)
     if(el !== ''){
         if(number > 0){
             if($("#"+el).hasClass("fa-caret-down") == true){
@@ -844,7 +843,6 @@ conv.setInfo = function(number, num, el){
                 $("."+el).css("color", "red")
             }
         }else if(number == 0){
-            console.log("----- masuk", number >0)
             $("#"+el)
                 .removeClass("fa-caret-up")
                 .removeClass("fa-caret-down")

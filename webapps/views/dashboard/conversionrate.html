@@ -296,35 +296,46 @@
 						</div>
 					</div>
 					<div class="col-sm-3 wl ">
-						<div class="panel panel-body dl material-ripple" style="height: 165px" id="conv">
+						<div class="panel panel-body dl material-ripple" style="height: 165px" >
 							<h6 class="tat-title tl">Underwriting Rate</h6>
 							<!-- <div class="avg"><span data-bind="text: kendo.toString(conv.apprRate(), 'n2')"></span ><span>%</span></div> -->
-							<div class="col-md-12">
-								<center>
-		                            <div class="col-md-4"></div>
-		                            <table class="col-md-4 avg" style="margin-left: -7%;">
-		                            	<tr>
-		                            		<td style="text-align: right;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 0, 'conv')"></span></td>
-		                            		<td style="text-align: left;font-size: 30px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 1, 'conv')"></span></td>
-		                            	</tr>
-		                            </table> 
-		                             <div class="col-md-4"></div>     
-								</center>
-							</div>
-							<!-- <div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.compundrRate(), 'n2')"></span>%</div> -->
-							<div class="col-md-12">
-								<center id="conv" class="conve">
-		                            <div class="col-md-4"></div>
-		                            <table class="col-md-4">
-		                            	<tr>
-		                            		<td style="text-align: right;"><span  style="font-size: 18px;" id="conve" class="fa fa-caret-up"></span></td>
-		                            		<td style="text-align: right;"><span style="font-size: 15px;" data-bind="text: conv.setInfo(conv.compundrRate(), 0, 'conv')"></span></td>
-		                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: conv.setInfo(conv.compundrRate(), 1, 'conv')"></span></td>
-		                            	</tr>
-		                            </table> 
-		                             <div class="col-md-4"></div>     
-								</center>
-							</div>
+							<center>
+								<!-- <div class="col-md-12">
+									<center>
+			                            <div class="col-md-4"></div>
+			                            <table class="col-md-4 avg">
+			                            	<tr>
+			                            		<td style="text-align: right;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 0, 'conv')"></span></td>
+			                            		<td style="text-align: left;font-size: 30px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 1, 'conv')"></span></td>
+			                            	</tr>
+			                            </table> 
+			                             <div class="col-md-4"></div>     
+									</center>
+								</div>
+								<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.compundrRate(), 'n2')"></span>%</div>
+								<div class="col-md-12">
+									<div id="conv" class="conve">
+			                            <div class="col-md-4"></div>
+			                            <table class="col-md-4">
+			                            	<tr>
+			                            		<td style="text-align: right;"><span  style="font-size: 18px;" id="conve" class="fa fa-caret-up"></span></td>
+			                            		<td style="text-align: right;"><span style="font-size: 15px;" data-bind="text: conv.setInfo(conv.compundrRate(), 0, 'conv')"></span></td>
+			                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: conv.setInfo(conv.compundrRate(), 1, 'conv')"></small></td>
+			                            	</tr>
+			                            </table> 
+			                             <div class="col-md-4"></div>     
+									</>
+								</div> -->
+								<div>
+									<span style="text-align: right;font-size: 42px;font-weight: bold;" data-bind="text: conv.setInfo(conv.apprRate(), 0, '')"></span>
+			                        <small style="text-align: left;font-size: 25px;vertical-align: text-bottom;font-weight: bold;" data-bind="text: conv.setInfo(conv.apprRate(), 1, '')"></small>
+								</div>
+								<div class="conv" style="margin-top: -5%;">
+									<span id="conv" style="text-align: right;font-size: 18px;" id="conve" class="fa fa-caret-up"></span>
+			                        <span style="text-align: right;font-size: 15px;" data-bind="text: conv.setInfo(conv.compundrRate(), 0, 'conv')"></span>
+			                        <small style="margin-left: -1%;font-size: 12px;vertical-align: text-bottom" data-bind="text: conv.setInfo(conv.compundrRate(), 1, '')"></small>
+								</div>
+							</center>
 							<div id="rate"></div>
 							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
 								<!-- <div class="col-sm-6"> -->
@@ -334,35 +345,46 @@
 						</div>
 					</div>
 					<div class="col-sm-3 wl ">
-						<div class="panel panel-body dl material-ripple" style="height: 165px" id="appr">
+						<div class="panel panel-body dl material-ripple" style="height: 165px" >
 							<h6 class="tat-title tl">Approval Rate</h6>
 							<!-- <div class="avg"><span data-bind="text: kendo.toString(conv.apprRate(), 'n2')"></span ><span>%</span></div> -->
-							<div class="col-md-12">
-								<center>
-		                            <div class="col-md-4"></div>
-		                            <table class="col-md-4 avg" style="margin-left: -7%;">
-		                            	<tr>
-		                            		<td style="text-align: right;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 0, 'conv')"></span></td>
-		                            		<td style="text-align: left;font-size: 30px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 1, 'conv')"></span></td>
-		                            	</tr>
-		                            </table> 
-		                             <div class="col-md-4"></div>     
-								</center>
-							</div>
-							<!-- <div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.compapprRate(), 'n2')">30</span>%</div> -->
-							<div class="col-sm-12">
-								<center id="conv" class="conve">
-		                            <div class="col-md-4"></div>
-		                            <table class="col-md-4">
-		                            	<tr>
-		                            		<td style="text-align: right;"><span  style="font-size: 18px;" id="conve" class="fa fa-caret-up"></span></td>
-		                            		<td style="text-align: right;"><span style="font-size: 15px;" data-bind="text: conv.setInfo(conv.compapprRate(), 0, 'appr')"></span></td>
-		                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: conv.setInfo(conv.compapprRate(), 1, 'appr')"></small></td>
-		                            	</tr>
-		                            </table> 
-		                             <div class="col-md-4"></div>     
-								</center>
-							</div>
+							<center>
+								<!-- <div class="col-md-12">
+									<center>
+			                            <div class="col-md-4"></div>
+			                            <table class="col-md-4 avg" style="margin-left: -7%;">
+			                            	<tr>
+			                            		<td style="text-align: right;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 0, 'conv')"></span></td>
+			                            		<td style="text-align: left;font-size: 30px;"><span data-bind="text: conv.setInfo(conv.apprRate(), 1, 'conv')"></span></td>
+			                            	</tr>
+			                            </table> 
+			                             <div class="col-md-4"></div>     
+									</center>
+								</div>
+								<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.compapprRate(), 'n2')">30</span>%</div>
+								<div class="col-sm-12">
+									<center id="conv" class="conve">
+			                            <div class="col-md-4"></div>
+			                            <table class="col-md-4">
+			                            	<tr>
+			                            		<td style="text-align: right;"><span  style="font-size: 18px;" id="conve" class="fa fa-caret-up"></span></td>
+			                            		<td style="text-align: right;"><span style="font-size: 15px;" data-bind="text: conv.setInfo(conv.compapprRate(), 0, 'appr')"></span></td>
+			                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: conv.setInfo(conv.compapprRate(), 1, 'appr')"></small></td>
+			                            	</tr>
+			                            </table> 
+			                             <div class="col-md-4"></div>     
+									</center>
+								</div> -->
+								<div>
+									<span style="text-align: right;font-size: 42px;font-weight: bold;" data-bind="text: conv.setInfo(conv.apprRate(), 0, '')"></span>
+			                        <small style="text-align: left;font-size: 25px;vertical-align: text-bottom;font-weight: bold;" data-bind="text: conv.setInfo(conv.apprRate(), 1, '')"></small>
+								</div>
+								<div class="appr" style="margin-top: -5%;">
+									<span id="appr" style="text-align: right;font-size: 18px;" id="conve" class="fa fa-caret-up"></span>
+			                        <span style="text-align: right;font-size: 15px;" data-bind="text: conv.setInfo(conv.compapprRate(), 0, 'appr')"></span>
+			                        <small style="margin-left: -1%;font-size: 12px;vertical-align: text-bottom" data-bind="text: conv.setInfo(conv.compapprRate(), 1, '')"></small>
+								</div>
+							</center>
 							<div id="approval"></div>
 							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
 								<!-- <div class="col-sm-6"> -->
@@ -371,35 +393,46 @@
 						</div>
 					</div>
 					<div class="col-sm-3 wl ">
-						<div class="panel panel-body dl material-ripple" style="height: 165px" id="anal">
+						<div class="panel panel-body dl material-ripple" style="height: 165px">
 							<h6 class="tat-title tl">Analysis Rate</h6>
 							<!-- <div class="avg"><span data-bind="text: kendo.toString(conv.analRate(), 'n2')"></span ><span>%</span></div> -->
-							<div class="col-md-12">
-								<center>
-		                            <div class="col-md-4"></div>
-		                            <table class="col-md-4 avg" style="margin-left: -7%;">
-		                            	<tr>
-		                            		<td style="text-align: right;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.analRate(), 0, 'conv')"></span></td>
-		                            		<td style="text-align: left;font-size: 30px;"><span data-bind="text: conv.setInfo(conv.analRate(), 1, 'conv')"></span></td>
-		                            	</tr>
-		                            </table> 
-		                             <div class="col-md-4"></div>     
-								</center>
-							</div>
-							<!-- <div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.companalRate(), 'n2')">30</span>%</div> -->
-							<div class="col-sm-12">
-								<center id="conv" class="conve">
-		                            <div class="col-md-4"></div>
-		                            <table class="col-md-4">
-		                            	<tr>
-		                            		<td style="text-align: right;"><span  style="font-size: 18px;" id="conve" class="fa fa-caret-up"></span></td>
-		                            		<td style="text-align: right;"><span style="font-size: 15px;" data-bind="text: conv.setInfo(conv.companalRate(), 0, 'anal')"></span></td>
-		                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: conv.setInfo(conv.companalRate(), 1, 'anal')"></small></td>
-		                            	</tr>
-		                            </table> 
-		                             <div class="col-md-4"></div>     
-								</center>
-							</div>
+							<center>
+								<!-- <div class="col-md-12">
+									<center>
+			                            <div class="col-md-4"></div>
+			                            <table class="col-md-4 avg" style="margin-left: -7%;">
+			                            	<tr>
+			                            		<td style="text-align: right;font-size: 42px;"><span data-bind="text: conv.setInfo(conv.analRate(), 0, 'conv')"></span></td>
+			                            		<td style="text-align: left;font-size: 30px;"><span data-bind="text: conv.setInfo(conv.analRate(), 1, 'conv')"></span></td>
+			                            	</tr>
+			                            </table> 
+			                             <div class="col-md-4"></div>     
+									</center>
+								</div>
+								<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(conv.companalRate(), 'n2')">30</span>%</div>
+								<div class="col-sm-12">
+									<center id="conv" class="conve">
+			                            <div class="col-md-4"></div>
+			                            <table class="col-md-4">
+			                            	<tr>
+			                            		<td style="text-align: right;"><span  style="font-size: 18px;" id="conve" class="fa fa-caret-up"></span></td>
+			                            		<td style="text-align: right;"><span style="font-size: 15px;" data-bind="text: conv.setInfo(conv.companalRate(), 0, 'anal')"></span></td>
+			                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: conv.setInfo(conv.companalRate(), 1, 'anal')"></small></td>
+			                            	</tr>
+			                            </table> 
+			                             <div class="col-md-4"></div>     
+									</center>
+								</div> -->
+								<div>
+									<span style="text-align: right;font-size: 42px;font-weight: bold;" data-bind="text: conv.setInfo(conv.analRate(), 0, '')"></span>
+			                        <small style="text-align: left;font-size: 25px;vertical-align: text-bottom;font-weight: bold;" data-bind="text: conv.setInfo(conv.analRate(), 1, '')"></small>
+								</div>
+								<div class="anal" style="margin-top: -5%;">
+									<span id="anal" style="text-align: right;font-size: 18px;" id="conve" class="fa fa-caret-up"></span>
+			                        <span style="text-align: right;font-size: 15px;" data-bind="text: conv.setInfo(conv.companalRate(), 0, 'anal')"></span>
+			                        <small style="margin-left: -1%;font-size: 12px;vertical-align: text-bottom" data-bind="text: conv.setInfo(conv.companalRate(), 1, '')"></small>
+								</div>
+							</center>
 							<div id="analysis"></div>
 							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
 								<!-- <div class="col-sm-6"> -->

@@ -467,13 +467,13 @@ conv.loadFunnelChart = function(data){
     $("#ontext1").text("Pending Deals: "+data[0].pending_1)
     $("#ontext2").text("Pending Deals: "+data[0].pending_2)
 	$('#funnelChart').kendoChart({
-        // title: {
-        //     text: "Deals",
-        //     position: "top",
-        //     align: "center",
-        //     color: "black",
-        //     font:  "12px Arial,Helvetica,Sans-Serif",
-        // },
+        title: {
+            text: "Deals",
+            position: "top",
+            align: "center",
+            color: "black",
+            font:  "12px Arial,Helvetica,Sans-Serif",
+        },
         legend: {
             visible: false
         },
@@ -531,9 +531,9 @@ conv.loadFunnelChart = function(data){
     });
 
     setTimeout(function(){
-        var fun1 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(3) > path:nth-child(1)").offset().left
+        var fun1 = $("#funnelChart > svg > g > g:nth-child(5) > g > g:nth-child(3)").offset().left
         var top1 = $("#svg1").offset().top
-        var fun2 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(4) > path:nth-child(1)").offset().left
+        var fun2 = $("#funnelChart > svg > g > g:nth-child(5) > g > g:nth-child(4)").offset().left
         var top2 = $("#svg2").offset().top
         $('#svg1').offset({top: top1, left: fun1 - 195})
         $('#svg2').offset({top: top2, left: fun2 - 195})
@@ -886,13 +886,13 @@ $(function () {
         var infilter = $("#infilter");
         if(infilter.is(":visible") == true){
             setTimeout(function(){
-                var fun1 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(3) > path:nth-child(1)").offset().left
+                var fun1 = $("#funnelChart > svg > g > g:nth-child(5) > g > g:nth-child(3)").offset().left
                 var top1 = $("#svg1").offset().top
-                var fun2 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(4) > path:nth-child(1)").offset().left
+                var fun2 = $("#funnelChart > svg > g > g:nth-child(5) > g > g:nth-child(4)").offset().left
                 var top2 = $("#svg2").offset().top
                 $('#svg1').offset({top: top1, left: fun1 - 195})
                 $('#svg2').offset({top: top2, left: fun2 - 195})
-            }, 500);
+            }, 500)
             $('#funnelChart').data("kendoChart").refresh()
             $('#chartContainer').data("kendoChart").refresh()
             // $('#tatgoals').data("kendoRadialGauge").refresh()
@@ -902,9 +902,9 @@ $(function () {
         }else{
             // $(".funpan").css("margin-left", "3px")
             setTimeout(function(){
-                var fun1 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(3) > path:nth-child(1)").offset().left
+                var fun1 = $("#funnelChart > svg > g > g:nth-child(5) > g > g:nth-child(3)").offset().left
                 var top1 = $("#svg1").offset().top
-                var fun2 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(4) > path:nth-child(1)").offset().left
+                var fun2 = $("#funnelChart > svg > g > g:nth-child(5) > g > g:nth-child(4)").offset().left
                 var top2 = $("#svg2").offset().top
                 $('#svg1').offset({top: top1, left: fun1 - 195})
                 $('#svg2').offset({top: top2, left: fun2 - 195})

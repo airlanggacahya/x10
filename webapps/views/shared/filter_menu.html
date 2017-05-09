@@ -185,22 +185,6 @@
 </style>
 <div class="col-md-12 sidebar-filter">
 <ul class="onli">
-    <!-- <li class="lilabel">Customer ID | Name</li>
-    <li><select name="page"  data-bind="kendoDropDownList: {data:filter().CustomerSearchList, value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
-     <li class="lilabel">Deal Number</li>
-    <li><select name="page" id="role"  data-bind="kendoDropDownList: {data:filter().DealNumberSearchList, value:filter().DealNumberSearchVal , optionLabel: 'Select One' , filter:'contains'}"></select></li>
-     <li class="lilabel">Relationship Manager</li>
-    <li><select name="page"  data-bind="kendoDropDownList: { dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
-     <li class="lilabel">Location</li>
-    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
-     <li class="lilabel">Branch</li>
-    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
-     <li class="lilabel">Customer Location</li>
-    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
-     <li class="lilabel">Turnover</li>
-    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li>
-     <li class="lilabel">Time Period</li>
-    <li><select name="page"  data-bind="kendoDropDownList: { value:filter().CustomerSearchVal, dataValueField: 'customer_id', dataTextField: 'customer_name', optionLabel: 'Select One', filter:'contains'}" ></select></li> -->
     <li>
       <div class="col-md-12" style="margin-top: 10px">
         <span class="col-md-6" id="all" style="margin-left: -16px;cursor:pointer;color:#eb8131;"><h5>Show All</h5></span>
@@ -209,7 +193,7 @@
     </li>
     <li  data-bind="visible: dash.TimePeriodVisible">
       <div class="panel show" style="background-color: #202935;">
-        <div class="col-md-12 cont" style="margin-bottom: 6%;">
+        <div class="col-md-12 cont" style="margin-bottom: 0px;">
           <div class="form-group fg" data-bind="visible: dash.TimePeriodVisible" id="onfg">
             <label class="cnt">Time Period</label>
             <div>
@@ -242,12 +226,11 @@
             </div>
           </div>
           <hr style="border-top: 1px solid #1586f0;"/>
-          <br/>
         </div>
       </div>
     </li>
     <li data-bind="visible: (dash.RegionShowMe() || dash.BranchShowMe())">
-      <div type="button" href="javascript:void(0)" class="fortitle toggle col-md-12"  style="background-color: #202935;color: #1586f0; margin-top: -35px;"><h5>Location Filters <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
+      <div type="button" href="javascript:void(0)" class="fortitle toggle col-md-12"  style="background-color: #202935;color: #1586f0;"><h5>Location Filters <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
       <div class="panel show" id="acc0" style="background-color: #202935;color: white;">
         <div class="col-md-12 cont">
           <div class="form-group fg" data-bind="visible: dash.RegionVisible">
@@ -318,7 +301,7 @@
         </div>
       </div>
     </li>
-    <li data-bind="visible: true">
+    <li data-bind="visible: dash.ClientTypeVisible() || dash.ClientTurnoverVisible() || dash.CustomerVisible() || dash.DealNoVisible()">
       <div type="button" href="javascript:void(0)" class="fortitle toggle col-md-12" style="background-color: #202935;color: #1586f0;margin-top: 0px;"><h5>Client Filters <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
       <div class="panel show" id="acc2" style="display: block;background-color: #202935;color: white;">
         <div class="col-md-12 cont">
@@ -386,7 +369,7 @@
         </div>
       </div>
     </li>
-     <li data-bind="visible: true">
+     <li data-bind="visible: dash.DealStatusVisible() || dash.IRVisible() || dash.CAVisible() || dash.RMVisible()">
       <div type="button" href="javascript:void(0)" class="fortitle toggle col-md-12" style="background-color: #202935;color: #1586f0;margin-top: 0px;"><h5>Deal Filters <span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
       <div class="panel show" id="acc2" style="display: block;background-color: #202935;color: white;">
         <div class="col-md-12 cont">
@@ -484,14 +467,14 @@
         </div>
       </div>
     </li>
-<li data-bind="visible: true">
+    <li data-bind="visible: dash.TopFilterVisible() || dash.TopNumberVisible()">
       <div type="button" href="javascript:void(0)" class="fortitle toggle col-md-12" style="background-color: #202935;color: #1586f0;margin-top: 0px;"><h5>Top Deals<span style="float: right" class="ic fa fa-chevron-down"></span></h5></div>
       <div class="panel show" id="acc2" style="display: block;background-color: #202935;color: white;">
         <div class="col-md-12 cont">
           <div class="form-group fg" data-bind="visible: dash.TopFilterVisible">
             <label class="cnt">Sort By</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.DealStatusShowMe.bind(dash, false)"></span>
+              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.TopFilterShowMe.bind(dash, false)"></span>
               <select style="width: 84%;"  data-bind="
                 kendoDropDownList: {
                   data: dash.TopFilterDS,
@@ -502,10 +485,9 @@
                 }" ></select>
             </div>
           </div>
-          <div class="form-group fg" data-bind="visible: dash.TopNumberVisible">
+          <div class="form-group fg" data-bind="visible: dash.TopFilterVisible() && dash.TopNumberVisible()">
             <label class="cnt">Select Top</label>
             <div>
-              <span style="color: #1586f0;" class="fa fa-times cl filter-close cl3 pull-right" aria-hidden="true" data-bind="click: dash.DealStatusShowMe.bind(dash, false)"></span>
               <input style="width: 84%;"  id="dashFilterTopNumber" data-bind="
                 kendoAutoComplete: {
                   data: dash.TopNumberDS,

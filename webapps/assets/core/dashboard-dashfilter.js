@@ -629,37 +629,14 @@ var CreateDashFilter = function() {
         dash.SaveFilter()
     }
 
-    // dash.accordionSideBar = function(){
-    //     $(".toggle").click(function(e){
-    //         e.preventDefault();
-    //         // alert("masuk")
-    //         var $this = $(this);
-    //         if($this.next().hasClass('show')){
-    //             $this.next().removeClass('show');
-    //             $this.next().slideUp(350);
-    //             $this.find("h5>").removeClass("fa-chevron-down");
-    //             $this.find("h5>").addClass("fa-chevron-up");
-    //         }else{
-    //             $this.next().removeClass('hide');
-    //             $this.next().slideDown(350);
-    //             $this.next().addClass("show");
-    //             $this.find("h5>").addClass("fa-chevron-down");
-    //             $this.find("h5>").removeClass("fa-chevron-up");
-    //         }
-    //     })
-
-    //     $("#all").click(function(e){
-    //         $(".toggle").next().removeClass('hide');
-    //         $(".toggle").next().slideDown(350).addClass("show");
-    //         $(".toggle").find("h5>").addClass("fa-chevron-down");
-    //         $(".toggle").find("h5>").removeClass("fa-chevron-up");
-            
-    //         $(".form-group").show()
-    //     })
-    // }
-
-    dash.ResetFilter = function(){
+    dash.ResetShowAll = function() {
         _.each(dash.FilterList, function (val) {		
+            dash[val + "ShowMe"](true)
+        })
+    }
+
+    dash.ResetFilter = function() {
+        _.each(dash.FilterList, function (val) {
             dash[val + "ShowMe"](true)
             dash[val + "Val"](dash[val + "Default"])
         })

@@ -538,7 +538,7 @@ ttrack.loadHeaderBox = function () {
 }
 
 ttrack.csstrack = function(number, section){
-    console.log("masuk")
+    // console.log("masuk")
     var infilter = $("#infilter")
     if(infilter.is(":visible") == true){
         if(number != 0){

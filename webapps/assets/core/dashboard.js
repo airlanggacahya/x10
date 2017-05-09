@@ -80,13 +80,10 @@ dash.accordionSideBar = function(){
 	})
 
 	$("#all").click(function(e){
-		// alert("masuk")
-		$(".toggle").next().removeClass('hide');
-		$(".toggle").next().slideDown(350).addClass("show");
-		$(".toggle").find("h5>").addClass("fa-chevron-down");
-		$(".toggle").find("h5>").removeClass("fa-chevron-up");
-		
-		$(".form-group").show()
+		dash.ResetShowAll()
+		$(".ic.fa-chevron-up").each(function (id, el) {
+			$(el).parent().parent().click()
+		})
 	})
 }
 

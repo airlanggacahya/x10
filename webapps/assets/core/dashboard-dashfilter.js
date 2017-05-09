@@ -661,7 +661,7 @@ var CreateDashFilter = function() {
     dash.ResetFilter = function(){
         _.each(dash.FilterList, function (val) {		
             dash[val + "ShowMe"](true)
-            dash[val + "Val"]("")
+            dash[val + "Val"](dash[val + "Default"])
         })
     }
 

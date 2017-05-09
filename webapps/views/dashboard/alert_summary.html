@@ -75,7 +75,7 @@
         margin-left: 14px;
         margin-right: 11px;
         margin-bottom: 7px !important;
-        margin-left: 5px;
+        margin-left: -6px;
 
     }
     .rad-down{
@@ -88,7 +88,7 @@
         margin-left: 14px;
         margin-right: 11px;
         margin-bottom: 7px !important;
-        margin-left: 5px;
+        margin-left: -6px;
     }
     .panechart{
         margin-top: 0px !important;
@@ -141,6 +141,10 @@
         padding: 0;
         /*margin-top: 1.5px !important;*/
     }
+
+    .colup{
+        margin-left: 8%;
+    }
 </style>
 
 <div class="row">
@@ -158,11 +162,11 @@
                         <div class="col-md-3 panel-wrapper">
                             <div class="panel-body panel">
                                 <h6>Approved Deals</h6>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
                                 </div>
-                                <div class="col-md-8">
-                                    <center>
+                                <div class="col-md-10">
+                                    <center class="colup">
                                         <div class="rest" data-bind="text: alertSum.currentData('countApproved')"></div>
                                         <span data-bind="attr: {class: alertSum.colorClass('countApproved')}">
                                             <div class="col-md-12" style="width: 100%;">
@@ -174,7 +178,7 @@
                                                 <span class="col-md-6 countApproved setnumch">
                                                     <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countApproved', 1), attr:{'id':'countApproved1'}"></small>
                                                 </span> -->
-                                                <div class="col-md-4"></div>
+                                                <!-- <div class="col-md-4"></div>
                                                 <table class="col-md-4">
                                                     <tr>
                                                         <td><span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('countApproved')}"></span></td>
@@ -182,7 +186,10 @@
                                                         <td style="text-align: left;"><small style="font-size: 12px;"  data-bind="text: alertSum.seriesChangePercent('countApproved', 1)"></small></td>
                                                     </tr>
                                                 </table> 
-                                                <div class="col-md-4"></div>
+                                                <div class="col-md-4"></div> -->
+                                                <span  style="font-size: 18px;" id="countApproved" data-bind="attr: {class: alertSum.seriesChangeFa('countApproved')}"></span>
+                                                <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countApproved', 0)"></span>
+                                                <small style="text-align: left;font-size: 12px;vertical-align: text-bottom;"  data-bind="text: alertSum.seriesChangePercent('countApproved', 1)"></small>
                                             </div>
     									</span>
                                     </center>
@@ -195,24 +202,31 @@
                         <div class="col-md-3 panel-wrapper">
                             <div class="panel-body panel">
                                 <h6>Approved Amount</h6>
-                                <div class="col-md-4">
-                                    <div class="rad-up" style="margin-left: 1%;"><i class="fa fa-thumbs-o-up thumb-up" style="font-size: 25px;"></i></div>
-                                </div>
-                                <div class="col-md-8 text-center">
-									<div class="rest" data-bind="text: alertSum.currentData('amountApproved')"></div>
-                                    <span data-bind="attr: {class: alertSum.colorClass('amountApproved')}">
-                                        <div class="col-md-12 colhed" id="amountApproved" style="width: 100%;">
-                                            <div class="col-md-4"></div>
-                                            <table class="col-md-4">
-                                                <tr>
-                                                    <td><span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('amountApproved')}"></span></td>
-                                                    <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountApproved', 0)"></span></td>
-                                                    <td style="text-align: left;"><small style="font-size: 12px;"  data-bind="text: alertSum.seriesChangePercent('amountApproved', 1), attr:{'id':'amountApproved1'}"></small></td>
-                                                </tr>
-                                            </table> 
-                                            <div class="col-md-4"></div>
+                                <div class="col-md-2">
+                                    <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
+                                </div>  
+                                <div class="col-md-10">
+                                    <center class="colup">
+                                        <div  style="margin-right: -12%;">
+    									<div class="rest" data-bind="text: alertSum.currentData('amountApproved')"></div>
+                                        <span data-bind="attr: {class: alertSum.colorClass('amountApproved')}">
+                                            <div class="col-md-12" style="width: 100%;">
+                                                <!-- <div class="col-md-4"></div>
+                                                <table class="col-md-4">
+                                                    <tr>
+                                                        <td><span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('amountApproved')}"></span></td>
+                                                        <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountApproved', 0)"></span></td>
+                                                        <td style="text-align: left;"><small style="font-size: 12px;"  data-bind="text: alertSum.seriesChangePercent('amountApproved', 1), attr:{'id':'amountApproved1'}"></small></td>
+                                                    </tr>
+                                                </table> 
+                                                <div class="col-md-4"></div> -->
+                                                <span  style="font-size: 18px;" id="amountApproved" data-bind="attr: {class: alertSum.seriesChangeFa('amountApproved')}"></span>
+                                                <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountApproved', 0)"></span>
+                                                <small style="text-align: left;font-size: 12px;vertical-align: text-bottom;"  data-bind="text: alertSum.seriesChangePercent('amountApproved', 1), attr:{'id':'amountApproved1'}"></small>
+                                            </div>
+    									</span>
                                         </div>
-									</span>
+                                    </center>
                                 </div>
                                 <div class="col-sm-12" style="margin-bottom: 10px">
                                     <div id="acc3"></div>
@@ -222,32 +236,39 @@
                         <div class="col-md-3 panel-wrapper">
                             <div class="panel-body panel">
                                 <h6>Rejected Deals</h6>
-                                <div class="col-md-4">
-                                    <div class="rad-down" style="margin-left: 1%;"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
+                                <div class="col-md-2">
+                                    <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
                                 </div>
-                                <div class="col-md-8 text-center">
-									<div class="rest" data-bind="text: alertSum.currentData('countRejected')"></div>
-                                    <span data-bind="attr: {class: alertSum.colorClass('countRejected')}">
-                                        <div class="col-md-12" style="width: 100%;">
-                                           <!--  <span class="col-md-6 setnumhed">
-                                                <i id="countRejected" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
-                                                <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 0)"></span>
-                                            </span>
-                                            <span class="col-md-6 countRejected setnumch">
-                                                <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 1), attr:{'id':'countRejected1'}"></small>
-                                            </span> -->
+                                <div class="col-md-10">
+                                    <center class="colup">
+                                        <div style="margin-right: -12px;">
+        									<div class="rest" data-bind="text: alertSum.currentData('countRejected')"></div>
+                                            <span data-bind="attr: {class: alertSum.colorClass('countRejected')}">
+                                                <div class="col-md-12" style="width: 100%;">
+                                                   <!--  <span class="col-md-6 setnumhed">
+                                                        <i id="countRejected" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></i>
+                                                        <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 0)"></span>
+                                                    </span>
+                                                    <span class="col-md-6 countRejected setnumch">
+                                                        <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 1), attr:{'id':'countRejected1'}"></small>
+                                                    </span> -->
 
-                                            <div class="col-md-4"></div>
-                                            <table class="col-md-4">
-                                                <tr>
-                                                    <td><span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></span></td>
-                                                    <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 0)"></span></td>
-                                                    <td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 1), attr:{'id':'countRejected1'}"></small></td>
-                                                </tr>
-                                            </table> 
-                                            <div class="col-md-4"></div>
+                                                    <!-- <div class="col-md-4"></div>
+                                                    <table class="col-md-4">
+                                                        <tr>
+                                                            <td><span  style="font-size: 18px;" id="countRejected" data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></span></td>
+                                                            <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 0)"></span></td>
+                                                            <td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 1), attr:{'id':'countRejected1'}"></small></td>
+                                                        </tr>
+                                                    </table> 
+                                                    <div class="col-md-4"></div> -->
+                                                    <span  style="font-size: 18px;" id="countRejected" data-bind="attr: {class: alertSum.seriesChangeFa('countRejected')}"></span>
+                                                    <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('countRejected', 0)"></span>
+                                                    <small style="text-align: left;font-size: 12px;vertical-align: text-bottom;"  data-bind="text: alertSum.seriesChangePercent('countRejected', 1), attr:{'id':'countRejected1'}"></small>
+                                                </div>
+        									</span>
                                         </div>
-									</span>
+                                    </center>
                                 </div>
                                 <div class="col-sm-12" style="margin-bottom: 10px">
                                     <div id="onac2"></div>
@@ -257,32 +278,39 @@
                         <div class="col-md-3 panel-wrapper">
                             <div class="panel-body panel">
                                 <h6>Rejected Amount</h6>
-                                <div class="col-md-4">
-                                    <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
+                                <div class="col-md-2">
+                                    <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down"></i></div>
                                 </div>
-                                <div class="col-md-8 text-center">
-									<div class="rest" data-bind="text: alertSum.currentData('amountRejected')"></div>
-                                    <span data-bind="attr: {class: alertSum.colorClass('amountRejected')}">
-                                        <div class="col-md-12" id="amountRejected" style="width: 100%;">
-                                            <!-- <span class="col-md-6 setnumhed">
-                                                <i id="countRejected" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></i>
-                                                <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 0)"></span>
-                                            </span>
-                                            <span class="col-md-6 amountRejected setnumch">
-                                                <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 1), attr:{'id':'amountRejected1'}"></small>
-                                            </span> -->
+                                <div class="col-md-10">
+                                    <center class="colup">
+                                    <div style="margin-right: -12%;">
+    									<div class="rest" data-bind="text: alertSum.currentData('amountRejected')"></div>
+                                        <span data-bind="attr: {class: alertSum.colorClass('amountRejected')}">
+                                            <div class="col-md-12" style="width: 100%;">
+                                                <!-- <span class="col-md-6 setnumhed">
+                                                    <i id="countRejected" style="font-size: 18px;" data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></i>
+                                                    <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 0)"></span>
+                                                </span>
+                                                <span class="col-md-6 amountRejected setnumch">
+                                                    <small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 1), attr:{'id':'amountRejected1'}"></small>
+                                                </span> -->
 
-                                            <div class="col-md-4"></div>
-                                            <table class="col-md-4">
-                                                <tr>
-                                                    <td><span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></span></td>
-                                                    <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 0)"></span></td>
-                                                    <td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 1), attr:{'id':'amountRejected1'}"></small></td>
-                                                </tr>
-                                            </table> 
-                                            <div class="col-md-4"></div>
-                                        </div>
-									</span>
+                                               <!--  <div class="col-md-4"></div>
+                                                <table class="col-md-4">
+                                                    <tr>
+                                                        <td><span  style="font-size: 18px;" id="conve" id="amountRejected" data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></span></td>
+                                                        <td><span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 0)"></span></td>
+                                                        <td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 1), attr:{'id':'amountRejected1'}"></small></td>
+                                                    </tr>
+                                                </table> 
+                                                <div class="col-md-4"></div> -->
+                                                <span  style="font-size: 18px;" id="conve" data-bind="attr: {class: alertSum.seriesChangeFa('amountRejected')}"></span>
+                                                <span style="font-size: 15px;" data-bind="text: alertSum.seriesChangePercent('amountRejected', 0)"></span>
+                                                <small style="text-align: left;font-size: 12px;vertical-align: text-bottom;"  data-bind="text: alertSum.seriesChangePercent('amountRejected', 1), attr:{'id':'amountRejected1'}"></small>
+                                            </div>
+    									</span>
+                                    </div>
+                                    </center>
                                 </div>
                                 <div class="col-sm-12" style="margin-bottom: 10px">
                                     <div id="acc4"></div>

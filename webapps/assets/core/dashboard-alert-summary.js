@@ -267,6 +267,7 @@ alertSum.trendDataConfig = [
 alertSum.trendDataMonths = ko.observableArray([]);
 
 alertSum.summary2fa = function (values) {
+    console.log("--------------->>>>>>", values)
     if (values == 0)
         return "";
     if (values < 0)

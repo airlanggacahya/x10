@@ -869,15 +869,15 @@ $(function () {
     $(window).bind("resize", function() {
         $('#funnelChart').data("kendoChart").refresh()
         setTimeout(function(){
-            var fun1 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(3) > path:nth-child(1)").offset().left
+            var fun1 = $("#funnelChart > svg > g > g:nth-child(5) > g > g:nth-child(3)").offset().left
             var top1 = $("#svg1").offset().top
-            var fun2 = $("#funnelChart > svg > g > g:nth-child(4) > g > g:nth-child(4) > path:nth-child(1)").offset().left
+            var fun2 = $("#funnelChart > svg > g > g:nth-child(5) > g > g:nth-child(4)").offset().left
             var top2 = $("#svg2").offset().top
             $('#svg1').offset({top: top1, left: fun1 - 195})
             $('#svg2').offset({top: top2, left: fun2 - 195})
         }, 500)
         $('#chartContainer').data("kendoChart").refresh()
-        $('#tatgoals').data("kendoRadialGauge").refresh()
+        // $('#tatgoals').data("kendoRadialGauge").refresh()
         $('#analysis').data("kendoChart").refresh()
         $('#approval').data("kendoChart").refresh()
         $('#rate').data("kendoChart").refresh()

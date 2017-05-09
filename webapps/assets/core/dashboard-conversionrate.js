@@ -811,7 +811,50 @@ conv.titleText = ko.computed(function () {
 })
 
 conv.setInfo = function(number, num, el){
+    console.log("--------------->>>", el)
+    if(el !== ''){
+        if(number > 0){
+            if($("#"+el).hasClass("fa-caret-down") == true){
+                $("#"+el)
+                    .removeClass("fa-caret-down")
+                    .addClass("fa-caret-up")
+                    .css("color", "green");
+
+                $("."+el).css("color", "green")
+            }else if($("#"+el).hasClass("fa-caret-down") == false){
+                $("#"+el)
+                    .addClass("fa-caret-up")
+                    .css("color", "green");
+
+                $("."+el).css("color", "green")
+            }
+        }else if(number < 0){
+            if($("#"+el).hasClass("fa-caret-up") == true){
+                $("#"+el)
+                    .removeClass("fa-caret-up")
+                    .addClass("fa-caret-down")
+                    .css("color", "red");
+
+                $("."+el).css("color", "red")
+            }else if($("#"+el).hasClass("fa-caret-up") == false){
+                $("#"+el)
+                    .addClass("fa-caret-down")
+                    .css("color", "red");
+
+                $("."+el).css("color", "red")
+            }
+        }else if(number == 0){
+            console.log("----- masuk", number >0)
+            $("#"+el)
+                .removeClass("fa-caret-up")
+                .removeClass("fa-caret-down")
+                .css("color", "grey");
+
+            $("."+el).css("color", "grey")
+        }
+    }
     return ko.computed(function(){
+        
         return dash.stringArr(number, num)
     })
 }

@@ -486,10 +486,30 @@ turn.lastMonth = function(id, field, data){
 			$("#"+id)
 				.addClass('fa-caret-up')
 				.css("color", "green");
-		}else{
+			$("."+id)
+				.css("color", "green");
+
+			$("."+id+">td").eq(1)
+				.css("padding-left", "0px");
+		}else if(data[0].avgdays < data[1].avgdays){
 			$("#"+id)
 				.addClass('fa-caret-down')
-				.css("color", "red")
+				.css("color", "red");
+			$("."+id)
+				.css("color", "red");
+
+			$("."+id+">td").eq(1)
+				.css("padding-left", "0px");
+		}else{
+			$("#"+id)
+				.removeClass('fa-caret-down')
+				.removeClass('fa-caret-up');
+			$("."+id+">td").eq(1)
+				.css("padding-left", "18%")
+				
+			$("."+id)
+				.css("color", "grey")
+				.css("text-align", "center")
 		}
 		var days = data[0].avgdays - data[1].avgdays
 		return days
@@ -498,10 +518,14 @@ turn.lastMonth = function(id, field, data){
 			$("#"+id)
 				.addClass('fa-caret-up')
 				.css("color", "green");
+			$("."+id)
+				.css("color", "green");
 		}else{
 			$("#"+id)
 				.addClass('fa-caret-down')
-				.css("color", "red")
+				.css("color", "red");
+			$("."+id)
+				.css("color", "red");
 		}
 		var deals = data[0].dealcount - data[1].dealcount
 		return deals

@@ -897,7 +897,12 @@ func (c *DashboardController) SaveFilter(k *knot.WebContext) interface{} {
 	k.GetPayload(&payload)
 
 	// Force id to prevent cross user editing
-	payload.Id = k.Session("username").(string)
+	username := k.Session("username")
+	if username == nil {
+		return c.SetResultInfo(true, "Please relogin", nil)
+	}
+
+	payload.Id = username.(string)
 
 	if err := c.Ctx.Save(&payload); err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)

@@ -564,7 +564,7 @@ h6 {
                                         <label>View Across</label>
                                     </td>
                                     <td>
-                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value'}"></select>
+                                        <select style="width:110% !important;" data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value'}"></select>
                                     </td>
                                 </tr>
                             </table>
@@ -575,14 +575,14 @@ h6 {
                 </div>
                 <div class="col-md-4">
                     <div class="panel panel-body aol trend">
-                        <div class="chart-options compare-space">
+                        <div class="chart-options compare-space" id="onrate">
                             <table>
                                 <tr>
                                     <td>
-                                        <label>View</label>
+                                        <label id="view">View</label>
                                     </td>
                                     <td>
-                                        <select data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenuDistribution, dataTextField: 'text', dataValueField: 'value'}"></select>
+                                        <select style="width: 100%;" data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenuDistribution, dataTextField: 'text', dataValueField: 'value'}"></select>
                                     </td>
                                 </tr>
                             </table>

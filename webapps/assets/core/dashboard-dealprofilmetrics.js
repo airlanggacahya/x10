@@ -55,8 +55,8 @@ pm.scatterWidth = ko.observable(0);
 
 // Hook to filter value changes
 dash.FilterValue.subscribe(function(val) {
-    pm.ValueDataPeriod("period");
-    pm.ValueDataMenuDistribution("amount");
+    // pm.ValueDataPeriod("period");
+    // pm.ValueDataMenuDistribution("amount");
     pm.init();
 });
 
@@ -1417,12 +1417,16 @@ $(function() {
     $(".sidebar-toggle").click(function(){
         var infilter = $("#infilter")
         if(infilter.is(":visible") == true){
+            $("#view").hide();
+            $("#onrate").css("top", "5px");
             $('#chartContainer').data("kendoChart").refresh();
             // $('#tatgoals').data("kendoRadialGauge").refresh()
             $('#distribution').data("kendoChart").refresh();
             pm.loadChaterChart()
             $(".tabl").css("width", "98.5%");
         }else{
+            $("#view").show();
+            $("#onrate").css("top", "3px");
             $('#chartContainer').data("kendoChart").refresh()
             // $('#tatgoals').data("kendoRadialGauge").refresh()
             $('#distribution').data("kendoChart").refresh()

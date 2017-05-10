@@ -1,7 +1,7 @@
 	{{template "dataaccess.html" .}}
-	<script>document.write('<script src="/static/core/dashboard-dashfilter.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
-	<script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
-	<script>document.write('<script src="/static/core/turnaroundtime.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+	<script>document.write('<script src="/static/core/dashboard-dashfilter.js?nochace='+ Date.now() + '"\><\/script>')</script>
+	<script>document.write('<script src="/static/core/dashboard.js?nochace='+ Date.now() + '"\><\/script>')</script>
+	<script>document.write('<script src="/static/core/turnaroundtime.js?nochace='+ Date.now() + '"\><\/script>')</script>
 	<!-- <script type="text/javascript" src="/static/material/dist/ripple.min.js"></script> -->
 	{{template "leftfilter.html"}}
 	{{template "compare_contrast.html"}}

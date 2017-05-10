@@ -46,6 +46,10 @@ pm.xfl3interestwidth = ko.observable(0);
 pm.xfl4interestwidth = ko.observable(0);
 pm.xfl5interestwidth = ko.observable(0);
 
+pm.xflcount= ko.observable(false) 
+pm.xflamount= ko.observable(false)
+pm.xflinterest = ko.observable(false)
+
 pm.distributionData = ko.observableArray([]);
 pm.scatterWidth = ko.observable(0);
 
@@ -846,7 +850,7 @@ pm.creditScoreCreator = function(creditscore) {
 
 pm.dealCountAmountInterest = function(data) {
     pm.reset();
-    
+    console.log("----------->>>>", data.xfl)
     if (!$.isEmptyObject(data.topwidget)){
         pm.dealCount(data.topwidget.count);
         pm.dealAmount(kendo.toString(data.topwidget.amount, "n"));
@@ -901,6 +905,24 @@ pm.dealCountAmountInterest = function(data) {
                 break;
         }
     });
+
+    if(pm.xfl1count() == 0 && pm.xfl2count() == 0 && pm.xfl3count() == 0 && pm.xfl4count() == 0){
+        pm.xflcount(true)
+    }else{
+        pm.xflcount(false)
+    }
+
+    if(pm.xfl1amount() == 0 && pm.xfl2amount() == 0 && pm.xfl3amount() == 0 && pm.xfl4amount() == 0){
+        pm.xflamount(true)
+    }else{
+        pm.xflamount(false)
+    }
+
+    if(pm.xfl1interest() == 0 && pm.xfl2interest() == 0 && pm.xfl3interest() == 0 && pm.xfl4interest() == 0){
+        pm.xflinterest(true)
+    }else{
+        pm.xflinterest(false)
+    }
 }
 
 pm.reset = function() {

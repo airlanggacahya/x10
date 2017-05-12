@@ -145,10 +145,16 @@
     .colup{
         margin-left: 8%;
     }
+
+    @media screen and (max-width: 1320px) {
+        .icon-thumbs {
+            display: none;
+        }
+    }
 </style>
 
 <div class="row">
-    <div class="col-md-12 gap-from-menu border-dashboard-bottom" >
+    <div class="col-md-12 gap-from-menu border-dashboard-bottom" style="padding-left: 0px; padding-right: 0px;">
         <div class="panel pn clean-border" style="border-bottom: 0px !important;background-color: #f0f3f4;">
             <div class="panel-heading hd toggle1" style="padding-top: 0px">
                 <div type="button" class="col-md-12" >
@@ -162,7 +168,7 @@
                         <div class="col-md-3 panel-wrapper">
                             <div class="panel-body panel">
                                 <h6>Approved Deals</h6>
-                                <div class="col-md-2">
+                                <div class="col-md-2 icon-thumbs">
                                     <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
                                 </div>
                                 <div class="col-md-10">
@@ -202,7 +208,7 @@
                         <div class="col-md-3 panel-wrapper">
                             <div class="panel-body panel">
                                 <h6>Approved Amount</h6>
-                                <div class="col-md-2">
+                                <div class="col-md-2 icon-thumbs">
                                     <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
                                 </div>  
                                 <div class="col-md-10">
@@ -236,7 +242,7 @@
                         <div class="col-md-3 panel-wrapper">
                             <div class="panel-body panel">
                                 <h6>Rejected Deals</h6>
-                                <div class="col-md-2">
+                                <div class="col-md-2 icon-thumbs">
                                     <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
                                 </div>
                                 <div class="col-md-10">
@@ -278,7 +284,7 @@
                         <div class="col-md-3 panel-wrapper">
                             <div class="panel-body panel">
                                 <h6>Rejected Amount</h6>
-                                <div class="col-md-2">
+                                <div class="col-md-2 icon-thumbs">
                                     <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down"></i></div>
                                 </div>
                                 <div class="col-md-10">

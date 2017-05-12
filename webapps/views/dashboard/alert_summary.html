@@ -128,7 +128,7 @@
 	}
 
 	.bd .col-md-3.panel-wrapper .panel {
-		min-height: 120px;
+		min-height: 192px;
 	}
 
     .setnumhed{
@@ -146,9 +146,14 @@
         margin-left: 8%;
     }
 
-    @media screen and (max-width: 1320px) {
+    @media screen and (max-width: 1270px) {
         .icon-thumbs {
             display: none;
+        }
+    }
+    @media screen and (min-width: 1270px) and (max-width: 1365px) {
+        .quick-info-number {
+            padding-right: 0px;
         }
     }
 </style>
@@ -171,7 +176,7 @@
                                 <div class="col-md-2 icon-thumbs">
                                     <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
                                 </div>
-                                <div class="col-md-10">
+                                <div class="col-md-10 quick-info-number">
                                     <center class="colup">
                                         <div class="rest" data-bind="text: alertSum.currentData('countApproved')"></div>
                                         <span data-bind="attr: {class: alertSum.colorClass('countApproved')}">
@@ -211,7 +216,7 @@
                                 <div class="col-md-2 icon-thumbs">
                                     <div class="rad-up"><i class="fa fa-thumbs-o-up thumb-up"></i></div>
                                 </div>  
-                                <div class="col-md-10">
+                                <div class="col-md-10 quick-info-number">
                                     <center class="colup">
                                         <div  style="margin-right: -12%;">
     									<div class="rest" data-bind="text: alertSum.currentData('amountApproved')"></div>
@@ -245,7 +250,7 @@
                                 <div class="col-md-2 icon-thumbs">
                                     <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down" style="font-size: 25px;"></i></div>
                                 </div>
-                                <div class="col-md-10">
+                                <div class="col-md-10 quick-info-number">
                                     <center class="colup">
                                         <div style="margin-right: -12px;">
         									<div class="rest" data-bind="text: alertSum.currentData('countRejected')"></div>
@@ -287,7 +292,7 @@
                                 <div class="col-md-2 icon-thumbs">
                                     <div class="rad-down"><i class="fa fa-thumbs-o-down thumb-down"></i></div>
                                 </div>
-                                <div class="col-md-10">
+                                <div class="col-md-10 quick-info-number">
                                     <center class="colup">
                                     <div style="margin-right: -12%;">
     									<div class="rest" data-bind="text: alertSum.currentData('amountRejected')"></div>

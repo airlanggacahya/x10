@@ -80,13 +80,10 @@ dash.accordionSideBar = function(){
 	})
 
 	$("#all").click(function(e){
-		// alert("masuk")
-		$(".toggle").next().removeClass('hide');
-		$(".toggle").next().slideDown(350).addClass("show");
-		$(".toggle").find("h5>").addClass("fa-chevron-down");
-		$(".toggle").find("h5>").removeClass("fa-chevron-up");
-		
-		$(".form-group").show()
+		dash.ResetShowAll()
+		$(".ic.fa-chevron-up").each(function (id, el) {
+			$(el).parent().parent().click()
+		})
 	})
 }
 
@@ -201,6 +198,26 @@ function onlyNumber(event) {
 	}
 
 	return isNumber;
+}
+
+dash.stringArr = function(number, num, section){
+	
+	srt = ''
+	idnum = kendo.toString(number, "n2")
+	strnum = idnum.toString();
+	if(strnum.indexOf(".") > -1){
+		inum = strnum.split(".")
+		if(num == 0){
+			srt = inum[0]
+		}else{
+
+			srt = "."+inum[1]+"%"
+		}
+		
+	}
+
+	return srt
+
 }
 
 $(function () {

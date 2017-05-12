@@ -54,6 +54,8 @@ func (c *DashboardController) ConversionRate(k *knot.WebContext) interface{} {
 		"shared/loading.html",
 		"shared/leftfilter.html",
 		"shared/filter_menu.html",
+
+		"dashboard/compare_contrast.html",
 	}
 
 	return DataAccess
@@ -895,7 +897,12 @@ func (c *DashboardController) SaveFilter(k *knot.WebContext) interface{} {
 	k.GetPayload(&payload)
 
 	// Force id to prevent cross user editing
-	payload.Id = k.Session("username").(string)
+	username := k.Session("username")
+	if username == nil {
+		return c.SetResultInfo(true, "Please relogin", nil)
+	}
+
+	payload.Id = username.(string)
 
 	if err := c.Ctx.Save(&payload); err != nil {
 		return c.SetResultInfo(true, err.Error(), nil)
@@ -2615,7 +2622,6 @@ func (c *DashboardController) metricTrendPeriodGrouping(results tk.Ms, tp TimePe
 	// tk.Println(tk.JsonString(results))
 	resultData := make([]tk.M, tp.PeriodCount)
 	resultDataWidget := tk.M{}
-	countMonthBefore := 0.0
 	for key := range resultData {
 		o := tk.M{}
 		o.Set("count", 0)
@@ -2625,7 +2631,7 @@ func (c *DashboardController) metricTrendPeriodGrouping(results tk.Ms, tp TimePe
 		resultData[key] = o
 	}
 
-	for key, v := range trendGroupByMonth {
+	for _, v := range trendGroupByMonth {
 		if len(v) == 0 {
 			continue
 		}
@@ -2649,24 +2655,32 @@ func (c *DashboardController) metricTrendPeriodGrouping(results tk.Ms, tp TimePe
 		}
 
 		resultData[o.GetInt("idx")] = o
-
-		if o.GetInt("idx") == 1 {
-			countMonthBefore = tk.ToFloat64(len(trendGroupByMonth[key]), 2, tk.RoundingAuto)
-		}
-		if o.GetInt("idx") == 0 {
-			count := tk.ToFloat64(len(trendGroupByMonth[key]), 2, tk.RoundingAuto)
-			resultDataWidget.Set("count", len(trendGroupByMonth[key]))
-			resultDataWidget.Set("avgCount", tk.Div(count-countMonthBefore, countMonthBefore))
-			resultDataWidget.Set("avgAmount", tk.Div(o.GetFloat64("amount")-countMonthBefore, countMonthBefore))
-			resultDataWidget.Set("avgInterest", tk.Div(o.GetFloat64("interest")-countMonthBefore, countMonthBefore))
-			resultDataWidget.Set("idx", o.GetInt("idx"))
-			resultDataWidget.Set("amount", o.GetFloat64("amount"))
-			resultDataWidget.Set("interest", o.GetFloat64("interest"))
-			resultDataWidget.Set("period", o.Get("period"))
-			// resultDataWidget = append(resultDataWidget, o)
-		}
 	}
+
+	resultDataWidget.Set("avgCount", calcPercent(resultData[0].GetFloat64("count"), resultData[1].GetFloat64("count")))
+	resultDataWidget.Set("avgAmount", calcPercent(resultData[0].GetFloat64("amount"), resultData[1].GetFloat64("amount")))
+	resultDataWidget.Set("avgInterest", calcPercent(resultData[0].GetFloat64("interest"), resultData[1].GetFloat64("interest")))
+	resultDataWidget.Set("count", resultData[0].GetInt("count"))
+	resultDataWidget.Set("amount", resultData[0].GetFloat64("amount"))
+	resultDataWidget.Set("interest", resultData[0].GetFloat64("interest"))
+	resultDataWidget.Set("period", resultData[0].GetInt("period"))
 	return resultData, resultDataWidget
+}
+
+func calcPercent(now float64, before float64) float64 {
+	if before != 0 {
+		return (now - before) / before * 100
+	}
+
+	if now > 0 {
+		return 100
+	}
+
+	if now < 0 {
+		return -100
+	}
+
+	return 0
 }
 
 func (c *DashboardController) metricTrendRegionGrouping(results tk.Ms, tp TimePeriod, k *knot.WebContext) (error, tk.Ms) {

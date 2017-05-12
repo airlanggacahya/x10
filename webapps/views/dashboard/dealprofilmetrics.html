@@ -1,12 +1,12 @@
 {{template "dataaccess.html" .}}
 <script>
-document.write('<script src="/static/core/dashboard-dashfilter.js?nochace=' + Math.floor(Math.random() * 100) + '"\><\/script>')
+document.write('<script src="/static/core/dashboard-dashfilter.js?nochace=' +Date.now()+ '"\><\/script>')
 </script>
 <script>
-document.write('<script src="/static/core/dashboard.js?nochace=' + Math.floor(Math.random() * 100) + '"\><\/script>')
+document.write('<script src="/static/core/dashboard.js?nochace=' +Date.now()+ '"\><\/script>')
 </script>
 <script>
-document.write('<script src="/static/core/dashboard-dealprofilmetrics.js?nochace=' + Math.floor(Math.random() * 100) + '"\><\/script>')
+document.write('<script src="/static/core/dashboard-dealprofilmetrics.js?nochace=' +Date.now()+ '"\><\/script>')
 </script>
 <!-- <script type="text/javascript" src="/static/material/dist/ripple.min.js"></script> -->
 {{template "leftfilter.html"}}
@@ -177,7 +177,6 @@ document.write('<script src="/static/core/dashboard-dealprofilmetrics.js?nochace
     height: 150px;
     text-align: center;
     margin: 0 auto 30px auto;
-    margin-top: 10px;
 }
 
 #tatgoals {
@@ -265,7 +264,7 @@ h6 {
     position: absolute;
     float: right;
     z-index: 1;
-    right: 25px;
+    right: 50px;
     top: 3px;
     font-size: 10px;
 }
@@ -406,6 +405,29 @@ h6 {
 .compare-space {
     right: 48px;
 }
+
+/* quick info small big percent */
+.quickinfo-percent.percent-span-big {
+    font-size: 15px;
+}
+
+.quickinfo-percent.percent-span-small {
+    font-size: 12px;
+    position: relative;
+    bottom: 1px;
+    right: 2px;
+}
+
+.quickinfo-stat.percent-span-big {
+}
+
+.quickinfo-stat.percent-span-small {
+    font-size: 32px;
+    position: relative;
+    bottom: 4px;
+    right: 10px;
+}
+
 </style>
  <div id="infilter" class="col-md-2" style="display: none;">
     <div class="filterfix">
@@ -417,12 +439,12 @@ h6 {
 <div id="incontainer" class="col-md-12 setpad lay">
     <div class="col-md-12 top turnaroundtime">
         <div class="col-md-12">
-            <h5>Quick Info : <span data-bind="text: pm.setTitle()">nanana</span></h5>
+            <h5>Quick Info: <span data-bind="text: dash.PeriodRangeText"></span></h5>
             <hr class="line">
             <div class="col-sm-12 new-dashboard" style="width: 100%;margin-left: -0.5%;margin-top: -32px;">
                 <div id="butt">
                     <div class="col-sm-3 wl">
-                        <div class="panel panel-body dl" id="target" style="height: 185px">
+                        <div class="panel panel-body dl" id="target" style="height: 165px">
                             <h6 class="tat-title tl">Deal Target</h6>
                             <div id="goal-container">
                                 <div id="tatgoals"></div>
@@ -431,19 +453,27 @@ h6 {
                         </div>
                     </div>
                     <div class="col-sm-3 wl ">
-                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
+                        <div class="panel panel-body dl material-ripple" style="height: 165px" id="conv">
                             <h6 class="tat-title tl">Deal Count</h6>
                             <div class="middle-center">
                                 <div class="middle widget-title col-sm-12" data-bind="text: pm.dealCount"></div>
-                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgCount"></span>&#37;</div>
+                                <div class="middle widget-avg col-sm-12">
+                                    <i class="fa" data-bind="css:{
+                                        'up-arrow': pm.avgCount() > 0, 'fa-caret-up': pm.avgCount() > 0,
+                                        'down-arrow': pm.avgCount() < 0, 'fa-caret-down': pm.avgCount() < 0
+                                    }" aria-hidden="true"></i>
+                                    <span class="quickinfo-percent percent-span-big" data-bind="text: pm.SeparateDecimal(pm.avgCount(), 0)"></span>
+                                    <span class="quickinfo-percent percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.avgCount(), 'n2'), 1) + '%'"></span>
+                                </div>
                                 <div class="col-sm-12">
-                                    <table data-bind="style:{width:'100%', marginTop: '25px'}" id="dealcount">
+                                    <table data-bind="style:{width:'100%', marginTop: '18px'}" id="dealcount">
                                         <tr>
                                             <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1count() > 0, style:{width: pm.xfl1countwidth()+'%'},text:pm.xfl1count"></td>
                                             <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2count() > 0, style:{width: pm.xfl2countwidth()+'%'},text:pm.xfl2count"></td>
                                             <td class="le legend tooltipdealcount" style="background-color: #ffc000;" data-bind="visible: pm.xfl3count() > 0, style:{width: pm.xfl3countwidth()+'%'},text:pm.xfl3count"></td>
                                             <td class="le legend" style="background-color: #ed7d31;" data-bind="visible: pm.xfl4count() > 0, style:{width: pm.xfl4countwidth()+'%'},text:pm.xfl4count"></td>
                                             <td class="le legend" style="background-color: #ff2929;" data-bind="visible: pm.xfl5count() > 0, style:{width: pm.xfl5countwidth()+'%'},text:pm.xfl5count"></td>
+                                            <td class="le legend" style="background-color:white;width:100%;border: solid #cdcdcd 1px;color: #58666e;" data-bind="visible: pm.xflcount() ==  true,text: 0"></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -451,19 +481,30 @@ h6 {
                         </div>
                     </div>
                     <div class="col-sm-3 wl">
-                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
+                        <div class="panel panel-body dl material-ripple" style="height: 165px" id="dec">
                             <h6 class="tat-title tl">Deal Amount</h6>
                             <div class="middle-center">
-                                <div class="middle widget-title col-sm-12" data-bind="text: pm.dealAmount"></div>
-                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up up-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgAmount"></span>&#37;</div>
+                                <div class="middle widget-title col-sm-12">
+                                    <span class="quickinfo-stat percent-span-big"data-bind="text: pm.SeparateDecimal(pm.dealAmount(), 0)"></span>
+                                    <span class="quickinfo-stat percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.dealAmount(), 'n2'), 1) + 'cr'"></span>
+                                </div>
+                                <div class="middle widget-avg col-sm-12">
+                                    <i class="fa" data-bind="css:{
+                                        'up-arrow': pm.avgAmount() > 0, 'fa-caret-up': pm.avgAmount() > 0,
+                                        'down-arrow': pm.avgAmount() < 0, 'fa-caret-down': pm.avgAmount() < 0
+                                    }" aria-hidden="true"></i>
+                                    <span class="quickinfo-percent percent-span-big" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.avgAmount(), 'n2') + '%', 0)"></span>
+                                    <span class="quickinfo-percent percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.avgAmount(), 'n2') + '%', 1)"></span>
+                                </div>
                                 <div class="col-sm-12">
-                                    <table data-bind="style:{width:'100%', marginTop: '25px'}">
+                                    <table data-bind="style:{width:'100%', marginTop: '18px'}">
                                         <tr>
                                             <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1amount() > 0, style:{width: pm.xfl1amountwidth()+'%'},text:pm.xfl1amount"></td>
                                             <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2amount() > 0, style:{width: pm.xfl2amountwidth()+'%'},text:pm.xfl2amount"></td>
                                             <td class="le legend" style="background-color: #ffc000;" data-bind="visible: pm.xfl3amount() > 0, style:{width: pm.xfl3amountwidth()+'%'},text:pm.xfl3amount"></td>
                                             <td class="le legend" style="background-color: #ed7d31;" data-bind="visible: pm.xfl4amount() > 0, style:{width: pm.xfl4amountwidth()+'%'},text:pm.xfl4amount"></td>
                                             <td class="le legend" style="background-color: #ff2929;" data-bind="visible: pm.xfl5amount() > 0, style:{width: pm.xfl5amountwidth()+'%'},text:pm.xfl5amount"></td>
+                                            <td class="le legend" style="background-color:white;width:100%;border: solid #cdcdcd 1px;color: #58666e;" data-bind="visible: pm.xflamount() ==  true,text: 0"></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -471,19 +512,30 @@ h6 {
                         </div>
                     </div>
                     <div class="col-sm-3 wl">
-                        <div class="panel panel-body dl material-ripple" style="height: 185px" id="process">
+                        <div class="panel panel-body dl material-ripple" style="height: 165px" id="process">
                             <h6 class="tat-title tl">Interest Amount</h6>
                             <div class="middle-center">
-                                <div class="middle widget-title col-sm-12" data-bind="text: pm.interestAmount"></div>
-                                <div class="middle widget-avg col-sm-12"><i class="fa fa-arrow-up down-arrow" aria-hidden="true"></i> <span data-bind="text: pm.avgInterestAmount"></span>&#37;</div>
+                                <div class="middle widget-title col-sm-12">
+                                    <span class="quickinfo-stat percent-span-big"data-bind="text: pm.SeparateDecimal(pm.interestAmount(), 0)"></span>
+                                    <span class="quickinfo-stat percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.interestAmount(), 'n2'), 1) + 'cr'"></span>
+                                </div>
+                                <div class="middle widget-avg col-sm-12">
+                                    <i class="fa" data-bind="css:{
+                                        'up-arrow': pm.avgInterestAmount() > 0, 'fa-caret-up': pm.avgInterestAmount() > 0,
+                                        'down-arrow': pm.avgInterestAmount() < 0, 'fa-caret-down': pm.avgInterestAmount() < 0
+                                    }" aria-hidden="true"></i>
+                                    <span class="quickinfo-percent percent-span-big" data-bind="text: pm.SeparateDecimal(pm.avgInterestAmount(), 0)"></span>
+                                    <span class="quickinfo-percent percent-span-small" data-bind="text: pm.SeparateDecimal(kendo.toString(pm.avgInterestAmount(), 'n2'), 1) + '%'"></span>
+                                </div>
                                 <div class="col-sm-12">
-                                    <table data-bind="style:{width:'100%', marginTop: '25px'}">
+                                    <table data-bind="style:{width:'100%', marginTop: '18px'}">
                                         <tr>
                                             <td class="le legend" style="background-color: #0b8140;" data-bind="visible: pm.xfl1interest() > 0, style:{width: pm.xfl1interestwidth()+'%'},text:pm.xfl1interest"></td>
                                             <td class="le legend" style="background-color: #70ad47;" data-bind="visible: pm.xfl2interest() > 0, style:{width: pm.xfl2interestwidth()+'%'},text:pm.xfl2interest"></td>
                                             <td class="le legend" style="background-color: #ffc000;" data-bind="visible: pm.xfl3interest() > 0, style:{width: pm.xfl3interestwidth()+'%'},text:pm.xfl3interest"></td>
                                             <td class="le legend" style="background-color: #ed7d31;" data-bind="visible: pm.xfl4interest() > 0, style:{width: pm.xfl4interestwidth()+'%'},text:pm.xfl4interest"></td>
                                             <td class="le legend" style="background-color: #ff2929;" data-bind="visible: pm.xfl5interest() > 0, style:{width: pm.xfl5interestwidth()+'%'},text:pm.xfl5interest"></td>
+                                            <td class="le legend" style="background-color:white;width:100%;border: solid #cdcdcd 1px;color: #58666e;" data-bind="visible: pm.xflinterest() ==  true,text: 0"></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -494,20 +546,25 @@ h6 {
             </div>
             <!-- <div class="col-sm-2"></div> -->
             <div class="col-md-12">
-                <h5>Trend : <span data-bind="text: pm.setTitle()"></span> </h5>
+                <h5>Trend: <span data-bind="text: dash.PeriodRangeText"></span> </h5>
                 <hr class="line">
             </div>
             <div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
                 <div class="col-md-4">
                     <div class="panel panel-body aol trend">
+                        <div class="compare-contrast">
+							<button class="btn btn-flat btn-xs btn-primary tooltipster" title='Compare & Contrast' data-bind="click: pm.openCompareTrend">
+								<i class="fa fa-search"></i>
+							</button>
+						</div>
                         <div class="chart-options">
                             <table>
                                 <tr>
                                     <td>
-                                        <label>View Acros</label>
+                                        <label>View Across</label>
                                     </td>
                                     <td>
-                                        <select data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value'}"></select>
+                                        <select style="width:110% !important;" data-bind="kendoDropDownList: {data: pm.dataPeriod, value: pm.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value'}"></select>
                                     </td>
                                 </tr>
                             </table>
@@ -518,14 +575,14 @@ h6 {
                 </div>
                 <div class="col-md-4">
                     <div class="panel panel-body aol trend">
-                        <div class="chart-options compare-space">
+                        <div class="chart-options compare-space" id="onrate">
                             <table>
                                 <tr>
                                     <td>
-                                        <label>View</label>
+                                        <label id="view">View</label>
                                     </td>
                                     <td>
-                                        <select data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenuDistribution, dataTextField: 'text', dataValueField: 'value'}"></select>
+                                        <select style="width: 100%;" data-bind="kendoDropDownList: {data: pm.dataMenu, value: pm.ValueDataMenuDistribution, dataTextField: 'text', dataValueField: 'value'}"></select>
                                     </td>
                                 </tr>
                             </table>
@@ -533,8 +590,8 @@ h6 {
                         <div style="clear: both"></div>
                         <div id="distribution"></div>
                         <div class="compare-contrast">
-                            <button class="btn btn-flat btn-xs btn-primary" data-bind="click: comp.Open.bind(comp, pm.CreateChartMoving)">
-                                <i class="fa fa-columns"></i>
+                            <button class="btn btn-flat btn-xs btn-primary tooltipster" title='Compare & Contrast' data-bind="click: comp.Open.bind(comp, pm.CreateChartMoving)">
+                                <i class="fa fa-search"></i>
                             </button>
                         </div>
                     </div>
@@ -549,7 +606,7 @@ h6 {
                 </div>
             </div>
             <div class="col-md-12">
-                <h5>Conversion TAT & Deal Amount : <span data-bind="text: pm.setTitle()">nanana</span> <!--span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
+                <h5>Deal Amount Vs. Credit Score: <span data-bind="text: dash.PeriodRangeText"></span> <!--span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
                 <hr class="line">
             </div>
             <div class="col-md-12 new-dashboard">

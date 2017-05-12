@@ -1,7 +1,7 @@
 	{{template "dataaccess.html" .}}
-	<script>document.write('<script src="/static/core/dashboard-dashfilter.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
-	<script>document.write('<script src="/static/core/dashboard.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
-	<script>document.write('<script src="/static/core/turnaroundtime.js?nochace='+  Math.floor(Math.random() * 100) + '"\><\/script>')</script>
+	<script>document.write('<script src="/static/core/dashboard-dashfilter.js?nochace='+ Date.now() + '"\><\/script>')</script>
+	<script>document.write('<script src="/static/core/dashboard.js?nochace='+ Date.now() + '"\><\/script>')</script>
+	<script>document.write('<script src="/static/core/turnaroundtime.js?nochace='+ Date.now() + '"\><\/script>')</script>
 	<!-- <script type="text/javascript" src="/static/material/dist/ripple.min.js"></script> -->
 	{{template "leftfilter.html"}}
 	{{template "compare_contrast.html"}}
@@ -209,11 +209,10 @@
 		position: absolute;
 		float: right;
 		z-index: 1;
-		right: 25px;
+		right: 50px;
 		top: 3px;
 		font-size: 10px;
-		margin-top: 1%;
-        padding-right: 2%;
+		margin-top: 0px;
 	}
 
 	.chart-options0 {
@@ -221,7 +220,7 @@
 		top: 3px;
 		right: 25px;
 		font-size: 10px;
-		margin-top: 3%;
+		margin-top: 8px;
 		padding-left: 2%;
 	}
 
@@ -235,7 +234,7 @@
 	}
 
 	.chart-options .k-widget.k-dropdown{
-		width: 100px;
+		width: 70px;
 	}
 
 	.chart-options .k-widget.k-dropdown .k-dropdown-wrap, .chart-options0 .k-widget.k-dropdown .k-dropdown-wrap {
@@ -265,7 +264,7 @@
 <div id="incontainer" class="col-md-12 setpad">
     <div class="col-md-12 top turnaroundtime">
 		<div class="col-md-12">
-			<h5>Quick Info : <span data-bind="text: turn.setTitle()"></span></h5>
+			<h5>Quick Info: <span data-bind="text: dash.PeriodRangeText"></span></h5>
 			<hr class="line">
 			<!-- <div class="col-sm-2"></div> -->
 			<div class="col-sm-12 new-dashboard" style="width: 120%;margin-left: -0.5%;margin-top: -32px;">
@@ -285,9 +284,21 @@
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="conv">
 							<h6 class="tat-title tl">Underwriting TAT (Avg.)</h6>
 							<div class="avg" data-bind="text: turn.avgConversion"></div>
-							<div id="conv"><span id="conve" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgConversionPercent(), 'n2')"></span>%</div>
+							<div class="col-sm-12">
+								<center id="conv" class="conve">
+		                            <div class="col-md-4"></div>
+		                            <table class="col-md-4">
+		                            	<tr class="conve">
+		                            		<td><span style="font-size: 18px;" id="conve" class="fa fa-caret-up"></span></td>
+		                            		<td><span style="font-size: 15px;" data-bind="text: turn.setInfo(turn.avgConversionPercent(), 0, 'conv')"></span></td>
+		                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: turn.setInfo(turn.avgConversionPercent(), 1, 'conv')"></small></td>
+		                            	</tr>
+		                            </table> 
+		                             <div class="col-md-4"></div>     
+								</center>
+							</div>
 							<div id="conversion"></div>
-							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+							<div class="col-sm-12 footnote" style="margin-top: -1px; text-align: left !important;">
 								<!-- <div class="col-sm-6"> -->
 									<p>Deals Underwriten
 									<span style="margin-left: 5px" data-bind="text: turn.dealConversion"></span> <span id="convers" class="fa fa-caret-up"></span></p>
@@ -299,9 +310,21 @@
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="dec">
 							<h6 class="tat-title tl">Decision TAT (Avg.)</h6>
 							<div class="avg" data-bind="text: turn.avgDecision"></div>
-							<div id="dec"><span id="deci" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgDecisionPercent(), 'n2')"></span>%</div>
-							<div id="decision"></div>
-							<div class="col-sm-12 footnote" style="margin-top: -10px; text-align: left !important;">
+							<div class="col-sm-12">
+								<center id="dec" class="conve">
+		                            <div class="col-md-4"></div>
+		                            <table class="col-md-4">
+		                            	<tr  class="deci">
+		                            		<td><span  style="font-size: 18px;" id="deci" class="fa fa-caret-up"></span></td>
+		                            		<td><span style="font-size: 15px;" data-bind="text: turn.setInfo(turn.avgDecisionPercent(), 0, 'dec')"></span></td>
+		                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: turn.setInfo(turn.avgDecisionPercent(), 1, 'dec')"></small></td>
+		                            	</tr>
+		                            </table> 
+		                             <div class="col-md-4"></div>     
+								</center>
+							</div>
+							<div id="decision" style="min-height: 75px"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -1px; text-align: left !important;">
 								<!-- <div class="col-sm-6"> -->
 									<p>Deals Decisioned
 									<span style="margin-left: 5px" data-bind="text: turn.dealDecision"></span> <span id="dealdeci" class="fa fa-caret-up"></span></p>
@@ -313,11 +336,24 @@
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="process">
 							<h6 class="tat-title tl">Analysis TAT (Avg.)</h6>
 							<div class="avg" data-bind="text: turn.avgProcessing"></div>
-							<div id="proc"><span id="proce" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgProcessingPercent(), 'n2')"></span>%</div>
-							<div id="processing"></div>
-							<div class="col-sm-12 footnote" style="margin-top: -10px;">
+							<!-- <div id="proc"><span id="proce" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgProcessingPercent(), 'n2')"></span>%</div> -->
+							<div class="col-sm-12">
+								<center id="proc" class="conve">
+		                            <div class="col-md-4"></div>
+		                            <table class="col-md-4">
+		                            	<tr  class="proce">
+		                            		<td><span id="proce" style="font-size: 18px;" class="fa fa-caret-up"></span></td>
+		                            		<td><span style="font-size: 15px;" data-bind="text: turn.setInfo(turn.avgProcessingPercent(), 0, 'proc')"></span></td>
+		                            		<td style="text-align: left;"><small style="font-size: 12px;" data-bind="text: turn.setInfo(turn.avgProcessingPercent(), 1, 'proc')"></small></td>
+		                            	</tr>
+		                            </table> 
+		                             <div class="col-md-4"></div>     
+								</center>
+							</div>
+							<div id="processing" style="min-height: 75px"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -1px;">
 								<!-- <div class="col-sm-6"> -->
-									<p>Deals Analysed
+									<p>Deals Analyzed
 									<span style="margin-left: 5px" data-bind="text: turn.dealProcessing"></span> <span id="proces" class="fa fa-caret-up"></span></p>
 								<!-- </div> -->
 							</div>
@@ -327,9 +363,22 @@
 						<div class="panel panel-body dl material-ripple" style="height: 185px" id="acep">
 							<h6 class="tat-title tl">Acceptance TAT (Avg.)</h6>
 							<div class="avg" data-bind="text: turn.avgAcceptance"></div>
-							<div id="acc"><span id="ace" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgAcceptancePercent(), 'n2')"></span>%</div>
-							<div id="acceptance"></div>
-							<div class="col-sm-12 footnote" style="margin-top: -10px;">
+							<!-- <div id="acc"><span id="ace" class="fa fa-caret-up"></span> <span data-bind="text: kendo.toString(turn.avgAcceptancePercent(), 'n2')"></span>%</div> -->
+							<div class="col-sm-12">
+								<center id="acc" class="conve">
+		                            <div class="col-md-4"></div>
+		                            <table class="col-md-4">
+		                            	<tr class="ace">
+		                            		<td><span  style="font-size: 18px;" id="ace" class="fa fa-caret-up"></span></td>
+		                            		<td><span style="font-size: 15px;" data-bind="text: turn.setInfo(turn.avgAcceptancePercent(), 0, 'acc')"></span></td>
+		                            		<td style="text-align: left;"><span style="font-size: 12px;" data-bind="text: turn.setInfo(turn.avgAcceptancePercent(), 1, 'acc')"></span></td>
+		                            	</tr>
+		                            </table> 
+		                             <div class="col-md-4"></div>     
+								</center>
+							</div>
+							<div id="acceptance" style="min-height: 75px"></div>
+							<div class="col-sm-12 footnote" style="margin-top: -1px;">
 								<!-- <div class="col-sm-6"> -->
 									<p>Deal Accepted
 									<span style="margin-left: 5px" data-bind="text: turn.dealAcceptance"></span> <span id="dealacc" class="fa fa-caret-up"></span></p>
@@ -341,12 +390,17 @@
 			</div>
 			<!-- <div class="col-sm-2"></div> -->
 			<div class="col-md-12">
-				<h5>Trend : <span data-bind="text: turn.setTitle()"></span> <!-- span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
+				<h5>Trend: <span data-bind="text: dash.PeriodRangeText"></span> <!-- span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
 				<hr class="line">
 			</div>
 			<div class="col-md-12 new-dashboard show minichart" style="margin-top: -0.5%">
 				<div class="col-md-4">
 					<div class="panel panel-body aol trend">
+						<div class="compare-contrast">
+							<button class="btn btn-flat btn-xs btn-primary tooltipster" title='Compare & Contrast' data-bind="click: turn.openCompareTrend">
+								<i class="fa fa-search"></i>
+							</button>
+						</div>
 						<div class="chart-options0">
 							<table>
 								<tr>
@@ -363,13 +417,13 @@
 										<label>View Across</label>
 									</td>
 									<td>
-										<select data-bind="kendoDropDownList: {data: turn.dataPeriod, value: turn.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value', optionLabel:'View Accross'}"></select>
+										<select data-bind="kendoDropDownList: {data: turn.dataPeriod, value: turn.ValueDataPeriod, dataTextField: 'text', dataValueField: 'value'}"></select>
 									</td>
 								</tr>
 							</table>
 						</div>
 						<div style="clear: both"></div>
-						<div id="chartContainer"></div>
+						<div id="chartContainer" style="min-height: 224px"></div>
 						<div id="chartContainer2" style="display: none"></div>
 						<center>
 							<div class="col-md-12 legend" style="display: inline;">
@@ -384,11 +438,11 @@
 				<div class="col-md-4 show new-dashboard">
 					<div class="panel panel-body aol">
 						<div class="compare-contrast">
-							<button class="btn btn-flat btn-xs btn-primary" data-bind="click: comp.Open.bind(comp, turn.CreateChartMoving)">
-								<i class="fa fa-columns"></i>
+							<button class="btn btn-flat btn-xs btn-primary tooltipster" title='Compare & Contrast' data-bind="click: comp.Open.bind(comp, turn.CreateChartMoving)">
+								<i class="fa fa-search"></i>
 							</button>
 						</div>
-						<div id="movingtat"></div>
+						<div id="movingtat" style="min-height: 250px"></div>
 						<center>
 							<div class="col-md-12 legend" style="display: inline;">
 								<span id="square1"></span> 15 + Days &nbsp
@@ -402,11 +456,11 @@
 				<div class="col-md-4 show new-dashboard">
 					<div class="panel panel-body aol">
 						<div class="compare-contrast">
-							<button class="btn btn-flat btn-xs btn-primary" data-bind="click: comp.Open.bind(comp, turn.CreateChartHistory)">
-								<i class="fa fa-columns"></i>
+							<button class="btn btn-flat btn-xs btn-primary tooltipster" title='Compare & Contrast' data-bind="click: comp.Open.bind(comp, turn.CreateChartHistory)">
+								<i class="fa fa-search"></i>
 							</button>
 						</div>
-						<div id="historytat"></div>
+						<div id="historytat" style="min-height: 250px"></div>
 						<center>
 							<div class="col-md-12 legend" style="display: inline;">
 								<span id="square1"></span> 15 + Days &nbsp
@@ -419,7 +473,7 @@
 				</div>
 			</div>
 			<div class="col-md-12">
-				<h5>Conversion TAT Vs. Deal Amount : <span data-bind="text: turn.setTitle()"></span> <!--span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
+				<h5>Conversion TAT Vs. Deal Amount: <span data-bind="text: dash.PeriodRangeText"></span> <!--span style="float: right" class="ic acc-down fa fa-external-link-square"></span--></h5>
 				<hr class="line">
 			</div>
 			<div class="col-md-12 new-dashboard">

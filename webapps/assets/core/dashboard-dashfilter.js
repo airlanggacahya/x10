@@ -301,8 +301,6 @@ var CreateDashFilter = function() {
     }
 
     function reapplyFilter(without) {
-        dash.SaveFilter()
-
         applyFilterRegionDS()
         applyFilterBranchDS()
         applyFilterProductDS()
@@ -312,6 +310,8 @@ var CreateDashFilter = function() {
         applyFilterCustDS()
         applyFilterDealNoDS()
         applyFilterClientTypeDS()
+
+        dash.SaveFilter()
     }
 
     dash.MasterDS = ko.observableArray([])
@@ -556,11 +556,18 @@ var CreateDashFilter = function() {
         dash.SaveCallback_ = callback;
     }
 
-    dash.SaveFilter_ = function() {
-        if (!dash.InitComplete()) {
-            return
+    dash.DelayNotifyTimer = null
+    dash.DelayNotify = function (param) {
+        if (dash.DelayNotifyTimer) {
+            clearTimeout(dash.DelayNotifyTimer)
         }
+        dash.DelayNotifyTimer = setTimeout(function () {
+            dash.DelayNotifyTimer = null
+            dash.FilterValue(param.Filters)
+        }, 50);
+    }
 
+    dash.NotifyFilter = function() {
         var param = {}
         // Id            string
         // Filters       []struct {
@@ -572,77 +579,66 @@ var CreateDashFilter = function() {
         param.Filters = dash.CompileFilter()
         
         // Notify subscribed chart first
-        dash.FilterValue(param.Filters)
+        dash.DelayNotify(param)
+
+        return param
+    }
+
+    dash.SaveFilter_ = function() {
+        var param = dash.NotifyFilter()
+
+        if (!dash.InitComplete())
+             return
 
         dash.SaveCallback_(param)
     }
 
-    // We delay 200ms before saving to prevent double request every propagated changes
+    // We delay 50ms before saving to prevent double request every propagated changes
     dash.SaveTimerDelay = null
     dash.SaveFilter = function() {
+        if (dash.waitLoadFilter !== null)
+            return
+
         if (dash.SaveTimerDelay) {
             clearTimeout(dash.SaveTimerDelay)
         }
         dash.SaveTimerDelay = setTimeout(function () {
             dash.SaveTimerDelay = null
             dash.SaveFilter_()
-        }, 200);
+        }, 50);
     }
 
 
-    dash.waitLoadFilter = null
+    dash.waitLoadFilter = []
     dash.InitComplete = ko.observable(false)
     dash.InitComplete.subscribe(function (val) {
         if (!val)
             return
 
-        dash.LoadFilter(dash.waitLoadFilter)
+        dash.ParseFilter(dash.waitLoadFilter)
         dash.waitLoadFilter = null
     })
 
     dash.LoadFilter = function(res) {
-        if (!dash.InitComplete()) {
+        if (!dash.InitComplete())
             dash.waitLoadFilter = res
-            return
-        }
 
         dash.ParseFilter(res)
+        dash.NotifyFilter()
+
         dash.SaveFilter()
     }
 
-    // dash.accordionSideBar = function(){
-    //     $(".toggle").click(function(e){
-    //         e.preventDefault();
-    //         // alert("masuk")
-    //         var $this = $(this);
-    //         if($this.next().hasClass('show')){
-    //             $this.next().removeClass('show');
-    //             $this.next().slideUp(350);
-    //             $this.find("h5>").removeClass("fa-chevron-down");
-    //             $this.find("h5>").addClass("fa-chevron-up");
-    //         }else{
-    //             $this.next().removeClass('hide');
-    //             $this.next().slideDown(350);
-    //             $this.next().addClass("show");
-    //             $this.find("h5>").addClass("fa-chevron-down");
-    //             $this.find("h5>").removeClass("fa-chevron-up");
-    //         }
-    //     })
-
-    //     $("#all").click(function(e){
-    //         $(".toggle").next().removeClass('hide');
-    //         $(".toggle").next().slideDown(350).addClass("show");
-    //         $(".toggle").find("h5>").addClass("fa-chevron-down");
-    //         $(".toggle").find("h5>").removeClass("fa-chevron-up");
-            
-    //         $(".form-group").show()
-    //     })
-    // }
-
-    dash.ResetFilter = function(){
+    dash.ResetShowAll = function() {
         _.each(dash.FilterList, function (val) {		
             dash[val + "ShowMe"](true)
-            dash[val + "Val"]("")
+        })
+    }
+
+    dash.ResetFilter = function() {
+        _.each(dash.FilterList, function (val) {
+            dash[val + "ShowMe"](true)
+            dash[val + "Val"](dash[val + "Default"])
         })
     }
 

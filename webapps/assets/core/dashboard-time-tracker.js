@@ -85,11 +85,33 @@ ttrack.renderModalChart = function(datas){
     });
 }
 ttrack.renderChart = function(datas){
-			datas = ttrack.normalisasiData(datas)
+			var datas = ttrack.normalisasiData(datas)
 
             var myHeight = ($(window).height() - 90)/3
 
-			datas = _.sortBy(datas,["status"])
+			datas = _.cloneDeep(_.sortBy(datas,["status"]))
+
+            datas = _.map(datas, function (val) {
+                switch (val.timestatus) {
+                case "d*Over due":
+                    val.color = "#ff2929"
+                    break
+                case "c*Getting due":
+                    val.color = "#ffc000"
+                    break
+                case "b*In time":
+                    val.color = "#92d050"
+                    break
+                case "a*New":
+                    val.color = "#2e75b6"
+                    break
+                default:
+                    val.color = "#00b0f0"
+                }
+
+                return val
+            })
+
 
 			var stocksDataSource = new kendo.data.DataSource({
             data : datas,
@@ -115,7 +137,8 @@ ttrack.renderChart = function(datas){
                     type: "column",
                     stack : true,
                     field: "count",
-                    name: "#= group.value.split('*')[1] #"
+                    name: "#= group.value.split('*')[1] #",
+                    colorField: "color"
                 }],
                 chartArea:{
                     height: myHeight,
@@ -152,7 +175,6 @@ ttrack.renderChart = function(datas){
                         font: "10px Arial,Helvetica,Sans-Serif"
                     }
                 },
-                seriesColors : ttrack.chartcolors,
                 valueAxis: {
                     labels: {
                         // format: "${0}",
@@ -428,7 +450,7 @@ ttrack.currentHeadValue = function(section) {
     })
 }
 
-ttrack.currentHeadPercent = function(section) {
+ttrack.currentHeadPercent = function(section, num) {
     function calculateSumSection(data, section) {
         var ret = 0
         _.each(data, function (val) {
@@ -449,9 +471,18 @@ ttrack.currentHeadPercent = function(section) {
         var prevSum = calculateSumSection(ttrack.currentHeaderData()[1], section);
 
         if (prevSum == 0)
-            return curSum * 100;
-
-        return kendo.toString((curSum - prevSum) / prevSum * 100, "n2");
+            ttrack.csstrack(curSum * 100, section)
+            return dash.stringArr(curSum * 100, num, section)
+            // if(num== 0){
+            //     return dash.stringArr(curSum * 100, num)
+            // }else{
+                
+            // }
+            
+        console.log("--------------->>>>> 475", dash.stringArr((curSum - prevSum) / prevSum * 100, num))
+        // return kendo.toString((curSum - prevSum) / prevSum * 100, "n2");
+        ttrack.csstrack((curSum - prevSum) / prevSum * 100, section)
+        return dash.stringArr((curSum - prevSum) / prevSum * 100, num, section)
     })
 }
 
@@ -504,4 +535,49 @@ ttrack.loadHeaderBox = function () {
             prev.Data
         ])
     })
+}
+
+ttrack.csstrack = function(number, section){
+    // console.log("masuk")
+    var infilter = $("#infilter")
+    if(infilter.is(":visible") == true){
+        if(number != 0){
+            if(section.indexOf(" ") > -1){
+                cl = section.replace(/\s+/g, '');
+                $("."+cl).css("margin-top", "3%")
+                $("#"+cl).css("margin-left", "-11%")
+            }else{
+                 $("."+cl).css("margin-top", "3%")
+                 $("#"+section).css("margin-left", "-11%")
+            }
+        }else{
+            if(section.indexOf(" ") > -1){
+                cl = section.replace(/\s+/g, '');
+                $("."+cl).css("margin-top", "6.5%")
+                $("#"+cl).css("margin-left", "-21%")
+            }else{
+                $("."+section).css("margin-top", "6.5%")
+                $("#"+section).css("margin-left", "-21%")
+            }
+        }
+    }else{
+        if(number != 0){
+            if(section.indexOf(" ") > -1){
+                cl = section.replace(/\s+/g, '');
+                $("."+cl).css("margin-top", "2%")
+                $("#"+cl).css("margin-left", "-11%")
+            }else{
+                 $("."+cl).css("margin-top", "2%")
+                 $("#"+section).css("margin-left", "-11%")
+            }
+        }else{
+            if(section.indexOf(" ") > -1){
+                cl = section.replace(/\s+/g, '');
+                $("."+cl).css("margin-top", "4.5%")
+                $("#"+cl).css("margin-left", "-21%")
+            }else{
+                $("."+section).css("margin-top", "4.5%")
+                $("#"+section).css("margin-left", "-21%")
+            }
+        }3    }
 }

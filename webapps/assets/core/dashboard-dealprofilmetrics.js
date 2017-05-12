@@ -46,13 +46,17 @@ pm.xfl3interestwidth = ko.observable(0);
 pm.xfl4interestwidth = ko.observable(0);
 pm.xfl5interestwidth = ko.observable(0);
 
+pm.xflcount= ko.observable(false) 
+pm.xflamount= ko.observable(false)
+pm.xflinterest = ko.observable(false)
+
 pm.distributionData = ko.observableArray([]);
 pm.scatterWidth = ko.observable(0);
 
 // Hook to filter value changes
 dash.FilterValue.subscribe(function(val) {
-    pm.ValueDataPeriod("period");
-    pm.ValueDataMenuDistribution("amount");
+    // pm.ValueDataPeriod("period");
+    // pm.ValueDataMenuDistribution("amount");
     pm.init();
 });
 
@@ -116,30 +120,33 @@ pm.Target = function() {
 pm.loadContainer = function(selected) {
     var selectedData;
     var catSelected;
-    if (selected == undefined || selected == "period"){
+    switch (selected) {
+    default:
+    case "period":
         selectedData = pm.trendPeriod();
         catSelected = { categories: pm.trendDataMonths(), axisCrossingValues: [0, 7]}
-    }else{
+        catSelected.labels = {
+            font: "10px sans-serif",
+            // rotation: -45,   
+            template:function(e){
+                data = (e.value).split(" ");
+                if(data[2] != null){
+                    tl = data[0].split("/");
+                    tgl1 = tl[0]+"/"+tl[1];
+                    tg = data[2].split("/");
+                    tgl2 = tg[0]+"/"+tg[1]
+                    return tgl1+"\n"+tgl2
+                }
+
+                return e.value
+                
+            }
+            // visible : true, 
+        }
+        break
+    case "region":
         selectedData = pm.trendRegion();
         catSelected = { field: "region", axisCrossingValues: [0, 7] }
-    }
-    catSelected.labels = {
-        font: "10px sans-serif",
-        // rotation: -45,   
-        template:function(e){
-            data = (e.value).split(" ");
-            if(data[2] != null){
-                tl = data[0].split("/");
-                tgl1 = tl[0]+"/"+tl[1];
-                tg = data[2].split("/");
-                tgl2 = tg[0]+"/"+tg[1]
-                return tgl1+"\n"+tgl2
-            }
-
-            return e.value
-            
-        }
-        // visible : true, 
     }
 
     $("#chartContainer").html('')
@@ -241,46 +248,15 @@ pm.loadContainer = function(selected) {
             },
         }],
         categoryAxis: catSelected,
-        // categoryAxis: {
-        //     categories: catSelected,
-        //     // field: "dateStr",
-        //     visible : true,
-        //     title : {
-        //         text : "",
-        //         font: "10px sans-serif",
-        //         visible : true,
-        //         color : "#4472C4"
-        //     },
-        //     labels : {
-        //         font: "10px sans-serif",
-        //         // rotation: -45,   
-        //         template:function(e){
-        //             console.log("-------------->>>", e)
-        //             data = (e.value).split(" ");
-        //             if(data[2] != null){
-        //                 tl = data[0].split("/");
-        //                 tgl1 = tl[0]+"/"+tl[1];
-        //                 tg = data[2].split("/");
-        //                 tgl2 = tg[0]+"/"+tg[1]
-        //                 return tgl1+"\n"+tgl2
-        //             }
-
-        //             return e.value
-                    
-        //         }
-        //         // visible : true,
-        //     },
-        //     axisCrossingValues: [0, 7]
-        // },
         tooltip: {
             visible: true,
             template: function(dt) {
                 if (dt.series.field == "count") {
                     return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Deal Count: " + kendo.toString(dt.value, "n0");
                 }else if (dt.series.field == "amount"){
-                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Amount: " + kendo.toString(dt.value, "n0");
+                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Amount: " + kendo.toString(dt.value, "n2") + "cr";
                 }else if ((dt.series.field == "interest")){
-                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Interest: " + kendo.toString(dt.value, "n0");
+                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Interest: " + kendo.toString(dt.value, "n2") + "cr";
                 }
                 return;
             }
@@ -362,7 +338,7 @@ pm.loadChaterChart = function() {
     $("#cater").html("");
     $("#cater").kendoChart({
         title: {
-            text: "Deal Amount vs. Credit Scores",
+            text: "Deal Amount Vs. Credit Scores",
             font: "12px Arial,Helvetica,Sans-Serif",
             align: "left",
             color: "#58666e",
@@ -435,7 +411,9 @@ pm.loadChaterChart = function() {
             visible: true,
             template: function(e) {
                 // console.log(e);
-                return "Deal Amount: " + kendo.toString(e.dataItem[1], "n") + "<br /> Interest Rate: " + e.series.ROI + "%";
+                return "Deal Amount: " + kendo.toString(e.dataItem[1], "n") +
+                "<br /> Interest Rate: " + e.series.ROI + "%" +
+                "<br /> XFL Score: " + kendo.toString(e.series.finalscoredob, "n2");
             }
         },
         seriesClick: function(e) {
@@ -580,13 +558,13 @@ pm.Distribution = function(selected) {
     var title = "";
     switch (pm.ValueDataMenuDistribution()) {
     case "amount":
-        title = "Deal Amount vs Interest Rate"
+        title = "Deal Amount Vs. Interest Rate"
         break;
     case "count":
-        title = "Deal Count vs Interest Rate"
+        title = "Deal Count Vs. Interest Rate"
         break;
     case "interest":
-        title = "Deal Interest vs Interest Rate"
+        title = "Deal Interest Vs. Interest Rate"
         break;
     }
     $("#distribution").html("");
@@ -702,7 +680,7 @@ pm.Distribution = function(selected) {
         }],
         categoryAxis: {
             title: {
-                visible: false,
+                visible: !pm.distributionData().length,
                 text: "Interest Rates (%)",
                 font: "10px sans-serif",
                 color: "#4472C4"
@@ -872,7 +850,7 @@ pm.creditScoreCreator = function(creditscore) {
 
 pm.dealCountAmountInterest = function(data) {
     pm.reset();
-    
+    console.log("----------->>>>", data.xfl)
     if (!$.isEmptyObject(data.topwidget)){
         pm.dealCount(data.topwidget.count);
         pm.dealAmount(kendo.toString(data.topwidget.amount, "n"));
@@ -927,6 +905,24 @@ pm.dealCountAmountInterest = function(data) {
                 break;
         }
     });
+
+    if(pm.xfl1count() == 0 && pm.xfl2count() == 0 && pm.xfl3count() == 0 && pm.xfl4count() == 0){
+        pm.xflcount(true)
+    }else{
+        pm.xflcount(false)
+    }
+
+    if(pm.xfl1amount() == 0 && pm.xfl2amount() == 0 && pm.xfl3amount() == 0 && pm.xfl4amount() == 0){
+        pm.xflamount(true)
+    }else{
+        pm.xflamount(false)
+    }
+
+    if(pm.xfl1interest() == 0 && pm.xfl2interest() == 0 && pm.xfl3interest() == 0 && pm.xfl4interest() == 0){
+        pm.xflinterest(true)
+    }else{
+        pm.xflinterest(false)
+    }
 }
 
 pm.reset = function() {
@@ -977,10 +973,183 @@ pm.findWidthScatter = function() {
     return data1 - data2;
 }
 
+pm.CreateChartTrendOption_ = function(param) {
+    var selectedData;
+    var catSelected;
+
+    switch (param.groupby) {
+    default:
+    case "period":
+        var months = pm.generateXAxis(param.type, param.start, param.end, 7);
+        months.shift();
+
+        selectedData = _.sortBy(param.trendPeriod, "idx");
+        catSelected = {
+            categories: months,
+            axisCrossingValues: [0, 7]
+        }
+        catSelected.labels = {
+            font: "10px sans-serif",
+            // rotation: -45,   
+            template:function(e){
+                data = (e.value).split(" ");
+                if(data[2] != null){
+                    tl = data[0].split("/");
+                    tgl1 = tl[0]+"/"+tl[1];
+                    tg = data[2].split("/");
+                    tgl2 = tg[0]+"/"+tg[1]
+                    return tgl1+"\n"+tgl2
+                }
+
+                return e.value
+                
+            }
+            // visible : true, 
+        }
+        break
+    case "region":
+        selectedData = param.trendRegion;
+        catSelected = {
+            field: "region",
+            axisCrossingValues: [0, 7]
+        }
+    }
+
+    return {
+        title: {  
+            text: "Deal Amount and Interest", 
+            font:  "12px Arial,Helvetica,Sans-Serif", 
+            align: "left", 
+            color: "#58666e", 
+            padding: { 
+                top: 0 
+            } 
+        },
+        plotArea: {
+            margin: {
+                right: 4
+            }
+        },
+        dataSource: selectedData,
+        series: [
+            {
+                type: "column",
+                stack: false,
+                field: "interest",
+                color: '#2e75b6',
+                overlay: {
+                    gradient: "none"
+                },
+                name: "Interest"
+            }, {
+                type: "column",
+                stack: false,
+                field: "amount",
+                color: '#00b0f0',
+                overlay: {
+                    gradient: "none"
+                },
+                name: "Deal Amount"
+            }, {
+                type: "line",
+                stack: false,
+                field: "count",
+                axis: "dc",
+                dashType: "dot",
+                color: '#ffc000',
+                name: "Deal Count"
+            }, {
+                name: "Target"
+            }
+        ],
+        chartArea: {
+            height: 250,
+            background: "white"
+        },
+        legend: {
+            visible: true,
+            position: "bottom",
+            labels: {
+                font: "10px Arial,Helvetica,Sans-Serif"
+            }
+        },
+        valueAxes: [{
+            title: {
+                text: "Amount (Rs. Lacs)",
+                font: "10px sans-serif",
+                color: "#4472C4",
+                margin: {
+                    right: 1,
+                }
+            },
+            labels: {
+                font: "10px sans-serif",
+                step: 2,
+                skip: 2
+            },
+            min: 0,
+            plotBands: [{
+                from: 2.9,
+                to: 3.0,
+                color: "#70ad47",
+                name: "Target"
+            }]
+        }, {
+            name: "dc",
+            title: {
+                text: "Deal Count",
+                font: "11px sans-serif",
+                color: "#4472C4",
+                margin: {
+                    left: 1,
+                }
+            },
+            min: 0,
+            max: 10,
+            labels: {
+                font: "10px sans-serif",
+                step: 2,
+                skip: 2
+            },
+        }],
+        categoryAxis: catSelected,
+        tooltip: {
+            visible: true,
+            template: function(dt) {
+                if (dt.series.field == "count") {
+                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Deal Count: " + kendo.toString(dt.value, "n0");
+                }else if (dt.series.field == "amount"){
+                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Amount: " + kendo.toString(dt.value, "n2") + "cr";
+                }else if ((dt.series.field == "interest")){
+                    return "Date: " + moment(dt.dataItem.period).format("YYYY-MM-DD") + "<br>Interest: " + kendo.toString(dt.value, "n2") + "cr";
+                }
+                return;
+            }
+        }
+    };
+}
+
+pm.openCompareTrend = function(param, callback) {
+    var groupby = pm.ValueDataPeriod()
+
+	var fun = function (param, callback) {
+		ajaxPost("/dashboard/metricstrend", param, function(res) {
+            var resp = res.Data;
+            resp.groupby = groupby;
+
+            // remove id 0
+            resp.trendPeriod = _.without(resp.trendPeriod, _.find(resp.trendPeriod, function(e) {
+                return e.idx == 0;
+            }));
+
+			callback(pm.CreateChartTrendOption_(resp))
+		})
+	}
+
+	comp.Open(fun)
+}
+
 pm.CreateChartMoving = function(param, callback) {
-    /*ajaxPost("/dashboard/metricstrend", param, function (data) {
-        pm.CreateChartMovingOptions_(data.Data.distribution);
-    })*/
     pm.CreateChartMovingData(param, function(data) {
         callback(pm.CreateChartMovingOptions_(data))
     })
@@ -991,6 +1160,23 @@ pm.CreateChartMovingData = function(param, callback) {
     ajaxPost("/dashboard/metricstrend", param, function (data) {
         callback(data.Data.distribution);
     })
+}
+
+// Separate decimal on number.
+// Part 0 will be number ahead dot.
+// Part 1 will be decimal point and below.
+pm.SeparateDecimal = function (input, part) {
+    var inputStr = "" + input
+    var parts = inputStr.split(".", 2)
+
+    if (part == 0) {
+        return parts[0];
+    }
+
+    if (part == 1 && parts.length < 2)
+        return "";
+    
+    return "." + parts[1]
 }
 
 pm.CreateChartMovingOptions_ = function (data) {
@@ -1231,12 +1417,16 @@ $(function() {
     $(".sidebar-toggle").click(function(){
         var infilter = $("#infilter")
         if(infilter.is(":visible") == true){
+            $("#view").hide();
+            $("#onrate").css("top", "5px");
             $('#chartContainer').data("kendoChart").refresh();
             // $('#tatgoals').data("kendoRadialGauge").refresh()
             $('#distribution').data("kendoChart").refresh();
             pm.loadChaterChart()
             $(".tabl").css("width", "98.5%");
         }else{
+            $("#view").show();
+            $("#onrate").css("top", "3px");
             $('#chartContainer').data("kendoChart").refresh()
             // $('#tatgoals').data("kendoRadialGauge").refresh()
             $('#distribution').data("kendoChart").refresh()

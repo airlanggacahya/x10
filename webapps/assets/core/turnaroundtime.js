@@ -486,10 +486,30 @@ turn.lastMonth = function(id, field, data){
 			$("#"+id)
 				.addClass('fa-caret-up')
 				.css("color", "green");
-		}else{
+			$("."+id)
+				.css("color", "green");
+
+			$("."+id+">td").eq(1)
+				.css("padding-left", "0px");
+		}else if(data[0].avgdays < data[1].avgdays){
 			$("#"+id)
 				.addClass('fa-caret-down')
-				.css("color", "red")
+				.css("color", "red");
+			$("."+id)
+				.css("color", "red");
+
+			$("."+id+">td").eq(1)
+				.css("padding-left", "0px");
+		}else{
+			$("#"+id)
+				.removeClass('fa-caret-down')
+				.removeClass('fa-caret-up');
+			$("."+id+">td").eq(1)
+				.css("padding-left", "18%")
+				
+			$("."+id)
+				.css("color", "grey")
+				.css("text-align", "center")
 		}
 		var days = data[0].avgdays - data[1].avgdays
 		return days
@@ -498,10 +518,14 @@ turn.lastMonth = function(id, field, data){
 			$("#"+id)
 				.addClass('fa-caret-up')
 				.css("color", "green");
+			$("."+id)
+				.css("color", "green");
 		}else{
 			$("#"+id)
 				.addClass('fa-caret-down')
-				.css("color", "red")
+				.css("color", "red");
+			$("."+id)
+				.css("color", "red");
 		}
 		var deals = data[0].dealcount - data[1].dealcount
 		return deals
@@ -510,7 +534,6 @@ turn.lastMonth = function(id, field, data){
 
 turn.loadChartRegionContainer = function() {
 	var param = {
-		trend: '',
 		groupby: 'region',
 		start: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar")),
 		end: discardTimezone(dash.FilterValue.GetVal("TimePeriodCalendar2")),
@@ -567,7 +590,7 @@ turn.loadChartRegionContainer = function() {
 			}
 			],
 			chartArea:{
-				height: 220,
+				height: 224,
 				background: "white"
 			},
 			legend: {
@@ -637,7 +660,6 @@ turn.loadChartRegionContainer = function() {
 			tooltip : {
 				visible: true,
 				template : function(dt){
-					console.log(dt);
 					return dt.series.name + " : "+ dt.value//dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
 				}
 			}
@@ -646,13 +668,153 @@ turn.loadChartRegionContainer = function() {
 }
 
 turn.CreateChartTrendOption_  = function (data) {
-	var len = data._request.len;
-    var start = data._request.start;
-    var end = data._request.end;
-    var type = data._request.type;
-	var month = dash.generateXAxis(type, start, end, len + 1)
-	month.shift();
-	console.log("---------------->>>", month)
+	var categoryAxis = null;
+	var series = null;
+	var tooltip = null;
+
+	switch (data._request.groupby) {
+	case "period":
+		var len = data._request.len;
+		var start = data._request.start;
+		var end = data._request.end;
+		var type = data._request.type;
+		var month = dash.generateXAxis(type, start, end, len + 1)
+		month.shift();
+
+		series = [
+			{
+				type: "column",
+				stack : false,
+				field: "avgdays",
+				color: '#2e75b6',
+				overlay: {
+					gradient: "none"
+				},
+				name: "Avg Days"
+			},
+			{
+				type: "column",
+				stack : false,
+				field: "median",
+				color: '#00b0f0',
+				overlay: {
+					gradient: "none"
+				},
+				name: "Median"
+			},
+			{
+				type: "line",
+				stack : false,
+				field: "dealcount",
+				axis: "dc",
+				dashType: "dot",
+				color: '#ffc000',
+				name: "Deal Count"
+			}
+		]
+
+		categoryAxis = {
+			categories: month,
+			title : {
+				text : "Deal Stages",
+				font: "10px sans-serif",
+				visible : true,
+				color : "#4472C4"
+			},
+			labels : {
+				font: "10px sans-serif",
+				// rotation: -45,   
+				template:function(e){
+					// try to split using dash
+					// if length is one, then return because not a from till
+					var data = (e.value).split(" - ");
+					if (data.length === 1)
+						return e.value;
+
+					var tgl1 = data[0].split("/");
+					var tgl2 = data[1].split("/");
+
+					// take out year if there is year value
+					if (tgl1.length >= 3 && tgl2.length >= 3) {
+						data[0] = tgl1[0] + "/" + tgl1[1]
+						data[1] = tgl2[0] + "/" + tgl2[1]
+					}
+
+					return data[0] + "\n" + data[1];
+				}
+				// visible : true,
+			},
+			axisCrossingValues: [0, 7]
+		}
+
+		tooltip = {
+			visible: true,
+			template : function(dt){
+				console.log(dt);
+				return dt.series.name + " : "+ dt.value//dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
+			}
+		}
+		break
+	case "region":
+		series = [
+			{
+				type: "column",
+				stack: false,
+				field: "avgdays",
+				color: '#2e75b6',
+				overlay: {
+					gradient: "none"
+				},
+				name: "Avg Days"
+			},
+			{
+				type: "column",
+				stack: false,
+				field: "median",
+				color: '#00b0f0',
+				overlay: {
+					gradient: "none"
+				},
+				name: "Median"
+			},
+			{
+				type: "column",
+				stack: false,
+				field: "dealcount",
+				axis: "dc",
+				color: '#ffc000',
+				overlay: {
+					gradient: "none"
+				},
+				name: "Deal Count"
+			},
+			{
+				name: "Target TAT"
+			}
+		]
+
+		categoryAxis = {
+			field: "idx",
+			title : {
+				text : "Region",
+				font: "10px sans-serif",
+				visible : true,
+				color : "#4472C4"
+			},
+			labels : {
+				font: "10px sans-serif",
+			},
+			axisCrossingValues: [0, 7]
+		}
+		
+		tooltip = {
+			visible: true,
+			template: function(dt) {
+				return dt.series.name + " : "+ dt.value
+			}
+		}
+		break
+	}
 
 	var opt = {
 		plotArea: {
@@ -661,43 +823,9 @@ turn.CreateChartTrendOption_  = function (data) {
 			}
 		},
 		dataSource: data.response,
-		series: [
-		{
-			type: "column",
-			stack : false,
-			field: "avgdays",
-			color: '#2e75b6',
-			overlay: {
-				gradient: "none"
-			},
-			name: "Avg Days"
-		},
-		{
-			type: "column",
-			stack : false,
-			field: "median",
-			color: '#00b0f0',
-			overlay: {
-				gradient: "none"
-			},
-			name: "Median"
-		},
-		{
-			type: "line",
-			stack : false,
-			field: "dealcount",
-			axis: "dc",
-			dashType: "dot",
-			color: '#ffc000',
-			name: "Deal Count"
-		},
-		{
-			// field: "wind",
-			name: "Target TAT"
-		}
-		],
+		series: series,
 		chartArea:{
-			height: 220,
+			height: 224,
 			background: "white"
 		},
 		legend: {
@@ -746,50 +874,9 @@ turn.CreateChartTrendOption_  = function (data) {
 				skip : 2
 			},
 			// max: 10
-		}
-		],
-		categoryAxis: {
-			categories: month,
-			// field: "dateStr",
-			// visible : true,
-			title : {
-				text : "Deal Stages",
-				font: "10px sans-serif",
-				visible : true,
-				color : "#4472C4"
-			},
-			labels : {
-				font: "10px sans-serif",
-				// rotation: -45,   
-				template:function(e){
-					// try to split using dash
-					// if length is one, then return because not a from till
-					var data = (e.value).split(" - ");
-					if (data.length === 1)
-						return e.value;
-
-					var tgl1 = data[0].split("/");
-					var tgl2 = data[1].split("/");
-
-					// take out year if there is year value
-					if (tgl1.length >= 3 && tgl2.length >= 3) {
-						data[0] = tgl1[0] + "/" + tgl1[1]
-						data[1] = tgl2[0] + "/" + tgl2[1]
-					}
-
-					return data[0] + "\n" + data[1];
-				}
-				// visible : true,
-			},
-			axisCrossingValues: [0, 7]
-		},
-		tooltip : {
-			visible: true,
-			template : function(dt){
-				console.log(dt);
-				return dt.series.name + " : "+ dt.value//dt.dataItem.timestatus.split("*")[1] + " : " + dt.value
-			}
-		}
+		}],
+		categoryAxis: categoryAxis,
+		tooltip: tooltip
 	}
 
 	if (data._request.title) {
@@ -803,9 +890,20 @@ turn.CreateChartTrendOption_  = function (data) {
 			}
 		}
 
-		switch (data._request.groupby) {
+		opt.chartArea.height = 250;
+
+		switch (data._request.trend) {
 		case "conversion":
-			opt.title.text = "Average Conversion TAT";
+			opt.title.text = "Underwriting TAT (Avg)";
+			break
+		case "decision":
+			opt.title.text = "Decision TAT (Avg)";
+			break
+		case "processing":
+			opt.title.text = "Analysis TAT (Avg)";
+			break
+		case "acceptance":
+			opt.title.text = "Acceptance TAT (Avg)";
 			break
 		}
 	}
@@ -834,7 +932,6 @@ turn.loadChartContainer = function(data){
 		$("#chartContainer").html('')
 		$("#chartContainer").kendoChart(opt);
 	},200)
-
 }
 
 turn.loadRadialGauge = function(){
@@ -1158,6 +1255,40 @@ turn.CreateChartMoving = function(param, callback) {
 	})
 }
 
+turn.openCompareTrend = function() {
+	var request = {
+		len: turn.trendDataLength(),
+		title: true,
+		trend: turn.dataMenuValue(),
+		groupby: turn.ValueDataPeriod()
+	}
+
+	var fun = function (param, callback) {
+		param.trend = request.trend
+		param.groupby = request.groupby
+
+		ajaxPost("/dashboard/snapshottat", param, function(res){
+			var resp = _.cloneDeep(res.Data) 
+			if (param.groupby == "period") {
+				resp.shift()
+			}
+
+			request.start = param.start
+			request.end = param.end
+			request.type = param.type
+
+			var prm = {
+				_request: request,
+				response: resp
+			}
+
+			callback(turn.CreateChartTrendOption_(prm))
+		})
+	}
+
+	comp.Open(fun)
+}
+
 turn.normalisasiData = function(data){
 	var category = [];
     var comdata = [];
@@ -1366,16 +1497,36 @@ turn.setTitle = function(){
 	return title;
 }
 
-$(window).bind("resize", function() {
-	$("#historytat").data("kendoChart").refresh();
-	$(".cater").data("kendoChart").refresh();
-	$("#chartContainer").data("kendoChart").refresh();
-	$("#movingtat").data("kendoChart").refresh();
-	$("#conversion").data("kendoChart").refresh();
-	$("#decision").data("kendoChart").refresh();
-	$("#processing").data("kendoChart").refresh();
-	$("#acceptance").data("kendoChart").refresh();
-});
+turn.setInfo = function(number, num, el){
+	return ko.computed(function(){
+	// 	t = $("#"+el+"> span:nth-child(2) > small").offset().top
+	// 	l = $("#"+el+"> span:nth-child(2) > small").offset().left
+	// 	$("#"+el+"> span:nth-child(2) > small").offset({top: t-0.3, left: l})
+		return dash.stringArr(number, num)
+	})
+}
+
+function refreshChart(selection) {
+	var chart = $(selection).data("kendoChart")
+	if (typeof(chart) === "undefined")
+		return;
+	if (chart === null)
+		return;
+	chart.refresh();
+}
+
+function refreshAllChart() {
+	refreshChart("#historytat");
+	refreshChart(".cater");
+	refreshChart("#chartContainer");
+	refreshChart("#movingtat");
+	refreshChart("#conversion");
+	refreshChart("#decision");
+	refreshChart("#processing");
+	refreshChart("#acceptance");
+}
+
+$(window).bind("resize", refreshAllChart);
 
 
 $(function(){
@@ -1386,25 +1537,11 @@ $(function(){
 		if(infilter.is(":visible") == true){
 			turn.loadChaterChart()
 			$("#onselect").css("width", "117px")
-			$("#historytat").data("kendoChart").refresh();
-			$(".cater").data("kendoChart").refresh();
-			$("#movingtat").data("kendoChart").refresh();
-			$("#conversion").data("kendoChart").refresh();
-			$("#decision").data("kendoChart").refresh();
-			$("#processing").data("kendoChart").refresh();
-			$("#acceptance").data("kendoChart").refresh();
-			$("#chartContainer").data("kendoChart").refresh();
-		}else{
+			refreshAllChart();
+		} else {
 			turn.loadChaterChart()
 			$("#onselect").css("width", "150px")
-			$("#historytat").data("kendoChart").refresh();
-			$(".cater").data("kendoChart").refresh();
-			$("#movingtat").data("kendoChart").refresh();
-			$("#conversion").data("kendoChart").refresh();
-			$("#decision").data("kendoChart").refresh();
-			$("#processing").data("kendoChart").refresh();
-			$("#acceptance").data("kendoChart").refresh();
-			$("#chartContainer").data("kendoChart").refresh();
+			refreshAllChart();
 		}
 	})
 	

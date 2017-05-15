@@ -4,7 +4,6 @@ import (
 	. "eaciit/x10/webapps/connection"
 	. "eaciit/x10/webapps/helper"
 	"eaciit/x10/webapps/models"
-	"encoding/json"
 	"errors"
 
 	"github.com/eaciit/cast"
@@ -589,8 +588,8 @@ func (a *DataBrowserController) GetCombinedDataNew(k *knot.WebContext) interface
 		},
 	}})
 
-	debug, _ := json.MarshalIndent(pipe, "", "  ")
-	fmt.Printf("PIPEX\n%s\n", debug)
+	// debug, _ := json.MarshalIndent(pipe, "", "  ")
+	// fmt.Printf("PIPEX\n%s\n", debug)
 
 	csr, err := conn.
 		NewQuery().

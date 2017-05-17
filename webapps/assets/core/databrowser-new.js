@@ -412,10 +412,10 @@ databrowser.loandetailscoll = [
 },
 {
 	field : "AD.loandetails.vintagewithx10",
-	title : "Vintage With X10 (in Months)",
+	title : "Vintage With Us (in Months)",
 	hidden : true,
 	width : 100,
-	headerTemplate : "Vintage With X10 <br/> (in Months)",
+	headerTemplate : "Vintage With Us <br/> (in Months)",
 	headerAttributes: { "class": "sub-bgcolor" },
 	attributes:{style: "text-align: right"},
 },

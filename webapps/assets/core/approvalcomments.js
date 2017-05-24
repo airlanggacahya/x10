@@ -177,13 +177,13 @@ apcom.loadCommentData = function(tayp){
 			// apcom.plainDate(data[1].DCFinalSanction.Date)
 			apcom.sanction.Id(data[1].DCFinalSanction.Id)
 		    apcom.Date(moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY') == "01-Jan-0001" ? "" : moment(data[1].DCFinalSanction.Date).format('DD-MMM-YYYY'));
-		    if(data[1].DCFinalSanction.IsNullAmount != true){
+		    if(data[1].DCFinalSanction.IsNullAmount == true){
 		    	apcom.LeftAmount("");
 		    }else{
 		    	apcom.LeftAmount(data[1].DCFinalSanction.Amount);
 		    }
 
-		    if(data[1].DCFinalSanction.IsNullROI != true){
+		    if(data[1].DCFinalSanction.IsNullROI == true){
 		    	apcom.ROI("");
 		    }else{
 		    	apcom.ROI(data[1].DCFinalSanction.ROI);

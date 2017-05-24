@@ -35,22 +35,26 @@ left.dataChartStick = ko.observableArray([]);
 left.TemplateWCASSETS = {
 	value: 0,
 	growth: 0,
-	title: "Working Capital Assets",
+	title:"Working Capital Assets",
+	htmlTitle: "Working Capital Assets<br>(Rs. Lacs)"
 }
 left.TemplateTNW = {
 	value: 0,
 	growth: 0,
 	title:"Total Net Worth",
+	htmlTitle: "Total Net Worth<br>(Rs. Lacs)"
 }
 left.TemplateADNW = {
 	value: 0,
 	growth: 0,
 	title:"Adjusted Net Worth",
+	htmlTitle: "Adjusted Net Worth<br>(Rs. Lacs)"
 }
 left.TemplateTOTOBW = {
 	value: 0,
 	growth: 0,
 	title:"Total Outside Debts",
+	htmlTitle: "Total Outside Debts<br>(Rs. Lacs)"
 }
 
 left.ratioDataAudited = ko.mapping.fromJS(left.templateRatioData);

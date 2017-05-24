@@ -65,13 +65,13 @@
 		<div class="form-group col-sm-6">
 	    	<label class="col-sm-12 text-left">Amount</label>
 	    	<div class="col-sm-12">
-	    		<input type="number" id="commentamount" data-bind="value: apcom.LeftAmount" class="input-sm form-control" style="width: 100%;">
+	    		<input type="number" id="commentamount" data-bind="value: apcom.LeftAmount, enable: apcom.latestStatusStr() == 'Awaiting Action'" class="input-sm form-control" style="width: 100%;">
 	    	</div>
 		</div>
 		<div class="form-group col-sm-6">
 	    	<label class="col-sm-12 text-left">ROI (%)</label>
 	    	<div class="col-sm-12">
-	    		<input type="number" id="commentroi" data-bind="value: apcom.ROI" class="input-sm form-control" style="width: 100%;">
+	    		<input type="number" id="commentroi" data-bind="value: apcom.ROI, enable: apcom.latestStatusStr() == 'Awaiting Action'" class="input-sm form-control" style="width: 100%;">
 	    	</div>
 		</div>
 	</div>
@@ -80,13 +80,13 @@
 		<div class="form-group col-sm-6">
 	    	<label class="col-sm-12 text-left">PF</label>
 	    	<div class="col-sm-12">
-	    		<input id="commentpf" data-bind="value: apcom.PF" class="input-sm form-control" style="width: 100%;">
+	    		<input id="commentpf" data-bind="value: apcom.PF, enable: apcom.latestStatusStr() == 'Awaiting Action'" class="input-sm form-control" style="width: 100%;">
 	    	</div>
 		</div>
 		<div class="form-group col-sm-6">
 	    	<label class="col-sm-12 text-left">PG</label>
 	    	<div class="col-sm-12">
-	    		<input id="commentpg" data-bind="value: apcom.PG" class="input-sm form-control" style="width: 100%;">
+	    		<input id="commentpg" data-bind="value: apcom.PG, enable: apcom.latestStatusStr() == 'Awaiting Action'" class="input-sm form-control" style="width: 100%;">
 	    	</div>
 		</div>
 	</div>
@@ -95,7 +95,7 @@
 		<div class="form-group col-sm-12">
 	    	<label class="col-sm-12 text-left">Security</label>
 	    	<div class="col-sm-12">
-	    		<input id="commentsecurity" data-bind="value: apcom.Security" class="input-sm form-control" style="width: 100%;">
+	    		<input id="commentsecurity" data-bind="value: apcom.Security, enable: apcom.latestStatusStr() == 'Awaiting Action'" class="input-sm form-control" style="width: 100%;">
 	    	</div>
 		</div>
 	</div>
@@ -106,7 +106,7 @@
 	    	<div class="col-sm-12">
 				<div data-bind="foreach: apcom.OtherConditions">
 					<div class="col-sm-10">
-						<input id="commentconditions" style="width: 100%; margin-left: -9px;margin-bottom: 5px;" data-bind="value: apcom.OtherConditions()[$index()]" class="input-sm form-control">
+						<input id="commentconditions" style="width: 100%; margin-left: -9px;margin-bottom: 5px;" data-bind="value: apcom.OtherConditions()[$index()], enable: apcom.latestStatusStr() == 'Awaiting Action'" class="input-sm form-control">
 					</div>
 					<div class="col-sm-2">
 						<button type="button" class="btn btn-sm btn-flat btn-success checkLatestStatus" data-bind="click: apcom.addOtherCondition, visible: $index() == 0"><i class="fa fa-plus"></i></button>
@@ -121,7 +121,7 @@
 		<div class="form-group col-sm-12">
 	    	<label class="col-sm-12 text-left">Committee Remarks</label>
 	    	<div class="col-sm-12">
-	    		<textarea id="commentremarks" data-bind="value: apcom.CommitteeRemarks" class="input-sm form-control" style="width: 100%;"></textarea>
+	    		<textarea id="commentremarks" data-bind="value: apcom.CommitteeRemarks, enable: apcom.latestStatusStr() == 'Awaiting Action'" class="input-sm form-control" style="width: 100%;"></textarea>
 	    	</div>
 		</div>
 	</div>

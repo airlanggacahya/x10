@@ -1,14 +1,6 @@
 
 alertSum = {}
 
-alertSum.dummyData = ko.observableArray([
-    {"avgdays":2.2,"date":"2016-10-01T00:00:00Z","dateStr":"Oct-2016","dealcount":8,"median":4},
-    {"avgdays":3.3,"date":"2016-11-01T00:00:00Z","dateStr":"Nov-2016","dealcount":5,"median":3},
-    {"avgdays":4.4,"date":"2016-12-01T00:00:00Z","dateStr":"Dec-2016","dealcount":3,"median":5},
-    {"avgdays":2.0,"date":"2017-01-01T00:00:00Z","dateStr":"Jan-2017","dealcount":7,"median":6},
-    {"avgdays":8.0,"date":"2017-02-01T00:00:00Z","dateStr":"Feb-2017","dealcount":9,"median":7},
-    {"avgdays":4.0,"date":"2017-03-01T00:00:00Z","dateStr":"Mar-2017","dealcount":2,"median":8}])
-
 alertSum.height = function(){
     var myHeight = ($(window).height() - 90) / 3
     if (myHeight < 230)
@@ -323,6 +315,7 @@ alertSum.trendDataAxes = ko.computed(function () {
         majorUnit: 1,
     }]
 })
+
 alertSum.trendDataAxes.subscribe(function (val) {
     var el = $("#alert-summary").data("kendoChart");
     if (typeof(el) === "undefined")
@@ -374,6 +367,7 @@ alertSum.seriesChangePercent = function(section, num) {
         return "."+strnum[1]+"%"
     })
 }
+
 alertSum.seriesChangeFa = function(section) {
     return ko.computed(function() {
         return alertSum.summary2fa(alertSum.seriesChange(section)());
@@ -388,7 +382,6 @@ alertSum.colorClass = function(section) {
 alertSum.currentData = function(section, rounding = 0) {
     return ko.computed(function () {
         var num = _.get(alertSum.trendDataCurrent(), section, 0)
-
 
         return kendo.toString(num, "n" + rounding);
     })

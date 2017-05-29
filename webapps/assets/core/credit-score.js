@@ -658,9 +658,14 @@ frp.exportExcel = function() {
 				}
 			}
 			
+			var address = XLSX.utils.encode_cell({r:r, c:c})
 			_.set(ws,
-				XLSX.utils.encode_cell({r:r, c:c}) + ".s.border",
+				address + ".s.border",
 				{top: border, right: border, left: border, bottom: border})
+
+			// set default value
+			_.set(ws, address + ".t", _.get(ws, address + ".t", "s"))
+			_.set(ws, address + ".v", _.get(ws, address + ".v", ""))
 		}
 	}
 
@@ -670,6 +675,15 @@ frp.exportExcel = function() {
 		{wch: 33},
 		{wch: 12},
 		{wch: 12},
+		{wch: 12},
+		{wch: 12},
+		{wch: 18},
+		{wch: 12},
+		{wch: 18},
+		{wch: 12},
+		{wch: 18},
+		{wch: 12},
+		{wch: 18},
 		{wch: 12}
 	]
 

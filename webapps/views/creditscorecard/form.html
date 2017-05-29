@@ -71,12 +71,16 @@
 				<div class="controls">
 					<div class="col-md-4">
 						<button class="btn btn-sm btn-success" data-bind="click: frp.exportPDF, visible: model.IsGranted('download')">
-             	<i class="fa fa-file-pdf-o"></i>&nbsp; Export PDF
-            </button>
+							<i class="fa fa-file-pdf-o"></i>&nbsp; Export PDF
+						</button>
+						<button class="btn btn-sm btn-success" data-bind="click: frp.exportExcel, visible: model.IsGranted('download')">
+							<i class="fa fa-file-excel-o"></i>&nbsp; Export Excel
+						</button>
 					</div>
 					<div class="clearfix"></div>
 				</div>
 				<div class="form-container"></div>
+				<div id="form-container-new"></div>
 			</div>
 		</div>
 	</div>

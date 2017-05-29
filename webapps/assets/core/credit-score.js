@@ -25,6 +25,7 @@ frp.render = function () {
 	var $container = $('.form-container').empty()
 	var $table = $('<table />')
 		.addClass('report')
+		.attr("id", "table-report")
 		.appendTo($container)
 
 	var $trCust = $('<tr />')
@@ -596,6 +597,94 @@ window.refreshFilter = function () {
 	}
 
 	frp.showDetail(false);
+}
+
+////
+function hexc(colorval) {
+	if (colorval === null || typeof(colorval) === "undefined") {
+		return null
+	}
+    var parts = colorval.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/)
+	if (parts === null) {
+		return null;
+	}
+    parts.shift()
+    for (var i = 0; i < 3; ++i) {
+        parts[i] = parseInt(parts[i]).toString(16);
+        if (parts[i].length == 1) parts[i] = '0' + parts[i];
+    }
+    return parts.join('');
+}
+////
+
+frp.exportExcel = function() {
+	var ws = XLSX.utils.table_to_sheet(document.getElementById("table-report"))
+
+	$("#table-report tbody tr").each(function (rowidx, rowel) {
+		var row = $(rowel)
+		rowcolor = hexc(row.css("backgroundColor"))
+
+		row.children("td").each(function (idx, cellel) {
+			var cell = $(cellel)
+			var top = cell.cellPos().top
+			var left = cell.cellPos().left
+
+			var xlscell = ws[XLSX.utils.encode_cell({r:top, c:left})]
+			var v;
+			v = hexc(cell.css("backgroundColor")) || rowcolor
+			if (v)
+				_.set(xlscell, "s.fill.fgColor.rgb", "ff" + v)
+
+			v = hexc(cell.css("color"))
+			if (v)
+				_.set(xlscell, "s.font.color.rgb", "ff" + v)
+
+			v = cell.css("textAlign")
+			if (v && v !== "start")
+				_.set(xlscell, "s.alignment.horizontal", v)
+		})
+	})
+
+	// set global border color
+	var allcell = XLSX.utils.decode_range(ws["!ref"])
+	console.log(allcell)
+	var r,c
+	for (r = allcell.s.r; r <= allcell.e.r; r++) {
+		for (c = allcell.s.c; c <= allcell.e.c; c++) {
+			var border = {
+				style: "thin",
+				color: {
+					rgb: "ffe2e2e2"
+				}
+			}
+			
+			_.set(ws,
+				XLSX.utils.encode_cell({r:r, c:c}) + ".s.border",
+				{top: border, right: border, left: border, bottom: border})
+		}
+	}
+
+	// Set Width
+	ws['!cols'] = [
+		{wch: 37},
+		{wch: 33},
+		{wch: 12},
+		{wch: 12},
+		{wch: 12}
+	]
+
+	var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
+	var wbout = XLSX.write({SheetNames: ["Sheet1"], Sheets: {Sheet1: ws}},wopts);
+
+	function s2ab(s) {
+		var buf = new ArrayBuffer(s.length);
+		var view = new Uint8Array(buf);
+		for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+		return buf;
+	}
+
+	/* the saveAs call downloads a file on the local machine */
+	saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), frp.customerName() + ".xlsx");
 }
 
 frp.exportPDF = function() {

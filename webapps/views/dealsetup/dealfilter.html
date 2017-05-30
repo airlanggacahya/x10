@@ -157,8 +157,10 @@ $(document).ready(function(){
 });
 
 $("body").click(function(e){  
-  var check = $(e.toElement).closest("#filtercontainer");
-  if((check.length==0 && !$(e.toElement).is("li"))&& setup.searchValueCustomerName() != "" ){
+  var x = $(this)
+
+  var check = x.closest("#filtercontainer");
+  if((check.length==0 && !x.is("li"))&& setup.searchValueCustomerName() != "" ){
     showFilter(false);
   }
 });

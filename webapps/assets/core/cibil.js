@@ -525,6 +525,7 @@ cibil.onChangeCustomer = function(){
 				itemData.changeEnabledScoring = function(i,e){
 					cibil.promotorParam([])
 					itemData.hasEnabledScoring(!itemData.hasEnabledScoring())
+					
 					if($(e.toElement).html() == " Confirm") {
 						cibil.promotorParam.push({CustomerId: cibil.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.Score })
 						savePromotors();

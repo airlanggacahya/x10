@@ -642,6 +642,31 @@ frp.exportExcel = function() {
 			v = cell.css("textAlign")
 			if (v && v !== "start")
 				_.set(xlscell, "s.alignment.horizontal", v)
+
+            var border = function(v){
+                return {
+    				style: "thin",
+    				color: {
+    					rgb: "ff" + v
+    				}
+    			}
+            }
+
+            v = hexc(cell.css("borderTopColor"))
+			if (v)
+				_.set(xlscell, "s.border.top", border(v))
+
+			v = hexc(cell.css("borderRightColor"))
+			if (v)
+				_.set(xlscell, "s.border.right", border(v))
+
+			v = hexc(cell.css("borderBottomColor"))
+			if (v)
+				_.set(xlscell, "s.border.bottom", border(v))
+
+			v = hexc(cell.css("borderLeftColor"))
+			if (v)
+				_.set(xlscell, "s.border.left", border(v))
 		})
 	})
 
@@ -651,17 +676,12 @@ frp.exportExcel = function() {
 	var r,c
 	for (r = allcell.s.r; r <= allcell.e.r; r++) {
 		for (c = allcell.s.c; c <= allcell.e.c; c++) {
-			var border = {
-				style: "thin",
-				color: {
-					rgb: "ffe2e2e2"
-				}
-			}
-			
 			var address = XLSX.utils.encode_cell({r:r, c:c})
-			_.set(ws,
-				address + ".s.border",
-				{top: border, right: border, left: border, bottom: border})
+
+            if(_.get(ws, address) == undefined)
+    			_.set(ws,
+    				address + ".s.border",
+    				_.get(ws, XLSX.utils.encode_cell({r: r, c: c - 1}) + ".s.border"))
 
 			// set default value
 			_.set(ws, address + ".t", _.get(ws, address + ".t", "s"))

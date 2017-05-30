@@ -309,10 +309,13 @@ function parse(val) {
 
 
 $("body").click(function(e){  
-  var check = $(this).closest("#filtercontainer");
-  
+
+  var x = $(this)
+
+  var check = x.closest("#filtercontainer");
+
   setTimeout(function(){
-  if((check.length==0 && !$(e.toElement).is("li"))&& filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" ){
+  if((check.length==0 && !x.is("li"))&& filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" ){
     //showFilter(false);
   }
 },500)

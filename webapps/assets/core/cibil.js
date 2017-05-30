@@ -525,14 +525,16 @@ cibil.onChangeCustomer = function(){
 				itemData.changeEnabledScoring = function(i,e){
 					cibil.promotorParam([])
 					itemData.hasEnabledScoring(!itemData.hasEnabledScoring())
-					if($(e.toElement).html() == " Confirm") {
+					var x = $(this)
+
+					if(x.html() == " Confirm") {
 						cibil.promotorParam.push({CustomerId: cibil.filtercustid(),DealNo:filter().DealNumberSearchVal() , Name: itemData.Name, FatherName: itemData.FatherName, Scors: ""+itemData.Score })
 						savePromotors();
-						$(e.toElement).removeClass('btn-confirm').addClass('btn-reenter').html(" Re Enter");
-						$(e.toElement).closest(".col-md-12").prev().find("#custname").attr("disabled",true);
-					} else if($(e.toElement).html() == " Re Enter") {
-						$(e.toElement).removeClass('btn-reenter').addClass('btn-confirm').html(" Confirm");
-						$(e.toElement).closest(".col-md-12").prev().find("#custname").attr("disabled",false);
+						x.removeClass('btn-confirm').addClass('btn-reenter').html(" Re Enter");
+						x.closest(".col-md-12").prev().find("#custname").attr("disabled",true);
+					} else if(x.html() == " Re Enter") {
+						x.removeClass('btn-reenter').addClass('btn-confirm').html(" Confirm");
+						x.closest(".col-md-12").prev().find("#custname").attr("disabled",false);
 					}
 					cibil.confirmedStatusCompany();
 				}

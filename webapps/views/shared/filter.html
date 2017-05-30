@@ -310,6 +310,7 @@ function parse(val) {
 
 $("body").click(function(e){  
   var check = $(this).closest("#filtercontainer");
+  
   setTimeout(function(){
   if((check.length==0 && !$(e.toElement).is("li"))&& filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" ){
     //showFilter(false);

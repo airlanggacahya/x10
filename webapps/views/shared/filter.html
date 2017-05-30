@@ -132,13 +132,14 @@ function showFilter(show) {
   if($("#menubackup #filtercontainer").length > 0){
     $("#filtercontainer").show();
   }
+
   setTimeout(function () {
-  $(document).scroll(function(e){
-  if(filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" && filter().DealNumberSearchVal()!="Deal No" ){
-    showFilter(false);
-  } 
- });
-}, 0);
+    $(document).scroll(function(e){
+      if(filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" && filter().DealNumberSearchVal()!="Deal No" ){
+        showFilter(false);
+      } 
+    });
+  }, 0);
 }
 
 function getFilterText() {
@@ -308,10 +309,10 @@ function parse(val) {
 
 
 $("body").click(function(e){  
-  var check = $(e.toElement).closest("#filtercontainer");
+  var check = $(this).closest("#filtercontainer");
   setTimeout(function(){
   if((check.length==0 && !$(e.toElement).is("li"))&& filter().CustomerSearchVal()!= "" && filter().DealNumberSearchVal()!="" ){
-    showFilter(false);
+    //showFilter(false);
   }
 },500)
 });

@@ -618,6 +618,8 @@ function hexc(colorval) {
 ////
 
 frp.exportExcel = function() {
+    $("#table-report tbody tr:empty").remove()
+
 	var ws = XLSX.utils.table_to_sheet(document.getElementById("table-report"))
 
 	$("#table-report tbody tr").each(function (rowidx, rowel) {

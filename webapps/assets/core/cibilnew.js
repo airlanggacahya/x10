@@ -988,6 +988,15 @@ r.removeDetailReportSummary = function (){
   r.dataEntryCibilReport().DetailReportSummary.remove(this);
 }
 
+r.tryParseCibilDate = function(dt) {
+  var v = moment(dt)
+  if (v.isValid())
+    return v
+  
+  v = moment(dt, "DD-MMM-YYYY")
+  return v
+}
+
 r.addDataReport = function(data) {
   var totalSt = 0;
   var totalCur = 0;
@@ -1055,11 +1064,11 @@ r.addDataReport = function(data) {
   r.creditguaranteothers(kendo.toString(parseInt(data.ReportSummary.FacilitiesGuaranteed),"n0"));
 
   var last = data.ReportSummary.LatestCreditFacilityOpenDate.split(" ").join("")
-  last = moment(last).format("DD-MMM-YYYY");
+  last = r.tryParseCibilDate(last).format("DD-MMM-YYYY");
   r.latestopendate(last);
 
   var first = data.ReportSummary.FirstCreditFacilityOpenDate.split(" ").join("")
-  first =  moment(first).format("DD-MMM-YYYY");
+  first = r.tryParseCibilDate(first).format("DD-MMM-YYYY");
   r.firstopendate(first);
 
   temp = []
@@ -1144,7 +1153,7 @@ r.addDataReport = function(data) {
   }
   
   var recent = data.EnquirySummary.MostRecentDate.split(" ").join("")
-  recent =  moment(recent).format("DD-MMM-YYYY");
+  recent = r.tryParseCibilDate(recent).format("DD-MMM-YYYY");
   r.recent(recent)
   if(data.EnquirySummary.TotalEnquiries != ""){
     r.totalenquiries(kendo.toString(parseInt(data.EnquirySummary.TotalEnquiries),"n0"));

@@ -454,7 +454,7 @@ func (c *RatioController) GetRatioInputDataALL(k *knot.WebContext) interface{} {
 func (c *RatioController) GetRatioInputDataALLConfirmed(k *knot.WebContext) interface{} {
 	k.Config.OutputType = knot.OutputJson
 
-	res := new(toolkit.Result)
+	res := toolkit.NewResult()
 
 	payload := NewRatioInputData()
 	if err := k.GetPayload(&payload); err != nil {

@@ -646,15 +646,6 @@ cibil.onChangeCustomer = function(){
 		  	model.totalCurrentBalance(0);
 	}
 
-	function tryParseCibilDate(dt) {
-		var v = moment(dt)
-		if (v.isValid())
-			return v
-		
-		v = moment(dt, "DD-MMM-YYYY")
-		return v
-	}
-
 	function addDataReport() {
 			setTimeout(function(){
 				var totalSt = 0;
@@ -679,12 +670,12 @@ cibil.onChangeCustomer = function(){
 		   cibil.creditguaranteothers(kendo.toString(parseInt(cibil.selectedCustomer()[0].ReportSummary.FacilitiesGuaranteed),"n0"));
 
 		   var last = cibil.selectedCustomer()[0].ReportSummary.LatestCreditFacilityOpenDate.split(" ").join("")
-		   	last = tryParseCibilDate(last).format("DD-MMM-YYYY");
+		   	last = moment(last).format("DD-MMM-YYYY");
 		   	cibil.latestopendate(last);
 
 
 		   	var first = cibil.selectedCustomer()[0].ReportSummary.FirstCreditFacilityOpenDate.split(" ").join("")
-  			first =  tryParseCibilDate(first).format("DD-MMM-YYYY");
+  			first =  moment(first).format("DD-MMM-YYYY");
   			cibil.firstopendate(first);
 
 
@@ -713,7 +704,7 @@ cibil.onChangeCustomer = function(){
 		   cibil.thanduaempatmonth(kendo.toString(parseInt(cibil.selectedCustomer()[0].EnquirySummary.EnquiriesThan24Month),"n0"));
 		   // cibil.lessduaempatmonth(cibil.selectedCustomer()[0].EnquirySummary.)
 		   	var recent = cibil.selectedCustomer()[0].EnquirySummary.MostRecentDate.split(" ").join("")
-  			recent = tryParseCibilDate(recent).format("DD-MMM-YYYY");
+  			recent =  moment(recent).format("DD-MMM-YYYY");
 		   cibil.recent(recent)
 
 		   cibil.totalenquiries(kendo.toString(parseInt(cibil.selectedCustomer()[0].EnquirySummary.TotalEnquiries),"n0"));

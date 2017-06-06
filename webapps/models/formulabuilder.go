@@ -1337,14 +1337,14 @@ func (fm *FormulaModel) CalculateScoreCard() (*CreditScoreCardResult, error) {
 				}
 			}
 
-			rowCustomerSegmentClassification := new(CreditScoreCardItem)
-			rowCustomerSegmentClassification.Id = "z1f"
-			rowCustomerSegmentClassification.Name = "Customer Segment Clasification"
-			rowCustomerSegmentClassification.Category = toolkit.Sprintf("%v", output)
-			rowCustomerSegmentClassification.Score = 0
-			rowCustomerSegmentClassification.Weight = 0
-			rowCustomerSegmentClassification.WeightScore = 0
-			resFinal = append(resFinal, rowCustomerSegmentClassification)
+			// rowCustomerSegmentClassification := new(CreditScoreCardItem)
+			// rowCustomerSegmentClassification.Id = "z1f"
+			// rowCustomerSegmentClassification.Name = "Customer Segment Clasification"
+			// rowCustomerSegmentClassification.Category = toolkit.Sprintf("%v", output)
+			// rowCustomerSegmentClassification.Score = 0
+			// rowCustomerSegmentClassification.Weight = 0
+			// rowCustomerSegmentClassification.WeightScore = 0
+			// resFinal = append(resFinal, rowCustomerSegmentClassification)
 		}
 		// ======
 

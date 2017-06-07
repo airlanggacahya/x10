@@ -990,8 +990,14 @@ r.render = function () {
         if(d.Date != ""){
             date_edited = kendo.toString( new Date(d.Date) , 'MMM-yyyy')
         }
-        $("<span>"+toTitleCase(d.Status) + " " + date_edited +"</span>").appendTo($auditmodif).addClass("title-cell-audit")
-        $("<span>"+toTitleCase(d.Status) + " " + date_edited +"</span>").appendTo($auditmodiffixed).addClass("title-cell-audit")
+
+        if(d.Status === "PROVISION"){
+            $("<span>"+toTitleCase(d.Status) + "al " + date_edited +"</span>").appendTo($auditmodif).addClass("title-cell-audit")
+            $("<span>"+toTitleCase(d.Status) + "al " + date_edited +"</span>").appendTo($auditmodiffixed).addClass("title-cell-audit")
+        } else {
+            $("<span>"+toTitleCase(d.Status) + " " + date_edited +"</span>").appendTo($auditmodif).addClass("title-cell-audit")
+            $("<span>"+toTitleCase(d.Status) + " " + date_edited +"</span>").appendTo($auditmodiffixed).addClass("title-cell-audit")
+        }
 
         var $pickDatePicker = $('<td />').appendTo($tr2).addClass('cell-picker').css("background-color",color)
         $('<select />').appendTo($pickDatePicker).kendoDropDownList({

@@ -2397,6 +2397,8 @@ adf.getData = function () {
 			adf.PdDate(date);
 		// }
 
+
+
 		var url = "/accountdetail/getaccountdetail"
 		var param = {
 			customerId: customerId,
@@ -2572,6 +2574,11 @@ adf.getData = function () {
 					adf.setDisable()
 
 					tempCustomerMargin(adf.form.AccountSetupDetails.PdInfo.CustomerMargin())
+					
+					if(res.Data.Freeze === true) {
+						$("#addpromotor").prop("disabled", true)
+					}
+
 				}, 1000)
 				adf.form.BorrowerDetails.DateBusinessStarted("");
 				adf.form.LoanDetails.IfBackedByPO("");
@@ -2915,7 +2922,7 @@ adf.fixMultiSectionCSS = function () {
 	var maxPromotors = _.max(adf.form.PromotorDetails().map(function (d) {
 	    return d.RealEstatePosition().length
 	}))
-	$('#c-3 .vendor-col-header').css('padding-bottom', maxPromotors * 68)
+	$('#c-3 .vendor-col-header').css('padding-bottom', maxPromotors * 68 + 14)
 	$('#c-3 .vendor-col-header1').css('padding-bottom', 10)
 }
 

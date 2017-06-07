@@ -2922,7 +2922,7 @@ adf.fixMultiSectionCSS = function () {
 	var maxPromotors = _.max(adf.form.PromotorDetails().map(function (d) {
 	    return d.RealEstatePosition().length
 	}))
-	$('#c-3 .vendor-col-header').css('padding-bottom', maxPromotors * 68)
+	$('#c-3 .vendor-col-header').css('padding-bottom', maxPromotors * 68 + 14)
 	$('#c-3 .vendor-col-header1').css('padding-bottom', 10)
 }
 

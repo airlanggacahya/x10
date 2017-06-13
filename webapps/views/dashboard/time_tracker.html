@@ -201,10 +201,10 @@
 												<label class="form-label">View Across</label>
 											</div>
 											<div class="col-md-3">
-												<select data-bind="kendoDropDownList: {data: ttrack.trackingList, value: ttrack.trackingValue, dataTextField: 'text', dataValueField: 'value'}" style="width: 100%;"></select>
+												<select data-bind="kendoDropDownList: {data: ttrack.trackingList, value: ttrack.trackingValue, dataTextField: 'text', dataValueField: 'value', event:{change:ttrack.getData}}" style="width: 100%;"></select>
 											</div>
 											<div class="col-md-2">
-												<div type="button" class="btn btn-sm btn-flat btn-primary" data-bind="click: ttrack.getData"><span class="fa fa-refresh"></span> Search</div>
+												<!-- <div type="button" class="btn btn-sm btn-flat btn-primary" data-bind="click: ttrack.getData"><span class="fa fa-refresh"></span> Search</div> -->
 											</div>
 										</div>
 

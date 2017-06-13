@@ -4,6 +4,10 @@ ttrack.trackingList = ko.observableArray([
     {text : 'Deal Stages', value: 'stages'}
 ]);
 ttrack.trackingValue = ko.observable("stages");
+ttrack.trackingValue.subscribe(function(d){
+    ttrack.getData()
+})
+
 ttrack.modalChartTittle = ko.observable("");
 ttrack.isRegion = ko.observable(false);
 ttrack.modalGridTittle = ko.observable("");

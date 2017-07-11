@@ -333,11 +333,11 @@ func sendOmnifinApproval(data DFFinalSanctionInput) error {
 	cur, err := conn.NewQuery().
 		From("CreditScorecard").
 		Where(
-		dbox.And(
-			dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
-			dbox.Eq("DealNo", data.DealNo),
-		),
-	).
+			dbox.And(
+				dbox.Eq("CustomerId", strconv.Itoa(data.CustomerId)),
+				dbox.Eq("DealNo", data.DealNo),
+			),
+		).
 		Cursor(nil)
 	if err != nil {
 		return err
@@ -646,10 +646,10 @@ func (c *ApprovalController) GetCheckConfirm(k *knot.WebContext) interface{} {
 func (c *ApprovalController) FetchAccountDetail(customerID string, DealNo string) (*AccountDetail, error) {
 	query := tk.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("customerid", customerID), dbox.Eq("dealno", DealNo)}...)}
 	csr, err := c.Ctx.Find(new(AccountDetail), query)
-	defer csr.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer csr.Close()
 
 	results := make([]AccountDetail, 0)
 	err = csr.Fetch(&results, 0, false)
@@ -667,10 +667,10 @@ func (c *ApprovalController) FetchAccountDetail(customerID string, DealNo string
 func (c *ApprovalController) FetchInternalRTR(custid string) (*InternalRtr, error) {
 	query := tk.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("_id", custid)}...)}
 	csr, err := c.Ctx.Find(new(InternalRtr), query)
-	defer csr.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer csr.Close()
 
 	results := make([]InternalRtr, 0)
 	err = csr.Fetch(&results, 0, false)
@@ -688,10 +688,10 @@ func (c *ApprovalController) FetchInternalRTR(custid string) (*InternalRtr, erro
 func (c *ApprovalController) FetchStockAndDebt(custid string) (*StockandDebtModel, error) {
 	query := tk.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("customerid", custid)}...)}
 	csr, err := c.Ctx.Find(new(StockandDebtModel), query)
-	defer csr.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer csr.Close()
 
 	results := make([]StockandDebtModel, 0)
 	err = csr.Fetch(&results, 0, false)
@@ -709,10 +709,10 @@ func (c *ApprovalController) FetchStockAndDebt(custid string) (*StockandDebtMode
 func (c *ApprovalController) FetchBalanceSheet(custid string) (*RatioInputData, error) {
 	query := tk.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("customerid", custid)}...)}
 	csr, err := c.Ctx.Find(new(RatioInputData), query)
-	defer csr.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer csr.Close()
 
 	results := make([]RatioInputData, 0)
 	err = csr.Fetch(&results, 0, false)
@@ -731,10 +731,10 @@ func (c *ApprovalController) FetchBalanceSheet(custid string) (*RatioInputData, 
 
 func (c *ApprovalController) FetchCrediScoreCard(customerID string, DealNo string) (interface{}, error) {
 	conn, err := GetConnection()
-	defer conn.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Close()
 
 	res := []tk.M{}
 	query := []*dbox.Filter{}
@@ -770,10 +770,10 @@ func (c *ApprovalController) FetchCrediScoreCard(customerID string, DealNo strin
 func (c *ApprovalController) FetchDueDiligence(customerID string, DealNo string) (*DueDiligenceInput, error) {
 	query := tk.M{"where": dbox.And([]*dbox.Filter{dbox.Eq("customerid", customerID), dbox.Eq("dealno", DealNo)}...)}
 	csr, err := c.Ctx.Find(new(DueDiligenceInput), query)
-	defer csr.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer csr.Close()
 
 	results := make([]DueDiligenceInput, 0)
 	err = csr.Fetch(&results, 0, false)
@@ -794,6 +794,7 @@ func (c *ApprovalController) FetchCustomerApplication(customerID int, DealNo str
 	if err != nil {
 		return nil, err
 	}
+	defer csr.Close()
 
 	res := make([]CustomerProfiles, 0)
 	err = csr.Fetch(&res, 0, false)
@@ -810,10 +811,10 @@ func (c *ApprovalController) FetchCustomerApplication(customerID int, DealNo str
 
 func (c *ApprovalController) FetchRTR(customerID string, DealNo string) (*RTRBottom, error) {
 	conn, err := GetConnection()
-	defer conn.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Close()
 
 	res := []RTRBottom{}
 	query := []*dbox.Filter{}
@@ -852,6 +853,7 @@ func (c *ApprovalController) FetchCibilPromotor(customerID int, DealNo string) (
 	if err != nil {
 		return nil, err
 	}
+	defer csr.Close()
 
 	res := make([]ReportData, 0)
 	err = csr.Fetch(&res, 0, false)
@@ -872,6 +874,7 @@ func (c *ApprovalController) FetchCibil(customerID int, DealNo string) (*CibilRe
 	if err != nil {
 		return nil, err
 	}
+	csr.Close()
 
 	res := make([]CibilReportModel, 0)
 	err = csr.Fetch(&res, 0, false)
@@ -888,10 +891,10 @@ func (c *ApprovalController) FetchCibil(customerID int, DealNo string) (*CibilRe
 
 func (c *ApprovalController) FetchBankAnalis(customerID int, DealNo string) (*BankAnalysisV2, error) {
 	conn, err := GetConnection()
-	defer conn.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Close()
 
 	res := []BankAnalysisV2{}
 
@@ -925,7 +928,6 @@ func DeleteAllDatas(CustomerID string, DealNo string, TableName string) error {
 	if e != nil {
 		return e
 	}
-
 	defer ctx.Close()
 
 	que := ctx.NewQuery().

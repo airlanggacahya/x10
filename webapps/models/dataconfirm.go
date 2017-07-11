@@ -4,10 +4,11 @@ import (
 	. "eaciit/x10/webapps/connection"
 	// . "eaciit/x10/webapps/models"
 	"errors"
+	"reflect"
+
 	"github.com/eaciit/cast"
 	"github.com/eaciit/dbox"
 	"github.com/eaciit/toolkit"
-	"reflect"
 )
 
 type DataConfirmController struct {
@@ -24,12 +25,12 @@ func (a *DataConfirmController) SaveDataConfirmed(CustomerID string, DealNo stri
 	if e != nil {
 		return e
 	}
+	defer ctx.Close()
+
 	que := ctx.NewQuery().
 		Delete().
 		From(TableName+"Confirmed").
 		SetConfig("multiexec", true)
-
-	defer ctx.Close()
 	defer que.Close()
 
 	//save query
@@ -111,11 +112,11 @@ func (a *DataConfirmController) GetDataConfirmed(CustomerID string, DealNo strin
 	if e != nil {
 		return e
 	}
+	defer ctx.Close()
+
 	que := ctx.NewQuery().
 		Select().
 		From(TableName + "Confirmed")
-
-	defer ctx.Close()
 	defer que.Close()
 
 	var v reflect.Type

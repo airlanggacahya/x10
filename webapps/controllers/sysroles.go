@@ -735,6 +735,7 @@ func isRoleUsed(name string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	defer con.Close()
 
 	cur, err := con.
 		NewQuery().

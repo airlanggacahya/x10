@@ -176,6 +176,7 @@ func (a *DataConfirmController) GetDataConfirmed(CustomerID string, DealNo strin
 	if err != nil {
 		return err
 	}
+	defer csr.Close()
 
 	for idx, val := range results {
 		results[idx].Set("Id", val.Get("_id"))

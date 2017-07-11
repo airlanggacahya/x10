@@ -1117,7 +1117,6 @@ func updateDealSetupLatestData(cid string, dealno string, formname string, forms
 var ErrorDataNotFound = errors.New("Data Deal Set-up Not Found")
 
 func UpdateDealSetup(cid string, dealno string, formname string, formstatus string, r *knot.WebContext) error {
-
 	cn, err := GetConnection()
 	defer cn.Close()
 
@@ -1135,7 +1134,7 @@ func UpdateDealSetup(cid string, dealno string, formname string, formstatus stri
 	defer csr.Close()
 
 	results := []tk.M{}
-	err = csr.Fetch(&results, 0, false)
+	err = csr.Fetch(&results, 0, true)
 	if err != nil {
 		return err
 	}

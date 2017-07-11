@@ -299,7 +299,7 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 	}
 
 	cibilReport := []CibilReportModel{}
-	err = csr.Fetch(&cibilReport, 0, false)
+	err = csr.Fetch(&cibilReport, 0, true)
 	if err != nil {
 		return CreateResult(false, nil, err.Error())
 	} else if csr == nil {
@@ -325,7 +325,7 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 	}
 
 	cibilReporttk := []tk.M{}
-	err = csr.Fetch(&cibilReporttk, 0, false)
+	err = csr.Fetch(&cibilReporttk, 0, true)
 	if err != nil {
 		return CreateResult(false, nil, e.Error())
 	} else if csr == nil {
@@ -337,8 +337,6 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 		tk.Serde(detail, &resjson, "json")
 		cibilReport[idx].DetailReportSummary = resjson
 	}
-
-	csr.Close()
 
 	cibilDraft := CibilDraftModel{}
 	if len(cibilReport) > 1 {
@@ -356,8 +354,6 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 				return CreateResult(false, nil, "No data found !")
 			}
 		}
-
-		csr.Close()
 	}
 
 	resprom := []tk.M{}
@@ -400,7 +396,7 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 	}
 
 	cbUnconfirm := []tk.M{}
-	e = csr.Fetch(&cbUnconfirm, 0, false)
+	e = csr.Fetch(&cbUnconfirm, 0, true)
 	if e != nil {
 		return CreateResult(false, nil, e.Error())
 	}
@@ -422,7 +418,7 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 	}
 
 	promUnconfirm := []tk.M{}
-	e = csr.Fetch(&promUnconfirm, 0, false)
+	e = csr.Fetch(&promUnconfirm, 0, true)
 	if e != nil {
 		return CreateResult(false, nil, e.Error())
 	}

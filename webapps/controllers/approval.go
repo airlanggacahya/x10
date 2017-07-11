@@ -874,7 +874,7 @@ func (c *ApprovalController) FetchCibil(customerID int, DealNo string) (*CibilRe
 	if err != nil {
 		return nil, err
 	}
-	csr.Close()
+	defer csr.Close()
 
 	res := make([]CibilReportModel, 0)
 	err = csr.Fetch(&res, 0, false)

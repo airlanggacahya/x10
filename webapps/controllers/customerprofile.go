@@ -276,8 +276,6 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 		return CreateResult(false, nil, "No data found !")
 	}
 
-	defer csr.Close()
-
 	loginDate := AD.AccountSetupDetails.LoginDate
 	expdate := loginDate.AddDate(0, -2, 0)
 
@@ -346,7 +344,9 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 			Cursor(nil)
 		if e != nil {
 			return CreateResult(false, nil, e.Error())
-		} else if csr.Count() > 0 {
+		}
+
+		if csr.Count() > 0 {
 			err = csr.Fetch(&cibilDraft, 1, true)
 			if err != nil {
 				return CreateResult(false, nil, err.Error())
@@ -354,6 +354,8 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 				return CreateResult(false, nil, "No data found !")
 			}
 		}
+
+		csr.Close()
 	}
 
 	resprom := []tk.M{}
@@ -370,7 +372,9 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 		Cursor(nil)
 	if e != nil {
 		return CreateResult(false, nil, e.Error())
-	} else if csr.Count() > 0 {
+	}
+
+	if csr.Count() > 0 {
 		err = csr.Fetch(&resprom, 0, true)
 		if err != nil {
 			return CreateResult(false, nil, err.Error())
@@ -378,6 +382,7 @@ func (c *DataCapturingController) GetCustomerProfileDetailByCustid(k *knot.WebCo
 			return CreateResult(false, nil, "No data found !")
 		}
 	}
+	csr.Close()
 
 	//get unconfirmId
 	csr, e = cn.NewQuery().
